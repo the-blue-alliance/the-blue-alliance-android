@@ -40,7 +40,7 @@ public class MatchListElement extends ListElement {
 
             //if we have video for this match, show an icon
             //currently the launcher icon. It'll be changed...
-            if(video) videoIcon.setBackgroundResource(R.drawable.ic_launcher);
+            if(video) videoIcon.setBackgroundResource(R.drawable.ic_action_play_over_video);
 
             TextView matchTitle = (TextView)view.findViewById(R.id.match_title),
                      red1       = (TextView)view.findViewById(R.id.red1),

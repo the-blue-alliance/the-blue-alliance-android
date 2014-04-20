@@ -3,14 +3,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_pref_height"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/activity_horizontal_margin">
 
-    <ImageView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:id="@+id/match_video"
-        android:gravity="center_vertical|center_horizontal"/>
+        android:layout_weight="1">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/match_video"
+            android:layout_centerInParent="true"
+            />
+        </RelativeLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
