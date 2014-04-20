@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="light_red">#fdd</color>
+    <color name="lighter_red">#fee</color>
+    <color name="light_blue">#ddf</color>
+    <color name="lighter_blue">#eef</color>
+</resources>

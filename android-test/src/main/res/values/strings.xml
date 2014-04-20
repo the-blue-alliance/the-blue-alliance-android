@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TBA Test</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Main Activity -->
+    <string-array name="event_list_year_selector">
+        <item>2014</item>
+        <item>2013</item>
+        <item>2012</item>
+    </string-array>
+
+    <string name="title_main_activity">The Blue Alliance</string>
+    <string name="tab_events">Events</string>
+    <string name="tab_teams">Teams</string>
+    <string name="tab_insights">Insights</string>
+    <string name="title_activity_view_event">View Event</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

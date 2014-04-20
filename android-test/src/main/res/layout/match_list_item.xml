@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_pref_height"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:id="@+id/match_video"
+        android:gravity="center_vertical|center_horizontal"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="2"
+        android:id="@+id/match_title"
+        android:text="Match"
+        android:gravity="center_vertical|center_horizontal"/>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="6">
+        <TableRow
+            android:layout_height="fill_parent"
+            android:background="@color/lighter_red"
+            android:weightSum="5"
+            android:minHeight="@dimen/list_half_pref_height">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/red1"
+                android:text="Red 1"
+                android:gravity="center_vertical|center_horizontal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/red2"
+                android:text="Red 2"
+                android:gravity="center_vertical|center_horizontal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/red3"
+                android:text="Red 3"
+                android:gravity="center_vertical|center_horizontal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="@color/light_red"
+                android:id="@+id/red_score"
+                android:text="Red Score"
+                android:gravity="center_vertical|center_horizontal"/>
+        </TableRow>
+        <TableRow
+            android:layout_height="fill_parent"
+            android:background="@color/lighter_blue"
+            android:weightSum="5"
+            android:minHeight="@dimen/list_half_pref_height">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/blue1"
+                android:text="Blue 1"
+                android:gravity="center_vertical|center_horizontal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/blue2"
+                android:text="Blue 2"
+                android:gravity="center_vertical|center_horizontal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/blue3"
+                android:text="Blue 3"
+                android:gravity="center_vertical|center_horizontal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:background="@color/light_blue"
+                android:id="@+id/blue_score"
+                android:text="Blue Score"
+                android:gravity="center_vertical|center_horizontal"/>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
