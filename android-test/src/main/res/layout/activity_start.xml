@@ -1,7 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.thebluealliance.androidtest.activities.TBA_Start"
-    tools:ignore="MergeRootFrame" />
+    android:id="@+id/nav_drawer_layout">
+
+    <!-- Framelayout to display Fragments -->
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Listview to display slider menu -->
+    <ListView style="@style/ActionBarStyle"
+        android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@color/nav_divider"
+        android:dividerHeight="1dp"/>
+
+</android.support.v4.widget.DrawerLayout>

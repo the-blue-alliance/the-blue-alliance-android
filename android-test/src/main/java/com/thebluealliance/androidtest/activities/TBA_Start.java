@@ -4,22 +4,29 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidtest.R;
+import com.thebluealliance.androidtest.datatypes.NavDrawerItem;
 import com.thebluealliance.androidtest.fragments.EventListFragment;
 import com.thebluealliance.androidtest.fragments.InsightsFragment;
 import com.thebluealliance.androidtest.fragments.TeamListFragment;
 
 
-public class TBA_Start extends Activity implements ActionBar.TabListener {
+public class TBA_Start extends Activity implements AdapterView.OnItemClickListener {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -30,6 +37,10 @@ public class TBA_Start extends Activity implements ActionBar.TabListener {
                                 TEAM_TAG  = "teams",
                                 INSIGHTS_TAG = "insights";
 
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +49,49 @@ public class TBA_Start extends Activity implements ActionBar.TabListener {
         // Set up the action bar to show a dropdown list.
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(R.string.title_main_activity);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setTitle(getResources().getStringArray(R.array.nav_drawer_items)[0]);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
-        //set up action bar tabs for main navigation
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_events)).setTag(EVENT_TAG).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_teams)).setTag(TEAM_TAG).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_insights)).setTag(INSIGHTS_TAG).setTabListener(this));
+        //set up nav drawer for main navigation
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,R.layout.nav_drawer_item, getResources().getStringArray(R.array.nav_drawer_items)));
+        // Set the list's click listener
+        mDrawerList.setOnItemClickListener(this);
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description */
+                R.string.drawer_close  /* "close drawer" description */) {
 
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        //default to events view
+        getFragmentManager().beginTransaction().replace(R.id.container,new EventListFragment()).commit();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -55,6 +101,12 @@ public class TBA_Start extends Activity implements ActionBar.TabListener {
             getActionBar().setSelectedNavigationItem(
                     savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -82,35 +134,34 @@ public class TBA_Start extends Activity implements ActionBar.TabListener {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        // When the given dropdown item is selected, show its contents in the container view.
-        // Tabs are (in order) - events, teams, insights
-        Fragment content; //Fragment to inflate into the content view
-        switch(tab.getTag().toString()){
-            default: case EVENT_TAG: //events
-                content = new EventListFragment();
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Fragment fragment;
+        switch(position){
+            default:case 0: //events
+                fragment = new EventListFragment();
                 break;
-            case TEAM_TAG: //teams
-                content = new TeamListFragment();
+            case 1: //teams
+                fragment = new TeamListFragment();
                 break;
-            case INSIGHTS_TAG: //insights
-                content = new InsightsFragment();
+            case 2: //insights
+                fragment = new InsightsFragment();
                 break;
         }
-        getFragmentManager().beginTransaction().replace(R.id.container, content).commit();
+        getFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
+        mDrawerList.setItemChecked(position,true);
+        setTitle(getResources().getStringArray(R.array.nav_drawer_items)[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
+    public void setTitle(CharSequence title) {
+        getActionBar().setTitle(title);
     }
 }
