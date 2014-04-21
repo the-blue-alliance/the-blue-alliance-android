@@ -6,5 +6,9 @@
     <color name="lighter_blue">#eef</color>
     <color name="nav_divider">#FFF</color>
 
+    <color name="grey">#F5F5F0</color>
+    <color name="white">#FFF</color>
+
+
     <color name="nav_drawer_background">#000099</color>
 </resources>

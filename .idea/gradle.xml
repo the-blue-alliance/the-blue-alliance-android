@@ -8,7 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/android-test" />
+            <option value="$PROJECT_DIR$/android" />
           </set>
         </option>
       </GradleProjectSettings>

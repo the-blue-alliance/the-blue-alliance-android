@@ -42,12 +42,6 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        // Set up the action bar to show a dropdown list.
-        final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(getResources().getStringArray(R.array.nav_drawer_items)[0]);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-
         //set up nav drawer for main navigation
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
