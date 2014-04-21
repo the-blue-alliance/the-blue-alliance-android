@@ -1,14 +1,11 @@
 package com.thebluealliance.androidtest.background;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.thebluealliance.androidtest.R;
-import com.thebluealliance.androidtest.activities.ViewEvent;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidtest.adapters.ListViewAdapter;
 import com.thebluealliance.androidtest.datatypes.ListElement;
 import com.thebluealliance.androidtest.datatypes.ListItem;

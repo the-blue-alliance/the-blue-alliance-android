@@ -4,8 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.thebluealliance.androidtest.R;
-import com.thebluealliance.androidtest.fragments.EventListFragment;
+import com.thebluealliance.androidclient.R;
 
 /**
  * File created by phil on 4/20/14.

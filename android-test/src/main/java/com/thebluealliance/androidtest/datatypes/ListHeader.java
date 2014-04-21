@@ -2,9 +2,7 @@ package com.thebluealliance.androidtest.datatypes;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 
-import com.thebluealliance.androidtest.R;
 import com.thebluealliance.androidtest.adapters.ListViewAdapter;
 
 /**

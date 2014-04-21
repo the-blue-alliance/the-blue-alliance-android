@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.thebluealliance.androidtest.R;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidtest.activities.ViewEvent;
 import com.thebluealliance.androidtest.adapters.ListViewAdapter;
 import com.thebluealliance.androidtest.datatypes.EventWeekHeader;

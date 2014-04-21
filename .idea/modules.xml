@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TBATest.iml" filepath="$PROJECT_DIR$/TBATest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android-test/android-test.iml" filepath="$PROJECT_DIR$/android-test/android-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-test/android.iml" filepath="$PROJECT_DIR$/android-test/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/the-blue-alliance.iml" filepath="$PROJECT_DIR$/the-blue-alliance.iml" />
+      <module fileurl="file://$PROJECT_DIR$/thebluealliance-android.iml" filepath="$PROJECT_DIR$/thebluealliance-android.iml" />
     </modules>
   </component>
 </project>

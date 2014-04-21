@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.thebluealliance.androidtest.R;
+import com.thebluealliance.androidclient.R;
 
 /**
  * File created by phil on 4/20/14.

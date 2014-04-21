@@ -17,10 +17,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.thebluealliance.androidtest.R;
-import com.thebluealliance.androidtest.datatypes.NavDrawerItem;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidtest.fragments.EventListFragment;
 import com.thebluealliance.androidtest.fragments.InsightsFragment;
 import com.thebluealliance.androidtest.fragments.TeamListFragment;

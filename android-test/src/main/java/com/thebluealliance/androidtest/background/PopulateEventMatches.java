@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ListView;
 
-import com.thebluealliance.androidtest.R;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidtest.adapters.ListViewAdapter;
 import com.thebluealliance.androidtest.datatypes.ListElement;
 import com.thebluealliance.androidtest.datatypes.ListItem;
