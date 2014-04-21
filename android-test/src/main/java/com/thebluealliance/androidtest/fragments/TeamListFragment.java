@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidtest.background.PopulateEventList;
 import com.thebluealliance.androidtest.background.PopulateTeamList;
 
 /**
