@@ -48,6 +48,7 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
             bar.setCustomView(actionBarView);
 
             //create appropriate number of action bar tabs
+            bar.removeAllTabs();
             //TODO get the number of weeks this season spans
             /* for now, use three weeks */
             bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector)+" "+1).setTag("week1").setTabListener(this));
