@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android/android.iml" filepath="$PROJECT_DIR$/android/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tba-android.iml" filepath="$PROJECT_DIR$/tba-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/the-blue-alliance.iml" filepath="$PROJECT_DIR$/the-blue-alliance.iml" />
       <module fileurl="file://$PROJECT_DIR$/thebluealliance-android.iml" filepath="$PROJECT_DIR$/thebluealliance-android.iml" />
     </modules>
   </component>
