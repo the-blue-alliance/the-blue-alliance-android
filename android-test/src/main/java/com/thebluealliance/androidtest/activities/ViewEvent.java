@@ -8,6 +8,9 @@ import android.view.MenuItem;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidtest.background.PopulateEventMatches;
 
+/**
+ * File created by phil on 4/20/14.
+ */
 public class ViewEvent extends Activity {
 
     @Override

@@ -23,7 +23,9 @@ import com.thebluealliance.androidtest.fragments.EventListFragment;
 import com.thebluealliance.androidtest.fragments.InsightsFragment;
 import com.thebluealliance.androidtest.fragments.TeamListFragment;
 
-
+/**
+ * File created by phil on 4/20/14.
+ */
 public class TBA_Start extends Activity implements AdapterView.OnItemClickListener {
 
     /**
