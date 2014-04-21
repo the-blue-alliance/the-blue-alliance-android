@@ -30,46 +30,65 @@ public class PopulateEventList extends AsyncTask<String,String,String> {
     public PopulateEventList(Activity activity, View view){
         this.activity = activity;
         this.view = view;
-
-        eventKeys = new ArrayList<String>();
-        events = new ArrayList<ListItem>();
     }
 
     @Override
     protected String doInBackground(String... params) {
-
+        String year = params[0],
+                      competitionWeek = params[1];
         /* Here, we would normally check if the events are stored locally, and fetch/store them if not.
          * Also, here is where we check if the remote data set has changed and update accordingly
          * Then, we'd go through the data and build the listview adapters
          * For now, it'll just be static data for demonstrative purposes
          */
 
-        eventKeys.add("week1");         events.add(new EventWeekHeader("Week 1"));
-        eventKeys.add("2014nhnas");     events.add(new ListElement("Granite State District Event","2014nhnas"));
+        eventKeys = new ArrayList<String>();
+        events = new ArrayList<ListItem>();
 
-        eventKeys.add("week2");         events.add(new EventWeekHeader("Week 2"));
-        eventKeys.add("2014nhdur");     events.add(new ListElement("UNH District Event","2014nhdur"));
-        eventKeys.add("2014ctgro");     events.add(new ListElement("Groton District Event","2014ctgro"));
+        switch(competitionWeek){
+            default: case "week1":
+                eventKeys.add("regionals");         events.add(new EventWeekHeader("Regional Competitions"));
+                eventKeys.add("2014scmb");          events.add(new ListElement("Palmetto Regional","2014scmb"));
+                eventKeys.add("2014ilil");          events.add(new ListElement("Central Illinios Regional","2014ilil"));
+                eventKeys.add("2014casb");          events.add(new ListElement("Inland Empire Regional","2014casb"));
 
-        eventKeys.add("week3");         events.add(new EventWeekHeader("Week 3"));
-        eventKeys.add("2014mawor");     events.add(new ListElement("WPI District Event","2014mawor"));
+                eventKeys.add("discrict_ne");       events.add(new EventWeekHeader("New England District Events"));
+                eventKeys.add("2014nhnas");         events.add(new ListElement("Granite State District Event","2014nhnas"));
 
-        eventKeys.add("week4");         events.add(new EventWeekHeader("Week 4"));
-        eventKeys.add("2014rismi");     events.add(new ListElement("Rhode Island District Event","2014rismi"));
-        eventKeys.add("2014ctsou");     events.add(new ListElement("Southington District Event","2014ctsou"));
+                eventKeys.add("discrict_fim");      events.add(new EventWeekHeader("New England District Events"));
+                eventKeys.add("2014misou");         events.add(new ListElement("Southfield District Event","2014misou"));
+                break;
+            case "week2":
+                eventKeys.add("regionals");         events.add(new EventWeekHeader("Regional Competitions"));
+                eventKeys.add("2014arfa");          events.add(new ListElement("Arkansas Regional","2014arfa"));
+                eventKeys.add("2014casd");          events.add(new ListElement("San Diego Regional","2014casd"));
+                eventKeys.add("2014inth");          events.add(new ListElement("Crossroads Regional","2014inth"));
 
-        eventKeys.add("week5");         events.add(new EventWeekHeader("Week 5"));
-        eventKeys.add("2014mabos");     events.add(new ListElement("Northeastern University District Event","2014mabos"));
-        eventKeys.add("2014cthar");     events.add(new ListElement("Hartford District Event","2014cthar"));
+                eventKeys.add("discrict_ne");       events.add(new EventWeekHeader("New England District Events"));
+                eventKeys.add("2014nhdur");         events.add(new ListElement("UNH District Event","2014nhdur"));
+                eventKeys.add("2014ctgro");         events.add(new ListElement("Groton District Event","2014ctgro"));
 
-        eventKeys.add("week6");         events.add(new EventWeekHeader("Week 6"));
-        eventKeys.add("2014melew");     events.add(new ListElement("Pine Tree District Event","2014melew"));
+                eventKeys.add("discrict_fim");      events.add(new EventWeekHeader("New England District Events"));
+                eventKeys.add("2014migul");         events.add(new ListElement("Gull Lake District Event","2014misou"));
+                eventKeys.add("2014miket");         events.add(new ListElement("Kettering District Event","2014miket"));
+                break;
+            case "week3":
+                eventKeys.add("regionals");         events.add(new EventWeekHeader("Regional Competitions"));
+                eventKeys.add("2014flor");          events.add(new ListElement("Orlando Regional","2014casa"));
+                eventKeys.add("2014casa");          events.add(new ListElement("Sacramento Regional","2014casa"));
+                eventKeys.add("2014mokc");          events.add(new ListElement("Greater Kansas City Regional","2014mokc"));
 
-        eventKeys.add("week7");         events.add(new EventWeekHeader("Week 7"));
-        eventKeys.add("2014necmp");     events.add(new ListElement("New England FRC Region Championship","20124necmp"));
+                eventKeys.add("discrict_ne");       events.add(new EventWeekHeader("New England District Events"));
+                eventKeys.add("2014mawor");         events.add(new ListElement("WPI District Event","2014mawor"));
+
+                eventKeys.add("discrict_fim");      events.add(new EventWeekHeader("New England District Events"));
+                eventKeys.add("2014miesc");         events.add(new ListElement("Escanaba District Event","2014miesc"));
+                eventKeys.add("2014mihow");         events.add(new ListElement("Howell District Event","2014mihow"));
+                break;
+        }
 
         adapter = new ListViewAdapter(activity,events,eventKeys);
-
+        adapter.notifyDataSetChanged();
         return "";
     }
 

@@ -9,6 +9,7 @@
     <color name="grey">#F5F5F0</color>
     <color name="white">#FFF</color>
 
-
+    <color name="action_bar_background">#000056</color>
+    <color name="action_bar_tab_background">#000099</color>
     <color name="nav_drawer_background">#000099</color>
 </resources>

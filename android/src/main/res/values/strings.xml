@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TBA Test</string>
+    <string name="app_name">The Blue Alliance</string>
+    <string name="app_name_short">TBA</string>
     <string name="action_settings">Settings</string>
 
     <!-- Main Activity -->
@@ -10,7 +11,7 @@
         <item>2013</item>
         <item>2012</item>
     </string-array>
-
+    <string name="week_selector">Week </string>
     <string name="title_main_activity">The Blue Alliance</string>
     <string name="tab_events">Events</string>
     <string name="tab_teams">Teams</string>
