@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateTeamList extends AsyncTask<String,String,String> {
+public class PopulateTeamList extends AsyncTask<Integer,String,String> {
 
     private Activity activity;
     private View view;
@@ -32,16 +32,28 @@ public class PopulateTeamList extends AsyncTask<String,String,String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected String doInBackground(Integer... params) {
+        int start = params[0] * 1000;
         //some more temp data
-        teamKeys.add("frc1124");    teams.add(new ListElement("1124","frc1124"));
-        teamKeys.add("frc177");     teams.add(new ListElement("177","frc177"));
-        teamKeys.add("frc1114");    teams.add(new ListElement("1114","frc1114"));
-        teamKeys.add("frc 254");    teams.add(new ListElement("254","frc254"));
-        teamKeys.add("frc2056");    teams.add(new ListElement("2056","frc2056"));
+
+        teamKeys = new ArrayList<String>();
+        teams = new ArrayList<ListItem>();
+        switch (start){
+            default:case 0:
+                teamKeys.add("frc177");     teams.add(new ListElement("177","frc177"));
+                teamKeys.add("frc 254");    teams.add(new ListElement("254","frc254"));
+                break;
+            case 1000:
+                teamKeys.add("frc1114");    teams.add(new ListElement("1114","frc1114"));
+                teamKeys.add("frc1124");    teams.add(new ListElement("1124","frc1124"));
+                break;
+            case 2000:
+                teamKeys.add("frc2056");    teams.add(new ListElement("2056","frc2056"));
+                break;
+        }
 
         adapter = new ListViewAdapter(activity,teams,teamKeys);
-
+        adapter.notifyDataSetChanged();
         return "";
     }
 

@@ -36,6 +36,7 @@ public class PopulateEventList extends AsyncTask<String,String,String> {
     protected String doInBackground(String... params) {
         String year = params[0],
                       competitionWeek = params[1];
+        if(activity == null) return "";
         /* Here, we would normally check if the events are stored locally, and fetch/store them if not.
          * Also, here is where we check if the remote data set has changed and update accordingly
          * Then, we'd go through the data and build the listview adapters

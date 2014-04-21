@@ -24,7 +24,6 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
     private Activity activity;
     private ActionBar bar;
     private View eventList;
-    private PopulateEventList eventFetcher;
     private String year, dropdownItems[];
 
     public EventListFragment(){
@@ -99,8 +98,7 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
 
         if(eventList == null)
             eventList = activity.getLayoutInflater().inflate(R.layout.fragment_events,null);
-        eventFetcher = new PopulateEventList(getActivity(),eventList);
-        eventFetcher.execute(year,week);
+        new PopulateEventList(getActivity(),eventList).execute(year,week);
     }
 
     @Override
