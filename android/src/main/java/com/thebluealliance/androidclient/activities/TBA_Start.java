@@ -1,6 +1,5 @@
-package com.thebluealliance.androidtest.activities;
+package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Configuration;
@@ -15,9 +14,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidtest.fragments.EventListFragment;
-import com.thebluealliance.androidtest.fragments.InsightsFragment;
-import com.thebluealliance.androidtest.fragments.TeamListFragment;
+import com.thebluealliance.androidclient.fragments.EventListFragment;
+import com.thebluealliance.androidclient.fragments.InsightsFragment;
+import com.thebluealliance.androidclient.fragments.TeamListFragment;
 
 /**
  * File created by phil on 4/20/14.

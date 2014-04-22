@@ -1,4 +1,4 @@
-package com.thebluealliance.androidtest.activities;
+package com.thebluealliance.androidclient.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidtest.background.PopulateEventMatches;
+import com.thebluealliance.androidclient.background.PopulateEventMatches;
 
 /**
  * File created by phil on 4/20/14.

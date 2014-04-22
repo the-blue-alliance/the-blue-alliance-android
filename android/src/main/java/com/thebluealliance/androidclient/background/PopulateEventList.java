@@ -1,4 +1,4 @@
-package com.thebluealliance.androidtest.background;
+package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,11 +8,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidtest.activities.ViewEvent;
-import com.thebluealliance.androidtest.adapters.ListViewAdapter;
-import com.thebluealliance.androidtest.datatypes.EventWeekHeader;
-import com.thebluealliance.androidtest.datatypes.ListElement;
-import com.thebluealliance.androidtest.datatypes.ListItem;
+import com.thebluealliance.androidclient.activities.ViewEvent;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
+import com.thebluealliance.androidclient.datatypes.ListElement;
+import com.thebluealliance.androidclient.datatypes.ListItem;
 
 import java.util.ArrayList;
 

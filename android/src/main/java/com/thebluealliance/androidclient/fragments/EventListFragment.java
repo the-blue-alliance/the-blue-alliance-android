@@ -1,4 +1,4 @@
-package com.thebluealliance.androidtest.fragments;
+package com.thebluealliance.androidclient.fragments;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -13,7 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidtest.background.PopulateEventList;
+import com.thebluealliance.androidclient.background.PopulateEventList;
 
 /**
  * File created by phil on 4/20/14.

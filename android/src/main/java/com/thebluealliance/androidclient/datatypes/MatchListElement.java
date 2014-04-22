@@ -1,4 +1,4 @@
-package com.thebluealliance.androidtest.datatypes;
+package com.thebluealliance.androidclient.datatypes;
 
 import android.view.LayoutInflater;
 import android.view.View;

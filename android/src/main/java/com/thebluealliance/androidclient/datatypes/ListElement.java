@@ -1,10 +1,10 @@
-package com.thebluealliance.androidtest.datatypes;
+package com.thebluealliance.androidclient.datatypes;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.thebluealliance.androidtest.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 
 /**
  * File created by phil on 4/20/14.

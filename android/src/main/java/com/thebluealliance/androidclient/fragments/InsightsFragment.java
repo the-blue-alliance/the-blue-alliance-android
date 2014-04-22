@@ -1,4 +1,4 @@
-package com.thebluealliance.androidtest.fragments;
+package com.thebluealliance.androidclient.fragments;
 
 import android.app.Fragment;
 

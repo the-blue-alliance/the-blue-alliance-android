@@ -1,13 +1,13 @@
-package com.thebluealliance.androidtest.background;
+package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidtest.adapters.ListViewAdapter;
-import com.thebluealliance.androidtest.datatypes.ListItem;
-import com.thebluealliance.androidtest.datatypes.MatchListElement;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
 import java.util.ArrayList;
 

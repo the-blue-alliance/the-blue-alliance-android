@@ -1,4 +1,4 @@
-package com.thebluealliance.androidtest.adapters;
+package com.thebluealliance.androidclient.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.thebluealliance.androidtest.datatypes.ListItem;
+import com.thebluealliance.androidclient.datatypes.ListItem;
 
 import java.util.ArrayList;
 
