@@ -27,6 +27,7 @@ public class ViewEvent extends Activity implements ActionBar.TabListener {
 
         //configure action bar tabs
         ActionBar bar = getActionBar();
+        bar.setTitle("2014 Palmetto Regional"); //TEST DATA!
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         bar.addTab(bar.newTab().setText(getString(R.string.tab_event_info)).setTag("info").setTabListener(this));

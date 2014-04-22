@@ -28,5 +28,7 @@
     <string name="tab_event_stats">Stats</string>
     <string name="last_match">Last Match:</string>
     <string name="next_match">Next Match:</string>
+    <string name="top_teams">Top Teams:</string>
+    <string name="top_opr">Top OPRs:</string>
 
 </resources>
