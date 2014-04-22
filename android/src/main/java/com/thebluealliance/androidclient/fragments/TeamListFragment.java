@@ -4,13 +4,22 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeam;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
+
+import java.util.List;
 
 /**
  * File created by phil on 4/20/14.
@@ -56,6 +65,21 @@ public class TeamListFragment extends Fragment implements ActionBar.TabListener 
             activity = getActivity();
 
         return teamList;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if(view.findViewById(R.id.team_list) != null) {
+            ((ListView) view.findViewById(R.id.team_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
+                    Intent i = new Intent(getActivity(), ViewTeam.class);
+                    i.putExtra(ViewTeam.TEAM_KEY, "frc254");
+                    startActivity(i);
+                }
+            });
+        }
     }
 
     @Override

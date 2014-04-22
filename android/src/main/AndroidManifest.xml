@@ -20,6 +20,9 @@
             android:name=".activities.ViewEvent"
             android:label="@string/title_activity_view_event" >
         </activity>
+        <activity
+            android:name=".activities.ViewTeam" >
+        </activity>
     </application>
 
 </manifest>

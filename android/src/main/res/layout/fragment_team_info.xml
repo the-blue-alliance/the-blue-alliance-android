@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle">
+
+        <RelativeLayout
+            android:id="@+id/name_wrapper"
+            style="@style/InfoItemStyle"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/name_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_group" />
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/name_icon"
+                android:text="Teh Chezy Pofs" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/location_wrapper"
+            style="@style/InfoItemStyle"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/location_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_place" />
+
+            <TextView
+                android:id="@+id/location"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/location_icon"
+                android:layout_toLeftOf="@+id/location_nav_arrow"
+                android:text="from San Jose, CA" />
+
+            <ImageView
+                android:id="@id/location_nav_arrow"
+                style="@style/InfoItemNavigationArrowStyle" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/full_name_wrapper"
+            style="@style/InfoItemStyle"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/full_name_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_about" />
+
+            <TextView
+                android:id="@+id/full_name"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/full_name_icon"
+                android:text="aka this name is too long to fit comfortably here" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/social_wrapper"
+            style="@style/InfoItemStyle"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:padding="0dp"
+            android:divider="?android:attr/dividerVertical">
+
+            <ImageView
+                android:id="@+id/website_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_action_web_site" />
+            <ImageView
+                android:id="@+id/twitter_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/twitter" />
+            <ImageView
+                android:id="@+id/youtube_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/youtube" />
+            <ImageView
+                android:id="@+id/chiefdelphi_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_action_web_site" />
+            </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
