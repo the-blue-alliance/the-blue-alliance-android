@@ -13,7 +13,12 @@ import com.thebluealliance.androidclient.background.PopulateEventMatches;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
+import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
+import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
 
 /**
  * File created by phil on 4/20/14.
@@ -31,6 +36,12 @@ public class ViewEvent extends Activity implements ActionBar.TabListener {
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         bar.addTab(bar.newTab().setText(getString(R.string.tab_event_info)).setTag("info").setTabListener(this));
+        bar.addTab(bar.newTab().setText(getString(R.string.tab_event_teams)).setTag("teams").setTabListener(this));
+        bar.addTab(bar.newTab().setText(getString(R.string.tab_event_results)).setTag("results").setTabListener(this));
+        bar.addTab(bar.newTab().setText(getString(R.string.tab_event_rankings)).setTag("rankings").setTabListener(this));
+        bar.addTab(bar.newTab().setText(getString(R.string.tab_event_stats)).setTag("stats").setTabListener(this));
+        bar.addTab(bar.newTab().setText(getString(R.string.tab_event_awards)).setTag("awards").setTabListener(this));
+
     }
 
 
@@ -60,6 +71,21 @@ public class ViewEvent extends Activity implements ActionBar.TabListener {
         switch(tab.getPosition()){
             default:case 0: //event info
                 fragment = new EventInfoFragment();
+                break;
+            case 1: //teams
+                fragment = new EventTeamsFragment();
+                break;
+            case 2: //results
+                fragment = new EventResultsFragment();
+                break;
+            case 3: //rankings
+                fragment = new EventRankingsFragment();
+                break;
+            case 4: //stats
+                fragment = new EventStatsFragment();
+                break;
+            case 5: //awards
+                fragment = new EventAwardsFragment();
                 break;
         }
         getFragmentManager().beginTransaction().replace(R.id.event_container,fragment).commit();
