@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidtest.background.PopulateEventList;
@@ -26,7 +25,7 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
     private View eventList;
     private String year, dropdownItems[];
 
-    public EventListFragment(){
+    public EventListFragment() {
         super();
     }
 
@@ -35,10 +34,9 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
         super.onCreate(savedInstanceState);
         activity = getActivity();
         bar = activity.getActionBar();
-        if(bar != null){
+        if (bar != null) {
             //configure action bar title
-            bar.setDisplayShowTitleEnabled(true);
-            bar.setTitle(activity.getString(R.string.app_name_short));
+            bar.setDisplayShowTitleEnabled(false);
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
             //inflate custom action bar layout.
@@ -51,20 +49,19 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
             bar.removeAllTabs();
             //TODO get the number of weeks this season spans
             /* for now, use three weeks */
-            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector)+" "+1).setTag("week1").setTabListener(this));
-            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector)+" "+2).setTag("week2").setTabListener(this));
-            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector)+" "+3).setTag("week3").setTabListener(this));
+            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector) + " " + 1).setTag("week1").setTabListener(this));
+            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector) + " " + 2).setTag("week2").setTabListener(this));
+            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector) + " " + 3).setTag("week3").setTabListener(this));
             //TODO again, select the proper tab based on the SavedInstanceState
         }
     }
 
-    private View inflateActionBarLayout(){
-        dropdownItems = new String[]{"2014","2013","2012"};
-        View out = activity.getLayoutInflater().inflate(R.layout.actionbar_spinner_layout,null);
-        TextView title = (TextView)out.findViewById(R.id.title);
-        title.setText(R.string.tab_events);
-        Spinner subtitle = (Spinner)out.findViewById(R.id.subtitle);
-        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(activity,R.layout.actionbar_spinner,dropdownItems);
+    private View inflateActionBarLayout() {
+        dropdownItems = new String[]{"2014", "2013", "2012"};
+        // This is required to obtain the proper context for styling
+        View out = activity.getLayoutInflater().cloneInContext(activity.getActionBar().getThemedContext()).inflate(R.layout.actionbar_spinner_layout, null);
+        Spinner subtitle = (Spinner) out;
+        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(activity.getActionBar().getThemedContext(), R.layout.actionbar_spinner, R.id.year, dropdownItems);
         actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
         subtitle.setAdapter(actionBarAdapter);
         subtitle.setOnItemSelectedListener(this);
@@ -74,8 +71,8 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(eventList == null)
-            eventList = inflater.inflate(R.layout.fragment_events,null);
+        if (eventList == null)
+            eventList = inflater.inflate(R.layout.fragment_events, null);
         return eventList;
     }
 
@@ -92,14 +89,14 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         String week;
-        if(bar == null || bar.getSelectedTab()==null)
+        if (bar == null || bar.getSelectedTab() == null)
             week = "week1";
         else
             week = bar.getSelectedTab().getTag().toString();
 
-        if(eventList == null)
-            eventList = activity.getLayoutInflater().inflate(R.layout.fragment_events,null);
-        new PopulateEventList(getActivity(),eventList).execute(year,week);
+        if (eventList == null)
+            eventList = activity.getLayoutInflater().inflate(R.layout.fragment_events, null);
+        new PopulateEventList(getActivity(), eventList).execute(year, week);
     }
 
     @Override
