@@ -83,7 +83,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
         } else if (view.getId() == R.id.youtube_button) {
             String query = view.getTag().toString();
             Intent i = new Intent(Intent.ACTION_SEARCH);
-            i.setPackage("com.google.android.youtubeee");
+            i.setPackage("com.google.android.youtube");
             i.putExtra("query", query);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
