@@ -44,8 +44,8 @@ public class PopulateEventMatches extends AsyncTask<String,String,String> {
         super.onPostExecute(s);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-        ListView eventList = (ListView)activity.findViewById(R.id.match_list);
-        eventList.setAdapter(adapter);
+        //ListView eventList = (ListView)activity.findViewById(R.id.match_list);
+        //eventList.setAdapter(adapter);
     }
 
 }

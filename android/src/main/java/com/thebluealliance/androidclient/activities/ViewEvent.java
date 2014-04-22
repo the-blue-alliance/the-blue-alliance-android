@@ -1,24 +1,35 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateEventMatches;
+import com.thebluealliance.androidclient.fragments.EventListFragment;
+import com.thebluealliance.androidclient.fragments.InsightsFragment;
+import com.thebluealliance.androidclient.fragments.TeamListFragment;
+import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class ViewEvent extends Activity {
+public class ViewEvent extends Activity implements ActionBar.TabListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
 
-        new PopulateEventMatches(this).execute("");
+        //configure action bar tabs
+        ActionBar bar = getActionBar();
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        bar.addTab(bar.newTab().setText(getString(R.string.tab_event_info)).setTag("info").setTabListener(this));
     }
 
 
@@ -42,4 +53,24 @@ public class ViewEvent extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        Fragment fragment;
+        switch(tab.getPosition()){
+            default:case 0: //event info
+                fragment = new EventInfoFragment();
+                break;
+        }
+        getFragmentManager().beginTransaction().replace(R.id.event_container,fragment).commit();
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
 }
