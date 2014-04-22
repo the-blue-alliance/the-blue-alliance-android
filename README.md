@@ -1,7 +1,7 @@
 The Blue Alliance - Android App
 ===============================
 
-An Android app for accessing information about the FIRST Robotics Competition. This is a native mobile version of [The Blue Alliance](thebluealliance.com). 
+An Android app for accessing information about the FIRST Robotics Competition. This is a native mobile version of [The Blue Alliance](http://www.thebluealliance.com). 
 
 **WARNING:**
 
