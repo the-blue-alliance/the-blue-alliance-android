@@ -10,6 +10,7 @@ This app in still in initial development: currently it is only working with stat
 Contributing
 ============
 Want to add features, fix bugs, or just poke around the code? No problem!
+
 1. Keep up to date with the [mailing list](https://groups.google.com/forum/#!forum/thebluealliance-developers) and read through the [planning documents](https://drive.google.com/#folders/0B5RO2Yzh2z01MDBOVXYwM1lXdFk) so you know what's going on.
 2. Set up your development environment if you haven't used Android Studio before ([see below](#setup))
 3. Fork this repository and create a branch for your changes
