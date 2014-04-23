@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:minHeight="@dimen/list_half_pref_height">
 
-    <TextView style="@android:style/TextAppearance.DeviceDefault.Large"
-        android:layout_column="0"
+    <TextView
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:id="@+id/award_name"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/award_winner"
+        android:layout_alignParentLeft="true"
         android:singleLine="false"
-        android:text="Award"/>
+        android:text="Award"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <TextView style="@android:style/TextAppearance.DeviceDefault.Large"
-        android:layout_column="1"
+    <TextView
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:id="@+id/award_winner"
-        android:gravity="right|center_vertical"
+        android:gravity="right"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
         android:singleLine="false"
-        android:text="Winner"/>
+        android:text="Winner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-</TableRow>
+</RelativeLayout>
