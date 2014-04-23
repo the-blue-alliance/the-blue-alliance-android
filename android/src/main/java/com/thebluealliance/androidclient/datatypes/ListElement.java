@@ -10,9 +10,9 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
  * File created by phil on 4/20/14.
  */
 public class ListElement implements ListItem {
-    private final String texts[],key;
-    private View view;
-    private boolean selected=false;
+    protected final String texts[],key;
+    protected View view;
+    protected boolean selected=false;
 
     public ListElement(){
         texts = new String[0];
