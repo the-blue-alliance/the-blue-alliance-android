@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -10,15 +9,12 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeam;
 import com.thebluealliance.androidclient.background.PopulateTeamInfo;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 public class TeamInfoFragment extends Fragment implements View.OnClickListener {
@@ -44,14 +40,20 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
         // Register this fragment as the callback for all clickable views
         v.findViewById(R.id.location_wrapper).setOnClickListener(this);
         v.findViewById(R.id.twitter_button).setOnClickListener(this);
-        v.findViewById(R.id.youtube_button).setOnClickListener(this);
+        v.findViewById(R.id.most_recent_match_details).findViewById(R.id.match_video).setOnClickListener(this);
         return v;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new PopulateTeamInfo(this, mTeamKey).execute("");
+        //new PopulateTeamInfo(this, mTeamKey).execute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new PopulateTeamInfo(this, mTeamKey).execute();
     }
 
     @Override

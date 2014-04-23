@@ -28,9 +28,11 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
      * current dropdown position.
      */
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item",
-                                EVENT_TAG = "events",
-                                TEAM_TAG  = "teams",
-                                INSIGHTS_TAG = "insights";
+            EVENT_TAG = "events",
+            TEAM_TAG = "teams",
+            INSIGHTS_TAG = "insights";
+
+    private int currentSelectedNavigationItem = -1;
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -45,7 +47,7 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,R.layout.nav_drawer_item, getResources().getStringArray(R.array.nav_drawer_items)));
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.nav_drawer_item, getResources().getStringArray(R.array.nav_drawer_items)));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -73,7 +75,8 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
         getActionBar().setHomeButtonEnabled(true);
 
         //default to events view
-        getFragmentManager().beginTransaction().replace(R.id.container,new EventListFragment()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.container, new EventListFragment()).commit();
+        currentSelectedNavigationItem = 0;
     }
 
     @Override
@@ -108,7 +111,7 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.event_list, menu);
         return true;
@@ -131,9 +134,15 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // Don't reload the fragment if the user selects the tab we are currently on
+        if (position == currentSelectedNavigationItem) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+            return;
+        }
         Fragment fragment;
-        switch(position){
-            default:case 0: //events
+        switch (position) {
+            default:
+            case 0: //events
                 fragment = new EventListFragment();
                 break;
             case 1: //teams
@@ -143,10 +152,12 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
                 fragment = new InsightsFragment();
                 break;
         }
-        getFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
-        mDrawerList.setItemChecked(position,true);
+        getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+        mDrawerList.setItemChecked(position, true);
         setTitle(getResources().getStringArray(R.array.nav_drawer_items)[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+        // Note the current selected position
+        currentSelectedNavigationItem = position;
     }
 
     @Override

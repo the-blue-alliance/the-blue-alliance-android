@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.R;
 public class MatchListElement extends ListElement {
 
     private boolean video;
-    String matchTitle, redTeams[],blueTeams[], matchKey;
+    String matchTitle, redTeams[], blueTeams[], matchKey;
     int redScore, blueScore;
 
     public MatchListElement(boolean video, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
@@ -29,23 +29,27 @@ public class MatchListElement extends ListElement {
 
     @Override
     public View getView(LayoutInflater inflater, View view) {
-        if(view == null){
+        if (view == null) {
             view = inflater.inflate(R.layout.match_list_item, null);
-            ImageView videoIcon = (ImageView)view.findViewById(R.id.match_video);
+            ImageView videoIcon = (ImageView) view.findViewById(R.id.match_video);
 
             //if we have video for this match, show an icon
             //currently the launcher icon. It'll be changed...
-            if(video) videoIcon.setBackgroundResource(R.drawable.ic_action_play_over_video);
+            if (video) {
+                videoIcon.setVisibility(View.VISIBLE);
+            } else {
+                videoIcon.setVisibility(View.INVISIBLE);
+            }
 
-            TextView matchTitle = (TextView)view.findViewById(R.id.match_title),
-                     red1       = (TextView)view.findViewById(R.id.red1),
-                     red2       = (TextView)view.findViewById(R.id.red2),
-                     red3       = (TextView)view.findViewById(R.id.red3),
-                     blue1      = (TextView)view.findViewById(R.id.blue1),
-                     blue2      = (TextView)view.findViewById(R.id.blue2),
-                     blue3      = (TextView)view.findViewById(R.id.blue3),
-                     red_score  = (TextView)view.findViewById(R.id.red_score),
-                     blue_score = (TextView)view.findViewById(R.id.blue_score);
+            TextView matchTitle = (TextView) view.findViewById(R.id.match_title),
+                    red1 = (TextView) view.findViewById(R.id.red1),
+                    red2 = (TextView) view.findViewById(R.id.red2),
+                    red3 = (TextView) view.findViewById(R.id.red3),
+                    blue1 = (TextView) view.findViewById(R.id.blue1),
+                    blue2 = (TextView) view.findViewById(R.id.blue2),
+                    blue3 = (TextView) view.findViewById(R.id.blue3),
+                    red_score = (TextView) view.findViewById(R.id.red_score),
+                    blue_score = (TextView) view.findViewById(R.id.blue_score);
 
             matchTitle.setText(this.matchTitle);
             red1.setText(redTeams[0]);

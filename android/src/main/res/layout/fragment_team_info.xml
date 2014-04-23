@@ -96,5 +96,68 @@
                 android:src="@drawable/ic_action_web_site" />
             </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/current_event_wrapper"
+            style="@style/InfoItemStyle"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/current_event_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_event" />
+
+            <TextView
+                android:id="@+id/current_event"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/current_event_icon"
+                android:layout_toLeftOf="@+id/current_event_nav_arrow"
+                android:text="currently competing at Central Valley Regional" />
+
+            <ImageView
+                android:id="@id/current_event_nav_arrow"
+                style="@style/InfoItemNavigationArrowStyle" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/current_matches_wrapper"
+            style="@style/InfoItemStyle">
+
+            <ImageView
+                android:id="@+id/current_match_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_time" />
+
+            <TextView
+                android:id="@+id/most_recent_match"
+                style="@style/InfoItemTextStyle"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="Most recent match" />
+
+            <include
+                android:id="@+id/most_recent_match_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/most_recent_match"
+                layout="@layout/match_list_item" />
+
+            <TextView
+                android:id="@+id/next_match"
+                style="@style/InfoItemTextStyle"
+                android:layout_below="@id/most_recent_match_details"
+                android:layout_centerHorizontal="true"
+                android:text="Next match" />
+
+            <include
+                android:id="@+id/next_match_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/next_match"
+                layout="@layout/match_list_item" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 </ScrollView>

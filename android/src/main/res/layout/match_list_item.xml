@@ -2,103 +2,121 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/list_pref_height"
+    android:layout_height="80dp"
     android:orientation="horizontal"
-    android:paddingBottom="@dimen/activity_horizontal_margin">
+    android:padding="8dp">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_weight="1">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/match_video"
-            android:layout_centerInParent="true"
-            />
-        </RelativeLayout>
+
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_weight="2"
+        android:layout_weight="1.7"
         android:id="@+id/match_title"
         android:text="Match"
-        android:gravity="center_vertical|center_horizontal"/>
+        android:gravity="center_vertical|center_horizontal" />
 
     <TableLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="6">
+
         <TableRow
             android:layout_height="fill_parent"
             android:background="@color/lighter_red"
-            android:weightSum="5"
             android:minHeight="@dimen/list_half_pref_height">
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:id="@+id/red1"
                 android:text="Red 1"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:gravity="center_vertical|center_horizontal" />
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:id="@+id/red2"
                 android:text="Red 2"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:gravity="center_vertical|center_horizontal" />
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:id="@+id/red3"
                 android:text="Red 3"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:gravity="center_vertical|center_horizontal" />
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
                 android:background="@color/light_red"
                 android:id="@+id/red_score"
                 android:text="Red Score"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:textStyle="bold"
+                android:gravity="center_vertical|center_horizontal" />
         </TableRow>
+
         <TableRow
             android:layout_height="fill_parent"
             android:background="@color/lighter_blue"
-            android:weightSum="5"
             android:minHeight="@dimen/list_half_pref_height">
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:id="@+id/blue1"
                 android:text="Blue 1"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:gravity="center_vertical|center_horizontal" />
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:id="@+id/blue2"
                 android:text="Blue 2"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:gravity="center_vertical|center_horizontal" />
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:id="@+id/blue3"
                 android:text="Blue 3"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:gravity="center_vertical|center_horizontal" />
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
                 android:background="@color/light_blue"
                 android:id="@+id/blue_score"
                 android:text="Blue Score"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:textStyle="bold"
+                android:gravity="center_vertical|center_horizontal" />
         </TableRow>
     </TableLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.3">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="0dp"
+            android:layout_margin="0dp"
+            android:layout_centerInParent="true"
+            style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
+            android:id="@+id/match_video"
+            android:src="@drawable/ic_action_play_over_video"
+            android:clickable="true"
+            android:focusable="false" />
+    </RelativeLayout>
 
 </LinearLayout>
