@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:minHeight="?android:attr/listPreferredItemHeight">
 
     <TextView
         style="@android:style/TextAppearance.DeviceDefault.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:id="@+id/event_title"
         android:text="Title" />
 
@@ -17,6 +17,16 @@
         style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/event_title"
+        android:layout_alignParentRight="true"
         android:id="@+id/event_dates"
         android:text="Dates"/>
-</LinearLayout>
+    <TextView
+        style="@android:style/TextAppearance.DeviceDefault.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/event_title"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/event_location"
+        android:text="Location"/>
+</RelativeLayout>

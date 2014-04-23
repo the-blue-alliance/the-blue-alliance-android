@@ -17,7 +17,18 @@
     <string name="tab_teams">Teams</string>
     <string name="tab_insights">Insights</string>
     <string name="title_activity_view_event">View Event</string>
-
     <string name="events_label">Events</string>
+
+    <!--View Event -->
+    <string name="tab_event_info">Info</string>
+    <string name="tab_event_results">Results</string>
+    <string name="tab_event_rankings">Rankings</string>
+    <string name="tab_event_awards">Awards</string>
+    <string name="tab_event_teams">Teams</string>
+    <string name="tab_event_stats">Stats</string>
+    <string name="last_match">Last Match:</string>
+    <string name="next_match">Next Match:</string>
+    <string name="top_teams">Top Teams:</string>
+    <string name="top_opr">Top OPRs:</string>
 
 </resources>
