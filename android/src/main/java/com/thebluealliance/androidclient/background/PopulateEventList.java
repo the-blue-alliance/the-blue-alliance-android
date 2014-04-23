@@ -49,42 +49,42 @@ public class PopulateEventList extends AsyncTask<String,String,String> {
         switch(competitionWeek){
             default: case "week1":
                 eventKeys.add("regionals");         events.add(new EventWeekHeader("Regional Competitions"));
-                eventKeys.add("2014scmb");          events.add(new ListElement("Palmetto Regional","2014scmb"));
-                eventKeys.add("2014ilil");          events.add(new ListElement("Central Illinios Regional","2014ilil"));
-                eventKeys.add("2014casb");          events.add(new ListElement("Inland Empire Regional","2014casb"));
+                eventKeys.add("2014scmb");          events.add(new ListElement("2014scmb","Palmetto Regional"));
+                eventKeys.add("2014ilil");          events.add(new ListElement("2014ilil","Central Illinois Regional"));
+                eventKeys.add("2014casb");          events.add(new ListElement("2014casb","Inland Empire Regional"));
 
                 eventKeys.add("discrict_ne");       events.add(new EventWeekHeader("New England District Events"));
-                eventKeys.add("2014nhnas");         events.add(new ListElement("Granite State District Event","2014nhnas"));
+                eventKeys.add("2014nhnas");         events.add(new ListElement("2014nhnas","Granite State District Event"));
 
                 eventKeys.add("discrict_fim");      events.add(new EventWeekHeader("New England District Events"));
-                eventKeys.add("2014misou");         events.add(new ListElement("Southfield District Event","2014misou"));
+                eventKeys.add("2014misou");         events.add(new ListElement("2014misou","Southfield District Event"));
                 break;
             case "week2":
                 eventKeys.add("regionals");         events.add(new EventWeekHeader("Regional Competitions"));
-                eventKeys.add("2014arfa");          events.add(new ListElement("Arkansas Regional","2014arfa"));
-                eventKeys.add("2014casd");          events.add(new ListElement("San Diego Regional","2014casd"));
-                eventKeys.add("2014inth");          events.add(new ListElement("Crossroads Regional","2014inth"));
+                eventKeys.add("2014arfa");          events.add(new ListElement("2014arfa","Arkansas Regional"));
+                eventKeys.add("2014casd");          events.add(new ListElement("2014casd","San Diego Regional"));
+                eventKeys.add("2014inth");          events.add(new ListElement("2014inth","Crossroads Regional"));
 
                 eventKeys.add("discrict_ne");       events.add(new EventWeekHeader("New England District Events"));
-                eventKeys.add("2014nhdur");         events.add(new ListElement("UNH District Event","2014nhdur"));
-                eventKeys.add("2014ctgro");         events.add(new ListElement("Groton District Event","2014ctgro"));
+                eventKeys.add("2014nhdur");         events.add(new ListElement("2014nhdur","UNH District Event"));
+                eventKeys.add("2014ctgro");         events.add(new ListElement("2014ctgro","Groton District Event"));
 
                 eventKeys.add("discrict_fim");      events.add(new EventWeekHeader("New England District Events"));
-                eventKeys.add("2014migul");         events.add(new ListElement("Gull Lake District Event","2014misou"));
-                eventKeys.add("2014miket");         events.add(new ListElement("Kettering District Event","2014miket"));
+                eventKeys.add("2014migul");         events.add(new ListElement("2014misou","Gull Lake District Event"));
+                eventKeys.add("2014miket");         events.add(new ListElement("2014miket","Kettering District Event"));
                 break;
             case "week3":
                 eventKeys.add("regionals");         events.add(new EventWeekHeader("Regional Competitions"));
-                eventKeys.add("2014flor");          events.add(new ListElement("Orlando Regional","2014casa"));
-                eventKeys.add("2014casa");          events.add(new ListElement("Sacramento Regional","2014casa"));
-                eventKeys.add("2014mokc");          events.add(new ListElement("Greater Kansas City Regional","2014mokc"));
+                eventKeys.add("2014flor");          events.add(new ListElement("2014casa","Orlando Regional"));
+                eventKeys.add("2014casa");          events.add(new ListElement("2014casa","Sacramento Regional"));
+                eventKeys.add("2014mokc");          events.add(new ListElement("2014mokc","Greater Kansas City Regional"));
 
                 eventKeys.add("discrict_ne");       events.add(new EventWeekHeader("New England District Events"));
-                eventKeys.add("2014mawor");         events.add(new ListElement("WPI District Event","2014mawor"));
+                eventKeys.add("2014mawor");         events.add(new ListElement("2014mawor","WPI District Event"));
 
                 eventKeys.add("discrict_fim");      events.add(new EventWeekHeader("New England District Events"));
-                eventKeys.add("2014miesc");         events.add(new ListElement("Escanaba District Event","2014miesc"));
-                eventKeys.add("2014mihow");         events.add(new ListElement("Howell District Event","2014mihow"));
+                eventKeys.add("2014miesc");         events.add(new ListElement("2014miesc","Escanaba District Event"));
+                eventKeys.add("2014mihow");         events.add(new ListElement("2014mihow","Howell District Event"));
                 break;
         }
 

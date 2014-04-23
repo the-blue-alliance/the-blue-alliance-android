@@ -40,10 +40,10 @@ public class PopulateEventTeams extends AsyncTask<String,String,String> {
         teams = new ArrayList<ListItem>();
 
         //put some static data here
-        teamKeys.add("frc281");     teams.add(new ListElement("281 - EnTech Green Villains","frc281"));
-        teamKeys.add("frc342");     teams.add(new ListElement("342 - Burning Magnetos","frc342"));
-        teamKeys.add("frc343");     teams.add(new ListElement("343 - Metal-In-Motion","frc343"));
-        teamKeys.add("frc346");     teams.add(new ListElement("346 - RoboHawks","frc346"));
+        teamKeys.add("frc281");     teams.add(new ListElement("frc281","281 - EnTech Green Villains"));
+        teamKeys.add("frc342");     teams.add(new ListElement("frc342","342 - Burning Magnetos"));
+        teamKeys.add("frc343");     teams.add(new ListElement("frc343","343 - Metal-In-Motion"));
+        teamKeys.add("frc346");     teams.add(new ListElement("frc346","346 - RoboHawks"));
 
         adapter = new ListViewAdapter(activity,teams,teamKeys);
         adapter.notifyDataSetChanged();

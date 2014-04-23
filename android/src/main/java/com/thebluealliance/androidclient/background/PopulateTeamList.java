@@ -40,15 +40,15 @@ public class PopulateTeamList extends AsyncTask<Integer,String,String> {
         teams = new ArrayList<ListItem>();
         switch (start){
             default:case 0:
-                teamKeys.add("frc177");     teams.add(new ListElement("177","frc177"));
-                teamKeys.add("frc 254");    teams.add(new ListElement("254","frc254"));
+                teamKeys.add("frc177");     teams.add(new ListElement("frc177","177"));
+                teamKeys.add("frc 254");    teams.add(new ListElement("frc254","254"));
                 break;
             case 1000:
-                teamKeys.add("frc1114");    teams.add(new ListElement("1114","frc1114"));
-                teamKeys.add("frc1124");    teams.add(new ListElement("1124","frc1124"));
+                teamKeys.add("frc1114");    teams.add(new ListElement("frc1114","1114"));
+                teamKeys.add("frc1124");    teams.add(new ListElement("frc1124","1124"));
                 break;
             case 2000:
-                teamKeys.add("frc2056");    teams.add(new ListElement("2056","frc2056"));
+                teamKeys.add("frc2056");    teams.add(new ListElement("frc2056","2056"));
                 break;
         }
 
