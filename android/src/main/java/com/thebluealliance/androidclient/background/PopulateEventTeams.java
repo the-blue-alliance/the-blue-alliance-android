@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.activities.ViewEvent;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datatypes.ListElement;
 import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.datatypes.TeamListElement;
 
 import java.util.ArrayList;
 
@@ -40,10 +41,10 @@ public class PopulateEventTeams extends AsyncTask<String,String,String> {
         teams = new ArrayList<ListItem>();
 
         //put some static data here
-        teamKeys.add("frc281");     teams.add(new ListElement("frc281","281 - EnTech Green Villains"));
-        teamKeys.add("frc342");     teams.add(new ListElement("frc342","342 - Burning Magnetos"));
-        teamKeys.add("frc343");     teams.add(new ListElement("frc343","343 - Metal-In-Motion"));
-        teamKeys.add("frc346");     teams.add(new ListElement("frc346","346 - RoboHawks"));
+        teamKeys.add("frc281");     teams.add(new TeamListElement("frc281","281","EnTech Green Villains","Greenville, SC"));
+        teamKeys.add("frc342");     teams.add(new TeamListElement("frc342","342","Burning Magnetos","North Charleston, SC"));
+        teamKeys.add("frc343");     teams.add(new TeamListElement("frc343","343","Metal-In-Motion","Seneca, SC"));
+        teamKeys.add("frc346");     teams.add(new TeamListElement("frc346","346","RoboHawks","Chesterfield, VA"));
 
         adapter = new ListViewAdapter(activity,teams,teamKeys);
         adapter.notifyDataSetChanged();
