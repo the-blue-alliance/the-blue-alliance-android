@@ -20,7 +20,7 @@ public class RankingListElement extends ListElement {
         if(texts.length < 4) return super.getView(inflater, convertView);
 
         if(view == null){
-            view = inflater.inflate(R.layout.ranking_table_row, null);
+            view = inflater.inflate(R.layout.ranking_list_item, null);
             view.setTag(key);
             view.setSelected(selected);
 
@@ -28,7 +28,13 @@ public class RankingListElement extends ListElement {
             team.setText(texts[0]);
 
             TextView rank = (TextView)view.findViewById(R.id.team_ranking); /* formatted as #<rank> (<record>)*/
-            rank.setText(texts[1]);
+            if(texts[1].isEmpty()){
+                rank.setVisibility(View.GONE);
+            }else{
+                rank.setVisibility(View.VISIBLE);
+                rank.setText(texts[1]);
+            }
+
 
             TextView name = (TextView)view.findViewById(R.id.team_name);
             name.setText(texts[2]);

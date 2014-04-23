@@ -9,7 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -31,7 +32,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
         <TextView style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ranking_breakdown"
-            android:layout_gravity="center"
+            android:layout_gravity="left"
             android:text="22 QS, 930 Assist, 725 Auto, 310 Truss &amp; Catch, 518 Teleop"/>
     </LinearLayout>
 
