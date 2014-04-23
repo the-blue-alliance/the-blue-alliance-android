@@ -9,10 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.background.PopulateEventMatches;
-import com.thebluealliance.androidclient.fragments.EventListFragment;
-import com.thebluealliance.androidclient.fragments.InsightsFragment;
-import com.thebluealliance.androidclient.fragments.TeamListFragment;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
