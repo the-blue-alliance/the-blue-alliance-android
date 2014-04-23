@@ -14,9 +14,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
+
+import java.util.ArrayList;
 
 /**
  * File created by phil on 4/20/14.
@@ -47,7 +52,11 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.nav_drawer_item, getResources().getStringArray(R.array.nav_drawer_items)));
+        ArrayList<ListItem> navDrawer = new ArrayList<ListItem>();
+        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_light));
+        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_light));
+        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_light));
+        mDrawerList.setAdapter(new ListViewAdapter(this, navDrawer, null));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(

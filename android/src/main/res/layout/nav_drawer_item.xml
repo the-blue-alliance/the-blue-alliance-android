@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/title"
-        android:layout_width="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:padding="8dp"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceListItem"
         android:textColor="#FFF"
-        android:gravity="center_vertical|center_horizontal"
-        android:paddingRight="40dp"/>
+        android:gravity="center_vertical"
+        android:paddingRight="8dp" />
+</LinearLayout>

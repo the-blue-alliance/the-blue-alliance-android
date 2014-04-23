@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 /**
  * File created by phil on 4/20/14.
  */
-public abstract class ListHeader implements ListItem{
+public abstract class ListHeader implements ListItem {
     private final String name;
 
     public ListHeader(){
