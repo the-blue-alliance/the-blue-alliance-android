@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,59 +15,42 @@ import android.widget.Spinner;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class EventListFragment extends Fragment implements AdapterView.OnItemSelectedListener, ActionBar.TabListener {
+public class EventListFragment extends Fragment {
 
-    private Activity activity;
-    private ActionBar bar;
+    public static final int EVENT_LIST_FOR_YEAR = 1;
+    public static final int EVENT_LIST_FOR_TEAM_YEAR = 2;
+    public static final int EVENT_LIST_FOR_YEAR_WEEK = 3;
+
+    private int mListType;
+    private int mYear;
+    private int mWeek;
+    private String mTeamKey;
+
+
     private View eventList;
-    private String year, dropdownItems[];
 
-    public EventListFragment() {
+    public EventListFragment(int listType, int year) {
         super();
+        mListType = listType;
+        mYear = year;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = getActivity();
-        bar = activity.getActionBar();
-        if (bar != null) {
-            //configure action bar title
-            bar.setDisplayShowTitleEnabled(false);
-            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-            //inflate custom action bar layout.
-            //This has to be done, because the regular layouts don't support both spinner and tab nagigation
-            bar.setDisplayShowCustomEnabled(true);
-            View actionBarView = inflateActionBarLayout();
-            bar.setCustomView(actionBarView);
-
-            //create appropriate number of action bar tabs
-            bar.removeAllTabs();
-            //TODO get the number of weeks this season spans
-            /* for now, use three weeks */
-            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector) + " " + 1).setTag("week1").setTabListener(this));
-            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector) + " " + 2).setTag("week2").setTabListener(this));
-            bar.addTab(bar.newTab().setText(activity.getString(R.string.week_selector) + " " + 3).setTag("week3").setTabListener(this));
-            //TODO again, select the proper tab based on the SavedInstanceState
-        }
+    public EventListFragment(int listType, String teamKey, int year) {
+        super();
+        mListType = listType;
+        mTeamKey = teamKey;
+        mYear = year;
     }
 
-    private View inflateActionBarLayout() {
-        dropdownItems = new String[]{"2014", "2013", "2012"};
-        // This is required to obtain the proper context for styling
-        View out = activity.getLayoutInflater().cloneInContext(activity.getActionBar().getThemedContext()).inflate(R.layout.actionbar_spinner_layout, null);
-        Spinner subtitle = (Spinner) out;
-        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(activity.getActionBar().getThemedContext(), R.layout.actionbar_spinner, R.id.year, dropdownItems);
-        actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-        subtitle.setAdapter(actionBarAdapter);
-        subtitle.setOnItemSelectedListener(this);
-        subtitle.setSelection(0); //TODO this should be taken from a SavedInstanceState, if available
-        return out;
+    public EventListFragment(int listType, int year, int week) {
+        mListType = listType;
+        mYear = year;
+        mWeek = week;
     }
 
     @Override
@@ -77,35 +61,9 @@ public class EventListFragment extends Fragment implements AdapterView.OnItemSel
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        year = dropdownItems[position];
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        String week;
-        if (bar == null || bar.getSelectedTab() == null)
-            week = "week1";
-        else
-            week = bar.getSelectedTab().getTag().toString();
-
-        if (eventList == null)
-            eventList = activity.getLayoutInflater().inflate(R.layout.fragment_events, null);
-        new PopulateEventList(getActivity(), eventList).execute(year, week);
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
+    public void onResume() {
+        super.onResume();
+        Log.d("EventListFragment", "onResume()");
+        new PopulateEventList(this).execute("" + mYear, "week" + mWeek);
     }
 }

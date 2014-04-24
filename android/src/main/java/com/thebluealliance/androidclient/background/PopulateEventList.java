@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
@@ -13,30 +14,29 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
 import com.thebluealliance.androidclient.datatypes.ListElement;
 import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.fragments.EventListFragment;
 
 import java.util.ArrayList;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateEventList extends AsyncTask<String,String,String> {
+public class PopulateEventList extends AsyncTask<String,Void,Void> {
 
-    private Activity activity;
-    private View view;
+    private Fragment fragment;
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
     private ListViewAdapter adapter;
 
-    public PopulateEventList(Activity activity, View view){
-        this.activity = activity;
-        this.view = view;
+    public PopulateEventList(EventListFragment fragment){
+        this.fragment = fragment;
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected Void doInBackground(String... params) {
         String year = params[0],
                       competitionWeek = params[1];
-        if(activity == null) return "";
+        if(fragment == null) return null;
         /* Here, we would normally check if the events are stored locally, and fetch/store them if not.
          * Also, here is where we check if the remote data set has changed and update accordingly
          * Then, we'd go through the data and build the listview adapters
@@ -88,24 +88,24 @@ public class PopulateEventList extends AsyncTask<String,String,String> {
                 break;
         }
 
-        adapter = new ListViewAdapter(activity,events,eventKeys);
+        adapter = new ListViewAdapter(fragment.getActivity(),events,eventKeys);
         adapter.notifyDataSetChanged();
-        return "";
+        return null;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(Void v) {
+        super.onPostExecute(v);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-        ListView eventList = (ListView)view.findViewById(R.id.event_list);
+        ListView eventList = (ListView)fragment.getView().findViewById(R.id.event_list);
         eventList.setAdapter(adapter);
 
         //set to open basic event view. More static data to be removed later...
         eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                activity.startActivity(new Intent(activity,ViewEvent.class));
+                fragment.getActivity().startActivity(new Intent(fragment.getActivity(),ViewEvent.class));
             }
         });
     }

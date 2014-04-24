@@ -42,15 +42,25 @@
                 android:src="@drawable/ic_action_place" />
 
             <TextView
-                android:id="@+id/location"
+                android:id="@+id/location_label"
                 style="@style/InfoItemTextStyle"
                 android:layout_toRightOf="@id/location_icon"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:paddingRight="5dp"
+                android:text="from" />
+
+            <TextView
+                android:id="@+id/location"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/location_label"
                 android:layout_toLeftOf="@+id/location_nav_arrow"
-                android:text="from San Jose, CA" />
+
+                android:text="San Jose, CA" />
 
             <ImageView
                 android:id="@id/location_nav_arrow"
-                style="@style/InfoItemNavigationArrowStyle" />
+                style="@style/InfoItemNavigationArrowStyle"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -109,11 +119,21 @@
                 android:src="@drawable/ic_action_event" />
 
             <TextView
+                android:id="@+id/current_event_label"
+                style="@style/InfoItemLabelStyle"
+                android:layout_toRightOf="@id/current_event_icon"
+                android:layout_centerVertical="false"
+                android:paddingRight="5dp"
+                android:text="currently competing at" />
+
+            <TextView
                 android:id="@+id/current_event"
                 style="@style/InfoItemTextStyle"
                 android:layout_toRightOf="@id/current_event_icon"
                 android:layout_toLeftOf="@+id/current_event_nav_arrow"
-                android:text="currently competing at Central Valley Regional" />
+                android:layout_below="@id/current_event_label"
+                android:layout_centerVertical="false"
+                android:text="Central Valley Regional" />
 
             <ImageView
                 android:id="@id/current_event_nav_arrow"

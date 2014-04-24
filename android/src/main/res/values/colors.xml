@@ -12,4 +12,6 @@
     <color name="action_bar_background">#000056</color>
     <color name="action_bar_tab_background">#000099</color>
     <color name="nav_drawer_background">#000099</color>
+
+    <color name="pager_indicator_color">#ff0057ff</color>
 </resources>

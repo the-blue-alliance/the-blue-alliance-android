@@ -42,7 +42,6 @@ public class TeamListFragment extends Fragment implements ActionBar.TabListener 
         if(bar != null){
             //configure action bar title
             bar.setDisplayShowTitleEnabled(true);
-            bar.setTitle(activity.getString(R.string.app_name_short)+" - "+activity.getString(R.string.tab_teams));
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             bar.setDisplayShowCustomEnabled(false);
 

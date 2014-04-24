@@ -32,6 +32,11 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <style name="InfoItemLabelStyle" parent="InfoItemTextStyle">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <style name="InfoItemTextStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
