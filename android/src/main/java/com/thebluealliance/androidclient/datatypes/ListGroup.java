@@ -15,11 +15,11 @@ public class ListGroup {
         this.string = string;
     }
 
-    public void updateTitle(String string){
+    public void updateTitle(String string) {
         this.string = string;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return string;
     }
 

@@ -10,9 +10,9 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
  * File created by phil on 4/20/14.
  */
 public class ListElement implements ListItem {
-    protected final String texts[],key;
+    protected final String texts[], key;
     protected View view;
-    protected boolean selected=false;
+    protected boolean selected = false;
 
     public ListElement(){
         texts = new String[0];
@@ -32,15 +32,15 @@ public class ListElement implements ListItem {
     @Override
     public View getView(LayoutInflater inflater, View convertView) {
         if(view == null){
-            view = (View) inflater.inflate(android.R.layout.simple_list_item_1, null);
+            view = inflater.inflate(android.R.layout.simple_list_item_1, null);
             view.setTag(key);
             TextView text1 = (TextView) view.findViewById(android.R.id.text1);
             text1.setText(texts[0]);
             text1.setSelected(selected);
             if(text1.isSelected()){
-                text1.setBackgroundResource(android.R.color.holo_blue_light);
+                text1.setBackgroundColor(android.R.color.holo_blue_light);
             }else{
-                text1.setBackgroundResource(android.R.color.transparent);
+                text1.setBackgroundColor(android.R.color.transparent);
             }
         }
         return view;

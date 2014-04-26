@@ -12,12 +12,12 @@ import com.thebluealliance.androidclient.background.PopulateEventRankings;
 /**
  * File created by phil on 4/22/14.
  */
-public class EventRankingsFragment extends Fragment{
+public class EventRankingsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View results = inflater.inflate(R.layout.fragment_event_rankings,null);
-        new PopulateEventRankings(getActivity(),results).execute("");
+        View results = inflater.inflate(R.layout.fragment_event_rankings, null);
+        new PopulateEventRankings(getActivity(), results).execute("");
         return results;
     }
 }

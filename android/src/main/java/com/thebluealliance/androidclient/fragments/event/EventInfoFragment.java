@@ -12,11 +12,11 @@ import com.thebluealliance.androidclient.background.PopulateEventInfo;
 /**
  * File created by phil on 4/22/14.
  */
-public class EventInfoFragment extends Fragment{
+public class EventInfoFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View info = inflater.inflate(R.layout.fragment_event_info,null);
+        View info = inflater.inflate(R.layout.fragment_event_info, null);
         new PopulateEventInfo(getActivity()).execute(info);
         return info;
     }

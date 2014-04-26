@@ -11,15 +11,15 @@ import com.thebluealliance.androidclient.R;
  */
 public class AwardListElement extends ListElement {
 
-    public AwardListElement(String key, String... texts){
-        super(key,texts);
+    public AwardListElement(String key, String... texts) {
+        super(key, texts);
     }
 
     @Override
     public View getView(LayoutInflater inflater, View convertView) {
-        if(texts.length < 2) return super.getView(inflater, convertView);
+        if (texts.length < 2) return super.getView(inflater, convertView);
 
-        if(view == null){
+        if (view == null) {
             view = inflater.inflate(R.layout.award_list_item, null);
             view.setTag(key);
             view.setSelected(selected);
@@ -27,13 +27,13 @@ public class AwardListElement extends ListElement {
             TextView title = (TextView) view.findViewById(R.id.award_name);
             title.setText(texts[0]);
 
-            TextView winner = (TextView)view.findViewById(R.id.award_winner);
+            TextView winner = (TextView) view.findViewById(R.id.award_winner);
             winner.setText(texts[1]);
 
-            if(view.isSelected()){
-                view.setBackgroundResource(android.R.color.holo_blue_light);
-            }else{
-                view.setBackgroundResource(android.R.color.transparent);
+            if (view.isSelected()) {
+                view.setBackgroundColor(android.R.color.holo_blue_light);
+            } else {
+                view.setBackgroundColor(android.R.color.transparent);
             }
         }
         return view;

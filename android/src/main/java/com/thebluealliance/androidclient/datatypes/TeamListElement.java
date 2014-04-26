@@ -11,15 +11,15 @@ import com.thebluealliance.androidclient.R;
  */
 public class TeamListElement extends ListElement {
 
-    public TeamListElement(String key, String... texts){
-        super(key,texts);
+    public TeamListElement(String key, String... texts) {
+        super(key, texts);
     }
 
     @Override
     public View getView(LayoutInflater inflater, View convertView) {
-        if(texts.length < 3) return super.getView(inflater, convertView);
+        if (texts.length < 3) return super.getView(inflater, convertView);
 
-        if(view == null){
+        if (view == null) {
             view = inflater.inflate(R.layout.team_list_item, null);
             view.setTag(key);
             view.setSelected(selected);
@@ -27,16 +27,16 @@ public class TeamListElement extends ListElement {
             TextView title = (TextView) view.findViewById(R.id.team_number);
             title.setText(texts[0]);
 
-            TextView dates = (TextView)view.findViewById(R.id.team_name);
+            TextView dates = (TextView) view.findViewById(R.id.team_name);
             dates.setText(texts[1]);
 
-            TextView location = (TextView)view.findViewById(R.id.team_location);
+            TextView location = (TextView) view.findViewById(R.id.team_location);
             location.setText(texts[2]);
 
-            if(view.isSelected()){
-                view.setBackgroundResource(android.R.color.holo_blue_light);
-            }else{
-                view.setBackgroundResource(android.R.color.transparent);
+            if (view.isSelected()) {
+                view.setBackgroundColor(android.R.color.holo_blue_light);
+            } else {
+                view.setBackgroundColor(android.R.color.transparent);
             }
         }
         return view;

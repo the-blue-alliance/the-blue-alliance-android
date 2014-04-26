@@ -30,7 +30,7 @@ public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
         return groups.get(groupPosition).children.get(childPosition);
     }
 
-    public Object getChildKey(int groupPosition, int childPosition){
+    public Object getChildKey(int groupPosition, int childPosition) {
         return groups.get(groupPosition).children_keys.get(childPosition);
     }
 
@@ -41,7 +41,7 @@ public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        if(groups == null || groups.get(groupPosition) == null)
+        if (groups == null || groups.get(groupPosition) == null)
             return 0;
         return groups.get(groupPosition).children.size();
     }

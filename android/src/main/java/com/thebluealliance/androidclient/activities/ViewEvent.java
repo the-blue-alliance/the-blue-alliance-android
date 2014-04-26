@@ -66,8 +66,9 @@ public class ViewEvent extends Activity implements ActionBar.TabListener {
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         Fragment fragment;
-        switch(tab.getPosition()){
-            default:case 0: //event info
+        switch (tab.getPosition()) {
+            default:
+            case 0: //event info
                 fragment = new EventInfoFragment();
                 break;
             case 1: //teams
@@ -86,7 +87,7 @@ public class ViewEvent extends Activity implements ActionBar.TabListener {
                 fragment = new EventAwardsFragment();
                 break;
         }
-        getFragmentManager().beginTransaction().replace(R.id.event_container,fragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.event_container, fragment).commit();
     }
 
     @Override

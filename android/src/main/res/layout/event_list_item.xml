@@ -20,7 +20,8 @@
         android:layout_below="@id/event_title"
         android:layout_alignParentRight="true"
         android:id="@+id/event_dates"
-        android:text="Dates"/>
+        android:text="Dates" />
+
     <TextView
         style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="wrap_content"
@@ -28,5 +29,5 @@
         android:layout_below="@id/event_title"
         android:layout_alignParentLeft="true"
         android:id="@+id/event_location"
-        android:text="Location"/>
+        android:text="Location" />
 </RelativeLayout>

@@ -16,8 +16,8 @@ public class EventStatsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View results = inflater.inflate(R.layout.fragment_event_rankings,null);
-        new PopulateEventStats(getActivity(),results).execute("");
+        View results = inflater.inflate(R.layout.fragment_event_rankings, null);
+        new PopulateEventStats(getActivity(), results).execute("");
         return results;
     }
 }

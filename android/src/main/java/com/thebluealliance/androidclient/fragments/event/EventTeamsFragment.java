@@ -16,8 +16,8 @@ public class EventTeamsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View out = inflater.inflate(R.layout.fragment_event_teams,null);
-        new PopulateEventTeams(getActivity(),out).execute("");
+        View out = inflater.inflate(R.layout.fragment_event_teams, null);
+        new PopulateEventTeams(getActivity(), out).execute("");
         return out;
     }
 }

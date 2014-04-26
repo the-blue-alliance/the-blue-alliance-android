@@ -60,7 +60,7 @@
 
             <ImageView
                 android:id="@id/location_nav_arrow"
-                style="@style/InfoItemNavigationArrowStyle"/>
+                style="@style/InfoItemNavigationArrowStyle" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -92,19 +92,22 @@
                 android:id="@+id/website_button"
                 style="@style/InfoItemButtonBarImageStyle"
                 android:src="@drawable/ic_action_web_site" />
+
             <ImageView
                 android:id="@+id/twitter_button"
                 style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/twitter" />
+                android:src="@drawable/ic_twitter" />
+
             <ImageView
                 android:id="@+id/youtube_button"
                 style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/youtube" />
+                android:src="@drawable/ic_youtube" />
+
             <ImageView
                 android:id="@+id/chiefdelphi_button"
                 style="@style/InfoItemButtonBarImageStyle"
                 android:src="@drawable/ic_action_web_site" />
-            </LinearLayout>
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/current_event_wrapper"

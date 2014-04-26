@@ -11,15 +11,15 @@ import com.thebluealliance.androidclient.R;
  */
 public class RankingListElement extends ListElement {
 
-    public RankingListElement(String key, String... texts){
-        super(key,texts);
+    public RankingListElement(String key, String... texts) {
+        super(key, texts);
     }
 
     @Override
     public View getView(LayoutInflater inflater, View convertView) {
-        if(texts.length < 4) return super.getView(inflater, convertView);
+        if (texts.length < 4) return super.getView(inflater, convertView);
 
-        if(view == null){
+        if (view == null) {
             view = inflater.inflate(R.layout.ranking_list_item, null);
             view.setTag(key);
             view.setSelected(selected);
@@ -27,25 +27,25 @@ public class RankingListElement extends ListElement {
             TextView team = (TextView) view.findViewById(R.id.team_number);
             team.setText(texts[0]);
 
-            TextView rank = (TextView)view.findViewById(R.id.team_ranking); /* formatted as #<rank> (<record>)*/
-            if(texts[1].isEmpty()){
+            TextView rank = (TextView) view.findViewById(R.id.team_ranking); /* formatted as #<rank> (<record>)*/
+            if (texts[1].isEmpty()) {
                 rank.setVisibility(View.GONE);
-            }else{
+            } else {
                 rank.setVisibility(View.VISIBLE);
                 rank.setText(texts[1]);
             }
 
 
-            TextView name = (TextView)view.findViewById(R.id.team_name);
+            TextView name = (TextView) view.findViewById(R.id.team_name);
             name.setText(texts[2]);
 
-            TextView breakdown = (TextView)view.findViewById(R.id.ranking_breakdown);
+            TextView breakdown = (TextView) view.findViewById(R.id.ranking_breakdown);
             breakdown.setText(texts[3]);
 
-            if(view.isSelected()){
-                view.setBackgroundResource(android.R.color.holo_blue_light);
-            }else{
-                view.setBackgroundResource(android.R.color.transparent);
+            if (view.isSelected()) {
+                view.setBackgroundColor(android.R.color.holo_blue_light);
+            } else {
+                view.setBackgroundColor(android.R.color.transparent);
             }
         }
         return view;

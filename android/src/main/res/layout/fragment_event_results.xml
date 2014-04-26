@@ -8,6 +8,6 @@
     <ExpandableListView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/match_results"/>
+        android:id="@+id/match_results" />
 
 </LinearLayout>
