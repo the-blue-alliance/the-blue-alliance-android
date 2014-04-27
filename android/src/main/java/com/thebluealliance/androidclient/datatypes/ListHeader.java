@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datatypes;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -11,7 +12,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 public abstract class ListHeader implements ListItem {
     private final String name;
 
-    public ListHeader(){
+    public ListHeader() {
         name = "";
     }
 
@@ -24,12 +25,12 @@ public abstract class ListHeader implements ListItem {
         return ListViewAdapter.ItemType.HEADER_ITEM.ordinal();
     }
 
-    public String getText(){
+    public String getText() {
         return name;
     }
 
     @Override
-    public abstract View getView(LayoutInflater inflater, View convertView);
+    public abstract View getView(Context c, LayoutInflater inflater, View convertView);
 
     @Override
     public void setSelected(boolean selected) {

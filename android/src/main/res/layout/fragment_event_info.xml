@@ -1,93 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle">
 
-        <TextView
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/list_half_pref_height"
-            android:id="@+id/event_date"
-            android:text="Event Date"
-            android:gravity="center"
-            android:drawableLeft="@drawable/ic_action_event" />
+        <RelativeLayout
+            android:id="@+id/event_name_container"
+            style="@style/InfoItemStyle"
+            android:clickable="true">
 
-        <TextView
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/list_half_pref_height"
-            android:id="@+id/event_location"
-            android:text="Event Location"
-            android:gravity="center"
-            android:drawableLeft="@drawable/ic_action_place" />
+            <ImageView
+                android:id="@+id/event_name_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_about" />
+
+            <TextView
+                android:id="@+id/event_name"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/event_name_icon"
+                android:text="Event name" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/event_date_container"
+            style="@style/InfoItemStyle"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/event_date_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_event" />
+
+            <TextView
+                android:id="@+id/event_date"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/event_date_icon"
+                android:text="Event date" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/event_location_container"
+            style="@style/InfoItemStyle"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/event_location_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_action_place" />
+
+            <TextView
+                android:id="@+id/event_location_label"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/event_location_icon"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:paddingRight="5dp"
+                android:text="at" />
+
+            <TextView
+                android:id="@+id/event_location"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/event_location_label"
+                android:layout_toLeftOf="@+id/event_location_nav_arrow"
+                android:text="Event location" />
+
+            <ImageView
+                android:id="@id/event_location_nav_arrow"
+                style="@style/InfoItemNavigationArrowStyle" />
+        </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/list_half_pref_height"
+            android:id="@+id/event_social_container"
+            style="@style/InfoItemStyle"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:id="@+id/social_container">
+            android:showDividers="middle"
+            android:divider="?android:attr/dividerVertical"
+            android:padding="0dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_action_web_site"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                android:id="@+id/event_website_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_action_web_site" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_facebook"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                android:id="@+id/event_facebook_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_facebook" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_twitter"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                android:id="@+id/event_twitter_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_twitter" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_youtube"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                android:id="@+id/event_youtube_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_youtube" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_cd"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                android:id="@+id/event_cd_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_cd" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_usfirst"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                android:id="@+id/event_usfirst_button"
+                style="@style/InfoItemButtonBarImageStyle"
+                android:src="@drawable/ic_usfirst" />
         </LinearLayout>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dip"
-            android:background="@color/dark_grey" />
-
         <LinearLayout
+            android:id="@+id/event_last_match_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/list_pref_height"
             android:orientation="vertical"
-            android:id="@+id/last_match_container"
             android:gravity="center">
 
             <TextView
@@ -95,21 +130,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/last_match"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dip"
-            android:background="@color/dark_grey" />
-
         <LinearLayout
+            android:id="@+id/event_next_match_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/list_pref_height"
             android:orientation="vertical"
-            android:id="@+id/next_match_container"
             android:gravity="center">
 
             <TextView
@@ -117,21 +145,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/next_match"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dip"
-            android:background="@color/dark_grey" />
-
         <LinearLayout
+            android:id="@+id/event_top_teams_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/list_pref_height"
             android:orientation="horizontal"
-            android:id="@+id/top_teams_container"
             android:layout_gravity="center"
             android:gravity="center_horizontal">
 
@@ -140,21 +161,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/top_teams"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dip"
-            android:background="@color/dark_grey" />
-
         <LinearLayout
+            android:id="@+id/top_opr_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/list_pref_height"
             android:orientation="horizontal"
-            android:id="@+id/top_opr_container"
             android:gravity="center_horizontal">
 
             <TextView
@@ -162,7 +176,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/top_opr"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
     </LinearLayout>

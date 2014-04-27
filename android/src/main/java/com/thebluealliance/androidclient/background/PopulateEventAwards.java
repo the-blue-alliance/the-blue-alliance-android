@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.background;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ListView;
@@ -17,15 +17,15 @@ import java.util.ArrayList;
  */
 public class PopulateEventAwards extends AsyncTask<String, Void, Void> {
 
-    private Activity activity;
+    private Context context;
     private View view;
     private String eventKey;
     private ArrayList<ListItem> awards;
     private ArrayList<String> keys;
     private ListViewAdapter adapter;
 
-    public PopulateEventAwards(Activity activity, View view) {
-        this.activity = activity;
+    public PopulateEventAwards(Context c, View view) {
+        this.context = c;
         this.view = view;
     }
 
@@ -46,7 +46,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> {
         keys.add("frc4551");
         awards.add(new AwardListElement("frc4551", "Woodie Flowers Finalist Award", "James Bryan\n(4551)"));
 
-        adapter = new ListViewAdapter(activity, awards, keys);
+        adapter = new ListViewAdapter(context, awards, keys);
 
         return null;
     }

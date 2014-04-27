@@ -12,8 +12,6 @@ import com.thebluealliance.androidclient.datatypes.TeamListElement;
 
 import java.util.ArrayList;
 
-;
-
 /**
  * File created by phil on 4/22/14.
  */
@@ -40,13 +38,13 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
 
         //put some static data here
         teamKeys.add("frc281");
-        teams.add(new TeamListElement("frc281", "281", "EnTech Green Villains", "Greenville, SC"));
+        teams.add(new TeamListElement("frc281", 281, "EnTech Green Villains", "Greenville, SC"));
         teamKeys.add("frc342");
-        teams.add(new TeamListElement("frc342", "342", "Burning Magnetos", "North Charleston, SC"));
+        teams.add(new TeamListElement("frc342", 342, "Burning Magnetos", "North Charleston, SC"));
         teamKeys.add("frc343");
-        teams.add(new TeamListElement("frc343", "343", "Metal-In-Motion", "Seneca, SC"));
+        teams.add(new TeamListElement("frc343", 343, "Metal-In-Motion", "Seneca, SC"));
         teamKeys.add("frc346");
-        teams.add(new TeamListElement("frc346", "346", "RoboHawks", "Chesterfield, VA"));
+        teams.add(new TeamListElement("frc346", 346, "RoboHawks", "Chesterfield, VA"));
 
         adapter = new ListViewAdapter(activity, teams, teamKeys);
         adapter.notifyDataSetChanged();

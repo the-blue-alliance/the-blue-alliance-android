@@ -12,7 +12,7 @@ public class MatchGroup extends ListGroup {
 
     public String string;
     public final List<Match> children = new ArrayList<Match>();
-    public final List<String> children_keys = new ArrayList<String>();
+    public final List<String> childrenKeys = new ArrayList<String>();
 
     public MatchGroup(String string) {
         super(string);

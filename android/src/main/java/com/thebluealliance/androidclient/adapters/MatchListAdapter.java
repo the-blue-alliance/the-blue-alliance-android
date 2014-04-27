@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +18,13 @@ import com.thebluealliance.androidclient.datatypes.MatchGroup;
 public class MatchListAdapter extends BaseExpandableListAdapter {
 
     public final SparseArray<MatchGroup> groups;
-    private Activity activity;
+    private Context context;
     private LayoutInflater inflater;
 
-    public MatchListAdapter(Activity act, SparseArray<MatchGroup> groups) {
+    public MatchListAdapter(Context c, SparseArray<MatchGroup> groups) {
         this.groups = groups;
-        activity = act;
-        inflater = act.getLayoutInflater();
+        context = c;
+        inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class MatchListAdapter extends BaseExpandableListAdapter {
     }
 
     public Object getChildKey(int groupPosition, int childPosition) {
-        return groups.get(groupPosition).children_keys.get(childPosition);
+        return groups.get(groupPosition).childrenKeys.get(childPosition);
     }
 
     @Override
@@ -79,8 +79,8 @@ public class MatchListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.expandable_list_group, null);
         }
         ListGroup group = (ListGroup) getGroup(groupPosition);
-        ((CheckedTextView) convertView).setText(group.string);
-        ((CheckedTextView) convertView).setChecked(isExpanded);
+        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setText(group.string);
+        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setChecked(isExpanded);
 
         return convertView;
     }
@@ -97,6 +97,6 @@ public class MatchListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        return groups.get(groupPosition).children.get(childPosition).render().getView(activity.getLayoutInflater(), null);
+        return groups.get(groupPosition).children.get(childPosition).render().getView(context, inflater, null);
     }
 }

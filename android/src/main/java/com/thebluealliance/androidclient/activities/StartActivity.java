@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,15 +13,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
+import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
-import com.thebluealliance.androidclient.fragments.TeamListFragment;
 import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.ArrayList;
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends Activity implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class StartActivity extends FragmentActivity implements AdapterView.OnItemClickListener, ActionBar.OnNavigationListener {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -43,6 +42,8 @@ public class StartActivity extends Activity implements AdapterView.OnItemClickLi
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
     private int mCurrentSelectedNavigationItem = -1;
+
+    private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -92,7 +93,7 @@ public class StartActivity extends Activity implements AdapterView.OnItemClickLi
         getActionBar().setHomeButtonEnabled(true);
 
         //default to events view
-        getFragmentManager().beginTransaction().replace(R.id.container, new EventsByWeekFragment(), MAIN_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new EventsByWeekFragment(), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedNavigationItem = 0;
         setupActionBarForEvents();
     }
@@ -165,7 +166,7 @@ public class StartActivity extends Activity implements AdapterView.OnItemClickLi
                 setupActionBarForEvents();
                 break;
             case 1: //teams
-                fragment = new TeamListFragment();
+                fragment = new AllTeamsListFragment();
                 setupActionBarForTeams();
                 break;
             case 2: //insights
@@ -173,7 +174,7 @@ public class StartActivity extends Activity implements AdapterView.OnItemClickLi
                 setupActionBarForInsights();
                 break;
         }
-        getFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         mDrawerList.setItemChecked(position, true);
         // This must be done before we lose the drawer
         mCurrentSelectedNavigationItem = position;
@@ -187,7 +188,7 @@ public class StartActivity extends Activity implements AdapterView.OnItemClickLi
     }
 
     private void setupActionBarForPosition(int position) {
-        switch(position) {
+        switch (position) {
             case 0:
                 setupActionBarForEvents();
                 return;
@@ -202,17 +203,12 @@ public class StartActivity extends Activity implements AdapterView.OnItemClickLi
     private void setupActionBarForEvents() {
         resetActionBar();
         getActionBar().setDisplayShowTitleEnabled(false);
-        String[] dropdownItems = new String[]{"2014", "2013", "2012"};
-        // This is required to obtain the proper context for styling
-        View actionBarView = getLayoutInflater().cloneInContext(getActionBar().getThemedContext()).inflate(R.layout.actionbar_spinner_layout, null);
-        Spinner subtitle = (Spinner) actionBarView;
+
         ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner, R.id.year, dropdownItems);
         actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-        subtitle.setAdapter(actionBarAdapter);
-        subtitle.setOnItemSelectedListener(this);
-        subtitle.setSelection(0); //TODO this should be taken from a SavedInstanceState, if available
-        getActionBar().setDisplayShowCustomEnabled(true);
-        getActionBar().setCustomView(actionBarView);
+        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getActionBar().setListNavigationCallbacks(actionBarAdapter, this);
+        getActionBar().setSelectedNavigationItem(0); //TODO take this value from savedinstancestate
     }
 
     private void setupActionBarForTeams() {
@@ -231,15 +227,11 @@ public class StartActivity extends Activity implements AdapterView.OnItemClickLi
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-        Fragment f = getFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-        if(f instanceof ActionBarSpinnerListener) {
-            ((ActionBarSpinnerListener) f).actionBarSpinnerSelected(adapterView, position);
+    public boolean onNavigationItemSelected(int position, long id) {
+        Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        if (f instanceof ActionBarSpinnerListener) {
+            ((ActionBarSpinnerListener) f).actionBarSpinnerSelected(position, dropdownItems[position]);
         }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
+        return true;
     }
 }

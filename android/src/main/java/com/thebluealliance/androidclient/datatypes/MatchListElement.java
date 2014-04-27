@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datatypes;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,9 +29,9 @@ public class MatchListElement extends ListElement {
     }
 
     @Override
-    public View getView(LayoutInflater inflater, View view) {
+    public View getView(Context c, LayoutInflater inflater, View view) {
         if (view == null) {
-            view = inflater.inflate(R.layout.match_list_item, null);
+            view = inflater.inflate(R.layout.list_item_match, null);
             ImageView videoIcon = (ImageView) view.findViewById(R.id.match_video);
 
             //if we have video for this match, show an icon

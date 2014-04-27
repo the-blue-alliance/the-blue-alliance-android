@@ -7,14 +7,14 @@
     tools:context="com.thebluealliance.androidclient.fragments.EventsByWeekFragment">
 
     <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/tabs"
+        android:id="@+id/team_pager_tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         app:pstsIndicatorColor="@color/pager_indicator_color" />
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+        android:id="@+id/team_pager"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

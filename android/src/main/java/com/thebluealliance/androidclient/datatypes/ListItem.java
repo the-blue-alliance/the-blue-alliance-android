@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datatypes;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -8,6 +9,8 @@ import android.view.View;
  */
 public interface ListItem {
     public int getViewType();
-    public View getView(LayoutInflater inflater, View convertView);
+
+    public View getView(Context c, LayoutInflater inflater, View convertView);
+
     public void setSelected(boolean selected);
 }

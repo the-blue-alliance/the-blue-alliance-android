@@ -1,23 +1,18 @@
 package com.thebluealliance.androidclient.fragments;
 
-
-
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentAdapter;
-import com.thebluealliance.androidclient.adapters.ViewTeamFragmentAdapter;
+import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
-public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerListener{
+public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerListener {
 
     private int mYear;
 
@@ -25,18 +20,22 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_events_by_week, container, false);
+        return inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
     }
 
     @Override
-    public void actionBarSpinnerSelected(AdapterView<?> adapterView, int position) {
+    public void actionBarSpinnerSelected(int position, String yearString) {
+        int year = Integer.parseInt(yearString);
+        // Only update the view when the year changes
+        if (year == mYear) {
+            return;
+        }
+        mYear = year;
         View view = getView();
-        ViewPager pager = (ViewPager) view.findViewById(R.id.view_pager);
-        mYear = Integer.parseInt(adapterView.getAdapter().getItem(position).toString());
-        pager.setAdapter(new EventsByWeekFragmentAdapter(getFragmentManager(), mYear));
+        ViewPager pager = (ViewPager) view.findViewById(R.id.event_pager);
+        pager.setAdapter(new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         tabs.setViewPager(pager);
-        Log.d("EventsByWeekFragment", "action bar selected: position " + position);
     }
 }

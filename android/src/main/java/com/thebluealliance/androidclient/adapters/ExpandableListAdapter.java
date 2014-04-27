@@ -31,7 +31,7 @@ public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     public Object getChildKey(int groupPosition, int childPosition) {
-        return groups.get(groupPosition).children_keys.get(childPosition);
+        return groups.get(groupPosition).childrenKeys.get(childPosition);
     }
 
     @Override

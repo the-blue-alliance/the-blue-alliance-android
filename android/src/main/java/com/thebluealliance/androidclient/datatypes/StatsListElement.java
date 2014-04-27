@@ -10,35 +10,41 @@ import com.thebluealliance.androidclient.R;
 /**
  * File created by phil on 4/23/14.
  */
-public class TeamListElement extends ListElement {
+public class StatsListElement extends ListElement {
 
     private int mTeamNumber;
     private String mTeamName;
+    private String mTeamStat;
     private String mTeamLocation;
 
-    public TeamListElement(String key, int number, String name, String location) {
+    public StatsListElement(String key, int number, String name, String location, String stat) {
         super(key);
         mTeamNumber = number;
         mTeamName = name;
+        mTeamStat = stat;
         mTeamLocation = location;
     }
 
     @Override
-    public View getView(Context context, LayoutInflater inflater, View convertView) {
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
         if (view == null) {
-            view = inflater.inflate(R.layout.list_item_team, null);
+            view = inflater.inflate(R.layout.list_item_stats, null);
             view.setTag(key);
             view.setSelected(selected);
 
-            TextView title = (TextView) view.findViewById(R.id.team_number);
-            title.setText("" + mTeamNumber);
+            TextView team = (TextView) view.findViewById(R.id.team_number);
+            team.setText("" + mTeamNumber);
 
-            TextView dates = (TextView) view.findViewById(R.id.team_name);
-            dates.setText(mTeamName);
+            TextView name = (TextView) view.findViewById(R.id.team_name);
+            name.setText(mTeamName);
 
             TextView location = (TextView) view.findViewById(R.id.team_location);
             location.setText(mTeamLocation);
+
+            TextView stat = (TextView) view.findViewById(R.id.team_stat);
+            stat.setText(mTeamStat);
         }
         return view;
     }
+
 }

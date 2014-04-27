@@ -9,7 +9,7 @@ import java.util.List;
 public class ListGroup {
     public String string;
     public final List<String> children = new ArrayList<String>();
-    public final List<String> children_keys = new ArrayList<String>();
+    public final List<String> childrenKeys = new ArrayList<String>();
 
     public ListGroup(String string) {
         this.string = string;

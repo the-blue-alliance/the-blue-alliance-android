@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.datatypes;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,11 +16,11 @@ public class NavDrawerItem implements ListItem {
     private String title;
     private int icon = -1;
 
-    public NavDrawerItem(String title){
+    public NavDrawerItem(String title) {
         this.title = title;
     }
 
-    public NavDrawerItem(String title, int icon){
+    public NavDrawerItem(String title, int icon) {
         this.title = title;
         this.icon = icon;
     }
@@ -31,11 +31,11 @@ public class NavDrawerItem implements ListItem {
     }
 
     @Override
-    public View getView(LayoutInflater inflater, View convertView) {
-        if(convertView == null) {
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        if (convertView == null) {
             convertView = inflater.inflate(R.layout.nav_drawer_item, null);
         }
-        if(icon != -1) {
+        if (icon != -1) {
             ((ImageView) convertView.findViewById(R.id.icon)).setImageResource(icon);
         }
         ((TextView) convertView.findViewById(R.id.title)).setText(title);

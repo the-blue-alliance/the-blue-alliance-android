@@ -1,21 +1,13 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateEventList;
-import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
 /**
  * File created by phil on 4/20/14.
@@ -30,9 +22,6 @@ public class EventListFragment extends Fragment {
     private int mYear;
     private int mWeek;
     private String mTeamKey;
-
-
-    private View eventList;
 
     public EventListFragment(int listType, int year) {
         super();
@@ -55,15 +44,12 @@ public class EventListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (eventList == null)
-            eventList = inflater.inflate(R.layout.fragment_events, null);
-        return eventList;
+        return inflater.inflate(R.layout.fragment_events, null);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("EventListFragment", "onResume()");
-        new PopulateEventList(this).execute("" + mYear, "week" + mWeek);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        new PopulateEventList(this, mYear, mWeek, mTeamKey).execute();
     }
 }

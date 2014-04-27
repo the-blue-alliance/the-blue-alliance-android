@@ -1,18 +1,18 @@
-package com.thebluealliance.androidclient.fragments;
+package com.thebluealliance.androidclient.fragments.team;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewTeam;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.PopulateTeamInfo;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeamKey = getArguments().getString(ViewTeam.TEAM_KEY);
+        mTeamKey = getArguments().getString(ViewTeamActivity.TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
@@ -38,9 +38,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_team_info, container, false);
         // Register this fragment as the callback for all clickable views
-        v.findViewById(R.id.location_wrapper).setOnClickListener(this);
-        v.findViewById(R.id.twitter_button).setOnClickListener(this);
-        v.findViewById(R.id.most_recent_match_details).findViewById(R.id.match_video).setOnClickListener(this);
+        v.findViewById(R.id.team_location_container).setOnClickListener(this);
+        v.findViewById(R.id.team_twitter_button).setOnClickListener(this);
+        v.findViewById(R.id.team_most_recent_match_details).findViewById(R.id.match_video).setOnClickListener(this);
         return v;
     }
 
@@ -59,7 +59,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         PackageManager manager = getActivity().getPackageManager();
-        if (view.getId() == R.id.location_wrapper) {
+        if (view.getId() == R.id.team_location_container) {
             String uri = view.getTag().toString();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
@@ -70,7 +70,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
                 // No application can handle this intent
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
-        } else if (view.getId() == R.id.twitter_button) {
+        } else if (view.getId() == R.id.team_twitter_button) {
             String uri = view.getTag().toString();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
@@ -82,7 +82,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
                 // No application can handle this intent
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
-        } else if (view.getId() == R.id.youtube_button) {
+        } else if (view.getId() == R.id.team_youtube_button) {
             String query = view.getTag().toString();
             Intent i = new Intent(Intent.ACTION_SEARCH);
             i.setPackage("com.google.android.youtube");

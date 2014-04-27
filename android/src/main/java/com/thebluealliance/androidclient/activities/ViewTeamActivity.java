@@ -1,30 +1,21 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ViewTeamFragmentAdapter;
-import com.thebluealliance.androidclient.fragments.EventListFragment;
-import com.thebluealliance.androidclient.fragments.TeamInfoFragment;
+import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 
 /**
  * File created by nathan on 4/21/14.
  */
-public class ViewTeam extends Activity {
+public class ViewTeamActivity extends FragmentActivity {
 
     public static final String TEAM_KEY = "team_key";
-
-    private static final String INFO_TAB_TAG = "info";
-    private static final String EVENTS_TAB_TAG = "events";
-    private static final String MEDIA_TAB_TAG = "media";
-    private String mCurrentTabTag = "";
 
     // Should come in the format frc####
     private String mTeamKey;
@@ -36,11 +27,11 @@ public class ViewTeam extends Activity {
 
         mTeamKey = getIntent().getStringExtra(TEAM_KEY);
         if (mTeamKey == null) {
-            throw new IllegalArgumentException("ViewTeam must be created with a team key!");
+            throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setAdapter(new ViewTeamFragmentAdapter(getFragmentManager(), mTeamKey));
+        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);

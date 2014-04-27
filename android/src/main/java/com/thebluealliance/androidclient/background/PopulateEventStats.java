@@ -8,7 +8,7 @@ import android.widget.ListView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datatypes.ListItem;
-import com.thebluealliance.androidclient.datatypes.RankingListElement;
+import com.thebluealliance.androidclient.datatypes.StatsListElement;
 
 import java.util.ArrayList;
 
@@ -38,13 +38,13 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> {
 
         //add some temp data
         teamKeys.add("frc1261");
-        teams.add(new RankingListElement("frc1261", "1261", "", "Robo Lions", "88.88 OPR"));
+        teams.add(new StatsListElement("frc1261", 1261, "RoboLions", "Location", "88.88 OPR"));
         teamKeys.add("frc1772");
-        teams.add(new RankingListElement("frc1772", "1772", "", "The Brazilian Trail Blazers", "83.84 OPR"));
+        teams.add(new StatsListElement("frc1772", 1772, "The Brazilian Trail Blazers", "Location", "83.84 OPR"));
         teamKeys.add("frc3824");
-        teams.add(new RankingListElement("frc3824", "3824", "", "HVA RoHAWKtics", "71.54 OPR"));
+        teams.add(new StatsListElement("frc3824", 3824, "HVA RoHAWKtics", "Location", "71.54 OPR"));
         teamKeys.add("frc1024");
-        teams.add(new RankingListElement("frc1024", "1024", "", "Kil-A-Bytes", "63.76 OPR"));
+        teams.add(new StatsListElement("frc1024", 1024, "Kil-A-Bytes", "Location", "63.76 OPR"));
 
         adapter = new ListViewAdapter(activity, teams, teamKeys);
         return null;

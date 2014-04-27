@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <TextView
-        style="?android:attr/listSeparatorTextViewStyle"
         android:id="@+id/event_week_separator"
-        android:text="Header"
+        style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#000099"
+        android:text="Header"
         android:textColor="#FFFFFF" />
 </LinearLayout>

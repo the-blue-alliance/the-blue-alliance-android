@@ -22,7 +22,7 @@
         <TableRow
             android:layout_height="fill_parent"
             android:background="@color/lighter_red"
-            android:minHeight="@dimen/list_half_pref_height">
+            android:minHeight="32dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -62,7 +62,7 @@
         <TableRow
             android:layout_height="fill_parent"
             android:background="@color/lighter_blue"
-            android:minHeight="@dimen/list_half_pref_height">
+            android:minHeight="32dp">
 
             <TextView
                 android:layout_width="0dp"

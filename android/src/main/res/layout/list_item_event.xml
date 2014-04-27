@@ -3,21 +3,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight">
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <TextView
         style="@android:style/TextAppearance.DeviceDefault.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:id="@+id/event_title"
-        android:text="Title" />
+        android:id="@+id/event_name"
+        android:text="Title"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
     <TextView
         style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_title"
+        android:layout_below="@id/event_name"
         android:layout_alignParentRight="true"
         android:id="@+id/event_dates"
         android:text="Dates" />
@@ -26,7 +29,7 @@
         style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/event_title"
+        android:layout_below="@id/event_name"
         android:layout_alignParentLeft="true"
         android:id="@+id/event_location"
         android:text="Location" />

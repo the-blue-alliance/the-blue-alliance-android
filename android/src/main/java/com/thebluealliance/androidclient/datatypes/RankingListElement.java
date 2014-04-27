@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datatypes;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -11,41 +12,47 @@ import com.thebluealliance.androidclient.R;
  */
 public class RankingListElement extends ListElement {
 
-    public RankingListElement(String key, String... texts) {
-        super(key, texts);
+    private int mTeamNumber;
+    private String mTeamName;
+    private int mTeamRank;
+    private String mTeamRecord;
+    private String mTeamBreakdown;
+
+    public RankingListElement(String key, int number, String name, int ranking, String record, String breakdown) {
+        super(key);
+        mTeamNumber = number;
+        mTeamName = name;
+        mTeamRank = ranking;
+        mTeamRecord = record;
+        mTeamBreakdown = breakdown;
     }
 
     @Override
-    public View getView(LayoutInflater inflater, View convertView) {
-        if (texts.length < 4) return super.getView(inflater, convertView);
-
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
         if (view == null) {
-            view = inflater.inflate(R.layout.ranking_list_item, null);
+            view = inflater.inflate(R.layout.list_item_ranking, null);
             view.setTag(key);
             view.setSelected(selected);
 
             TextView team = (TextView) view.findViewById(R.id.team_number);
-            team.setText(texts[0]);
-
-            TextView rank = (TextView) view.findViewById(R.id.team_ranking); /* formatted as #<rank> (<record>)*/
-            if (texts[1].isEmpty()) {
-                rank.setVisibility(View.GONE);
-            } else {
-                rank.setVisibility(View.VISIBLE);
-                rank.setText(texts[1]);
-            }
-
+            team.setText("" + mTeamNumber);
 
             TextView name = (TextView) view.findViewById(R.id.team_name);
-            name.setText(texts[2]);
+            name.setText(mTeamName);
+
+            TextView rank = (TextView) view.findViewById(R.id.team_rank);
+            rank.setText("" + mTeamRank);
+
+            TextView record = (TextView) view.findViewById(R.id.team_record); /* formatted as (W, L, T) */
+            record.setText(mTeamRecord);
 
             TextView breakdown = (TextView) view.findViewById(R.id.ranking_breakdown);
-            breakdown.setText(texts[3]);
+            breakdown.setText(mTeamBreakdown);
 
             if (view.isSelected()) {
-                view.setBackgroundColor(android.R.color.holo_blue_light);
+                view.setBackgroundColor(c.getResources().getColor(android.R.color.holo_blue_light));
             } else {
-                view.setBackgroundColor(android.R.color.transparent);
+                view.setBackgroundColor(c.getResources().getColor(android.R.color.transparent));
             }
         }
         return view;

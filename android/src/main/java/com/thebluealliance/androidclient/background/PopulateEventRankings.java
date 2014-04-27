@@ -38,13 +38,13 @@ public class PopulateEventRankings extends AsyncTask<String, Void, Void> {
 
         //add some temp data
         teamKeys.add("frc3824");
-        teams.add(new RankingListElement("frc3824", "3824", "#1 (9-0-0)", "HVA RoHAWKtics", "18 QS, 200 Assist, 401 Auto, 240 T&C, 312 Teleop"));
+        teams.add(new RankingListElement("frc3824", 3824, "HVA RoHAWKtics", 1, "(9-0-0)", "18 QS, 200 Assist, 401 Auto, 240 T&C, 312 Teleop"));
         teamKeys.add("frc1876");
-        teams.add(new RankingListElement("frc1876", "1876", "#2 (9-0-0)", "Beachbotics", "18 QS, 120 Assist, 276 Auto, 100 T&C, 218 Teleop"));
+        teams.add(new RankingListElement("frc1876", 1876, "Beachbotics", 2, "(9-0-0)", "18 QS, 120 Assist, 276 Auto, 100 T&C, 218 Teleop"));
         teamKeys.add("frc2655");
-        teams.add(new RankingListElement("frc2655", "2655", "#3 (8-1-0)", "Flying Platypi", "16 QS, 170 Assist, 291 Auto, 80 T&C, 176 Teleop"));
+        teams.add(new RankingListElement("frc2655", 2655, "Flying Platypi", 3, "(8-1-0)", "16 QS, 170 Assist, 291 Auto, 80 T&C, 176 Teleop"));
         teamKeys.add("frc1261");
-        teams.add(new RankingListElement("frc1261", "1261", "#4 (7-2-0)", "Robo Lions", "14 QS, 260 Assist, 386 Auto, 190 T&C, 237 Teleop"));
+        teams.add(new RankingListElement("frc1261", 1261, "Robo Lions", 3, "(7-2-0)", "14 QS, 260 Assist, 386 Auto, 190 T&C, 237 Teleop"));
 
         adapter = new ListViewAdapter(activity, teams, teamKeys);
         return null;
