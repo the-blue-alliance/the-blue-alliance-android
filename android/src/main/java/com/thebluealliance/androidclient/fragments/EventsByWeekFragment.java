@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -31,11 +33,25 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
             return;
         }
         mYear = year;
-        View view = getView();
-        ViewPager pager = (ViewPager) view.findViewById(R.id.event_pager);
-        pager.setAdapter(new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear));
-
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
-        tabs.setViewPager(pager);
+        final View view = getView();
+        final ViewPager pager = (ViewPager) view.findViewById(R.id.event_pager);
+        final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
+        final int mShortAnimationDuration = getResources().getInteger(
+                android.R.integer.config_shortAnimTime);
+        // Fade out the view, load the adapter, fade back in the view
+        view.animate()
+                .alpha(0f)
+                .setDuration(mShortAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        pager.setAdapter(new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear));
+                        tabs.setViewPager(pager);
+                        view.animate()
+                                .alpha(1f)
+                                .setDuration(mShortAnimationDuration)
+                                .setListener(null).start();
+                    }
+                }).start();
     }
 }

@@ -10,5 +10,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:singleLine="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:paddingLeft="40dp" />
 </RelativeLayout>
