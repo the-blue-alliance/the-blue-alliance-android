@@ -32,6 +32,6 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new EventListFragment(EventListFragment.EVENT_LIST_FOR_YEAR_WEEK, mYear, (position + 1));
+        return EventListFragment.newInstance(mYear, (position + 1), null);
     }
 }

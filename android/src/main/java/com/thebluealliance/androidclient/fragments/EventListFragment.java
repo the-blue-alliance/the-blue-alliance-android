@@ -14,32 +14,30 @@ import com.thebluealliance.androidclient.background.PopulateEventList;
  */
 public class EventListFragment extends Fragment {
 
-    public static final int EVENT_LIST_FOR_YEAR = 1;
-    public static final int EVENT_LIST_FOR_TEAM_YEAR = 2;
-    public static final int EVENT_LIST_FOR_YEAR_WEEK = 3;
+    public static final String YEAR = "YEAR";
+    public static final String WEEK = "WEEK";
+    public static final String TEAM_KEY = "TEAM_KEY";
 
-    private int mListType;
     private int mYear;
     private int mWeek;
     private String mTeamKey;
 
-    public EventListFragment(int listType, int year) {
-        super();
-        mListType = listType;
-        mYear = year;
+    public static EventListFragment newInstance(int year, int week, String teamKey) {
+        EventListFragment f = new EventListFragment();
+        Bundle args = new Bundle();
+        args.putInt(YEAR, year);
+        args.putInt(WEEK, week);
+        args.putString(TEAM_KEY, teamKey);
+        f.setArguments(args);
+        return f;
     }
 
-    public EventListFragment(int listType, String teamKey, int year) {
-        super();
-        mListType = listType;
-        mTeamKey = teamKey;
-        mYear = year;
-    }
-
-    public EventListFragment(int listType, int year, int week) {
-        mListType = listType;
-        mYear = year;
-        mWeek = week;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mYear = getArguments().getInt(YEAR, -1);
+        mWeek = getArguments().getInt(WEEK, -1);
+        mTeamKey = getArguments().getString(TEAM_KEY);
     }
 
     @Override

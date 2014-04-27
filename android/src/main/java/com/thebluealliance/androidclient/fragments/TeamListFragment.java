@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,19 +19,25 @@ import com.thebluealliance.androidclient.background.PopulateTeamList;
  */
 public class TeamListFragment extends Fragment {
 
-    private Activity activity;
-    private int teamNumberStart, teamNumberEnd;
+    private static final String START = "START";
+    private static final String END = "END";
 
-    public TeamListFragment(int start, int end) {
-        super();
-        teamNumberStart = start;
-        teamNumberEnd = end;
+    private int mTeamNumberStart, mTeamNumberEnd;
+
+    public static TeamListFragment newInstance(int startTeamNumber, int endTeamNumber) {
+        TeamListFragment f = new TeamListFragment();
+        Bundle args = new Bundle();
+        args.putInt(START, startTeamNumber);
+        args.putInt(END, endTeamNumber);
+        f.setArguments(args);
+        return f;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = getActivity();
+        mTeamNumberStart = getArguments().getInt(START);
+        mTeamNumberEnd = getArguments().getInt(END);
     }
 
     @Override
@@ -54,6 +59,6 @@ public class TeamListFragment extends Fragment {
                 }
             });
         }
-        new PopulateTeamList(this).execute(teamNumberStart, teamNumberEnd);
+        new PopulateTeamList(this).execute(mTeamNumberStart, mTeamNumberEnd);
     }
 }

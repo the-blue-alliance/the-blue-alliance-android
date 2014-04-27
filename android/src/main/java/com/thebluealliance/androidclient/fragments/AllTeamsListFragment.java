@@ -28,10 +28,4 @@ public class AllTeamsListFragment extends Fragment {
         tabs.setViewPager(pager);
         return v;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((ViewPager) getView().findViewById(R.id.team_pager)).getAdapter().notifyDataSetChanged();
-    }
 }

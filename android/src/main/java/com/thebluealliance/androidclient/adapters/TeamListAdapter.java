@@ -29,12 +29,6 @@ public class TeamListAdapter extends FragmentPagerAdapter {
 
     }
 
-    // This is necessary to recreate all fragments when we call notifyDataSetChanged()
-    @Override
-    public int getItemPosition(Object object) {
-        return POSITION_NONE;
-    }
-
     @Override
     public int getCount() {
         return mCount;
@@ -42,6 +36,6 @@ public class TeamListAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new TeamListFragment(position * 1000, (position * 1000) + 999);
+        return TeamListFragment.newInstance(position * 1000, (position * 1000) + 999);
     }
 }
