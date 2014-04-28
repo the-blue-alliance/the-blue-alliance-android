@@ -35,6 +35,14 @@ public class Database extends SQLiteOpenHelper{
         db = getWritableDatabase();
     }
 
+    /**
+     * USE THIS METHOD TO GAIN DATABASE REFERENCES!!11!!!
+     * This makes sure that db accesses stay thread-safe
+     * (which becomes important with multiple AsyncTasks working simultaneously).
+     * Should work, per http://touchlabblog.tumblr.com/post/24474750219/single-sqlite-connection
+     * @param context Context used to create Database object, if necessary
+     * @return Your synchronized reference to use.
+     */
     public static synchronized Database getInstance(Context context){
         if(instance == null){
             instance = new Database(context);
