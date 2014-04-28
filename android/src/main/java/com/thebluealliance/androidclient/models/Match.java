@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -239,8 +241,13 @@ public class Match implements BasicModel{
                 new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
                 redScore, blueScore, key);
     }
-	
-	public static boolean validateMatchKey(String key) {
+
+    @Override
+    public ContentValues getParams() {
+        return null;
+    }
+
+    public static boolean validateMatchKey(String key) {
 		return key.matches("^[1-9]\\d{3}[a-z]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
 	}
 		

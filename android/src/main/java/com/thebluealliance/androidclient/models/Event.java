@@ -1,7 +1,10 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datatypes.EventListElement;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -10,6 +13,7 @@ import java.util.Date;
 
 
 public class Event implements BasicModel{
+
     public static enum TYPE{
         NONE,
         REGIONAL,
@@ -275,5 +279,16 @@ public class Event implements BasicModel{
 
     public void setLastUpdated(long last_updated) {
         this.last_updated = last_updated;
+    }
+
+    @Override
+    public EventListElement render() {
+        //TODO return EventListElement here
+        return null;
+    }
+
+    @Override
+    public ContentValues getParams() {
+        return null;
     }
 }

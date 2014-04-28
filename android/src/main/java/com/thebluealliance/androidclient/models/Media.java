@@ -1,11 +1,15 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.thebluealliance.androidclient.datatypes.ListElement;
 
 
 public class Media implements BasicModel{
-	public enum TYPE{
+
+    public enum TYPE{
 		NONE,
 		YOUTUBE,
 		CD_PHOTO_THREAD
@@ -83,7 +87,16 @@ public class Media implements BasicModel{
 	public void setLastUpdated(long last_updated) {
 		this.last_updated = last_updated;
 	}
-	
-	
+
+    @Override
+    public ListElement render() {
+        //TODO implement this, eventually
+        return null;
+    }
+
+    @Override
+    public ContentValues getParams() {
+        return null;
+    }
 	
 }

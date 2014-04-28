@@ -1,6 +1,9 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.JsonArray;
+import com.thebluealliance.androidclient.datatypes.TeamListElement;
 
 public class Team implements BasicModel{
     String 	teamKey,
@@ -80,5 +83,16 @@ public class Team implements BasicModel{
     }
     public void setLastUpdated(long last_updated) {
         this.last_updated = last_updated;
+    }
+
+    @Override
+    public TeamListElement render() {
+        //TODO return TeamListElement here
+        return null;
+    }
+
+    @Override
+    public ContentValues getParams() {
+        return null;
     }
 }
