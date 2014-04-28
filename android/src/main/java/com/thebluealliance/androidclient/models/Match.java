@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.datatypes.MatchListElement;
 import java.util.HashMap;
 
 
-public class Match {
+public class Match implements BasicModel{
     public static enum TYPE{
     	NONE,
         QUAL {

@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 
 
-public class Media {
+public class Media implements BasicModel{
 	public enum TYPE{
 		NONE,
 		YOUTUBE,
