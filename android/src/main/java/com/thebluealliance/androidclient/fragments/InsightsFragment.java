@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 /**
  * File created by phil on 4/20/14.

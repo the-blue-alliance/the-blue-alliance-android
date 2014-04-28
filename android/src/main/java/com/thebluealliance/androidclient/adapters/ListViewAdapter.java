@@ -18,12 +18,12 @@ public class ListViewAdapter extends ArrayAdapter<ListItem> {
     public ArrayList<ListItem> values;
     public ArrayList<String> keys;
 
-    public enum ItemType{
-        LIST_ITEM,HEADER_ITEM
+    public enum ItemType {
+        LIST_ITEM, HEADER_ITEM
     }
 
-    public ListViewAdapter(Context context,ArrayList<ListItem> values, ArrayList<String> keys){
-        super(context,android.R.layout.simple_list_item_1,values);
+    public ListViewAdapter(Context context, ArrayList<ListItem> values, ArrayList<String> keys) {
+        super(context, android.R.layout.simple_list_item_1, values);
         this.values = values;
         this.keys = keys;
         mInflater = LayoutInflater.from(context);
@@ -38,16 +38,14 @@ public class ListViewAdapter extends ArrayAdapter<ListItem> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = getItem(position).getView(mInflater, convertView);
-
-        return v;
+        return getItem(position).getView(getContext(), mInflater, convertView);
     }
 
-    public String getKey(int position){
+    public String getKey(int position) {
         return keys.get(position);
     }
 
-    public void updateListData(){
+    public void updateListData() {
         notifyDataSetChanged();
     }
 

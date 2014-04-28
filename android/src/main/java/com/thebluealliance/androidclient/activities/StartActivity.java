@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.app.ActionBar;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,23 +15,35 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.EventListFragment;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
+import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
+import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
-import com.thebluealliance.androidclient.fragments.TeamListFragment;
+import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
+
+import java.util.ArrayList;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class TBA_Start extends Activity implements AdapterView.OnItemClickListener {
+public class StartActivity extends FragmentActivity implements AdapterView.OnItemClickListener, ActionBar.OnNavigationListener {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
      * current dropdown position.
      */
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item",
-                                EVENT_TAG = "events",
-                                TEAM_TAG  = "teams",
-                                INSIGHTS_TAG = "insights";
+            EVENT_TAG = "events",
+            TEAM_TAG = "teams",
+            INSIGHTS_TAG = "insights";
+
+    private static final String MAIN_FRAGMENT_TAG = "mainFragment";
+
+    private int mCurrentSelectedNavigationItem = -1;
+
+    private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -45,7 +58,11 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,R.layout.nav_drawer_item, getResources().getStringArray(R.array.nav_drawer_items)));
+        ArrayList<ListItem> navDrawer = new ArrayList<ListItem>();
+        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_light));
+        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_light));
+        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_light));
+        mDrawerList.setAdapter(new ListViewAdapter(this, navDrawer, null));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -58,11 +75,14 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
+                setupActionBarForPosition(mCurrentSelectedNavigationItem);
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                resetActionBar();
+                getActionBar().setTitle("The Blue Alliance");
             }
         };
 
@@ -73,7 +93,9 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
         getActionBar().setHomeButtonEnabled(true);
 
         //default to events view
-        getFragmentManager().beginTransaction().replace(R.id.container,new EventListFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new EventsByWeekFragment(), MAIN_FRAGMENT_TAG).commit();
+        mCurrentSelectedNavigationItem = 0;
+        setupActionBarForEvents();
     }
 
     @Override
@@ -86,7 +108,7 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore the previously serialized current dropdown position.
-        if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
+        if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM) && getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST) {
             getActionBar().setSelectedNavigationItem(
                     savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
         }
@@ -108,7 +130,7 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.event_list, menu);
         return true;
@@ -131,26 +153,85 @@ public class TBA_Start extends Activity implements AdapterView.OnItemClickListen
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // Don't reload the fragment if the user selects the tab we are currently on
+        if (position == mCurrentSelectedNavigationItem) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+            return;
+        }
         Fragment fragment;
-        switch(position){
-            default:case 0: //events
-                fragment = new EventListFragment();
+        switch (position) {
+            default:
+            case 0: //events
+                fragment = new EventsByWeekFragment();
+                setupActionBarForEvents();
                 break;
             case 1: //teams
-                fragment = new TeamListFragment();
+                fragment = new AllTeamsListFragment();
+                setupActionBarForTeams();
                 break;
             case 2: //insights
                 fragment = new InsightsFragment();
+                setupActionBarForInsights();
                 break;
         }
-        getFragmentManager().beginTransaction().replace(R.id.container,fragment).commit();
-        mDrawerList.setItemChecked(position,true);
-        setTitle(getResources().getStringArray(R.array.nav_drawer_items)[position]);
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
+        mDrawerList.setItemChecked(position, true);
+        // This must be done before we lose the drawer
+        mCurrentSelectedNavigationItem = position;
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    private void resetActionBar() {
+        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        getActionBar().setDisplayShowCustomEnabled(false);
+        getActionBar().setDisplayShowTitleEnabled(true);
+    }
+
+    private void setupActionBarForPosition(int position) {
+        switch (position) {
+            case 0:
+                setupActionBarForEvents();
+                return;
+            case 1:
+                setupActionBarForTeams();
+                return;
+            case 2:
+                setupActionBarForInsights();
+        }
+    }
+
+    private void setupActionBarForEvents() {
+        resetActionBar();
+        getActionBar().setDisplayShowTitleEnabled(false);
+
+        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner, R.id.year, dropdownItems);
+        actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
+        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getActionBar().setListNavigationCallbacks(actionBarAdapter, this);
+        getActionBar().setSelectedNavigationItem(0); //TODO take this value from savedinstancestate
+    }
+
+    private void setupActionBarForTeams() {
+        resetActionBar();
+        getActionBar().setTitle("Teams");
+    }
+
+    private void setupActionBarForInsights() {
+        resetActionBar();
+        getActionBar().setTitle("Insights");
     }
 
     @Override
     public void setTitle(CharSequence title) {
         getActionBar().setTitle(title);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(int position, long id) {
+        Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        if (f instanceof ActionBarSpinnerListener) {
+            ((ActionBarSpinnerListener) f).actionBarSpinnerSelected(position, dropdownItems[position]);
+        }
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datatypes;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -11,12 +12,12 @@ import com.thebluealliance.androidclient.R;
  */
 public class EventWeekHeader extends ListHeader {
 
-    public EventWeekHeader(String title){
+    public EventWeekHeader(String title) {
         super(title);
     }
 
     @Override
-    public View getView(LayoutInflater inflater, View convertView) {
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
         View view;
         view = inflater.inflate(R.layout.event_week_header, null);
 

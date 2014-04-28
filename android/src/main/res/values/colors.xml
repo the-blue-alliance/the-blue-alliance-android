@@ -4,12 +4,15 @@
     <color name="lighter_red">#fee</color>
     <color name="light_blue">#ddf</color>
     <color name="lighter_blue">#eef</color>
+    <color name="blue">#00F</color>
     <color name="nav_divider">#FFF</color>
 
     <color name="grey">#F5F5F0</color>
+    <color name="dark_grey">#A4A4A4</color>
     <color name="white">#FFF</color>
 
     <color name="action_bar_background">#000056</color>
-    <color name="action_bar_tab_background">#000099</color>
     <color name="nav_drawer_background">#000099</color>
+
+    <color name="pager_indicator_color">#ff0057ff</color>
 </resources>
