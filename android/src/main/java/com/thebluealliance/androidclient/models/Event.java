@@ -73,4 +73,8 @@ public class Event extends SimpleEvent{
 		this.stats = stats;
 	}
 
+    public static boolean validateEventKey(String key){
+        return key.matches("^[1-9]\\d{3}[a-z]+$");
+    }
+
 }

@@ -100,7 +100,8 @@ public class SimpleEvent {
 	}
 	
 	public SimpleEvent(String eventKey, String eventName, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate, long last_updated) {
-		this.eventKey = eventKey;
+		if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        this.eventKey = eventKey;
 		this.eventName = eventName;
 		this.location = location;
 		this.eventType = eventType;
@@ -116,6 +117,7 @@ public class SimpleEvent {
 	}
 
 	public void setEventKey(String eventKey) {
+        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
 		this.eventKey = eventKey;
 	}
 
