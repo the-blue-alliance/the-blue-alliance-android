@@ -6,26 +6,26 @@
     android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
     <TextView
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:id="@+id/award_name"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/award_winner"
-        android:layout_alignParentLeft="true"
         android:singleLine="false"
-        android:text="Award"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:text="Award" />
 
     <TextView
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:id="@+id/award_winner"
-        android:gravity="right"
-        android:layout_centerVertical="true"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="right"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:singleLine="false"
-        android:text="Winner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:text="Winner" />
 
 </RelativeLayout>
