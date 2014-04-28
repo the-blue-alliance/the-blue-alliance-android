@@ -107,7 +107,7 @@ public class Match {
 
     /* Temporary constructor for fake data. Probably to be removed... */
     public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore){
-        //if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.time = "";
@@ -241,7 +241,7 @@ public class Match {
     }
 	
 	public static boolean validateMatchKey(String key) {
-		return key.matches("'^[1-9]\\d{3}[a-z]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
+		return key.matches("^[1-9]\\d{3}[a-z]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
 	}
 		
 }
