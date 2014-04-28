@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
 import java.util.HashMap;
@@ -104,6 +105,37 @@ public class Match {
 		this.last_updated = last_updated;
 	}
 
+    /* Temporary constructor for fake data. Probably to be removed... */
+    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore){
+        //if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+        this.key = key;
+        this.eventKey = key.split("_")[0];
+        this.time = "";
+        this.type = type;
+        this.alliances = new JsonObject();
+        JsonObject blueAlliance = new JsonObject();
+            blueAlliance.addProperty("score",blueScore);
+            JsonArray blueTeams = new JsonArray();
+            blueTeams.add(new JsonPrimitive("frc"+blue1));
+            blueTeams.add(new JsonPrimitive("frc"+blue2));
+            blueTeams.add(new JsonPrimitive("frc"+blue3));
+            blueAlliance.add("teams",blueTeams);
+        JsonObject redAllaince = new JsonObject();
+            redAllaince.addProperty("score",redScore);
+            JsonArray redTeams = new JsonArray();
+            redTeams.add(new JsonPrimitive("frc"+red1));
+            redTeams.add(new JsonPrimitive("frc"+red2));
+            redTeams.add(new JsonPrimitive("frc"+red3));
+            redAllaince.add("teams",redTeams);
+        alliances.add("blue",blueAlliance);
+        alliances.add("red",redAllaince);
+        this.videos = new JsonObject();
+        this.year = Integer.parseInt(key.substring(0, 3));
+        this.matchNumber = matchNumber;
+        this.setNumber = setNumber;
+        this.last_updated = -1;
+    }
+
 	public String getKey() {
 		return key;
 	}
@@ -203,8 +235,8 @@ public class Match {
         int       redScore  = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                   blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
         return new MatchListElement(true, getTitle(),
-                new String[]{redTeams.get(0).getAsString(), redTeams.get(1).getAsString(), redTeams.get(2).getAsString()},
-                new String[]{blueTeams.get(0).getAsString(), blueTeams.get(1).getAsString(), blueTeams.get(2).getAsString()},
+                new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
+                new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
                 redScore, blueScore, key);
     }
 	
