@@ -57,11 +57,71 @@ public class Database extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        String CREATE_AWARDS = "CREATE TABLE " + TABLE_AWARDS + "("
+                + Awards.KEY        + " TEXT PRIMARY KEY, "
+                + Awards.EVENTKEY   + " TEXT, "
+                + Awards.NAME       + " TEXT, "
+                + Awards.YEAR       + " INTEGER, "
+                + Awards.TYPE       + " INTEGER, "
+                + Awards.WINNER     + " TEXT, "
+                + Awards.LASTUPDATE + " TIMESTAMP "
+                + ")";
+        db.execSQL(CREATE_AWARDS);
 
+        String CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + "("
+                + Events.KEY        + " TEXT PRIMARY KEY, "
+                + Events.NAME       + " TEXT, "
+                + Events.SHORTNAME  + " TEXT, "
+                + Events.ABBREVIATION+" TEXT, "
+                + Events.TYPE       + " INTEGER, "
+                + Events.DISTRICT   + " INTEGER, "
+                + Events.START      + " TIMESTAMP, "
+                + Events.END        + " TIMESTAMP, "
+                + Events.LOCATION   + " TEXT, "
+                + Events.OFFICIAL   + " INTEGER, "
+                + Events.WEBSITE    + " TEXT , "
+                + Events.RANKINGS   + " TEXT, "
+                + Events.STATS      + " TEXT, "
+                + Events.LASTUPDATE + " TIMESTAMP"
+                + ")";
+        db.execSQL(CREATE_EVENTS);
+
+        String CREATE_MATCHES = "CREATE TABLE " + TABLE_MATCHES + "("
+                + Matches.KEY       + " TEXT PRIMARY KEY,"
+                + Matches.TYPE      + " INTEGER, "
+                + Matches.MATCHNUM  + " INTEGER, "
+                + Matches.SETNUM    + " INTEGER, "
+                + Matches.ALLIANCES + " TEXT, "
+                + Matches.TIME      + " TEXT, "
+                + Matches.VIDEOS    + " TEXT, "
+                + Matches.LASTUPDATE+ " TIMESTAMP"
+                + ")";
+        db.execSQL(CREATE_MATCHES);
+
+        String CREATE_MEDIAS = "CREATE TABLE " + TABLE_MEDIA + "("
+                + Medias.TYPE       + " INTEGER, "
+                + Medias.FOREIGNKEY + " TEXT, "
+                + Medias.DETAILS    + " TEXT, "
+                + Medias.YEAR       + " INTEGER, "
+                + Medias.TEAMKEY    + " TEXT, "
+                + Medias.LASTUPDATE + " TIMESTAMP"
+                + ")";
+        db.execSQL(CREATE_MEDIAS);
+
+        String CREATE_TEAMS = "CREATE TABLE " + TABLE_TEAMS + "("
+                + Teams.KEY         + " TEXT PRIMARY KEY, "
+                + Teams.NAME        + " TEXT, "
+                + Teams.NICKNAME    + " TEXT, "
+                + Teams.LOCATION    + " TEXT, "
+                + Teams.EVENTS      + " TEXT, "
+                + Teams.WEBSITE     + " TEXT, "
+                + Teams.LASTUPDATE  + " TIMESTAMP"
+                + ")";
+        db.execSQL(CREATE_TEAMS);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        //TODO implement some upgrade code
     }
 
     public class Awards implements DatabaseTable<Award>{
@@ -138,7 +198,7 @@ public class Database extends SQLiteOpenHelper{
                 event.setStartDate(new Date(cursor.getLong(6)));
                 event.setEndDate(new Date(cursor.getLong(7)));
                 event.setLocation(cursor.getString(8));
-                event.setOfficial(cursor.getInt(9)==1);
+                event.setOfficial(cursor.getInt(9) == 1);
                 event.setWebsite(cursor.getString(10));
                 event.setWebcasts(JSONManager.getasJsonArray(cursor.getString(11)));
                 event.setStats(JSONManager.getasJsonObject(cursor.getString(12)));
