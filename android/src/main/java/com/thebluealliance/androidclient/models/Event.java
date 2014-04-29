@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
 
 import java.text.DateFormat;
@@ -14,6 +15,9 @@ import java.util.Date;
 
 public class Event implements BasicModel{
 
+    /* Do not insert any new entries above the existing enums!!!
+     * Things depend on their ordinal values, so you can only to the bottom of the list
+     */
     public static enum TYPE{
         NONE,
         REGIONAL,
@@ -85,22 +89,25 @@ public class Event implements BasicModel{
 
     String 		eventKey,
                 eventName,
-                location;
+                location,
+                shortName,
+                abbreviation,
+                website;
     TYPE		eventType;
     DISTRICT	eventDistrict;
     Date		startDate,
                 endDate;
     boolean		official;
     long		last_updated;
-	String 		website;
-	JsonArray 	matches,
-				rankings,
+	JsonArray 	rankings,
 				webcasts;
 	JsonObject	stats;
 	
 	public Event() {
         this.eventKey = "";
         this.eventName = "";
+        this.shortName = "";
+        this.abbreviation = "";
         this.location = "";
         this.eventType = TYPE.NONE;
         this.eventDistrict = DISTRICT.NONE;
@@ -109,17 +116,18 @@ public class Event implements BasicModel{
         this.official = false;
         this.last_updated = -1;
 		website = "";
-		matches = new JsonArray();
 		rankings = new JsonArray();
 		webcasts = new JsonArray();
 		stats = new JsonObject();
 	}
 	
-	public Event(String eventKey, String eventName, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate, 
-				 String website, JsonArray matches, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
+	public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
+				 String website, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
         if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
         this.eventName = eventName;
+        this.shortName = shortName;
+        this.abbreviation = abbreviation;
         this.location = location;
         this.eventType = eventType;
         this.eventDistrict = eventDistrict;
@@ -128,7 +136,6 @@ public class Event implements BasicModel{
         this.official = official;
         this.last_updated = last_updated;
         this.website = website;
-		this.matches = matches;
 		this.rankings = rankings;
 		this.webcasts = webcasts;
 		this.stats = stats;
@@ -140,14 +147,6 @@ public class Event implements BasicModel{
 
 	public void setWebsite(String website) {
 		this.website = website;
-	}
-
-	public JsonArray getMatches() {
-		return matches;
-	}
-
-	public void setMatches(JsonArray matches) {
-		this.matches = matches;
 	}
 
 	public JsonArray getRankings() {
@@ -273,6 +272,22 @@ public class Event implements BasicModel{
         this.official = official;
     }
 
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
     public long getLastUpdated() {
         return last_updated;
     }
@@ -289,6 +304,23 @@ public class Event implements BasicModel{
 
     @Override
     public ContentValues getParams() {
-        return null;
+        ContentValues values = new ContentValues();
+        values.put(Database.Events.KEY,eventKey);
+        values.put(Database.Events.NAME,eventName);
+        values.put(Database.Events.SHORTNAME,shortName);
+        values.put(Database.Events.ABBREVIATION,abbreviation);
+        values.put(Database.Events.LOCATION,location);
+        values.put(Database.Events.WEBSITE,website);
+        values.put(Database.Events.TYPE,eventType.ordinal());
+        values.put(Database.Events.DISTRICT,eventDistrict.ordinal());
+        values.put(Database.Events.START,startDate.getTime());
+        values.put(Database.Events.END,endDate.getTime());
+        values.put(Database.Events.OFFICIAL,official?1:0);
+        values.put(Database.Events.RANKINGS,rankings.toString());
+        values.put(Database.Events.WEBCASTS,website.toString());
+        values.put(Database.Events.STATS,stats.toString());
+        values.put(Database.Events.LASTUPDATE,last_updated);
+
+        return values;
     }
 }

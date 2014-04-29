@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.models;
 import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.TeamListElement;
 
 public class Team implements BasicModel{
@@ -93,6 +94,14 @@ public class Team implements BasicModel{
 
     @Override
     public ContentValues getParams() {
-        return null;
+        ContentValues values = new ContentValues();
+        values.put(Database.Teams.KEY,teamKey);
+        values.put(Database.Teams.NICKNAME,nickname);
+        values.put(Database.Teams.NAME,fullName);
+        values.put(Database.Teams.LOCATION,location);
+        values.put(Database.Teams.WEBSITE,website);
+        values.put(Database.Teams.EVENTS,events.toString());
+        values.put(Database.Teams.LASTUPDATE,last_updated);
+        return values;
     }
 }

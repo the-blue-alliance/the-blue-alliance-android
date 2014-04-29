@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
 import java.util.HashMap;
@@ -244,7 +245,17 @@ public class Match implements BasicModel{
 
     @Override
     public ContentValues getParams() {
-        return null;
+        ContentValues values = new ContentValues();
+        values.put(Database.Matches.KEY,key);
+        values.put(Database.Matches.TIME,time);
+        values.put(Database.Matches.TYPE,type.ordinal());
+        values.put(Database.Matches.ALLIANCES,alliances.toString());
+        values.put(Database.Matches.VIDEOS,videos.toString());
+        values.put(Database.Matches.MATCHNUM,matchNumber);
+        values.put(Database.Matches.SETNUM,setNumber);
+        values.put(Database.Matches.LASTUPDATE,last_updated);
+
+        return values;
     }
 
     public static boolean validateMatchKey(String key) {

@@ -1,17 +1,22 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.SimpleEvent;
+import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * File created by phil on 4/28/14.
@@ -60,6 +65,11 @@ public class Database extends SQLiteOpenHelper{
     }
 
     public class Awards implements DatabaseTable<Award>{
+
+        /* Awards are not yet implemented yet in the API.
+         * So we can hang off in implementing this class, for now
+         */
+
         public static final String  KEY                 = "awardKey",       //text
                                     NAME                = "awardName",      //text
                                     YEAR                = "year",           //int
@@ -79,22 +89,12 @@ public class Database extends SQLiteOpenHelper{
         }
 
         @Override
-        public ArrayList<Award> getAll() {
-            return null;
-        }
-
-        @Override
         public boolean exists(String key) {
             return false;
         }
 
         @Override
         public int update(Award in) {
-            return 0;
-        }
-
-        @Override
-        public int delete(String key) {
             return 0;
         }
     }
@@ -105,7 +105,6 @@ public class Database extends SQLiteOpenHelper{
                                     ABBREVIATION        = "eventAbbrev",    //text
                                     TYPE                = "eventType",      //int (from event types enum)
                                     DISTRICT            = "eventDistrict",  //int (from district enum)
-                                    YEAR                = "eventYear",      //int
                                     START               = "eventStart",     //timestamp
                                     END                 = "eventEnd",       //timestamp
                                     LOCATION            = "location",       //text
@@ -118,36 +117,74 @@ public class Database extends SQLiteOpenHelper{
 
         @Override
         public long add(Event in) {
-            return 0;
+            if(!exists(in.getEventKey())){
+                return db.insert(TABLE_EVENTS, null, in.getParams());
+            }else{
+                return update(in);
+            }
         }
-
         @Override
         public Event get(String key) {
-            return null;
-        }
+            Cursor cursor = db.query(TABLE_EVENTS,new String[]{KEY,NAME,SHORTNAME,ABBREVIATION,TYPE,DISTRICT,START,END,LOCATION,OFFICIAL,WEBSITE,WEBCASTS,RANKINGS,STATS},
+                    KEY + "=?",new String[]{key},null,null,null,null);
+            if(cursor != null && cursor.moveToFirst()){
+                Event event = new Event();
+                event.setEventKey(cursor.getString(0));
+                event.setEventName(cursor.getString(1));
+                event.setShortName(cursor.getString(2));
+                event.setAbbreviation(cursor.getString(3));
+                event.setEventType(Event.TYPE.values()[cursor.getInt(4)]);
+                event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(5)]);
+                event.setStartDate(new Date(cursor.getLong(6)));
+                event.setEndDate(new Date(cursor.getLong(7)));
+                event.setLocation(cursor.getString(8));
+                event.setOfficial(cursor.getInt(9)==1);
+                event.setWebsite(cursor.getString(10));
+                event.setWebcasts(JSONManager.getasJsonArray(cursor.getString(11)));
+                event.setStats(JSONManager.getasJsonObject(cursor.getString(12)));
+                event.setLastUpdated(cursor.getLong(13));
 
+                return event;
+            }else{
+                Log.w(Constants.LOG_TAG,"Failed to find event in database with key "+key);
+                return null;
+            }
+        }
+        /* Only get some of the details for this event */
         public SimpleEvent getSimple(String key){
+            Cursor cursor = db.query(TABLE_EVENTS,new String[]{KEY,NAME,TYPE,DISTRICT,START,END,LOCATION,OFFICIAL,STATS},
+                    KEY + "=?",new String[]{key},null,null,null,null);
+            if(cursor != null && cursor.moveToFirst()){
+                SimpleEvent event = new SimpleEvent();
+                event.setEventKey(cursor.getString(0));
+                event.setEventName(cursor.getString(1));
+                event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
+                event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(3)]);
+                event.setStartDate(new Date(cursor.getLong(4)));
+                event.setEndDate(new Date(cursor.getLong(5)));
+                event.setLocation(cursor.getString(6));
+                event.setOfficial(cursor.getInt(7) == 1);
+                event.setLastUpdated(cursor.getLong(8));
+
+                return event;
+            }else{
+                Log.w(Constants.LOG_TAG,"Failed to find event in database with key "+key);
+                return null;
+            }
+        }
+        public ArrayList<Event> getAll(int week){
+            //return all events happening during the given competition week
+            //TODO implement this (and think of a good way to calculate the time bounds for a given competition week (week of year - 8)
             return null;
         }
-
-        @Override
-        public ArrayList<Event> getAll() {
-            return null;
-        }
-
         @Override
         public boolean exists(String key) {
-            return false;
+            Cursor cursor = db.query(TABLE_EVENTS,new String[]{KEY},KEY + "=?", new String[]{key},null,null,null,null);
+            return cursor != null && cursor.moveToFirst();
         }
-
         @Override
         public int update(Event in) {
-            return 0;
-        }
-
-        @Override
-        public int delete(String key) {
-            return 0;
+            return db.update(TABLE_EVENTS,in.getParams(),KEY + "=?",new String[]{in.getEventKey()});
         }
     }
     public class Matches implements DatabaseTable<Match>{
@@ -162,35 +199,49 @@ public class Database extends SQLiteOpenHelper{
 
         @Override
         public long add(Match in) {
-            return 0;
+            if(!exists(in.getKey())){
+                return db.insert(TABLE_MATCHES, null, in.getParams());
+            }else{
+                return update(in);
+            }
         }
-
         @Override
         public Match get(String key) {
-            return null;
-        }
+            Cursor cursor = db.query(TABLE_MATCHES,new String[]{KEY,TYPE,MATCHNUM,SETNUM,ALLIANCES,TIME,VIDEOS,LASTUPDATE},
+                    KEY + "=?",new String[]{key},null,null,null,null);
+            if(cursor != null && cursor.moveToFirst()){
+                Match match = new Match();
+                match.setKey(cursor.getString(0));
+                match.setType(Match.TYPE.values()[cursor.getInt(1)]);
+                match.setMatchNumber(cursor.getInt(2));
+                match.setSetNumber(cursor.getInt(3));
+                match.setAlliances(JSONManager.getasJsonObject(cursor.getString(4)));
+                match.setTime(cursor.getString(5));
+                match.setVideos(JSONManager.getasJsonObject(cursor.getString(6)));
+                match.setLastUpdated(cursor.getLong(7));
 
-        @Override
-        public ArrayList<Match> getAll() {
-            return null;
+                return match;
+            }else{
+                Log.w(Constants.LOG_TAG,"Failed to find match in database with key "+key);
+                return null;
+            }
         }
-
         @Override
         public boolean exists(String key) {
-            return false;
+            Cursor cursor = db.query(TABLE_MATCHES,new String[]{KEY},KEY + "=?", new String[]{key},null,null,null,null);
+            return cursor != null && cursor.moveToFirst();
         }
-
         @Override
         public int update(Match in) {
-            return 0;
-        }
-
-        @Override
-        public int delete(String key) {
-            return 0;
+            return db.update(TABLE_MATCHES,in.getParams(),KEY + "=?",new String[]{in.getKey()});
         }
     }
     public class Medias implements DatabaseTable<Media>{
+
+        /* NOT YET IMPLEMENTED IN API
+         * Holding off until it is...
+         */
+
         public static final String  TYPE                = "mediaType",      //int (from enum)
                                     FOREIGNKEY          = "mediaKey",       //text
                                     DETAILS             = "details",        //text, json dict of details
@@ -209,11 +260,6 @@ public class Database extends SQLiteOpenHelper{
         }
 
         @Override
-        public ArrayList<Media> getAll() {
-            return null;
-        }
-
-        @Override
         public boolean exists(String key) {
             return false;
         }
@@ -222,52 +268,69 @@ public class Database extends SQLiteOpenHelper{
         public int update(Media in) {
             return 0;
         }
-
-        @Override
-        public int delete(String key) {
-            return 0;
-        }
     }
     public class Teams implements DatabaseTable<Team>{
         public static final String  KEY                 = "teamKey",        //text
                                     NAME                = "teamName",       //text (full team name)
                                     NICKNAME            = "teamNick",       //text (team nickname)
                                     LOCATION            = "location",       //text
-                                    EVENTS              = "teamEvents",      //text (json array of events, with dict of matches competed in)
+                                    EVENTS              = "teamEvents",     //text (json array of events, with dict of matches competed in)
+                                    WEBSITE             = "teamWebsite",    //text
                                     LASTUPDATE          = "lastUpdated";    //timestamp
 
         @Override
         public long add(Team in) {
-            return 0;
+            if(!exists(in.getTeamKey())){
+                return db.insert(TABLE_TEAMS,null,in.getParams());
+            }else{
+                return update(in);
+            }
         }
-
         @Override
         public Team get(String key) {
-            return null;
-        }
+            Cursor cursor = db.query(TABLE_MATCHES, new String[]{KEY, NAME, NICKNAME, LOCATION, WEBSITE, EVENTS, LASTUPDATE},
+                    KEY + "=?",new String[]{key},null, null, null, null);
+            if(cursor != null && cursor.moveToFirst()){
+                Team team = new Team();
+                team.setTeamKey(cursor.getString(0));
+                team.setFullName(cursor.getString(1));
+                team.setNickname(cursor.getString(2));
+                team.setLocation(cursor.getString(3));
+                team.setWebsite(cursor.getString(4));
+                team.setEvents(JSONManager.getasJsonArray(cursor.getString(5)));
+                team.setLastUpdated(cursor.getLong(6));
 
-        public Team getSimple(String key){
-            return null;
+                return team;
+            }else{
+                Log.w(Constants.LOG_TAG,"Failed to find team in database with key "+key);
+                return null;
+            }
         }
+        public SimpleTeam getSimple(String key){
+            Cursor cursor = db.query(TABLE_MATCHES, new String[]{KEY, NAME, NICKNAME, LOCATION, LASTUPDATE},
+                    KEY + "=?",new String[]{key},null, null, null, null);
+            if(cursor != null && cursor.moveToFirst()){
+                SimpleTeam team = new SimpleTeam();
+                team.setTeamKey(cursor.getString(0));
+                team.setFullName(cursor.getString(1));
+                team.setNickname(cursor.getString(2));
+                team.setLocation(cursor.getString(3));
+                team.setLastUpdated(cursor.getLong(4));
 
-        @Override
-        public ArrayList<Team> getAll() {
-            return null;
+                return team;
+            }else{
+                Log.w(Constants.LOG_TAG,"Failed to find team in database with key "+key);
+                return null;
+            }
         }
-
         @Override
         public boolean exists(String key) {
-            return false;
+            Cursor cursor = db.query(TABLE_TEAMS,new String[]{KEY},KEY + "=?",new String[]{key},null,null,null,null);
+            return cursor != null && cursor.moveToFirst();
         }
-
         @Override
         public int update(Team in) {
-            return 0;
-        }
-
-        @Override
-        public int delete(String key) {
-            return 0;
+            return db.update(TABLE_TEAMS,in.getParams(),KEY + "=?",new String[]{in.getTeamKey()});
         }
     }
 }

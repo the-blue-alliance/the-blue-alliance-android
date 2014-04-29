@@ -33,7 +33,7 @@ public class EventDeserializer implements JsonDeserializer<Event>{
 		
 		//event.setWebsite(""); /* NOT EXPOSED BY API YET */
 		if(object.has("matches")) {
-			event.setMatches(object.get("matches").getAsJsonArray());
+			//TODO add the matches into the db as their own model/table
 		}
 		if(object.has("webcasts")) {
 			//event.setWebcasts(); /* NOT EXPOSED BY API YET */
