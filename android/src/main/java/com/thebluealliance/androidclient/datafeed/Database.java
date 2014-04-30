@@ -280,7 +280,7 @@ public class Database extends SQLiteOpenHelper{
                 match.setAlliances(JSONManager.getasJsonObject(cursor.getString(4)));
                 match.setTimeString(cursor.getString(5));
                 match.setTime(cursor.getLong(6));
-                match.setVideos(JSONManager.getasJsonObject(cursor.getString(7)));
+                match.setVideos(JSONManager.getasJsonArray(cursor.getString(7)));
                 match.setLastUpdated(cursor.getLong(8));
 
                 return match;

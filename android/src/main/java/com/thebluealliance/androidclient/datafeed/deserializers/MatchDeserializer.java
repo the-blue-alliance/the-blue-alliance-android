@@ -24,8 +24,7 @@ public class MatchDeserializer implements JsonDeserializer<Match>{
 		match.setAlliances(object.get("alliances").getAsJsonObject());
 		match.setTimeString(object.get("time_string").getAsString());
         match.setTime(object.get("time").getAsLong());
-		match.setVideos(object.get("videos").getAsJsonObject());
-		match.setVideos(new JsonObject());
+		match.setVideos(object.get("videos").getAsJsonArray());
 		match.setLastUpdated(System.currentTimeMillis());
 		
 		return null;

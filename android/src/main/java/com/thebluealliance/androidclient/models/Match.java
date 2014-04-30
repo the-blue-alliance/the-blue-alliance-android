@@ -75,8 +75,8 @@ public class Match implements BasicModel{
 				eventKey,
 				timeString;
 	Match.TYPE	type;
-	JsonObject 	alliances,
-				videos;
+	JsonObject 	alliances;
+    JsonArray   videos;
 	int 		year,
 				matchNumber,
 				setNumber;
@@ -90,14 +90,14 @@ public class Match implements BasicModel{
         this.time = new Date(0);
 		this.type = TYPE.NONE;
 		this.alliances = new JsonObject();
-		this.videos = new JsonObject();
+		this.videos = new JsonArray();
 		this.year = -1;
 		this.matchNumber = -1;
 		this.setNumber = -1;
 		this.last_updated = -1;
 	}
 	
-	public Match(String key, TYPE type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonObject videos, long last_updated) {
+	public Match(String key, TYPE type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonArray videos, long last_updated) {
 		if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
 		this.key = key;
 		this.eventKey = key.split("_")[0];
@@ -137,7 +137,7 @@ public class Match implements BasicModel{
             redAllaince.add("teams",redTeams);
         alliances.add("blue",blueAlliance);
         alliances.add("red",redAllaince);
-        this.videos = new JsonObject();
+        this.videos = new JsonArray();
         this.year = Integer.parseInt(key.substring(0, 3));
         this.matchNumber = matchNumber;
         this.setNumber = setNumber;
@@ -199,11 +199,11 @@ public class Match implements BasicModel{
 		this.alliances = alliances;
 	}
 
-	public JsonObject getVideos() {
+	public JsonArray getVideos() {
 		return videos;
 	}
 
-	public void setVideos(JsonObject videos) {
+	public void setVideos(JsonArray videos) {
 		this.videos = videos;
 	}
 
