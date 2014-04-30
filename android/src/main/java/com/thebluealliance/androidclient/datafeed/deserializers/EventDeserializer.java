@@ -16,11 +16,7 @@ public class EventDeserializer implements JsonDeserializer<Event>{
 	public Event deserialize(final JsonElement json, Type typeOf, JsonDeserializationContext context) throws JsonParseException {
 		final JsonObject object = json.getAsJsonObject();
 		final Event event = new Event();
-		
-		/* TODO there should be a way to use inheritance to do this section with SimpleEventDeserializer
-		 * But I'm not sure how to do it without constructing a dummy SimpleTeam.
-		 * There's probably a way, but it isn't coming to me at the moment...
-		 */
+
 		event.setEventKey(object.get("key").getAsString());
 		event.setEventName(object.get("name").getAsString());
 		event.setLocation(object.get("location").getAsString());
@@ -39,7 +35,7 @@ public class EventDeserializer implements JsonDeserializer<Event>{
 			//event.setWebcasts(); /* NOT EXPOSED BY API YET */
 		}
 		if(object.has("rankings")) {
-			//event.setRankings(); /* NOT EXPOSED BY API YET */
+			event.setRankings(object.get("rankings").getAsJsonArray()); /* Will be exposed to API via pull #1011 */
 		}
 		if(object.has("stats")) {
 			event.setStats(object.get("stats").getAsJsonObject());
