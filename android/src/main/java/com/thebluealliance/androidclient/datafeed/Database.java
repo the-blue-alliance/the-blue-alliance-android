@@ -92,7 +92,8 @@ public class Database extends SQLiteOpenHelper{
                 + Matches.MATCHNUM  + " INTEGER, "
                 + Matches.SETNUM    + " INTEGER, "
                 + Matches.ALLIANCES + " TEXT, "
-                + Matches.TIME      + " TEXT, "
+                + Matches.TIMESTRING+ " TEXT, "
+                + Matches.TIMESTAMP + " TIMESTAMP, "
                 + Matches.VIDEOS    + " TEXT, "
                 + Matches.LASTUPDATE+ " TIMESTAMP"
                 + ")";
@@ -253,9 +254,10 @@ public class Database extends SQLiteOpenHelper{
                                     MATCHNUM            = "matchNumber",    //int
                                     SETNUM              = "matchSet",       //int
                                     ALLIANCES           = "alliances",      //text (flattened json dict of some sort, depends on year)
-                                    TIME                = "matchTime",      //time string from schedule
+                                    TIMESTRING          = "matchTimeString",//time string from schedule
+                                    TIMESTAMP           = "matchTime",      //UNIX timestamp
                                     VIDEOS              = "matchVideo",     //text (flattened json array)
-                                    LASTUPDATE          = "lastUpdated";   //timestamp
+                                    LASTUPDATE          = "lastUpdated";    //timestamp
 
         @Override
         public long add(Match in) {
@@ -267,7 +269,7 @@ public class Database extends SQLiteOpenHelper{
         }
         @Override
         public Match get(String key) {
-            Cursor cursor = db.query(TABLE_MATCHES,new String[]{KEY,TYPE,MATCHNUM,SETNUM,ALLIANCES,TIME,VIDEOS,LASTUPDATE},
+            Cursor cursor = db.query(TABLE_MATCHES,new String[]{KEY,TYPE,MATCHNUM,SETNUM,ALLIANCES,TIMESTRING,TIMESTAMP, VIDEOS,LASTUPDATE},
                     KEY + "=?",new String[]{key},null,null,null,null);
             if(cursor != null && cursor.moveToFirst()){
                 Match match = new Match();
@@ -276,9 +278,10 @@ public class Database extends SQLiteOpenHelper{
                 match.setMatchNumber(cursor.getInt(2));
                 match.setSetNumber(cursor.getInt(3));
                 match.setAlliances(JSONManager.getasJsonObject(cursor.getString(4)));
-                match.setTime(cursor.getString(5));
-                match.setVideos(JSONManager.getasJsonObject(cursor.getString(6)));
-                match.setLastUpdated(cursor.getLong(7));
+                match.setTimeString(cursor.getString(5));
+                match.setTime(cursor.getLong(6));
+                match.setVideos(JSONManager.getasJsonObject(cursor.getString(7)));
+                match.setLastUpdated(cursor.getLong(8));
 
                 return match;
             }else{

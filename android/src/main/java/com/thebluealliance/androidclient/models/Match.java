@@ -8,6 +8,7 @@ import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -72,19 +73,21 @@ public class Match implements BasicModel{
     
 	String		key,
 				eventKey,
-				time;
+				timeString;
 	Match.TYPE	type;
 	JsonObject 	alliances,
 				videos;
 	int 		year,
 				matchNumber,
 				setNumber;
+    Date        time;
 	long		last_updated;
 	
 	public Match() {
 		this.key = "";
 		this.eventKey = "";
-		this.time = "";
+		this.timeString = "";
+        this.time = new Date(0);
 		this.type = TYPE.NONE;
 		this.alliances = new JsonObject();
 		this.videos = new JsonObject();
@@ -94,11 +97,12 @@ public class Match implements BasicModel{
 		this.last_updated = -1;
 	}
 	
-	public Match(String key, TYPE type, int matchNumber, int setNumber, JsonObject alliances, String time, JsonObject videos, long last_updated) {
+	public Match(String key, TYPE type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonObject videos, long last_updated) {
 		if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
 		this.key = key;
 		this.eventKey = key.split("_")[0];
-		this.time = time;
+		this.timeString = timeString;
+        this.time = new Date(timestamp);
 		this.type = type;
 		this.alliances = alliances;
 		this.videos = videos;
@@ -113,7 +117,8 @@ public class Match implements BasicModel{
         if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
         this.key = key;
         this.eventKey = key.split("_")[0];
-        this.time = "";
+        this.timeString = "";
+        this.time = new Date(0);
         this.type = type;
         this.alliances = new JsonObject();
         JsonObject blueAlliance = new JsonObject();
@@ -154,13 +159,25 @@ public class Match implements BasicModel{
 		return eventKey;
 	}
 
-	public String getTime() {
-		return time;
+	public String getTimeString() {
+		return timeString;
 	}
 
-	public void setTime(String time) {
-		this.time = time;
+    public void setTimeString(String timeString) {
+		this.timeString = timeString;
 	}
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    public void setTime(long timestamp){
+        this.time = new Date(timestamp);
+    }
 
 	public Match.TYPE getType() {
 		return type;
@@ -247,7 +264,8 @@ public class Match implements BasicModel{
     public ContentValues getParams() {
         ContentValues values = new ContentValues();
         values.put(Database.Matches.KEY,key);
-        values.put(Database.Matches.TIME,time);
+        values.put(Database.Matches.TIMESTRING,timeString);
+        values.put(Database.Matches.TIMESTAMP,time.getTime());
         values.put(Database.Matches.TYPE,type.ordinal());
         values.put(Database.Matches.ALLIANCES,alliances.toString());
         values.put(Database.Matches.VIDEOS,videos.toString());

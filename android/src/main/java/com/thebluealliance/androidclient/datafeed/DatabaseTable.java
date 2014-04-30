@@ -9,7 +9,7 @@ public interface DatabaseTable<T extends BasicModel> {
     /**
      * Adds something to the database
      * @param in Model to be added to the database
-     * @return Sucess code from <a href="http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)">insert method</a>
+     * @return Success code from <a href="http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)">insert method</a>
      */
     public long add(T in);
 
@@ -31,7 +31,7 @@ public interface DatabaseTable<T extends BasicModel> {
      * Updates the given model in the database.
      * Model is found by key (so that obviously can't be changed, but all else can) and then updated
      * @param in Model to be updated
-     * @return Sucess code from <a href="http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)">update method</a>, or -1 if nonexistent
+     * @return Success code from <a href="http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html#insert(java.lang.String, java.lang.String, android.content.ContentValues)">update method</a>, or -1 if nonexistent
      */
     public int update(T in);
 
