@@ -22,11 +22,9 @@ public class MatchDeserializer implements JsonDeserializer<Match>{
 		match.setMatchNumber(object.get("match_number").getAsInt());
 		match.setSetNumber(object.get("set_number").getAsInt());
 		match.setAlliances(object.get("alliances").getAsJsonObject());
-		/* NOT YET EXPOSED TO THE API, uncomment below when it is
-		 * match.setTime(object.get("time").getAsString());
-		 * match.setVideos(object.get("videos").getAsJsonObject);
-		 */
-		match.setTime("");
+		match.setTimeString(object.get("time_string").getAsString());
+        match.setTime(object.get("time").getAsLong());
+		match.setVideos(object.get("videos").getAsJsonObject());
 		match.setVideos(new JsonObject());
 		match.setLastUpdated(System.currentTimeMillis());
 		
