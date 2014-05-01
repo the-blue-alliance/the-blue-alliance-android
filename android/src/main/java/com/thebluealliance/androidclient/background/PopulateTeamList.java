@@ -39,7 +39,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, Void> {
         if (start >= 0 && end < 1000) {
             teamKeys.add("frc177");
             teams.add(new TeamListElement("frc177", 177, "Bobcat Robotics", "South Windsor, CT"));
-            teamKeys.add("frc 254");
+            teamKeys.add("frc254");
             teams.add(new TeamListElement("frc254", 254, "Teh Chezy Pofs", "San Jose, CA"));
         }
         if (start >= 1000 && end < 2000) {

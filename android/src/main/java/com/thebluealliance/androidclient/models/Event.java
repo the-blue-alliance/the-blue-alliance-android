@@ -100,10 +100,11 @@ public class Event implements BasicModel{
     boolean		official;
     long		last_updated;
 	JsonArray 	rankings,
-				webcasts;
-	JsonObject	stats;
-	
-	public Event() {
+            webcasts,
+            teams;
+    JsonObject	stats;
+
+    public Event() {
         this.eventKey = "";
         this.eventName = "";
         this.shortName = "";
@@ -118,11 +119,12 @@ public class Event implements BasicModel{
 		website = "";
 		rankings = new JsonArray();
 		webcasts = new JsonArray();
-		stats = new JsonObject();
+        teams = new JsonArray();
+        stats = new JsonObject();
 	}
-	
-	public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
-				 String website, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
+
+    public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
+                 String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
         if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
         this.eventName = eventName;
@@ -139,7 +141,8 @@ public class Event implements BasicModel{
 		this.rankings = rankings;
 		this.webcasts = webcasts;
 		this.stats = stats;
-	}
+        this.teams = teams;
+    }
 
 	public String getWebsite() {
 		return website;
@@ -286,6 +289,14 @@ public class Event implements BasicModel{
 
     public void setShortName(String shortName) {
         this.shortName = shortName;
+    }
+
+    public void setTeams(JsonArray teams) {
+        this.teams = teams;
+    }
+
+    public JsonArray getTeams() {
+        return teams;
     }
 
     public long getLastUpdated() {

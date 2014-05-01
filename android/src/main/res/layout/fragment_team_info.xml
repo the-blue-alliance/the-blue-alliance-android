@@ -25,8 +25,7 @@
             <TextView
                 android:id="@+id/team_name"
                 style="@style/InfoItemTextStyle"
-                android:layout_toRightOf="@id/team_name_icon"
-                android:text="Teh Chezy Pofs" />
+                android:layout_toRightOf="@id/team_name_icon" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -54,8 +53,7 @@
                 android:id="@+id/team_location"
                 style="@style/InfoItemTextStyle"
                 android:layout_toRightOf="@id/team_location_label"
-                android:layout_toLeftOf="@+id/team_location_nav_arrow"
-                android:text="San Jose, CA" />
+                android:layout_toLeftOf="@+id/team_location_nav_arrow" />
 
             <ImageView
                 android:id="@id/team_location_nav_arrow"
@@ -75,8 +73,7 @@
             <TextView
                 android:id="@+id/team_full_name"
                 style="@style/InfoItemTextStyle"
-                android:layout_toRightOf="@id/team_full_name_icon"
-                android:text="aka this name is too long to fit comfortably here" />
+                android:layout_toRightOf="@id/team_full_name_icon" />
         </RelativeLayout>
 
         <LinearLayout
@@ -113,9 +110,10 @@
             style="@style/InfoItemStyle"
             android:clickable="true"
             android:focusable="true"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="?android:attr/selectableItemBackground"
+            android:visibility="gone">
 
-            <ImageView
+        <ImageView
                 android:id="@+id/team_current_event_icon"
                 style="@style/InfoItemImageStyle"
                 android:src="@drawable/ic_action_event" />
@@ -144,9 +142,10 @@
 
         <RelativeLayout
             android:id="@+id/team_current_matches_container"
-            style="@style/InfoItemStyle">
+            style="@style/InfoItemStyle"
+            android:visibility="gone">
 
-            <ImageView
+        <ImageView
                 android:id="@+id/team_current_match_icon"
                 style="@style/InfoItemImageStyle"
                 android:src="@drawable/ic_action_time" />

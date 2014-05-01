@@ -10,12 +10,18 @@ import android.widget.ListView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.SimpleEvent;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * File created by phil on 4/20/14.
@@ -126,7 +132,26 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             return null;
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
-            // Return a list of all events for a team in a given year
+            try {
+                ArrayList<SimpleEvent> eventsArray = DataManager.getEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
+                Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
+                Event.TYPE lastType = null;
+                for (SimpleEvent event : eventsArray) {
+                    Event.TYPE currentType = event.getEventType();
+                    // TODO: finish implementing this once we have event type info available
+                    if (currentType != lastType) {
+                        eventKeys.add(currentType.toString());
+                        events.add(new EventWeekHeader("HEADER GOES HERE"));
+                    }
+                    eventKeys.add(event.getEventKey());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
+                    events.add(new EventListElement(event.getEventKey(), event.getEventName(), dateFormat.format(event.getStartDate()) + " to " + dateFormat.format(event.getEndDate()), event.getLocation()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+            return null;
         } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
             // Return a list of all events for a given team in a given week in a given year
         }
