@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
 
     TABLE_AWARDS = "awards",
@@ -113,6 +113,7 @@ public class Database extends SQLiteOpenHelper {
                 + Events.LOCATION + " TEXT, "
                 + Events.OFFICIAL + " INTEGER, "
                 + Events.WEBSITE + " TEXT , "
+                + Events.WEBCASTS + " TEXT, "
                 + Events.RANKINGS + " TEXT, "
                 + Events.STATS + " TEXT, "
                 + Events.TEAMS + " TEXT, "
@@ -157,7 +158,15 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //TODO implement some upgrade code
+        // on upgrade drop older tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_AWARDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCHES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIA);
+
+        // create new tables
+        onCreate(db);
     }
 
     /*
@@ -238,6 +247,12 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public void add(ArrayList<SimpleEvent> events){
+            for(SimpleEvent e:events){
+                add(e);
+            }
+        }
+
         @Override
         public Event get(String key) {
             Cursor cursor = db.query(TABLE_EVENTS, new String[]{KEY, NAME, SHORTNAME, ABBREVIATION, TYPE, DISTRICT, START, END, LOCATION, OFFICIAL, WEBSITE, WEBCASTS, RANKINGS, STATS, TEAMS, LASTUPDATE},
@@ -291,10 +306,36 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public ArrayList<Event> getAll(int week) {
+        public ArrayList<SimpleEvent> getAll(int year, int week) {
             //return all events happening during the given competition week
-            //TODO implement this (and think of a good way to calculate the time bounds for a given competition week (week of year - 8)
-            return null;
+            Date start = Event.dateForCompetitionWeek(year, week);
+            Date end = Event.dateForCompetitionWeek(year, week+1);
+            Log.d("db","Getting events between "+start.getTime()+" - "+end.getTime());
+            ArrayList<SimpleEvent> events = new ArrayList<>();
+            Cursor cursor = db.query(TABLE_EVENTS, new String[]{KEY, NAME, SHORTNAME, ABBREVIATION, TYPE, DISTRICT, START, END, LOCATION, OFFICIAL, LASTUPDATE},
+                    START + ">DATETIME(?,'unixepoch') AND "+START+"<DATETIME(?,'unixepoch')",
+                    new String[]{Long.toString(start.getTime()/1000),Long.toString(end.getTime()/1000)}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    SimpleEvent event = new SimpleEvent();
+                    event.setEventKey(cursor.getString(0));
+                    event.setEventName(cursor.getString(1));
+                    event.setShortName(cursor.getString(2));
+                    event.setAbbreviation(cursor.getString(3));
+                    event.setEventType(Event.TYPE.values()[cursor.getInt(4)]);
+                    event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(5)]);
+                    event.setStartDate(cursor.getString(6));
+                    event.setEndDate(cursor.getString(7));
+                    event.setLocation(cursor.getString(8));
+                    event.setOfficial(cursor.getInt(9) == 1);
+                    event.setLastUpdated(cursor.getLong(10));
+
+                    events.add(event);
+                }while(cursor.moveToNext());
+            } else {
+                Log.w(Constants.LOG_TAG, "Failed to find event in database during week " + week);
+            }
+            return events;
         }
 
         @Override

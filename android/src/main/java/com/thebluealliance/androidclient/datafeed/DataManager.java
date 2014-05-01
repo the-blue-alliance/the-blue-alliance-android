@@ -66,6 +66,40 @@ public class DataManager {
         return events;
     }
 
+    public static ArrayList<SimpleEvent> getEventsForCompetitionWeek(Context c, int year, int week) throws NoDataException{
+        Database db = Database.getInstance(c);
+        ArrayList<SimpleEvent> databaseEvents = db.getEventsTable().getAll(year,week);
+        boolean existsInDb = databaseEvents.size()>0;
+        boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
+        if (existsInDb) {
+            if (connectedToInternet) {
+                // We are connected to the internet and have a record in the database.
+                // Check if the local copy is up-to-date; if it is, return it.
+                // Otherwise, requery the API, cache the new data, and return the data.
+                // TODO: once we support the If-Modified-Since header, use that to check if our local copy is up-to-date.
+                // For now, we just load from the database every time
+
+                Log.d("datamanager", "Online; loaded from database");
+                return databaseEvents;
+            } else {
+                Log.d("datamanager", "Offline; loaded from database");
+                return databaseEvents;
+            }
+        } else {
+            if (connectedToInternet) {
+                // Load team data, cache it in the database, return it to caller
+                ArrayList<SimpleEvent> loadedEvents = TBAv2.getEventList(year);
+                db.getEventsTable().add(loadedEvents);
+                Log.d("datamanager", "Online; loaded from internet");
+                return db.getEventsTable().getAll(year,week);
+            } else {
+                // There is no locally stored data and we are not connected to the internet.
+                Log.d("datamanager", "Offline; no data!");
+                throw new NoDataException("There is no internet connection and no local cache for this team!");
+            }
+        }
+    }
+
     public static class NoDataException extends Exception {
         public NoDataException(String message) {
             super(message);

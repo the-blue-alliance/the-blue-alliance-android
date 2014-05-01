@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
 
+import org.joda.time.DateTime;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -108,7 +110,8 @@ public class Event implements BasicModel{
     }
 
     public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ENGLISH);
-    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy");
+    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy"),
+                                         weekFormat = new SimpleDateFormat("w");
 
     String 		eventKey,
                 eventName,
@@ -148,7 +151,7 @@ public class Event implements BasicModel{
 
     public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
                  String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
-        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid event key: "+eventKey+" Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
         this.eventName = eventName;
         this.shortName = shortName;
@@ -200,7 +203,7 @@ public class Event implements BasicModel{
 	}
 
     public static boolean validateEventKey(String key){
-        return key.matches("^[1-9]\\d{3}[a-z]+$");
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
     public String getEventKey() {
@@ -208,7 +211,7 @@ public class Event implements BasicModel{
     }
 
     public void setEventKey(String eventKey) {
-        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid event key: "+eventKey+" Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
     }
 
@@ -290,6 +293,12 @@ public class Event implements BasicModel{
         }
     }
 
+    public int getCompetitionWeek(){
+        if(startDate == null) return -1;
+        int week = Integer.parseInt(weekFormat.format(startDate))-8;
+        return week<0?0:week;
+    }
+
     public boolean isOfficial() {
         return official;
     }
@@ -346,8 +355,9 @@ public class Event implements BasicModel{
         values.put(Database.Events.WEBSITE,website);
         values.put(Database.Events.TYPE,eventType.ordinal());
         values.put(Database.Events.DISTRICT,eventDistrict.ordinal());
-        values.put(Database.Events.START,startDate.getTime());
-        values.put(Database.Events.END,endDate.getTime());
+
+        values.put(Database.Events.START,eventDateFormat.format(startDate));
+        values.put(Database.Events.END,eventDateFormat.format(endDate));
         values.put(Database.Events.OFFICIAL,official?1:0);
         values.put(Database.Events.RANKINGS,rankings.toString());
         values.put(Database.Events.WEBCASTS,website.toString());
@@ -355,5 +365,10 @@ public class Event implements BasicModel{
         values.put(Database.Events.LASTUPDATE,last_updated);
 
         return values;
+    }
+
+    public static Date dateForCompetitionWeek(int year, int week){
+        DateTime weekStart = new DateTime(new Date()).withWeekOfWeekyear(week+8).withDayOfWeek(1).withTimeAtStartOfDay();
+        return weekStart.toDate();
     }
 }

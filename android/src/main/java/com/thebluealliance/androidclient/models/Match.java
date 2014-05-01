@@ -114,7 +114,7 @@ public class Match implements BasicModel{
 
     /* Temporary constructor for fake data. Probably to be removed... */
     public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore){
-        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.timeString = "";
@@ -149,7 +149,7 @@ public class Match implements BasicModel{
 	}
 
 	public void setKey(String key) {
-		if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+		if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
 		this.key = key;
 		this.eventKey = key.split("_")[0];
 		this.year = Integer.parseInt(key.substring(0, 3));
