@@ -8,9 +8,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by Nathan on 4/30/2014.
@@ -60,22 +58,9 @@ public class DataManager {
         // We want this to propagate up the stack
         Team team = getTeam(c, teamKey);
         JsonArray jsonEvents = team.getEvents();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < jsonEvents.size(); i++) {
             JsonObject currentEvent = jsonEvents.get(i).getAsJsonObject();
-            String eventKey = currentEvent.get("key").getAsString();
-            String eventName = currentEvent.get("name").getAsString();
-            String location = currentEvent.get("location").getAsString();
-            boolean official = currentEvent.get("official").getAsBoolean();
-            Date startDate = null;
-            Date endDate = null;
-            try {
-                startDate = formatter.parse(currentEvent.get("start_date").getAsString());
-                endDate = formatter.parse(currentEvent.get("start_date").getAsString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            SimpleEvent event = new SimpleEvent(eventKey, eventName, location, official, null, null, startDate, endDate, -1);
+            SimpleEvent event = JSONManager.getGson().fromJson(currentEvent,SimpleEvent.class);
             events.add(event);
         }
         return events;

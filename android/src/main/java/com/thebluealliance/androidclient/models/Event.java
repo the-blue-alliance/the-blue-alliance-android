@@ -28,6 +28,28 @@ public class Event implements BasicModel{
         OFFSEASON,
         PRESEASON;
 
+        public String toString(){
+            switch(ordinal()){
+                default:
+                case 0:
+                    return "";
+                case 1:
+                    return "Regional Events";
+                case 2:
+                    return "District Events";
+                case 3:
+                    return "District Championship";
+                case 4:
+                    return "Championship Divisions";
+                case 5:
+                    return "Championship Finals";
+                case 6:
+                    return "Offseason Events";
+                case 7:
+                    return "Preseason Events";
+            }
+        }
+
         public static TYPE fromString(String str) {
             switch(str) {
                 case "Regional":
@@ -86,6 +108,7 @@ public class Event implements BasicModel{
     }
 
     public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ENGLISH);
+    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy");
 
     String 		eventKey,
                 eventName,
@@ -309,8 +332,7 @@ public class Event implements BasicModel{
 
     @Override
     public EventListElement render() {
-        //TODO return EventListElement here
-        return null;
+        return new EventListElement(eventKey, eventName, renderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate), location);
     }
 
     @Override

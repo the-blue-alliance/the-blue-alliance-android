@@ -19,7 +19,6 @@ import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -141,11 +140,11 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
                     // TODO: finish implementing this once we have event type info available
                     if (currentType != lastType) {
                         eventKeys.add(currentType.toString());
-                        events.add(new EventWeekHeader("HEADER GOES HERE"));
+                        events.add(new EventWeekHeader(currentType.toString()));
                     }
                     eventKeys.add(event.getEventKey());
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
-                    events.add(new EventListElement(event.getEventKey(), event.getEventName(), dateFormat.format(event.getStartDate()) + " to " + dateFormat.format(event.getEndDate()), event.getLocation()));
+                    events.add(event.render());
+                    lastType = currentType;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
