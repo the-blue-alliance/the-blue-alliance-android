@@ -265,8 +265,8 @@ public class Database extends SQLiteOpenHelper {
                 event.setAbbreviation(cursor.getString(3));
                 event.setEventType(Event.TYPE.values()[cursor.getInt(4)]);
                 event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(5)]);
-                event.setStartDate(new Date(cursor.getLong(6)));
-                event.setEndDate(new Date(cursor.getLong(7)));
+                event.setStartDate(cursor.getString(6));
+                event.setEndDate(cursor.getString(7));
                 event.setLocation(cursor.getString(8));
                 event.setOfficial(cursor.getInt(9) == 1);
                 event.setWebsite(cursor.getString(10));
@@ -293,8 +293,8 @@ public class Database extends SQLiteOpenHelper {
                 event.setEventName(cursor.getString(1));
                 event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
                 event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(3)]);
-                event.setStartDate(new Date(cursor.getLong(4)));
-                event.setEndDate(new Date(cursor.getLong(5)));
+                event.setStartDate(cursor.getString(4));
+                event.setEndDate(cursor.getString(5));
                 event.setLocation(cursor.getString(6));
                 event.setOfficial(cursor.getInt(7) == 1);
                 event.setLastUpdated(cursor.getLong(8));
@@ -378,6 +378,12 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public void add(ArrayList<Match> matches){
+            for(Match m:matches){
+                add(m);
+            }
+        }
+
         @Override
         public Match get(String key) {
             Cursor cursor = db.query(TABLE_MATCHES, new String[]{KEY, TYPE, MATCHNUM, SETNUM, ALLIANCES, TIMESTRING, TIMESTAMP, VIDEOS, LASTUPDATE},
@@ -400,6 +406,7 @@ public class Database extends SQLiteOpenHelper {
                 return null;
             }
         }
+        
 
         @Override
         public boolean exists(String key) {

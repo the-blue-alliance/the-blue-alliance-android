@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -95,7 +96,44 @@ public class DataManager {
             } else {
                 // There is no locally stored data and we are not connected to the internet.
                 Log.d("datamanager", "Offline; no data!");
-                throw new NoDataException("There is no internet connection and no local cache for this team!");
+                throw new NoDataException("There is no internet connection and no local cache for this week!");
+            }
+        }
+    }
+
+    public static Event getEvent(Context c, String eventKey) throws NoDataException{
+        Database db = Database.getInstance(c);
+        boolean existsInDb = db.getEventsTable().exists(eventKey);
+        boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
+        if (existsInDb) {
+            if (connectedToInternet) {
+                // We are connected to the internet and have a record in the database.
+                // Check if the local copy is up-to-date; if it is, return it.
+                // Otherwise, requery the API, cache the new data, and return the data.
+                // TODO: once we support the If-Modified-Since header, use that to check if our local copy is up-to-date.
+                // For now, we just load the new data every time.
+
+                // Event event = TBAv2.getEvent(eventKey);
+                //db.getEventsTable().update(event);
+                Log.d("datamanager", "Online; loaded from database");
+                Event event = db.getEventsTable().get(eventKey);
+                return event;
+            } else {
+                Log.d("datamanager", "Offline; loaded from database");
+                return db.getEventsTable().get(eventKey);
+            }
+        } else {
+            if (connectedToInternet) {
+                // Load team data, cache it in the database, return it to caller
+                Event event = TBAv2.getEvent(eventKey);
+                db.getEventsTable().add(event);
+                db.getMatchesTable().add(event.getMatchList());
+                Log.d("datamanager", "Online; loaded from internet");
+                return event;
+            } else {
+                // There is no locally stored data and we are not connected to the internet.
+                Log.d("datamanager", "Offline; no data!");
+                throw new NoDataException("There is no internet connection and no local cache for this event!");
             }
         }
     }

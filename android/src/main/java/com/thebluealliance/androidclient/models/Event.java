@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
 
 import org.joda.time.DateTime;
@@ -12,7 +13,9 @@ import org.joda.time.DateTime;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 
 public class Event implements BasicModel{
@@ -126,8 +129,9 @@ public class Event implements BasicModel{
     boolean		official;
     long		last_updated;
 	JsonArray 	rankings,
-            webcasts,
-            teams;
+                webcasts,
+                teams,
+                matches;
     JsonObject	stats;
 
     public Event() {
@@ -147,6 +151,7 @@ public class Event implements BasicModel{
 		webcasts = new JsonArray();
         teams = new JsonArray();
         stats = new JsonObject();
+        matches = new JsonArray();
 	}
 
     public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
@@ -178,7 +183,25 @@ public class Event implements BasicModel{
 		this.website = website;
 	}
 
-	public JsonArray getRankings() {
+    public JsonArray getMatches() {
+        return matches;
+    }
+
+    public void setMatches(JsonArray matches) {
+        this.matches = matches;
+    }
+
+    public ArrayList<Match> getMatchList(){
+        ArrayList<Match> matches = new ArrayList<>();
+        if(matches == null) return matches;
+        Iterator iterator = matches.iterator();
+        while(iterator!= null){
+            matches.add(JSONManager.getGson().fromJson((JsonObject)(iterator.next()),Match.class));
+        }
+        return matches;
+    }
+
+    public JsonArray getRankings() {
 		return rankings;
 	}
 
@@ -299,6 +322,11 @@ public class Event implements BasicModel{
         return week<0?0:week;
     }
 
+    public boolean isHappeningNow(){
+        Date now = new Date();
+        return now.after(startDate) && now.before(endDate);
+    }
+
     public boolean isOfficial() {
         return official;
     }
@@ -339,9 +367,13 @@ public class Event implements BasicModel{
         this.last_updated = last_updated;
     }
 
+    public String getDateString(){
+        return renderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
+    }
+
     @Override
     public EventListElement render() {
-        return new EventListElement(eventKey, eventName, renderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate), location);
+        return new EventListElement(eventKey, eventName, getDateString() , location);
     }
 
     @Override

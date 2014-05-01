@@ -15,16 +15,19 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
  */
 public class ViewEventActivity extends FragmentActivity {
 
+    private String mEventKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
 
-        // Dummy info
-        String dummyEventKey = "event";
+        if(getIntent().getExtras()!= null){
+            mEventKey = getIntent().getExtras().getString("eventKey","");
+        }
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setAdapter(new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), dummyEventKey));
+        pager.setAdapter(new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
