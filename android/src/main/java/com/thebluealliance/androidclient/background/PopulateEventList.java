@@ -133,7 +133,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             return null;
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             try {
-                ArrayList<SimpleEvent> eventsArray = DataManager.getEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
+                ArrayList<SimpleEvent> eventsArray = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
                 Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
                 Event.TYPE lastType = null;
                 for (SimpleEvent event : eventsArray) {

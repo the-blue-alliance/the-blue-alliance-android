@@ -8,9 +8,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by Nathan on 4/30/2014.
@@ -19,7 +17,8 @@ public class DataManager {
 
     public static Team getTeam(Context c, String teamKey) throws NoDataException {
         Database db = Database.getInstance(c);
-        boolean existsInDb = db.getTeamsTable().exists(teamKey);
+        final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey;
+        boolean existsInDb = db.exists(URL);
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
         if (existsInDb) {
             if (connectedToInternet) {
@@ -32,19 +31,24 @@ public class DataManager {
                 // Team team = TBAv2.getTeam(teamKey);
                 //db.getTeamsTable().update(team);
                 Log.d("datamanager", "Online; loaded from database");
-                Team team = db.getTeamsTable().get(teamKey);
+                String response = db.getResponse(URL);
+                Team team = JSONManager.getGson().fromJson(response, Team.class);
                 System.out.println("events: " + team.getEvents().toString());
                 return team;
             } else {
                 Log.d("datamanager", "Offline; loaded from database");
-                return db.getTeamsTable().get(teamKey);
+                String response = db.getResponse(URL);
+                Team team = JSONManager.getGson().fromJson(response, Team.class);
+                System.out.println("events: " + team.getEvents().toString());
+                return team;
             }
         } else {
             if (connectedToInternet) {
                 // Load team data, cache it in the database, return it to caller
-                Team team = TBAv2.getTeam(teamKey);
-                db.getTeamsTable().add(team);
+                String response = HTTP.GET(URL);
+                db.storeResponse(URL, response, -1);
                 Log.d("datamanager", "Online; loaded from internet");
+                Team team = JSONManager.getGson().fromJson(response, Team.class);
                 return team;
             } else {
                 // There is no locally stored data and we are not connected to the internet.
@@ -54,28 +58,15 @@ public class DataManager {
         }
     }
 
-    public static ArrayList<SimpleEvent> getEventsForTeamInYear(Context c, String teamKey, int year) throws NoDataException {
+    public static ArrayList<SimpleEvent> getSimpleEventsForTeamInYear(Context c, String teamKey, int year) throws NoDataException {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         // This will throw an exception if there is no local data and no internet connection
         // We want this to propagate up the stack
         Team team = getTeam(c, teamKey);
         JsonArray jsonEvents = team.getEvents();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < jsonEvents.size(); i++) {
             JsonObject currentEvent = jsonEvents.get(i).getAsJsonObject();
-            String eventKey = currentEvent.get("key").getAsString();
-            String eventName = currentEvent.get("name").getAsString();
-            String location = currentEvent.get("location").getAsString();
-            boolean official = currentEvent.get("official").getAsBoolean();
-            Date startDate = null;
-            Date endDate = null;
-            try {
-                startDate = formatter.parse(currentEvent.get("start_date").getAsString());
-                endDate = formatter.parse(currentEvent.get("start_date").getAsString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            SimpleEvent event = new SimpleEvent(eventKey, eventName, location, official, null, null, startDate, endDate, -1);
+            SimpleEvent event = JSONManager.getGson().fromJson(currentEvent, SimpleEvent.class);
             events.add(event);
         }
         return events;

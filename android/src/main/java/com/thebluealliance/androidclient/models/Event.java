@@ -1,10 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
 
 import java.text.DateFormat;
@@ -13,12 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class Event implements BasicModel{
+public class Event implements BasicModel {
 
     /* Do not insert any new entries above the existing enums!!!
      * Things depend on their ordinal values, so you can only to the bottom of the list
      */
-    public static enum TYPE{
+    public static enum TYPE {
         NONE,
         REGIONAL,
         DISTRICT,
@@ -29,7 +26,7 @@ public class Event implements BasicModel{
         PRESEASON;
 
         public static TYPE fromString(String str) {
-            switch(str) {
+            switch (str) {
                 case "Regional":
                     return REGIONAL;
                 case "District":
@@ -50,7 +47,7 @@ public class Event implements BasicModel{
         }
 
         public static TYPE fromInt(int num) {
-            switch(num) {
+            switch (num) {
                 case 0:
                     return REGIONAL;
                 case 1:
@@ -70,7 +67,8 @@ public class Event implements BasicModel{
             }
         }
     }
-    public static enum DISTRICT{
+
+    public static enum DISTRICT {
         NONE,
         FIM,  /* Michigan */
         MAR,  /* Mid Atlantic */
@@ -78,31 +76,31 @@ public class Event implements BasicModel{
         PNW;  /* Pacific Northwest */
 
         public static DISTRICT fromString(String str) {
-			/*
+            /*
 			 * Not implemented on TBA yet. Write it here whenever it is...
 			 */
             return NONE;
         }
     }
 
-    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ENGLISH);
+    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH);
 
-    String 		eventKey,
-                eventName,
-                location,
-                shortName,
-                abbreviation,
-                website;
-    TYPE		eventType;
-    DISTRICT	eventDistrict;
-    Date		startDate,
-                endDate;
-    boolean		official;
-    long		last_updated;
-	JsonArray 	rankings,
+    String eventKey,
+            eventName,
+            location,
+            shortName,
+            abbreviation,
+            website;
+    TYPE eventType;
+    DISTRICT eventDistrict;
+    Date startDate,
+            endDate;
+    boolean official;
+    long last_updated;
+    JsonArray rankings,
             webcasts,
             teams;
-    JsonObject	stats;
+    JsonObject stats;
 
     public Event() {
         this.eventKey = "";
@@ -116,16 +114,17 @@ public class Event implements BasicModel{
         this.endDate = new Date(0);
         this.official = false;
         this.last_updated = -1;
-		website = "";
-		rankings = new JsonArray();
-		webcasts = new JsonArray();
+        website = "";
+        rankings = new JsonArray();
+        webcasts = new JsonArray();
         teams = new JsonArray();
         stats = new JsonObject();
-	}
+    }
 
     public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
                  String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
-        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        if (!Event.validateEventKey(eventKey))
+            throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
         this.eventName = eventName;
         this.shortName = shortName;
@@ -138,45 +137,45 @@ public class Event implements BasicModel{
         this.official = official;
         this.last_updated = last_updated;
         this.website = website;
-		this.rankings = rankings;
-		this.webcasts = webcasts;
-		this.stats = stats;
+        this.rankings = rankings;
+        this.webcasts = webcasts;
+        this.stats = stats;
         this.teams = teams;
     }
 
-	public String getWebsite() {
-		return website;
-	}
+    public String getWebsite() {
+        return website;
+    }
 
-	public void setWebsite(String website) {
-		this.website = website;
-	}
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 
-	public JsonArray getRankings() {
-		return rankings;
-	}
+    public JsonArray getRankings() {
+        return rankings;
+    }
 
-	public void setRankings(JsonArray rankings) {
-		this.rankings = rankings;
-	}
+    public void setRankings(JsonArray rankings) {
+        this.rankings = rankings;
+    }
 
-	public JsonArray getWebcasts() {
-		return webcasts;
-	}
+    public JsonArray getWebcasts() {
+        return webcasts;
+    }
 
-	public void setWebcasts(JsonArray webcasts) {
-		this.webcasts = webcasts;
-	}
+    public void setWebcasts(JsonArray webcasts) {
+        this.webcasts = webcasts;
+    }
 
-	public JsonObject getStats() {
-		return stats;
-	}
+    public JsonObject getStats() {
+        return stats;
+    }
 
-	public void setStats(JsonObject stats) {
-		this.stats = stats;
-	}
+    public void setStats(JsonObject stats) {
+        this.stats = stats;
+    }
 
-    public static boolean validateEventKey(String key){
+    public static boolean validateEventKey(String key) {
         return key.matches("^[1-9]\\d{3}[a-z]+$");
     }
 
@@ -185,7 +184,8 @@ public class Event implements BasicModel{
     }
 
     public void setEventKey(String eventKey) {
-        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        if (!Event.validateEventKey(eventKey))
+            throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
     }
 
@@ -311,27 +311,5 @@ public class Event implements BasicModel{
     public EventListElement render() {
         //TODO return EventListElement here
         return null;
-    }
-
-    @Override
-    public ContentValues getParams() {
-        ContentValues values = new ContentValues();
-        values.put(Database.Events.KEY,eventKey);
-        values.put(Database.Events.NAME,eventName);
-        values.put(Database.Events.SHORTNAME,shortName);
-        values.put(Database.Events.ABBREVIATION,abbreviation);
-        values.put(Database.Events.LOCATION,location);
-        values.put(Database.Events.WEBSITE,website);
-        values.put(Database.Events.TYPE,eventType.ordinal());
-        values.put(Database.Events.DISTRICT,eventDistrict.ordinal());
-        values.put(Database.Events.START,startDate.getTime());
-        values.put(Database.Events.END,endDate.getTime());
-        values.put(Database.Events.OFFICIAL,official?1:0);
-        values.put(Database.Events.RANKINGS,rankings.toString());
-        values.put(Database.Events.WEBCASTS,website.toString());
-        values.put(Database.Events.STATS,stats.toString());
-        values.put(Database.Events.LASTUPDATE,last_updated);
-
-        return values;
     }
 }

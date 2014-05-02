@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -36,7 +37,10 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
+            Long start = System.nanoTime();
             Team team = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
+            Long end = System.nanoTime();
+            Log.d("doInBackground", "Total time to load team: " + (end - start));
             mTeamName = team.getNickname();
             mLocation = team.getLocation();
             mFullName = team.getFullName();

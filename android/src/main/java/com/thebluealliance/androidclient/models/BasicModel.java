@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
-
 import com.thebluealliance.androidclient.datatypes.ListElement;
 
 /**
@@ -10,7 +8,6 @@ import com.thebluealliance.androidclient.datatypes.ListElement;
 public interface BasicModel {
 
     public ListElement render();
-    public ContentValues getParams();
 
     /*
      * When we're ready for it, I can foresee wanting easy inflating/deflating with json. Uncomment whenever that is...
