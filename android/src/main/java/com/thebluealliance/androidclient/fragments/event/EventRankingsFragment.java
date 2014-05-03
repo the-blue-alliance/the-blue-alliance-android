@@ -14,10 +14,24 @@ import com.thebluealliance.androidclient.background.PopulateEventRankings;
  */
 public class EventRankingsFragment extends Fragment {
 
+    private String eventKey;
+
+    public EventRankingsFragment(){
+        super();
+        if(eventKey == null){
+            eventKey = "";
+        }
+    }
+
+    public EventRankingsFragment(String eventKey){
+        super();
+        this.eventKey = eventKey;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View results = inflater.inflate(R.layout.fragment_event_rankings, null);
-        new PopulateEventRankings(getActivity(), results).execute("");
+        new PopulateEventRankings(getActivity(), results).execute(eventKey);
         return results;
     }
 }

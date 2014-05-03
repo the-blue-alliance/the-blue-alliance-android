@@ -44,7 +44,7 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
             case 1: //teams
                 return new EventTeamsFragment(mEventKey);
             case 2: //rankings
-                return new EventRankingsFragment();
+                return new EventRankingsFragment(mEventKey);
             case 3: //results
                 return new EventResultsFragment();
             case 4: //stats

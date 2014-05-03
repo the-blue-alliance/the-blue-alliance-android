@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -79,14 +80,27 @@ public class DataManager {
 
     public static synchronized ArrayList<Team> getEventTeams(Context c, String eventKey) throws NoDataException{
         ArrayList<Team> teams = new ArrayList<>();
+        Log.d("event teams","Fetching teams for "+eventKey);
         String response = TBAv2.getResponseFromURLOrThrow(c,"http://thebluealliance.com/api/v2/event/" + eventKey + "/teams", true);
-        Log.d("get event teams: ","data: "+response);
+        //Log.d("get event teams: ","data: "+response);
         JsonArray teamList = JSONManager.getasJsonArray(response);
-        Iterator iterator = teamList.iterator();
+        Iterator<JsonElement> iterator = teamList.iterator();
         while(iterator.hasNext()){
-            teams.add(JSONManager.getGson().fromJson((JsonObject)iterator.next(),Team.class));
+            teams.add(JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(),Team.class));
         }
         return teams;
+    }
+
+    public static synchronized ArrayList<JsonArray> getEventRankings(Context c, String eventKey) throws NoDataException{
+        ArrayList<JsonArray> rankings = new ArrayList<>();
+        Log.d("event ranks","Fetching rankings for "+eventKey);
+        String response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/rankings", true);
+        JsonArray rankList = JSONManager.getasJsonArray(response);
+        Iterator<JsonElement> iterator = rankList.iterator();
+        while(iterator.hasNext()){
+            rankings.add(iterator.next().getAsJsonArray());
+        }
+        return rankings;
     }
 
     public synchronized static ArrayList<SimpleEvent> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException{
