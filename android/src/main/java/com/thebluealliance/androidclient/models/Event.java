@@ -371,6 +371,12 @@ public class Event implements BasicModel {
         return renderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
     }
 
+    public int getWeek(){
+        if(startDate == null) return -1;
+        int week = Integer.parseInt(weekFormat.format(startDate))-8;
+        return week<0?0:week;
+    }
+
     @Override
     public EventListElement render() {
         return new EventListElement(eventKey, eventName, getDateString() , location);
@@ -379,22 +385,15 @@ public class Event implements BasicModel {
     @Override
     public ContentValues getParams() {
         ContentValues values = new ContentValues();
-        /*values.put(Database.Events.KEY,eventKey);
+        values.put(Database.Events.KEY,eventKey);
         values.put(Database.Events.NAME,eventName);
-        values.put(Database.Events.SHORTNAME,shortName);
-        values.put(Database.Events.ABBREVIATION,abbreviation);
         values.put(Database.Events.LOCATION,location);
-        values.put(Database.Events.WEBSITE,website);
         values.put(Database.Events.TYPE,eventType.ordinal());
         values.put(Database.Events.DISTRICT,eventDistrict.ordinal());
-
         values.put(Database.Events.START,eventDateFormat.format(startDate));
         values.put(Database.Events.END,eventDateFormat.format(endDate));
         values.put(Database.Events.OFFICIAL,official?1:0);
-        values.put(Database.Events.RANKINGS,rankings.toString());
-        values.put(Database.Events.WEBCASTS,website.toString());
-        values.put(Database.Events.STATS,stats.toString());
-        values.put(Database.Events.LASTUPDATE,last_updated);*/
+        values.put(Database.Events.WEEK,getWeek());
 
         return values;
     }

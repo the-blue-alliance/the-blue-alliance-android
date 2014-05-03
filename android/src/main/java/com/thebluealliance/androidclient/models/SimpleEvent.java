@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import java.util.Date;
 
 
@@ -22,4 +24,9 @@ public class SimpleEvent extends Event implements BasicModel{
 		this.official = official;
 		this.last_updated = last_updated;
 	}
+
+    @Override
+    public ContentValues getParams() {
+        return super.getParams();
+    }
 }

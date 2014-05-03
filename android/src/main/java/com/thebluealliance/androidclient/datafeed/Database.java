@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
-import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,8 @@ public class Database extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
-            TABLE_TEAMS = "teams";
+            TABLE_TEAMS = "teams",
+            TABLE_EVENTS = "events";
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
@@ -65,6 +66,19 @@ public class Database extends SQLiteOpenHelper {
                 + Teams.LOCATION + " TEXT"
                 + ")";
         db.execSQL(CREATE_TEAMS);
+
+        String CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + "("
+                + Events.KEY + " TEXT PRIMARY KEY, "
+                + Events.NAME + " TEXT, "
+                + Events.LOCATION + " TEXT, "
+                + Events.TYPE + " INTEGER, "
+                + Events.DISTRICT + " INTEGER, "
+                + Events.START + " TIMESTAMP, "
+                + Events.END + " TIMESTAMP, "
+                + Events.OFFICIAL + " INTEGER, "
+                + Events.WEEK + " INTEGER"
+                + ")";
+        db.execSQL(CREATE_EVENTS);
     }
 
     @Override
@@ -88,6 +102,18 @@ public class Database extends SQLiteOpenHelper {
 
     }
 
+    public class Events{
+        public static final String KEY = "key",
+            NAME = "name",
+            LOCATION = "location",
+            TYPE = "eventType",
+            DISTRICT = "eventDistrict",
+            START = "startDate",
+            END = "endDate",
+            OFFICIAL = "official",
+            WEEK = "competitionWeek";
+    }
+
     public long storeTeam(SimpleTeam team) {
         return db.insert(TABLE_TEAMS, null, team.getParams());
     }
@@ -95,7 +121,7 @@ public class Database extends SQLiteOpenHelper {
     public void storeTeams(ArrayList<SimpleTeam> teams) {
         db.beginTransaction();
         for (SimpleTeam team : teams) {
-            db.insert(TABLE_TEAMS, null, team.getParams());
+            storeTeam(team);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -111,6 +137,19 @@ public class Database extends SQLiteOpenHelper {
             teams.add(new SimpleTeam(cursor.getString(0), cursor.getInt(1), cursor.getString(3), cursor.getString(4), -1));
         }
         return teams;
+    }
+
+    public long storeEvent(SimpleEvent event){
+        return db.insert(TABLE_EVENTS, null, event.getParams());
+    }
+
+    public void storeEvents(ArrayList<SimpleEvent> events){
+        db.beginTransaction();
+        for(SimpleEvent event: events){
+            storeEvent(event);
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     public String getResponse(String url) {
