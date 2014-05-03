@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.datatypes.TeamListElement;
 
@@ -102,5 +104,10 @@ public class Team implements BasicModel {
     @Override
     public TeamListElement render() {
         return new TeamListElement(teamKey, teamNumber, nickname, location);
+    }
+
+    @Override
+    public ContentValues getParams() {
+        return null;
     }
 }

@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
+import com.thebluealliance.androidclient.datafeed.Database;
+
 public class SimpleTeam extends Team implements BasicModel{
 
 
@@ -19,4 +23,15 @@ public class SimpleTeam extends Team implements BasicModel{
 		this.teamNumber = teamNumber;
 		this.last_updated = last_updated;
 	}
+
+    @Override
+    public ContentValues getParams() {
+        ContentValues cv = new ContentValues();
+        cv.put(Database.Teams.KEY, teamKey);
+        cv.put(Database.Teams.NUMBER, teamNumber);
+        cv.put(Database.Teams.NAME, fullName);
+        cv.put(Database.Teams.SHORTNAME, nickname);
+        cv.put(Database.Teams.LOCATION, location);
+        return cv;
+    }
 }

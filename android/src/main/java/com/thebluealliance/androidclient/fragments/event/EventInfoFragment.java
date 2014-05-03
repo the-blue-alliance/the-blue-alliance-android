@@ -14,10 +14,22 @@ import com.thebluealliance.androidclient.background.PopulateEventInfo;
  */
 public class EventInfoFragment extends Fragment {
 
+    private String eventKey;
+
+    public EventInfoFragment(){
+        if(eventKey == null)
+            eventKey = "";
+    }
+
+    public EventInfoFragment(String key){
+        super();
+        eventKey = key;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View info = inflater.inflate(R.layout.fragment_event_info, null);
-        new PopulateEventInfo(getActivity()).execute(info);
+        new PopulateEventInfo(getActivity(),info).execute(eventKey);
         return info;
     }
 }

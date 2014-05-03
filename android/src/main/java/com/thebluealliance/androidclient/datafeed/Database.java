@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
             TABLE_TEAMS = "teams";
@@ -69,7 +69,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //TODO implement some upgrade code
+
     }
 
     public class Response {
@@ -89,25 +89,13 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public long storeTeam(SimpleTeam team) {
-        ContentValues cv = new ContentValues();
-        cv.put(Teams.KEY, team.getTeamKey());
-        cv.put(Teams.NUMBER, team.getTeamNumber());
-        cv.put(Teams.NAME, team.getFullName());
-        cv.put(Teams.SHORTNAME, team.getNickname());
-        cv.put(Teams.LOCATION, team.getLocation());
-        return db.insert(TABLE_TEAMS, null, cv);
+        return db.insert(TABLE_TEAMS, null, team.getParams());
     }
 
     public void storeTeams(ArrayList<SimpleTeam> teams) {
         db.beginTransaction();
-        for (Team team : teams) {
-            ContentValues cv = new ContentValues();
-            cv.put(Teams.KEY, team.getTeamKey());
-            cv.put(Teams.NUMBER, team.getTeamNumber());
-            cv.put(Teams.NAME, team.getFullName());
-            cv.put(Teams.SHORTNAME, team.getNickname());
-            cv.put(Teams.LOCATION, team.getLocation());
-            db.insert(TABLE_TEAMS, null, cv);
+        for (SimpleTeam team : teams) {
+            db.insert(TABLE_TEAMS, null, team.getParams());
         }
         db.setTransactionSuccessful();
         db.endTransaction();

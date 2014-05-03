@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.thebluealliance.androidclient.datatypes.AwardListElement;
 
 public class Award implements BasicModel {
@@ -10,6 +12,11 @@ public class Award implements BasicModel {
 
     @Override
     public AwardListElement render() {
+        return null;
+    }
+
+    @Override
+    public ContentValues getParams() {
         return null;
     }
 }

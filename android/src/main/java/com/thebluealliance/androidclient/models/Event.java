@@ -1,13 +1,20 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
+
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 
 public class Event implements BasicModel {
@@ -24,6 +31,28 @@ public class Event implements BasicModel {
         CMP_FINALS,
         OFFSEASON,
         PRESEASON;
+
+        public String toString(){
+            switch(ordinal()){
+                default:
+                case 0:
+                    return "";
+                case 1:
+                    return "Regional Events";
+                case 2:
+                    return "District Events";
+                case 3:
+                    return "District Championship";
+                case 4:
+                    return "Championship Divisions";
+                case 5:
+                    return "Championship Finals";
+                case 6:
+                    return "Offseason Events";
+                case 7:
+                    return "Preseason Events";
+            }
+        }
 
         public static TYPE fromString(String str) {
             switch (str) {
@@ -83,24 +112,27 @@ public class Event implements BasicModel {
         }
     }
 
-    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH);
+    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ENGLISH);
+    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy"),
+                                         weekFormat = new SimpleDateFormat("w");
 
-    String eventKey,
-            eventName,
-            location,
-            shortName,
-            abbreviation,
-            website;
-    TYPE eventType;
-    DISTRICT eventDistrict;
-    Date startDate,
-            endDate;
-    boolean official;
-    long last_updated;
-    JsonArray rankings,
-            webcasts,
-            teams;
-    JsonObject stats;
+    String 		eventKey,
+                eventName,
+                location,
+                shortName,
+                abbreviation,
+                website;
+    TYPE		eventType;
+    DISTRICT	eventDistrict;
+    Date		startDate,
+                endDate;
+    boolean		official;
+    long		last_updated;
+	JsonArray 	rankings,
+                webcasts,
+                teams,
+                matches;
+    JsonObject	stats;
 
     public Event() {
         this.eventKey = "";
@@ -123,8 +155,7 @@ public class Event implements BasicModel {
 
     public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
                  String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
-        if (!Event.validateEventKey(eventKey))
-            throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid event key: "+eventKey+" Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
         this.eventName = eventName;
         this.shortName = shortName;
@@ -155,6 +186,24 @@ public class Event implements BasicModel {
         return rankings;
     }
 
+    public JsonArray getMatches() {
+        return matches;
+    }
+
+    public void setMatches(JsonArray matches) {
+        this.matches = matches;
+    }
+
+    public ArrayList<Match> getMatchList(){
+        ArrayList<Match> matches = new ArrayList<>();
+        if(matches == null) return matches;
+        Iterator iterator = matches.iterator();
+        while(iterator!= null){
+            matches.add(JSONManager.getGson().fromJson((JsonObject)(iterator.next()),Match.class));
+        }
+        return matches;
+    }
+
     public void setRankings(JsonArray rankings) {
         this.rankings = rankings;
     }
@@ -175,8 +224,9 @@ public class Event implements BasicModel {
         this.stats = stats;
     }
 
-    public static boolean validateEventKey(String key) {
-        return key.matches("^[1-9]\\d{3}[a-z]+$");
+
+    public static boolean validateEventKey(String key){
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
     public String getEventKey() {
@@ -184,8 +234,7 @@ public class Event implements BasicModel {
     }
 
     public void setEventKey(String eventKey) {
-        if (!Event.validateEventKey(eventKey))
-            throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid event key: "+eventKey+" Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
     }
 
@@ -267,6 +316,17 @@ public class Event implements BasicModel {
         }
     }
 
+    public int getCompetitionWeek(){
+        if(startDate == null) return -1;
+        int week = Integer.parseInt(weekFormat.format(startDate))-8;
+        return week<0?0:week;
+    }
+
+    public boolean isHappeningNow(){
+        Date now = new Date();
+        return now.after(startDate) && now.before(endDate);
+    }
+
     public boolean isOfficial() {
         return official;
     }
@@ -307,9 +367,35 @@ public class Event implements BasicModel {
         this.last_updated = last_updated;
     }
 
+    public String getDateString(){
+        return renderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
+    }
+
     @Override
     public EventListElement render() {
-        //TODO return EventListElement here
-        return null;
+        return new EventListElement(eventKey, eventName, getDateString() , location);
+    }
+
+    @Override
+    public ContentValues getParams() {
+        ContentValues values = new ContentValues();
+        /*values.put(Database.Events.KEY,eventKey);
+        values.put(Database.Events.NAME,eventName);
+        values.put(Database.Events.SHORTNAME,shortName);
+        values.put(Database.Events.ABBREVIATION,abbreviation);
+        values.put(Database.Events.LOCATION,location);
+        values.put(Database.Events.WEBSITE,website);
+        values.put(Database.Events.TYPE,eventType.ordinal());
+        values.put(Database.Events.DISTRICT,eventDistrict.ordinal());
+
+        values.put(Database.Events.START,eventDateFormat.format(startDate));
+        values.put(Database.Events.END,eventDateFormat.format(endDate));
+        values.put(Database.Events.OFFICIAL,official?1:0);
+        values.put(Database.Events.RANKINGS,rankings.toString());
+        values.put(Database.Events.WEBCASTS,website.toString());
+        values.put(Database.Events.STATS,stats.toString());
+        values.put(Database.Events.LASTUPDATE,last_updated);*/
+
+        return values;
     }
 }

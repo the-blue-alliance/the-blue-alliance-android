@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -116,8 +118,9 @@ public class Match implements BasicModel {
     }
 
     /* Temporary constructor for fake data. Probably to be removed... */
-    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore) {
-        if (!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+
+    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore){
+        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.timeString = "";
@@ -151,12 +154,12 @@ public class Match implements BasicModel {
         return key;
     }
 
-    public void setKey(String key) {
-        if (!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
-        this.key = key;
-        this.eventKey = key.split("_")[0];
-        this.year = Integer.parseInt(key.substring(0, 3));
-    }
+	public void setKey(String key) {
+		if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
+		this.key = key;
+		this.eventKey = key.split("_")[0];
+		this.year = Integer.parseInt(key.substring(0, 3));
+	}
 
     public String getEventKey() {
         return eventKey;
@@ -262,6 +265,12 @@ public class Match implements BasicModel {
                 new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
                 new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
                 redScore, blueScore, key);
+    }
+
+    @Override
+    public ContentValues getParams(){
+        ContentValues values = new ContentValues();
+        return values;
     }
 
     public static boolean validateMatchKey(String key) {
