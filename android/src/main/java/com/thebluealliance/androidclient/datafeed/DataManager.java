@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
@@ -22,7 +23,7 @@ public class DataManager {
 
     public synchronized static Team getTeam(Context c, String teamKey) throws NoDataException {
         final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey;
-        String response = getResponseFromURLOrThrow(c, URL, true);
+        String response = TBAv2.getResponseFromURLOrThrow(c, URL, true);
         Team team = JSONManager.getGson().fromJson(response, Team.class);
         System.out.println("events: " + team.getEvents().toString());
         return team;
@@ -54,7 +55,7 @@ public class DataManager {
             // We need to load teams from the API
             //TODO move to TBAv2 class
             final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=greg:marra:hi";
-            String response = getResponseFromURLOrThrow(c, URL, false);
+            String response = TBAv2.getResponseFromURLOrThrow(c, URL, false);
             Log.d("get simple teams", "starting parse");
             teams = CSVManager.parseTeamsFromCSV(response);
             Log.d("get simple teams", "ending parse");
@@ -66,6 +67,13 @@ public class DataManager {
         }
 
         return teams;
+    }
+
+    public static synchronized Event getEvent(Context c, String key) throws NoDataException{
+        final String URL = "http://thebluealliance.com/api/v2/event/" + key;
+        String response = TBAv2.getResponseFromURLOrThrow(c, URL, true);
+        Event event = JSONManager.getGson().fromJson(response, Event.class);
+        return event;
     }
 
     public synchronized static ArrayList<SimpleEvent> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException{
@@ -98,38 +106,5 @@ public class DataManager {
         }
     }
 
-    private static String getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws NoDataException {
-        Database db = Database.getInstance(c);
-        boolean existsInDb = db.exists(URL);
-        boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
-        if (existsInDb) {
-            if (connectedToInternet) {
-                // We are connected to the internet and have a record in the database.
-                // Check if the local copy is up-to-date; if it is, return it.
-                // Otherwise, requery the API, cache the new data, and return the data.
-                // TODO: once we support the If-Modified-Since header, use that to check if our local copy is up-to-date.
-                // For now, we just load the new data every time.
 
-                Log.d("datamanager", "Online; loaded from database");
-                return db.getResponse(URL);
-            } else {
-                Log.d("datamanager", "Offline; loaded from database");
-                return db.getResponse(URL);
-            }
-        } else {
-            if (connectedToInternet) {
-                // Load team data, cache it in the database, return it to caller
-                String response = HTTP.GET(URL);
-                if (cacheInDatabase) {
-                    db.storeResponse(URL, response, -1);
-                }
-                Log.d("datamanager", "Online; loaded from internet");
-                return response;
-            } else {
-                // There is no locally stored data and we are not connected to the internet.
-                Log.d("datamanager", "Offline; no data!");
-                throw new NoDataException("There is no internet connection and no local cache for this team!");
-            }
-        }
-    }
 }

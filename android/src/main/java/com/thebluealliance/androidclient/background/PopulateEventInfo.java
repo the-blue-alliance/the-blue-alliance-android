@@ -2,11 +2,14 @@ package com.thebluealliance.androidclient.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
 
 /**
@@ -38,7 +41,21 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
         topTeams = (LinearLayout) info.findViewById(R.id.event_top_teams_container);
         topOpr = (LinearLayout) info.findViewById(R.id.top_opr_container);
 
-       //TODO this
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        try {
+            event = DataManager.getEvent(context,eventKey);
+            last = new MatchListElement(true, "Quals 1", new String[]{"3182", "3634", "2168"}, new String[]{"181", "4055", "237"}, 23, 120, "2014ctgro_qm1").getView(context, inflater, null);
+            next = new MatchListElement(true, "Quals 2", new String[]{"3718", "230", "5112"}, new String[]{"175", "4557", "125"}, 60, 121, "2014ctgro_qm2").getView(context, inflater, null);
+        } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
+        }
+
+        /* TODO finish basic event bits as the rest of the API queries get implemented
+         * this includes next/last match, if event is currently active
+         * Top teams in rankings
+         * Top teams in stats
+         *
+         */
 
         return null;
     }
