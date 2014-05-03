@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
@@ -18,7 +17,8 @@ import java.util.ArrayList;
  */
 public class DataManager {
 
-    private static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded";
+    private static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
+                                ALL_EVENTS_LOADED_TO_DATABASE = "all_events_loaded";
 
     public synchronized static Team getTeam(Context c, String teamKey) throws NoDataException {
         final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey;
@@ -45,12 +45,14 @@ public class DataManager {
     public synchronized static ArrayList<SimpleTeam> getSimpleTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
         Log.d("get simple teams", "getting teams in range " + lowerBound + " - " + upperBound);
         ArrayList<SimpleTeam> teams = new ArrayList<>();
+        //TODO move to PreferenceHandler class
         boolean allTeamsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE, false);
         // TODO check for updated data from the API
         if (allTeamsLoaded) {
             teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
         } else {
             // We need to load teams from the API
+            //TODO move to TBAv2 class
             final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=greg:marra:hi";
             String response = getResponseFromURLOrThrow(c, URL, false);
             Log.d("get simple teams", "starting parse");
@@ -64,6 +66,26 @@ public class DataManager {
         }
 
         return teams;
+    }
+
+    public synchronized static ArrayList<SimpleEvent> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException{
+        Log.d("get events for week","getting for week: "+week);
+        ArrayList<SimpleEvent> events = new ArrayList<>();
+        boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE, false);
+        //TODO check for updates
+        if(allEventsLoaded){
+            Log.d("get events for week","loading from db");
+            events = Database.getInstance(c).getEventsInWeek(year,week);
+        }else{
+            Log.d("get events for week","loading from interwebs");
+            events = TBAv2.getEventList(year);
+            Database.getInstance(c).storeEvents(events);
+            Log.d("get events for week","stored to db");
+            // ^ stores all events, now refetch for just the week we want.
+            events = Database.getInstance(c).getEventsInWeek(year,week);
+            PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE, true).commit();
+        }
+        return events;
     }
 
     public static class NoDataException extends Exception {

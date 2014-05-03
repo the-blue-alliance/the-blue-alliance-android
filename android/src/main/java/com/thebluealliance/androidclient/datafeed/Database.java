@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
@@ -140,7 +141,11 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public long storeEvent(SimpleEvent event){
-        return db.insert(TABLE_EVENTS, null, event.getParams());
+        if(!eventExists(event.getEventKey())) {
+            return db.insert(TABLE_EVENTS, null, event.getParams());
+        }else{
+            return  0;//updateEvent(event);
+        }
     }
 
     public void storeEvents(ArrayList<SimpleEvent> events){
@@ -150,6 +155,41 @@ public class Database extends SQLiteOpenHelper {
         }
         db.setTransactionSuccessful();
         db.endTransaction();
+    }
+
+    public ArrayList<SimpleEvent> getEventsInWeek(int year, int week){
+        ArrayList<SimpleEvent> events = new ArrayList<>();
+        Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
+                        Events.END, Events.LOCATION, Events.OFFICIAL},
+                        Events.KEY + " LIKE ? AND "+Events.WEEK+" = ?", new String[]{Integer.toString(year)+"%", Integer.toString(week)}, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                SimpleEvent event = new SimpleEvent();
+                event.setEventKey(cursor.getString(0));
+                event.setEventName(cursor.getString(1));
+                event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
+                event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(3)]);
+                event.setStartDate(cursor.getString(4));
+                event.setEndDate(cursor.getString(5));
+                event.setLocation(cursor.getString(6));
+                event.setOfficial(cursor.getInt(7) == 1);
+
+                events.add(event);
+            }while(cursor.moveToNext());
+            return events;
+        } else {
+            Log.w(Constants.LOG_TAG, "Failed to find events in "+year+" week "+week);
+            return null;
+        }
+    }
+
+    public boolean eventExists(String key) {
+        Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
+        return cursor != null && cursor.moveToFirst();
+    }
+
+    public int updateEvent(SimpleEvent in){
+        return db.update(TABLE_EVENTS, in.getParams(), Events.KEY + "=?", new String[]{in.getEventKey()});
     }
 
     public String getResponse(String url) {

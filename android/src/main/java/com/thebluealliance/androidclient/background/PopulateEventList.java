@@ -60,7 +60,15 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             // Return a list of all events for a year
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
-            //TODO this
+            try {
+                ArrayList<SimpleEvent> eventData = DataManager.getSimpleEventsInWeek(mFragment.getActivity(),mYear,mWeek);
+                for(SimpleEvent e:eventData){
+                    eventKeys.add(e.getEventKey());
+                    events.add(e.render());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             return null;
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
