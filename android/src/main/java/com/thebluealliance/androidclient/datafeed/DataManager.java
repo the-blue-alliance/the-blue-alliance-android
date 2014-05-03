@@ -121,6 +121,11 @@ public class DataManager {
         return results;
     }
 
+    public synchronized static JsonObject getEventStats(Context c, String eventKey) throws NoDataException{
+        String results = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/stats", true);
+        return JSONManager.getasJsonObject(results);
+    }
+
     public synchronized static ArrayList<SimpleEvent> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException{
         Log.d("get events for week","getting for week: "+week);
         ArrayList<SimpleEvent> events = new ArrayList<>();
