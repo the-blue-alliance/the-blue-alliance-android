@@ -101,7 +101,6 @@ public class Team implements BasicModel {
 
     @Override
     public TeamListElement render() {
-        //TODO return TeamListElement here
-        return null;
+        return new TeamListElement(teamKey, teamNumber, nickname, location);
     }
 }

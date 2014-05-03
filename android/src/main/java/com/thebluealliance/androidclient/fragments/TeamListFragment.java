@@ -24,6 +24,8 @@ public class TeamListFragment extends Fragment {
 
     private int mTeamNumberStart, mTeamNumberEnd;
 
+    private PopulateTeamList task;
+
     public static TeamListFragment newInstance(int startTeamNumber, int endTeamNumber) {
         TeamListFragment f = new TeamListFragment();
         Bundle args = new Bundle();
@@ -59,6 +61,13 @@ public class TeamListFragment extends Fragment {
                 }
             });
         }
-        new PopulateTeamList(this).execute(mTeamNumberStart, mTeamNumberEnd);
+        task = new PopulateTeamList(this);
+        task.execute(mTeamNumberStart, mTeamNumberEnd);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        task.cancel(false);
     }
 }
