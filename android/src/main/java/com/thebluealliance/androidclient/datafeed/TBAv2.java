@@ -34,15 +34,26 @@ public class TBAv2 {
     public static Event getEvent(String key) {
         Log.d(Constants.LOG_TAG,"Loading data for "+key);
         JsonObject data = JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key));
-        data.add("matches", JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key + "/matches")));
-        data.add("stats", JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key + "/stats")));
-        data.add("teams", JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key + "/teams")));
+
+
+        //data.add("matches", JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key + "/matches")));
+        //data.add("stats", JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key + "/stats")));
         /*
          * NOT YET IMPLEMENTED:
 		 * data.add("rankings", JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/"+key+"/rankings")));
 		   data.add("webcasts", JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/"+key+"/webcasts")));
 		 */
         return JSONManager.getGson().fromJson(data, Event.class);
+    }
+
+    public static ArrayList<Team> getEventTeams(String eventKey){
+        ArrayList<Team> teams = new ArrayList<>();
+        JsonArray teamList = JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/" + eventKey + "/teams"));
+        Iterator iterator = teamList.iterator();
+        while(iterator.hasNext()){
+            teams.add(JSONManager.getGson().fromJson((JsonObject)iterator.next(),Team.class));
+        }
+        return teams;
     }
 
     public static ArrayList<SimpleEvent> getEventList(int year){

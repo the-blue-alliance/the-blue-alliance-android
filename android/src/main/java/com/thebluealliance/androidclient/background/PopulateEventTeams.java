@@ -2,13 +2,15 @@ package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.ListItem;
-import com.thebluealliance.androidclient.datatypes.TeamListElement;
+import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 
@@ -22,29 +24,30 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
+    private String eventKey;
 
     public PopulateEventTeams(Activity activity, View view) {
         this.activity = activity;
         this.view = view;
-
-        //generate the teams attending data
-
     }
 
     @Override
     protected String doInBackground(String... params) {
+        eventKey = params[0];
         teamKeys = new ArrayList<String>();
         teams = new ArrayList<ListItem>();
 
-        //put some static data here
-        teamKeys.add("frc281");
-        teams.add(new TeamListElement("frc281", 281, "EnTech Green Villains", "Greenville, SC"));
-        teamKeys.add("frc342");
-        teams.add(new TeamListElement("frc342", 342, "Burning Magnetos", "North Charleston, SC"));
-        teamKeys.add("frc343");
-        teams.add(new TeamListElement("frc343", 343, "Metal-In-Motion", "Seneca, SC"));
-        teamKeys.add("frc346");
-        teams.add(new TeamListElement("frc346", 346, "RoboHawks", "Chesterfield, VA"));
+        Log.d("load event teams: ", "event key: " + eventKey);
+        try {
+            ArrayList<Team> teamList = DataManager.getEventTeams(activity,eventKey);
+            //TODO make sure the team list is sorted numerically
+            for(Team t:teamList){
+                teamKeys.add(t.getTeamKey());
+                teams.add(t.render());
+            }
+        } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
+        }
 
         adapter = new ListViewAdapter(activity, teams, teamKeys);
         adapter.notifyDataSetChanged();

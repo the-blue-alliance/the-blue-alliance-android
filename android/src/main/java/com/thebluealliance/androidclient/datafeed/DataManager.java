@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Nathan on 4/30/2014.
@@ -74,6 +75,18 @@ public class DataManager {
         String response = TBAv2.getResponseFromURLOrThrow(c, URL, true);
         Event event = JSONManager.getGson().fromJson(response, Event.class);
         return event;
+    }
+
+    public static synchronized ArrayList<Team> getEventTeams(Context c, String eventKey) throws NoDataException{
+        ArrayList<Team> teams = new ArrayList<>();
+        String response = TBAv2.getResponseFromURLOrThrow(c,"http://thebluealliance.com/api/v2/event/" + eventKey + "/teams", true);
+        Log.d("get event teams: ","data: "+response);
+        JsonArray teamList = JSONManager.getasJsonArray(response);
+        Iterator iterator = teamList.iterator();
+        while(iterator.hasNext()){
+            teams.add(JSONManager.getGson().fromJson((JsonObject)iterator.next(),Team.class));
+        }
+        return teams;
     }
 
     public synchronized static ArrayList<SimpleEvent> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException{

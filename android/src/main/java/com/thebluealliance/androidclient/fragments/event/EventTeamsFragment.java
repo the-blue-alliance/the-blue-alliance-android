@@ -14,10 +14,23 @@ import com.thebluealliance.androidclient.background.PopulateEventTeams;
  */
 public class EventTeamsFragment extends Fragment {
 
+    private String key;
+
+    public EventTeamsFragment(){
+        super();
+        if(key == null)
+            key = "";
+    }
+
+    public EventTeamsFragment(String eventKey){
+        super();
+        this.key = eventKey;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View out = inflater.inflate(R.layout.fragment_event_teams, null);
-        new PopulateEventTeams(getActivity(), out).execute("");
+        new PopulateEventTeams(getActivity(), out).execute(key);
         return out;
     }
 }
