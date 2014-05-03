@@ -16,14 +16,12 @@ public class EventInfoFragment extends Fragment {
 
     private String eventKey;
 
-    public EventInfoFragment(){
-        if(eventKey == null)
-            eventKey = "";
-    }
-
-    public EventInfoFragment(String key){
-        super();
-        eventKey = key;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            eventKey = getArguments().getString("eventKey");
+        }
     }
 
     @Override

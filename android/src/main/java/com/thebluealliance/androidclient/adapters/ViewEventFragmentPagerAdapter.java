@@ -44,13 +44,13 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
         switch (position) {
             default:
             case 0: //event info
-                fragment = new EventInfoFragment(mEventKey);
+                fragment = new EventInfoFragment();
                 break;
             case 1: //teams
-                fragment = new EventTeamsFragment(mEventKey);
+                fragment = new EventTeamsFragment();
                 break;
             case 2: //rankings
-                fragment = new EventRankingsFragment(mEventKey);
+                fragment = new EventRankingsFragment();
                 break;
             case 3: //results
                 fragment = new EventResultsFragment();

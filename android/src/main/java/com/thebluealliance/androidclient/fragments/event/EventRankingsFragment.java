@@ -16,16 +16,12 @@ public class EventRankingsFragment extends Fragment {
 
     private String eventKey;
 
-    public EventRankingsFragment(){
-        super();
-        if(eventKey == null){
-            eventKey = "";
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            eventKey = getArguments().getString("eventKey");
         }
-    }
-
-    public EventRankingsFragment(String eventKey){
-        super();
-        this.eventKey = eventKey;
     }
 
     @Override
