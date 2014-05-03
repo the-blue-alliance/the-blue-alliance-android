@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.models.SimpleTeam;
+import com.thebluealliance.androidclient.models.Team;
+
+import java.util.ArrayList;
 
 
 /**
@@ -17,8 +21,8 @@ public class Database extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
-
-    TABLE_API = "api";
+            TABLE_API = "api",
+            TABLE_TEAMS = "teams";
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
@@ -52,6 +56,15 @@ public class Database extends SQLiteOpenHelper {
                 + Response.LASTUPDATE + " TIMESTAMP "
                 + ")";
         db.execSQL(CREATE_API);
+
+        String CREATE_TEAMS = "CREATE TABLE " + TABLE_TEAMS + "("
+                + Teams.KEY + " TEXT PRIMARY KEY, "
+                + Teams.NUMBER + " INTEGER NOT NULL, "
+                + Teams.NAME + " TEXT, "
+                + Teams.SHORTNAME + " TEXT, "
+                + Teams.LOCATION + " TEXT"
+                + ")";
+        db.execSQL(CREATE_TEAMS);
     }
 
     @Override
@@ -60,15 +73,56 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public class Response {
-
-        /* Awards are not yet implemented yet in the API.
-         * So we can hang off in implementing this class, for now
-         */
-
         public static final String URL = "url",       //text
                 RESPONSE = "response",      //text
                 LASTUPDATE = "lastUpdated";    //timestamp
 
+    }
+
+    public class Teams {
+        public static final String KEY = "key",
+                NUMBER = "number",
+                NAME = "name",
+                SHORTNAME = "shortname",
+                LOCATION = "location";
+
+    }
+
+    public long storeTeam(SimpleTeam team) {
+        ContentValues cv = new ContentValues();
+        cv.put(Teams.KEY, team.getTeamKey());
+        cv.put(Teams.NUMBER, team.getTeamNumber());
+        cv.put(Teams.NAME, team.getFullName());
+        cv.put(Teams.SHORTNAME, team.getNickname());
+        cv.put(Teams.LOCATION, team.getLocation());
+        return db.insert(TABLE_TEAMS, null, cv);
+    }
+
+    public void storeTeams(ArrayList<SimpleTeam> teams) {
+        db.beginTransaction();
+        for (Team team : teams) {
+            ContentValues cv = new ContentValues();
+            cv.put(Teams.KEY, team.getTeamKey());
+            cv.put(Teams.NUMBER, team.getTeamNumber());
+            cv.put(Teams.NAME, team.getFullName());
+            cv.put(Teams.SHORTNAME, team.getNickname());
+            cv.put(Teams.LOCATION, team.getLocation());
+            db.insert(TABLE_TEAMS, null, cv);
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    public ArrayList<SimpleTeam> getTeamsInRange(int lowerBound, int upperBound) {
+        ArrayList<SimpleTeam> teams = new ArrayList<>();
+        // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
+        Cursor cursor = db.query(TABLE_TEAMS, new String[]{Teams.KEY, Teams.NUMBER, Teams.NAME, Teams.SHORTNAME, Teams.LOCATION},
+                Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{"" + lowerBound, "" + upperBound}, null, null, null, null);
+        cursor.moveToPosition(-1);
+        while (cursor.moveToNext()) {
+            teams.add(new SimpleTeam(cursor.getString(0), cursor.getInt(1), cursor.getString(3), cursor.getString(4), -1));
+        }
+        return teams;
     }
 
     public String getResponse(String url) {

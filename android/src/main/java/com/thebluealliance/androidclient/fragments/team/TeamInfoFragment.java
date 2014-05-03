@@ -14,12 +14,15 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.PopulateTeamInfo;
+import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
 
 import java.util.List;
 
-public class TeamInfoFragment extends Fragment implements View.OnClickListener {
+public class TeamInfoFragment extends Fragment implements View.OnClickListener, RefreshableActivityListener {
 
     private String mTeamKey;
+
+    private PopulateTeamInfo task;
 
     public TeamInfoFragment() {
         // Empty constructor
@@ -53,7 +56,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        new PopulateTeamInfo(getActivity(), this, mTeamKey).execute();
+        task = new PopulateTeamInfo(getActivity(), this, mTeamKey);
+        task.execute();
     }
 
     @Override
@@ -97,5 +101,16 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        task = new PopulateTeamInfo(getActivity(), this, mTeamKey);
+        task.execute();
+    }
+
+    @Override
+    public void onRefreshStop() {
+        task.cancel(false);
     }
 }

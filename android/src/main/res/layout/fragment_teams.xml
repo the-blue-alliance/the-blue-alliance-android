@@ -8,6 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:id="@+id/team_list" />
+        android:id="@+id/team_list"
+        android:fastScrollAlwaysVisible="true"
+        android:scrollbarStyle="outsideInset" />
 </RelativeLayout>

@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Created by Nathan on 4/30/2014.
@@ -20,7 +19,7 @@ public class DataManager {
 
     private static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded";
 
-    public static Team getTeam(Context c, String teamKey) throws NoDataException {
+    public synchronized static Team getTeam(Context c, String teamKey) throws NoDataException {
         final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey;
         String response = getResponseFromURLOrThrow(c, URL, true);
         Team team = JSONManager.getGson().fromJson(response, Team.class);
@@ -28,7 +27,7 @@ public class DataManager {
         return team;
     }
 
-    public static ArrayList<SimpleEvent> getSimpleEventsForTeamInYear(Context c, String teamKey, int year) throws NoDataException {
+    public synchronized static ArrayList<SimpleEvent> getSimpleEventsForTeamInYear(Context c, String teamKey, int year) throws NoDataException {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         // This will throw an exception if there is no local data and no internet connection
         // We want this to propagate up the stack
@@ -42,25 +41,25 @@ public class DataManager {
         return events;
     }
 
-    public static ArrayList<SimpleTeam> getSimpleTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
+    public synchronized static ArrayList<SimpleTeam> getSimpleTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
+        Log.d("get simple teams", "getting teams in range " + lowerBound + " - " + upperBound);
         ArrayList<SimpleTeam> teams = new ArrayList<>();
         boolean allTeamsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE, false);
         // TODO check for updated data from the API
         if (allTeamsLoaded) {
-            // All teams exist in the database; we can query from there
-            // TODO perform the query for teams withing the designated range
+            teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
         } else {
             // We need to load teams from the API
             final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=greg:marra:hi";
             String response = getResponseFromURLOrThrow(c, URL, false);
+            Log.d("get simple teams", "starting parse");
             teams = CSVManager.parseTeamsFromCSV(response);
-            Iterator<SimpleTeam> i = teams.iterator();
-            while (i.hasNext()) {
-                SimpleTeam team = i.next();
-                if (team.getTeamNumber() < lowerBound || team.getTeamNumber() > upperBound) {
-                    i.remove();
-                }
-            }
+            Log.d("get simple teams", "ending parse");
+            Log.d("get simple teams", "starting insert");
+            Database.getInstance(c).storeTeams(teams);
+            Log.d("get simple teams", "ending insert");
+            teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
+            PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_TEAMS_LOADED_TO_DATABASE, true).commit();
         }
 
         return teams;
