@@ -14,10 +14,21 @@ import com.thebluealliance.androidclient.background.PopulateEventResults;
  */
 public class EventResultsFragment extends Fragment {
 
+    private String eventKey;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //TODO implement savedInstanceState and stuff
+        if(getArguments() != null){
+            eventKey = getArguments().getString("eventKey","");
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View results = inflater.inflate(R.layout.fragment_event_results, null);
-        new PopulateEventResults(getActivity(), results).execute("");
+        new PopulateEventResults(getActivity(), results).execute(eventKey);
         return results;
     }
 }

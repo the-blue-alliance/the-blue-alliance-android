@@ -8,11 +8,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -101,6 +103,22 @@ public class DataManager {
             rankings.add(iterator.next().getAsJsonArray());
         }
         return rankings;
+    }
+
+    public static synchronized HashMap<Match.TYPE,ArrayList<Match>> getEventResults(Context c, String eventKey) throws NoDataException{
+        HashMap<Match.TYPE,ArrayList<Match>> results = new HashMap<Match.TYPE,ArrayList<Match>>();
+        results.put(Match.TYPE.QUAL, new ArrayList<Match>());
+        results.put(Match.TYPE.QUARTER, new ArrayList<Match>());
+        results.put(Match.TYPE.SEMI, new ArrayList<Match>());
+        results.put(Match.TYPE.FINAL, new ArrayList<Match>());
+        Log.d("event results", "Fetching results for "+eventKey);
+        String response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/matches",true);
+        Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response).iterator();
+        while(iterator.hasNext()){
+            Match match = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Match.class);
+            results.get(match.getType()).add(match);
+        }
+        return results;
     }
 
     public synchronized static ArrayList<SimpleEvent> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException{
