@@ -272,7 +272,7 @@ public class Match implements BasicModel {
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
-        return new MatchListElement(true, getTitle(),
+        return new MatchListElement(videos.size()>0, getTitle(),
                 new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
                 new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
                 redScore, blueScore, key);
