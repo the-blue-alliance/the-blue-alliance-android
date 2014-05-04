@@ -60,6 +60,7 @@ public class Match implements BasicModel {
     }
 
     public static final HashMap<TYPE, String> SHORT_TYPES, LONG_TYPES;
+    public static final HashMap<TYPE, Integer> PLAY_ORDER;
 
     static {
         SHORT_TYPES = new HashMap<TYPE, String>();
@@ -73,6 +74,12 @@ public class Match implements BasicModel {
         LONG_TYPES.put(TYPE.QUARTER, "Quarters");
         LONG_TYPES.put(TYPE.SEMI, "Semis");
         LONG_TYPES.put(TYPE.FINAL, "Finals");
+
+        PLAY_ORDER = new HashMap<>();
+        PLAY_ORDER.put(TYPE.QUAL,1);
+        PLAY_ORDER.put(TYPE.QUARTER,2);
+        PLAY_ORDER.put(TYPE.SEMI,3);
+        PLAY_ORDER.put(TYPE.FINAL,4);
     }
 
 
@@ -247,6 +254,10 @@ public class Match implements BasicModel {
         } else {
             return LONG_TYPES.get(type) + " " + setNumber + " - " + matchNumber;
         }
+    }
+
+    public Integer getPlayOrder(){
+        return PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
     }
 
     /**

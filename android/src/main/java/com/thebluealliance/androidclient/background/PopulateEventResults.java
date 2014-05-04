@@ -8,11 +8,13 @@ import android.widget.ExpandableListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.MatchGroup;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -40,27 +42,30 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
             teamKey = "";
         }
 
-
         SparseArray<MatchGroup> groups = new SparseArray<>();
         MatchGroup qualMatches = new MatchGroup("Qualification Matches");
         MatchGroup quarterMatches = new MatchGroup("Quarterfinal Matches");
         MatchGroup semiMatches = new MatchGroup("Semifinal Matches");
         MatchGroup finalMatches = new MatchGroup("Finals Matches");
+        MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         try {
             HashMap<Match.TYPE,ArrayList<Match>> results = DataManager.getEventResults(activity,eventKey);
-            //TODO proper sorting of matches
+            Collections.sort(results.get(Match.TYPE.QUAL), comparator);
             for(Match m:results.get(Match.TYPE.QUAL)){
                 qualMatches.children.add(m);
                 qualMatches.childrenKeys.add(m.getKey());
             }
+            Collections.sort(results.get(Match.TYPE.QUARTER), comparator);
             for(Match m:results.get(Match.TYPE.QUARTER)){
                 quarterMatches.children.add(m);
                 quarterMatches.childrenKeys.add(m.getKey());
             }
+            Collections.sort(results.get(Match.TYPE.SEMI), comparator);
             for(Match m:results.get(Match.TYPE.SEMI)){
                 semiMatches.children.add(m);
                 semiMatches.childrenKeys.add(m.getKey());
             }
+            Collections.sort(results.get(Match.TYPE.FINAL), comparator);
             for(Match m:results.get(Match.TYPE.FINAL)){
                 finalMatches.children.add(m);
                 finalMatches.childrenKeys.add(m.getKey());
