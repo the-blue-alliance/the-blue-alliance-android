@@ -8,11 +8,13 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * File created by phil on 4/22/14.
@@ -40,7 +42,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
             ArrayList<Team> teamList = DataManager.getEventTeams(activity,eventKey);
-            //TODO make sure the team list is sorted numerically
+            Collections.sort(teamList, new TeamSortByNumberComparator());
             for(Team t:teamList){
                 teamKeys.add(t.getTeamKey());
                 teams.add(t.render());

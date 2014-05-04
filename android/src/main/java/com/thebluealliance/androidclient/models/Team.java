@@ -85,7 +85,7 @@ public class Team implements BasicModel {
         this.location = location;
     }
 
-    public int getTeamNumber() {
+    public Integer getTeamNumber() {
         return teamNumber;
     }
 
