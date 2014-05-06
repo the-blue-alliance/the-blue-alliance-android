@@ -1,0 +1,10 @@
+<resources>
+        <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_appinfo">Info</string>
+    <string name="example_summary">This is an example preference</string>
+    <string name="title_example">Example</string>>
+</resources>
