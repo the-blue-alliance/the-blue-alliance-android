@@ -13,7 +13,7 @@ Want to add features, fix bugs, or just poke around the code? No problem!
 
 1. Keep up to date with the [mailing list](https://groups.google.com/forum/#!forum/thebluealliance-developers) and read through the [planning documents](https://drive.google.com/#folders/0B5RO2Yzh2z01MDBOVXYwM1lXdFk) so you know what's going on.
 2. Set up your development environment if you haven't used Android Studio before ([see below](#setup))
-3. Fork this repository and create a branch for your changes
+3. Fork this repository, import the project to your IDE, and create a branch for your changes
 4. Make, commit, and push your changes to your branch
 5. Submit a pull request here and we'll review it and get it added in!
 
