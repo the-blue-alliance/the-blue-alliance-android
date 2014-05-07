@@ -1,6 +1,4 @@
 /local.properties
-/.idea/workspace.xml
-.idea/libraries/*
 .DS_Store
 
 # Built application files
@@ -29,3 +27,8 @@ proguard/
 
 # Android Studio Stuff
 .idea/libraries
+.idea/gradle.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/vcs.xml
+
