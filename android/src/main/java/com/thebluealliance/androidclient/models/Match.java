@@ -285,7 +285,7 @@ public class Match implements BasicModel {
     }
 
     public static boolean validateMatchKey(String key) {
-        return key.matches("^[1-9]\\d{3}[a-z]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 
 }
