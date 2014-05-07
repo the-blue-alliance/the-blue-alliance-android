@@ -12,7 +12,8 @@
         android:layout_height="match_parent" />
 
     <!-- Listview to display slider menu -->
-    <ListView style="@style/ActionBarStyle"
+    <ListView
+        android:background="#fff7f7f7"
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
