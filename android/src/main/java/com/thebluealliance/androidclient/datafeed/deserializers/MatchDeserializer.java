@@ -27,7 +27,7 @@ public class MatchDeserializer implements JsonDeserializer<Match>{
 		match.setVideos(object.get("videos").getAsJsonArray());
 		match.setLastUpdated(System.currentTimeMillis());
 		
-		return null;
+		return match;
 	}
 
 }

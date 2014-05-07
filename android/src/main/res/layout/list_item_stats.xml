@@ -20,9 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/team_stat"
         android:layout_toRightOf="@id/team_number"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/team_details">
 
         <TextView
             android:id="@+id/team_name"
@@ -41,12 +41,16 @@
     </LinearLayout>
 
     <TextView
-        android:id="@id/team_stat"
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:id="@+id/team_stat"
+        style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/team_details"
+        android:paddingRight="@dimen/activity_vertical_margin"
         android:layout_centerVertical="true"
+        android:gravity="right"
+        android:singleLine="false"
         android:text="stat"
         android:textSize="20sp" />
 

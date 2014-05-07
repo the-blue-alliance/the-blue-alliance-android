@@ -29,7 +29,11 @@ public class EventDeserializer implements JsonDeserializer<Event>{
 		
 		//event.setWebsite(""); /* NOT EXPOSED BY API YET */
 		if(object.has("matches")) {
-			//TODO add the matches into the db as their own model/table
+            /* This data won't actually get added into the matches table
+             * It'll be added into its own table, but it just needs to be associated with the match model here
+             * So don't go expecting this field to always have matches populated
+             */
+			event.setMatches(object.get("matches").getAsJsonArray());
 		}
 		if(object.has("webcasts")) {
 			//event.setWebcasts(); /* NOT EXPOSED BY API YET */

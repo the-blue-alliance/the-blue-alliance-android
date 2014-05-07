@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
 import java.util.Date;
@@ -13,18 +12,55 @@ import java.util.HashMap;
 
 
 public class Match implements BasicModel {
+    public static enum TYPE {
+        NONE,
+        QUAL {
+            @Override
+            public TYPE previous() {
+                return null; // see below for options for this line
+            }
+        },
+        QUARTER,
+        SEMI,
+        FINAL {
+            @Override
+            public TYPE next() {
+                return null; // see below for options for this line
+            }
+        };
+
+        public TYPE next() {
+            // No bounds checking required here, because the last instance overrides
+            return values()[ordinal() + 1];
+        }
+
+        public TYPE previous() {
+            // No bounds checking required here, because the last instance overrides
+            return values()[ordinal() - 1];
+        }
+
+        public TYPE get(String str) {
+            return valueOf(str);
+        }
+
+        public static TYPE fromShortType(String str) {
+            switch (str) {
+                case "qm":
+                    return QUAL;
+                case "qf":
+                    return QUARTER;
+                case "sf":
+                    return SEMI;
+                case "f":
+                    return FINAL;
+                default:
+                    throw new IllegalArgumentException("Invalid short type");
+            }
+        }
+    }
+
     public static final HashMap<TYPE, String> SHORT_TYPES, LONG_TYPES;
-    String key,
-            eventKey,
-            timeString;
-    Match.TYPE type;
-    JsonObject alliances;
-    JsonArray videos;
-    int year,
-            matchNumber,
-            setNumber;
-    Date time;
-    long last_updated;
+    public static final HashMap<TYPE, Integer> PLAY_ORDER;
 
     static {
         SHORT_TYPES = new HashMap<TYPE, String>();
@@ -38,7 +74,26 @@ public class Match implements BasicModel {
         LONG_TYPES.put(TYPE.QUARTER, "Quarters");
         LONG_TYPES.put(TYPE.SEMI, "Semis");
         LONG_TYPES.put(TYPE.FINAL, "Finals");
+
+        PLAY_ORDER = new HashMap<>();
+        PLAY_ORDER.put(TYPE.QUAL,1);
+        PLAY_ORDER.put(TYPE.QUARTER,2);
+        PLAY_ORDER.put(TYPE.SEMI,3);
+        PLAY_ORDER.put(TYPE.FINAL,4);
     }
+
+
+    String key,
+            eventKey,
+            timeString;
+    Match.TYPE type;
+    JsonObject alliances;
+    JsonArray videos;
+    int year,
+            matchNumber,
+            setNumber;
+    Date time;
+    long last_updated;
 
     public Match() {
         this.key = "";
@@ -70,8 +125,9 @@ public class Match implements BasicModel {
     }
 
     /* Temporary constructor for fake data. Probably to be removed... */
-    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore) {
-        if (!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+
+    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore){
+        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.timeString = "";
@@ -101,16 +157,12 @@ public class Match implements BasicModel {
         this.last_updated = -1;
     }
 
-    public static boolean validateMatchKey(String key) {
-        return key.matches("^[1-9]\\d{3}[a-z]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
-    }
-
     public String getKey() {
         return key;
     }
 
     public void setKey(String key) {
-        if (!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.year = Integer.parseInt(key.substring(0, 3));
@@ -132,12 +184,12 @@ public class Match implements BasicModel {
         return time;
     }
 
-    public void setTime(long timestamp) {
-        this.time = new Date(timestamp);
-    }
-
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public void setTime(long timestamp) {
+        this.time = new Date(timestamp);
     }
 
     public Match.TYPE getType() {
@@ -204,6 +256,10 @@ public class Match implements BasicModel {
         }
     }
 
+    public Integer getPlayOrder(){
+        return PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
+    }
+
     /**
      * Renders a MatchListElement for displaying this match.
      * ASSUMES 3v3 match structure with red/blue alliances
@@ -216,73 +272,20 @@ public class Match implements BasicModel {
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
-        return new MatchListElement(true, getTitle(),
+        return new MatchListElement(videos.size()>0, getTitle(),
                 new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
                 new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
                 redScore, blueScore, key);
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(){
         ContentValues values = new ContentValues();
-        values.put(Database.Matches.KEY, key);
-        values.put(Database.Matches.TIMESTRING, timeString);
-        values.put(Database.Matches.TIMESTAMP, time.getTime());
-        values.put(Database.Matches.TYPE, type.ordinal());
-        values.put(Database.Matches.ALLIANCES, alliances.toString());
-        values.put(Database.Matches.VIDEOS, videos.toString());
-        values.put(Database.Matches.MATCHNUM, matchNumber);
-        values.put(Database.Matches.SETNUM, setNumber);
-        values.put(Database.Matches.LASTUPDATE, last_updated);
-
         return values;
     }
 
-    public static enum TYPE {
-        NONE,
-        QUAL {
-            @Override
-            public TYPE previous() {
-                return null; // see below for options for this line
-            }
-        },
-        QUARTER,
-        SEMI,
-        FINAL {
-            @Override
-            public TYPE next() {
-                return null; // see below for options for this line
-            }
-        };
-
-        public static TYPE fromShortType(String str) {
-            switch (str) {
-                case "qm":
-                    return QUAL;
-                case "qf":
-                    return QUARTER;
-                case "sf":
-                    return SEMI;
-                case "f":
-                    return FINAL;
-                default:
-                    throw new IllegalArgumentException("Invalid short type");
-            }
-        }
-
-        public TYPE next() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() + 1];
-        }
-
-        public TYPE previous() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() - 1];
-        }
-
-        public TYPE get(String str) {
-            return valueOf(str);
-        }
+    public static boolean validateMatchKey(String key) {
+        return key.matches("^[1-9]\\d{3}[a-z]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 
 }

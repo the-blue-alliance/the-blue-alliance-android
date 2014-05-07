@@ -5,8 +5,10 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ListView;
 
+import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.RankingListElement;
 
@@ -36,15 +38,30 @@ public class PopulateEventRankings extends AsyncTask<String, Void, Void> {
         teamKeys = new ArrayList<String>();
         teams = new ArrayList<ListItem>();
 
-        //add some temp data
-        teamKeys.add("frc3824");
-        teams.add(new RankingListElement("frc3824", 3824, "HVA RoHAWKtics", 1, "(9-0-0)", "18 QS, 200 Assist, 401 Auto, 240 T&C, 312 Teleop"));
-        teamKeys.add("frc1876");
-        teams.add(new RankingListElement("frc1876", 1876, "Beachbotics", 2, "(9-0-0)", "18 QS, 120 Assist, 276 Auto, 100 T&C, 218 Teleop"));
-        teamKeys.add("frc2655");
-        teams.add(new RankingListElement("frc2655", 2655, "Flying Platypi", 3, "(8-1-0)", "16 QS, 170 Assist, 291 Auto, 80 T&C, 176 Teleop"));
-        teamKeys.add("frc1261");
-        teams.add(new RankingListElement("frc1261", 1261, "Robo Lions", 3, "(7-2-0)", "14 QS, 260 Assist, 386 Auto, 190 T&C, 237 Teleop"));
+        try {
+            ArrayList<JsonArray> rankList = DataManager.getEventRankings(activity,eventKey);
+            JsonArray headerRow = rankList.remove(0);
+            for(JsonArray row:rankList){
+                /* Assume that the list of lists has rank first
+                 * and team # second, always
+                 */
+                String teamKey = "frc"+row.get(1).getAsString();
+                teamKeys.add(teamKey);
+                String rankingString = "";
+                for(int i=2;i<row.size();i++){
+                    rankingString += headerRow.get(i).getAsString()+": "+row.get(i).getAsString();
+                    if(i+1<row.size()){
+                        rankingString += ", ";
+                    }
+                }
+                teams.add(new RankingListElement(teamKey,row.get(1).getAsInt(),"",row.get(0).getAsInt(),"",rankingString));
+                //the two columns set to "" above are 'team name' and 'record' as those are not consistently in the data
+                //TODO get team name for given number
+                //TODO remove record from layout (since it's not a constant parameter)
+            }
+        } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
+        }
 
         adapter = new ListViewAdapter(activity, teams, teamKeys);
         return null;

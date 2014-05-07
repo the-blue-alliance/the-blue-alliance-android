@@ -6,10 +6,13 @@ import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.models.Team;
 
 /**
  * File created by phil on 4/20/14.
@@ -33,13 +36,28 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        //some temp data
-        mTeamName = "Teh Chezy Pofs";
-        mLocation = "San Jose, CA";
-        mFullName = "This name is too long to comfortably fit here";
-        mTeamNumber = 254;
-        mIsCurrentlyCompeting = true;
-        return null;
+        try {
+            Long start = System.nanoTime();
+            Team team = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
+            Long end = System.nanoTime();
+            Log.d("doInBackground", "Total time to load team: " + (end - start));
+            mTeamName = team.getNickname();
+            mLocation = team.getLocation();
+            mFullName = team.getFullName();
+            mTeamNumber = team.getTeamNumber();
+            // TODO: determine if the team actually is competing
+            mIsCurrentlyCompeting = false;
+            return null;
+        } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
+            //some temp data
+            mTeamName = "Teh Chezy Pofs";
+            mLocation = "San Jose, CA";
+            mFullName = "This name is too long to comfortably fit here";
+            mTeamNumber = 254;
+            mIsCurrentlyCompeting = true;
+            return null;
+        }
     }
 
     @Override

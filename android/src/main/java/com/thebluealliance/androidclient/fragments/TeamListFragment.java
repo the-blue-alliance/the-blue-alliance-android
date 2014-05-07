@@ -24,6 +24,8 @@ public class TeamListFragment extends Fragment {
 
     private int mTeamNumberStart, mTeamNumberEnd;
 
+    private PopulateTeamList task;
+
     public static TeamListFragment newInstance(int startTeamNumber, int endTeamNumber) {
         TeamListFragment f = new TeamListFragment();
         Bundle args = new Bundle();
@@ -54,11 +56,18 @@ public class TeamListFragment extends Fragment {
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                     String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
                     Intent i = new Intent(getActivity(), ViewTeamActivity.class);
-                    i.putExtra(ViewTeamActivity.TEAM_KEY, "frc254");
+                    i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
                     startActivity(i);
                 }
             });
         }
-        new PopulateTeamList(this).execute(mTeamNumberStart, mTeamNumberEnd);
+        task = new PopulateTeamList(this);
+        task.execute(mTeamNumberStart, mTeamNumberEnd);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        task.cancel(false);
     }
 }

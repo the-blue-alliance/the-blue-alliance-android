@@ -4,9 +4,9 @@ import android.content.ContentValues;
 
 import com.thebluealliance.androidclient.datatypes.AwardListElement;
 
-public class Award implements BasicModel{
+public class Award implements BasicModel {
     /*
-	 * NOT IMPLEMENTED AT ALL IN API YET.
+     * NOT IMPLEMENTED AT ALL IN API YET.
 	 * Let's hold off here for now
 	 */
 

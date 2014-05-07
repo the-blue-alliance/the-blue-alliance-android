@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 
 
 public class HTTP {
-	public static String GET(String url){
+    public static String GET(String url) {
 
         InputStream is = null;
         String result = "";
@@ -25,14 +25,14 @@ public class HTTP {
             HttpResponse response = httpclient.execute(httpget);
             HttpEntity entity = response.getEntity();
             is = entity.getContent();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
         // Read response to string
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is,"utf-8"),8);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
@@ -40,11 +40,10 @@ public class HTTP {
             }
             is.close();
             result = sb.toString();
-        } catch(Exception e) {
-        	e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
         return result;
-
     }
 }

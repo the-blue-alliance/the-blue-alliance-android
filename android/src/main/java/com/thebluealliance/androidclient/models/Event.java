@@ -5,20 +5,24 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
+
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 
-public class Event implements BasicModel{
+public class Event implements BasicModel {
 
     /* Do not insert any new entries above the existing enums!!!
      * Things depend on their ordinal values, so you can only to the bottom of the list
      */
-    public static enum TYPE{
+    public static enum TYPE {
         NONE,
         REGIONAL,
         DISTRICT,
@@ -28,8 +32,30 @@ public class Event implements BasicModel{
         OFFSEASON,
         PRESEASON;
 
+        public String toString(){
+            switch(ordinal()){
+                default:
+                case 0:
+                    return "";
+                case 1:
+                    return "Regional Events";
+                case 2:
+                    return "District Events";
+                case 3:
+                    return "District Championship";
+                case 4:
+                    return "Championship Divisions";
+                case 5:
+                    return "Championship Finals";
+                case 6:
+                    return "Offseason Events";
+                case 7:
+                    return "Preseason Events";
+            }
+        }
+
         public static TYPE fromString(String str) {
-            switch(str) {
+            switch (str) {
                 case "Regional":
                     return REGIONAL;
                 case "District":
@@ -50,7 +76,7 @@ public class Event implements BasicModel{
         }
 
         public static TYPE fromInt(int num) {
-            switch(num) {
+            switch (num) {
                 case 0:
                     return REGIONAL;
                 case 1:
@@ -70,7 +96,8 @@ public class Event implements BasicModel{
             }
         }
     }
-    public static enum DISTRICT{
+
+    public static enum DISTRICT {
         NONE,
         FIM,  /* Michigan */
         MAR,  /* Mid Atlantic */
@@ -78,7 +105,7 @@ public class Event implements BasicModel{
         PNW;  /* Pacific Northwest */
 
         public static DISTRICT fromString(String str) {
-			/*
+            /*
 			 * Not implemented on TBA yet. Write it here whenever it is...
 			 */
             return NONE;
@@ -86,6 +113,8 @@ public class Event implements BasicModel{
     }
 
     public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ENGLISH);
+    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy"),
+                                         weekFormat = new SimpleDateFormat("w");
 
     String 		eventKey,
                 eventName,
@@ -100,10 +129,12 @@ public class Event implements BasicModel{
     boolean		official;
     long		last_updated;
 	JsonArray 	rankings,
-				webcasts;
-	JsonObject	stats;
-	
-	public Event() {
+                webcasts,
+                teams,
+                matches;
+    JsonObject	stats;
+
+    public Event() {
         this.eventKey = "";
         this.eventName = "";
         this.shortName = "";
@@ -115,15 +146,16 @@ public class Event implements BasicModel{
         this.endDate = new Date(0);
         this.official = false;
         this.last_updated = -1;
-		website = "";
-		rankings = new JsonArray();
-		webcasts = new JsonArray();
-		stats = new JsonObject();
-	}
-	
-	public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
-				 String website, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
-        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        website = "";
+        rankings = new JsonArray();
+        webcasts = new JsonArray();
+        teams = new JsonArray();
+        stats = new JsonObject();
+    }
+
+    public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
+                 String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
+        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid event key: "+eventKey+" Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
         this.eventName = eventName;
         this.shortName = shortName;
@@ -136,45 +168,65 @@ public class Event implements BasicModel{
         this.official = official;
         this.last_updated = last_updated;
         this.website = website;
-		this.rankings = rankings;
-		this.webcasts = webcasts;
-		this.stats = stats;
-	}
+        this.rankings = rankings;
+        this.webcasts = webcasts;
+        this.stats = stats;
+        this.teams = teams;
+    }
 
-	public String getWebsite() {
-		return website;
-	}
+    public String getWebsite() {
+        return website;
+    }
 
-	public void setWebsite(String website) {
-		this.website = website;
-	}
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 
-	public JsonArray getRankings() {
-		return rankings;
-	}
+    public JsonArray getRankings() {
+        return rankings;
+    }
 
-	public void setRankings(JsonArray rankings) {
-		this.rankings = rankings;
-	}
+    public JsonArray getMatches() {
+        return matches;
+    }
 
-	public JsonArray getWebcasts() {
-		return webcasts;
-	}
+    public void setMatches(JsonArray matches) {
+        this.matches = matches;
+    }
 
-	public void setWebcasts(JsonArray webcasts) {
-		this.webcasts = webcasts;
-	}
+    public ArrayList<Match> getMatchList(){
+        ArrayList<Match> matches = new ArrayList<>();
+        if(matches == null) return matches;
+        Iterator iterator = matches.iterator();
+        while(iterator!= null){
+            matches.add(JSONManager.getGson().fromJson((JsonObject)(iterator.next()),Match.class));
+        }
+        return matches;
+    }
 
-	public JsonObject getStats() {
-		return stats;
-	}
+    public void setRankings(JsonArray rankings) {
+        this.rankings = rankings;
+    }
 
-	public void setStats(JsonObject stats) {
-		this.stats = stats;
-	}
+    public JsonArray getWebcasts() {
+        return webcasts;
+    }
+
+    public void setWebcasts(JsonArray webcasts) {
+        this.webcasts = webcasts;
+    }
+
+    public JsonObject getStats() {
+        return stats;
+    }
+
+    public void setStats(JsonObject stats) {
+        this.stats = stats;
+    }
+
 
     public static boolean validateEventKey(String key){
-        return key.matches("^[1-9]\\d{3}[a-z]+$");
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
     public String getEventKey() {
@@ -182,7 +234,7 @@ public class Event implements BasicModel{
     }
 
     public void setEventKey(String eventKey) {
-        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
+        if(!Event.validateEventKey(eventKey)) throw new IllegalArgumentException("Invalid event key: "+eventKey+" Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
     }
 
@@ -264,6 +316,17 @@ public class Event implements BasicModel{
         }
     }
 
+    public int getCompetitionWeek(){
+        if(startDate == null) return -1;
+        int week = Integer.parseInt(weekFormat.format(startDate))-8;
+        return week<0?0:week;
+    }
+
+    public boolean isHappeningNow(){
+        Date now = new Date();
+        return now.after(startDate) && now.before(endDate);
+    }
+
     public boolean isOfficial() {
         return official;
     }
@@ -288,6 +351,14 @@ public class Event implements BasicModel{
         this.shortName = shortName;
     }
 
+    public void setTeams(JsonArray teams) {
+        this.teams = teams;
+    }
+
+    public JsonArray getTeams() {
+        return teams;
+    }
+
     public long getLastUpdated() {
         return last_updated;
     }
@@ -296,10 +367,19 @@ public class Event implements BasicModel{
         this.last_updated = last_updated;
     }
 
+    public String getDateString(){
+        return renderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
+    }
+
+    public int getWeek(){
+        if(startDate == null) return -1;
+        int week = Integer.parseInt(weekFormat.format(startDate))-8;
+        return week<0?0:week;
+    }
+
     @Override
     public EventListElement render() {
-        //TODO return EventListElement here
-        return null;
+        return new EventListElement(eventKey, eventName, getDateString() , location);
     }
 
     @Override
@@ -307,19 +387,13 @@ public class Event implements BasicModel{
         ContentValues values = new ContentValues();
         values.put(Database.Events.KEY,eventKey);
         values.put(Database.Events.NAME,eventName);
-        values.put(Database.Events.SHORTNAME,shortName);
-        values.put(Database.Events.ABBREVIATION,abbreviation);
         values.put(Database.Events.LOCATION,location);
-        values.put(Database.Events.WEBSITE,website);
         values.put(Database.Events.TYPE,eventType.ordinal());
         values.put(Database.Events.DISTRICT,eventDistrict.ordinal());
-        values.put(Database.Events.START,startDate.getTime());
-        values.put(Database.Events.END,endDate.getTime());
+        values.put(Database.Events.START,eventDateFormat.format(startDate));
+        values.put(Database.Events.END,eventDateFormat.format(endDate));
         values.put(Database.Events.OFFICIAL,official?1:0);
-        values.put(Database.Events.RANKINGS,rankings.toString());
-        values.put(Database.Events.WEBCASTS,website.toString());
-        values.put(Database.Events.STATS,stats.toString());
-        values.put(Database.Events.LASTUPDATE,last_updated);
+        values.put(Database.Events.WEEK,getWeek());
 
         return values;
     }

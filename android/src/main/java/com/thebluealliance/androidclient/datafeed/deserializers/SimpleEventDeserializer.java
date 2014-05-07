@@ -26,7 +26,7 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent>{
 		event.setEndDate(object.get("end_date").getAsString());
 		event.setOfficial(object.get("official").getAsBoolean());
 		event.setLastUpdated(System.currentTimeMillis());
-		
+
 		return event;
 	}
 }

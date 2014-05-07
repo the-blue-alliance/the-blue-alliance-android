@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.adapters;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -37,20 +38,31 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        Fragment fragment;
+        Bundle info = new Bundle();
+        info.putString("eventKey",mEventKey);
         switch (position) {
             default:
             case 0: //event info
-                return new EventInfoFragment();
+                fragment = new EventInfoFragment();
+                break;
             case 1: //teams
-                return new EventTeamsFragment();
+                fragment = new EventTeamsFragment();
+                break;
             case 2: //rankings
-                return new EventRankingsFragment();
+                fragment = new EventRankingsFragment();
+                break;
             case 3: //results
-                return new EventResultsFragment();
+                fragment = new EventResultsFragment();
+                break;
             case 4: //stats
-                return new EventStatsFragment();
+                fragment = new EventStatsFragment();
+                break;
             case 5: //awards
-                return new EventAwardsFragment();
+                fragment = new EventAwardsFragment();
+                break;
         }
+        fragment.setArguments(info);
+        return fragment;
     }
 }
