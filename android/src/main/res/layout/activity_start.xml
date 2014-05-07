@@ -13,7 +13,7 @@
 
     <!-- Listview to display slider menu -->
     <ListView
-        android:background="#ffd7d7d7"
+        android:background="#fff7f7f7"
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
