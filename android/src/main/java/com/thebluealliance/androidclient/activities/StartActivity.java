@@ -61,10 +61,10 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
         ArrayList<ListItem> navDrawer = new ArrayList<ListItem>();
-        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_light));
-        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_light));
-        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_light));
-        navDrawer.add(new NavDrawerItem("Settings", R.drawable.ic_menu_settings_holo_light));
+        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_light, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_light, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_light, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Settings", R.drawable.ic_action_settings, R.layout.nav_drawer_item_small));
         mDrawerList.setAdapter(new ListViewAdapter(this, navDrawer, null));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(this);
