@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -59,9 +60,10 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
         ArrayList<ListItem> navDrawer = new ArrayList<ListItem>();
-        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_light));
-        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_light));
-        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_light));
+        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_light, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_light, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_light, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Settings", R.drawable.ic_action_settings, R.layout.nav_drawer_item_small));
         mDrawerList.setAdapter(new ListViewAdapter(this, navDrawer, null));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(this);
@@ -141,9 +143,10 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()){
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
         }
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
@@ -173,6 +176,9 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
                 fragment = new InsightsFragment();
                 setupActionBarForInsights();
                 break;
+            case 3:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return;
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         mDrawerList.setItemChecked(position, true);

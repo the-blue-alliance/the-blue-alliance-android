@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/android" />
+            <option value="C:\Users\Adam\Documents\the-blue-alliance-android" />
+            <option value="C:\Users\Adam\Documents\the-blue-alliance-android\android" />
           </set>
         </option>
       </GradleProjectSettings>

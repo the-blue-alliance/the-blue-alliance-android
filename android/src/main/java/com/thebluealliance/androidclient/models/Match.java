@@ -161,12 +161,12 @@ public class Match implements BasicModel {
         return key;
     }
 
-	public void setKey(String key) {
-		if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
-		this.key = key;
-		this.eventKey = key.split("_")[0];
-		this.year = Integer.parseInt(key.substring(0, 3));
-	}
+    public void setKey(String key) {
+        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
+        this.key = key;
+        this.eventKey = key.split("_")[0];
+        this.year = Integer.parseInt(key.substring(0, 3));
+    }
 
     public String getEventKey() {
         return eventKey;

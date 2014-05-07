@@ -1,0 +1,5 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_header_appinfo">Info</string>
+    <string name="pref_header_general">General</string>
+</resources>
