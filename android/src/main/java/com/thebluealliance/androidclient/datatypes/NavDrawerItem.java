@@ -8,8 +8,6 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 
-import org.xmlpull.v1.XmlPullParser;
-
 /**
  * File created by phil on 4/20/14.
  */

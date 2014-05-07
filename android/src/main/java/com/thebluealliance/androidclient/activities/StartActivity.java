@@ -25,7 +25,6 @@ import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * File created by phil on 4/20/14.
