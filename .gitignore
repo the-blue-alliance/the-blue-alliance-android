@@ -26,10 +26,5 @@ local.properties
 proguard/
 
 # Android Studio Stuff
-./idea
-.idea/libraries
-.idea/gradle.xml
-.idea/modules.xml
-.idea/workspace.xml
-.idea/vcs.xml
+./idea/
 *.iml
