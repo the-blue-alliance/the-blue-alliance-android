@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,7 +23,7 @@ public class HTTP {
         try {
             HttpClient httpclient = new DefaultHttpClient(); // for port 80 requests!
             HttpGet httpget = new HttpGet(url);
-            httpget.addHeader("X-TBA-App-Id", "the-blue-alliance:android:v"+BuildConfig.VERSION_NAME);
+            httpget.addHeader("X-TBA-App-Id", Constants.getApiHeader());
             HttpResponse response = httpclient.execute(httpget);
             HttpEntity entity = response.getEntity();
             is = entity.getContent();
