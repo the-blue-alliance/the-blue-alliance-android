@@ -7,6 +7,7 @@
     <PreferenceCategory android:title="Info">
         <Preference
             android:key="github_link"
+            android:persistent="false"
             android:title="The Blue Alliance for Andoid is open source"
             android:summary="View Project on GitHub" />
 
