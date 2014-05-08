@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
+import com.thebluealliance.androidclient.comparators.EventSortByTypeComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
@@ -62,9 +63,18 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             // Return a list of all events for a week in a given year
             try {
                 ArrayList<SimpleEvent> eventData = DataManager.getSimpleEventsInWeek(mFragment.getActivity(),mYear,mWeek);
-                for(SimpleEvent e:eventData){
-                    eventKeys.add(e.getEventKey());
-                    events.add(e.render());
+                Collections.sort(eventData, new EventSortByTypeComparator());
+                Event.TYPE lastType = null, currentType;
+                for (SimpleEvent event : eventData) {
+                    currentType = event.getEventType();
+                    // TODO: finish implementing this once we have event type info available
+                    if (currentType != lastType) {
+                        eventKeys.add(currentType.toString());
+                        events.add(new EventWeekHeader(currentType.toString()));
+                    }
+                    eventKeys.add(event.getEventKey());
+                    events.add(event.render());
+                    lastType = currentType;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -75,9 +85,9 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             try {
                 ArrayList<SimpleEvent> eventsArray = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
                 Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
-                Event.TYPE lastType = null;
+                Event.TYPE lastType = null, currentType;
                 for (SimpleEvent event : eventsArray) {
-                    Event.TYPE currentType = event.getEventType();
+                    currentType = event.getEventType();
                     // TODO: finish implementing this once we have event type info available
                     if (currentType != lastType) {
                         eventKeys.add(currentType.toString());

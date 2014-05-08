@@ -39,5 +39,11 @@
     <string name="next_match">Next Match:</string>
     <string name="top_teams">Top Teams:</string>
     <string name="top_opr">Top OPRs:</string>
+    <string name="at">at</string>
+
+    <!-- View Team -->
+    <string name="from">from</string>
+    <string name="currently_competing">currently competing at</string>
+
 
 </resources>
