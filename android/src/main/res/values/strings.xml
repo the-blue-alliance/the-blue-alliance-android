@@ -13,6 +13,12 @@
         <item>2012</item>
     </string-array>
 
+    <!-- Nav drawer items -->
+    <string name="nav_drawer_events_label">Events</string>
+    <string name="nav_drawer_teams_label">Teams</string>
+    <string name="nav_drawer_insights_label">Insights</string>
+    <string name="nav_drawer_settings_label">Settings</string>
+
     <string name="week_selector">Week </string>
     <string name="title_main_activity">The Blue Alliance</string>
     <string name="tab_events">Events</string>

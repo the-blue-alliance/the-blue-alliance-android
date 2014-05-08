@@ -20,8 +20,8 @@ public class ViewEventActivity extends RefreshableActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
 
-        if(getIntent().getExtras()!= null){
-            mEventKey = getIntent().getExtras().getString("eventKey","");
+        if (getIntent().getExtras() != null) {
+            mEventKey = getIntent().getExtras().getString("eventKey", "");
         }
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
@@ -44,9 +44,7 @@ public class ViewEventActivity extends RefreshableActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
