@@ -1,17 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<<<<<<< HEAD
     <PreferenceCategory android:title="General" />
+=======
 
-    <PreferenceCategory android:title="Info">
+    <PreferenceCategory android:title="@string/pref_header_account" />
+
+    <PreferenceCategory android:title="@string/pref_header_general" />
+
+    <PreferenceCategory android:title="@string/pref_header_appinfo">
+        <Preference
+            android:key="tba_link"
+            android:persistent="false"
+            android:selectable="true"
+            android:title="@string/tbasite_label"
+            android:summary="@string/tbasite_summary"/>
+>>>>>>> master
+
         <Preference
             android:key="tba_link"
             android:title="The Blue Alliance"
             android:summary="Visit The Blue Alliance website" />
         <Preference
             android:key="github_link"
+<<<<<<< HEAD
             android:title="The Blue Alliance for Android is open source"
             android:summary="View Project on GitHub" />
+=======
+            android:persistent="false"
+            android:selectable="true"
+            android:title="@string/github_label"
+            android:summary="@string/github_summary" />
+
+        <Preference
+            android:key="app_version"
+            android:persistent="false"
+            android:selectable="false"
+            android:title="@string/settings_version_label" />
+
+        <Preference
+            android:key="license"
+            android:persistent="false"
+            android:selectable="false"
+            android:title="@string/license_label"/>
+>>>>>>> master
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Other Community Sites" />

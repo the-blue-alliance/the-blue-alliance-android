@@ -113,6 +113,7 @@ public class Event implements BasicModel {
 
     public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ENGLISH);
     public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy"),
+                                         shortRenderDateFormat = new SimpleDateFormat("MMM d"),
                                          weekFormat = new SimpleDateFormat("w");
 
     String 		eventKey,
@@ -367,7 +368,7 @@ public class Event implements BasicModel {
     }
 
     public String getDateString(){
-        return renderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
+        return shortRenderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
     }
 
     public int getWeek(){
