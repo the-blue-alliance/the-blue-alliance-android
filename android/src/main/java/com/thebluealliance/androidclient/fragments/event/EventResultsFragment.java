@@ -15,18 +15,32 @@ import com.thebluealliance.androidclient.background.PopulateEventResults;
 public class EventResultsFragment extends Fragment {
 
     private String eventKey;
+    private static final String KEY = "eventKey";
+
+    public static EventResultsFragment getInstance(String eventKey){
+        EventResultsFragment f = new EventResultsFragment();
+        Bundle data = new Bundle();
+        data.putString(KEY,eventKey);
+        f.setArguments(data);
+        return f;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO implement savedInstanceState and stuff
         if(getArguments() != null){
-            eventKey = getArguments().getString("eventKey","");
+            eventKey = getArguments().getString(KEY,"");
+        }
+        if(savedInstanceState != null && savedInstanceState.containsKey(KEY)){
+            eventKey = savedInstanceState.getString(KEY);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if(savedInstanceState != null && savedInstanceState.containsKey(KEY)){
+            eventKey = savedInstanceState.getString(KEY);
+        }
         View results = inflater.inflate(R.layout.fragment_event_results, null);
         new PopulateEventResults(getActivity(), results).execute(eventKey);
         return results;

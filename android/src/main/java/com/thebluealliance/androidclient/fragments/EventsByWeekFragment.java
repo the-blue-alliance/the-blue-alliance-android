@@ -17,11 +17,34 @@ import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerListener {
 
     private int mYear;
+    private static final String YEAR = "YEAR";
+
+    public static EventsByWeekFragment newInstance(int year) {
+        EventsByWeekFragment f = new EventsByWeekFragment();
+        Bundle args = new Bundle();
+        args.putInt(YEAR, year);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //TODO make the default year update to the current year, not a constant one
+        if(getArguments() != null) {
+            mYear = getArguments().getInt(YEAR, 2014);
+        }
+        if(savedInstanceState != null && savedInstanceState.containsKey(YEAR)){
+            mYear = savedInstanceState.getInt(YEAR);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        if(savedInstanceState != null && savedInstanceState.containsKey(YEAR)){
+            mYear = savedInstanceState.getInt(YEAR);
+        }
         return inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
     }
 
