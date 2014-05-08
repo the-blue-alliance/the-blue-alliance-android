@@ -2,12 +2,5 @@
     <string name="title_activity_settings">Settings</string>
     <string name="pref_header_appinfo">Info</string>
     <string name="pref_header_general">General</string>
-<<<<<<< HEAD
-    <string name="pref_header_other">Other Community Sites</string>
-    <string name="pref_header_contributors">List of Contributors</string>
-    <string name="pref_header_opensource">Open Source Licenses</string>
-
-=======
     <string name="pref_header_account">Account</string>
->>>>>>> master
 </resources>
