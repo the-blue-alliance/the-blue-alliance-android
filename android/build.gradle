@@ -1,6 +1,6 @@
 apply plugin: 'android'
 
-def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+//def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 
 android {
     compileSdkVersion 19
@@ -18,10 +18,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     buildTypes {
+        /*
         debug {
             versionNameSuffix "-#" + gitSha
             packageNameSuffix ".development"
         }
+        */
 
         release {
             runProguard false

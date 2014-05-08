@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datatypes;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,7 +41,13 @@ public class NavDrawerItem implements ListItem {
         if (icon != -1) {
             ((ImageView) convertView.findViewById(R.id.icon)).setImageResource(icon);
         }
-        ((TextView) convertView.findViewById(R.id.title)).setText(title);
+        TextView textView = ((TextView) convertView.findViewById(R.id.title));
+        textView.setText(title);
+        if(convertView.isActivated()){
+            textView.setTypeface(null, Typeface.BOLD);
+        } else {
+            textView.setTypeface(null, Typeface.NORMAL);
+        }
         return convertView;
     }
 

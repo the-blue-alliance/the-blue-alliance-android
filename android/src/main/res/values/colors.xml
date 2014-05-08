@@ -10,7 +10,7 @@
     <color name="grey">#F5F5F0</color>
     <color name="dark_grey">#A4A4A4</color>
     <color name="white">#FFF</color>
-
+    <color name="nav_text_color">#585858</color>
     <color name="action_bar_background">#000056</color>
 
     <color name="pager_indicator_color">#ff0057ff</color>
