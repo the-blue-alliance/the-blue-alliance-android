@@ -19,7 +19,7 @@ public class TestTBACSV extends TestCase{
 
         assertEquals((int)team.getTeamNumber(), 1124);
         assertEquals(team.getNickname(), "ÜberBots");
-        assertEquals(team.getLocation(), "Avon, CT, USA");
+        assertEquals(team.getLocation(), "Avon, CT, USA"); 
     }
 
 }
