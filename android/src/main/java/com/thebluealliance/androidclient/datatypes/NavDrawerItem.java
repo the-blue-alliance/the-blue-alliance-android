@@ -16,6 +16,7 @@ public class NavDrawerItem implements ListItem {
     private String title;
     private int icon = -1;
     private int layout;
+
     public NavDrawerItem(String title) {
         this.title = title;
     }
@@ -34,7 +35,7 @@ public class NavDrawerItem implements ListItem {
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
         if (convertView == null) {
-            convertView = inflater.inflate(layout,null);
+            convertView = inflater.inflate(layout, null);
         }
         if (icon != -1) {
             ((ImageView) convertView.findViewById(R.id.icon)).setImageResource(icon);

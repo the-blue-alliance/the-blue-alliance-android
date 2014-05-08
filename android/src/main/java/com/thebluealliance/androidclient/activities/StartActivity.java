@@ -8,7 +8,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,14 +36,13 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
      * The serialization (saved instance state) Bundle key representing the
      * current dropdown position.
      */
-    private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item",
-            EVENT_TAG = "events",
-            TEAM_TAG = "teams",
-            INSIGHTS_TAG = "insights";
+    private static final String STATE_SELECTED_NAVIGATION_ITEM_POSITION = "selected_navigation_item";
+    private static final String STATE_SELECTED_YEAR_SPINNER_POSITION = "selected_spinner_position";
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
-    private int mCurrentSelectedNavigationItem = -1;
+    private int mCurrentSelectedNavigationItemPosition = -1;
+    private int mCurrentSelectedYearPosition = -1;
 
     private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
 
@@ -59,13 +58,14 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
 
         //set up nav drawer for main navigation
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
         ArrayList<ListItem> navDrawer = new ArrayList<ListItem>();
         navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_blue, R.layout.nav_drawer_item));
         navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_blue, R.layout.nav_drawer_item));
         navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_blue, R.layout.nav_drawer_item));
-        navDrawer.add(new NavDrawerItem("Settings", R.drawable.ic_action_settings_blue, R.layout.nav_drawer_item_small));
+        navDrawer.add(new NavDrawerItem("SETTINGS", R.drawable.ic_action_settings_blue, R.layout.nav_drawer_item_small));
         mDrawerList.setAdapter(new ListViewAdapter(this, navDrawer, null));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(this);
@@ -79,7 +79,7 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                setupActionBarForPosition(mCurrentSelectedNavigationItem);
+                setupActionBarForPosition(mCurrentSelectedNavigationItemPosition);
             }
 
             /** Called when a drawer has settled in a completely open state. */
@@ -96,10 +96,24 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-        //default to events view
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, new EventsByWeekFragment(), MAIN_FRAGMENT_TAG).commit();
-        mCurrentSelectedNavigationItem = 0;
-        setupActionBarForEvents();
+        if (savedInstanceState != null) {
+            // Restore needed stuff
+            mCurrentSelectedNavigationItemPosition = savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM_POSITION, 0);
+            Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+            if (f == null) {
+                Log.d("onCreate", "creating new fragment");
+                switchToModeForPosition(mCurrentSelectedNavigationItemPosition);
+            } else {
+                Log.d("onCreate", "old fragment retained");
+                setupActionBarForPosition(mCurrentSelectedNavigationItemPosition);
+            }
+            if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION) && getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST) {
+                getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION));
+            }
+        } else {
+            // Default to events view
+            switchToModeForPosition(0);
+        }
     }
 
     @Override
@@ -107,15 +121,6 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Restore the previously serialized current dropdown position.
-        if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM) && getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST) {
-            getActionBar().setSelectedNavigationItem(
-                    savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-        }
     }
 
     @Override
@@ -127,17 +132,9 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // Serialize the current dropdown position.
-        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM,
+        outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
                 getActionBar().getSelectedNavigationIndex());
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.event_list, menu);
-        return true;
+        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM_POSITION, mCurrentSelectedNavigationItemPosition);
     }
 
     @Override
@@ -145,11 +142,6 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-        }
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
@@ -159,10 +151,14 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // Don't reload the fragment if the user selects the tab we are currently on
-        if (position == mCurrentSelectedNavigationItem) {
+        if (position == mCurrentSelectedNavigationItemPosition) {
             mDrawerLayout.closeDrawer(mDrawerList);
             return;
         }
+        switchToModeForPosition(position);
+    }
+
+    private void switchToModeForPosition(int position) {
         Fragment fragment;
         switch (position) {
             default:
@@ -180,12 +176,14 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
                 break;
             case 3:
                 startActivity(new Intent(this, SettingsActivity.class));
+                mDrawerLayout.closeDrawer(mDrawerList);
                 return;
         }
+        fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         mDrawerList.setItemChecked(position, true);
         // This must be done before we lose the drawer
-        mCurrentSelectedNavigationItem = position;
+        mCurrentSelectedNavigationItemPosition = position;
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -240,6 +238,7 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         if (f instanceof ActionBarSpinnerListener) {
             ((ActionBarSpinnerListener) f).actionBarSpinnerSelected(position, dropdownItems[position]);
         }
+        mCurrentSelectedYearPosition = position;
         return true;
     }
 }
