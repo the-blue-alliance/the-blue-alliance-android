@@ -34,4 +34,7 @@
     <string name="top_teams">Top Teams:</string>
     <string name="top_opr">Top OPRs:</string>
 
+    <!-- Settings -->
+    <string name="settings_version_label">Version</string>
+
 </resources>

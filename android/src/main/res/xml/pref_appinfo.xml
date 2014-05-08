@@ -7,7 +7,12 @@
         <Preference
             android:key="github_link"
             android:title="The Blue Alliance for Andoid is open source"
-            android:summary="View Project on GitHub"
-            ></Preference>
+            android:summary="View Project on GitHub" />
+
+        <Preference
+            android:key="app_version"
+            android:persistent="false"
+            android:selectable="false"
+            android:title="@string/settings_version_label" />
     </PreferenceCategory>
 </PreferenceScreen>

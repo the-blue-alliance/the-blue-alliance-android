@@ -14,6 +14,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
 
 import java.util.List;
@@ -43,6 +44,9 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.pref_appinfo);
         Preference github_link = findPreference("github_link");
         github_link.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/")));
+
+        Preference appVersion = findPreference("app_version");
+        appVersion.setSummary(BuildConfig.VERSION_NAME);
     }
 
     /**
