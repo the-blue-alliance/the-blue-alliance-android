@@ -45,5 +45,7 @@
     <string name="from">from</string>
     <string name="currently_competing">currently competing at</string>
 
+    <!-- Settings -->
+    <string name="settings_version_label">Version</string>
 
 </resources>

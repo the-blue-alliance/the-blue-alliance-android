@@ -1,8 +1,10 @@
 apply plugin: 'android'
 
+def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.0'
+    buildToolsVersion '19.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -16,6 +18,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     buildTypes {
+        debug {
+            versionNameSuffix "-#" + gitSha
+            packageNameSuffix ".development"
+        }
+
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -27,6 +34,6 @@ dependencies {
     compile 'com.android.support:support-v13:19.+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.android.support:support-v4:19.+'
+    compile 'com.google.code.gson:gson:2.2.4'
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile files('libs/joda-time-2.3.jar')
 }
