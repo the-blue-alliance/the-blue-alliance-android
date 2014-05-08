@@ -379,7 +379,7 @@ public class Event implements BasicModel {
 
     @Override
     public EventListElement render() {
-        return new EventListElement(eventKey, eventName, getDateString() , location);
+        return new EventListElement(eventKey, eventName, getDateString() , location); 
     }
 
     @Override
