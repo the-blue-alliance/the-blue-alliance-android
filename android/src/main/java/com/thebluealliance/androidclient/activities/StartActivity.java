@@ -17,7 +17,6 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.datafeed.PreferenceHelper;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
@@ -54,7 +53,6 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        PreferenceHelper.setAppVersion(this);
 
         //set up nav drawer for main navigation
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);

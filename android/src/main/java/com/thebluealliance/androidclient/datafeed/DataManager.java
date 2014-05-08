@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -58,7 +59,7 @@ public class DataManager {
         } else {
             // We need to load teams from the API
             //TODO move to TBAv2 class
-            final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id="+PreferenceHelper.getAppVersion();
+            final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id="+ BuildConfig.VERSION_NAME;
             String response = TBAv2.getResponseFromURLOrThrow(c, URL, false);
             Log.d("get simple teams", "starting parse");
             teams = CSVManager.parseTeamsFromCSV(response);
