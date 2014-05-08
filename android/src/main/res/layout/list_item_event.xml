@@ -31,6 +31,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/event_name"
         android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/event_dates"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:id="@+id/event_location"
         android:text="Location" />
 </RelativeLayout>
