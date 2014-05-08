@@ -17,7 +17,7 @@ public class EventAwardsFragment extends Fragment {
     private String eventKey;
     private static final String KEY = "eventKey";
 
-    public static EventAwardsFragment getInstance(String eventKey){
+    public static EventAwardsFragment newInstance(String eventKey){
         EventAwardsFragment f = new EventAwardsFragment();
         Bundle data = new Bundle();
         data.putString(KEY,eventKey);

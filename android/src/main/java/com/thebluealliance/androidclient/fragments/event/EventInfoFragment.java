@@ -17,7 +17,7 @@ public class EventInfoFragment extends Fragment {
     private String eventKey;
     private static final String KEY = "eventKey";
 
-    public static EventInfoFragment getInstance(String eventKey){
+    public static EventInfoFragment newInstance(String eventKey){
         EventInfoFragment f = new EventInfoFragment();
         Bundle data = new Bundle();
         data.putString(KEY,eventKey);
