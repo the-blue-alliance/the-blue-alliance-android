@@ -21,7 +21,9 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         team.setTeamNumber(object.get("team_number").getAsInt());
         team.setFullName(object.get("name").getAsString());
         team.setNickname(object.get("nickname").getAsString());
-        team.setLocation(object.get("location").getAsString());
+        if(object.has("location") && !object.get("location").isJsonNull()) {
+            team.setLocation(object.get("location").getAsString());
+        }
         if(object.has("events")) {
             team.setEvents(object.get("events").getAsJsonArray());
         }
