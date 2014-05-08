@@ -16,6 +16,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     buildTypes {
+        debug {
+            versionNameSuffix "-DEVELOPMENT"
+            packageNameSuffix ".development"
+        }
+
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
