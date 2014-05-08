@@ -32,5 +32,6 @@ dependencies {
     compile 'com.android.support:support-v13:19.+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.android.support:support-v4:19.+'
+    compile 'com.google.code.gson:gson:2.2.4'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
