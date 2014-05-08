@@ -66,4 +66,23 @@
         <item name="android:src">@drawable/ic_action_forward</item>
     </style>
 
+    <style name="NavDrawerIconStyle">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="NavDrawerLabelStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
+        <item name="android:textColor">#585858</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingRight">8dp</item>
+    </style>
+
+    <style name="NavDrawerSmallLabelStyle" parent="NavDrawerLabelStyle">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
+    </style>
+
 </resources>

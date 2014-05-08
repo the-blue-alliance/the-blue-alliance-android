@@ -18,6 +18,8 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
 
     private int mYear;
 
+    private ViewPager mViewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -34,7 +36,7 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
         }
         mYear = year;
         final View view = getView();
-        final ViewPager pager = (ViewPager) view.findViewById(R.id.event_pager);
+        mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         final int mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -45,8 +47,8 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        pager.setAdapter(new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear));
-                        tabs.setViewPager(pager);
+                        mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear));
+                        tabs.setViewPager(mViewPager);
                         view.animate()
                                 .alpha(1f)
                                 .setDuration(mShortAnimationDuration)

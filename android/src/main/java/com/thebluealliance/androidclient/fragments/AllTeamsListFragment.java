@@ -16,16 +16,18 @@ public class AllTeamsListFragment extends Fragment {
 
     private int mYear;
 
+    private ViewPager mViewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragmet_team_list_fragment_pager, container, false);
-        ViewPager pager = (ViewPager) v.findViewById(R.id.team_pager);
-        pager.setAdapter(new TeamListAdapter(getChildFragmentManager()));
+        mViewPager = (ViewPager) v.findViewById(R.id.team_pager);
+        mViewPager.setAdapter(new TeamListAdapter(getChildFragmentManager()));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) v.findViewById(R.id.team_pager_tabs);
-        tabs.setViewPager(pager);
+        tabs.setViewPager(mViewPager);
         return v;
     }
 }

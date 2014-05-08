@@ -2,21 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeightLarge"
     android:orientation="horizontal"
-    android:minHeight="?android:attr/listPreferredItemHeightLarge">
+    android:background="@color/nav_drawer_item_background">
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:padding="4dp"/>
+        style="@style/NavDrawerIconStyle" />
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textAppearance="?android:attr/textAppearanceListItem"
-        android:textColor="#ff585858"
-        android:gravity="center_vertical"
-        android:paddingRight="8dp" />
+        style="@style/NavDrawerLabelStyle" />
+
 </LinearLayout>

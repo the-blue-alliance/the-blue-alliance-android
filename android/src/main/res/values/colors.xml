@@ -12,7 +12,15 @@
     <color name="white">#FFF</color>
 
     <color name="action_bar_background">#000056</color>
-    <color name="nav_drawer_background">#000099</color>
 
     <color name="pager_indicator_color">#ff0057ff</color>
+
+    <!-- navigation drawer colors -->
+    <color name="nav_drawer_background">#f7f7f7</color>
+    <color name="nav_drawer_item_divider">#e5e5e5</color>
+    <color name="nav_drawer_item_light_default">#fff</color>
+    <color name="nav_drawer_item_light_pressed">#ebebeb</color>
+    <color name="nav_drawer_item_dark_default">#f7f7f7</color>
+    <color name="nav_drawer_item_dark_pressed">#e5e5e5</color>
+
 </resources>
