@@ -1,5 +1,7 @@
 apply plugin: 'android'
 
+def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+
 android {
     compileSdkVersion 19
     buildToolsVersion '19.0.3'
@@ -17,7 +19,7 @@ android {
     }
     buildTypes {
         debug {
-            versionNameSuffix "-DEVELOPMENT"
+            versionNameSuffix "-#" + gitSha
             packageNameSuffix ".development"
         }
 
