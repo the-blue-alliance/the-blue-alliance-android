@@ -58,7 +58,7 @@ public class DataManager {
         } else {
             // We need to load teams from the API
             //TODO move to TBAv2 class
-            final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=greg:marra:hi";
+            final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id="+PreferenceHelper.getAppVersion();
             String response = TBAv2.getResponseFromURLOrThrow(c, URL, false);
             Log.d("get simple teams", "starting parse");
             teams = CSVManager.parseTeamsFromCSV(response);
