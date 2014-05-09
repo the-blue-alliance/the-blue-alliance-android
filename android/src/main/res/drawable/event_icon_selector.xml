@@ -6,6 +6,6 @@
     <item android:state_focused="true" android:drawable="@drawable/ic_action_event_blue" />
     <item android:state_pressed="true" android:drawable="@drawable/ic_action_event_blue" />
     <item android:state_selected="true" android:drawable="@drawable/ic_action_event_blue" />
-    <item android:state_checked="true" android:drawable="@drawable/ic_action_event_blue"/>
-    <item android:drawable="@drawable/ic_action_event"/>
+    <item android:state_checked="true" android:drawable="@drawable/ic_action_event_blue" />
+    <item android:drawable="@drawable/ic_action_event" />
 </selector>
