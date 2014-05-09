@@ -61,7 +61,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/team_full_name_wrapper"
+            android:id="@+id/team_full_name_container"
             style="@style/InfoItemStyle"
             android:clickable="true">
 
@@ -113,7 +113,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:visibility="gone">
 
-        <ImageView
+            <ImageView
                 android:id="@+id/team_current_event_icon"
                 style="@style/InfoItemImageStyle"
                 android:src="@drawable/ic_action_event" />
@@ -144,7 +144,7 @@
             style="@style/InfoItemStyle"
             android:visibility="gone">
 
-        <ImageView
+            <ImageView
                 android:id="@+id/team_current_match_icon"
                 style="@style/InfoItemImageStyle"
                 android:src="@drawable/ic_action_time" />

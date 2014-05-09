@@ -66,16 +66,26 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
 
         View view = mFragment.getView();
         if (view != null) {
-            ((TextView) view.findViewById(R.id.team_name)).setText(mTeamName);
+            TextView teamName = ((TextView) view.findViewById(R.id.team_name));
+            if (mTeamName.isEmpty()) {
+                teamName.setText("Team " + mTeamNumber);
+            } else {
+                teamName.setText(mTeamName);
+            }
             ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
             // Tag is used to create an ACTION_VIEW intent for a maps application
             view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
             view.findViewById(R.id.team_twitter_button).setTag("twitter://search?q=%23" + mTeamKey);
             view.findViewById(R.id.team_youtube_button).setTag(String.format("#frc%d OR \"team %d\"", mTeamNumber, mTeamNumber));
-            // This string needs to be specially formatted
-            SpannableString string = new SpannableString("aka " + mFullName);
-            string.setSpan(new TextAppearanceSpan(mContext, R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+            if (mFullName.isEmpty()) {
+                // No full name specified, hide the view
+                view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
+            } else {
+                // This string needs to be specially formatted
+                SpannableString string = new SpannableString("aka " + mFullName);
+                string.setSpan(new TextAppearanceSpan(mContext, R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+            }
             if (!mIsCurrentlyCompeting) {
                 view.findViewById(R.id.team_current_event_container).setVisibility(View.GONE);
                 view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);

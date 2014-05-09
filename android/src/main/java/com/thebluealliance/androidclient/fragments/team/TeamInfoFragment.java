@@ -48,12 +48,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        //new PopulateTeamInfo(this, mTeamKey).execute();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         task = new PopulateTeamInfo(getActivity(), this, mTeamKey);
