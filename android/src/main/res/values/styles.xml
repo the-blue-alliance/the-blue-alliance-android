@@ -76,7 +76,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
-        <item name="android:textColor">#585858</item>
+        <item name="android:textColor">@color/nav_text_color_selected</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingRight">8dp</item>
     </style>
