@@ -18,10 +18,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     buildTypes {
+
         debug {
             versionNameSuffix "-#" + gitSha
             packageNameSuffix ".development"
         }
+
 
         release {
             runProguard false

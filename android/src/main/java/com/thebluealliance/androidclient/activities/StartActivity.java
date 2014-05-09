@@ -60,10 +60,10 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
         ArrayList<ListItem> navDrawer = new ArrayList<ListItem>();
-        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_blue, R.layout.nav_drawer_item));
-        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_blue, R.layout.nav_drawer_item));
-        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_blue, R.layout.nav_drawer_item));
-        navDrawer.add(new NavDrawerItem("SETTINGS", R.drawable.ic_action_settings_blue, R.layout.nav_drawer_item_small));
+        navDrawer.add(new NavDrawerItem("Events", R.drawable.ic_action_event_selectable, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Teams", R.drawable.ic_action_group_selectable, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("Insights", R.drawable.ic_action_sort_by_size_selectable, R.layout.nav_drawer_item));
+        navDrawer.add(new NavDrawerItem("SETTINGS", R.drawable.ic_action_settings_selectable, R.layout.nav_drawer_item_small));
         mDrawerList.setAdapter(new ListViewAdapter(this, navDrawer, null));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(this);
@@ -153,6 +153,7 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
             mDrawerLayout.closeDrawer(mDrawerList);
             return;
         }
+        mDrawerList.setSelection(position);
         switchToModeForPosition(position);
     }
 
@@ -161,6 +162,7 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         switch (position) {
             default:
             case 0: //events
+
                 fragment = new EventsByWeekFragment();
                 setupActionBarForEvents();
                 break;
@@ -177,6 +179,7 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
                 mDrawerLayout.closeDrawer(mDrawerList);
                 return;
         }
+        mDrawerList.setSelection(position);
         fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         mDrawerList.setItemChecked(position, true);

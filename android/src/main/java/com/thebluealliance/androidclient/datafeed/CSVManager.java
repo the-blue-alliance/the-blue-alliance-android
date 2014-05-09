@@ -23,7 +23,7 @@ public class CSVManager {
             int i = 1;
             while (values != null) {
                 StringBuilder sb = new StringBuilder();
-                if (values.get(1).toLowerCase().equals("none")) {
+                if (values.size() < 4 || values.get(1).toLowerCase().equals("none")) {
                     values = CSVHelper.parseLine(reader);
                     continue;
                 }
