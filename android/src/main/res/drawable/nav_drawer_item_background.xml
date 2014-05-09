@@ -2,7 +2,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true" android:drawable="@color/nav_drawer_item_light_pressed" />
-    <item android:state_activated="true" android:drawable="@color/nav_drawer_item_light_pressed" />
     <item android:drawable="@color/nav_drawer_item_light_default" />
 
 </selector>
