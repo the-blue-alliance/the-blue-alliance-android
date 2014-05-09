@@ -47,5 +47,9 @@
 
     <!-- Settings -->
     <string name="settings_version_label">Version</string>
-
+    <string name="github_label">The Blue Alliance for Android is open source</string>
+    <string name="github_summary">View project on GitHub</string>
+    <string name="tbasite_label">The Blue Alliance website</string>
+    <string name="tbasite_summary">Visit The Blue Alliance</string>
+    <string name="license_label">Open Source Licenses</string>
 </resources>

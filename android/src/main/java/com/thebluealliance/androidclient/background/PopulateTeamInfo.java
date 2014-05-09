@@ -65,41 +65,44 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
         super.onPostExecute(v);
 
         View view = mFragment.getView();
-        ((TextView) view.findViewById(R.id.team_name)).setText(mTeamName);
-        ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
-        // Tag is used to create an ACTION_VIEW intent for a maps application
-        view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
-        view.findViewById(R.id.team_twitter_button).setTag("twitter://search?q=%23" + mTeamKey);
-        view.findViewById(R.id.team_youtube_button).setTag(String.format("#frc%d OR \"team %d\"", mTeamNumber, mTeamNumber));
-        // This string needs to be specially formatted
-        SpannableString string = new SpannableString("aka " + mFullName);
-        string.setSpan(new TextAppearanceSpan(mContext, R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
-        if (!mIsCurrentlyCompeting) {
-            view.findViewById(R.id.team_current_event_container).setVisibility(View.GONE);
-            view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
-        } else {
-            //TODO: populate current event/match fields with the appropriate data
-            boolean hasPlayedAtCurrentEvent = true;
-            boolean hasNextMatchAtCurrentEvent = true;
-            if (hasPlayedAtCurrentEvent) {
-
+        if (view != null) {
+            ((TextView) view.findViewById(R.id.team_name)).setText(mTeamName);
+            ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
+            // Tag is used to create an ACTION_VIEW intent for a maps application
+            view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
+            view.findViewById(R.id.team_twitter_button).setTag("twitter://search?q=%23" + mTeamKey);
+            view.findViewById(R.id.team_youtube_button).setTag(String.format("#frc%d OR \"team %d\"", mTeamNumber, mTeamNumber));
+            // This string needs to be specially formatted
+            SpannableString string = new SpannableString("aka " + mFullName);
+            string.setSpan(new TextAppearanceSpan(mContext, R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+            if (!mIsCurrentlyCompeting) {
+                view.findViewById(R.id.team_current_event_container).setVisibility(View.GONE);
+                view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
             } else {
-                // Hide most recent match views, this team has not yet had a match at this competition
-                view.findViewById(R.id.team_most_recent_match_label).setVisibility(View.GONE);
-                view.findViewById(R.id.team_most_recent_match_details).setVisibility(View.GONE);
-            }
+                //TODO: populate current event/match fields with the appropriate data
+                boolean hasPlayedAtCurrentEvent = true;
+                boolean hasNextMatchAtCurrentEvent = true;
+                if (hasPlayedAtCurrentEvent) {
 
-            if (hasNextMatchAtCurrentEvent) {
-                // Hide the video button in the match details, future matches cannot have videos yet
-                View nextMatchDetailsView = view.findViewById(R.id.team_next_match_details);
-                nextMatchDetailsView.findViewById(R.id.match_video).setVisibility(View.INVISIBLE);
-            } else {
-                // Hide next match views, this team has no more matches at this competition
-                view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
-                view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
+                } else {
+                    // Hide most recent match views, this team has not yet had a match at this competition
+                    view.findViewById(R.id.team_most_recent_match_label).setVisibility(View.GONE);
+                    view.findViewById(R.id.team_most_recent_match_details).setVisibility(View.GONE);
+                }
+
+                if (hasNextMatchAtCurrentEvent) {
+                    // Hide the video button in the match details, future matches cannot have videos yet
+                    View nextMatchDetailsView = view.findViewById(R.id.team_next_match_details);
+                    nextMatchDetailsView.findViewById(R.id.match_video).setVisibility(View.INVISIBLE);
+                } else {
+                    // Hide next match views, this team has no more matches at this competition
+                    view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
+                    view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
+                }
             }
         }
     }
+
 
 }

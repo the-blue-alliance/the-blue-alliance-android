@@ -59,8 +59,10 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-        ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
-        teamList.setAdapter(adapter);
+        if (view != null) {
+            //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
+            ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
+            teamList.setAdapter(adapter);
+        }
     }
 }

@@ -122,20 +122,25 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(v);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-        ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
-        eventList.setAdapter(adapter);
 
-        //set to open basic event view. More static data to be removed later...
-        eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(mFragment.getActivity(), ViewEventActivity.class);
-                Bundle data = intent.getExtras();
-                if(data == null) data = new Bundle();
-                data.putString("eventKey",view.getTag().toString());
-                intent.putExtras(data);
-                mFragment.getActivity().startActivity(intent);
-            }
-        });
+       if (mFragment.getView() != null) {
+            ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
+            eventList.setAdapter(adapter);
+
+            //set to open basic event view. More static data to be removed later...
+            eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(mFragment.getActivity(), ViewEventActivity.class);
+                    Bundle data = intent.getExtras();
+                    if (data == null) data = new Bundle();
+                    if (view.getTag() != null) {
+                        data.putString("eventKey", view.getTag().toString());
+                        intent.putExtras(data);
+                        mFragment.getActivity().startActivity(intent);
+                    }
+                }
+            });
+        }
     }
 }

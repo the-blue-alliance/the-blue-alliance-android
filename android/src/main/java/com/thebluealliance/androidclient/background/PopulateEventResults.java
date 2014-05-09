@@ -98,7 +98,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
-        listView.setAdapter(adapter);
+        if (view != null) {
+            ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
+            listView.setAdapter(adapter);
+        }
     }
 }

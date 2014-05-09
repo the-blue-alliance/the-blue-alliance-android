@@ -53,8 +53,10 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        ListView rankings = (ListView) view.findViewById(R.id.event_awards);
-        rankings.setAdapter(adapter);
+        if (view != null) {
+            ListView rankings = (ListView) view.findViewById(R.id.event_awards);
+            rankings.setAdapter(adapter);
+        }
     }
 
 }
