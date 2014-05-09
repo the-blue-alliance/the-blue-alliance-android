@@ -55,7 +55,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, Void> {
         }
         if (!isCancelled()) {
             adapter = new ListViewAdapter(fragment.getActivity(), teamItems, teamKeys);
-
             adapter.notifyDataSetChanged();
         }
         return null;
