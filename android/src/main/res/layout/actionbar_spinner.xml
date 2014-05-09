@@ -10,6 +10,7 @@
         android:id="@+id/year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 
     <TextView
@@ -18,5 +19,6 @@
         android:layout_height="wrap_content"
         android:paddingLeft="5dp"
         android:text="@string/events_label"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 </LinearLayout>

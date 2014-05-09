@@ -3,4 +3,5 @@
     style="@android:style/Widget.Holo.Light.DropDownItem"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeightSmall"
-    android:id="@+id/year" />
+    android:id="@+id/year"
+    android:background="@color/action_bar_background"/>
