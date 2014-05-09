@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightLarge"
     android:orientation="horizontal"
-    android:background="@color/nav_drawer_item_background">
+    android:background="@drawable/nav_drawer_item_background"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
-    <ImageView
+<ImageView
         android:id="@+id/icon"
         style="@style/NavDrawerIconStyle" />
 
