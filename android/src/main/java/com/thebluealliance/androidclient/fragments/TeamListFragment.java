@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,10 @@ public class TeamListFragment extends Fragment {
 
     private static final String START = "START";
     private static final String END = "END";
+
+    private Parcelable mListState;
+    private ListViewAdapter mAdapter;
+    private ListView mListView;
 
     private int mTeamNumberStart, mTeamNumberEnd;
 
@@ -44,30 +49,34 @@ public class TeamListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_teams, null);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getView().findViewById(R.id.team_list) != null) {
-            ((ListView) getView().findViewById(R.id.team_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
-                    Intent i = new Intent(getActivity(), ViewTeamActivity.class);
-                    i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
-                    startActivity(i);
-                }
-            });
+        View v = inflater.inflate(R.layout.fragment_teams, null);
+        mListView = (ListView) v.findViewById(R.id.team_list);
+        if(mAdapter != null) {
+            mListView.setAdapter(mAdapter);
+            mListView.onRestoreInstanceState(mListState);
+        } else {
+            task = new PopulateTeamList(this);
+            task.execute(mTeamNumberStart, mTeamNumberEnd);
         }
-        task = new PopulateTeamList(this);
-        task.execute(mTeamNumberStart, mTeamNumberEnd);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
+                Intent i = new Intent(getActivity(), ViewTeamActivity.class);
+                i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+                startActivity(i);
+            }
+        });
+        return v;
     }
 
     @Override
     public void onPause() {
         super.onPause();
         task.cancel(false);
+        if(mListView != null) {
+            mAdapter = (ListViewAdapter) mListView.getAdapter();
+            mListState = mListView.onSaveInstanceState();
+        }
     }
 }

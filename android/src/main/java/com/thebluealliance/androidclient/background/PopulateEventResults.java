@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -22,15 +23,12 @@ import java.util.HashMap;
  */
 public class PopulateEventResults extends AsyncTask<String, Void, Void> {
 
-    private Activity activity;
-    private View view;
+private Fragment mFragment;
     private String eventKey, teamKey;
     private MatchListAdapter adapter;
 
-    public PopulateEventResults(Activity activity, View view) {
-        this.activity = activity;
-        this.view = view;
-
+    public PopulateEventResults(Fragment f) {
+        mFragment = f;
     }
 
     @Override
@@ -49,7 +47,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
         MatchGroup finalMatches = new MatchGroup("Finals Matches");
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         try {
-            HashMap<Match.TYPE,ArrayList<Match>> results = DataManager.getEventResults(activity,eventKey);
+            HashMap<Match.TYPE,ArrayList<Match>> results = DataManager.getEventResults(mFragment.getActivity(), eventKey);
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
             for(Match m:results.get(Match.TYPE.QUAL)){
                 qualMatches.children.add(m);
@@ -91,13 +89,14 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
             groups.append(numGroups, finalMatches);
             numGroups++;
         }
-        adapter = new MatchListAdapter(activity, groups);
+        adapter = new MatchListAdapter(mFragment.getActivity(), groups);
 
         return null;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(Void params) {
+        View view = mFragment.getView();
         if (view != null) {
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
