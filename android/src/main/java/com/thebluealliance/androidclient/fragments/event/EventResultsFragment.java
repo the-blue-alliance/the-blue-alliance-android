@@ -8,10 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventResults;
 
@@ -28,7 +26,7 @@ public class EventResultsFragment extends Fragment {
     private ExpandableListView mListView;
     private int mFirstVisiblePosition;
 
-    private PopulateEventResults task;
+    private PopulateEventResults mTask;
 
     public static EventResultsFragment newInstance(String eventKey){
         EventResultsFragment f = new EventResultsFragment();
@@ -56,8 +54,8 @@ public class EventResultsFragment extends Fragment {
             mListView.setSelection(mFirstVisiblePosition);
             Log.d("onCreateView", "using existing adapter");
         } else {
-            task = new PopulateEventResults(this);
-            task.execute(eventKey);
+            mTask = new PopulateEventResults(this);
+            mTask.execute(eventKey);
             Log.d("onCreateView", "creating new adapter");
         }
         return v;
@@ -66,7 +64,7 @@ public class EventResultsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        task.cancel(false);
+        mTask.cancel(false);
         if(mListView != null) {
             Log.d("onPause", "saving adapter");
             mAdapter = (MatchListAdapter) mListView.getExpandableListAdapter();

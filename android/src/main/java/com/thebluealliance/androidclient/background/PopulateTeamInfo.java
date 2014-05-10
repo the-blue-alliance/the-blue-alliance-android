@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
@@ -17,10 +16,9 @@ import com.thebluealliance.androidclient.models.Team;
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
+public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
 
     private Fragment mFragment;
-    private Context mContext;
     private String mTeamName;
     private int mTeamNumber;
     private String mLocation;
@@ -28,14 +26,13 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
     private String mTeamKey;
     private boolean mIsCurrentlyCompeting = false;
 
-    public PopulateTeamInfo(Context c, Fragment fragment, String teamKey) {
+    public PopulateTeamInfo(Fragment fragment) {
         mFragment = fragment;
-        mContext = c;
-        mTeamKey = teamKey;
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(String... params) {
+        mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
             Team team = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
@@ -83,7 +80,7 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
             } else {
                 // This string needs to be specially formatted
                 SpannableString string = new SpannableString("aka " + mFullName);
-                string.setSpan(new TextAppearanceSpan(mContext, R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                string.setSpan(new TextAppearanceSpan(mFragment.getActivity(), R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
             }
             if (!mIsCurrentlyCompeting) {

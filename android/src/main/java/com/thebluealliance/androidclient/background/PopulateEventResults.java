@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.background;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.SparseArray;
@@ -23,7 +22,7 @@ import java.util.HashMap;
  */
 public class PopulateEventResults extends AsyncTask<String, Void, Void> {
 
-private Fragment mFragment;
+    private Fragment mFragment;
     private String eventKey, teamKey;
     private MatchListAdapter adapter;
 
@@ -47,24 +46,24 @@ private Fragment mFragment;
         MatchGroup finalMatches = new MatchGroup("Finals Matches");
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         try {
-            HashMap<Match.TYPE,ArrayList<Match>> results = DataManager.getEventResults(mFragment.getActivity(), eventKey);
+            HashMap<Match.TYPE, ArrayList<Match>> results = DataManager.getEventResults(mFragment.getActivity(), eventKey);
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
-            for(Match m:results.get(Match.TYPE.QUAL)){
+            for (Match m : results.get(Match.TYPE.QUAL)) {
                 qualMatches.children.add(m);
                 qualMatches.childrenKeys.add(m.getKey());
             }
             Collections.sort(results.get(Match.TYPE.QUARTER), comparator);
-            for(Match m:results.get(Match.TYPE.QUARTER)){
+            for (Match m : results.get(Match.TYPE.QUARTER)) {
                 quarterMatches.children.add(m);
                 quarterMatches.childrenKeys.add(m.getKey());
             }
             Collections.sort(results.get(Match.TYPE.SEMI), comparator);
-            for(Match m:results.get(Match.TYPE.SEMI)){
+            for (Match m : results.get(Match.TYPE.SEMI)) {
                 semiMatches.children.add(m);
                 semiMatches.childrenKeys.add(m.getKey());
             }
             Collections.sort(results.get(Match.TYPE.FINAL), comparator);
-            for(Match m:results.get(Match.TYPE.FINAL)){
+            for (Match m : results.get(Match.TYPE.FINAL)) {
                 finalMatches.children.add(m);
                 finalMatches.childrenKeys.add(m.getKey());
             }
@@ -73,21 +72,20 @@ private Fragment mFragment;
         }
 
         int numGroups = 0;
-        if(qualMatches.children.size()>0){
+        if (qualMatches.children.size() > 0) {
             groups.append(numGroups, qualMatches);
             numGroups++;
         }
-        if(quarterMatches.children.size()>0){
+        if (quarterMatches.children.size() > 0) {
             groups.append(numGroups, quarterMatches);
             numGroups++;
         }
-        if(semiMatches.children.size()>0){
+        if (semiMatches.children.size() > 0) {
             groups.append(numGroups, semiMatches);
             numGroups++;
         }
-        if(finalMatches.children.size()>0){
+        if (finalMatches.children.size() > 0) {
             groups.append(numGroups, finalMatches);
-            numGroups++;
         }
         adapter = new MatchListAdapter(mFragment.getActivity(), groups);
 

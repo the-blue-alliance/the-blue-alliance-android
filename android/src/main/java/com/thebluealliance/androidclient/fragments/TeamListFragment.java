@@ -29,7 +29,7 @@ public class TeamListFragment extends Fragment {
 
     private int mTeamNumberStart, mTeamNumberEnd;
 
-    private PopulateTeamList task;
+    private PopulateTeamList mTask;
 
     public static TeamListFragment newInstance(int startTeamNumber, int endTeamNumber) {
         TeamListFragment f = new TeamListFragment();
@@ -55,8 +55,8 @@ public class TeamListFragment extends Fragment {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
         } else {
-            task = new PopulateTeamList(this);
-            task.execute(mTeamNumberStart, mTeamNumberEnd);
+            mTask = new PopulateTeamList(this);
+            mTask.execute(mTeamNumberStart, mTeamNumberEnd);
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -73,7 +73,7 @@ public class TeamListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        task.cancel(false);
+        mTask.cancel(false);
         if(mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
