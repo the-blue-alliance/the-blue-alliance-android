@@ -50,10 +50,10 @@ public class NavigationDrawerFragment extends Fragment {
     private static final List<ListItem> NAVGATION_ITEMS = new ArrayList<>();
 
     static {
-        NAVGATION_ITEMS.add(new NavDrawerItem("Events", R.drawable.event_icon_selector, R.layout.nav_drawer_item));
-        NAVGATION_ITEMS.add(new NavDrawerItem("Teams", R.drawable.team_icon_selector, R.layout.nav_drawer_item));
-        NAVGATION_ITEMS.add(new NavDrawerItem("Insights", R.drawable.insights_icon_selector, R.layout.nav_drawer_item));
-        NAVGATION_ITEMS.add(new NavDrawerItem("SETTINGS", R.drawable.settings_icon_selector, R.layout.nav_drawer_item_small));
+        NAVGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.event_icon_selector, R.layout.nav_drawer_item));
+        NAVGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.team_icon_selector, R.layout.nav_drawer_item));
+        NAVGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_insights, "Insights", R.drawable.insights_icon_selector, R.layout.nav_drawer_item));
+        NAVGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, "SETTINGS", R.drawable.settings_icon_selector, R.layout.nav_drawer_item_small));
     }
 
     /**
