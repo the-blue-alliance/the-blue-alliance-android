@@ -24,6 +24,11 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
         NavigationDrawerFragment.OnNavigationDrawerListener {
 
     /**
+     * Saved instance state key representing the last select navigation drawer item
+     */
+    private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
+
+    /**
      * The serialization (saved instance state) Bundle key representing the
      * current dropdown position.
      */
@@ -46,17 +51,18 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment, (DrawerLayout) findViewById(R.id.nav_drawer_layout));
 
+        int initNavId = R.id.nav_item_events;
         if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
+                initNavId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
+            }
+
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION) && getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST) {
                 getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION));
             }
         }
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mNavDrawerFragment.setSelectedItem(mCurrentSelectedNavigationItemId);
+        mNavDrawerFragment.selectItemId(initNavId);
     }
 
     @Override
@@ -64,6 +70,7 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
                 getActionBar().getSelectedNavigationIndex());
+        outState.putInt(STATE_SELECTED_NAV_ID, mCurrentSelectedNavigationItemId);
     }
 
     private void switchToModeForId(int id) {

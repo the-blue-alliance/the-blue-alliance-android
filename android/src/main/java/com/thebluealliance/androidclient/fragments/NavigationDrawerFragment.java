@@ -41,12 +41,6 @@ import java.util.List;
  * @author tanis7x
  */
 public class NavigationDrawerFragment extends Fragment {
-
-    /**
-     * Remember the position of the selected item.
-     */
-    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
      * expands it. This shared preference tracks this.
@@ -73,7 +67,6 @@ public class NavigationDrawerFragment extends Fragment {
     private NavigationDrawerAdapter mNavigationAdapter;
     private OnNavigationDrawerListener mListener;
 
-    private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
@@ -89,16 +82,11 @@ public class NavigationDrawerFragment extends Fragment {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
-        // TODO: Figure out why savedInstance state is always null
         if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
 
         mNavigationAdapter =  new NavigationDrawerAdapter(getActivity(), NAVGATION_ITEMS);
-
-        // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
     }
 
     @Override
@@ -122,7 +110,6 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setAdapter(mNavigationAdapter);
 
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
 
@@ -209,7 +196,6 @@ public class NavigationDrawerFragment extends Fragment {
      * @param position The position of the clicked item
      */
     private void selectItem(int position) {
-        mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
             mNavigationAdapter.setItemSelected(position);
@@ -249,16 +235,9 @@ public class NavigationDrawerFragment extends Fragment {
      *
      * @param itemId The id of the item to select.
      */
-    public void setSelectedItem(int itemId) {
+    public void selectItemId(int itemId) {
         int position = mNavigationAdapter.getPostitionForId(itemId);
-        mDrawerListView.setItemChecked(position, true);
-        mNavigationAdapter.setItemSelected(position);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+        selectItem(position);
     }
 
     @Override
