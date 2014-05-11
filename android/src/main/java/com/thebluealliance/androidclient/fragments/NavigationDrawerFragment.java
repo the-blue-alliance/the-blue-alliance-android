@@ -89,10 +89,16 @@ public class NavigationDrawerFragment extends Fragment {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
+        // TODO: Figure out why savedInstance state is always null
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
+
+        mNavigationAdapter =  new NavigationDrawerAdapter(getActivity(), NAVGATION_ITEMS);
+
+        // Select either the default item (0) or the last selected item.
+        selectItem(mCurrentSelectedPosition);
     }
 
     @Override
@@ -100,17 +106,6 @@ public class NavigationDrawerFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        if (activity instanceof OnNavigationDrawerListener) {
-            mListener = (OnNavigationDrawerListener) activity;
-        } else {
-            throw new IllegalStateException("Activities hosting a NavigationDrawerFragment must implement OnNavigationItemClickedListener");
-        }
     }
 
     @Override
@@ -125,7 +120,6 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        mNavigationAdapter =  new NavigationDrawerAdapter(getActivity(), NAVGATION_ITEMS);
         mDrawerListView.setAdapter(mNavigationAdapter);
 
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
@@ -180,8 +174,6 @@ public class NavigationDrawerFragment extends Fragment {
                     return;
                 }
 
-                showGlobalContextActionBar();
-
                 if (!mUserLearnedDrawer) {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
                     // the navigation drawer automatically in the future.
@@ -229,6 +221,24 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (activity instanceof OnNavigationDrawerListener) {
+            mListener = (OnNavigationDrawerListener) activity;
+        } else {
+            throw new IllegalStateException("Activities hosting a NavigationDrawerFragment must implement OnNavigationDrawerListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mListener = null;
     }
 
     /**
