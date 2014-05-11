@@ -57,42 +57,44 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onClick(View view) {
         PackageManager manager = getActivity().getPackageManager();
-        if (view.getId() == R.id.team_location_container) {
-            String uri = view.getTag().toString();
-            Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-            if (handlers.size() > 0) {
-                // There is an application to handle this intent intent
-                startActivity(i);
-            } else {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
-            }
-        } else if (view.getId() == R.id.team_twitter_button) {
-            String uri = view.getTag().toString();
-            Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-            if (handlers.size() > 0) {
-                // There is an application to handle this intent intent
-                //TODO: Figure out if the Twitter app supports initiating searches via an Intent
-                //startActivity(i);
-            } else {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
-            }
-        } else if (view.getId() == R.id.team_youtube_button) {
-            String query = view.getTag().toString();
-            Intent i = new Intent(Intent.ACTION_SEARCH);
-            i.setPackage("com.google.android.youtube");
-            i.putExtra("query", query);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-            if (handlers.size() > 0) {
-                // There is an application to handle this intent intent
-                startActivity(i);
-            } else {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+        if (view.getTag() != null) {
+            if (view.getId() == R.id.team_location_container) {
+                String uri = view.getTag().toString();
+                Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
+                if (handlers.size() > 0) {
+                    // There is an application to handle this intent intent
+                    startActivity(i);
+                } else {
+                    // No application can handle this intent
+                    Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+                }
+            } else if (view.getId() == R.id.team_twitter_button) {
+                    String uri = view.getTag().toString();
+                    Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                    List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
+                    if (handlers.size() > 0) {
+                        // There is an application to handle this intent intent
+                        //TODO: Figure out if the Twitter app supports initiating searches via an Intent
+                        //startActivity(i);
+                    } else {
+                        // No application can handle this intent
+                        Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+                    }
+            } else if (view.getId() == R.id.team_youtube_button) {
+                String query = view.getTag().toString();
+                Intent i = new Intent(Intent.ACTION_SEARCH);
+                i.setPackage("com.google.android.youtube");
+                i.putExtra("query", query);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
+                if (handlers.size() > 0) {
+                    // There is an application to handle this intent intent
+                    startActivity(i);
+                } else {
+                    // No application can handle this intent
+                    Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

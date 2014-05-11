@@ -125,7 +125,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
 
        if (mFragment.getView() != null) {
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
-            eventList.setAdapter(adapter);
+           if (adapter != null) eventList.setAdapter(adapter);
 
             //set to open basic event view. More static data to be removed later...
             eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
