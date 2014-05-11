@@ -23,6 +23,7 @@ public class NavDrawerItem implements ListItem {
     }
 
     public NavDrawerItem(int id, String title, int icon, int layout) {
+        this.id = id;
         this.title = title;
         this.icon = icon;
         this.layout = layout;
