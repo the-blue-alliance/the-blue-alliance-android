@@ -17,6 +17,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+    signingConfigs {
+        release {
+            storeFile file("../../tba-keys.jks")
+            keyAlias "thebluealliance-android"
+
+            storePassword "notRealPassword"
+            keyPassword "notRealPassword"
+        }
+    }
     buildTypes {
 
         debug {
@@ -28,7 +37,28 @@ android {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                def file = variant.outputFile
+                variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + ".apk")
+            }
         }
+    }
+}
+
+task askForPasswords << {
+    // Must create String because System.readPassword() returns char[]
+    // (and assigning that below fails silently)
+    def storePw = new String(System.console().readPassword("\nKeystore password: "))
+    def keyPw = new String(System.console().readPassword("Key password: "))
+
+    android.signingConfigs.release.storePassword = storePw
+    android.signingConfigs.release.keyPassword = keyPw
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("packageRelease")) {
+        theTask.dependsOn "askForPasswords"
     }
 }
 
