@@ -65,7 +65,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerListView;
     private View mFragmentContainerView;
     private NavigationDrawerAdapter mNavigationAdapter;
-    private OnNavigationItemClickedListener mListener;
+    private OnNavigationDrawerListener mListener;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -100,8 +100,8 @@ public class NavigationDrawerFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if (activity instanceof OnNavigationItemClickedListener) {
-            mListener = (OnNavigationItemClickedListener) activity;
+        if (activity instanceof OnNavigationDrawerListener) {
+            mListener = (OnNavigationDrawerListener) activity;
         } else {
             throw new IllegalStateException("Activities hosting a NavigationDrawerFragment must implement OnNavigationItemClickedListener");
         }
@@ -219,7 +219,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         NavDrawerItem item = (NavDrawerItem) mNavigationAdapter.getItem(position);
-        mListener.onNavigationItemClicked(item);
+        mListener.onNavDrawerItemClicked(item);
     }
 
     @Override
@@ -266,13 +266,13 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     /**
-     * Interface for receiving navigation item click callbacks
+     * Interface for receiving navigation drawer callbacks
      */
-    public interface OnNavigationItemClickedListener {
+    public interface OnNavigationDrawerListener {
         /**
-         * Called when a NavigationItem in the navigation drawer is clicked
+         * Called when a NavDrawerItem in the navigation drawer is clicked
          * @param item The item that was clicked
          */
-        public void onNavigationItemClicked(NavDrawerItem item);
+        public void onNavDrawerItemClicked(NavDrawerItem item);
     }
 }

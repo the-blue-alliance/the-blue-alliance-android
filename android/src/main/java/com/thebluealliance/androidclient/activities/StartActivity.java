@@ -23,7 +23,7 @@ import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
  * File created by phil on 4/20/14.
  */
 public class StartActivity extends FragmentActivity implements AdapterView.OnItemClickListener, ActionBar.OnNavigationListener,
-        NavigationDrawerFragment.OnNavigationItemClickedListener {
+        NavigationDrawerFragment.OnNavigationDrawerListener {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -180,7 +180,7 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
     }
 
     @Override
-    public void onNavigationItemClicked(NavDrawerItem item) {
-        
+    public void onNavDrawerItemClicked(NavDrawerItem item) {
+
     }
 }
