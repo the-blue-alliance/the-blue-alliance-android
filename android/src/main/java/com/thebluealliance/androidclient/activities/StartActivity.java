@@ -66,6 +66,12 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mNavDrawerFragment.setSelectedItem(mCurrentSelectedNavigationItemId);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
@@ -87,11 +93,6 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
                 break;
             case R.id.nav_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
-                // If we don't manually set the checked item, Android will try to be helpful and set
-                // the clicked item as checked. We don't want this behavior when we click on settings,
-                // so we manually set it to check the current navigation item.
-                // TODO evaluate necessity, as settings screen doesn't have a nav drawer anyway
-               // mDrawerList.setItemChecked(mCurrentSelectedNavigationItemPosition, true);
                 return;
         }
         fragment.setRetainInstance(true);

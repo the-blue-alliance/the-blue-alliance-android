@@ -223,12 +223,26 @@ public class NavigationDrawerFragment extends Fragment {
             mNavigationAdapter.setItemSelected(position);
         }
 
-        NavDrawerItem item = (NavDrawerItem) mNavigationAdapter.getItem(position);
+        NavDrawerItem item = mNavigationAdapter.getItem(position);
         mListener.onNavDrawerItemClicked(item);
 
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
+    }
+
+    /**
+     * Set the currently selected item.
+     *
+     * This will only update the visible selected state. The drawer will not open or close,
+     * nor will onNavDrawerItemClicked() be called.
+     *
+     * @param itemId The id of the item to select.
+     */
+    public void setSelectedItem(int itemId) {
+        int position = mNavigationAdapter.getPostitionForId(itemId);
+        mDrawerListView.setItemChecked(position, true);
+        mNavigationAdapter.setItemSelected(position);
     }
 
     @Override
