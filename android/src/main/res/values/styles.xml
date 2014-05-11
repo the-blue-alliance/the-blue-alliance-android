@@ -3,6 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:dropDownListViewStyle">@style/App.Style.Spinner</item>
     </style>
 
     <style name="ActionBarStyle" parent="android:Widget.Holo.ActionBar">
@@ -85,6 +86,11 @@
     <style name="NavDrawerSmallLabelStyle" parent="NavDrawerLabelStyle">
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="App.Style.Spinner" parent="android:Widget.Holo.Light.ListView.DropDown">
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:divider">@color/white</item>
     </style>
 
 </resources>

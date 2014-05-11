@@ -42,7 +42,7 @@ public class EventStatsFragment extends Fragment {
             eventKey = savedInstanceState.getString(KEY);
         }
         View results = inflater.inflate(R.layout.fragment_event_rankings, null);
-        new PopulateEventStats(getActivity(), results).execute(eventKey);
+        new PopulateEventStats(this).execute(eventKey);
         return results;
     }
 }

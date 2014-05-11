@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.background;
 
-import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ListView;
 
@@ -19,27 +19,25 @@ import java.util.ArrayList;
  */
 public class PopulateEventRankings extends AsyncTask<String, Void, Void> {
 
-    private Activity activity;
-    private View view;
+    private Fragment mFragment;
     private String eventKey;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
 
-    public PopulateEventRankings(Activity activity, View view) {
-        this.activity = activity;
-        this.view = view;
+    public PopulateEventRankings(Fragment f) {
+        mFragment = f;
     }
 
     @Override
     protected Void doInBackground(String... params) {
         eventKey = params[0];
 
-        teamKeys = new ArrayList<String>();
-        teams = new ArrayList<ListItem>();
+        teamKeys = new ArrayList<>();
+        teams = new ArrayList<>();
 
         try {
-            ArrayList<JsonArray> rankList = DataManager.getEventRankings(activity,eventKey);
+            ArrayList<JsonArray> rankList = DataManager.getEventRankings(mFragment.getActivity(), eventKey);
             JsonArray headerRow = rankList.remove(0);
             for(JsonArray row:rankList){
                 /* Assume that the list of lists has rank first
@@ -63,12 +61,13 @@ public class PopulateEventRankings extends AsyncTask<String, Void, Void> {
             e.printStackTrace();
         }
 
-        adapter = new ListViewAdapter(activity, teams, teamKeys);
+        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        View view = mFragment.getView();
         if (view != null) {
             ListView rankings = (ListView) view.findViewById(R.id.event_ranking);
             rankings.setAdapter(adapter);

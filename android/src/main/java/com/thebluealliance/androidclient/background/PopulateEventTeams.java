@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -21,16 +22,14 @@ import java.util.Collections;
  */
 public class PopulateEventTeams extends AsyncTask<String, String, String> {
 
-    private Activity activity;
-    private View view;
+    private Fragment mFragment;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
     private String eventKey;
 
-    public PopulateEventTeams(Activity activity, View view) {
-        this.activity = activity;
-        this.view = view;
+    public PopulateEventTeams(Fragment f) {
+        mFragment = f;
     }
 
     @Override
@@ -41,7 +40,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
-            ArrayList<Team> teamList = DataManager.getEventTeams(activity,eventKey);
+            ArrayList<Team> teamList = DataManager.getEventTeams(mFragment.getActivity(), eventKey);
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for(Team t:teamList){
                 teamKeys.add(t.getTeamKey());
@@ -51,7 +50,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
 
-        adapter = new ListViewAdapter(activity, teams, teamKeys);
+        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
         adapter.notifyDataSetChanged();
         return "";
     }
@@ -59,6 +58,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        View view = mFragment.getView();
         if (view != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
             ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
