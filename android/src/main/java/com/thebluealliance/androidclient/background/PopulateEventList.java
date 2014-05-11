@@ -54,8 +54,8 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
          * For now, it'll just be static data for demonstrative purposes
          */
 
-        eventKeys = new ArrayList<String>();
-        events = new ArrayList<ListItem>();
+        eventKeys = new ArrayList<>();
+        events = new ArrayList<>();
 
         if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
             // Return a list of all events for a year
@@ -127,7 +127,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
             eventList.setAdapter(adapter);
 
-            //set to open basic event view. More static data to be removed later...
+            //set to open basic event view
             eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

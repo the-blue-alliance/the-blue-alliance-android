@@ -29,7 +29,11 @@ public class CSVManager {
                 }
                 String teamKey = "frc" + values.get(0);
                 try {
-                    SimpleTeam team = new SimpleTeam(teamKey, Integer.parseInt(values.get(0)), values.get(2), values.get(3), -1);
+                    String teamName = values.get(2);
+                    if (teamName.isEmpty()) {
+                        teamName = "Team " + Integer.parseInt(values.get(0));
+                    }
+                    SimpleTeam team = new SimpleTeam(teamKey, Integer.parseInt(values.get(0)), teamName, values.get(3), -1);
                     teams.add(team);
                 } catch (NumberFormatException e) {
                     // Invalid team number. Probably the column header.

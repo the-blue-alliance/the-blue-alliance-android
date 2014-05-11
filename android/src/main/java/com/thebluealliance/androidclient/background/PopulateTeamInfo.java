@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
@@ -17,10 +16,9 @@ import com.thebluealliance.androidclient.models.Team;
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
+public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
 
     private Fragment mFragment;
-    private Context mContext;
     private String mTeamName;
     private int mTeamNumber;
     private String mLocation;
@@ -28,14 +26,13 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
     private String mTeamKey;
     private boolean mIsCurrentlyCompeting = false;
 
-    public PopulateTeamInfo(Context c, Fragment fragment, String teamKey) {
+    public PopulateTeamInfo(Fragment fragment) {
         mFragment = fragment;
-        mContext = c;
-        mTeamKey = teamKey;
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(String... params) {
+        mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
             Team team = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
@@ -66,16 +63,26 @@ public class PopulateTeamInfo extends AsyncTask<Void, String, Void> {
 
         View view = mFragment.getView();
         if (view != null) {
-            ((TextView) view.findViewById(R.id.team_name)).setText(mTeamName);
+            TextView teamName = ((TextView) view.findViewById(R.id.team_name));
+            if (mTeamName.isEmpty()) {
+                teamName.setText("Team " + mTeamNumber);
+            } else {
+                teamName.setText(mTeamName);
+            }
             ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
             // Tag is used to create an ACTION_VIEW intent for a maps application
             view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
             view.findViewById(R.id.team_twitter_button).setTag("twitter://search?q=%23" + mTeamKey);
             view.findViewById(R.id.team_youtube_button).setTag(String.format("#frc%d OR \"team %d\"", mTeamNumber, mTeamNumber));
-            // This string needs to be specially formatted
-            SpannableString string = new SpannableString("aka " + mFullName);
-            string.setSpan(new TextAppearanceSpan(mContext, R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+            if (mFullName.isEmpty()) {
+                // No full name specified, hide the view
+                view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
+            } else {
+                // This string needs to be specially formatted
+                SpannableString string = new SpannableString("aka " + mFullName);
+                string.setSpan(new TextAppearanceSpan(mFragment.getActivity(), R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+            }
             if (!mIsCurrentlyCompeting) {
                 view.findViewById(R.id.team_current_event_container).setVisibility(View.GONE);
                 view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
