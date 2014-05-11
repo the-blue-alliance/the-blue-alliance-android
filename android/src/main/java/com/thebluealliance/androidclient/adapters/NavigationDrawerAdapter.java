@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Nathan on 5/8/2014.
@@ -18,8 +18,8 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
 
     private int mSelectedItemPosition = -1;
 
-    public NavigationDrawerAdapter(Context context, ArrayList<ListItem> values, ArrayList<String> keys) {
-        super(context, values, keys);
+    public NavigationDrawerAdapter(Context context, List<ListItem> values) {
+        super(context, values, null);
     }
 
     public void setItemSelected(int position) {
