@@ -66,6 +66,14 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Ensure that the corerct navigation item is highlighted when returning to the StartActivity
+        mNavDrawerFragment.selectItemId(mCurrentSelectedNavigationItemId);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
