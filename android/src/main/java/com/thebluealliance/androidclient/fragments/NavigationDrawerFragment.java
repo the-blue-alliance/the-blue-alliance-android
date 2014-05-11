@@ -175,9 +175,7 @@ public class NavigationDrawerFragment extends Fragment {
                     return;
                 }
 
-                // TODO
-                // resetActionBar();
-                // getActionBar().setTitle("The Blue Alliance");
+                showGlobalContextActionBar();
 
                 if (!mUserLearnedDrawer) {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
@@ -209,17 +207,23 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
+    /**
+     * Called when an item int he navigation drawer is clicked
+     * @param position The position of the clicked item
+     */
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
-        }
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
+            mNavigationAdapter.setItemSelected(position);
         }
 
         NavDrawerItem item = (NavDrawerItem) mNavigationAdapter.getItem(position);
         mListener.onNavDrawerItemClicked(item);
+
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
     }
 
     @Override

@@ -7,8 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.thebluealliance.androidclient.R;
@@ -22,7 +20,7 @@ import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends FragmentActivity implements AdapterView.OnItemClickListener, ActionBar.OnNavigationListener,
+public class StartActivity extends FragmentActivity implements ActionBar.OnNavigationListener,
         NavigationDrawerFragment.OnNavigationDrawerListener {
 
     /**
@@ -33,7 +31,7 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
-    private int mCurrentSelectedNavigationItemPosition = -1;
+    private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
 
     private NavigationDrawerFragment mNavDrawerFragment;
@@ -50,17 +48,17 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
             Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
             if (f == null) {
                 Log.d("onCreate", "creating new fragment");
-                switchToModeForPosition(mCurrentSelectedNavigationItemPosition);
+                switchToModeForId(mCurrentSelectedNavigationItemId);
             } else {
                 Log.d("onCreate", "old fragment retained");
-                setupActionBarForPosition(mCurrentSelectedNavigationItemPosition);
+                setupActionBarForId(mCurrentSelectedNavigationItemId);
             }
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION) && getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST) {
                 getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION));
             }
         } else {
             // Default to events view
-            switchToModeForPosition(0);
+            switchToModeForId(R.id.nav_item_events);
         }
 
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
@@ -74,54 +72,35 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
                 getActionBar().getSelectedNavigationIndex());
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // Don't reload the fragment if the user selects the tab we are currently on
-        if (position == mCurrentSelectedNavigationItemPosition) {
-            // TODO
-           //  mDrawerLayout.closeDrawer(mDrawerList);
-            return;
-        }
-        switchToModeForPosition(position);
-    }
-
-    private void switchToModeForPosition(int position) {
+    private void switchToModeForId(int id) {
         Fragment fragment;
-        switch (position) {
+        switch (id) {
             default:
-            case 0: //events
+            case R.id.nav_item_events:
                 fragment = new EventsByWeekFragment();
                 setupActionBarForEvents();
                 break;
-            case 1: //teams
+            case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
                 setupActionBarForTeams();
                 break;
-            case 2: //insights
+            case R.id.nav_item_insights:
                 fragment = new InsightsFragment();
                 setupActionBarForInsights();
                 break;
-            case 3:
+            case R.id.nav_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 // If we don't manually set the checked item, Android will try to be helpful and set
                 // the clicked item as checked. We don't want this behavior when we click on settings,
                 // so we manually set it to check the current navigation item.
-                // TODO
+                // TODO evaluate necessity, as settings screen doesn't have a nav drawer anyway
                // mDrawerList.setItemChecked(mCurrentSelectedNavigationItemPosition, true);
-              //  mDrawerLayout.closeDrawer(mDrawerList);
                 return;
         }
-        // TODO
-        //mDrawerList.setItemChecked(position, true);
-        // This notifies the custom adapter that the TextView with id R.id.title should be bold
-       // ((NavigationDrawerAdapter) mDrawerList.getAdapter()).setItemSelected(position);
         fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         // This must be done before we lose the drawer
-        mCurrentSelectedNavigationItemPosition = position;
-
-        // TODO
-       // mDrawerLayout.closeDrawer(mDrawerList);
+        mCurrentSelectedNavigationItemId = id;
     }
 
     private void resetActionBar() {
@@ -130,15 +109,15 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         getActionBar().setDisplayShowTitleEnabled(true);
     }
 
-    private void setupActionBarForPosition(int position) {
-        switch (position) {
-            case 0:
+    private void setupActionBarForId(int id) {
+        switch (id) {
+            case R.id.nav_item_events:
                 setupActionBarForEvents();
                 return;
-            case 1:
+            case R.id.nav_item_teams:
                 setupActionBarForTeams();
                 return;
-            case 2:
+            case R.id.nav_item_insights:
                 setupActionBarForInsights();
         }
     }
@@ -181,6 +160,10 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
 
     @Override
     public void onNavDrawerItemClicked(NavDrawerItem item) {
-
+        // Don't reload the fragment if the user selects the tab we are currently on
+        int id = item.getId();
+        if (id != mCurrentSelectedNavigationItemId) {
+            switchToModeForId(id);
+        }
     }
 }
