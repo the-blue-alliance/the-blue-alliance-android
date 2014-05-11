@@ -2,40 +2,33 @@ package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
-import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
+import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
-
-import java.util.ArrayList;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends FragmentActivity implements AdapterView.OnItemClickListener, ActionBar.OnNavigationListener {
+public class StartActivity extends FragmentActivity implements AdapterView.OnItemClickListener, ActionBar.OnNavigationListener,
+        NavigationDrawerFragment.OnNavigationItemClickedListener {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
      * current dropdown position.
      */
-    private static final String STATE_SELECTED_NAVIGATION_ITEM_POSITION = "selected_navigation_item";
     private static final String STATE_SELECTED_YEAR_SPINNER_POSITION = "selected_spinner_position";
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
@@ -43,60 +36,17 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
     private int mCurrentSelectedNavigationItemPosition = -1;
     private int mCurrentSelectedYearPosition = -1;
 
-    private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
+    private NavigationDrawerFragment mNavDrawerFragment;
 
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        //set up nav drawer for main navigation
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
-
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        // Set the adapter for the list view
-        ArrayList<ListItem> navDrawer = new ArrayList<ListItem>();
-        navDrawer.add(new NavDrawerItem("Events", R.drawable.event_icon_selector, R.layout.nav_drawer_item));
-        navDrawer.add(new NavDrawerItem("Teams", R.drawable.team_icon_selector, R.layout.nav_drawer_item));
-        navDrawer.add(new NavDrawerItem("Insights", R.drawable.insights_icon_selector, R.layout.nav_drawer_item));
-        navDrawer.add(new NavDrawerItem("SETTINGS", R.drawable.settings_icon_selector, R.layout.nav_drawer_item_small));
-        mDrawerList.setAdapter(new NavigationDrawerAdapter(this, navDrawer, null));
-        // Set the list's click listener
-        mDrawerList.setOnItemClickListener(this);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
-                R.string.drawer_open,  /* "open drawer" description */
-                R.string.drawer_close  /* "close drawer" description */) {
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                setupActionBarForPosition(mCurrentSelectedNavigationItemPosition);
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                resetActionBar();
-                getActionBar().setTitle("The Blue Alliance");
-            }
-        };
-
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-
         if (savedInstanceState != null) {
             // Restore needed stuff
-            mCurrentSelectedNavigationItemPosition = savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM_POSITION, 0);
             Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
             if (f == null) {
                 Log.d("onCreate", "creating new fragment");
@@ -112,19 +62,9 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
             // Default to events view
             switchToModeForPosition(0);
         }
-    }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
+        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment, (DrawerLayout) findViewById(R.id.nav_drawer_layout));
     }
 
     @Override
@@ -132,25 +72,14 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
                 getActionBar().getSelectedNavigationIndex());
-        outState.putInt(STATE_SELECTED_NAVIGATION_ITEM_POSITION, mCurrentSelectedNavigationItemPosition);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // Don't reload the fragment if the user selects the tab we are currently on
         if (position == mCurrentSelectedNavigationItemPosition) {
-            mDrawerLayout.closeDrawer(mDrawerList);
+            // TODO
+           //  mDrawerLayout.closeDrawer(mDrawerList);
             return;
         }
         switchToModeForPosition(position);
@@ -177,18 +106,22 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
                 // If we don't manually set the checked item, Android will try to be helpful and set
                 // the clicked item as checked. We don't want this behavior when we click on settings,
                 // so we manually set it to check the current navigation item.
-                mDrawerList.setItemChecked(mCurrentSelectedNavigationItemPosition, true);
-                mDrawerLayout.closeDrawer(mDrawerList);
+                // TODO
+               // mDrawerList.setItemChecked(mCurrentSelectedNavigationItemPosition, true);
+              //  mDrawerLayout.closeDrawer(mDrawerList);
                 return;
         }
-        mDrawerList.setItemChecked(position, true);
+        // TODO
+        //mDrawerList.setItemChecked(position, true);
         // This notifies the custom adapter that the TextView with id R.id.title should be bold
-        ((NavigationDrawerAdapter) mDrawerList.getAdapter()).setItemSelected(position);
+       // ((NavigationDrawerAdapter) mDrawerList.getAdapter()).setItemSelected(position);
         fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         // This must be done before we lose the drawer
         mCurrentSelectedNavigationItemPosition = position;
-        mDrawerLayout.closeDrawer(mDrawerList);
+
+        // TODO
+       // mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     private void resetActionBar() {
@@ -244,5 +177,10 @@ public class StartActivity extends FragmentActivity implements AdapterView.OnIte
         }
         mCurrentSelectedYearPosition = position;
         return true;
+    }
+
+    @Override
+    public void onNavigationItemClicked(NavDrawerItem item) {
+        
     }
 }
