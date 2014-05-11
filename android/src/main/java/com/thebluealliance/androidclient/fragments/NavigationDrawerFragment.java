@@ -29,6 +29,12 @@ import java.util.List;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
+ *
+ * Opening or closing the drawer will trigger a call to onPrepareOptionsMenu().
+ *
+ * Activities containing a NavigationDrawerFragment <strong>must</strong> implement
+ * {@link NavigationDrawerFragment.OnNavigationDrawerListener}.
+ *
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for an explanation of the behaviors implemented here.
  *
@@ -163,8 +169,7 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-                // TODO
-                // setupActionBarForPosition(mCurrentSelectedNavigationItemPosition);
+
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
 
@@ -208,7 +213,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     /**
-     * Called when an item int he navigation drawer is clicked
+     * Called when an item in the navigation drawer is clicked
      * @param position The position of the clicked item
      */
     private void selectItem(int position) {
@@ -256,7 +261,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     /**
      * Per the navigation drawer design guidelines, updates the action bar to show the global app
-     * 'context', rather than just what's in the current screen.
+     * title, rather than just what's in the current screen.
      */
     private void showGlobalContextActionBar() {
         ActionBar actionBar = getActionBar();

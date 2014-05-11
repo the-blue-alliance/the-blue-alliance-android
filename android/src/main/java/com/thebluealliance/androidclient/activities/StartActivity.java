@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.ArrayAdapter;
 
 import com.thebluealliance.androidclient.R;
@@ -51,7 +52,6 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
                 switchToModeForId(mCurrentSelectedNavigationItemId);
             } else {
                 Log.d("onCreate", "old fragment retained");
-                setupActionBarForId(mCurrentSelectedNavigationItemId);
             }
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION) && getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST) {
                 getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION));
@@ -78,15 +78,12 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
             default:
             case R.id.nav_item_events:
                 fragment = new EventsByWeekFragment();
-                setupActionBarForEvents();
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
-                setupActionBarForTeams();
                 break;
             case R.id.nav_item_insights:
                 fragment = new InsightsFragment();
-                setupActionBarForInsights();
                 break;
             case R.id.nav_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -109,21 +106,29 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
         getActionBar().setDisplayShowTitleEnabled(true);
     }
 
-    private void setupActionBarForId(int id) {
-        switch (id) {
-            case R.id.nav_item_events:
-                setupActionBarForEvents();
-                return;
-            case R.id.nav_item_teams:
-                setupActionBarForTeams();
-                return;
-            case R.id.nav_item_insights:
-                setupActionBarForInsights();
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // This will be triggered whenever the drawer opens or closes.
+        if (!mNavDrawerFragment.isDrawerOpen()) {
+            resetActionBar();
+
+            switch (mCurrentSelectedNavigationItemId) {
+                case R.id.nav_item_events:
+                    setupActionBarForEvents();
+                    break;
+                case R.id.nav_item_teams:
+                    getActionBar().setTitle("Teams");
+                    break;
+                case R.id.nav_item_insights:
+                    getActionBar().setTitle("Insights");
+                    break;
+            }
         }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     private void setupActionBarForEvents() {
-        resetActionBar();
         getActionBar().setDisplayShowTitleEnabled(false);
 
         ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner, R.id.year, dropdownItems);
@@ -131,16 +136,6 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getActionBar().setListNavigationCallbacks(actionBarAdapter, this);
         getActionBar().setSelectedNavigationItem(0); //TODO take this value from savedinstancestate
-    }
-
-    private void setupActionBarForTeams() {
-        resetActionBar();
-        getActionBar().setTitle("Teams");
-    }
-
-    private void setupActionBarForInsights() {
-        resetActionBar();
-        getActionBar().setTitle("Insights");
     }
 
     @Override
