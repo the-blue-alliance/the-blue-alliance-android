@@ -62,14 +62,13 @@ public class PopulateEventRankings extends AsyncTask<String, Void, Void> {
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
         }
-
-        adapter = new ListViewAdapter(activity, teams, teamKeys);
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if (view != null) {
+        if (view != null && activity != null) {
+            adapter = new ListViewAdapter(activity, teams, teamKeys);
             ListView rankings = (ListView) view.findViewById(R.id.event_ranking);
             rankings.setAdapter(adapter);
         }
