@@ -82,6 +82,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> implements
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        activity.startActivity(ViewTeamActivity.newInstance(activity, view.getTag().toString()));
+        mFragment.startActivity(ViewTeamActivity.newInstance(mFragment.getActivity(), view.getTag().toString()));
     }
 }

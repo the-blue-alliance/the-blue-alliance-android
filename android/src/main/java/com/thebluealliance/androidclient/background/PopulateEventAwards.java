@@ -40,7 +40,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> implement
 
         ArrayList<Award> awardList = null;
         try {
-            awardList = DataManager.getEventAwards(context, eventKey);
+            awardList = DataManager.getEventAwards(mFragment.getActivity(), eventKey);
             for(Award a:awardList){
                 ArrayList<AwardListElement> allWinners = a.renderAll();
                 awards.addAll(allWinners);
@@ -72,7 +72,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> implement
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String tag = view.getTag().toString();
         if(!tag.equals("frc0") && !tag.equals("frc-1")){
-            context.startActivity(ViewTeamActivity.newInstance(context, tag));
+            mFragment.startActivity(ViewTeamActivity.newInstance(mFragment.getActivity(), tag));
         }
     }
 }
