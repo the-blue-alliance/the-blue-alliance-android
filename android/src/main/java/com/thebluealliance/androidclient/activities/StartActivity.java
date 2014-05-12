@@ -61,7 +61,8 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
 
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
-                (DrawerLayout) findViewById(R.id.nav_drawer_layout));
+                (DrawerLayout) findViewById(R.id.nav_drawer_layout),
+                true);
 
         switchToModeForId(initNavId);
     }
