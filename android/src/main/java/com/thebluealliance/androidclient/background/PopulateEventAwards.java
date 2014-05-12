@@ -46,14 +46,13 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> {
         keys.add("frc4551");
         awards.add(new AwardListElement("frc4551", "Woodie Flowers Finalist Award", "James Bryan\n(4551)"));
 
-        adapter = new ListViewAdapter(context, awards, keys);
-
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if (view != null) {
+        if (view != null && context != null) {
+            adapter = new ListViewAdapter(context, awards, keys);
             ListView rankings = (ListView) view.findViewById(R.id.event_awards);
             rankings.setAdapter(adapter);
         }
