@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
@@ -56,9 +57,9 @@ public class TBAv2 {
         return teams;
     }
 
-    public static ArrayList<SimpleEvent> getEventList(int year){
+    public static ArrayList<SimpleEvent> getEventList(String json){
         ArrayList<SimpleEvent> events = new ArrayList<>();
-        JsonArray data = JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/events/" +year));
+        JsonArray data = JSONManager.getasJsonArray(json);
         Iterator iterator = data.iterator();
         while(iterator.hasNext()){
             events.add(JSONManager.getGson().fromJson((JsonObject)(iterator.next()),SimpleEvent.class));
@@ -66,11 +67,12 @@ public class TBAv2 {
         return events;
     }
 
-    public static String getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {
-       	if (c == null) {
-	    Log.d("datamanager", "Error: null context");
-            throw new DataManager.NoDataException("Unexpected problem retrieving data");
-        }
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {
+            if (c == null) {
+                Log.d("datamanager", "Error: null context");
+                throw new DataManager.NoDataException("Unexpected problem retrieving data");
+            }
+        Log.d("datamanager","Loading URL: "+URL);
         Database db = Database.getInstance(c);
         boolean existsInDb = db.exists(URL);
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
@@ -81,12 +83,22 @@ public class TBAv2 {
                 // Otherwise, requery the API, cache the new data, and return the data.
                 // TODO: once we support the If-Modified-Since header, use that to check if our local copy is up-to-date.
                 // For now, we just load the new data every time.
-
-                Log.d("datamanager", "Online; loaded from database");
-                return db.getResponse(URL);
+                boolean dataRequiresUpdate = false;
+                if(dataRequiresUpdate){
+                    // Load team data, cache it in the database, return it to caller
+                    String response = HTTP.GET(URL);
+                    if (cacheInDatabase) {
+                        db.storeResponse(URL, response, -1);
+                    }
+                    Log.d("datamanager", "Online; updated from internet");
+                    return new APIResponse<String>(response, APIResponse.CODE.UPDATED);
+                }else{
+                    Log.d("datamanager", "Online; no update required, loaded from database");
+                    return new APIResponse<String>(db.getResponse(URL), APIResponse.CODE.CACHED304);
+                }
             } else {
                 Log.d("datamanager", "Offline; loaded from database");
-                return db.getResponse(URL);
+                return new APIResponse<String>(db.getResponse(URL), APIResponse.CODE.OFFLINECACHE);
             }
         } else {
             if (connectedToInternet) {
@@ -96,7 +108,7 @@ public class TBAv2 {
                     db.storeResponse(URL, response, -1);
                 }
                 Log.d("datamanager", "Online; loaded from internet");
-                return response;
+                return new APIResponse<String>(response, APIResponse.CODE.WEBLOAD);
             } else {
                 // There is no locally stored data and we are not connected to the internet.
                 Log.d("datamanager", "Offline; no data!");

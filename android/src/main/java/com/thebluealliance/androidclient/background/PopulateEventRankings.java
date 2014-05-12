@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.RankingListElement;
 
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventRankings extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
+public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> implements AdapterView.OnItemClickListener {
 
     private Fragment mFragment;
     private String eventKey;
@@ -32,14 +33,15 @@ public class PopulateEventRankings extends AsyncTask<String, Void, Void> impleme
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
         teamKeys = new ArrayList<>();
         teams = new ArrayList<>();
 
         try {
-            ArrayList<JsonArray> rankList = DataManager.getEventRankings(mFragment.getActivity(), eventKey);
+            APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(mFragment.getActivity(),eventKey);
+            ArrayList<JsonArray> rankList = response.getData();
             JsonArray headerRow = rankList.remove(0);
             for(JsonArray row:rankList){
                 /* Assume that the list of lists has rank first
@@ -59,18 +61,18 @@ public class PopulateEventRankings extends AsyncTask<String, Void, Void> impleme
                 //TODO get team name for given number
                 //TODO remove record from layout (since it's not a constant parameter)
             }
+            return response.getCode();
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
+            return APIResponse.CODE.NODATA;
         }
-
-
-        return null;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             ListView rankings = (ListView) view.findViewById(R.id.event_ranking);
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             rankings.setAdapter(adapter);

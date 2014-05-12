@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.AwardListElement;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.models.Award;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventAwards extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
+public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.CODE> implements AdapterView.OnItemClickListener {
 
     private Fragment mFragment;
     private String eventKey;
@@ -33,15 +34,16 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> implement
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
         awards = new ArrayList<>();
         keys = new ArrayList<>();
 
-        ArrayList<Award> awardList = null;
+        APIResponse<ArrayList<Award>> response;
         try {
-            awardList = DataManager.getEventAwards(mFragment.getActivity(), eventKey);
+            response = DataManager.getEventAwards(mFragment.getActivity(), eventKey);
+            ArrayList<Award> awardList = response.getData();
             for(Award a:awardList){
                 ArrayList<AwardListElement> allWinners = a.renderAll();
                 awards.addAll(allWinners);
@@ -49,17 +51,17 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> implement
                     keys.add(a.getEventKey()+"_"+a.getName());
                 }
             }
+            return response.getCode();
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
+            return APIResponse.CODE.NODATA;
         }
-
-        return null;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
-        if (view != null && mFragment.getActivity() != null) {
+        if (view != null) {
             adapter = new ListViewAdapter(mFragment.getActivity(), awards, keys);
             ListView rankings = (ListView) view.findViewById(R.id.event_awards);
             rankings.setAdapter(adapter);

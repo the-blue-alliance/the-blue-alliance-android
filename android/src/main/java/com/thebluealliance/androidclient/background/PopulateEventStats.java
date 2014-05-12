@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.StatsListElement;
 
@@ -22,7 +23,7 @@ import java.util.Map;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventStats extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
+public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> implements AdapterView.OnItemClickListener {
 
     private Fragment mFragment;
     private String eventKey;
@@ -35,7 +36,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> implements
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
         teamKeys = new ArrayList<>();
@@ -44,7 +45,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> implements
         DecimalFormat displayFormat = new DecimalFormat("#.##");
 
         try {
-            JsonObject stats = DataManager.getEventStats(mFragment.getActivity(), eventKey);
+            APIResponse<JsonObject> response = DataManager.getEventStats(mFragment.getActivity(), eventKey);
+            JsonObject stats = response.getData();
             ArrayList<Map.Entry<String,JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
@@ -62,15 +64,15 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> implements
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
                 //TODO the blank fields above are team name and location
             }
+            return response.getCode();
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
+            return APIResponse.CODE.NODATA;
         }
-
-        return null;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment != null) {
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);

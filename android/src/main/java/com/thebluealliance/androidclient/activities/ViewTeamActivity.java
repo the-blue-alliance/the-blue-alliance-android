@@ -4,20 +4,23 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
 /**
  * File created by nathan on 4/21/14.
  */
-public class ViewTeamActivity extends FragmentActivity {
+public class ViewTeamActivity extends BaseActivity {
 
     public static final String TEAM_KEY = "team_key";
+    private TextView warningMessage;
 
     // Should come in the format frc####
     private String mTeamKey;
@@ -39,6 +42,9 @@ public class ViewTeamActivity extends FragmentActivity {
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
+        warningMessage = (TextView)findViewById(R.id.warning_container);
+        hideWarningMessage();
+
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey));
 
@@ -47,6 +53,20 @@ public class ViewTeamActivity extends FragmentActivity {
 
         // Setup the action bar
         setupActionBar();
+
+        if (!ConnectionDetector.isConnectedToInternet(this)) {
+            showWarningMessage(getString(R.string.warning_unable_to_load));
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ConnectionDetector.isConnectedToInternet(this)) {
+            hideWarningMessage();
+        }else{
+            showWarningMessage(getString(R.string.warning_unable_to_load));
+        }
     }
 
     private void setupActionBar() {
@@ -69,5 +89,16 @@ public class ViewTeamActivity extends FragmentActivity {
             this.finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void showWarningMessage(String message) {
+        warningMessage.setText(message);
+        warningMessage.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideWarningMessage() {
+        warningMessage.setVisibility(View.GONE);
     }
 }

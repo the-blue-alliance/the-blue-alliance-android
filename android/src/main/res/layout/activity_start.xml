@@ -1,13 +1,28 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/nav_drawer_layout">
 
-    <!-- Framelayout to display Fragments -->
-    <FrameLayout
-        android:id="@+id/container"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <!-- Framelayout to display Fragments -->
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/warning_container"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:id="@+id/warning_container"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:background="@color/lighter_red"
+            android:drawableLeft="@drawable/ic_action_warning_blue"/>
+    </RelativeLayout>
 
     <fragment
         android:id="@+id/navigation_drawer_fragment"

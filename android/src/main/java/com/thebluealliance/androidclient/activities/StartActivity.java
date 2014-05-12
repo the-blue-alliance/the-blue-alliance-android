@@ -4,12 +4,14 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
@@ -20,7 +22,7 @@ import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends FragmentActivity implements ActionBar.OnNavigationListener,
+public class StartActivity extends BaseActivity implements ActionBar.OnNavigationListener,
         NavigationDrawerFragment.OnNavigationDrawerListener {
 
     /**
@@ -43,10 +45,15 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
 
     private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
 
+    private TextView warningMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        warningMessage = (TextView)findViewById(R.id.warning_container);
+        hideWarningMessage();
 
         int initNavId = R.id.nav_item_events;
         if (savedInstanceState != null) {
@@ -65,6 +72,10 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
                 true);
 
         switchToModeForId(initNavId);
+
+        if (!ConnectionDetector.isConnectedToInternet(this)) {
+            showWarningMessage(getString(R.string.warning_unable_to_load));
+        }
     }
 
     @Override
@@ -73,6 +84,12 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
 
         // Ensure that the correct navigation item is highlighted when returning to the StartActivity
         mNavDrawerFragment.setItemSelected(mCurrentSelectedNavigationItemId);
+
+        if (ConnectionDetector.isConnectedToInternet(this)) {
+            hideWarningMessage();
+        }else{
+            showWarningMessage(getString(R.string.warning_unable_to_load));
+        }
     }
 
     @Override
@@ -166,5 +183,16 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
         if (id != mCurrentSelectedNavigationItemId) {
             switchToModeForId(id);
         }
+    }
+
+    @Override
+    public void showWarningMessage(String message) {
+        warningMessage.setText(message);
+        warningMessage.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideWarningMessage() {
+        warningMessage.setVisibility(View.GONE);
     }
 }

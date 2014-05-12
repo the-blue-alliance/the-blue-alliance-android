@@ -11,12 +11,13 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.Team;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
+public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private String mTeamName;
@@ -31,11 +32,12 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected APIResponse.CODE doInBackground(String... params) {
         mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
-            Team team = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
+            APIResponse<Team> response = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
+            Team team = response.getData();
             Long end = System.nanoTime();
             Log.d("doInBackground", "Total time to load team: " + (end - start));
             mTeamName = team.getNickname();
@@ -44,7 +46,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
             mTeamNumber = team.getTeamNumber();
             // TODO: determine if the team actually is competing
             mIsCurrentlyCompeting = false;
-            return null;
+            return response.getCode();
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
             //some temp data
@@ -53,12 +55,12 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
             mFullName = "This name is too long to comfortably fit here";
             mTeamNumber = 254;
             mIsCurrentlyCompeting = true;
-            return null;
+            return APIResponse.CODE.NODATA;
         }
     }
 
     @Override
-    protected void onPostExecute(Void v) {
+    protected void onPostExecute(APIResponse.CODE v) {
         super.onPostExecute(v);
 
         View view = mFragment.getView();

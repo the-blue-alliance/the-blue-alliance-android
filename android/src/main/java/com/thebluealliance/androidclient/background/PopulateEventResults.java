@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.MatchGroup;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -20,7 +21,7 @@ import java.util.HashMap;
 /**
  * File created by phil on 4/22/14.
  */
-public class PopulateEventResults extends AsyncTask<String, Void, Void> {
+public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private String eventKey, teamKey;
@@ -32,7 +33,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
         if (params.length == 2) {
             teamKey = params[1];
@@ -46,8 +47,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
         MatchGroup semiMatches = new MatchGroup("Semifinal Matches");
         MatchGroup finalMatches = new MatchGroup("Finals Matches");
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
+        APIResponse<HashMap<Match.TYPE,ArrayList<Match>>> response;
         try {
-            HashMap<Match.TYPE, ArrayList<Match>> results = DataManager.getEventResults(mFragment.getActivity(), eventKey);
+            response = DataManager.getEventResults(mFragment.getActivity(), eventKey);
+            HashMap<Match.TYPE,ArrayList<Match>> results = response.getData();
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
             for (Match m : results.get(Match.TYPE.QUAL)) {
                 qualMatches.children.add(m);
@@ -70,6 +73,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
             }
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
+            response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
 
         int numGroups = 0;
@@ -89,11 +93,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
             groups.append(numGroups, finalMatches);
         }
 
-        return null;
+        return response.getCode();
     }
 
-    @Override
-    protected void onPostExecute(Void params) {
+    protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
             adapter = new MatchListAdapter(mFragment.getActivity(), groups);

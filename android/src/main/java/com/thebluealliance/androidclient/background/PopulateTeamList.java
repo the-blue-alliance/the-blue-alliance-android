@@ -8,6 +8,7 @@ import android.widget.ListView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.TeamListElement;
 import com.thebluealliance.androidclient.models.SimpleTeam;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateTeamList extends AsyncTask<Integer, String, Void> {
+public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private Fragment fragment;
     private ArrayList<String> teamKeys;
@@ -32,13 +33,15 @@ public class PopulateTeamList extends AsyncTask<Integer, String, Void> {
     }
 
     @Override
-    protected Void doInBackground(Integer... params) {
+    protected APIResponse.CODE doInBackground(Integer... params) {
         int start = params[0];
         int end = params[1];
         Log.d("doInBackground", "is cancelled? " + isCancelled());
+        APIResponse<ArrayList<SimpleTeam>> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         if (!isCancelled()) {
             try {
-                ArrayList<SimpleTeam> teams = DataManager.getSimpleTeamsInRange(fragment.getActivity(), start, end);
+                response = DataManager.getSimpleTeamsInRange(fragment.getActivity(), start, end);
+                ArrayList<SimpleTeam> teams = response.getData();
                 for (SimpleTeam team : teams) {
                     if (isCancelled()) {
                         break;
@@ -48,17 +51,19 @@ public class PopulateTeamList extends AsyncTask<Integer, String, Void> {
                     teamItems.add(e);
                 }
             } catch (Exception e) {
-                teamKeys.add("frc2056");
-                teamItems.add(new TeamListElement("frc2056", 2056, "OP Robotics", "Stoney Creek, ON"));
                 e.printStackTrace();
             }
         }
-        return null;
+        if (!isCancelled()) {
+            adapter = new ListViewAdapter(fragment.getActivity(), teamItems, teamKeys);
+            adapter.notifyDataSetChanged();
+        }
+        return response.getCode();
     }
 
 
     @Override
-    protected void onPostExecute(Void v) {
+    protected void onPostExecute(APIResponse.CODE v) {
         super.onPostExecute(v);
 
         if (!isCancelled() && fragment.getActivity() != null) {

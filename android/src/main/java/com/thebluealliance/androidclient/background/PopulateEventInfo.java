@@ -10,13 +10,14 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
 
 /**
  * File created by phil on 4/22/14.
  */
-public class PopulateEventInfo extends AsyncTask<String, String, String> {
+public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.CODE> {
 
     private Fragment mFragment;
     View last, next;
@@ -30,7 +31,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
         View view = mFragment.getView();
@@ -45,9 +46,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
 
             LayoutInflater inflater = (LayoutInflater) mFragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
-                event = DataManager.getEvent(mFragment.getActivity(), eventKey);
+                APIResponse<Event> response = DataManager.getEvent(mFragment.getActivity(), eventKey);
+                event = response.getData();
                 last = new MatchListElement(true, "Quals 1", new String[]{"3182", "3634", "2168"}, new String[]{"181", "4055", "237"}, 23, 120, "2014ctgro_qm1").getView(mFragment.getActivity(), inflater, null);
                 next = new MatchListElement(true, "Quals 2", new String[]{"3718", "230", "5112"}, new String[]{"175", "4557", "125"}, 60, 121, "2014ctgro_qm2").getView(mFragment.getActivity(), inflater, null);
+                return response.getCode();
             } catch (DataManager.NoDataException e) {
                 e.printStackTrace();
             }
@@ -59,13 +62,13 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
          *
          */
         }
-        return null;
+        return APIResponse.CODE.NODATA;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        if(event != null && mFragment.getActivity() != null) {
+    protected void onPostExecute(APIResponse.CODE c) {
+        super.onPostExecute(c);
+        if (event != null && mFragment.getActivity() != null) {
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());
             eventLoc.setText(event.getLocation());
