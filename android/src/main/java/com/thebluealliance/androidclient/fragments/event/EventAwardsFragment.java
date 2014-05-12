@@ -42,7 +42,7 @@ public class EventAwardsFragment extends Fragment {
             eventKey = savedInstanceState.getString(KEY);
         }
         View info = inflater.inflate(R.layout.fragment_event_awards, null);
-        new PopulateEventAwards(getActivity(), info).execute("");
+        new PopulateEventAwards(getActivity(), info).execute(eventKey);
         return info;
     }
 }
