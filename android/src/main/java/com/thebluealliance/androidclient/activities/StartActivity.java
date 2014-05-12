@@ -84,12 +84,6 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
 
         // Ensure that the correct navigation item is highlighted when returning to the StartActivity
         mNavDrawerFragment.setItemSelected(mCurrentSelectedNavigationItemId);
-
-        if (ConnectionDetector.isConnectedToInternet(this)) {
-            hideWarningMessage();
-        }else{
-            showWarningMessage(getString(R.string.warning_unable_to_load));
-        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -24,12 +25,14 @@ import java.util.HashMap;
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
+    private BaseActivity activity;
     private String eventKey, teamKey;
     private MatchListAdapter adapter;
     SparseArray<MatchGroup> groups;
 
     public PopulateEventResults(Fragment f) {
         mFragment = f;
+        activity = (BaseActivity)mFragment.getActivity();
     }
 
     @Override
@@ -49,7 +52,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         APIResponse<HashMap<Match.TYPE,ArrayList<Match>>> response;
         try {
-            response = DataManager.getEventResults(mFragment.getActivity(), eventKey);
+            response = DataManager.getEventResults(activity, eventKey);
             HashMap<Match.TYPE,ArrayList<Match>> results = response.getData();
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
             for (Match m : results.get(Match.TYPE.QUAL)) {
@@ -99,9 +102,14 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new MatchListAdapter(mFragment.getActivity(), groups);
+            adapter = new MatchListAdapter(activity, groups);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
+
+            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+                //TODO only show warning for currently competing event (there's likely missing data)
+                activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
+            }
         }
     }
 }

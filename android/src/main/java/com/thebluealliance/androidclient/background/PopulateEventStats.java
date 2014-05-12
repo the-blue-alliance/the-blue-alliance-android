@@ -9,6 +9,7 @@ import android.widget.ListView;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -26,6 +27,7 @@ import java.util.Map;
 public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> implements AdapterView.OnItemClickListener {
 
     private Fragment mFragment;
+    private BaseActivity activity;
     private String eventKey;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
@@ -33,6 +35,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
     public PopulateEventStats(Fragment f) {
         mFragment = f;
+        activity = (BaseActivity)mFragment.getActivity();
     }
 
     @Override
@@ -45,7 +48,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         DecimalFormat displayFormat = new DecimalFormat("#.##");
 
         try {
-            APIResponse<JsonObject> response = DataManager.getEventStats(mFragment.getActivity(), eventKey);
+            APIResponse<JsonObject> response = DataManager.getEventStats(activity, eventKey);
             JsonObject stats = response.getData();
             ArrayList<Map.Entry<String,JsonElement>>
                     opr = new ArrayList<>(),
@@ -79,6 +82,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             ListView stats = (ListView) view.findViewById(R.id.event_ranking);
             stats.setAdapter(adapter);
             stats.setOnItemClickListener(this);
+
+            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+                //TODO only show warning for currently competing event (there's likely missing data)
+                activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
@@ -26,6 +27,7 @@ import java.util.Collections;
 public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CODE> implements AdapterView.OnItemClickListener {
 
     private Fragment mFragment;
+    private BaseActivity activity;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
@@ -33,6 +35,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
     public PopulateEventTeams(Fragment f) {
         mFragment = f;
+        activity = (BaseActivity)mFragment.getActivity();
     }
 
     @Override
@@ -43,7 +46,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
-            APIResponse<ArrayList<Team>> response = DataManager.getEventTeams(mFragment.getActivity(), eventKey);
+            APIResponse<ArrayList<Team>> response = DataManager.getEventTeams(activity, eventKey);
             ArrayList<Team> teamList = response.getData();
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {
@@ -70,12 +73,17 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
             teamList.setAdapter(adapter);
             teamList.setOnItemClickListener(this);
+
+            if(c == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+                //TODO only show warning for currently competing event (there's likely missing data)
+                activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
+            }
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = ViewTeamActivity.newInstance(mFragment.getActivity(),view.getTag().toString());
+        Intent intent = ViewTeamActivity.newInstance(activity,view.getTag().toString());
         mFragment.startActivity(intent);
     }
 }

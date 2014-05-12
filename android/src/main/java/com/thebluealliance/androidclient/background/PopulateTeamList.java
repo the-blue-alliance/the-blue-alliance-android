@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -63,8 +64,8 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
 
     @Override
-    protected void onPostExecute(APIResponse.CODE v) {
-        super.onPostExecute(v);
+    protected void onPostExecute(APIResponse.CODE code) {
+        super.onPostExecute(code);
 
         if (!isCancelled() && fragment.getActivity() != null) {
             adapter = new ListViewAdapter(fragment.getActivity(), teamItems, teamKeys);
@@ -74,6 +75,11 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         if (fragment.getView() != null) {
             ListView eventList = (ListView) fragment.getView().findViewById(R.id.team_list);
             eventList.setAdapter(adapter);
+
+            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+                //TODO only show warning for currently competing event (there's likely missing data)
+                ((BaseActivity)fragment.getActivity()).showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
+            }
         }
     }
 }

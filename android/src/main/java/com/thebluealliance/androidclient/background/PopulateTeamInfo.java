@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.Team;
@@ -60,8 +61,8 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     }
 
     @Override
-    protected void onPostExecute(APIResponse.CODE v) {
-        super.onPostExecute(v);
+    protected void onPostExecute(APIResponse.CODE code) {
+        super.onPostExecute(code);
 
         View view = mFragment.getView();
         if (view != null) {
@@ -109,6 +110,11 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                     view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
                     view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
                 }
+            }
+
+            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+                //TODO only show warning for currently competing event (there's likely missing data)
+                ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
         }
     }

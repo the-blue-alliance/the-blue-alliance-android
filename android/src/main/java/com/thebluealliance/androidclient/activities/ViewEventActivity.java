@@ -44,16 +44,6 @@ public class ViewEventActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (ConnectionDetector.isConnectedToInternet(this)) {
-            hideWarningMessage();
-        }else{
-            showWarningMessage(getString(R.string.warning_unable_to_load));
-        }
-    }
-
     private void setupActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }

@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
@@ -142,6 +143,11 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                     }
                 }
             });
+
+           if(c == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+               //TODO only show warning for currently competing event (there's likely missing data)
+               ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+           }
         }
     }
 }
