@@ -3,9 +3,11 @@ package com.thebluealliance.androidclient.background;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.AwardListElement;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventAwards extends AsyncTask<String, Void, Void> {
+public class PopulateEventAwards extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
 
     private Context context;
     private View view;
@@ -63,7 +65,15 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> {
         if (view != null) {
             ListView rankings = (ListView) view.findViewById(R.id.event_awards);
             rankings.setAdapter(adapter);
+            rankings.setOnItemClickListener(this);
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String tag = view.getTag().toString();
+        if(!tag.equals("frc0") && !tag.equals("frc-1")){
+            context.startActivity(ViewTeamActivity.newInstance(context, tag));
+        }
+    }
 }

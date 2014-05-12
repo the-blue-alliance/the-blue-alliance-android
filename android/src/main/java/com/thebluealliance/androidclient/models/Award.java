@@ -80,7 +80,7 @@ public class Award implements BasicModel {
                 awardee = winner.get("awardee").getAsString();
             }
 
-            output.add(new AwardListElement(eventKey+"_"+name,name,buildWinnerString(awardee,teamNumber)));
+            output.add(new AwardListElement(eventKey+"_"+name,name,buildWinnerString(awardee,teamNumber),teamNumber));
         }
         return output;
     }

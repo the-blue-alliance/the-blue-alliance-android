@@ -16,10 +16,11 @@ public class AwardListElement extends ListElement {
     private String mAwardWinner;
     private int mAwardTeam;
 
-    public AwardListElement(String key, String name, String winnerString) {
+    public AwardListElement(String key, String name, String winnerString, int team) {
         super(key);
         mAwardName = name;
         mAwardWinner = winnerString;
+        mAwardTeam = team;
     }
 
     @Override
