@@ -56,7 +56,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
 
         eventKeys = new ArrayList<String>();
         events = new ArrayList<ListItem>();
-        if (mFragment.getActivity() != null && events != null && eventKeys != null) {
             if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
                 // Return a list of all events for a year
             } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
@@ -79,7 +78,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+                //adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
                 return null;
             } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
                 try {
@@ -100,7 +99,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
                 return null;
             } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
                 // Return a list of all events for a given team in a given week in a given year
@@ -113,10 +111,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             events.add(new EventListElement("2014ilil", "Central Illinois Regional", "Feb 27th to Mar 1st, 2014", "Pekin, IL"));
             eventKeys.add("2014casb");
             events.add(new EventListElement("2014casb", "Inland Empire Regional", "Feb 27th to Mar 1st, 2014", "Grand Terrace, CA"));
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             return null;
-        }
-        return null;
     }
 
     @Override
@@ -124,10 +119,10 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(v);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-
-       if (mFragment.getView() != null) {
+       if (mFragment.getView() != null && mFragment.getActivity() != null) {
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
-             eventList.setAdapter(adapter);
+            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+            eventList.setAdapter(adapter);
 
             //set to open basic event view. More static data to be removed later...
             eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
