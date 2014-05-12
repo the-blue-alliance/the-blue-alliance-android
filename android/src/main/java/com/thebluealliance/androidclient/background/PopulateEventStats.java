@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.background;
 
-import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -24,29 +24,27 @@ import java.util.Map;
  */
 public class PopulateEventStats extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
 
-    private Activity activity;
-    private View view;
+    private Fragment mFragment;
     private String eventKey;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
 
-    public PopulateEventStats(Activity activity, View view) {
-        this.activity = activity;
-        this.view = view;
+    public PopulateEventStats(Fragment f) {
+        mFragment = f;
     }
 
     @Override
     protected Void doInBackground(String... params) {
         eventKey = params[0];
 
-        teamKeys = new ArrayList<String>();
-        teams = new ArrayList<ListItem>();
+        teamKeys = new ArrayList<>();
+        teams = new ArrayList<>();
 
         DecimalFormat displayFormat = new DecimalFormat("#.##");
 
         try {
-            JsonObject stats = DataManager.getEventStats(activity, eventKey);
+            JsonObject stats = DataManager.getEventStats(mFragment.getActivity(), eventKey);
             ArrayList<Map.Entry<String,JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
@@ -68,12 +66,13 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> implements
             e.printStackTrace();
         }
 
-        adapter = new ListViewAdapter(activity, teams, teamKeys);
+        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        View view = mFragment.getView();
         if (view != null) {
             ListView stats = (ListView) view.findViewById(R.id.event_ranking);
             stats.setAdapter(adapter);

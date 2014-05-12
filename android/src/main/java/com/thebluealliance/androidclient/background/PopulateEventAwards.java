@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -21,24 +21,22 @@ import java.util.ArrayList;
  */
 public class PopulateEventAwards extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
 
-    private Context context;
-    private View view;
+    private Fragment mFragment;
     private String eventKey;
     private ArrayList<ListItem> awards;
     private ArrayList<String> keys;
     private ListViewAdapter adapter;
 
-    public PopulateEventAwards(Context c, View view) {
-        this.context = c;
-        this.view = view;
+    public PopulateEventAwards(Fragment f) {
+        mFragment = f;
     }
 
     @Override
     protected Void doInBackground(String... params) {
         eventKey = params[0];
 
-        awards = new ArrayList<ListItem>();
-        keys = new ArrayList<String>();
+        awards = new ArrayList<>();
+        keys = new ArrayList<>();
 
         ArrayList<Award> awardList = null;
         try {
@@ -55,13 +53,14 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> implement
         }
 
 
-        adapter = new ListViewAdapter(context, awards, keys);
+        adapter = new ListViewAdapter(mFragment.getActivity(), awards, keys);
 
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        View view = mFragment.getView();
         if (view != null) {
             ListView rankings = (ListView) view.findViewById(R.id.event_awards);
             rankings.setAdapter(adapter);

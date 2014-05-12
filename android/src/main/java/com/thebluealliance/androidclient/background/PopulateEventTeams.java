@@ -2,13 +2,12 @@ package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -21,18 +20,16 @@ import java.util.Collections;
 /**
  * File created by phil on 4/22/14.
  */
-public class PopulateEventTeams extends AsyncTask<String, String, String> implements AdapterView.OnItemClickListener {
+public class PopulateEventTeams extends AsyncTask<String, String, String> {
 
-    private Activity activity;
-    private View view;
+    private Fragment mFragment;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
     private String eventKey;
 
-    public PopulateEventTeams(Activity activity, View view) {
-        this.activity = activity;
-        this.view = view;
+    public PopulateEventTeams(Fragment f) {
+        mFragment = f;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> implem
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
-            ArrayList<Team> teamList = DataManager.getEventTeams(activity, eventKey);
+            ArrayList<Team> teamList = DataManager.getEventTeams(mFragment.getActivity(), eventKey);
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {
                 teamKeys.add(t.getTeamKey());
@@ -53,7 +50,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> implem
             e.printStackTrace();
         }
 
-        adapter = new ListViewAdapter(activity, teams, teamKeys);
+        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
         adapter.notifyDataSetChanged();
         return "";
     }
@@ -61,16 +58,11 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> implem
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        View view = mFragment.getView();
         if (view != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
             ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
             teamList.setAdapter(adapter);
-            teamList.setOnItemClickListener(this);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        activity.startActivity(ViewTeamActivity.newInstance(activity, view.getTag().toString()));
     }
 }
