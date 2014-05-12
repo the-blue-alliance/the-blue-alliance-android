@@ -131,8 +131,7 @@ public class DataManager {
     public synchronized static ArrayList<Award> getEventAwards(Context c, String eventKey) throws NoDataException{
         ArrayList<Award> awards = new ArrayList<>();
         Log.d("event awards","Fetching awards for "+eventKey);
-        String response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards",true);
-        System.out.println(response);
+        String response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards",true);;
         Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response).iterator();
         while(iterator.hasNext()){
             Award award = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Award.class);
