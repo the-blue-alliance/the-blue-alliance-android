@@ -78,7 +78,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
                 return null;
             } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
                 try {
