@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -19,7 +21,7 @@ import java.util.Collections;
 /**
  * File created by phil on 4/22/14.
  */
-public class PopulateEventTeams extends AsyncTask<String, String, String> {
+public class PopulateEventTeams extends AsyncTask<String, String, String> implements AdapterView.OnItemClickListener {
 
     private Activity activity;
     private View view;
@@ -41,9 +43,9 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
-            ArrayList<Team> teamList = DataManager.getEventTeams(activity,eventKey);
+            ArrayList<Team> teamList = DataManager.getEventTeams(activity, eventKey);
             Collections.sort(teamList, new TeamSortByNumberComparator());
-            for(Team t:teamList){
+            for (Team t : teamList) {
                 teamKeys.add(t.getTeamKey());
                 teams.add(t.render());
             }
@@ -63,6 +65,12 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
             ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
             teamList.setAdapter(adapter);
+            teamList.setOnItemClickListener(this);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        activity.startActivity(ViewTeamActivity.newInstance(activity, view.getTag().toString()));
     }
 }
