@@ -209,6 +209,21 @@ public class NavigationDrawerFragment extends Fragment {
         }
     }
 
+    /**
+     * Set the currently selected item in the drawer
+     *
+     * This will NOT trigger the OnNavigationDrawerListener callbacks or close the drawer.
+     *
+     * @param itemId The ID of the item to select
+     */
+    public void setItemSelected(int itemId) {
+        if (mDrawerListView != null) {
+            int position = mNavigationAdapter.getPostitionForId(itemId);
+            mDrawerListView.setItemChecked(position, true);
+
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -225,19 +240,6 @@ public class NavigationDrawerFragment extends Fragment {
         super.onDetach();
 
         mListener = null;
-    }
-
-    /**
-     * Set the currently selected item.
-     *
-     * This will only update the visible selected state. The drawer will not open or close,
-     * nor will onNavDrawerItemClicked() be called.
-     *
-     * @param itemId The id of the item to select.
-     */
-    public void selectItemId(int itemId) {
-        int position = mNavigationAdapter.getPostitionForId(itemId);
-        selectItem(position);
     }
 
     @Override

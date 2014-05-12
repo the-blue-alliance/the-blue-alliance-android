@@ -48,9 +48,6 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
-        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment, (DrawerLayout) findViewById(R.id.nav_drawer_layout));
-
         int initNavId = R.id.nav_item_events;
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
@@ -62,15 +59,19 @@ public class StartActivity extends FragmentActivity implements ActionBar.OnNavig
             }
         }
 
-        mNavDrawerFragment.selectItemId(initNavId);
+        mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
+        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
+                (DrawerLayout) findViewById(R.id.nav_drawer_layout));
+
+        switchToModeForId(initNavId);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        // Ensure that the corerct navigation item is highlighted when returning to the StartActivity
-        mNavDrawerFragment.selectItemId(mCurrentSelectedNavigationItemId);
+        // Ensure that the correct navigation item is highlighted when returning to the StartActivity
+        mNavDrawerFragment.setItemSelected(mCurrentSelectedNavigationItemId);
     }
 
     @Override
