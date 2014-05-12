@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -125,6 +126,18 @@ public class DataManager {
     public synchronized static JsonObject getEventStats(Context c, String eventKey) throws NoDataException{
         String results = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/stats", true);
         return JSONManager.getasJsonObject(results);
+    }
+
+    public synchronized static ArrayList<Award> getEventAwards(Context c, String eventKey) throws NoDataException{
+        ArrayList<Award> awards = new ArrayList<>();
+        Log.d("event awards","Fetching awards for "+eventKey);
+        String response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards",true);;
+        Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response).iterator();
+        while(iterator.hasNext()){
+            Award award = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Award.class);
+            awards.add(award);
+        }
+        return awards;
     }
 
     public synchronized static ArrayList<SimpleEvent> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException{

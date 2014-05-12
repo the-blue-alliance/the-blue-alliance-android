@@ -3,11 +3,13 @@ package com.thebluealliance.androidclient.background;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.ListItem;
@@ -20,7 +22,7 @@ import java.util.Map;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventStats extends AsyncTask<String, Void, Void> {
+public class PopulateEventStats extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
 
     private Fragment mFragment;
     private String eventKey;
@@ -72,9 +74,14 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         View view = mFragment.getView();
         if (view != null) {
-            ListView rankings = (ListView) view.findViewById(R.id.event_ranking);
-            rankings.setAdapter(adapter);
+            ListView stats = (ListView) view.findViewById(R.id.event_ranking);
+            stats.setAdapter(adapter);
+            stats.setOnItemClickListener(this);
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        activity.startActivity(ViewTeamActivity.newInstance(activity, view.getTag().toString()));
+    }
 }

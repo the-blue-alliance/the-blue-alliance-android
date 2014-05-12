@@ -42,7 +42,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
         try {
             ArrayList<Team> teamList = DataManager.getEventTeams(mFragment.getActivity(), eventKey);
             Collections.sort(teamList, new TeamSortByNumberComparator());
-            for(Team t:teamList){
+            for (Team t : teamList) {
                 teamKeys.add(t.getTeamKey());
                 teams.add(t.render());
             }

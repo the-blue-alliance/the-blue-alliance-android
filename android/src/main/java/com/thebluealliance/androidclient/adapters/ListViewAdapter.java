@@ -8,21 +8,21 @@ import android.widget.ArrayAdapter;
 
 import com.thebluealliance.androidclient.datatypes.ListItem;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * File created by phil on 4/20/14.
  */
 public class ListViewAdapter extends ArrayAdapter<ListItem> {
     private LayoutInflater mInflater;
-    public ArrayList<ListItem> values;
-    public ArrayList<String> keys;
+    public List<ListItem> values;
+    public List<String> keys;
 
     public enum ItemType {
         LIST_ITEM, HEADER_ITEM
     }
 
-    public ListViewAdapter(Context context, ArrayList<ListItem> values, ArrayList<String> keys) {
+    public ListViewAdapter(Context context, List<ListItem> values, List<String> keys) {
         super(context, android.R.layout.simple_list_item_1, values);
         this.values = values;
         this.keys = keys;
