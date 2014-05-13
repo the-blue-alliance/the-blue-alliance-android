@@ -1,6 +1,8 @@
 The Blue Alliance - Android App
 ===============================
 
+[![Build Status](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android.png?branch=master)](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android)
+
 An Android app for accessing information about the FIRST Robotics Competition. This is a native mobile version of [The Blue Alliance](http://www.thebluealliance.com). 
 
 **WARNING:**
