@@ -50,8 +50,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
-        task = new PopulateTeamInfo(getActivity(), this, mTeamKey);
-        task.execute();
+        task = new PopulateTeamInfo(this);
+        task.execute(mTeamKey);
     }
 
     @Override
@@ -101,8 +101,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onRefreshStart() {
-        task = new PopulateTeamInfo(getActivity(), this, mTeamKey);
-        task.execute();
+        task = new PopulateTeamInfo(this);
+        task.execute(mTeamKey);
     }
 
     @Override

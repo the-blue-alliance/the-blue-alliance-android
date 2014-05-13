@@ -1,12 +1,18 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventTeams;
 
 /**
@@ -14,8 +20,14 @@ import com.thebluealliance.androidclient.background.PopulateEventTeams;
  */
 public class EventTeamsFragment extends Fragment {
 
-    private String eventKey;
-    private static final String KEY = "eventKey";
+    private String mEventKey;
+    private static final String KEY = "event_key";
+
+    private Parcelable mListState;
+    private ListViewAdapter mAdapter;
+    private ListView mListView;
+
+    private PopulateEventTeams mTask;
 
     public static EventTeamsFragment newInstance(String eventKey){
         EventTeamsFragment f = new EventTeamsFragment();
@@ -29,20 +41,40 @@ public class EventTeamsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null){
-            eventKey = getArguments().getString(KEY,"");
-        }
-        if(savedInstanceState != null && savedInstanceState.containsKey(KEY)){
-            eventKey = savedInstanceState.getString(KEY);
+            mEventKey = getArguments().getString(KEY,"");
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(savedInstanceState != null && savedInstanceState.containsKey(KEY)){
-            eventKey = savedInstanceState.getString(KEY);
+        View view = inflater.inflate(R.layout.fragment_event_teams, null);
+        mListView = (ListView) view.findViewById(R.id.event_team_list);
+        if(mAdapter != null) {
+            mListView.setAdapter(mAdapter);
+            mListView.onRestoreInstanceState(mListState);
+        } else {
+            mTask = new PopulateEventTeams(this);
+            mTask.execute(mEventKey);
         }
-        View out = inflater.inflate(R.layout.fragment_event_teams, null);
-        new PopulateEventTeams(getActivity(), out).execute(eventKey);
-        return out;
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
+                Intent i = new Intent(getActivity(), ViewTeamActivity.class);
+                i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+                startActivity(i);
+            }
+        });
+        return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mTask.cancel(false);
+        if(mListView != null) {
+            mAdapter = (ListViewAdapter) mListView.getAdapter();
+            mListState = mListView.onSaveInstanceState();
+        }
     }
 }

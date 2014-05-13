@@ -17,10 +17,10 @@ public class EventInfoFragment extends Fragment {
     private String eventKey;
     private static final String KEY = "eventKey";
 
-    public static EventInfoFragment newInstance(String eventKey){
+    public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
         Bundle data = new Bundle();
-        data.putString(KEY,eventKey);
+        data.putString(KEY, eventKey);
         f.setArguments(data);
         return f;
     }
@@ -42,7 +42,7 @@ public class EventInfoFragment extends Fragment {
             eventKey = savedInstanceState.getString(KEY);
         }
         View info = inflater.inflate(R.layout.fragment_event_info, null);
-        new PopulateEventInfo(getActivity(),info).execute(eventKey);
+        new PopulateEventInfo(this).execute(eventKey);
         return info;
     }
 }

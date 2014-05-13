@@ -54,63 +54,67 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
          * For now, it'll just be static data for demonstrative purposes
          */
 
-        eventKeys = new ArrayList<String>();
-        events = new ArrayList<ListItem>();
-            if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
-                // Return a list of all events for a year
-            } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
-                // Return a list of all events for a week in a given year
-                try {
-                    ArrayList<SimpleEvent> eventData = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
-                    Collections.sort(eventData, new EventSortByTypeComparator());
-                    Event.TYPE lastType = null, currentType;
-                    for (SimpleEvent event : eventData) {
-                        currentType = event.getEventType();
-                        // TODO: finish implementing this once we have event type info available
-                        if (currentType != lastType) {
-                            eventKeys.add(currentType.toString());
-                            events.add(new EventWeekHeader(currentType.toString()));
-                        }
-                        eventKeys.add(event.getEventKey());
-                        events.add(event.render());
-                        lastType = currentType;
+        eventKeys = new ArrayList<>();
+        events = new ArrayList<>();
+
+        if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
+            // Return a list of all events for a year
+        } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
+            // Return a list of all events for a week in a given year
+            try {
+                ArrayList<SimpleEvent> eventData = DataManager.getSimpleEventsInWeek(mFragment.getActivity(),mYear,mWeek);
+                Collections.sort(eventData, new EventSortByTypeComparator());
+                Event.TYPE lastType = null, currentType;
+                for (SimpleEvent event : eventData) {
+                    currentType = event.getEventType();
+                    // TODO: finish implementing this once we have event type info available
+                    if (currentType != lastType) {
+                        eventKeys.add(currentType.toString());
+                        events.add(new EventWeekHeader(currentType.toString()));
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    eventKeys.add(event.getEventKey());
+                    events.add(event.render());
+                    lastType = currentType;
                 }
-                return null;
-            } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
-                try {
-                    ArrayList<SimpleEvent> eventsArray = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
-                    Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
-                    Event.TYPE lastType = null, currentType;
-                    for (SimpleEvent event : eventsArray) {
-                        currentType = event.getEventType();
-                        // TODO: finish implementing this once we have event type info available
-                        if (currentType != lastType) {
-                            eventKeys.add(currentType.toString());
-                            events.add(new EventWeekHeader(currentType.toString()));
-                        }
-                        eventKeys.add(event.getEventKey());
-                        events.add(event.render());
-                        lastType = currentType;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
-                // Return a list of all events for a given team in a given week in a given year
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            eventKeys.add("regionals");
-            events.add(new EventWeekHeader("Regional Competitions"));
-            eventKeys.add("2014scmb");
-            events.add(new EventListElement("2014scmb", "Palmetto Regional", "Feb 27th to Mar 1st, 2014", "Myrtle Beach, SC"));
-            eventKeys.add("2014ilil");
-            events.add(new EventListElement("2014ilil", "Central Illinois Regional", "Feb 27th to Mar 1st, 2014", "Pekin, IL"));
-            eventKeys.add("2014casb");
-            events.add(new EventListElement("2014casb", "Inland Empire Regional", "Feb 27th to Mar 1st, 2014", "Grand Terrace, CA"));
+            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             return null;
+        } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
+            try {
+                ArrayList<SimpleEvent> eventsArray = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
+                Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
+                Event.TYPE lastType = null, currentType;
+                for (SimpleEvent event : eventsArray) {
+                    currentType = event.getEventType();
+                    // TODO: finish implementing this once we have event type info available
+                    if (currentType != lastType) {
+                        eventKeys.add(currentType.toString());
+                        events.add(new EventWeekHeader(currentType.toString()));
+                    }
+                    eventKeys.add(event.getEventKey());
+                    events.add(event.render());
+                    lastType = currentType;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+            return null;
+        } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
+            // Return a list of all events for a given team in a given week in a given year
+        }
+        eventKeys.add("regionals");
+        events.add(new EventWeekHeader("Regional Competitions"));
+        eventKeys.add("2014scmb");
+        events.add(new EventListElement("2014scmb", "Palmetto Regional", "Feb 27th to Mar 1st, 2014", "Myrtle Beach, SC"));
+        eventKeys.add("2014ilil");
+        events.add(new EventListElement("2014ilil", "Central Illinois Regional", "Feb 27th to Mar 1st, 2014", "Pekin, IL"));
+        eventKeys.add("2014casb");
+        events.add(new EventListElement("2014casb", "Inland Empire Regional", "Feb 27th to Mar 1st, 2014", "Grand Terrace, CA"));
+        adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+        return null;
     }
 
     @Override
@@ -118,12 +122,12 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(v);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-       if (mFragment.getView() != null && mFragment.getActivity() != null) {
+
+       if (mFragment.getView() != null) {
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             eventList.setAdapter(adapter);
 
-            //set to open basic event view. More static data to be removed later...
+            //set to open basic event view
             eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

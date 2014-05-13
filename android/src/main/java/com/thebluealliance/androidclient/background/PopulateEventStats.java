@@ -1,13 +1,15 @@
 package com.thebluealliance.androidclient.background;
 
-import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.ListItem;
@@ -20,31 +22,29 @@ import java.util.Map;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventStats extends AsyncTask<String, Void, Void> {
+public class PopulateEventStats extends AsyncTask<String, Void, Void> implements AdapterView.OnItemClickListener {
 
-    private Activity activity;
-    private View view;
+    private Fragment mFragment;
     private String eventKey;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
 
-    public PopulateEventStats(Activity activity, View view) {
-        this.activity = activity;
-        this.view = view;
+    public PopulateEventStats(Fragment f) {
+        mFragment = f;
     }
 
     @Override
     protected Void doInBackground(String... params) {
         eventKey = params[0];
 
-        teamKeys = new ArrayList<String>();
-        teams = new ArrayList<ListItem>();
+        teamKeys = new ArrayList<>();
+        teams = new ArrayList<>();
 
         DecimalFormat displayFormat = new DecimalFormat("#.##");
 
         try {
-            JsonObject stats = DataManager.getEventStats(activity, eventKey);
+            JsonObject stats = DataManager.getEventStats(mFragment.getActivity(), eventKey);
             ArrayList<Map.Entry<String,JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
@@ -66,16 +66,22 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> {
             e.printStackTrace();
         }
 
+        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if (view != null && activity != null) {
-            adapter = new ListViewAdapter(activity, teams, teamKeys);
-            ListView rankings = (ListView) view.findViewById(R.id.event_ranking);
-            rankings.setAdapter(adapter);
+        View view = mFragment.getView();
+        if (view != null) {
+            ListView stats = (ListView) view.findViewById(R.id.event_ranking);
+            stats.setAdapter(adapter);
+            stats.setOnItemClickListener(this);
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mFragment.startActivity(ViewTeamActivity.newInstance(mFragment.getActivity(), view.getTag().toString()));
+    }
 }

@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -19,6 +21,13 @@ public class ViewTeamActivity extends FragmentActivity {
 
     // Should come in the format frc####
     private String mTeamKey;
+
+    public static Intent newInstance(Context context, String teamKey){
+        System.out.println("making intent for "+teamKey);
+        Intent intent = new Intent(context, ViewTeamActivity.class);
+        intent.putExtra(TEAM_KEY, teamKey);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

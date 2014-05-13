@@ -14,11 +14,13 @@ public class AwardListElement extends ListElement {
 
     private String mAwardName;
     private String mAwardWinner;
+    private int mAwardTeam;
 
-    public AwardListElement(String key, String name, String winner) {
+    public AwardListElement(String key, String name, String winnerString, int team) {
         super(key);
         mAwardName = name;
-        mAwardWinner = winner;
+        mAwardWinner = winnerString;
+        mAwardTeam = team;
     }
 
     @Override
@@ -26,20 +28,13 @@ public class AwardListElement extends ListElement {
 
         if (view == null) {
             view = inflater.inflate(R.layout.list_item_award, null);
-            view.setTag(key);
-            view.setSelected(selected);
+            view.setTag("frc"+mAwardTeam);
 
             TextView title = (TextView) view.findViewById(R.id.award_name);
             title.setText(mAwardName);
 
             TextView winner = (TextView) view.findViewById(R.id.award_winner);
             winner.setText(mAwardWinner);
-
-            if (view.isSelected()) {
-                view.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));
-            } else {
-                view.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-            }
         }
         return view;
     }
