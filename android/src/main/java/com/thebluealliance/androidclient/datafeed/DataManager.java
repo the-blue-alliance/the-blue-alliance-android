@@ -77,7 +77,7 @@ public class DataManager {
             }
         }
 
-        return new APIResponse<>(teams, response == null ? APIResponse.CODE.CACHED304 : response.getCode());
+        return new APIResponse<>(teams, response == null ? APIResponse.CODE.OFFLINECACHE : response.getCode());
     }
 
     public static synchronized APIResponse<Event> getEvent(Context c, String key) throws NoDataException {
@@ -164,7 +164,7 @@ public class DataManager {
                 PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE, true).commit();
             }
         }
-        return new APIResponse<>(events, response == null ? APIResponse.CODE.CACHED304 : response.getCode());
+        return new APIResponse<>(events, response == null ? APIResponse.CODE.OFFLINECACHE : response.getCode());
     }
 
     public static class NoDataException extends Exception {
