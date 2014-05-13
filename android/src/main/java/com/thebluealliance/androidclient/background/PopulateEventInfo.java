@@ -3,11 +3,13 @@ package com.thebluealliance.androidclient.background;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -69,7 +71,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             next = new MatchListElement(true, "Quals 2", new String[]{"3718", "230", "5112"}, new String[]{"175", "4557", "125"}, 60, 121, "2014ctgro_qm2").getView(activity, inflater, null);
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "unable to load event info");
+            return APIResponse.CODE.NODATA;
         }
 
         /* TODO finish basic event bits as the rest of the API queries get implemented

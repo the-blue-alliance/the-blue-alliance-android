@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -65,7 +66,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             mIsCurrentlyCompeting = false;
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "unable to load team info");
             //some temp data
             mTeamName = "Teh Chezy Pofs";
             mLocation = "San Jose, CA";

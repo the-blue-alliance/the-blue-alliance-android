@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -116,7 +118,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 }
                 return response.getCode();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.w(Constants.LOG_TAG, "unable to load event list");
             }
 
             return null;

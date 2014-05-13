@@ -2,12 +2,14 @@ package com.thebluealliance.androidclient.background;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
@@ -83,7 +85,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "unable to load event stats");
             return APIResponse.CODE.NODATA;
         }
     }

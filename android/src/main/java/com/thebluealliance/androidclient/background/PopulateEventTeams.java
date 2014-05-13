@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
@@ -69,7 +70,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "unable to load event teams");
             return APIResponse.CODE.NODATA;
         }
     }

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.ListView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -63,7 +64,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                     teamItems.add(e);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.w(Constants.LOG_TAG, "unable to load team list");
             }
         }
         if (!isCancelled()) {

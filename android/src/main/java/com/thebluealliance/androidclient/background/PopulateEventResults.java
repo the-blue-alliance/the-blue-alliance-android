@@ -2,10 +2,12 @@ package com.thebluealliance.androidclient.background;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ExpandableListView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
@@ -89,7 +91,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 finalMatches.childrenKeys.add(m.getKey());
             }
         } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "unable to load event results");
             response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
 

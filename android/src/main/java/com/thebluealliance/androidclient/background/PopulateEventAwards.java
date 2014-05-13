@@ -3,10 +3,12 @@ package com.thebluealliance.androidclient.background;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
@@ -70,7 +72,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "unable to load event awards");
             return APIResponse.CODE.NODATA;
         }
     }
