@@ -50,8 +50,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
 
-        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
-        adapter.notifyDataSetChanged();
         return "";
     }
 
@@ -59,8 +57,10 @@ public class PopulateEventTeams extends AsyncTask<String, String, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && mFragment.getActivity() != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            adapter.notifyDataSetChanged();
             ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
             teamList.setAdapter(adapter);
         }

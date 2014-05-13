@@ -63,15 +63,16 @@ public class PopulateEventRankings extends AsyncTask<String, Void, Void> impleme
             e.printStackTrace();
         }
 
-        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && mFragment.getActivity() != null) {
             ListView rankings = (ListView) view.findViewById(R.id.event_ranking);
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             rankings.setAdapter(adapter);
             rankings.setOnItemClickListener(this);
         }

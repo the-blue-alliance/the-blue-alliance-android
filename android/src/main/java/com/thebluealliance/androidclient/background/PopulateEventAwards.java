@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.background;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -52,16 +53,14 @@ public class PopulateEventAwards extends AsyncTask<String, Void, Void> implement
             e.printStackTrace();
         }
 
-
-        adapter = new ListViewAdapter(mFragment.getActivity(), awards, keys);
-
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && mFragment.getActivity() != null) {
+            adapter = new ListViewAdapter(mFragment.getActivity(), awards, keys);
             ListView rankings = (ListView) view.findViewById(R.id.event_awards);
             rankings.setAdapter(adapter);
             rankings.setOnItemClickListener(this);
