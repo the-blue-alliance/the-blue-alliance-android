@@ -23,13 +23,6 @@
             android:layout_height="fill_parent" />
 
     </LinearLayout>
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:id="@+id/warning_container"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:background="@color/lighter_red"
-        android:drawableLeft="@drawable/ic_action_warning_blue" />
+    <TextView style="@style/ActivityWarningStyle"
+        android:id="@+id/warning_container"/>
 </RelativeLayout>
