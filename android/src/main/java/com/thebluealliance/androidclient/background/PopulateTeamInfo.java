@@ -134,6 +134,10 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             }
         }
 
+        if(code == APIResponse.CODE.NODATA){
+            mFragment.getView().setVisibility(View.GONE);
+        }
+
         if(loadedWithDialog){
             dialog.dismiss();
         }

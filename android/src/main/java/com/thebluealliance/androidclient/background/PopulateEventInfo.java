@@ -111,6 +111,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
         }
 
+        if(c == APIResponse.CODE.NODATA){
+            mFragment.getView().setVisibility(View.GONE);
+        }
+
         if(loadedWithDialog){
             dialog.dismiss();
         }
