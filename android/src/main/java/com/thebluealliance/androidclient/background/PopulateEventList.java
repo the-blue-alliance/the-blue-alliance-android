@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
 import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.dialogs.LoadingDialog;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -31,17 +32,27 @@ import java.util.Collections;
 public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
+    private BaseActivity activity;
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null;
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
     private ListViewAdapter adapter;
+    private LoadingDialog dialog;
 
     public PopulateEventList(EventListFragment fragment, int year, int week, String teamKey) {
         mFragment = fragment;
+        activity = (BaseActivity)mFragment.getActivity();
         mYear = year;
         mWeek = week;
         mTeamKey = teamKey;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        dialog = LoadingDialog.newInstance(mFragment.getString(R.string.dialog_loading_title), mFragment.getString(R.string.dialog_loading_event_list));
+        dialog.show(activity.getFragmentManager(), "loading event list");
     }
 
     @Override
@@ -149,5 +160,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
            }
         }
+
+        dialog.dismiss();
     }
 }

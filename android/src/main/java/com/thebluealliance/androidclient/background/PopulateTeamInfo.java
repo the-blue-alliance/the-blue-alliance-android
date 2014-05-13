@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.dialogs.LoadingDialog;
 import com.thebluealliance.androidclient.models.Team;
 
 /**
@@ -21,15 +22,30 @@ import com.thebluealliance.androidclient.models.Team;
 public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
+    private BaseActivity activity;
     private String mTeamName;
     private int mTeamNumber;
     private String mLocation;
     private String mFullName;
     private String mTeamKey;
     private boolean mIsCurrentlyCompeting = false;
+    private LoadingDialog dialog;
+    private boolean loadedWithDialog;
 
     public PopulateTeamInfo(Fragment fragment) {
         mFragment = fragment;
+        activity = (BaseActivity)fragment.getActivity();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        dialog = LoadingDialog.newInstance(mFragment.getString(R.string.dialog_loading_title), mFragment.getString(R.string.dialog_loading_team_info));
+        loadedWithDialog = false;
+        if(mFragment.getView() != null) {
+            loadedWithDialog = true;
+            dialog.show(activity.getFragmentManager(), "loading team info");
+        }
     }
 
     @Override
@@ -37,7 +53,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
-            APIResponse<Team> response = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
+            APIResponse<Team> response = DataManager.getTeam(activity, mTeamKey);
             Team team = response.getData();
             Long end = System.nanoTime();
             Log.d("doInBackground", "Total time to load team: " + (end - start));
@@ -116,6 +132,10 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 //TODO only show warning for currently competing event (there's likely missing data)
                 ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
+        }
+
+        if(loadedWithDialog){
+            dialog.dismiss();
         }
     }
 

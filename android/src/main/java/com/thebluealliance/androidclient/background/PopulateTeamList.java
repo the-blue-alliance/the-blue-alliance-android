@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.TeamListElement;
+import com.thebluealliance.androidclient.dialogs.LoadingDialog;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
 import java.util.ArrayList;
@@ -22,12 +23,22 @@ import java.util.ArrayList;
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private Fragment fragment;
+    private BaseActivity activity;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teamItems;
     private ListViewAdapter adapter;
+    private LoadingDialog dialog;
 
     public PopulateTeamList(Fragment fragment) {
         this.fragment = fragment;
+        activity = (BaseActivity)fragment.getActivity();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        dialog = LoadingDialog.newInstance(fragment.getString(R.string.dialog_loading_title), fragment.getString(R.string.dialog_loading_team_list));
+        dialog.show(activity.getFragmentManager(), "loading team list");
 
         teamKeys = new ArrayList<String>();
         teamItems = new ArrayList<ListItem>();
@@ -41,7 +52,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         APIResponse<ArrayList<SimpleTeam>> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         if (!isCancelled()) {
             try {
-                response = DataManager.getSimpleTeamsInRange(fragment.getActivity(), start, end);
+                response = DataManager.getSimpleTeamsInRange(activity, start, end);
                 ArrayList<SimpleTeam> teams = response.getData();
                 for (SimpleTeam team : teams) {
                     if (isCancelled()) {
@@ -56,7 +67,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             }
         }
         if (!isCancelled()) {
-            adapter = new ListViewAdapter(fragment.getActivity(), teamItems, teamKeys);
+            adapter = new ListViewAdapter(activity, teamItems, teamKeys);
             adapter.notifyDataSetChanged();
         }
         return response.getCode();
@@ -78,8 +89,10 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
             if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
                 //TODO only show warning for currently competing event (there's likely missing data)
-                ((BaseActivity)fragment.getActivity()).showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
+                activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
         }
+
+        dialog.dismiss();
     }
 }
