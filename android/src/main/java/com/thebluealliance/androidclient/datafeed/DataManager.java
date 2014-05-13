@@ -56,9 +56,10 @@ public class DataManager {
         //TODO move to PreferenceHandler class
         boolean allTeamsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE, false);
         // TODO check for updated data from the API and update response accordingly
-        APIResponse<String> response = null;
+        APIResponse<String> response;
         if (allTeamsLoaded) {
             teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
+            response = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c)? APIResponse.CODE.CACHED304: APIResponse.CODE.OFFLINECACHE);
         } else {
             // We need to load teams from the API
             //TODO move to TBAv2 class
@@ -77,7 +78,7 @@ public class DataManager {
             }
         }
 
-        return new APIResponse<>(teams, response == null ? APIResponse.CODE.OFFLINECACHE : response.getCode());
+        return new APIResponse<>(teams, response.getCode());
     }
 
     public static synchronized APIResponse<Event> getEvent(Context c, String key) throws NoDataException {
@@ -150,10 +151,11 @@ public class DataManager {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE, false);
         //TODO check for updates and update response accordingly
-        APIResponse<String> response = null;
+        APIResponse<String> response;
         if (allEventsLoaded) {
             Log.d("get events for week", "loading from db");
             events = Database.getInstance(c).getEventsInWeek(year, week);
+            response = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c)? APIResponse.CODE.CACHED304: APIResponse.CODE.OFFLINECACHE);
         } else {
             response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/events/" + year, false);
             events = TBAv2.getEventList(response.getData());
@@ -164,7 +166,7 @@ public class DataManager {
                 PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE, true).commit();
             }
         }
-        return new APIResponse<>(events, response == null ? APIResponse.CODE.OFFLINECACHE : response.getCode());
+        return new APIResponse<>(events, response.getCode());
     }
 
     public static class NoDataException extends Exception {
