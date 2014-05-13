@@ -15,7 +15,6 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.MatchGroup;
-import com.thebluealliance.androidclient.dialogs.LoadingDialog;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
@@ -32,23 +31,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     private String eventKey, teamKey;
     private MatchListAdapter adapter;
     SparseArray<MatchGroup> groups;
-    private LoadingDialog dialog;
-    private boolean loadedWithDialog;
-
     public PopulateEventResults(Fragment f) {
         mFragment = f;
         activity = (BaseActivity)mFragment.getActivity();
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        dialog = LoadingDialog.newInstance(mFragment.getString(R.string.dialog_loading_title), mFragment.getString(R.string.dialog_loading_event_results));
-        loadedWithDialog = false;
-        if(mFragment.getView() != null) {
-            loadedWithDialog = true;
-            dialog.show(activity.getFragmentManager(), "loading event results");
-        }
     }
 
     @Override
@@ -126,10 +111,8 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if(loadedWithDialog){
-            dialog.dismiss();
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 }

@@ -17,7 +17,6 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.RankingListElement;
-import com.thebluealliance.androidclient.dialogs.LoadingDialog;
 
 import java.util.ArrayList;
 
@@ -32,23 +31,10 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
-    private LoadingDialog dialog;
-    private boolean loadedWithDialog;
 
     public PopulateEventRankings(Fragment f) {
         mFragment = f;
         activity = (BaseActivity)mFragment.getActivity();
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        dialog = LoadingDialog.newInstance(mFragment.getString(R.string.dialog_loading_title), mFragment.getString(R.string.dialog_loading_event_rankings));
-        loadedWithDialog = false;
-        if(mFragment.getView() != null) {
-            loadedWithDialog = true;
-            dialog.show(activity.getFragmentManager(), "loading event rankings");
-        }
     }
 
     @Override
@@ -101,10 +87,8 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if(loadedWithDialog){
-            dialog.dismiss();
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.background;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
@@ -13,7 +14,6 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.TeamListElement;
-import com.thebluealliance.androidclient.dialogs.LoadingDialog;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teamItems;
     private ListViewAdapter adapter;
-    private LoadingDialog dialog;
 
     public PopulateTeamList(Fragment fragment) {
         this.fragment = fragment;
@@ -38,8 +37,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        dialog = LoadingDialog.newInstance(fragment.getString(R.string.dialog_loading_title), fragment.getString(R.string.dialog_loading_team_list));
-        dialog.show(activity.getFragmentManager(), "loading team list");
 
         teamKeys = new ArrayList<String>();
         teamItems = new ArrayList<ListItem>();
@@ -92,8 +89,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
+            fragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
-
-        dialog.dismiss();
     }
 }

@@ -11,4 +11,11 @@
         android:fastScrollAlwaysVisible="true"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:scrollbarStyle="outsideInset" />
+    <ProgressBar style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:id="@+id/progress"
+        android:visibility="visible"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 </RelativeLayout>

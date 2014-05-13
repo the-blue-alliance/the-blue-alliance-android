@@ -20,7 +20,6 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
 import com.thebluealliance.androidclient.datatypes.ListItem;
-import com.thebluealliance.androidclient.dialogs.LoadingDialog;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -40,7 +39,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
     private ListViewAdapter adapter;
-    private LoadingDialog dialog;
 
     public PopulateEventList(EventListFragment fragment, int year, int week, String teamKey) {
         mFragment = fragment;
@@ -48,13 +46,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         mYear = year;
         mWeek = week;
         mTeamKey = teamKey;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        dialog = LoadingDialog.newInstance(mFragment.getString(R.string.dialog_loading_title), mFragment.getString(R.string.dialog_loading_event_list));
-        dialog.show(activity.getFragmentManager(), "loading event list");
     }
 
     @Override
@@ -161,8 +152,8 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                //TODO only show warning for currently competing event (there's likely missing data)
                ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
            }
-        }
 
-        dialog.dismiss();
+           mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
+       }
     }
 }
