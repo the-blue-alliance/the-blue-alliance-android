@@ -7,8 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
-import com.thebluealliance.androidclient.background.PopulateEventStats;
+import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 
 /**
  * File created by phil on 4/22/14.

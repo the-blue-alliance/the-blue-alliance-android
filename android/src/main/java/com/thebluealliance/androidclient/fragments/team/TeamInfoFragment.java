@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.background.PopulateTeamInfo;
+import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
 
 import java.util.List;

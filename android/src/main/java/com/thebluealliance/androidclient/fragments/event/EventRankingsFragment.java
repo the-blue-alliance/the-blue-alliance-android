@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventRankings;
+import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
 
 /**
  * File created by phil on 4/22/14.

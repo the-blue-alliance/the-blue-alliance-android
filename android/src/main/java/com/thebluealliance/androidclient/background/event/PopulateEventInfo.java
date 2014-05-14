@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.background;
+package com.thebluealliance.androidclient.background.event;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -145,6 +145,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     @Override
     protected void onPostExecute(APIResponse.CODE c) {
         super.onPostExecute(c);
+        activity.getActionBar().setTitle(event.getEventName());
         if (event != null && mFragment.getActivity() != null) {
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());

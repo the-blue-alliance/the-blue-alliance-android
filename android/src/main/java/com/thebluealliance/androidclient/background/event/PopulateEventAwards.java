@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.background;
+package com.thebluealliance.androidclient.background.event;
 
 import android.app.Activity;
 import android.os.AsyncTask;

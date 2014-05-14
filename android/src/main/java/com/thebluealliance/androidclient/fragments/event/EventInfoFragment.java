@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
-import com.thebluealliance.androidclient.background.PopulateEventInfo;
+import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
 
 import java.util.List;

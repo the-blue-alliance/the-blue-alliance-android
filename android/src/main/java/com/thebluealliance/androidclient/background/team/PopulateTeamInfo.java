@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.background;
+package com.thebluealliance.androidclient.background.team;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
