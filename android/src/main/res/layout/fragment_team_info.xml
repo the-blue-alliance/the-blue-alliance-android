@@ -108,7 +108,7 @@
                 <ImageView
                     android:id="@+id/team_cd_button"
                     style="@style/InfoItemButtonBarImageStyle"
-                    android:src="@drawable/ic_action_web_site" />
+                    android:src="@drawable/ic_cd" />
             </LinearLayout>
 
             <RelativeLayout

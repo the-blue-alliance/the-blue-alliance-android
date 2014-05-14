@@ -36,6 +36,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private String mLocation;
     private String mFullName;
     private String mTeamKey;
+    private String mTeamWebsite;
     private SimpleEvent mCurrentEvent;
     private boolean mIsCurrentlyCompeting;
 
@@ -56,6 +57,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             mTeamName = team.getNickname();
             mLocation = team.getLocation();
             mFullName = team.getFullName();
+            mTeamWebsite = team.getWebsite();
             mTeamNumber = team.getTeamNumber();
             mCurrentEvent = team.getCurrentEvent();
             mIsCurrentlyCompeting = mCurrentEvent != null;
@@ -83,8 +85,10 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
             // Tag is used to create an ACTION_VIEW intent for a maps application
             view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
-            view.findViewById(R.id.team_twitter_button).setTag("twitter://search?q=%23" + mTeamKey);
-            view.findViewById(R.id.team_youtube_button).setTag(String.format("#frc%d OR \"team %d\"", mTeamNumber, mTeamNumber));
+            view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
+            view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query="+mTeamKey);
+            view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/"+mTeamKey);
+            view.findViewById(R.id.team_website_button).setTag(!mTeamWebsite.isEmpty()?mTeamWebsite:"https://www.google.com/search?q="+mTeamKey);
             if (mFullName.isEmpty()) {
                 // No full name specified, hide the view
                 view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
