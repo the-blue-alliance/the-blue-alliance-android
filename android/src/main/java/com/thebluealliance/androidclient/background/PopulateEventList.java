@@ -1,15 +1,10 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeComparator;
@@ -126,21 +121,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
        if (mFragment.getView() != null) {
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
             eventList.setAdapter(adapter);
-
-            //set to open basic event view
-            eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(mFragment.getActivity(), ViewEventActivity.class);
-                    Bundle data = intent.getExtras();
-                    if (data == null) data = new Bundle();
-                    if (view.getTag() != null) {
-                        data.putString("eventKey", view.getTag().toString());
-                        intent.putExtras(data);
-                        mFragment.getActivity().startActivity(intent);
-                    }
-                }
-            });
         }
     }
 }

@@ -6,9 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventRankings;
 
@@ -53,6 +55,13 @@ public class EventRankingsFragment extends Fragment {
             mTask = new PopulateEventRankings(this);
             mTask.execute(eventKey);
         }
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String eventKey = ((ListViewAdapter) parent.getAdapter()).getKey(position);
+                startActivity(ViewTeamActivity.newInstance(getActivity(), eventKey));
+            }
+        });
         return v;
     }
 

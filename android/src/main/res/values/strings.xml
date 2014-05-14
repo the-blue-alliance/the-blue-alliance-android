@@ -45,6 +45,9 @@
     <string name="from">from</string>
     <string name="currently_competing">currently competing at</string>
 
+    <!-- Insights -->
+    <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
+
     <!-- Settings -->
     <string name="settings_version_label">Version</string>
     <string name="github_label">The Blue Alliance for Android is open source</string>
