@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.PopulateTeamInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
@@ -44,7 +43,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         // Register this fragment as the callback for all clickable views
         v.findViewById(R.id.team_location_container).setOnClickListener(this);
         v.findViewById(R.id.team_twitter_button).setOnClickListener(this);
-        v.findViewById(R.id.team_most_recent_match_details).findViewById(R.id.match_video).setOnClickListener(this);
         return v;
     }
 
