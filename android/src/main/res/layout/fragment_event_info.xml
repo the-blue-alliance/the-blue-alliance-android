@@ -95,11 +95,6 @@
                 android:src="@drawable/ic_action_web_site" />
 
             <ImageView
-                android:id="@+id/event_facebook_button"
-                style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/ic_facebook" />
-
-            <ImageView
                 android:id="@+id/event_twitter_button"
                 style="@style/InfoItemButtonBarImageStyle"
                 android:src="@drawable/ic_twitter" />
@@ -117,8 +112,8 @@
             <ImageView
                 android:id="@+id/event_usfirst_button"
                 style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/ic_usfirst" />
-        </LinearLayout>
+                android:src="@drawable/ic_usfirst"
+                android:visibility="gone" /> <!-- not sure what website to use here, so hide it for now -->         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/event_last_match_container"

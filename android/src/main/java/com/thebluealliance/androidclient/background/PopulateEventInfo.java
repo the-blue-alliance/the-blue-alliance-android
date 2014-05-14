@@ -75,7 +75,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 return APIResponse.CODE.NODATA;
             }
 
-            if(event.hasStarted()){
+            if (event.hasStarted()) {
                 //event has started (may or may not have finished).
                 //show the ranks and stats
                 showRanks = showStats = true;
@@ -84,8 +84,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     APIResponse<ArrayList<JsonArray>> rankResponse = DataManager.getEventRankings(activity, eventKey);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
-                    for(int i=1;i<Math.min(6, rankList.size()); i++){
-                        rankString += ((i)+". "+rankList.get(i).get(1).getAsString())+"\n";
+                    for (int i = 1; i < Math.min(6, rankList.size()); i++) {
+                        rankString += ((i) + ". " + rankList.get(i).get(1).getAsString()) + "\n";
                     }
                     ranks.setText(rankString);
                 } catch (DataManager.NoDataException e) {
@@ -96,12 +96,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 stats = new TextView(activity);
                 try {
                     APIResponse<JsonObject> statsResponse = DataManager.getEventStats(activity, eventKey);
-                    ArrayList<Map.Entry<String,JsonElement>> opr = new ArrayList<>();
+                    ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
                     opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
                     Collections.sort(opr, new TeamSortByOPRComparator());
                     String statsString = "";
-                    for(int i=0;i<Math.min(5, opr.size()); i++){
-                        statsString += ((i+1)+". "+opr.get(i).getKey()+"\n");
+                    for (int i = 0; i < Math.min(5, opr.size()); i++) {
+                        statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
                     }
                     stats.setText(statsString);
                 } catch (DataManager.NoDataException e) {
@@ -110,7 +110,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
             }
 
-            if(event.isHappeningNow()){
+            if (event.isHappeningNow()) {
                 //show the next/last matches, if applicable
                 try {
                     APIResponse<ArrayList<Match>> matchResult = DataManager.getMatchList(activity, eventKey);
@@ -119,11 +119,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     Match nextMatch = Match.getNextMatchPlayed(matches);
                     Match lastMatch = Match.getLastMatchPlayed(matches);
 
-                    if(nextMatch != null){
+                    if (nextMatch != null) {
                         showNextMatch = true;
                         next = nextMatch.render().getView(activity, inflater, null);
                     }
-                    if(lastMatch != null){
+                    if (lastMatch != null) {
                         showLastMatch = true;
                         last = lastMatch.render().getView(activity, inflater, null);
                     }
@@ -133,12 +133,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
             }
 
-        /* TODO finish basic event bits as the rest of the API queries get implemented
-         * this includes next/last match, if event is currently active
-         * Top teams in rankings
-         * Top teams in stats
-         *
-         */
+            view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
+            view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty()?event.getWebsite():"https://www.google.com/search?q="+event.getEventName());
+            view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23"+event.getEventKey());
+            view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query="+event.getEventKey());
+            view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/"+event.getEventKey());
         }
         return APIResponse.CODE.NODATA;
     }
@@ -150,20 +149,20 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());
             eventLoc.setText(event.getLocation());
-            if(showNextMatch) {
+            if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);
                 nextLayout.addView(next);
             }
-            if(showLastMatch) {
+            if (showLastMatch) {
                 lastLayout.setVisibility(View.VISIBLE);
                 lastLayout.addView(last);
             }
-            if(showRanks) {
+            if (showRanks) {
                 topTeams.setVisibility(View.VISIBLE);
                 topTeams.addView(ranks);
             }
 
-            if(showStats) {
+            if (showStats) {
                 topOpr.setVisibility(View.VISIBLE);
                 topOpr.addView(stats);
             }
