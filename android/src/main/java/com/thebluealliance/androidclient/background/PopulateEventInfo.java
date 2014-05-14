@@ -34,7 +34,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
         eventKey = params[0];
 
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && mFragment.getActivity() != null) {
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
             eventLoc = (TextView) view.findViewById(R.id.event_location);
@@ -65,7 +65,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if(event != null) {
+        if(event != null && mFragment.getActivity() != null) {
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());
             eventLoc.setText(event.getLocation());
