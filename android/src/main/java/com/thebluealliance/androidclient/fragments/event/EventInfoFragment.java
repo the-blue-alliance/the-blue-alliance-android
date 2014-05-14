@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.PopulateEventInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
 
@@ -56,6 +57,8 @@ public class EventInfoFragment extends Fragment implements RefreshableActivityLi
         info.findViewById(R.id.event_twitter_button).setOnClickListener(this);
         info.findViewById(R.id.event_youtube_button).setOnClickListener(this);
         info.findViewById(R.id.event_cd_button).setOnClickListener(this);
+        info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
+        info.findViewById(R.id.top_opr_container).setOnClickListener(this);
         return info;
     }
 
@@ -79,20 +82,26 @@ public class EventInfoFragment extends Fragment implements RefreshableActivityLi
 
     @Override
     public void onClick(View v) {
-        PackageManager manager = getActivity().getPackageManager();
-        if (v.getTag() != null) {
+        if(v.getTag().equals("top_teams")){
+            ((ViewEventActivity)getActivity()).getPager().setCurrentItem(2);
+        }else if(v.getTag().equals("top_opr")){
+            ((ViewEventActivity)getActivity()).getPager().setCurrentItem(4);
+        }else {
+            PackageManager manager = getActivity().getPackageManager();
+            if (v.getTag() != null) {
 
-            String uri = v.getTag().toString();
-            Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-            if (handlers.size() > 0) {
-                // There is an application to handle this intent intent
-                startActivity(i);
-            } else {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+                String uri = v.getTag().toString();
+                Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
+                if (handlers.size() > 0) {
+                    // There is an application to handle this intent intent
+                    startActivity(i);
+                } else {
+                    // No application can handle this intent
+                    Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+                }
+
             }
-
         }
     }
 }

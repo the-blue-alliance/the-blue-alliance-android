@@ -151,6 +151,7 @@
 
         <LinearLayout
             android:id="@+id/event_top_teams_container"
+            android:tag="top_teams"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -169,6 +170,7 @@
 
         <LinearLayout
             android:id="@+id/top_opr_container"
+            android:tag="top_opr"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
