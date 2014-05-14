@@ -151,19 +151,31 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             eventLoc.setText(event.getLocation());
             if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);
+                if(nextLayout.getChildCount() > 1) {
+                    nextLayout.removeViewAt(1);
+                }
                 nextLayout.addView(next);
             }
             if (showLastMatch) {
                 lastLayout.setVisibility(View.VISIBLE);
+                if(lastLayout.getChildCount() > 1) {
+                    lastLayout.removeViewAt(1);
+                }
                 lastLayout.addView(last);
             }
             if (showRanks) {
                 topTeams.setVisibility(View.VISIBLE);
+                if(topTeams.getChildCount() > 1) {
+                    topTeams.removeViewAt(1);
+                }
                 topTeams.addView(ranks);
             }
 
             if (showStats) {
                 topOpr.setVisibility(View.VISIBLE);
+                if(topOpr.getChildCount() > 1) {
+                    topOpr.removeViewAt(1);
+                }
                 topOpr.addView(stats);
             }
 
