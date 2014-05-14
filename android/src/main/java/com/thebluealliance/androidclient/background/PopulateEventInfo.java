@@ -15,11 +15,12 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
-import com.thebluealliance.androidclient.datatypes.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,8 +69,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             try {
                 APIResponse<Event> response = DataManager.getEvent(activity, eventKey);
                 event = response.getData();
-                last = new MatchListElement(true, "Quals 1", new String[]{"3182", "3634", "2168"}, new String[]{"181", "4055", "237"}, 23, 120, "2014ctgro_qm1").getView(activity, inflater, null);
-                next = new MatchListElement(true, "Quals 2", new String[]{"3718", "230", "5112"}, new String[]{"175", "4557", "125"}, 60, 121, "2014ctgro_qm2").getView(activity, inflater, null);
                 //return response.getCode();
             } catch (DataManager.NoDataException e) {
                 Log.w(Constants.LOG_TAG, "unable to load event info");
@@ -111,6 +110,29 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
             }
 
+            if(event.isHappeningNow()){
+                //show the next/last matches, if applicable
+                try {
+                    APIResponse<ArrayList<Match>> matchResult = DataManager.getMatchList(activity, eventKey);
+                    ArrayList<Match> matches = matchResult.getData();
+                    Collections.sort(matches, new MatchSortByPlayOrderComparator());
+                    Match nextMatch = Match.getNextMatchPlayed(matches);
+                    Match lastMatch = Match.getLastMatchPlayed(matches);
+
+                    if(nextMatch != null){
+                        showNextMatch = true;
+                        next = nextMatch.render().getView(activity, inflater, null);
+                    }
+                    if(lastMatch != null){
+                        showLastMatch = true;
+                        last = lastMatch.render().getView(activity, inflater, null);
+                    }
+                } catch (DataManager.NoDataException e) {
+                    Log.w(Constants.LOG_TAG, "unable to load match list");
+                    return APIResponse.CODE.NODATA;
+                }
+            }
+
         /* TODO finish basic event bits as the rest of the API queries get implemented
          * this includes next/last match, if event is currently active
          * Top teams in rankings
@@ -128,8 +150,14 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());
             eventLoc.setText(event.getLocation());
-            nextLayout.addView(next);
-            lastLayout.addView(last);
+            if(showNextMatch) {
+                nextLayout.setVisibility(View.VISIBLE);
+                nextLayout.addView(next);
+            }
+            if(showLastMatch) {
+                lastLayout.setVisibility(View.VISIBLE);
+                lastLayout.addView(last);
+            }
             if(showRanks) {
                 topTeams.setVisibility(View.VISIBLE);
                 topTeams.addView(ranks);
