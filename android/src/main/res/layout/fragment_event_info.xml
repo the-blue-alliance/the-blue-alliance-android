@@ -125,13 +125,15 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:visibility="gone">
 
             <TextView
                 style="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/last_match"
+                android:paddingRight="@dimen/activity_half_vertical_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
 
@@ -140,13 +142,15 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:visibility="gone">
 
             <TextView
                 style="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/next_match"
+                android:paddingRight="@dimen/activity_half_vertical_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
 
@@ -156,13 +160,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:visibility="gone">
 
             <TextView
                 style="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/top_teams"
+                android:paddingRight="@dimen/activity_half_vertical_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
 
@@ -171,13 +177,15 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:visibility="gone">
 
             <TextView
                 style="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/top_opr"
+                android:paddingRight="@dimen/activity_half_vertical_margin"
                 android:layout_gravity="center" />
         </LinearLayout>
     </LinearLayout>
