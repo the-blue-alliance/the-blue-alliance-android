@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by Nathan on 4/29/2014.
  */
-public abstract class RefreshableActivity extends FragmentActivity {
+public abstract class BaseActivity extends FragmentActivity {
 
     private ArrayList<RefreshableActivityListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshableActivityListener> mCompletedRefreshListeners = new ArrayList<>();
@@ -159,4 +159,7 @@ public abstract class RefreshableActivity extends FragmentActivity {
         }
         mRefreshInProgress = true;
     }
+
+    public abstract void showWarningMessage(String message);
+    public abstract void hideWarningMessage();
 }

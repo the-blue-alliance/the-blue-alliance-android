@@ -9,16 +9,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.Team;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
+public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
+    private BaseActivity activity;
     private String mTeamName;
     private int mTeamNumber;
     private String mLocation;
@@ -28,14 +32,16 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
 
     public PopulateTeamInfo(Fragment fragment) {
         mFragment = fragment;
+        activity = (BaseActivity)fragment.getActivity();
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected APIResponse.CODE doInBackground(String... params) {
         mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
-            Team team = DataManager.getTeam(mFragment.getActivity(), mTeamKey);
+            APIResponse<Team> response = DataManager.getTeam(activity, mTeamKey);
+            Team team = response.getData();
             Long end = System.nanoTime();
             Log.d("doInBackground", "Total time to load team: " + (end - start));
             mTeamName = team.getNickname();
@@ -44,22 +50,22 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
             mTeamNumber = team.getTeamNumber();
             // TODO: determine if the team actually is competing
             mIsCurrentlyCompeting = false;
-            return null;
+            return response.getCode();
         } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "unable to load team info");
             //some temp data
             mTeamName = "Teh Chezy Pofs";
             mLocation = "San Jose, CA";
             mFullName = "This name is too long to comfortably fit here";
             mTeamNumber = 254;
             mIsCurrentlyCompeting = true;
-            return null;
+            return APIResponse.CODE.NODATA;
         }
     }
 
     @Override
-    protected void onPostExecute(Void v) {
-        super.onPostExecute(v);
+    protected void onPostExecute(APIResponse.CODE code) {
+        super.onPostExecute(code);
 
         View view = mFragment.getView();
         if (view != null) {
@@ -108,6 +114,14 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, Void> {
                     view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
                 }
             }
+
+            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+                //TODO only show warning for currently competing event (there's likely missing data)
+                ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+            }
+
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
         }
     }
 
