@@ -67,6 +67,10 @@ public class TBAv2 {
     }
 
     public static String getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {
+       	if (c == null) {
+	    Log.d("datamanager", "Error: null context");
+            throw new DataManager.NoDataException("Unexpected problem retrieving data");
+        }
         Database db = Database.getInstance(c);
         boolean existsInDb = db.exists(URL);
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);

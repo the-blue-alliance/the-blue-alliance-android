@@ -66,14 +66,14 @@ public class PopulateEventStats extends AsyncTask<String, Void, Void> implements
             e.printStackTrace();
         }
 
-        adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && mFragment != null) {
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             ListView stats = (ListView) view.findViewById(R.id.event_ranking);
             stats.setAdapter(adapter);
             stats.setOnItemClickListener(this);

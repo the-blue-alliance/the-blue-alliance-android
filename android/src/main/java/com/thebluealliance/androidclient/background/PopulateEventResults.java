@@ -25,6 +25,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
     private Fragment mFragment;
     private String eventKey, teamKey;
     private MatchListAdapter adapter;
+    SparseArray<MatchGroup> groups;
 
     public PopulateEventResults(Fragment f) {
         mFragment = f;
@@ -39,7 +40,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
             teamKey = "";
         }
 
-        SparseArray<MatchGroup> groups = new SparseArray<>();
+        groups = new SparseArray<>();
         MatchGroup qualMatches = new MatchGroup("Qualification Matches");
         MatchGroup quarterMatches = new MatchGroup("Quarterfinal Matches");
         MatchGroup semiMatches = new MatchGroup("Semifinal Matches");
@@ -87,7 +88,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
         if (finalMatches.children.size() > 0) {
             groups.append(numGroups, finalMatches);
         }
-        adapter = new MatchListAdapter(mFragment.getActivity(), groups);
 
         return null;
     }
@@ -95,7 +95,8 @@ public class PopulateEventResults extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void params) {
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && mFragment.getActivity() != null) {
+            adapter = new MatchListAdapter(mFragment.getActivity(), groups);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
         }

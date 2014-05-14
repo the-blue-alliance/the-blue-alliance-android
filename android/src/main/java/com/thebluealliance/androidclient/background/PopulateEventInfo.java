@@ -34,22 +34,23 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
         eventKey = params[0];
 
         View view = mFragment.getView();
-        eventName = (TextView) view.findViewById(R.id.event_name);
-        eventDate = (TextView) view.findViewById(R.id.event_date);
-        eventLoc = (TextView) view.findViewById(R.id.event_location);
-        nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
-        lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
-        topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
-        topOpr = (LinearLayout) view.findViewById(R.id.top_opr_container);
+        if (view != null && mFragment.getActivity() != null) {
+            eventName = (TextView) view.findViewById(R.id.event_name);
+            eventDate = (TextView) view.findViewById(R.id.event_date);
+            eventLoc = (TextView) view.findViewById(R.id.event_location);
+            nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
+            lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
+            topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
+            topOpr = (LinearLayout) view.findViewById(R.id.top_opr_container);
 
-        LayoutInflater inflater = (LayoutInflater) mFragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        try {
-            event = DataManager.getEvent(mFragment.getActivity(),eventKey);
-            last = new MatchListElement(true, "Quals 1", new String[]{"3182", "3634", "2168"}, new String[]{"181", "4055", "237"}, 23, 120, "2014ctgro_qm1").getView(mFragment.getActivity(), inflater, null);
-            next = new MatchListElement(true, "Quals 2", new String[]{"3718", "230", "5112"}, new String[]{"175", "4557", "125"}, 60, 121, "2014ctgro_qm2").getView(mFragment.getActivity(), inflater, null);
-        } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
-        }
+            LayoutInflater inflater = (LayoutInflater) mFragment.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            try {
+                event = DataManager.getEvent(mFragment.getActivity(), eventKey);
+                last = new MatchListElement(true, "Quals 1", new String[]{"3182", "3634", "2168"}, new String[]{"181", "4055", "237"}, 23, 120, "2014ctgro_qm1").getView(mFragment.getActivity(), inflater, null);
+                next = new MatchListElement(true, "Quals 2", new String[]{"3718", "230", "5112"}, new String[]{"175", "4557", "125"}, 60, 121, "2014ctgro_qm2").getView(mFragment.getActivity(), inflater, null);
+            } catch (DataManager.NoDataException e) {
+                e.printStackTrace();
+            }
 
         /* TODO finish basic event bits as the rest of the API queries get implemented
          * this includes next/last match, if event is currently active
@@ -57,14 +58,14 @@ public class PopulateEventInfo extends AsyncTask<String, String, String> {
          * Top teams in stats
          *
          */
-
+        }
         return null;
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if(event != null) {
+        if(event != null && mFragment.getActivity() != null) {
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());
             eventLoc.setText(event.getLocation());

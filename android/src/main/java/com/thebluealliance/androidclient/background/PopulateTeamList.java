@@ -53,10 +53,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, Void> {
                 e.printStackTrace();
             }
         }
-        if (!isCancelled()) {
-            adapter = new ListViewAdapter(fragment.getActivity(), teamItems, teamKeys);
-            adapter.notifyDataSetChanged();
-        }
         return null;
     }
 
@@ -65,6 +61,10 @@ public class PopulateTeamList extends AsyncTask<Integer, String, Void> {
     protected void onPostExecute(Void v) {
         super.onPostExecute(v);
 
+        if (!isCancelled() && fragment.getActivity() != null) {
+            adapter = new ListViewAdapter(fragment.getActivity(), teamItems, teamKeys);
+            adapter.notifyDataSetChanged();
+        }
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         if (fragment.getView() != null) {
             ListView eventList = (ListView) fragment.getView().findViewById(R.id.team_list);

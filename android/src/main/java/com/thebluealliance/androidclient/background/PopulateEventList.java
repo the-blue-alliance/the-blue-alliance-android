@@ -79,7 +79,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+
             return null;
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             try {
@@ -100,7 +100,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+
             return null;
         } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
             // Return a list of all events for a given team in a given week in a given year
@@ -113,7 +113,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
         events.add(new EventListElement("2014ilil", "Central Illinois Regional", "Feb 27th to Mar 1st, 2014", "Pekin, IL"));
         eventKeys.add("2014casb");
         events.add(new EventListElement("2014casb", "Inland Empire Regional", "Feb 27th to Mar 1st, 2014", "Grand Terrace, CA"));
-        adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
         return null;
     }
 
@@ -123,8 +122,9 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
 
-       if (mFragment.getView() != null) {
+       if (mFragment.getView() != null && mFragment.getActivity() != null) {
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
+            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             eventList.setAdapter(adapter);
 
             //set to open basic event view
