@@ -1,182 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:divider="?android:attr/dividerHorizontal"
-        android:showDividers="middle">
-
-        <RelativeLayout
-            android:id="@+id/team_name_container"
-            style="@style/InfoItemStyle"
-            android:clickable="true">
-
-            <ImageView
-                android:id="@+id/team_name_icon"
-                style="@style/InfoItemImageStyle"
-                android:src="@drawable/ic_action_group" />
-
-            <TextView
-                android:id="@+id/team_name"
-                style="@style/InfoItemTextStyle"
-                android:layout_toRightOf="@id/team_name_icon" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/team_location_container"
-            style="@style/InfoItemStyle"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground">
-
-            <ImageView
-                android:id="@+id/team_location_icon"
-                style="@style/InfoItemImageStyle"
-                android:src="@drawable/ic_action_place" />
-
-            <TextView
-                android:id="@+id/team_location_label"
-                style="@style/InfoItemTextStyle"
-                android:layout_toRightOf="@id/team_location_icon"
-                android:textSize="14sp"
-                android:textStyle="italic"
-                android:paddingRight="5dp"
-                android:text="@string/from" />
-
-            <TextView
-                android:id="@+id/team_location"
-                style="@style/InfoItemTextStyle"
-                android:layout_toRightOf="@id/team_location_label"
-                android:layout_toLeftOf="@+id/team_location_nav_arrow" />
-
-            <ImageView
-                android:id="@id/team_location_nav_arrow"
-                style="@style/InfoItemNavigationArrowStyle" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/team_full_name_container"
-            style="@style/InfoItemStyle"
-            android:clickable="true">
-
-            <ImageView
-                android:id="@+id/team_full_name_icon"
-                style="@style/InfoItemImageStyle"
-                android:src="@drawable/ic_action_about" />
-
-            <TextView
-                android:id="@+id/team_full_name"
-                style="@style/InfoItemTextStyle"
-                android:layout_toRightOf="@id/team_full_name_icon" />
-        </RelativeLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/team_social_container"
-            style="@style/InfoItemStyle"
-            android:orientation="horizontal"
-            android:showDividers="middle"
-            android:padding="0dp"
-            android:divider="?android:attr/dividerVertical">
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/team_info_container"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:divider="?android:attr/dividerHorizontal"
+            android:showDividers="middle">
 
-            <ImageView
-                android:id="@+id/team_website_button"
-                style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/ic_action_web_site" />
+            <RelativeLayout
+                android:id="@+id/team_name_container"
+                style="@style/InfoItemStyle"
+                android:clickable="true">
 
-            <ImageView
-                android:id="@+id/team_twitter_button"
-                style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/ic_twitter" />
+                <ImageView
+                    android:id="@+id/team_name_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:src="@drawable/ic_action_group" />
 
-            <ImageView
-                android:id="@+id/team_youtube_button"
-                style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/ic_youtube" />
+                <TextView
+                    android:id="@+id/team_name"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_toRightOf="@id/team_name_icon" />
+            </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/team_cd_button"
-                style="@style/InfoItemButtonBarImageStyle"
-                android:src="@drawable/ic_action_web_site" />
+            <RelativeLayout
+                android:id="@+id/team_location_container"
+                style="@style/InfoItemStyle"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/team_location_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:src="@drawable/ic_action_place" />
+
+                <TextView
+                    android:id="@+id/team_location_label"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_toRightOf="@id/team_location_icon"
+                    android:textSize="14sp"
+                    android:textStyle="italic"
+                    android:paddingRight="5dp"
+                    android:text="@string/from" />
+
+                <TextView
+                    android:id="@+id/team_location"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_toRightOf="@id/team_location_label"
+                    android:layout_toLeftOf="@+id/team_location_nav_arrow" />
+
+                <ImageView
+                    android:id="@id/team_location_nav_arrow"
+                    style="@style/InfoItemNavigationArrowStyle" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/team_full_name_container"
+                style="@style/InfoItemStyle"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/team_full_name_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:src="@drawable/ic_action_about" />
+
+                <TextView
+                    android:id="@+id/team_full_name"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_toRightOf="@id/team_full_name_icon" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/team_social_container"
+                style="@style/InfoItemStyle"
+                android:orientation="horizontal"
+                android:showDividers="middle"
+                android:padding="0dp"
+                android:divider="?android:attr/dividerVertical">
+
+                <ImageView
+                    android:id="@+id/team_website_button"
+                    style="@style/InfoItemButtonBarImageStyle"
+                    android:src="@drawable/ic_action_web_site" />
+
+                <ImageView
+                    android:id="@+id/team_twitter_button"
+                    style="@style/InfoItemButtonBarImageStyle"
+                    android:src="@drawable/ic_twitter" />
+
+                <ImageView
+                    android:id="@+id/team_youtube_button"
+                    style="@style/InfoItemButtonBarImageStyle"
+                    android:src="@drawable/ic_youtube" />
+
+                <ImageView
+                    android:id="@+id/team_cd_button"
+                    style="@style/InfoItemButtonBarImageStyle"
+                    android:src="@drawable/ic_action_web_site" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/team_current_event_container"
+                style="@style/InfoItemStyle"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/team_current_event_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:src="@drawable/ic_action_event" />
+
+                <TextView
+                    android:id="@+id/team_current_event_label"
+                    style="@style/InfoItemLabelStyle"
+                    android:layout_toRightOf="@id/team_current_event_icon"
+                    android:layout_centerVertical="false"
+                    android:paddingRight="5dp"
+                    android:text="@string/currently_competing" />
+
+                <TextView
+                    android:id="@+id/team_current_event_name"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_toRightOf="@id/team_current_event_icon"
+                    android:layout_toLeftOf="@+id/team_current_event_nav_arrow"
+                    android:layout_below="@id/team_current_event_label"
+                    android:layout_centerVertical="false" />
+
+                <ImageView
+                    android:id="@id/team_current_event_nav_arrow"
+                    style="@style/InfoItemNavigationArrowStyle" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/team_current_matches_container"
+                style="@style/InfoItemStyle"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/team_current_match_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:src="@drawable/ic_action_time" />
+
+                <TextView
+                    android:id="@+id/team_most_recent_match_label"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/last_match" />
+
+                <include
+                    android:id="@+id/team_most_recent_match_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/team_most_recent_match_label"
+                    layout="@layout/list_item_match" />
+
+                <TextView
+                    android:id="@+id/team_next_match_label"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_below="@id/team_most_recent_match_details"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/next_match" />
+
+                <include
+                    android:id="@+id/team_next_match_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/team_next_match_label"
+                    layout="@layout/list_item_match" />
+
+            </RelativeLayout>
         </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/team_current_event_container"
-            style="@style/InfoItemStyle"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/team_current_event_icon"
-                style="@style/InfoItemImageStyle"
-                android:src="@drawable/ic_action_event" />
-
-            <TextView
-                android:id="@+id/team_current_event_label"
-                style="@style/InfoItemLabelStyle"
-                android:layout_toRightOf="@id/team_current_event_icon"
-                android:layout_centerVertical="false"
-                android:paddingRight="5dp"
-                android:text="@string/currently_competing" />
-
-            <TextView
-                android:id="@+id/team_current_event_name"
-                style="@style/InfoItemTextStyle"
-                android:layout_toRightOf="@id/team_current_event_icon"
-                android:layout_toLeftOf="@+id/team_current_event_nav_arrow"
-                android:layout_below="@id/team_current_event_label"
-                android:layout_centerVertical="false" />
-
-            <ImageView
-                android:id="@id/team_current_event_nav_arrow"
-                style="@style/InfoItemNavigationArrowStyle" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/team_current_matches_container"
-            style="@style/InfoItemStyle"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/team_current_match_icon"
-                style="@style/InfoItemImageStyle"
-                android:src="@drawable/ic_action_time" />
-
-            <TextView
-                android:id="@+id/team_most_recent_match_label"
-                style="@style/InfoItemTextStyle"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:text="@string/last_match" />
-
-            <include
-                android:id="@+id/team_most_recent_match_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/team_most_recent_match_label"
-                layout="@layout/list_item_match" />
-
-            <TextView
-                android:id="@+id/team_next_match_label"
-                style="@style/InfoItemTextStyle"
-                android:layout_below="@id/team_most_recent_match_details"
-                android:layout_centerHorizontal="true"
-                android:text="@string/next_match" />
-
-            <include
-                android:id="@+id/team_next_match_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/team_next_match_label"
-                layout="@layout/list_item_match" />
-
-        </RelativeLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+    <ProgressBar style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:id="@+id/progress"
+        android:visibility="visible"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>
