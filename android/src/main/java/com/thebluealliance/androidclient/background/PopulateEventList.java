@@ -1,20 +1,19 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datatypes.EventListElement;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
@@ -27,9 +26,10 @@ import java.util.Collections;
 /**
  * File created by phil on 4/20/14.
  */
-public class PopulateEventList extends AsyncTask<Void, Void, Void> {
+public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
+    private BaseActivity activity;
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null;
     private ArrayList<String> eventKeys;
@@ -38,13 +38,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
 
     public PopulateEventList(EventListFragment fragment, int year, int week, String teamKey) {
         mFragment = fragment;
+        activity = (BaseActivity) mFragment.getActivity();
         mYear = year;
         mWeek = week;
         mTeamKey = teamKey;
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected APIResponse.CODE doInBackground(Void... params) {
         if (mFragment == null) {
             throw new IllegalArgumentException("Fragment must not be null!");
         }
@@ -54,15 +55,18 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
          * For now, it'll just be static data for demonstrative purposes
          */
 
-        eventKeys = new ArrayList<String>();
-        events = new ArrayList<ListItem>();
+        eventKeys = new ArrayList<>();
+        events = new ArrayList<>();
+
+        APIResponse<ArrayList<SimpleEvent>> response;
 
         if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
             // Return a list of all events for a year
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
-                ArrayList<SimpleEvent> eventData = DataManager.getSimpleEventsInWeek(mFragment.getActivity(),mYear,mWeek);
+                response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
+                ArrayList<SimpleEvent> eventData = response.getData();
                 Collections.sort(eventData, new EventSortByTypeComparator());
                 Event.TYPE lastType = null, currentType;
                 for (SimpleEvent event : eventData) {
@@ -76,14 +80,16 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
                     events.add(event.render());
                     lastType = currentType;
                 }
+                return response.getCode();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+
             return null;
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             try {
-                ArrayList<SimpleEvent> eventsArray = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
+                response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
+                ArrayList<SimpleEvent> eventsArray = response.getData();
                 Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
                 Event.TYPE lastType = null, currentType;
                 for (SimpleEvent event : eventsArray) {
@@ -97,50 +103,38 @@ public class PopulateEventList extends AsyncTask<Void, Void, Void> {
                     events.add(event.render());
                     lastType = currentType;
                 }
+                return response.getCode();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.w(Constants.LOG_TAG, "unable to load event list");
             }
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+
             return null;
         } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
             // Return a list of all events for a given team in a given week in a given year
         }
-        eventKeys.add("regionals");
-        events.add(new EventWeekHeader("Regional Competitions"));
-        eventKeys.add("2014scmb");
-        events.add(new EventListElement("2014scmb", "Palmetto Regional", "Feb 27th to Mar 1st, 2014", "Myrtle Beach, SC"));
-        eventKeys.add("2014ilil");
-        events.add(new EventListElement("2014ilil", "Central Illinois Regional", "Feb 27th to Mar 1st, 2014", "Pekin, IL"));
-        eventKeys.add("2014casb");
-        events.add(new EventListElement("2014casb", "Inland Empire Regional", "Feb 27th to Mar 1st, 2014", "Grand Terrace, CA"));
-        adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
-        return null;
+
+
+        return APIResponse.CODE.NODATA;
     }
 
     @Override
-    protected void onPostExecute(Void v) {
-        super.onPostExecute(v);
+    protected void onPostExecute(APIResponse.CODE c) {
+        super.onPostExecute(c);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
 
-       if (mFragment.getView() != null) {
-            ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
+        if (mFragment.getView() != null && mFragment.getActivity() != null) {
+            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+            ListView eventList = (ListView) mFragment.getView().findViewById(R.id.list);
+            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             eventList.setAdapter(adapter);
 
-            //set to open basic event view. More static data to be removed later...
-            eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(mFragment.getActivity(), ViewEventActivity.class);
-                    Bundle data = intent.getExtras();
-                    if (data == null) data = new Bundle();
-                    if (view.getTag() != null) {
-                        data.putString("eventKey", view.getTag().toString());
-                        intent.putExtras(data);
-                        mFragment.getActivity().startActivity(intent);
-                    }
-                }
-            });
+            if (c == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
+                //TODO only show warning for currently competing event (there's likely missing data)
+                ((BaseActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+            }
+
+            mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 }

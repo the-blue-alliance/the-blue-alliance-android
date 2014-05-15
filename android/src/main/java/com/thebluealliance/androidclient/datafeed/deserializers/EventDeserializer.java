@@ -25,7 +25,13 @@ public class EventDeserializer implements JsonDeserializer<Event>{
 		event.setStartDate(object.get("start_date").getAsString());
 		event.setEndDate(object.get("end_date").getAsString());
 		event.setOfficial(object.get("official").getAsBoolean());
-        event.setShortName(object.get("short_name").getAsString());
+        // "short_name" is not a required field in the API response.
+        // If it is null, simply use the event name as the short name
+        if (object.get("short_name").isJsonNull()) {
+            event.setShortName(object.get("name").getAsString());
+        } else {
+            event.setShortName(object.get("short_name").getAsString());
+        }
 		event.setLastUpdated(System.currentTimeMillis());
 		
 		//event.setWebsite(""); /* NOT EXPOSED BY API YET */

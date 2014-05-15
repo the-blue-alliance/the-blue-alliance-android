@@ -2,12 +2,14 @@ package com.thebluealliance.androidclient.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
@@ -22,9 +24,14 @@ public class TeamListFragment extends Fragment {
     private static final String START = "START";
     private static final String END = "END";
 
+    private Parcelable mListState;
+    private ListViewAdapter mAdapter;
+    private ListView mListView;
+    private ProgressBar mProgressBar;
+
     private int mTeamNumberStart, mTeamNumberEnd;
 
-    private PopulateTeamList task;
+    private PopulateTeamList mTask;
 
     public static TeamListFragment newInstance(int startTeamNumber, int endTeamNumber) {
         TeamListFragment f = new TeamListFragment();
@@ -44,30 +51,36 @@ public class TeamListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_teams, null);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getView().findViewById(R.id.team_list) != null) {
-            ((ListView) getView().findViewById(R.id.team_list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
-                    Intent i = new Intent(getActivity(), ViewTeamActivity.class);
-                    i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
-                    startActivity(i);
-                }
-            });
+        View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        mListView = (ListView) view.findViewById(R.id.list);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        if(mAdapter != null) {
+            mListView.setAdapter(mAdapter);
+            mListView.onRestoreInstanceState(mListState);
+            mProgressBar.setVisibility(View.GONE);
+        } else {
+            mTask = new PopulateTeamList(this);
+            mTask.execute(mTeamNumberStart, mTeamNumberEnd);
         }
-        task = new PopulateTeamList(this);
-        task.execute(mTeamNumberStart, mTeamNumberEnd);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
+                Intent i = new Intent(getActivity(), ViewTeamActivity.class);
+                i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+                startActivity(i);
+            }
+        });
+        return view;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        task.cancel(false);
+        mTask.cancel(false);
+        if(mListView != null) {
+            mAdapter = (ListViewAdapter) mListView.getAdapter();
+            mListState = mListView.onSaveInstanceState();
+        }
     }
 }

@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
 
     <TextView
         android:id="@+id/team_number"
@@ -16,12 +18,12 @@
         android:textSize="30sp" />
 
     <LinearLayout
+        android:id="@+id/team_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/team_number"
-        android:orientation="vertical"
-        android:id="@+id/team_details">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/team_name"
@@ -45,10 +47,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/team_details"
-        android:paddingRight="@dimen/activity_vertical_margin"
         android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/team_details"
         android:gravity="right"
+        android:paddingRight="@dimen/activity_vertical_margin"
         android:singleLine="false"
         android:text="stat"
         android:textSize="20sp" />

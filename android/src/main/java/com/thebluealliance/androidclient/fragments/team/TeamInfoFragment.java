@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.background.PopulateTeamInfo;
+import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
 
 import java.util.List;
@@ -43,21 +43,24 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         // Register this fragment as the callback for all clickable views
         v.findViewById(R.id.team_location_container).setOnClickListener(this);
         v.findViewById(R.id.team_twitter_button).setOnClickListener(this);
-        v.findViewById(R.id.team_most_recent_match_details).findViewById(R.id.match_video).setOnClickListener(this);
+        v.findViewById(R.id.team_cd_button).setOnClickListener(this);
+        v.findViewById(R.id.team_youtube_button).setOnClickListener(this);
+        v.findViewById(R.id.team_website_button).setOnClickListener(this);
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        task = new PopulateTeamInfo(getActivity(), this, mTeamKey);
-        task.execute();
+        task = new PopulateTeamInfo(this);
+        task.execute(mTeamKey);
     }
 
     @Override
     public void onClick(View view) {
         PackageManager manager = getActivity().getPackageManager();
-        if (view.getId() == R.id.team_location_container) {
+        if (view.getTag() != null) {
+
             String uri = view.getTag().toString();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
@@ -68,39 +71,14 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
                 // No application can handle this intent
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
-        } else if (view.getId() == R.id.team_twitter_button) {
-            String uri = view.getTag().toString();
-            Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-            if (handlers.size() > 0) {
-                // There is an application to handle this intent intent
-                //TODO: Figure out if the Twitter app supports initiating searches via an Intent
-                //startActivity(i);
-            } else {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
-            }
-        } else if (view.getId() == R.id.team_youtube_button) {
-            String query = view.getTag().toString();
-            Intent i = new Intent(Intent.ACTION_SEARCH);
-            i.setPackage("com.google.android.youtube");
-            i.putExtra("query", query);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-            if (handlers.size() > 0) {
-                // There is an application to handle this intent intent
-                startActivity(i);
-            } else {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
-            }
+
         }
     }
 
     @Override
     public void onRefreshStart() {
-        task = new PopulateTeamInfo(getActivity(), this, mTeamKey);
-        task.execute();
+        task = new PopulateTeamInfo(this);
+        task.execute(mTeamKey);
     }
 
     @Override

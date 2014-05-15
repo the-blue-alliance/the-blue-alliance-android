@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.R;
  */
 public class NavDrawerItem implements ListItem {
 
+    private int id;
     private String title;
     private int icon = -1;
     private int layout;
@@ -21,7 +22,8 @@ public class NavDrawerItem implements ListItem {
         this.title = title;
     }
 
-    public NavDrawerItem(String title, int icon, int layout) {
+    public NavDrawerItem(int id, String title, int icon, int layout) {
+        this.id = id;
         this.title = title;
         this.icon = icon;
         this.layout = layout;
@@ -48,6 +50,10 @@ public class NavDrawerItem implements ListItem {
             textView.setTypeface(null, Typeface.NORMAL);
         }*/
         return convertView;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

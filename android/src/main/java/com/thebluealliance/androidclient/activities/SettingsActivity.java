@@ -37,6 +37,9 @@ public class SettingsActivity extends PreferenceActivity {
 
             Preference licenses = findPreference("licenses");
             licenses.setIntent(new Intent(getActivity(), OpenSourceLicensesActivity.class));
+
+            Preference tbaLink = findPreference("tba_link");
+            tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
         }
     }
 
