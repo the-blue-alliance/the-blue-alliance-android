@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,8 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
      */
     private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
 
+    private static final String REQUESTED_MODE = "requested_mode";
+
     /**
      * The serialization (saved instance state) Bundle key representing the
      * current dropdown position.
@@ -47,15 +50,29 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
 
     private TextView warningMessage;
 
+    public static Intent newInstance(Context context, int requestedMode) {
+        Intent i = new Intent(context, StartActivity.class);
+        i.putExtra(REQUESTED_MODE, requestedMode);
+        return i;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);
 
-        warningMessage = (TextView)findViewById(R.id.warning_container);
+        warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
         int initNavId = R.id.nav_item_events;
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            if (b.containsKey(REQUESTED_MODE)) {
+                if (b.getInt(REQUESTED_MODE, -1) != -1) {
+                    initNavId = b.getInt(REQUESTED_MODE);
+                }
+            }
+        }
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
                 initNavId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by Nathan on 4/29/2014.
  */
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends NavigationDrawerActivity {
 
     private ArrayList<RefreshableActivityListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshableActivityListener> mCompletedRefreshListeners = new ArrayList<>();

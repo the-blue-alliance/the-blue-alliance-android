@@ -127,8 +127,11 @@ public class NavigationDrawerFragment extends Fragment {
      *                          the user has demonstrated knowledge of the drawer's existence by opening
      *                          the drawer. False will disable this behavior and only show the drawer
      *                          when manually opened.
+     * @param useActionBarToggle True if the Action Bar home button should be used to open the navigation
+     *                           drawer; false if otherwise. Some hosts may want to use up navigation so we
+     *                           provide the option to disable this.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout, boolean encourageLearning) {
+    public void setUp(int fragmentId, DrawerLayout drawerLayout, boolean encourageLearning, boolean useActionBarToggle) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
