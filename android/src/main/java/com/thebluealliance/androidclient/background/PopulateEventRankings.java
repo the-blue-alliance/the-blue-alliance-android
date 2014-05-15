@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.JsonArray;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> implements AdapterView.OnItemClickListener {
+public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private BaseActivity activity;
@@ -81,7 +80,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             ListView rankings = (ListView) view.findViewById(R.id.event_ranking);
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             rankings.setAdapter(adapter);
-            rankings.setOnItemClickListener(this);
 
             if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
                 //TODO only show warning for currently competing event (there's likely missing data)
@@ -90,10 +88,5 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mFragment.startActivity(ViewTeamActivity.newInstance(activity, view.getTag().toString()));
     }
 }

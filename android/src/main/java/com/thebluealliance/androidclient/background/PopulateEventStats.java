@@ -2,17 +2,12 @@ package com.thebluealliance.androidclient.background;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -26,7 +21,7 @@ import java.util.Map;
 /**
  * File created by phil on 4/23/14.
  */
-public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> implements AdapterView.OnItemClickListener {
+public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private BaseActivity activity;
@@ -60,11 +55,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
             ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
 
-            for(int i=0;i<opr.size();i++){
-                String statsString = "OPR: "+displayFormat.format(opr.get(i).getValue().getAsDouble())
-                        +", DPR: "+displayFormat.format(dpr.get(i).getValue().getAsDouble())
-                        +", CCWM: "+displayFormat.format(ccwm.get(i).getValue().getAsDouble());
-                String teamKey = "frc"+opr.get(i).getKey();
+            for (int i = 0; i < opr.size(); i++) {
+                String statsString = "OPR: " + displayFormat.format(opr.get(i).getValue().getAsDouble())
+                        + ", DPR: " + displayFormat.format(dpr.get(i).getValue().getAsDouble())
+                        + ", CCWM: " + displayFormat.format(ccwm.get(i).getValue().getAsDouble());
+                String teamKey = "frc" + opr.get(i).getKey();
                 teamKeys.add(teamKey);
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
                 //TODO the blank fields above are team name and location
@@ -92,10 +87,5 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mFragment.startActivity(ViewTeamActivity.newInstance(mFragment.getActivity(), view.getTag().toString()));
     }
 }

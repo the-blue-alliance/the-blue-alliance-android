@@ -1,18 +1,14 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeComparator;
@@ -133,21 +129,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             eventList.setAdapter(adapter);
 
-            //set to open basic event view
-            eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(mFragment.getActivity(), ViewEventActivity.class);
-                    Bundle data = intent.getExtras();
-                    if (data == null) data = new Bundle();
-                    if (view.getTag() != null) {
-                        data.putString("eventKey", view.getTag().toString());
-                        intent.putExtras(data);
-                        mFragment.getActivity().startActivity(intent);
-                    }
-                }
-            });
-
            if(c == APIResponse.CODE.OFFLINECACHE /* && event is current */){
                //TODO only show warning for currently competing event (there's likely missing data)
                ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
@@ -155,5 +136,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
            mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
        }
+        }
     }
 }
