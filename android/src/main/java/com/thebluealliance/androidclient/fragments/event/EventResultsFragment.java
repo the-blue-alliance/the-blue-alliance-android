@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -9,10 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventResults;
+import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
 /**
  * File created by phil on 4/22/14.
@@ -62,6 +67,15 @@ public class EventResultsFragment extends Fragment {
             mTask.execute(eventKey);
             Log.d("onCreateView", "creating new adapter");
         }
+        mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
+                String matchKey = (String) ((MatchListAdapter) parent.getExpandableListAdapter()).getChildKey(groupPosition, childPosition);
+                Toast.makeText(getActivity(), "Match clicked: " + matchKey, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), ViewMatchActivity.class));
+                return true;
+            }
+        });
         return v;
     }
 

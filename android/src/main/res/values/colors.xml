@@ -8,6 +8,7 @@
     <color name="nav_divider">#ffc2c2c2</color>
 
     <color name="grey">#F5F5F0</color>
+    <color name="column_header_gray">#ddd</color>
     <color name="dark_grey">#A4A4A4</color>
     <color name="white">#FFF</color>
     <color name="nav_text_color">#585858</color>

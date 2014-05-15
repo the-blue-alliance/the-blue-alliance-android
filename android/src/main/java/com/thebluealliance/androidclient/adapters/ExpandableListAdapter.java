@@ -18,6 +18,7 @@ public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
     public final SparseArray<ListGroup> groups;
     public LayoutInflater inflater;
     public Activity activity;
+    private boolean mIsChildSelectable = false;
 
     public ExpandableListAdapter(Activity act, SparseArray<ListGroup> groups) {
         activity = act;
@@ -90,6 +91,10 @@ public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return mIsChildSelectable;
+    }
+
+    public void setChildSelectable(boolean isSelectable) {
+        mIsChildSelectable = isSelectable;
     }
 }
