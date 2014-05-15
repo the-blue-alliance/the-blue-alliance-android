@@ -82,7 +82,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         }
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         if (fragment.getView() != null) {
-            ListView eventList = (ListView) fragment.getView().findViewById(R.id.team_list);
+            ListView eventList = (ListView) fragment.getView().findViewById(R.id.list);
             eventList.setAdapter(adapter);
 
             if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){

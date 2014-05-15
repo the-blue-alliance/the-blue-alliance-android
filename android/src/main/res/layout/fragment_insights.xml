@@ -7,24 +7,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_centerInParent="true"
+        android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:src="@drawable/ic_action_sort_by_size"
-            android:paddingBottom="16dp"/>
+            android:paddingBottom="16dp"
+            android:src="@drawable/ic_action_sort_by_size"/>
 
         <TextView
             android:id="@+id/placeholder_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/insights_placeholder"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-            android:gravity="center" />
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
     </LinearLayout>
 
 </RelativeLayout>

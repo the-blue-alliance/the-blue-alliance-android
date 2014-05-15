@@ -7,13 +7,13 @@
     android:padding="8dp">
 
     <TextView
+        android:id="@+id/match_title"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="1.7"
-        android:id="@+id/match_title"
-        android:text="Match"
         android:gravity="center_vertical|center_horizontal"
-        android:paddingRight="8dp" />
+        android:paddingRight="8dp"
+        android:text="Match" />
 
     <TableLayout
         android:layout_width="0dp"
@@ -26,38 +26,38 @@
             android:minHeight="32dp">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
                 android:id="@+id/red1"
-                android:text="Red 1"
-                android:gravity="center_vertical|center_horizontal" />
-
-            <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Red 1" />
+
+            <TextView
                 android:id="@+id/red2"
-                android:text="Red 2"
-                android:gravity="center_vertical|center_horizontal" />
-
-            <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:id="@+id/red3"
-                android:text="Red 3"
-                android:gravity="center_vertical|center_horizontal" />
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Red 2" />
 
             <TextView
+                android:id="@+id/red3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Red 3" />
+
+            <TextView
+                android:id="@+id/red_score"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1.5"
                 android:background="@color/light_red"
-                android:id="@+id/red_score"
+                android:gravity="center_vertical|center_horizontal"
                 android:text="Red Score"
-                android:textStyle="bold"
-                android:gravity="center_vertical|center_horizontal" />
+                android:textStyle="bold" />
         </TableRow>
 
         <TableRow
@@ -66,38 +66,38 @@
             android:minHeight="32dp">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
                 android:id="@+id/blue1"
-                android:text="Blue 1"
-                android:gravity="center_vertical|center_horizontal" />
-
-            <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Blue 1" />
+
+            <TextView
                 android:id="@+id/blue2"
-                android:text="Blue 2"
-                android:gravity="center_vertical|center_horizontal" />
-
-            <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:id="@+id/blue3"
-                android:text="Blue 3"
-                android:gravity="center_vertical|center_horizontal" />
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Blue 2" />
 
             <TextView
+                android:id="@+id/blue3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Blue 3" />
+
+            <TextView
+                android:id="@+id/blue_score"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1.5"
                 android:background="@color/light_blue"
-                android:id="@+id/blue_score"
+                android:gravity="center_vertical|center_horizontal"
                 android:text="Blue Score"
-                android:textStyle="bold"
-                android:gravity="center_vertical|center_horizontal" />
+                android:textStyle="bold" />
         </TableRow>
     </TableLayout>
 
@@ -107,16 +107,16 @@
         android:layout_weight="1.3">
 
         <ImageView
+            android:id="@+id/match_video"
+            style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:padding="0dp"
-            android:layout_margin="0dp"
             android:layout_centerInParent="true"
-            style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
-            android:id="@+id/match_video"
-            android:src="@drawable/ic_action_play_over_video"
+            android:layout_margin="0dp"
             android:clickable="true"
-            android:focusable="false" />
+            android:focusable="false"
+            android:padding="0dp"
+            android:src="@drawable/ic_action_play_over_video" />
     </RelativeLayout>
 
 </LinearLayout>

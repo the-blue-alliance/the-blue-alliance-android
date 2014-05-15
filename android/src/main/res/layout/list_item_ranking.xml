@@ -3,8 +3,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:orientation="horizontal"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall">
+    android:paddingBottom="4dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="4dp">
 
 
     <TextView
@@ -21,10 +25,10 @@
         android:id="@+id/team_number_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@id/team_rank"
         android:orientation="vertical"
-        android:paddingRight="10dp"
-        android:layout_centerVertical="true">
+        android:paddingRight="10dp">
 
         <TextView
             android:id="@+id/team_number"
@@ -56,8 +60,8 @@
         android:id="@+id/ranking_breakdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/team_name"
         android:layout_alignLeft="@id/team_name"
+        android:layout_below="@id/team_name"
         android:text="22 QS, 930 Assist, 725 Auto, 310 Truss &amp; Catch, 518 Teleop" />
 
 </RelativeLayout>

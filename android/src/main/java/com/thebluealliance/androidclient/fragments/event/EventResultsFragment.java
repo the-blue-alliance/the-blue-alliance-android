@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
@@ -25,6 +26,7 @@ public class EventResultsFragment extends Fragment {
     private MatchListAdapter mAdapter;
     private ExpandableListView mListView;
     private int mFirstVisiblePosition;
+    private ProgressBar mProgressBar;
 
     private PopulateEventResults mTask;
 
@@ -48,11 +50,13 @@ public class EventResultsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_event_results, null);
         mListView = (ExpandableListView) v.findViewById(R.id.match_results);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         if(mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mListView.setSelection(mFirstVisiblePosition);
             Log.d("onCreateView", "using existing adapter");
+            mProgressBar.setVisibility(View.GONE);
         } else {
             mTask = new PopulateEventResults(this);
             mTask.execute(eventKey);

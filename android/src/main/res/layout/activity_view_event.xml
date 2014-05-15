@@ -5,10 +5,10 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/warning_container">
+        android:layout_above="@+id/warning_container"
+        android:orientation="vertical">
 
         <com.astuetz.PagerSlidingTabStrip
             android:id="@+id/tabs"
@@ -23,6 +23,6 @@
 
     </LinearLayout>
 
-    <TextView style="@style/ActivityWarningStyle"
-        android:id="@+id/warning_container"/>
+    <TextView android:id="@+id/warning_container"
+        style="@style/ActivityWarningStyle"/>
 </RelativeLayout>

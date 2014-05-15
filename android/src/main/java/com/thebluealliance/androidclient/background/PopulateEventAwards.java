@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
@@ -66,7 +65,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         View view = mFragment.getView();
         if (view != null) {
             adapter = new ListViewAdapter(activity, awards, keys);
-            ListView rankings = (ListView) view.findViewById(R.id.event_awards);
+            ListView rankings = (ListView) view.findViewById(R.id.list);
             rankings.setAdapter(adapter);
 
             if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
