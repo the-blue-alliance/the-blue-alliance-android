@@ -129,6 +129,18 @@ public class DataManager {
         return new APIResponse<>(results, response.getCode());
     }
 
+    public static synchronized APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey) throws NoDataException{
+        ArrayList<Match> results = new ArrayList<>();
+        Log.d("match list", "fetching matches for "+eventKey);
+        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/matches", true);
+        Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response.getData()).iterator();
+        while (iterator.hasNext()){
+            Match match = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Match.class);
+            results.add(match);
+        }
+        return new APIResponse<>(results, response.getCode());
+    }
+
     public synchronized static APIResponse<JsonObject> getEventStats(Context c, String eventKey) throws NoDataException {
         APIResponse<String> results = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/stats", true);
         return new APIResponse<>(JSONManager.getasJsonObject(results.getData()), results.getCode());

@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventResults;
+import com.thebluealliance.androidclient.background.event.PopulateEventResults;
 
 /**
  * File created by phil on 4/22/14.

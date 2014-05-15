@@ -108,7 +108,7 @@
                 <ImageView
                     android:id="@+id/team_cd_button"
                     style="@style/InfoItemButtonBarImageStyle"
-                    android:src="@drawable/ic_action_web_site" />
+                    android:src="@drawable/ic_cd" />
             </LinearLayout>
 
             <RelativeLayout
@@ -162,12 +162,12 @@
                     android:layout_centerHorizontal="true"
                     android:text="@string/last_match" />
 
-                <include
+                <LinearLayout
                     android:id="@+id/team_most_recent_match_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/team_most_recent_match_label"
-                    layout="@layout/list_item_match" />
+                    android:orientation="vertical"
+                    android:layout_below="@id/team_most_recent_match_label"/>
 
                 <TextView
                     android:id="@+id/team_next_match_label"
@@ -176,12 +176,12 @@
                     android:layout_centerHorizontal="true"
                     android:text="@string/next_match" />
 
-                <include
+                <LinearLayout
                     android:id="@+id/team_next_match_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/team_next_match_label"
-                    layout="@layout/list_item_match" />
+                    android:orientation="vertical"
+                    android:layout_below="@id/team_next_match_label"/>
 
             </RelativeLayout>
         </LinearLayout>

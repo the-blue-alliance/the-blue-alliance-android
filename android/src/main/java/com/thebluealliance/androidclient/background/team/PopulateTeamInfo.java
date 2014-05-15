@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.background;
+package com.thebluealliance.androidclient.background.team;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -6,15 +6,23 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * File created by phil on 4/20/14.
@@ -28,7 +36,9 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private String mLocation;
     private String mFullName;
     private String mTeamKey;
-    private boolean mIsCurrentlyCompeting = false;
+    private String mTeamWebsite;
+    private SimpleEvent mCurrentEvent;
+    private boolean mIsCurrentlyCompeting;
 
     public PopulateTeamInfo(Fragment fragment) {
         mFragment = fragment;
@@ -47,18 +57,14 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             mTeamName = team.getNickname();
             mLocation = team.getLocation();
             mFullName = team.getFullName();
+            mTeamWebsite = team.getWebsite();
             mTeamNumber = team.getTeamNumber();
-            // TODO: determine if the team actually is competing
-            mIsCurrentlyCompeting = false;
+            mCurrentEvent = team.getCurrentEvent();
+            mIsCurrentlyCompeting = mCurrentEvent != null;
             return response.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load team info");
             //some temp data
-            mTeamName = "Teh Chezy Pofs";
-            mLocation = "San Jose, CA";
-            mFullName = "This name is too long to comfortably fit here";
-            mTeamNumber = 254;
-            mIsCurrentlyCompeting = true;
             return APIResponse.CODE.NODATA;
         }
     }
@@ -68,7 +74,8 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         super.onPostExecute(code);
 
         View view = mFragment.getView();
-        if (view != null) {
+        LayoutInflater inflater = activity.getLayoutInflater();
+        if (view != null && code != APIResponse.CODE.NODATA) {
             TextView teamName = ((TextView) view.findViewById(R.id.team_name));
             if (mTeamName.isEmpty()) {
                 teamName.setText("Team " + mTeamNumber);
@@ -78,8 +85,10 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
             // Tag is used to create an ACTION_VIEW intent for a maps application
             view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
-            view.findViewById(R.id.team_twitter_button).setTag("twitter://search?q=%23" + mTeamKey);
-            view.findViewById(R.id.team_youtube_button).setTag(String.format("#frc%d OR \"team %d\"", mTeamNumber, mTeamNumber));
+            view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
+            view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query="+mTeamKey);
+            view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/"+mTeamKey);
+            view.findViewById(R.id.team_website_button).setTag(!mTeamWebsite.isEmpty()?mTeamWebsite:"https://www.google.com/search?q="+mTeamKey);
             if (mFullName.isEmpty()) {
                 // No full name specified, hide the view
                 view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
@@ -93,21 +102,27 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 view.findViewById(R.id.team_current_event_container).setVisibility(View.GONE);
                 view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
             } else {
-                //TODO: populate current event/match fields with the appropriate data
-                boolean hasPlayedAtCurrentEvent = true;
-                boolean hasNextMatchAtCurrentEvent = true;
-                if (hasPlayedAtCurrentEvent) {
-
+                ((TextView)view.findViewById(R.id.team_current_event_name)).setText(mCurrentEvent.getEventName());
+                ArrayList<Match> matches;
+                try {
+                    matches = DataManager.getMatchList(activity, mCurrentEvent.getEventKey()).getData();
+                } catch (DataManager.NoDataException e) {
+                    Log.w(Constants.LOG_TAG, "unable to fetch event data");
+                    return;
+                }
+                Collections.sort(matches, new MatchSortByPlayOrderComparator());
+                Match lastMatch = Match.getLastMatchPlayed(matches);
+                Match nextMatch = Match.getNextMatchPlayed(matches);
+                if (lastMatch != null) {
+                    ((LinearLayout)view.findViewById(R.id.team_most_recent_match_details)).addView(lastMatch.render().getView(activity, inflater, null));
                 } else {
                     // Hide most recent match views, this team has not yet had a match at this competition
                     view.findViewById(R.id.team_most_recent_match_label).setVisibility(View.GONE);
                     view.findViewById(R.id.team_most_recent_match_details).setVisibility(View.GONE);
                 }
 
-                if (hasNextMatchAtCurrentEvent) {
-                    // Hide the video button in the match details, future matches cannot have videos yet
-                    View nextMatchDetailsView = view.findViewById(R.id.team_next_match_details);
-                    nextMatchDetailsView.findViewById(R.id.match_video).setVisibility(View.INVISIBLE);
+                if (nextMatch != null) {
+                    ((LinearLayout)view.findViewById(R.id.team_next_match_details)).addView(nextMatch.render().getView(activity, inflater, null));
                 } else {
                     // Hide next match views, this team has no more matches at this competition
                     view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);

@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventStats;
+import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 
 /**
  * File created by phil on 4/22/14.
