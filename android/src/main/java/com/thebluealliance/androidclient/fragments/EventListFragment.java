@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -31,6 +32,7 @@ public class EventListFragment extends Fragment {
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
+    private ProgressBar mProgressBar;
 
     private PopulateEventList mTask;
 
@@ -54,11 +56,13 @@ public class EventListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_events, null);
-        mListView = (ListView) v.findViewById(R.id.event_list);
+        View v = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        mListView = (ListView) v.findViewById(R.id.list);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
+            mProgressBar.setVisibility(View.GONE);
         } else {
             mTask = new PopulateEventList(this, mYear, mWeek, mTeamKey);
             mTask.execute();

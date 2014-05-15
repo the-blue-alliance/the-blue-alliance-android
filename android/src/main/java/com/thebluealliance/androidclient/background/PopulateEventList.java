@@ -38,7 +38,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     public PopulateEventList(EventListFragment fragment, int year, int week, String teamKey) {
         mFragment = fragment;
-        activity = (BaseActivity)mFragment.getActivity();
+        activity = (BaseActivity) mFragment.getActivity();
         mYear = year;
         mWeek = week;
         mTeamKey = teamKey;
@@ -123,19 +123,18 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
 
-       if (mFragment.getView() != null && mFragment.getActivity() != null) {
+        if (mFragment.getView() != null && mFragment.getActivity() != null) {
             adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
-            ListView eventList = (ListView) mFragment.getView().findViewById(R.id.event_list);
+            ListView eventList = (ListView) mFragment.getView().findViewById(R.id.list);
             adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             eventList.setAdapter(adapter);
 
-           if(c == APIResponse.CODE.OFFLINECACHE /* && event is current */){
-               //TODO only show warning for currently competing event (there's likely missing data)
-               ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
-           }
+            if (c == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
+                //TODO only show warning for currently competing event (there's likely missing data)
+                ((BaseActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+            }
 
-           mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
-       }
+            mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 }

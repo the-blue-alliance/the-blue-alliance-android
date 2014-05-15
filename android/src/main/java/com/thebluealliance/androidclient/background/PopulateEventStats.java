@@ -2,12 +2,15 @@ package com.thebluealliance.androidclient.background;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -32,7 +35,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
     public PopulateEventStats(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity)mFragment.getActivity();
+        activity = (BaseActivity) mFragment.getActivity();
     }
 
     @Override
@@ -47,7 +50,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         try {
             APIResponse<JsonObject> response = DataManager.getEventStats(activity, eventKey);
             JsonObject stats = response.getData();
-            ArrayList<Map.Entry<String,JsonElement>>
+            ArrayList<Map.Entry<String, JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
                     ccwm = new ArrayList<>();
@@ -76,11 +79,10 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         View view = mFragment.getView();
         if (view != null && mFragment != null) {
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
-            ListView stats = (ListView) view.findViewById(R.id.event_ranking);
+            ListView stats = (ListView) view.findViewById(R.id.list);
             stats.setAdapter(adapter);
-            stats.setOnItemClickListener(this);
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }

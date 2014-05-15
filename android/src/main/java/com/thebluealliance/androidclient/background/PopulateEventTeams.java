@@ -1,17 +1,14 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.BaseActivity;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -25,7 +22,7 @@ import java.util.Collections;
 /**
  * File created by phil on 4/22/14.
  */
-public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CODE> implements AdapterView.OnItemClickListener {
+public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CODE> {
 
     private Fragment mFragment;
     private BaseActivity activity;
@@ -71,9 +68,8 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             adapter.notifyDataSetChanged();
-            ListView teamList = (ListView) view.findViewById(R.id.event_team_list);
+            ListView teamList = (ListView) view.findViewById(R.id.list);
             teamList.setAdapter(adapter);
-            teamList.setOnItemClickListener(this);
 
             if(c == APIResponse.CODE.OFFLINECACHE /* && event is current */){
                 //TODO only show warning for currently competing event (there's likely missing data)
@@ -82,11 +78,5 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = ViewTeamActivity.newInstance(activity,view.getTag().toString());
-        mFragment.startActivity(intent);
     }
 }
