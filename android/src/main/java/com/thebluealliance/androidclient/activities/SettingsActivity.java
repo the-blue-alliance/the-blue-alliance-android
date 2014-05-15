@@ -34,7 +34,10 @@ public class SettingsActivity extends PreferenceActivity {
 
             Preference githubLink = findPreference("github_link");
             githubLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/")));
-            
+
+            Preference licenses = findPreference("licenses");
+            licenses.setIntent(new Intent(getActivity(), OpenSourceLicensesActivity.class));
+
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
         }
