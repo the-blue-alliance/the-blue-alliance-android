@@ -76,10 +76,10 @@ public class Match implements BasicModel {
         LONG_TYPES.put(TYPE.FINAL, "Finals");
 
         PLAY_ORDER = new HashMap<>();
-        PLAY_ORDER.put(TYPE.QUAL,1);
-        PLAY_ORDER.put(TYPE.QUARTER,2);
-        PLAY_ORDER.put(TYPE.SEMI,3);
-        PLAY_ORDER.put(TYPE.FINAL,4);
+        PLAY_ORDER.put(TYPE.QUAL, 1);
+        PLAY_ORDER.put(TYPE.QUARTER, 2);
+        PLAY_ORDER.put(TYPE.SEMI, 3);
+        PLAY_ORDER.put(TYPE.FINAL, 4);
     }
 
 
@@ -126,8 +126,8 @@ public class Match implements BasicModel {
 
     /* Temporary constructor for fake data. Probably to be removed... */
 
-    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore){
-        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
+    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore) {
+        if (!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: " + key);
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.timeString = "";
@@ -162,7 +162,7 @@ public class Match implements BasicModel {
     }
 
     public void setKey(String key) {
-        if(!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: "+key);
+        if (!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: " + key);
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.year = Integer.parseInt(key.substring(0, 3));
@@ -256,7 +256,7 @@ public class Match implements BasicModel {
         }
     }
 
-    public Integer getPlayOrder(){
+    public Integer getPlayOrder() {
         return PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
     }
 
@@ -272,14 +272,14 @@ public class Match implements BasicModel {
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
-        return new MatchListElement(videos.size()>0, getTitle(),
+        return new MatchListElement(videos.size() > 0, getTitle(),
                 new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
                 new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
                 redScore, blueScore, key);
     }
 
     @Override
-    public ContentValues getParams(){
+    public ContentValues getParams() {
         ContentValues values = new ContentValues();
         return values;
     }

@@ -28,7 +28,7 @@ public class AwardListElement extends ListElement {
 
         if (view == null) {
             view = inflater.inflate(R.layout.list_item_award, null);
-            view.setTag("frc"+mAwardTeam);
+            view.setTag("frc" + mAwardTeam);
 
             TextView title = (TextView) view.findViewById(R.id.award_name);
             title.setText(mAwardName);

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -44,8 +43,6 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
 
-    private NavigationDrawerFragment mNavDrawerFragment;
-
     private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
 
     private TextView warningMessage;
@@ -58,6 +55,8 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // This must be called first!
+        super.useActionBarToggle(true);
         super.onCreate(savedInstanceState);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
@@ -83,11 +82,6 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
             }
         }
 
-        mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
-        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
-                (DrawerLayout) findViewById(R.id.nav_drawer_layout),
-                true);
-
         switchToModeForId(initNavId);
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
@@ -100,7 +94,7 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
         super.onResume();
 
         // Ensure that the correct navigation item is highlighted when returning to the StartActivity
-        mNavDrawerFragment.setItemSelected(mCurrentSelectedNavigationItemId);
+        setNavigationDrawerItemSelected(mCurrentSelectedNavigationItemId);
     }
 
     @Override
@@ -143,7 +137,7 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // This will be triggered whenever the drawer opens or closes.
-        if (!mNavDrawerFragment.isDrawerOpen()) {
+        if (!isDrawerOpen()) {
             resetActionBar();
 
             switch (mCurrentSelectedNavigationItemId) {

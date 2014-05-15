@@ -33,7 +33,7 @@ public class TBAv2 {
     }
 
     public static Event getEvent(String key) {
-        Log.d(Constants.LOG_TAG,"Loading data for "+key);
+        Log.d(Constants.LOG_TAG, "Loading data for " + key);
         JsonObject data = JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key));
 
 
@@ -47,32 +47,32 @@ public class TBAv2 {
         return JSONManager.getGson().fromJson(data, Event.class);
     }
 
-    public static ArrayList<Team> getEventTeams(String eventKey){
+    public static ArrayList<Team> getEventTeams(String eventKey) {
         ArrayList<Team> teams = new ArrayList<>();
         JsonArray teamList = JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/" + eventKey + "/teams"));
         Iterator iterator = teamList.iterator();
-        while(iterator.hasNext()){
-            teams.add(JSONManager.getGson().fromJson((JsonObject)iterator.next(),Team.class));
+        while (iterator.hasNext()) {
+            teams.add(JSONManager.getGson().fromJson((JsonObject) iterator.next(), Team.class));
         }
         return teams;
     }
 
-    public static ArrayList<SimpleEvent> getEventList(String json){
+    public static ArrayList<SimpleEvent> getEventList(String json) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
         Iterator iterator = data.iterator();
-        while(iterator.hasNext()){
-            events.add(JSONManager.getGson().fromJson((JsonObject)(iterator.next()),SimpleEvent.class));
+        while (iterator.hasNext()) {
+            events.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), SimpleEvent.class));
         }
         return events;
     }
 
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {
-            if (c == null) {
-                Log.d("datamanager", "Error: null context");
-                throw new DataManager.NoDataException("Unexpected problem retrieving data");
-            }
-        Log.d("datamanager","Loading URL: "+URL);
+        if (c == null) {
+            Log.d("datamanager", "Error: null context");
+            throw new DataManager.NoDataException("Unexpected problem retrieving data");
+        }
+        Log.d("datamanager", "Loading URL: " + URL);
         Database db = Database.getInstance(c);
         boolean existsInDb = db.exists(URL);
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
@@ -84,7 +84,7 @@ public class TBAv2 {
                 // TODO: once we support the If-Modified-Since header, use that to check if our local copy is up-to-date.
                 // For now, we just load the new data every time.
                 boolean dataRequiresUpdate = false;
-                if(dataRequiresUpdate){
+                if (dataRequiresUpdate) {
                     // Load team data, cache it in the database, return it to caller
                     String response = HTTP.GET(URL);
                     if (cacheInDatabase) {
@@ -92,7 +92,7 @@ public class TBAv2 {
                     }
                     Log.d("datamanager", "Online; updated from internet");
                     return new APIResponse<String>(response, APIResponse.CODE.UPDATED);
-                }else{
+                } else {
                     Log.d("datamanager", "Online; no update required, loaded from database");
                     return new APIResponse<String>(db.getResponse(URL), APIResponse.CODE.CACHED304);
                 }

@@ -31,7 +31,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
     public PopulateTeamList(Fragment fragment) {
         this.fragment = fragment;
-        activity = (BaseActivity)fragment.getActivity();
+        activity = (BaseActivity) fragment.getActivity();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             ListView eventList = (ListView) fragment.getView().findViewById(R.id.list);
             eventList.setAdapter(adapter);
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }

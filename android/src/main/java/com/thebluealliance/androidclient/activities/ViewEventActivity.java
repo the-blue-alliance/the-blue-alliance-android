@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ public class ViewEventActivity extends BaseActivity {
             mEventKey = getIntent().getExtras().getString("eventKey", "");
         }
 
-        warningMessage = (TextView)findViewById(R.id.warning_container);
+        warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
@@ -46,6 +47,15 @@ public class ViewEventActivity extends BaseActivity {
 
     private void setupActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setTitle(R.string.title_activity_view_event);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!isDrawerOpen()) {
+            setupActionBar();
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
     public PopulateTeamInfo(Fragment fragment) {
         mFragment = fragment;
-        activity = (BaseActivity)fragment.getActivity();
+        activity = (BaseActivity) fragment.getActivity();
     }
 
     @Override
@@ -115,9 +115,9 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 }
             }
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
-                ((BaseActivity)mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+                ((BaseActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);

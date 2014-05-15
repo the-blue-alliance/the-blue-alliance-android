@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -161,5 +160,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity {
     }
 
     public abstract void showWarningMessage(String message);
+
     public abstract void hideWarningMessage();
 }

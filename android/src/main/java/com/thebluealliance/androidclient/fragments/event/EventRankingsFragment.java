@@ -73,7 +73,7 @@ public class EventRankingsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         mTask.cancel(false);
-        if(mListView != null) {
+        if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }

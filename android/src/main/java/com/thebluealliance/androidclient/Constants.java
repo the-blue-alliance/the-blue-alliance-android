@@ -26,7 +26,7 @@ public class Constants {
         MATCH_LEVELS.put("f", "f");
     }
 
-    public static String getApiHeader(){
-        return "the-blue-alliance:android:v"+BuildConfig.VERSION_NAME;
+    public static String getApiHeader() {
+        return "the-blue-alliance:android:v" + BuildConfig.VERSION_NAME;
     }
 }

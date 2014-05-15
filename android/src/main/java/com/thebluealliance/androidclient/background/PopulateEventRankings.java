@@ -64,29 +64,29 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 String record = null;
                 // Find if the rankings contain a record; remove it if it does
                 Iterator it = rankingElements.entrySet().iterator();
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     Map.Entry<String, Object> entry = (Map.Entry) it.next();
-                    if(entry.getKey().toLowerCase().contains("record".toLowerCase())) {
+                    if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
                         record = "(" + rankingElements.get(entry.getKey()) + ")";
                         it.remove();
                         break;
                     }
                 }
-                if(record == null) {
+                if (record == null) {
                     Set<String> keys = rankingElements.keySet();
-                    if(keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
+                    if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
                         record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
                         rankingElements.remove("wins");
                         rankingElements.remove("losses");
                         rankingElements.remove("ties");
                     }
                 }
-                if(record == null) {
+                if (record == null) {
                     record = "";
                 }
                 // Construct rankings string
                 it = rankingElements.entrySet().iterator();
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     Map.Entry entry = (Map.Entry) it.next();
                     rankingString += entry.getKey() + ": " + entry.getValue();
                     if (it.hasNext()) {

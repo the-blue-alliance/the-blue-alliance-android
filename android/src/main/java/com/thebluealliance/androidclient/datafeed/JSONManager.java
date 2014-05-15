@@ -25,14 +25,14 @@ public class JSONManager {
     private static Gson gson;
     private static JsonParser parser;
 
-    public static JsonParser getParser(){
+    public static JsonParser getParser() {
         if (parser == null)
             parser = new JsonParser();
         return parser;
     }
 
-    public static Gson getGson(){
-        if (gson == null){
+    public static Gson getGson() {
+        if (gson == null) {
             /* Construct new gson with our custom deserializers */
             GsonBuilder builder = new GsonBuilder();
             builder.registerTypeAdapter(Award.class, new AwardDeserializer());
@@ -46,7 +46,7 @@ public class JSONManager {
         return gson;
     }
 
-    public static JsonObject getasJsonObject(String input){
+    public static JsonObject getasJsonObject(String input) {
         if (input == null || input.equals(""))
             return new JsonObject();
         return getParser().parse(input).getAsJsonObject();

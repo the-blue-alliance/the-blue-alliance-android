@@ -54,7 +54,7 @@ public class TeamListFragment extends Fragment {
         View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
@@ -78,7 +78,7 @@ public class TeamListFragment extends Fragment {
     public void onPause() {
         super.onPause();
         mTask.cancel(false);
-        if(mListView != null) {
+        if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }

@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.datatypes.ListElement;
 public interface BasicModel {
 
     public ListElement render();
+
     public ContentValues getParams();
 
     /*

@@ -31,9 +31,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     private String eventKey, teamKey;
     private MatchListAdapter adapter;
     SparseArray<MatchGroup> groups;
+
     public PopulateEventResults(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity)mFragment.getActivity();
+        activity = (BaseActivity) mFragment.getActivity();
     }
 
     @Override
@@ -51,10 +52,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         MatchGroup semiMatches = new MatchGroup("Semifinal Matches");
         MatchGroup finalMatches = new MatchGroup("Finals Matches");
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
-        APIResponse<HashMap<Match.TYPE,ArrayList<Match>>> response;
+        APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
         try {
             response = DataManager.getEventResults(activity, eventKey);
-            HashMap<Match.TYPE,ArrayList<Match>> results = response.getData();
+            HashMap<Match.TYPE, ArrayList<Match>> results = response.getData();
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
             for (Match m : results.get(Match.TYPE.QUAL)) {
                 qualMatches.children.add(m);
@@ -107,7 +108,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }

@@ -32,7 +32,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
     public PopulateEventAwards(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity)mFragment.getActivity();
+        activity = (BaseActivity) mFragment.getActivity();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         try {
             response = DataManager.getEventAwards(activity, eventKey);
             ArrayList<Award> awardList = response.getData();
-            for(Award a:awardList){
+            for (Award a : awardList) {
                 ArrayList<AwardListElement> allWinners = a.renderAll();
                 awards.addAll(allWinners);
                 for (AwardListElement allWinner : allWinners) {
@@ -68,7 +68,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             ListView rankings = (ListView) view.findViewById(R.id.list);
             rankings.setAdapter(adapter);
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
