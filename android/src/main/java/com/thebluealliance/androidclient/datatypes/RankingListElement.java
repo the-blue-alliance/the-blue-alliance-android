@@ -38,9 +38,9 @@ public class RankingListElement extends ListElement {
             team.setText("" + mTeamNumber);
 
             TextView name = (TextView) view.findViewById(R.id.team_name);
-            if(mTeamName.equals("")) {
+            if (mTeamName.equals("")) {
                 name.setVisibility(View.INVISIBLE);
-            }else{
+            } else {
                 name.setText(mTeamName);
             }
 
@@ -48,9 +48,9 @@ public class RankingListElement extends ListElement {
             rank.setText("" + mTeamRank);
 
             TextView record = (TextView) view.findViewById(R.id.team_record); /* formatted as (W, L, T) */
-            if(mTeamRecord.equals("")){
-                record.setVisibility(View.INVISIBLE);
-            }else{
+            if (mTeamRecord.isEmpty()) {
+                record.setVisibility(View.GONE);
+            } else {
                 record.setText(mTeamRecord);
             }
 

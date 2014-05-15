@@ -16,7 +16,7 @@ public class Award implements BasicModel {
     int year;
     JsonArray winners;
 
-    public Award(){
+    public Award() {
         this.eventKey = "";
         this.name = "";
         this.year = -1;
@@ -30,11 +30,11 @@ public class Award implements BasicModel {
         this.winners = winners;
     }
 
-    public JsonArray getWinners(){
+    public JsonArray getWinners() {
         return winners;
     }
 
-    public void setWinners(JsonArray winners){
+    public void setWinners(JsonArray winners) {
         this.winners = winners;
     }
 
@@ -62,36 +62,36 @@ public class Award implements BasicModel {
         this.eventKey = eventKey;
     }
 
-    public ArrayList<AwardListElement> renderAll(){
+    public ArrayList<AwardListElement> renderAll() {
         ArrayList<AwardListElement> output = new ArrayList<>();
         Iterator<JsonElement> iterator = winners.iterator();
         int teamNumber;
         String awardee;
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             JsonObject winner = iterator.next().getAsJsonObject();
-            if(winner.get("team_number").isJsonNull()){
+            if (winner.get("team_number").isJsonNull()) {
                 teamNumber = -1;
-            }else{
+            } else {
                 teamNumber = winner.get("team_number").getAsInt();
             }
-            if(winner.get("awardee").isJsonNull()){
+            if (winner.get("awardee").isJsonNull()) {
                 awardee = "";
-            }else{
+            } else {
                 awardee = winner.get("awardee").getAsString();
             }
 
-            output.add(new AwardListElement(eventKey+"_"+name,name,buildWinnerString(awardee,teamNumber),teamNumber));
+            output.add(new AwardListElement(eventKey + "_" + name, name, buildWinnerString(awardee, teamNumber), teamNumber));
         }
         return output;
     }
 
-    public static String buildWinnerString(String awardee, int team){
-        if(awardee.isEmpty()){
-            return ""+team;
-        }else if(team == -1){
+    public static String buildWinnerString(String awardee, int team) {
+        if (awardee.isEmpty()) {
+            return "" + team;
+        } else if (team == -1) {
             return awardee;
-        }else{
-            return awardee + " ("+team+")";
+        } else {
+            return awardee + " (" + team + ")";
         }
     }
 

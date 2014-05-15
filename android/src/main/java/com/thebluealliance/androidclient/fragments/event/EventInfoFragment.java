@@ -38,19 +38,13 @@ public class EventInfoFragment extends Fragment implements RefreshableActivityLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null){
-            eventKey = getArguments().getString(KEY,"");
-        }
-        if(savedInstanceState != null && savedInstanceState.containsKey(KEY)){
-            eventKey = savedInstanceState.getString(KEY);
+        if (getArguments() != null) {
+            eventKey = getArguments().getString(KEY, "");
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(savedInstanceState != null && savedInstanceState.containsKey(KEY)){
-            eventKey = savedInstanceState.getString(KEY);
-        }
         View info = inflater.inflate(R.layout.fragment_event_info, null);
         info.findViewById(R.id.event_location_container).setOnClickListener(this);
         info.findViewById(R.id.event_website_button).setOnClickListener(this);

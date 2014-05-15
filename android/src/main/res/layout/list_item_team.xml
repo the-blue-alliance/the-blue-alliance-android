@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
 
     <TextView
         android:id="@+id/team_number"
@@ -17,9 +19,9 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@id/team_number"
-        android:layout_centerVertical="true">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/team_name"
