@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -248,15 +249,19 @@ public class Match implements BasicModel {
         this.last_updated = last_updated;
     }
 
-    public String getTitle() {
+    public String getTitle(boolean lineBreak){
         if (type == TYPE.QUAL) {
-            return LONG_TYPES.get(TYPE.QUAL) + " " + matchNumber;
+            return LONG_TYPES.get(TYPE.QUAL) + (lineBreak?"\n":" ") + matchNumber;
         } else {
-            return LONG_TYPES.get(type) + " " + setNumber + " - " + matchNumber;
+            return LONG_TYPES.get(type) + (lineBreak?"\n":" ") + setNumber + " - " + matchNumber;
         }
     }
 
-    public Integer getPlayOrder() {
+    public String getTitle() {
+        return getTitle(false);
+    }
+
+    public Integer getPlayOrder(){
         return PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
     }
 
@@ -286,6 +291,41 @@ public class Match implements BasicModel {
 
     public static boolean validateMatchKey(String key) {
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
+    }
+
+    /**
+     * Returns the match object of the match next to be played
+     * @param matches ArrayList of matches. Assumes the list is sorted by play order
+     * @return Next match
+     */
+    public static Match getNextMatchPlayed(ArrayList<Match> matches){
+        for(Match m:matches){
+            if(m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
+               m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1){
+                //match is unplayed
+                return m;
+            }
+        }
+        //all matches have been played
+        return null;
+    }
+
+    /**
+     * Returns the match object of the last match played
+     * @param matches ArrayList of matches. Assumes the list is sorted by play order
+     * @return Last match played
+     */
+    public static Match getLastMatchPlayed(ArrayList<Match> matches){
+        Match last = null;
+        for(Match m:matches){
+            if(m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
+               m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1){
+                break;
+            }else{
+                last = m;
+            }
+        }
+        return last;
     }
 
 }

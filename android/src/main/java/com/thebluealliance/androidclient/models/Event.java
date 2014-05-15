@@ -329,6 +329,11 @@ public class Event implements BasicModel {
         return now.after(startDate) && now.before(endDate);
     }
 
+    public boolean hasStarted(){
+        Date now = new Date();
+        return now.after(startDate);
+    }
+
     public boolean isOfficial() {
         return official;
     }

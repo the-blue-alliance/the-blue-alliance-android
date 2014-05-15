@@ -28,9 +28,9 @@
             android:title="@string/settings_version_label" />
 
         <Preference
-            android:key="license"
+            android:key="licenses"
             android:persistent="false"
-            android:selectable="false"
+            android:selectable="true"
             android:title="@string/license_label"/>
     </PreferenceCategory>
 

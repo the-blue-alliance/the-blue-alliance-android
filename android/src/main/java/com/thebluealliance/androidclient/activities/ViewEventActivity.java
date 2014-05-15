@@ -19,6 +19,7 @@ public class ViewEventActivity extends BaseActivity {
 
     private String mEventKey;
     private TextView warningMessage;
+    private ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class ViewEventActivity extends BaseActivity {
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        pager = (ViewPager) findViewById(R.id.view_pager);
         pager.setAdapter(new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -68,6 +69,10 @@ public class ViewEventActivity extends BaseActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public ViewPager getPager(){
+        return pager;
     }
 
     @Override

@@ -10,10 +10,10 @@
         android:id="@+id/match_title"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_weight="1.7"
+        android:layout_weight="2.0"
+        android:text="Match"
         android:gravity="center_vertical|center_horizontal"
-        android:paddingRight="8dp"
-        android:text="Match" />
+        android:paddingRight="8dp" />
 
     <TableLayout
         android:layout_width="0dp"
