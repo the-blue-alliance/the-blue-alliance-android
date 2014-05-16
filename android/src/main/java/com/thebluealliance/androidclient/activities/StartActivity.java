@@ -22,8 +22,7 @@ import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends BaseActivity implements ActionBar.OnNavigationListener,
-        NavigationDrawerFragment.OnNavigationDrawerListener {
+public class StartActivity extends BaseActivity implements ActionBar.OnNavigationListener {
 
     /**
      * Saved instance state key representing the last select navigation drawer item
@@ -58,6 +57,8 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
         // This must be called first!
         super.useActionBarToggle(true);
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activty_start);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -99,6 +100,7 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
                 getActionBar().getSelectedNavigationIndex());

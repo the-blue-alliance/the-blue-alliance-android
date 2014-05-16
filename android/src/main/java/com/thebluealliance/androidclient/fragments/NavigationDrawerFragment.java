@@ -32,7 +32,7 @@ import java.util.List;
  * Opening or closing the drawer will trigger a call to onPrepareOptionsMenu().
  * <p/>
  * Activities containing a NavigationDrawerFragment <strong>must</strong> implement
- * {@link NavigationDrawerFragment.OnNavigationDrawerListener}.
+ * {@link com.thebluealliance.androidclient.fragments.NavigationDrawerFragment.NavigationDrawerListener}.
  * <p/>
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for an explanation of the behaviors implemented here.
@@ -64,7 +64,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerListView;
     private View mFragmentContainerView;
     private NavigationDrawerAdapter mNavigationAdapter;
-    private OnNavigationDrawerListener mListener;
+    private NavigationDrawerListener mListener;
 
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
@@ -160,6 +160,7 @@ public class NavigationDrawerFragment extends Fragment {
                         return;
                     }
 
+                    mListener.onNavDrawerClosed();
                     getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
 
@@ -179,6 +180,7 @@ public class NavigationDrawerFragment extends Fragment {
                         sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                     }
 
+                    mListener.onNavDrawerOpened();
                     getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
             };
@@ -208,6 +210,7 @@ public class NavigationDrawerFragment extends Fragment {
                         sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                     }
 
+                    mListener.onNavDrawerOpened();
                     getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
 
@@ -217,6 +220,7 @@ public class NavigationDrawerFragment extends Fragment {
                         return;
                     }
 
+                    mListener.onNavDrawerClosed();
                     getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
             });
@@ -267,8 +271,8 @@ public class NavigationDrawerFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if (activity instanceof OnNavigationDrawerListener) {
-            mListener = (OnNavigationDrawerListener) activity;
+        if (activity instanceof NavigationDrawerListener) {
+            mListener = (NavigationDrawerListener) activity;
         } else {
             throw new IllegalStateException("Activities hosting a NavigationDrawerFragment must implement OnNavigationDrawerListener");
         }
@@ -324,12 +328,23 @@ public class NavigationDrawerFragment extends Fragment {
     /**
      * Interface for receiving navigation drawer callbacks
      */
-    public interface OnNavigationDrawerListener {
+    public interface NavigationDrawerListener {
         /**
          * Called when a NavDrawerItem in the navigation drawer is clicked
          *
          * @param item The item that was clicked
          */
         public void onNavDrawerItemClicked(NavDrawerItem item);
+
+        /**
+         * Called when the drawer is opened.
+         */
+        public void onNavDrawerOpened();
+
+        /**
+         * CAlled when the drawer is opened.
+         */
+        public void onNavDrawerClosed();
+
     }
 }

@@ -2,12 +2,14 @@ package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -48,15 +50,9 @@ public class ViewEventActivity extends BaseActivity {
 
     private void setupActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setTitle(R.string.title_activity_view_event);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!isDrawerOpen()) {
-            setupActionBar();
-        }
-        return super.onPrepareOptionsMenu(menu);
+        // The title is empty now; the EventInfoFragment will set the appropriate title
+        // once it is loaded.
+        setActionBarTitle("");
     }
 
     @Override

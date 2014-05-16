@@ -61,7 +61,7 @@ public class ViewTeamActivity extends BaseActivity {
 
     private void setupActionBar() {
         String teamNumber = mTeamKey.replace("frc", "");
-        getActionBar().setTitle("Team " + teamNumber);
+        setActionBarTitle("Team " + teamNumber);
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
