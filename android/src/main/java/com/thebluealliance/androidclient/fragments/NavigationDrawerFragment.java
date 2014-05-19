@@ -261,7 +261,7 @@ public class NavigationDrawerFragment extends Fragment {
      */
     public void setItemSelected(int itemId) {
         if (mDrawerListView != null) {
-            int position = mNavigationAdapter.getPostitionForId(itemId);
+            int position = mNavigationAdapter.getPositionForId(itemId);
             mDrawerListView.setItemChecked(position, true);
 
         }

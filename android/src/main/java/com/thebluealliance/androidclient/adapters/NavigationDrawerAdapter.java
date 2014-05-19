@@ -24,7 +24,7 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
     private int mSelectedItemPosition = -1;
 
     public NavigationDrawerAdapter(Context context, List<ListItem> values) {
-        super(context, values, null);
+        super(context, values);
     }
 
     public void setItemSelected(int position) {
@@ -58,8 +58,8 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
      * @param id The id of the item to find
      * @return The position of the item in the adapter, or -1 if it is not found.
      */
-    public int getPostitionForId(int id) {
-        for (int i = 0; i < getCount(); i++) {
+    public int getPositionForId(int id) {
+        for (int i=0; i<getCount(); i++) {
             if (getItem(i).getId() == id) {
                 return i;
             }

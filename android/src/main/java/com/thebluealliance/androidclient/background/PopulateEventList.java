@@ -121,9 +121,8 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
 
         if (mFragment.getView() != null && mFragment.getActivity() != null) {
-            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.list);
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), events);
             eventList.setAdapter(adapter);
 
             if (c == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
