@@ -10,7 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -27,14 +27,13 @@ import java.util.Map;
 public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
-    private ListViewAdapter adapter;
 
     public PopulateEventStats(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity) mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -75,7 +74,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams);
+            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), teams);
             ListView stats = (ListView) view.findViewById(R.id.list);
             stats.setAdapter(adapter);
 

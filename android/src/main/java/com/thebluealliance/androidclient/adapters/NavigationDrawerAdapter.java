@@ -14,9 +14,9 @@ import java.util.List;
 
 /**
  * Adapter for NavDrawerItems
- *
+ * <p/>
  * TODO: Update to only take NavDrawerItems instead of ListItems.
- *
+ * <p/>
  * Created by Nathan on 5/8/2014.
  */
 public class NavigationDrawerAdapter extends ListViewAdapter {

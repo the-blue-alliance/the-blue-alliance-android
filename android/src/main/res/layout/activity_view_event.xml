@@ -23,6 +23,8 @@
 
     </LinearLayout>
 
-    <TextView android:id="@+id/warning_container"
-        style="@style/ActivityWarningStyle"/>
+    <TextView
+        android:id="@+id/warning_container"
+        style="@style/ActivityWarningStyle"
+        android:visibility="gone" />
 </RelativeLayout>

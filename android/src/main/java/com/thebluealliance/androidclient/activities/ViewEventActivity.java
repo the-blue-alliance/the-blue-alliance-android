@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 /**
  * File created by phil on 4/20/14.
  */
-public class ViewEventActivity extends BaseActivity {
+public class ViewEventActivity extends RefreshableHostActivity {
 
     private String mEventKey;
     private TextView warningMessage;
@@ -29,7 +29,7 @@ public class ViewEventActivity extends BaseActivity {
             mEventKey = getIntent().getExtras().getString("eventKey", "");
         }
 
-        warningMessage = (TextView)findViewById(R.id.warning_container);
+        warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -45,8 +45,17 @@ public class ViewEventActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onCreateNavigationDrawer() {
+        useActionBarToggle(false);
+        encourageLearning(false);
+    }
+
     private void setupActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        // The title is empty now; the EventInfoFragment will set the appropriate title
+        // once it is loaded.
+        setActionBarTitle("");
     }
 
     @Override

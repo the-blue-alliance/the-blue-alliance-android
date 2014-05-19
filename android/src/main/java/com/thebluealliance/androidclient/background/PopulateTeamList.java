@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -24,13 +24,14 @@ import java.util.ArrayList;
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private Fragment fragment;
-    private BaseActivity activity;
+
+    private RefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
     private ListViewAdapter adapter;
 
     public PopulateTeamList(Fragment fragment) {
         this.fragment = fragment;
-        activity = (BaseActivity)fragment.getActivity();
+        activity = (RefreshableHostActivity) fragment.getActivity();
     }
 
     @Override
@@ -78,7 +79,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             ListView eventList = (ListView) fragment.getView().findViewById(R.id.list);
             eventList.setAdapter(adapter);
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
