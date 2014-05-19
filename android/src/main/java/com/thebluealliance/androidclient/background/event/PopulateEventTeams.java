@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -25,15 +25,14 @@ import java.util.Collections;
 public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
-    private ListViewAdapter adapter;
     private String eventKey;
 
     public PopulateEventTeams(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity)mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -63,7 +62,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
         super.onPostExecute(c);
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             adapter.notifyDataSetChanged();
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
@@ -71,7 +70,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             ListView teamList = (ListView) view.findViewById(R.id.list);
             teamList.setAdapter(adapter);
 
-            if(c == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (c == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }

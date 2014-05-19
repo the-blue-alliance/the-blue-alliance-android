@@ -9,7 +9,7 @@ import android.widget.ListView;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -28,15 +28,14 @@ import java.util.Set;
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
-    private ListViewAdapter adapter;
 
     public PopulateEventRankings(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity) mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -64,29 +63,29 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 String record = null;
                 // Find if the rankings contain a record; remove it if it does
                 Iterator it = rankingElements.entrySet().iterator();
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     Map.Entry<String, Object> entry = (Map.Entry) it.next();
-                    if(entry.getKey().toLowerCase().contains("record".toLowerCase())) {
+                    if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
                         record = "(" + rankingElements.get(entry.getKey()) + ")";
                         it.remove();
                         break;
                     }
                 }
-                if(record == null) {
+                if (record == null) {
                     Set<String> keys = rankingElements.keySet();
-                    if(keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
+                    if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
                         record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
                         rankingElements.remove("wins");
                         rankingElements.remove("losses");
                         rankingElements.remove("ties");
                     }
                 }
-                if(record == null) {
+                if (record == null) {
                     record = "";
                 }
                 // Construct rankings string
                 it = rankingElements.entrySet().iterator();
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     Map.Entry entry = (Map.Entry) it.next();
                     rankingString += entry.getKey() + ": " + entry.getValue();
                     if (it.hasNext()) {
@@ -108,7 +107,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             ListView rankings = (ListView) view.findViewById(R.id.list);
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             rankings.setAdapter(adapter);

@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeComparator;
@@ -29,16 +29,13 @@ import java.util.Collections;
 public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null;
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
-    private ListViewAdapter adapter;
 
     public PopulateEventList(EventListFragment fragment, int year, int week, String teamKey) {
         mFragment = fragment;
-        activity = (BaseActivity) mFragment.getActivity();
         mYear = year;
         mWeek = week;
         mTeamKey = teamKey;
@@ -124,14 +121,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
 
         if (mFragment.getView() != null && mFragment.getActivity() != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
+            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             ListView eventList = (ListView) mFragment.getView().findViewById(R.id.list);
             adapter = new ListViewAdapter(mFragment.getActivity(), events, eventKeys);
             eventList.setAdapter(adapter);
 
             if (c == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
-                ((BaseActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+                ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
             mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);

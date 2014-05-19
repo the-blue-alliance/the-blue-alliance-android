@@ -31,10 +31,10 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TODO make the default year update to the current year, not a constant one
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mYear = getArguments().getInt(YEAR, 2014);
         }
-        if(savedInstanceState != null && savedInstanceState.containsKey(YEAR)){
+        if (savedInstanceState != null && savedInstanceState.containsKey(YEAR)) {
             mYear = savedInstanceState.getInt(YEAR);
         }
     }
@@ -44,7 +44,7 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(savedInstanceState != null && savedInstanceState.containsKey(YEAR)){
+        if (savedInstanceState != null && savedInstanceState.containsKey(YEAR)) {
             mYear = savedInstanceState.getInt(YEAR);
         }
         return inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);

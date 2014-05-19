@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,19 +16,19 @@ import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
-import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends BaseActivity implements ActionBar.OnNavigationListener,
-        NavigationDrawerFragment.OnNavigationDrawerListener {
+public class StartActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener {
 
     /**
      * Saved instance state key representing the last select navigation drawer item
      */
     private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
+
+    private static final String REQUESTED_MODE = "requested_mode";
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -41,21 +41,35 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
 
-    private NavigationDrawerFragment mNavDrawerFragment;
-
     private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
 
     private TextView warningMessage;
 
+    public static Intent newInstance(Context context, int requestedMode) {
+        Intent i = new Intent(context, StartActivity.class);
+        i.putExtra(REQUESTED_MODE, requestedMode);
+        return i;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);
 
-        warningMessage = (TextView)findViewById(R.id.warning_container);
+        setContentView(R.layout.activty_start);
+
+        warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
         int initNavId = R.id.nav_item_events;
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            if (b.containsKey(REQUESTED_MODE)) {
+                if (b.getInt(REQUESTED_MODE, -1) != -1) {
+                    initNavId = b.getInt(REQUESTED_MODE);
+                }
+            }
+        }
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
                 initNavId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
@@ -66,11 +80,6 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
             }
         }
 
-        mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
-        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
-                (DrawerLayout) findViewById(R.id.nav_drawer_layout),
-                true);
-
         switchToModeForId(initNavId);
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
@@ -79,15 +88,22 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
     }
 
     @Override
+    public void onCreateNavigationDrawer() {
+        useActionBarToggle(true);
+        encourageLearning(true);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         // Ensure that the correct navigation item is highlighted when returning to the StartActivity
-        mNavDrawerFragment.setItemSelected(mCurrentSelectedNavigationItemId);
+        setNavigationDrawerItemSelected(mCurrentSelectedNavigationItemId);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
                 getActionBar().getSelectedNavigationIndex());
@@ -126,7 +142,7 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // This will be triggered whenever the drawer opens or closes.
-        if (!mNavDrawerFragment.isDrawerOpen()) {
+        if (!isDrawerOpen()) {
             resetActionBar();
 
             switch (mCurrentSelectedNavigationItemId) {

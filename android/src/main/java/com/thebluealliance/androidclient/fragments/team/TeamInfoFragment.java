@@ -14,11 +14,11 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
-import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.List;
 
-public class TeamInfoFragment extends Fragment implements View.OnClickListener, RefreshableActivityListener {
+public class TeamInfoFragment extends Fragment implements View.OnClickListener, RefreshListener {
 
     private String mTeamKey;
 
@@ -71,7 +71,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
                 // No application can handle this intent
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 

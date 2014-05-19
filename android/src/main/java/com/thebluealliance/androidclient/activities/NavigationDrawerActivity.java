@@ -1,0 +1,234 @@
+package com.thebluealliance.androidclient.activities;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
+import android.view.Menu;
+import android.widget.FrameLayout;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
+import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
+
+/**
+ * Activity that provides a navigation drawer.
+ * <p/>
+ * This allows for the easy reuse of a single navigation drawer throughout the app.
+ * <p/>
+ * Created by Nathan on 5/15/2014.
+ */
+public abstract class NavigationDrawerActivity extends FragmentActivity implements NavigationDrawerFragment.NavigationDrawerListener {
+
+    private static final String IS_DRAWER_OPEN = "is_drawer_open";
+
+    private NavigationDrawerFragment mNavDrawerFragment;
+    private DrawerLayout mDrawerLayout;
+    private FrameLayout mContentView;
+
+    private String mActionBarTitle;
+
+    private boolean mUseActionBarToggle = false;
+    private boolean mEncourageLearning = false;
+
+    /**
+     * Tells the activity whether or not to use the action bar toggle for
+     * the navigation drawer.
+     *
+     * @param use True if this activity should use the action bar toggle
+     */
+    public void useActionBarToggle(boolean use) {
+        mUseActionBarToggle = use;
+    }
+
+    /**
+     * Tells the activity whether or not to use the action bar toggle for
+     * the navigation drawer.
+     *
+     * @param encourage True if this activity should use the action bar toggle
+     */
+    public void encourageLearning(boolean encourage) {
+        mEncourageLearning = encourage;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        super.setContentView(R.layout.activity_navigation_drawer);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+
+        mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
+        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
+                (DrawerLayout) findViewById(R.id.nav_drawer_layout),
+                mEncourageLearning, mUseActionBarToggle);
+        mContentView = (FrameLayout) findViewById(R.id.container);
+
+        // Restore the state of the navigation drawer on rotation changes
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(IS_DRAWER_OPEN)) {
+                if (savedInstanceState.getBoolean(IS_DRAWER_OPEN)) {
+                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                }
+            }
+        }
+    }
+
+    /**
+     * Called before the navigation drawer is created. Subclasses can override this to perform
+     * setup before the navigation drawer is created, such as enabling or disabling it or disabling
+     * the action bar toggle. Subclasses do not have to call through to super.
+     */
+    public void onCreateNavigationDrawer() {
+        // Default implementation is empty
+    }
+
+    /**
+     * Inflates the specified view into the "content container" of the activity.
+     * This allows the resuse of a single layout containing a navigation drawer and said container
+     * across all instances of this activity. Subclassing activities that call setContentView(...)
+     * will have their requested layout inserted into the content container.
+     *
+     * @param layoutResID id of the view to be inflated into the content container
+     */
+    @Override
+    public void setContentView(int layoutResID) {
+        getLayoutInflater().inflate(layoutResID, mContentView);
+    }
+
+    /**
+     * Provides a default implementation of item click handling that simply opens the
+     * specified mode in a StartActivity that is inserted into the back stack. Children
+     * classes can override this if they want to enable custom handling of click events.
+     * If children override this method, they should <strong>not</strong> call through to
+     * this method.
+     *
+     * @param item The item that was clicked
+     */
+    @Override
+    public void onNavDrawerItemClicked(NavDrawerItem item) {
+        int id = item.getId();
+
+        // Open settings in the foreground
+        if (id == R.id.nav_item_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return;
+        }
+
+        /*
+         * We manually add the start activity to the back stack so that we maintain proper
+         * back button functionality and so we get the proper "activity finish" animation
+         */
+        TaskStackBuilder.create(this).addNextIntent(StartActivity.newInstance(this, id)).startActivities();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isDrawerOpen()) {
+            getActionBar().setTitle(R.string.app_name);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+    /**
+     * Allows the navigation drawer to be enabled or disabled.
+     *
+     * @param enabled true if the navigation drawer should be enabled
+     */
+    public void setNavigationDrawerEnabled(boolean enabled) {
+        if (enabled) {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        } else {
+            mDrawerLayout.closeDrawers();
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+    }
+
+    /**
+     * Shows the specified item in the navigation drawer with a highlight.
+     *
+     * @param position index of the item to be selected
+     */
+    public void setNavigationDrawerItemSelected(int position) {
+        mNavDrawerFragment.setItemSelected(position);
+    }
+
+    /**
+     * Check if the navigation drawer is visible
+     *
+     * @return true if the drawer is open
+     */
+    public boolean isDrawerOpen() {
+        return mNavDrawerFragment.isDrawerOpen();
+    }
+
+    /**
+     * Allows access to the DrawerLayout that this activity hosts
+     *
+     * @return the DrawerLayout of this activity
+     */
+    public DrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
+    }
+
+    /**
+     * Allows access to the DrawerFragment that this activity hosts
+     *
+     * @return the DrawerFragment of this activity
+     */
+    public NavigationDrawerFragment getDrawerFragment() {
+        return mNavDrawerFragment;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(IS_DRAWER_OPEN, isDrawerOpen());
+    }
+
+    /**
+     * Sets the title of this activity's action bar.
+     * <p/>
+     * If subclassing activities want the title to be automatically handled when the
+     * nav drawer is opened or closed, they should set the action bar title via this method
+     *
+     * @param title The desired title string
+     */
+    public void setActionBarTitle(String title) {
+        mActionBarTitle = title;
+        if (!isDrawerOpen()) {
+            getActionBar().setTitle(mActionBarTitle);
+        }
+    }
+
+    /**
+     * Sets the title of this activity's action bar.
+     * <p/>
+     * If subclassing activities want the title to be automatically handled when the
+     * nav drawer is opened or closed, they should set the action bar title via this method
+     *
+     * @param resID The desired title string resource
+     */
+    public void setActionBarTitle(int resID) {
+        mActionBarTitle = getResources().getString(resID);
+        if (!isDrawerOpen()) {
+            getActionBar().setTitle(mActionBarTitle);
+        }
+    }
+
+    @Override
+    public void onNavDrawerClosed() {
+        if (mActionBarTitle != null) {
+            getActionBar().setTitle(mActionBarTitle);
+        }
+    }
+
+    @Override
+    public void onNavDrawerOpened() {
+        getActionBar().setTitle(R.string.app_name);
+    }
+
+}
