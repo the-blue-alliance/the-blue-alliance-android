@@ -29,7 +29,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private Fragment mFragment;
     private BaseActivity activity;
     private String eventKey;
-    private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
 
@@ -42,7 +41,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
-        teamKeys = new ArrayList<>();
         teams = new ArrayList<>();
 
         DecimalFormat displayFormat = new DecimalFormat("#.##");
@@ -63,7 +61,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         + ", DPR: " + displayFormat.format(dpr.get(i).getValue().getAsDouble())
                         + ", CCWM: " + displayFormat.format(ccwm.get(i).getValue().getAsDouble());
                 String teamKey = "frc" + opr.get(i).getKey();
-                teamKeys.add(teamKey);
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
                 //TODO the blank fields above are team name and location
             }
@@ -78,7 +75,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams);
             ListView stats = (ListView) view.findViewById(R.id.list);
             stats.setAdapter(adapter);
 

@@ -26,7 +26,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
     private Fragment mFragment;
     private BaseActivity activity;
-    private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
     private String eventKey;
@@ -39,7 +38,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
-        teamKeys = new ArrayList<String>();
+
         teams = new ArrayList<ListItem>();
 
         Log.d("load event teams: ", "event key: " + eventKey);
@@ -48,7 +47,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             ArrayList<Team> teamList = response.getData();
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {
-                teamKeys.add(t.getTeamKey());
                 teams.add(t.render());
             }
             return response.getCode();
@@ -63,10 +61,10 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
         super.onPostExecute(c);
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams);
             adapter.notifyDataSetChanged();
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams);
             adapter.notifyDataSetChanged();
             ListView teamList = (ListView) view.findViewById(R.id.list);
             teamList.setAdapter(adapter);

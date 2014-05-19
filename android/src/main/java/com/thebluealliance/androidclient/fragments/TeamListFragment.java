@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
+import com.thebluealliance.androidclient.datatypes.ListElement;
 
 /**
  * File created by phil on 4/20/14.
@@ -65,7 +66,7 @@ public class TeamListFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
+                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
                 Intent i = new Intent(getActivity(), ViewTeamActivity.class);
                 i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
                 startActivity(i);

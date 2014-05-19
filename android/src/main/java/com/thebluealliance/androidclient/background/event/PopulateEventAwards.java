@@ -27,7 +27,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     private BaseActivity activity;
     private String eventKey;
     private ArrayList<ListItem> awards;
-    private ArrayList<String> keys;
     private ListViewAdapter adapter;
 
     public PopulateEventAwards(Fragment f) {
@@ -40,7 +39,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         eventKey = params[0];
 
         awards = new ArrayList<>();
-        keys = new ArrayList<>();
 
         APIResponse<ArrayList<Award>> response;
         try {
@@ -49,9 +47,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             for(Award a:awardList){
                 ArrayList<AwardListElement> allWinners = a.renderAll();
                 awards.addAll(allWinners);
-                for (AwardListElement allWinner : allWinners) {
-                    keys.add(a.getEventKey() + "_" + a.getName());
-                }
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
@@ -64,7 +59,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null) {
-            adapter = new ListViewAdapter(activity, awards, keys);
+            adapter = new ListViewAdapter(activity, awards);
             ListView rankings = (ListView) view.findViewById(R.id.list);
             rankings.setAdapter(adapter);
 

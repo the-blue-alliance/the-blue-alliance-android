@@ -30,7 +30,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private Fragment mFragment;
     private BaseActivity activity;
     private String eventKey;
-    private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
     private ListViewAdapter adapter;
 
@@ -43,7 +42,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
-        teamKeys = new ArrayList<>();
         teams = new ArrayList<>();
 
         try {
@@ -55,7 +53,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                  * and team # second, always
                  */
                 String teamKey = "frc" + row.get(1).getAsString();
-                teamKeys.add(teamKey);
                 String rankingString = "";
                 CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();
                 for (int i = 2; i < row.size(); i++) {
@@ -108,9 +105,8 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             ListView rankings = (ListView) view.findViewById(R.id.list);
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            adapter = new ListViewAdapter(mFragment.getActivity(), teams);
             rankings.setAdapter(adapter);
 
             if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
