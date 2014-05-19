@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -30,7 +30,7 @@ import java.util.Collections;
 public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private String mTeamName;
     private int mTeamNumber;
     private String mLocation;
@@ -42,7 +42,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
     public PopulateTeamInfo(Fragment fragment) {
         mFragment = fragment;
-        activity = (BaseActivity) fragment.getActivity();
+        activity = (RefreshableHostActivity) fragment.getActivity();
     }
 
     @Override
@@ -132,7 +132,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
             if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
-                ((BaseActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+                ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);

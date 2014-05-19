@@ -9,7 +9,7 @@ import android.widget.ExpandableListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -27,14 +27,13 @@ import java.util.HashMap;
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private String eventKey, teamKey;
-    private MatchListAdapter adapter;
     SparseArray<MatchGroup> groups;
 
     public PopulateEventResults(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity) mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -104,7 +103,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new MatchListAdapter(activity, groups);
+            MatchListAdapter adapter = new MatchListAdapter(activity, groups);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
 

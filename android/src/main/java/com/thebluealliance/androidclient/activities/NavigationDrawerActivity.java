@@ -31,6 +31,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
     private String mActionBarTitle;
 
     private boolean mUseActionBarToggle = false;
+    private boolean mEncourageLearning = false;
 
     /**
      * Tells the activity whether or not to use the action bar toggle for
@@ -40,6 +41,16 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      */
     public void useActionBarToggle(boolean use) {
         mUseActionBarToggle = use;
+    }
+
+    /**
+     * Tells the activity whether or not to use the action bar toggle for
+     * the navigation drawer.
+     *
+     * @param encourage True if this activity should use the action bar toggle
+     */
+    public void encourageLearning(boolean encourage) {
+        mEncourageLearning = encourage;
     }
 
     @Override
@@ -52,7 +63,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
-                true, mUseActionBarToggle);
+                mEncourageLearning, mUseActionBarToggle);
         mContentView = (FrameLayout) findViewById(R.id.container);
 
         // Restore the state of the navigation drawer on rotation changes
@@ -63,6 +74,15 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
                 }
             }
         }
+    }
+
+    /**
+     * Called before the navigation drawer is created. Subclasses can override this to perform
+     * setup before the navigation drawer is created, such as enabling or disabling it or disabling
+     * the action bar toggle. Subclasses do not have to call through to super.
+     */
+    public void onCreateNavigationDrawer() {
+        // Default implementation is empty
     }
 
     /**
@@ -171,7 +191,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
 
     /**
      * Sets the title of this activity's action bar.
-     *
+     * <p/>
      * If subclassing activities want the title to be automatically handled when the
      * nav drawer is opened or closed, they should set the action bar title via this method
      *
@@ -179,29 +199,29 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      */
     public void setActionBarTitle(String title) {
         mActionBarTitle = title;
-        if(!isDrawerOpen()) {
+        if (!isDrawerOpen()) {
             getActionBar().setTitle(mActionBarTitle);
         }
     }
 
     /**
      * Sets the title of this activity's action bar.
-     *
+     * <p/>
      * If subclassing activities want the title to be automatically handled when the
      * nav drawer is opened or closed, they should set the action bar title via this method
      *
-     * @param title The desired title string resource
+     * @param resID The desired title string resource
      */
     public void setActionBarTitle(int resID) {
         mActionBarTitle = getResources().getString(resID);
-        if(!isDrawerOpen()) {
+        if (!isDrawerOpen()) {
             getActionBar().setTitle(mActionBarTitle);
         }
     }
 
     @Override
     public void onNavDrawerClosed() {
-        if(mActionBarTitle != null) {
+        if (mActionBarTitle != null) {
             getActionBar().setTitle(mActionBarTitle);
         }
     }

@@ -16,13 +16,12 @@ import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
-import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends BaseActivity implements ActionBar.OnNavigationListener {
+public class StartActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener {
 
     /**
      * Saved instance state key representing the last select navigation drawer item
@@ -54,8 +53,6 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // This must be called first!
-        super.useActionBarToggle(true);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activty_start);
@@ -88,6 +85,12 @@ public class StartActivity extends BaseActivity implements ActionBar.OnNavigatio
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+    }
+
+    @Override
+    public void onCreateNavigationDrawer() {
+        useActionBarToggle(true);
+        encourageLearning(true);
     }
 
     @Override

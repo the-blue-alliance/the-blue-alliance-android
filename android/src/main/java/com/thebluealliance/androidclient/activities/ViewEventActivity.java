@@ -2,14 +2,11 @@ package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -17,7 +14,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 /**
  * File created by phil on 4/20/14.
  */
-public class ViewEventActivity extends BaseActivity {
+public class ViewEventActivity extends RefreshableHostActivity {
 
     private String mEventKey;
     private TextView warningMessage;
@@ -46,6 +43,12 @@ public class ViewEventActivity extends BaseActivity {
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+    }
+
+    @Override
+    public void onCreateNavigationDrawer() {
+        useActionBarToggle(false);
+        encourageLearning(false);
     }
 
     private void setupActionBar() {

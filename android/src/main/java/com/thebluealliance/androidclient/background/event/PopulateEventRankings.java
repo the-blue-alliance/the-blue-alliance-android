@@ -9,7 +9,7 @@ import android.widget.ListView;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -28,15 +28,14 @@ import java.util.Set;
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teams;
-    private ListViewAdapter adapter;
 
     public PopulateEventRankings(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity) mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -108,7 +107,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
+            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             ListView rankings = (ListView) view.findViewById(R.id.list);
             adapter = new ListViewAdapter(mFragment.getActivity(), teams, teamKeys);
             rankings.setAdapter(adapter);

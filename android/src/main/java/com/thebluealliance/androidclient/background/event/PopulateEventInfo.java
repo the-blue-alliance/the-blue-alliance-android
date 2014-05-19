@@ -14,7 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
@@ -33,7 +33,7 @@ import java.util.Map;
 public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     View last, next;
     LinearLayout nextLayout, lastLayout, topTeams, topOpr;
     TextView eventName, eventDate, eventLoc, ranks, stats;
@@ -43,7 +43,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
     public PopulateEventInfo(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity) mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override

@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -24,14 +24,14 @@ import java.util.ArrayList;
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private Fragment fragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private ArrayList<String> teamKeys;
     private ArrayList<ListItem> teamItems;
     private ListViewAdapter adapter;
 
     public PopulateTeamList(Fragment fragment) {
         this.fragment = fragment;
-        activity = (BaseActivity) fragment.getActivity();
+        activity = (RefreshableHostActivity) fragment.getActivity();
     }
 
     @Override
@@ -63,10 +63,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load team list");
             }
-        }
-        if (!isCancelled()) {
-            adapter = new ListViewAdapter(activity, teamItems, teamKeys);
-            adapter.notifyDataSetChanged();
         }
         return response.getCode();
     }

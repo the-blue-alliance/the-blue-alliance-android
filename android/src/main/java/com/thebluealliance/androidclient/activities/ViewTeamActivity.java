@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 /**
  * File created by nathan on 4/21/14.
  */
-public class ViewTeamActivity extends BaseActivity {
+public class ViewTeamActivity extends RefreshableHostActivity {
 
     public static final String TEAM_KEY = "team_key";
     private TextView warningMessage;
@@ -57,6 +57,12 @@ public class ViewTeamActivity extends BaseActivity {
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+    }
+
+    @Override
+    public void onCreateNavigationDrawer() {
+        useActionBarToggle(false);
+        encourageLearning(false);
     }
 
     private void setupActionBar() {

@@ -14,14 +14,14 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
-import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.List;
 
 /**
  * File created by phil on 4/22/14.
  */
-public class EventInfoFragment extends Fragment implements RefreshableActivityListener, View.OnClickListener {
+public class EventInfoFragment extends Fragment implements RefreshListener, View.OnClickListener {
 
     private String eventKey;
     private static final String KEY = "eventKey";

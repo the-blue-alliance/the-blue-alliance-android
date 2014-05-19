@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -24,15 +24,14 @@ import java.util.ArrayList;
 public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> awards;
     private ArrayList<String> keys;
-    private ListViewAdapter adapter;
 
     public PopulateEventAwards(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity) mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -64,7 +63,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null) {
-            adapter = new ListViewAdapter(activity, awards, keys);
+            ListViewAdapter adapter = new ListViewAdapter(activity, awards, keys);
             ListView rankings = (ListView) view.findViewById(R.id.list);
             rankings.setAdapter(adapter);
 
