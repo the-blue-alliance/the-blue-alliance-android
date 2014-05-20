@@ -60,6 +60,9 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         super.setContentView(R.layout.activity_navigation_drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
 
+        // Call this so that subclasses can configure the navigation drawer before it is created
+        onCreateNavigationDrawer();
+
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),

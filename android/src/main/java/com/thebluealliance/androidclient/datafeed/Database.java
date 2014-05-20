@@ -157,6 +157,27 @@ public class Database extends SQLiteOpenHelper {
         db.endTransaction();
     }
 
+    public SimpleEvent getEvent(String eventKey) {
+        Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
+                        Events.END, Events.LOCATION, Events.OFFICIAL},
+                Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null
+        );
+        if(cursor != null && cursor.moveToFirst()) {
+            SimpleEvent event = new SimpleEvent();
+            event.setEventKey(cursor.getString(0));
+            event.setEventName(cursor.getString(1));
+            event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
+            event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(3)]);
+            event.setStartDate(cursor.getString(4));
+            event.setEndDate(cursor.getString(5));
+            event.setLocation(cursor.getString(6));
+            event.setOfficial(cursor.getInt(7) == 1);
+            return event;
+        } else {
+            return null;
+        }
+    }
+
     public ArrayList<SimpleEvent> getEventsInWeek(int year, int week) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,

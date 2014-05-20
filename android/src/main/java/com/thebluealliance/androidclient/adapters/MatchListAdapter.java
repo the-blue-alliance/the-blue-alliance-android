@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
-import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
@@ -98,6 +97,6 @@ public class MatchListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        return groups.get(groupPosition).children.get(childPosition).render().getView(context, inflater, null);
+        return groups.get(groupPosition).children.get(childPosition).render().getView(context, inflater, convertView);
     }
 }
