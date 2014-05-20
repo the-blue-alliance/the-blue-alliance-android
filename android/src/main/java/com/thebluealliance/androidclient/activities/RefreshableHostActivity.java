@@ -1,21 +1,20 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.interfaces.RefreshableActivityListener;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.ArrayList;
 
 /**
  * Created by Nathan on 4/29/2014.
  */
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class RefreshableHostActivity extends NavigationDrawerActivity {
 
-    private ArrayList<RefreshableActivityListener> mRefreshListeners = new ArrayList<>();
-    private ArrayList<RefreshableActivityListener> mCompletedRefreshListeners = new ArrayList<>();
+    private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
+    private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
 
     private Menu mOptionsMenu;
 
@@ -45,13 +44,13 @@ public abstract class BaseActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public synchronized void registerRefreshableActivityListener(RefreshableActivityListener listener) {
+    public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
         if (listener != null && !mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
     }
 
-    public synchronized void deregisterRefreshableActivityListener(RefreshableActivityListener listener) {
+    public synchronized void deregisterRefreshableActivityListener(RefreshListener listener) {
         if (listener != null && mRefreshListeners.contains(listener)) {
             mRefreshListeners.remove(listener);
         }
@@ -78,7 +77,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     @param listener the listener that has finished refreshing
      */
-    public synchronized void notifyRefreshComplete(RefreshableActivityListener completedListener) {
+    public synchronized void notifyRefreshComplete(RefreshListener completedListener) {
         if (completedListener == null || !mRefreshListeners.contains(completedListener)) {
             return;
         }
@@ -87,7 +86,7 @@ public abstract class BaseActivity extends FragmentActivity {
         }
         boolean refreshComplete = true;
         if (mRefreshListeners.size() == mCompletedRefreshListeners.size()) {
-            for (RefreshableActivityListener listener : mRefreshListeners) {
+            for (RefreshListener listener : mRefreshListeners) {
                 if (!mCompletedRefreshListeners.contains(listener)) {
                     refreshComplete = false;
                 }
@@ -123,7 +122,7 @@ public abstract class BaseActivity extends FragmentActivity {
         if (mRefreshListeners.isEmpty()) {
             return;
         }
-        for (RefreshableActivityListener listener : mRefreshListeners) {
+        for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }
         if (mOptionsMenu != null) {
@@ -137,7 +136,7 @@ public abstract class BaseActivity extends FragmentActivity {
     Notifies all registered listeners that they should cancel their refresh
      */
     protected void cancelRefresh() {
-        for (RefreshableActivityListener listener : mRefreshListeners) {
+        for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
         if (mOptionsMenu != null) {
@@ -151,15 +150,16 @@ public abstract class BaseActivity extends FragmentActivity {
     Notifies all refresh listeners that they should stop, and immediately notifies them that they should start again.
      */
     protected void restartRefresh() {
-        for (RefreshableActivityListener listener : mRefreshListeners) {
+        for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
-        for (RefreshableActivityListener listener : mRefreshListeners) {
+        for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }
         mRefreshInProgress = true;
     }
 
     public abstract void showWarningMessage(String message);
+
     public abstract void hideWarningMessage();
 }

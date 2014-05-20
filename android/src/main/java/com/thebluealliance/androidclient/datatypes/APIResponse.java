@@ -5,7 +5,7 @@ package com.thebluealliance.androidclient.datatypes;
  */
 public class APIResponse<A> {
 
-    public static enum CODE{
+    public static enum CODE {
         UPDATED, //data was updated from the API
         CACHED304, //data was found to have not changed (API returned 304-Not-Modified)
         OFFLINECACHE, //client is offline, loaded from local cache

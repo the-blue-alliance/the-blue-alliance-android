@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
+import com.thebluealliance.androidclient.background.event.PopulateEventResults;
 import com.thebluealliance.androidclient.background.PopulateEventResults;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
@@ -35,10 +36,10 @@ public class EventResultsFragment extends Fragment {
 
     private PopulateEventResults mTask;
 
-    public static EventResultsFragment newInstance(String eventKey){
+    public static EventResultsFragment newInstance(String eventKey) {
         EventResultsFragment f = new EventResultsFragment();
         Bundle data = new Bundle();
-        data.putString(KEY,eventKey);
+        data.putString(KEY, eventKey);
         f.setArguments(data);
         return f;
     }
@@ -46,8 +47,8 @@ public class EventResultsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null){
-            eventKey = getArguments().getString(KEY,"");
+        if (getArguments() != null) {
+            eventKey = getArguments().getString(KEY, "");
         }
     }
 
@@ -56,7 +57,7 @@ public class EventResultsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_event_results, null);
         mListView = (ExpandableListView) v.findViewById(R.id.match_results);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mListView.setSelection(mFirstVisiblePosition);
@@ -83,7 +84,7 @@ public class EventResultsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         mTask.cancel(false);
-        if(mListView != null) {
+        if (mListView != null) {
             Log.d("onPause", "saving adapter");
             mAdapter = (MatchListAdapter) mListView.getExpandableListAdapter();
             mListState = mListView.onSaveInstanceState();

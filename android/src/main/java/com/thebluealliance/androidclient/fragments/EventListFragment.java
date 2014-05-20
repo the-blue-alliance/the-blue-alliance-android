@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.datatypes.ListElement;
 
 /**
  * File created by phil on 4/20/14.
@@ -71,7 +72,7 @@ public class EventListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ViewEventActivity.class);
-                String eventKey = ((ListViewAdapter) parent.getAdapter()).getKey(position);
+                String eventKey = ((ListElement) ((ListViewAdapter) parent.getAdapter()).getItem(position)).getKey();
                 intent.putExtra("eventKey", eventKey);
                 startActivity(intent);
             }

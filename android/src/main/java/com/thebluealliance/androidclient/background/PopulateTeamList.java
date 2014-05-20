@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -24,22 +24,21 @@ import java.util.ArrayList;
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private Fragment fragment;
-    private BaseActivity activity;
-    private ArrayList<String> teamKeys;
+
+    private RefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
     private ListViewAdapter adapter;
 
     public PopulateTeamList(Fragment fragment) {
         this.fragment = fragment;
-        activity = (BaseActivity)fragment.getActivity();
+        activity = (RefreshableHostActivity) fragment.getActivity();
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
 
-        teamKeys = new ArrayList<String>();
-        teamItems = new ArrayList<ListItem>();
+        teamItems = new ArrayList<>();
     }
 
     @Override
@@ -57,16 +56,11 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                         break;
                     }
                     TeamListElement e = team.render();
-                    teamKeys.add(e.getKey());
                     teamItems.add(e);
                 }
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load team list");
             }
-        }
-        if (!isCancelled()) {
-            adapter = new ListViewAdapter(activity, teamItems, teamKeys);
-            adapter.notifyDataSetChanged();
         }
         return response.getCode();
     }
@@ -76,16 +70,16 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if (!isCancelled() && fragment.getActivity() != null) {
-            adapter = new ListViewAdapter(fragment.getActivity(), teamItems, teamKeys);
+        if (fragment.getActivity() != null) {
+            adapter = new ListViewAdapter(fragment.getActivity(), teamItems);
             adapter.notifyDataSetChanged();
         }
-        //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
+
         if (fragment.getView() != null) {
             ListView eventList = (ListView) fragment.getView().findViewById(R.id.list);
             eventList.setAdapter(adapter);
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }

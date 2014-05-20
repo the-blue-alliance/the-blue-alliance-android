@@ -103,16 +103,16 @@ public class Database extends SQLiteOpenHelper {
 
     }
 
-    public class Events{
+    public class Events {
         public static final String KEY = "key",
-            NAME = "name",
-            LOCATION = "location",
-            TYPE = "eventType",
-            DISTRICT = "eventDistrict",
-            START = "startDate",
-            END = "endDate",
-            OFFICIAL = "official",
-            WEEK = "competitionWeek";
+                NAME = "name",
+                LOCATION = "location",
+                TYPE = "eventType",
+                DISTRICT = "eventDistrict",
+                START = "startDate",
+                END = "endDate",
+                OFFICIAL = "official",
+                WEEK = "competitionWeek";
     }
 
     public long storeTeam(SimpleTeam team) {
@@ -140,28 +140,29 @@ public class Database extends SQLiteOpenHelper {
         return teams;
     }
 
-    public long storeEvent(SimpleEvent event){
-        if(!eventExists(event.getEventKey())) {
+    public long storeEvent(SimpleEvent event) {
+        if (!eventExists(event.getEventKey())) {
             return db.insert(TABLE_EVENTS, null, event.getParams());
-        }else{
-            return  0;//updateEvent(event);
+        } else {
+            return 0;//updateEvent(event);
         }
     }
 
-    public void storeEvents(ArrayList<SimpleEvent> events){
+    public void storeEvents(ArrayList<SimpleEvent> events) {
         db.beginTransaction();
-        for(SimpleEvent event: events){
+        for (SimpleEvent event : events) {
             storeEvent(event);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
     }
 
-    public ArrayList<SimpleEvent> getEventsInWeek(int year, int week){
+    public ArrayList<SimpleEvent> getEventsInWeek(int year, int week) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
                         Events.END, Events.LOCATION, Events.OFFICIAL},
-                        Events.KEY + " LIKE ? AND "+Events.WEEK+" = ?", new String[]{Integer.toString(year)+"%", Integer.toString(week)}, null, null, null, null);
+                Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null
+        );
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 SimpleEvent event = new SimpleEvent();
@@ -175,10 +176,10 @@ public class Database extends SQLiteOpenHelper {
                 event.setOfficial(cursor.getInt(7) == 1);
 
                 events.add(event);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
             return events;
         } else {
-            Log.w(Constants.LOG_TAG, "Failed to find events in "+year+" week "+week);
+            Log.w(Constants.LOG_TAG, "Failed to find events in " + year + " week " + week);
             return null;
         }
     }
@@ -188,7 +189,7 @@ public class Database extends SQLiteOpenHelper {
         return cursor != null && cursor.moveToFirst();
     }
 
-    public int updateEvent(SimpleEvent in){
+    public int updateEvent(SimpleEvent in) {
         return db.update(TABLE_EVENTS, in.getParams(), Events.KEY + "=?", new String[]{in.getEventKey()});
     }
 

@@ -13,7 +13,8 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventAwards;
+import com.thebluealliance.androidclient.background.event.PopulateEventAwards;
+import com.thebluealliance.androidclient.datatypes.ListElement;
 
 /**
  * File created by phil on 4/22/14.
@@ -61,8 +62,8 @@ public class EventAwardsFragment extends Fragment {
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String eventKey = ((ListViewAdapter) parent.getAdapter()).getKey(position);
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String eventKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
                 startActivity(ViewTeamActivity.newInstance(getActivity(), eventKey));
             }
         });

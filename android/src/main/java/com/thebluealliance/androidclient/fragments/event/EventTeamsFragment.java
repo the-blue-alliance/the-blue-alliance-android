@@ -14,7 +14,8 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventTeams;
+import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
+import com.thebluealliance.androidclient.datatypes.ListElement;
 
 /**
  * File created by phil on 4/22/14.
@@ -31,10 +32,10 @@ public class EventTeamsFragment extends Fragment {
 
     private PopulateEventTeams mTask;
 
-    public static EventTeamsFragment newInstance(String eventKey){
+    public static EventTeamsFragment newInstance(String eventKey) {
         EventTeamsFragment f = new EventTeamsFragment();
         Bundle data = new Bundle();
-        data.putString(KEY,eventKey);
+        data.putString(KEY, eventKey);
         f.setArguments(data);
         return f;
     }
@@ -42,8 +43,8 @@ public class EventTeamsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null){
-            mEventKey = getArguments().getString(KEY,"");
+        if (getArguments() != null) {
+            mEventKey = getArguments().getString(KEY, "");
         }
     }
 
@@ -52,7 +53,7 @@ public class EventTeamsFragment extends Fragment {
         View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
@@ -63,7 +64,7 @@ public class EventTeamsFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((ListViewAdapter) adapterView.getAdapter()).getKey(position);
+                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
                 Intent i = new Intent(getActivity(), ViewTeamActivity.class);
                 i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
                 startActivity(i);
@@ -76,7 +77,7 @@ public class EventTeamsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         mTask.cancel(false);
-        if(mListView != null) {
+        if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }

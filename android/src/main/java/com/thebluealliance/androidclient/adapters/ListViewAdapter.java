@@ -16,33 +16,26 @@ import java.util.List;
 public class ListViewAdapter extends ArrayAdapter<ListItem> {
     private LayoutInflater mInflater;
     public List<ListItem> values;
-    public List<String> keys;
 
     public enum ItemType {
         LIST_ITEM, HEADER_ITEM
     }
 
-    public ListViewAdapter(Context context, List<ListItem> values, List<String> keys) {
+    public ListViewAdapter(Context context, List<ListItem> values) {
         super(context, android.R.layout.simple_list_item_1, values);
         this.values = values;
-        this.keys = keys;
         mInflater = LayoutInflater.from(context);
     }
 
     public void removeAt(int index) {
         if (index >= 0) {
             values.remove(index);
-            keys.remove(index);
         }
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         return getItem(position).getView(getContext(), mInflater, convertView);
-    }
-
-    public String getKey(int position) {
-        return keys.get(position);
     }
 
     public void updateListData() {

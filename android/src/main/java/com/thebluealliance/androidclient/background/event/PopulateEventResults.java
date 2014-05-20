@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.background;
+package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -9,7 +9,7 @@ import android.widget.ExpandableListView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -27,13 +27,13 @@ import java.util.HashMap;
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
-    private BaseActivity activity;
+    private RefreshableHostActivity activity;
     private String eventKey, teamKey;
-    private MatchListAdapter adapter;
     SparseArray<MatchGroup> groups;
+
     public PopulateEventResults(Fragment f) {
         mFragment = f;
-        activity = (BaseActivity)mFragment.getActivity();
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -51,10 +51,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         MatchGroup semiMatches = new MatchGroup("Semifinal Matches");
         MatchGroup finalMatches = new MatchGroup("Finals Matches");
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
-        APIResponse<HashMap<Match.TYPE,ArrayList<Match>>> response;
+        APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
         try {
             response = DataManager.getEventResults(activity, eventKey);
-            HashMap<Match.TYPE,ArrayList<Match>> results = response.getData();
+            HashMap<Match.TYPE, ArrayList<Match>> results = response.getData();
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
             for (Match m : results.get(Match.TYPE.QUAL)) {
                 qualMatches.children.add(m);
@@ -103,11 +103,11 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && mFragment.getActivity() != null) {
-            adapter = new MatchListAdapter(activity, groups);
+            MatchListAdapter adapter = new MatchListAdapter(activity, groups);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
 
-            if(code == APIResponse.CODE.OFFLINECACHE /* && event is current */){
+            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
