@@ -324,6 +324,12 @@ public class Event implements BasicModel {
         return week < 0 ? 0 : week;
     }
 
+    public static int competitionWeek(Date date){
+        if (date == null) return -1;
+        int week = Integer.parseInt(weekFormat.format(date)) - 8;
+        return week < 0 ? 0 : week;
+    }
+
     public boolean isHappeningNow() {
         Date now = new Date();
         return now.after(startDate) && now.before(endDate);
