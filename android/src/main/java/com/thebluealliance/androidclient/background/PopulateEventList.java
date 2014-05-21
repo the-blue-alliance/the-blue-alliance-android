@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
-import com.thebluealliance.androidclient.comparators.EventSortByTypeComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
@@ -64,7 +63,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
-                Collections.sort(eventData, new EventSortByTypeComparator());
+                Collections.sort(eventData, new EventSortByTypeAndDateComparator());
                 Event.TYPE lastType = null, currentType;
                 for (SimpleEvent event : eventData) {
                     currentType = event.getEventType();

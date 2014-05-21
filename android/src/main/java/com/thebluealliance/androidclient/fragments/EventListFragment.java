@@ -67,6 +67,7 @@ public class EventListFragment extends Fragment {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         } else {
+            System.out.println("populate for week "+mWeek);
             mTask = new PopulateEventList(this, mYear, mWeek, mTeamKey);
             mTask.execute();
         }

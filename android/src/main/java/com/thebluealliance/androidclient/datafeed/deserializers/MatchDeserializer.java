@@ -22,7 +22,9 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         match.setMatchNumber(object.get("match_number").getAsInt());
         match.setSetNumber(object.get("set_number").getAsInt());
         match.setAlliances(object.get("alliances").getAsJsonObject());
-        match.setTimeString(object.get("time_string").getAsString());
+        if(object.has("time_string") && !object.get("time_string").isJsonNull()) {
+            match.setTimeString(object.get("time_string").getAsString());
+        }
         if(object.has("time") && !object.get("time").isJsonNull()) {
             match.setTime(object.get("time").getAsLong());
         }
