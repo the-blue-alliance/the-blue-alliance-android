@@ -13,6 +13,9 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
+import com.thebluealliance.androidclient.models.Event;
+
+import java.util.Date;
 
 public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerListener {
 
@@ -72,11 +75,15 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
                     public void onAnimationEnd(Animator animation) {
                         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear));
                         tabs.setViewPager(mViewPager);
+                        int currentWeek = Event.competitionWeek(new Date());
+                        mViewPager.setCurrentItem(currentWeek>9? 0 : currentWeek - 1);
+                        //week 9 is current CMP, but it wasn't always. TODO fix that
                         view.animate()
                                 .alpha(1f)
                                 .setDuration(mShortAnimationDuration)
                                 .setListener(null).start();
                     }
                 }).start();
+
     }
 }
