@@ -78,8 +78,7 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
                         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
                         tabs.setViewPager(mViewPager);
                         int currentWeek = Event.competitionWeek(new Date());
-                        mViewPager.setCurrentItem(currentWeek>9? 0 : currentWeek - 1);
-                        //week 9 is current CMP, but it wasn't always. TODO fix that
+                        mViewPager.setCurrentItem(currentWeek>10? Math.min(mViewPager.getAdapter().getCount(),1) : currentWeek);
                         view.animate()
                                 .alpha(1f)
                                 .setDuration(mShortAnimationDuration)
