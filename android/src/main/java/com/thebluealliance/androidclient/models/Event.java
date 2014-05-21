@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
 
@@ -94,6 +95,21 @@ public class Event implements BasicModel {
                     return NONE;
             }
         }
+
+        public static TYPE fromLabel(String label){
+            switch(label){
+                case OFFSEASON_LABEL:
+                    return OFFSEASON;
+                case PRESEASON_LABEL:
+                    return PRESEASON;
+                case CHAMPIONSHIP_LABEL:
+                    return CMP_DIVISION;
+                case WEEKLESS_LABEL:
+                    return NONE;
+                default:
+                    return REGIONAL;
+            }
+        }
     }
 
     public static enum DISTRICT {
@@ -115,6 +131,12 @@ public class Event implements BasicModel {
     public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy"),
             shortRenderDateFormat = new SimpleDateFormat("MMM d"),
             weekFormat = new SimpleDateFormat("w");
+
+    public static final String CHAMPIONSHIP_LABEL = "Championship Event",
+                               REGIONAL_LABEL     = "Week %d",
+                               WEEKLESS_LABEL     = "Other Official Events",
+                               OFFSEASON_LABEL    = "Offseason Events",
+                               PRESEASON_LABEL    = "Preseason Events";
 
     String eventKey,
             eventName,
@@ -409,5 +431,70 @@ public class Event implements BasicModel {
         values.put(Database.Events.WEEK, getWeek());
 
         return values;
+    }
+
+    public static int getEventOrder(TYPE eventType){
+        switch(eventType){
+            default:
+            case NONE:
+                return 99;
+            case REGIONAL:
+                return 2;
+            case DISTRICT:
+                return 2;
+            case DISTRICT_CMP:
+                return 3;
+            case CMP_DIVISION:
+                return 4;
+            case CMP_FINALS:
+                return 5;
+            case OFFSEASON:
+                return 6;
+            case PRESEASON:
+                return 1;
+        }
+    }
+
+    public static String generateLabelForEvent(Event e){
+        switch(e.getEventType()){
+            case CMP_DIVISION:
+            case CMP_FINALS:
+                return CHAMPIONSHIP_LABEL;
+            case REGIONAL:
+            case DISTRICT:
+            case DISTRICT_CMP:
+                return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+            case OFFSEASON:
+                return OFFSEASON_LABEL;
+            case PRESEASON:
+                return PRESEASON_LABEL;
+            default:
+                return WEEKLESS_LABEL;
+        }
+    }
+
+    public static String weekLabelFromNum(HashMap<String, ArrayList<SimpleEvent>> events, int num){
+        /**
+         * the whole event list is required because CMP doesn't happen the same week every year
+         */
+
+        if(num <= 0){
+            return PRESEASON_LABEL;
+        }
+
+        //let's find the week of CMP and base everything else off that
+        //there should always be something in the CMP set for every year
+        int cmpWeek = events.get(CHAMPIONSHIP_LABEL).get(0).getCompetitionWeek();
+
+        if(num > 0 && num < cmpWeek){
+            return String.format(REGIONAL_LABEL, num);
+        }
+        if(num == cmpWeek){
+            return CHAMPIONSHIP_LABEL;
+        }
+        if(num > cmpWeek){
+            return OFFSEASON_LABEL;
+        }
+        return WEEKLESS_LABEL;
     }
 }

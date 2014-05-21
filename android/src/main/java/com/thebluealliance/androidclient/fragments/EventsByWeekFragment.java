@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -64,6 +65,7 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
         final View view = getView();
         mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
+        final Context c = getActivity();
         final int mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
         // Fade out the view, load the adapter, fade back in the view
@@ -73,7 +75,7 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear));
+                        mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
                         tabs.setViewPager(mViewPager);
                         int currentWeek = Event.competitionWeek(new Date());
                         mViewPager.setCurrentItem(currentWeek>9? 0 : currentWeek - 1);

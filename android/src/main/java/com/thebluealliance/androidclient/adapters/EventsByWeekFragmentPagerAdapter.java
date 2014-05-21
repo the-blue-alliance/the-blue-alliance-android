@@ -1,12 +1,17 @@
 package com.thebluealliance.androidclient.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.Event;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -14,22 +19,32 @@ import java.util.Date;
  */
 public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    //TODO: don't hardcode this, use value from database
-    private int mCount = 6;
+    private int mCount;
     private int mYear;
+    private ArrayList<String> thisYearsWeekLabels;
 
-    public EventsByWeekFragmentPagerAdapter(FragmentManager fm, int year) {
+    public EventsByWeekFragmentPagerAdapter(Context c, FragmentManager fm, int year) {
         super(fm);
         mYear = year;
+        thisYearsWeekLabels = new ArrayList<>();
+        try {
+            thisYearsWeekLabels.addAll(DataManager.getEventsByYear(c, year).getData().keySet());
+            Collections.sort(thisYearsWeekLabels, new EventWeekLabelSortComparator());
+            mCount = thisYearsWeekLabels.size();
+        } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         Date now = new Date();
-        if(Event.competitionWeek(now) == (position + 1)){
+        if(Event.competitionWeek(now) == (position)){
             return "Current Week";
         }else {
-            return "Week " + (position + 1);
+            return thisYearsWeekLabels.get(position);
         }
     }
 
@@ -40,6 +55,10 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return EventListFragment.newInstance(mYear, (position + 1), null);
+        return EventListFragment.newInstance(mYear, (position == 8?9:position), null);
+        /**
+         * Not sure of a better way to do this ATM, but the gap week between the last event and CMP is throwing things off
+         * I don't think it'll be affected by prior years' schedules, but I can fix that when it comes
+         */
     }
 }
