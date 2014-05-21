@@ -145,13 +145,17 @@
             </TableLayout>
         </RelativeLayout>
 
-        <fragment
+        <ScrollView
             android:id="@+id/youtube_fragment"
-            android:name="com.google.android.youtube.player.YouTubePlayerFragment"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/video_thumbnail_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+            </ScrollView>
     </LinearLayout>
 
     <ProgressBar

@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.datatypes;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,13 +15,13 @@ import com.thebluealliance.androidclient.R;
  */
 public class MatchListElement extends ListElement {
 
-    private boolean video;
+    private String videoKey;
     String matchTitle, redTeams[], blueTeams[], matchKey;
     int redScore, blueScore;
 
-    public MatchListElement(boolean video, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
         super();
-        this.video = video;
+        this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
         this.redTeams = redTeams;
         this.blueTeams = blueTeams;
@@ -53,13 +55,20 @@ public class MatchListElement extends ListElement {
 
         //if we have video for this match, show an icon
         //currently the launcher icon. It'll be changed...
-        if (video) {
+        if (videoKey != null) {
             holder.videoIcon.setVisibility(View.VISIBLE);
+            holder.videoIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                    view.getContext().startActivity(intent);
+                }
+            });
         } else {
             holder.videoIcon.setVisibility(View.INVISIBLE);
         }
 
-        holder.matchTitle.setText(this.matchTitle);
+        holder.matchTitle.setText(matchTitle);
         holder.red1.setText(redTeams[0]);
         holder.red2.setText(redTeams[1]);
         holder.red3.setText(redTeams[2]);

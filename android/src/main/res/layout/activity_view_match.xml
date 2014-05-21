@@ -22,7 +22,8 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_horizontal_margin">
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:paddingBottom="@dimen/activity_horizontal_margin">
 
                 <TextView
                     android:id="@+id/match_name"
@@ -149,12 +150,12 @@
                     </TableRow>
                 </TableLayout>
 
-                <fragment
-                    android:id="@+id/youtube_fragment"
-                    android:name="com.google.android.youtube.player.YouTubePlayerFragment"
+                <LinearLayout
+                    android:id="@+id/video_thumbnail_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/score_table" />
+                    android:orientation="vertical"
+                    android:layout_below="@id/score_table"/>
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>

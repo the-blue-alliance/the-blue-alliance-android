@@ -1,13 +1,19 @@
 package com.thebluealliance.androidclient.background.match;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -44,10 +50,10 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             HashMap<Match.TYPE, ArrayList<Match>> matches = response.getData();
             // Extract the specified match from the list
             mMatch = null;
-            for(Map.Entry<Match.TYPE, ArrayList<Match>> matchListEntry : matches.entrySet()) {
-                ArrayList<Match> matchList= matchListEntry.getValue();
-                for(Match match : matchList) {
-                    if(match.getKey().equals(mMatchKey)) {
+            for (Map.Entry<Match.TYPE, ArrayList<Match>> matchListEntry : matches.entrySet()) {
+                ArrayList<Match> matchList = matchListEntry.getValue();
+                for (Match match : matchList) {
+                    if (match.getKey().equals(mMatchKey)) {
                         mMatch = match;
                         break;
                     }
@@ -81,11 +87,35 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
 
             SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
-            if(event != null) {
+            if (event != null) {
                 ((TextView) mActivity.findViewById(R.id.event_name)).setText(event.getEventName());
             }
 
             ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatch.getTitle());
+
+            JsonArray videos = mMatch.getVideos();
+            Picasso picasso = Picasso.with(mActivity);
+            for (int i = 0; i < videos.size(); i++) {
+                JsonObject video = videos.get(i).getAsJsonObject();
+                if (video.get("type").getAsString().equals("youtube")) {
+                    final String videoKey = video.get("key").getAsString();
+                    String thumbnailURL = "http://img.youtube.com/vi/" + videoKey + "/0.jpg";
+                    //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utilities.getPixelsFromDp(mActivity, 120));
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    ImageView thumbnail = new ImageView(mActivity);
+                    thumbnail.setAdjustViewBounds(true);
+                    thumbnail.setClickable(true);
+                    thumbnail.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                            mActivity.startActivity(intent);
+                        }
+                    });
+                    ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, lp);
+                    picasso.load(thumbnailURL).into(thumbnail);
+                }
+            }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 ((RefreshableHostActivity) mActivity).showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
