@@ -16,7 +16,9 @@ import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -25,6 +27,7 @@ import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -74,16 +77,80 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         if (code != APIResponse.CODE.NODATA) {
             JsonObject redAlliance = mMatch.getAlliances().getAsJsonObject("red");
             JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
-            ((TextView) mActivity.findViewById(R.id.red1)).setText(redAllianceTeamKeys.get(0).getAsString().replace("frc", ""));
-            ((TextView) mActivity.findViewById(R.id.red2)).setText(redAllianceTeamKeys.get(1).getAsString().replace("frc", ""));
-            ((TextView) mActivity.findViewById(R.id.red3)).setText(redAllianceTeamKeys.get(2).getAsString().replace("frc", ""));
+
+            // Red 1
+            TextView red1 = ((TextView) mActivity.findViewById(R.id.red1));
+            final String red1Key = redAllianceTeamKeys.get(0).getAsString();
+            red1.setText(red1Key.replace("frc", ""));
+            red1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red1Key));
+                }
+            });
+
+            // Red 2
+            TextView red2 = ((TextView) mActivity.findViewById(R.id.red2));
+            final String red2Key = redAllianceTeamKeys.get(1).getAsString();
+            red2.setText(red2Key.replace("frc", ""));
+            red2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red2Key));
+                }
+            });
+
+            // Red 3
+            TextView red3 = ((TextView) mActivity.findViewById(R.id.red3));
+            final String red3Key = redAllianceTeamKeys.get(2).getAsString();
+            red3.setText(red3Key.replace("frc", ""));
+            red3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red3Key));
+                }
+            });
+
+            // Red Score
             ((TextView) mActivity.findViewById(R.id.red_score)).setText(redAlliance.get("score").getAsString());
 
             JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
             JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
-            ((TextView) mActivity.findViewById(R.id.blue1)).setText(blueAllianceTeamKeys.get(0).getAsString().replace("frc", ""));
-            ((TextView) mActivity.findViewById(R.id.blue2)).setText(blueAllianceTeamKeys.get(1).getAsString().replace("frc", ""));
-            ((TextView) mActivity.findViewById(R.id.blue3)).setText(blueAllianceTeamKeys.get(2).getAsString().replace("frc", ""));
+
+            // Blue 1
+            TextView blue1 = ((TextView) mActivity.findViewById(R.id.blue1));
+            final String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
+            blue1.setText(blue1Key.replace("frc", ""));
+            blue1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue1Key));
+                }
+            });
+
+            // Blue 2
+            TextView blue2 = ((TextView) mActivity.findViewById(R.id.blue2));
+            final String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
+            blue2.setText(blue2Key.replace("frc", ""));
+            blue2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue2Key));
+                }
+            });
+
+            // Blue 3
+            TextView blue3 = ((TextView) mActivity.findViewById(R.id.blue3));
+            final String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
+            blue3.setText(blue3Key.replace("frc", ""));
+            blue3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue3Key));
+                }
+            });
+
+            // Blue score
             ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
 
             SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
@@ -95,13 +162,12 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
             JsonArray videos = mMatch.getVideos();
             Picasso picasso = Picasso.with(mActivity);
+            List<ImageView> images = new ArrayList();
             for (int i = 0; i < videos.size(); i++) {
                 JsonObject video = videos.get(i).getAsJsonObject();
                 if (video.get("type").getAsString().equals("youtube")) {
                     final String videoKey = video.get("key").getAsString();
                     String thumbnailURL = "http://img.youtube.com/vi/" + videoKey + "/0.jpg";
-                    //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utilities.getPixelsFromDp(mActivity, 120));
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     ImageView thumbnail = new ImageView(mActivity);
                     thumbnail.setAdjustViewBounds(true);
                     thumbnail.setClickable(true);
@@ -112,9 +178,18 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                             mActivity.startActivity(intent);
                         }
                     });
-                    ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, lp);
+                    images.add(thumbnail);
                     picasso.load(thumbnailURL).into(thumbnail);
                 }
+            }
+            for(int i = 0; i < images.size(); i++) {
+                ImageView thumbnail = images.get(i);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                // Add padding between thumbnails if the list of thumbnail has multiple items
+                if(images.size() > 1 && i > 0) {
+                    layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
+                }
+                ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, layoutParams);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
