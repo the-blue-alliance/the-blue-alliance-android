@@ -249,11 +249,11 @@ public class Match implements BasicModel {
         this.last_updated = last_updated;
     }
 
-    public String getTitle(boolean lineBreak){
+    public String getTitle(boolean lineBreak) {
         if (type == TYPE.QUAL) {
-            return LONG_TYPES.get(TYPE.QUAL) + (lineBreak?"\n":" ") + matchNumber;
+            return LONG_TYPES.get(TYPE.QUAL) + (lineBreak ? "\n" : " ") + matchNumber;
         } else {
-            return LONG_TYPES.get(type) + (lineBreak?"\n":" ") + setNumber + " - " + matchNumber;
+            return LONG_TYPES.get(type) + (lineBreak ? "\n" : " ") + setNumber + " - " + matchNumber;
         }
     }
 
@@ -261,7 +261,7 @@ public class Match implements BasicModel {
         return getTitle(false);
     }
 
-    public Integer getPlayOrder(){
+    public Integer getPlayOrder() {
         return PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
     }
 
@@ -277,7 +277,14 @@ public class Match implements BasicModel {
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
-        return new MatchListElement(videos.size() > 0, getTitle(),
+        String youTubeVideoKey = null;
+        for (int i = 0; i < videos.size(); i++) {
+            JsonObject video = videos.get(i).getAsJsonObject();
+            if (video.get("type").getAsString().equals("youtube")) {
+                youTubeVideoKey = video.get("key").getAsString();
+            }
+        }
+        return new MatchListElement(youTubeVideoKey, getTitle(),
                 new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
                 new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
                 redScore, blueScore, key);
@@ -295,13 +302,14 @@ public class Match implements BasicModel {
 
     /**
      * Returns the match object of the match next to be played
+     *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Next match
      */
-    public static Match getNextMatchPlayed(ArrayList<Match> matches){
-        for(Match m:matches){
-            if(m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
-               m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1){
+    public static Match getNextMatchPlayed(ArrayList<Match> matches) {
+        for (Match m : matches) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1) {
                 //match is unplayed
                 return m;
             }
@@ -312,16 +320,17 @@ public class Match implements BasicModel {
 
     /**
      * Returns the match object of the last match played
+     *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Last match played
      */
-    public static Match getLastMatchPlayed(ArrayList<Match> matches){
+    public static Match getLastMatchPlayed(ArrayList<Match> matches) {
         Match last = null;
-        for(Match m:matches){
-            if(m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
-               m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1){
+        for (Match m : matches) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1) {
                 break;
-            }else{
+            } else {
                 last = m;
             }
         }

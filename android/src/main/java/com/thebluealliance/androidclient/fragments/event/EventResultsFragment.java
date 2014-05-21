@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventResults;
 
@@ -62,6 +64,15 @@ public class EventResultsFragment extends Fragment {
             mTask.execute(eventKey);
             Log.d("onCreateView", "creating new adapter");
         }
+        mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
+                String matchKey = (String) ((MatchListAdapter) parent.getExpandableListAdapter()).getChildKey(groupPosition, childPosition);
+                Toast.makeText(getActivity(), "Match clicked: " + matchKey, Toast.LENGTH_SHORT).show();
+                startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
+                return true;
+            }
+        });
         return v;
     }
 

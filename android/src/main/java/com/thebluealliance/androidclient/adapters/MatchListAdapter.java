@@ -92,11 +92,11 @@ public class MatchListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        return groups.get(groupPosition).children.get(childPosition).render().getView(context, inflater, null);
+        return groups.get(groupPosition).children.get(childPosition).render().getView(context, inflater, convertView);
     }
 }

@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 
 /**

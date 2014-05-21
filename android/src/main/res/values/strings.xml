@@ -45,6 +45,10 @@
     <string name="from">from</string>
     <string name="currently_competing">currently competing at</string>
 
+    <!-- View Match Details -->
+    <string name="teams">Teams</string>
+    <string name="score">Score</string>
+
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
 

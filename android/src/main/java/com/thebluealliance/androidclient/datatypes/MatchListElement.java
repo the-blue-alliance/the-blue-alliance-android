@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.datatypes;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,13 +15,13 @@ import com.thebluealliance.androidclient.R;
  */
 public class MatchListElement extends ListElement {
 
-    private boolean video;
+    private String videoKey;
     String matchTitle, redTeams[], blueTeams[], matchKey;
     int redScore, blueScore;
 
-    public MatchListElement(boolean video, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
         super();
-        this.video = video;
+        this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
         this.redTeams = redTeams;
         this.blueTeams = blueTeams;
@@ -29,39 +31,65 @@ public class MatchListElement extends ListElement {
     }
 
     @Override
-    public View getView(Context c, LayoutInflater inflater, View view) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item_match, null);
-            ImageView videoIcon = (ImageView) view.findViewById(R.id.match_video);
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.list_item_match, null);
 
-            //if we have video for this match, show an icon
-            //currently the launcher icon. It'll be changed...
-            if (video) {
-                videoIcon.setVisibility(View.VISIBLE);
-            } else {
-                videoIcon.setVisibility(View.INVISIBLE);
-            }
+            holder = new ViewHolder();
+            holder.matchTitle = (TextView) convertView.findViewById(R.id.match_title);
+            holder.red1 = (TextView) convertView.findViewById(R.id.red1);
+            holder.red2 = (TextView) convertView.findViewById(R.id.red2);
+            holder.red3 = (TextView) convertView.findViewById(R.id.red3);
+            holder.blue1 = (TextView) convertView.findViewById(R.id.blue1);
+            holder.blue2 = (TextView) convertView.findViewById(R.id.blue2);
+            holder.blue3 = (TextView) convertView.findViewById(R.id.blue3);
+            holder.redScore = (TextView) convertView.findViewById(R.id.red_score);
+            holder.blueScore = (TextView) convertView.findViewById(R.id.blue_score);
+            holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
 
-            TextView matchTitle = (TextView) view.findViewById(R.id.match_title),
-                    red1 = (TextView) view.findViewById(R.id.red1),
-                    red2 = (TextView) view.findViewById(R.id.red2),
-                    red3 = (TextView) view.findViewById(R.id.red3),
-                    blue1 = (TextView) view.findViewById(R.id.blue1),
-                    blue2 = (TextView) view.findViewById(R.id.blue2),
-                    blue3 = (TextView) view.findViewById(R.id.blue3),
-                    red_score = (TextView) view.findViewById(R.id.red_score),
-                    blue_score = (TextView) view.findViewById(R.id.blue_score);
-
-            matchTitle.setText(this.matchTitle);
-            red1.setText(redTeams[0]);
-            red2.setText(redTeams[1]);
-            red3.setText(redTeams[2]);
-            blue1.setText(blueTeams[0]);
-            blue2.setText(blueTeams[1]);
-            blue3.setText(blueTeams[2]);
-            red_score.setText(Integer.toString(redScore));
-            blue_score.setText(Integer.toString(blueScore));
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        return view;
+
+        //if we have video for this match, show an icon
+        //currently the launcher icon. It'll be changed...
+        if (videoKey != null) {
+            holder.videoIcon.setVisibility(View.VISIBLE);
+            holder.videoIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                    view.getContext().startActivity(intent);
+                }
+            });
+        } else {
+            holder.videoIcon.setVisibility(View.INVISIBLE);
+        }
+
+        holder.matchTitle.setText(matchTitle);
+        holder.red1.setText(redTeams[0]);
+        holder.red2.setText(redTeams[1]);
+        holder.red3.setText(redTeams[2]);
+        holder.blue1.setText(blueTeams[0]);
+        holder.blue2.setText(blueTeams[1]);
+        holder.blue3.setText(blueTeams[2]);
+        holder.redScore.setText(Integer.toString(redScore));
+        holder.blueScore.setText(Integer.toString(blueScore));
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView matchTitle;
+        TextView red1;
+        TextView red2;
+        TextView red3;
+        TextView blue1;
+        TextView blue2;
+        TextView blue3;
+        TextView redScore;
+        TextView blueScore;
+        ImageView videoIcon;
     }
 }

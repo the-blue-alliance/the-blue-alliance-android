@@ -72,7 +72,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
         if (fragment.getActivity() != null) {
             adapter = new ListViewAdapter(fragment.getActivity(), teamItems);
-            adapter.notifyDataSetChanged();
         }
 
         if (fragment.getView() != null) {
