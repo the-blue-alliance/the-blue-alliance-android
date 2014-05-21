@@ -98,13 +98,15 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 try {
                     APIResponse<JsonObject> statsResponse = DataManager.getEventStats(activity, eventKey);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
-                    opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
-                    Collections.sort(opr, new TeamSortByOPRComparator());
-                    String statsString = "";
-                    for (int i = 0; i < Math.min(5, opr.size()); i++) {
-                        statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
+                    if(statsResponse.getData().has("oprs")) {
+                        opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
+                        Collections.sort(opr, new TeamSortByOPRComparator());
+                        String statsString = "";
+                        for (int i = 0; i < Math.min(5, opr.size()); i++) {
+                            statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
+                        }
+                        stats.setText(statsString);
                     }
-                    stats.setText(statsString);
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to load event stats");
                     return APIResponse.CODE.NODATA;

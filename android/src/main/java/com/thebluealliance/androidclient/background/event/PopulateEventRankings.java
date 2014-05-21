@@ -46,54 +46,59 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         try {
             APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey);
             ArrayList<JsonArray> rankList = response.getData();
-            JsonArray headerRow = rankList.remove(0);
-            for (JsonArray row : rankList) {
+            if(rankList.size() > 0) {
+                JsonArray headerRow = rankList.remove(0);
+                for (JsonArray row : rankList) {
                 /* Assume that the list of lists has rank first
                  * and team # second, always
                  */
-                String teamKey = "frc" + row.get(1).getAsString();
-                String rankingString = "";
-                CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();
-                for (int i = 2; i < row.size(); i++) {
-                    rankingElements.put(headerRow.get(i).getAsString(), row.get(i).getAsString());
-                }
-                String record = null;
-                // Find if the rankings contain a record; remove it if it does
-                Iterator it = rankingElements.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, Object> entry = (Map.Entry) it.next();
-                    if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
-                        record = "(" + rankingElements.get(entry.getKey()) + ")";
-                        it.remove();
-                        break;
+                    String teamKey = "frc" + row.get(1).getAsString();
+                    String rankingString = "";
+                    CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();
+                    for (int i = 2; i < row.size(); i++) {
+                        rankingElements.put(headerRow.get(i).getAsString(), row.get(i).getAsString());
                     }
-                }
-                if (record == null) {
-                    Set<String> keys = rankingElements.keySet();
-                    if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
-                        record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
-                        rankingElements.remove("wins");
-                        rankingElements.remove("losses");
-                        rankingElements.remove("ties");
+                    String record = null;
+                    // Find if the rankings contain a record; remove it if it does
+                    Iterator it = rankingElements.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<String, Object> entry = (Map.Entry) it.next();
+                        if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
+                            record = "(" + rankingElements.get(entry.getKey()) + ")";
+                            it.remove();
+                            break;
+                        }
                     }
-                }
-                if (record == null) {
-                    record = "";
-                }
-                // Construct rankings string
-                it = rankingElements.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry entry = (Map.Entry) it.next();
-                    rankingString += entry.getKey() + ": " + entry.getValue();
-                    if (it.hasNext()) {
-                        rankingString += ", ";
+                    if (record == null) {
+                        Set<String> keys = rankingElements.keySet();
+                        if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
+                            record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
+                            rankingElements.remove("wins");
+                            rankingElements.remove("losses");
+                            rankingElements.remove("ties");
+                        }
                     }
+                    if (record == null) {
+                        record = "";
+                    }
+                    // Construct rankings string
+                    it = rankingElements.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry entry = (Map.Entry) it.next();
+                        rankingString += entry.getKey() + ": " + entry.getValue();
+                        if (it.hasNext()) {
+                            rankingString += ", ";
+                        }
+                    }
+                    teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), "", row.get(0).getAsInt(), record, rankingString));
+                    //the two columns set to "" above are 'team name' and 'record' as those are not consistently in the data
+                    //TODO get team name for given number
                 }
-                teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), "", row.get(0).getAsInt(), record, rankingString));
-                //the two columns set to "" above are 'team name' and 'record' as those are not consistently in the data
-                //TODO get team name for given number
+                return response.getCode();
+            }else{
+                //TODO indicate that no rankings exist (same for other fragments)
+                return APIResponse.CODE.NODATA;
             }
-            return response.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event rankings");
             return APIResponse.CODE.NODATA;
