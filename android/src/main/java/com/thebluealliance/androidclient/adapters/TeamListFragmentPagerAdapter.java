@@ -9,12 +9,12 @@ import com.thebluealliance.androidclient.fragments.TeamListFragment;
 /**
  * Created by Nathan on 4/22/2014.
  */
-public class TeamListAdapter extends FragmentPagerAdapter {
+public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
 
     //TODO: don't hardcode this, use value from database
     private int mCount = 6;
 
-    public TeamListAdapter(FragmentManager fm) {
+    public TeamListFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

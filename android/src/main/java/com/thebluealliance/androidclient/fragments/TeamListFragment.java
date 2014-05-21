@@ -54,6 +54,7 @@ public class TeamListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
+        mListView.setFastScrollAlwaysVisible(true);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
