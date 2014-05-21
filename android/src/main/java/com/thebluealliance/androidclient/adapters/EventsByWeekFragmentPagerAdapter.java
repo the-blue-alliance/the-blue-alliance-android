@@ -5,8 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.thebluealliance.androidclient.background.DownloadEventList;
 import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.Event;
 
@@ -27,23 +27,23 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         mYear = year;
         thisYearsWeekLabels = new ArrayList<>();
+        DownloadEventList task = new DownloadEventList(c);
+        task.execute(year);
         try {
-            thisYearsWeekLabels.addAll(DataManager.getEventsByYear(c, year).getData().keySet());
+            thisYearsWeekLabels.addAll(task.get());
             Collections.sort(thisYearsWeekLabels, new EventWeekLabelSortComparator());
             mCount = thisYearsWeekLabels.size();
-        } catch (DataManager.NoDataException e) {
-            e.printStackTrace();
+        } catch (Exception e){
+            mCount = 0;
         }
-
-
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         Date now = new Date();
-        if(Event.competitionWeek(now) == (position)){
+        if (Event.competitionWeek(now) == (position)) {
             return "Current Week";
-        }else {
+        } else {
             return thisYearsWeekLabels.get(position);
         }
     }
@@ -55,7 +55,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return EventListFragment.newInstance(mYear, (position >= 8?position + 1:position), null);
+        return EventListFragment.newInstance(mYear, (position >= 8 ? position + 1 : position), null);
         /**
          * Not sure of a better way to do this ATM, but the gap week between the last event and CMP is throwing things off
          * I don't think it'll be affected by prior years' schedules, but I can fix that when it comes
