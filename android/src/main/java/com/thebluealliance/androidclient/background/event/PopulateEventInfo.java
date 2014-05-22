@@ -148,14 +148,16 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     @Override
     protected void onPostExecute(APIResponse.CODE c) {
         super.onPostExecute(c);
-        // If the activity is a NavigationDrawerActivity, set the action bar title using this method
-        // so that it properly handles changing the title when the nav drawer is opened or closed.
-        if(activity instanceof NavigationDrawerActivity) {
-            ((NavigationDrawerActivity) activity).setActionBarTitle(event.getEventName());
-        } else {
-            activity.getActionBar().setTitle(event.getEventName());
-        }
+
         if (event != null && mFragment.getActivity() != null) {
+            // If the activity is a NavigationDrawerActivity, set the action bar title using this method
+            // so that it properly handles changing the title when the nav drawer is opened or closed.
+            if(activity instanceof NavigationDrawerActivity) {
+                ((NavigationDrawerActivity) activity).setActionBarTitle(event.getEventName());
+            } else {
+                activity.getActionBar().setTitle(event.getEventName());
+            }
+
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());
             eventLoc.setText(event.getLocation());
