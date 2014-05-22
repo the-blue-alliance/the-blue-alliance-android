@@ -64,7 +64,9 @@ public class EventAwardsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String eventKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                startActivity(ViewTeamActivity.newInstance(getActivity(), eventKey));
+                if (!eventKey.equals("frc-1")) {
+                    startActivity(ViewTeamActivity.newInstance(getActivity(), eventKey));
+                }
             }
         });
         return view;

@@ -79,8 +79,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
-        if (view != null && mFragment != null) {
-            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), teams);
+        if (view != null && activity != null) {
+            ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             ListView stats = (ListView) view.findViewById(R.id.list);
             stats.setAdapter(adapter);
 

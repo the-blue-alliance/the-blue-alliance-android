@@ -70,11 +70,9 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if (fragment.getActivity() != null) {
+        View view = fragment.getView();
+        if (activity != null && view != null) {
             adapter = new ListViewAdapter(fragment.getActivity(), teamItems);
-        }
-
-        if (fragment.getView() != null) {
             ListView eventList = (ListView) fragment.getView().findViewById(R.id.list);
             eventList.setAdapter(adapter);
 
@@ -82,7 +80,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                 //TODO only show warning for currently competing event (there's likely missing data)
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
-            fragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 }
