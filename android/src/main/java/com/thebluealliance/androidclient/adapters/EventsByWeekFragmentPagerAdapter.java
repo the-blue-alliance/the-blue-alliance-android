@@ -66,4 +66,8 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
          * That constant 8 should eventually be replaced with the week number before CMP
          */
     }
+
+    public ArrayList<String> getLabels(){
+        return thisYearsWeekLabels;
+    }
 }
