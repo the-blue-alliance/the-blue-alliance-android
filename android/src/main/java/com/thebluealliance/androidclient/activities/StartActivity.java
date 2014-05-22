@@ -19,6 +19,8 @@ import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
 
+import java.util.Calendar;
+
 /**
  * File created by phil on 4/20/14.
  */
@@ -42,7 +44,8 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
 
-    private String[] dropdownItems = new String[]{"2014", "2013", "2012"};
+    private String[] dropdownItems;
+    private int oldestYearToDisplay = 1992;
 
     private TextView warningMessage;
 
@@ -60,6 +63,12 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
+
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        dropdownItems = new String[currentYear - oldestYearToDisplay + 1];
+        for(int i=0; i<dropdownItems.length; i++){
+            dropdownItems[i] = Integer.toString(currentYear - i);
+        }
 
         int initNavId = R.id.nav_item_events;
         Bundle b = getIntent().getExtras();
