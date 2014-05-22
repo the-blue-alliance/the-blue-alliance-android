@@ -28,6 +28,8 @@ public class DataManager {
     private static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
             ALL_EVENTS_LOADED_TO_DATABASE = "all_events_loaded";
 
+    private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> eventsByYear = new HashMap<>();
+
     public synchronized static APIResponse<Team> getTeam(Context c, String teamKey) throws NoDataException {
         final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey;
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, URL, true);
@@ -161,25 +163,46 @@ public class DataManager {
 
     public synchronized static APIResponse<ArrayList<SimpleEvent>> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException {
         Log.d("get events for week", "getting for week: " + week);
-        ArrayList<SimpleEvent> events = new ArrayList<>();
-        boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE, false);
-        //TODO check for updates and update response accordingly
-        APIResponse<String> response;
-        if (allEventsLoaded) {
-            Log.d("get events for week", "loading from db");
-            events = Database.getInstance(c).getEventsInWeek(year, week);
-            response = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
-        } else {
-            response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/events/" + year, false);
-            events = TBAv2.getEventList(response.getData());
-            Database.getInstance(c).storeEvents(events);
-            // ^ stores all events, now refetch for just the week we want.
-            events = Database.getInstance(c).getEventsInWeek(year, week);
-            if (response.getCode() != APIResponse.CODE.NODATA) {
-                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE, true).commit();
-            }
+
+        APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getEventsByYear(c, year);
+        String weekLabel = Event.weekLabelFromNum(events.getData(), week);
+
+        if(eventsByYear.get(year).containsKey(weekLabel)){
+            return new APIResponse<>(eventsByYear.get(year).get(weekLabel), events.getCode());
+        }else{
+            //nothing found...
+            Log.w(Constants.LOG_TAG, "Unable to find events for tag "+ weekLabel);
+            return new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
-        return new APIResponse<>(events, response.getCode());
+
+    }
+
+    public synchronized static APIResponse<HashMap<String, ArrayList<SimpleEvent>>> getEventsByYear(Context c, int year) throws NoDataException {
+        if(eventsByYear.containsKey(year)){
+            return new APIResponse<>(eventsByYear.get(year), APIResponse.CODE.CACHED304);
+        }else {
+            ArrayList<SimpleEvent> events = new ArrayList<>();
+            boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE, false);
+            HashMap<String, ArrayList<SimpleEvent>> groupedEvents;
+            APIResponse<String> eventListResponse;
+            //TODO check for updates and update response accordingly
+            if (allEventsLoaded) {
+                Log.d("get events for week", "loading from db");
+                events = Database.getInstance(c).getEventsInYear(year);
+                eventListResponse = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
+                groupedEvents = SimpleEvent.groupByWeek(events);
+            } else {
+                eventListResponse = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/events/" + year, false);
+                events = TBAv2.getEventList(eventListResponse.getData());
+                Database.getInstance(c).storeEvents(events);
+                groupedEvents = SimpleEvent.groupByWeek(events);
+                if (eventListResponse.getCode() != APIResponse.CODE.NODATA) {
+                    PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE, true).commit();
+                }
+            }
+            eventsByYear.put(year, groupedEvents);
+            return new APIResponse<>(groupedEvents, eventListResponse.getCode());
+        }
     }
 
     public static class NoDataException extends Exception {

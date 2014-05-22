@@ -205,6 +205,33 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
+    public ArrayList<SimpleEvent> getEventsInYear(int year) {
+        ArrayList<SimpleEvent> events = new ArrayList<>();
+        Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
+                        Events.END, Events.LOCATION, Events.OFFICIAL},
+                Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null
+        );
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                SimpleEvent event = new SimpleEvent();
+                event.setEventKey(cursor.getString(0));
+                event.setEventName(cursor.getString(1));
+                event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
+                event.setEventDistrict(Event.DISTRICT.values()[cursor.getInt(3)]);
+                event.setStartDate(cursor.getString(4));
+                event.setEndDate(cursor.getString(5));
+                event.setLocation(cursor.getString(6));
+                event.setOfficial(cursor.getInt(7) == 1);
+
+                events.add(event);
+            } while (cursor.moveToNext());
+            return events;
+        } else {
+            Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
+            return null;
+        }
+    }
+
     public boolean eventExists(String key) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
         return cursor != null && cursor.moveToFirst();

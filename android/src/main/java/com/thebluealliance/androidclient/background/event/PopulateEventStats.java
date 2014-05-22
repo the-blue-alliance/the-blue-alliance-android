@@ -51,9 +51,15 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
                     ccwm = new ArrayList<>();
-            opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
-            dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
-            ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
+            if(stats.has("oprs")) {
+                opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
+            }
+            if(stats.has("dprs")) {
+                dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
+            }
+            if(stats.has("ccwms")) {
+                ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
+            }
 
             for (int i = 0; i < opr.size(); i++) {
                 String statsString = "OPR: " + displayFormat.format(opr.get(i).getValue().getAsDouble())

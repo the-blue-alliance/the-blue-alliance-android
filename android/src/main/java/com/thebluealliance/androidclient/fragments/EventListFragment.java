@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -65,16 +67,29 @@ public class EventListFragment extends Fragment {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         } else {
+            System.out.println("populate for week "+mWeek);
             mTask = new PopulateEventList(this, mYear, mWeek, mTeamKey);
             mTask.execute();
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), ViewEventActivity.class);
-                String eventKey = ((ListElement) ((ListViewAdapter) parent.getAdapter()).getItem(position)).getKey();
-                intent.putExtra("eventKey", eventKey);
-                startActivity(intent);
+                if(!(parent.getAdapter() instanceof ListViewAdapter)){
+                    //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
+                    Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
+                    return;
+                }
+                Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
+                if(item != null && item instanceof ListElement) {
+                    // only open up the view event activity if the user actually clicks on a ListElement
+                    // (as opposed to something inheriting from ListHeader, which shouldn't do anything on user click
+                    Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+                    String eventKey = ((ListElement) item).getKey();
+                    intent.putExtra("eventKey", eventKey);
+                    startActivity(intent);
+                }else{
+                    Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
+                }
             }
         });
         return v;

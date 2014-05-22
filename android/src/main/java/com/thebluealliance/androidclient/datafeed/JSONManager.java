@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
@@ -49,7 +50,11 @@ public class JSONManager {
     public static JsonObject getasJsonObject(String input) {
         if (input == null || input.equals(""))
             return new JsonObject();
-        return getParser().parse(input).getAsJsonObject();
+        JsonElement e = getParser().parse(input);
+        if(e == null || e.isJsonNull()){
+            return new JsonObject();
+        }
+        return e.getAsJsonObject();
     }
 
     public static JsonArray getasJsonArray(String input) {
