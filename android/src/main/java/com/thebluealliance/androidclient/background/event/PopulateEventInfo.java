@@ -57,7 +57,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventKey = params[0];
 
         View view = mFragment.getView();
-        if (view != null && mFragment.getActivity() != null) {
+        if (view != null && activity != null) {
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
             eventLoc = (TextView) view.findViewById(R.id.event_location);
@@ -149,7 +149,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE c) {
         super.onPostExecute(c);
 
-        if (event != null && mFragment.getActivity() != null) {
+        if (event != null && activity != null) {
             // If the activity is a NavigationDrawerActivity, set the action bar title using this method
             // so that it properly handles changing the title when the nav drawer is opened or closed.
             if(activity instanceof NavigationDrawerActivity) {
@@ -196,9 +196,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
-            if (mFragment.getView() != null) {
-                mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
-                mFragment.getView().findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
+            View view = mFragment.getView();
+            if (view != null) {
+                view.findViewById(R.id.progress).setVisibility(View.GONE);
+                view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
             }
         }
     }
