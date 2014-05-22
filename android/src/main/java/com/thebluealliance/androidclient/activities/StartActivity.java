@@ -5,18 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
-import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 
 /**
  * File created by phil on 4/20/14.
@@ -115,7 +116,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = new EventsByWeekFragment();
+                fragment = new EventsByWeekFragment().newInstance(2014);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
@@ -168,7 +169,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
         actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getActionBar().setListNavigationCallbacks(actionBarAdapter, this);
-        getActionBar().setSelectedNavigationItem(0); //TODO take this value from savedinstancestate
+        getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
     }
 
     @Override
@@ -178,10 +179,8 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
 
     @Override
     public boolean onNavigationItemSelected(int position, long id) {
-        Fragment f = getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-        if (f instanceof ActionBarSpinnerListener) {
-            ((ActionBarSpinnerListener) f).actionBarSpinnerSelected(position, dropdownItems[position]);
-        }
+        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedYearPosition = position;
         return true;
     }

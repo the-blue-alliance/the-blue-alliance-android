@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
@@ -34,6 +35,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
             Collections.sort(thisYearsWeekLabels, new EventWeekLabelSortComparator());
             mCount = thisYearsWeekLabels.size();
         } catch (Exception e){
+            e.printStackTrace();
             mCount = 0;
         }
     }
@@ -41,7 +43,9 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         Date now = new Date();
-        if (Event.competitionWeek(now) == (position)) {
+        Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(now);
+        if (Event.competitionWeek(now) == position && nowCalendar.get(Calendar.YEAR) == mYear) {
             return "Current Week";
         } else {
             return thisYearsWeekLabels.get(position);

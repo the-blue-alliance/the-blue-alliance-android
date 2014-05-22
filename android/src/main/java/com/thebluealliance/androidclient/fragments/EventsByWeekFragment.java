@@ -6,19 +6,20 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
-import com.thebluealliance.androidclient.interfaces.ActionBarSpinnerListener;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.Date;
 
-public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerListener {
+public class EventsByWeekFragment extends Fragment {
 
     private int mYear;
     private static final String YEAR = "YEAR";
@@ -38,31 +39,14 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
         if (getArguments() != null) {
             mYear = getArguments().getInt(YEAR, 2014);
         }
-        if (savedInstanceState != null && savedInstanceState.containsKey(YEAR)) {
-            mYear = savedInstanceState.getInt(YEAR);
-        }
+        Log.d(Constants.LOG_TAG, "mYear: " + mYear);
     }
 
     private ViewPager mViewPager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(YEAR)) {
-            mYear = savedInstanceState.getInt(YEAR);
-        }
-        return inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
-    }
-
-    @Override
-    public void actionBarSpinnerSelected(int position, String yearString) {
-        int year = Integer.parseInt(yearString);
-        // Only update the view when the year changes
-        if (year == mYear) {
-            return;
-        }
-        mYear = year;
-        final View view = getView();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         final Context c = getActivity();
@@ -78,13 +62,13 @@ public class EventsByWeekFragment extends Fragment implements ActionBarSpinnerLi
                         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
                         tabs.setViewPager(mViewPager);
                         int currentWeek = Event.competitionWeek(new Date());
-                        mViewPager.setCurrentItem(currentWeek>10? Math.min(mViewPager.getAdapter().getCount(),1) : currentWeek);
+                        mViewPager.setCurrentItem(currentWeek > 10 ? Math.min(mViewPager.getAdapter().getCount(), 1) : currentWeek);
                         view.animate()
                                 .alpha(1f)
                                 .setDuration(mShortAnimationDuration)
                                 .setListener(null).start();
                     }
                 }).start();
-
+        return view;
     }
 }
