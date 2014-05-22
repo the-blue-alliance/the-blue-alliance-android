@@ -27,10 +27,11 @@ public class EventListFragment extends Fragment {
     public static final String YEAR = "YEAR";
     public static final String WEEK = "WEEK";
     public static final String TEAM_KEY = "TEAM_KEY";
+    public static final String WEEK_HEADER = "HEADER";
 
     private int mYear;
     private int mWeek;
-    private String mTeamKey;
+    private String mTeamKey, mHeader;
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
@@ -39,12 +40,13 @@ public class EventListFragment extends Fragment {
 
     private PopulateEventList mTask;
 
-    public static EventListFragment newInstance(int year, int week, String teamKey) {
+    public static EventListFragment newInstance(int year, int week, String teamKey, String weekHeader) {
         EventListFragment f = new EventListFragment();
         Bundle args = new Bundle();
         args.putInt(YEAR, year);
         args.putInt(WEEK, week);
         args.putString(TEAM_KEY, teamKey);
+        args.putString(WEEK_HEADER, weekHeader);
         f.setArguments(args);
         return f;
     }
@@ -55,6 +57,7 @@ public class EventListFragment extends Fragment {
         mYear = getArguments().getInt(YEAR, -1);
         mWeek = getArguments().getInt(WEEK, -1);
         mTeamKey = getArguments().getString(TEAM_KEY);
+        mHeader = getArguments().getString(WEEK_HEADER);
     }
 
     @Override
@@ -68,7 +71,7 @@ public class EventListFragment extends Fragment {
             mProgressBar.setVisibility(View.GONE);
         } else {
             System.out.println("populate for week "+mWeek);
-            mTask = new PopulateEventList(this, mYear, mWeek, mTeamKey);
+            mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey);
             mTask.execute();
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

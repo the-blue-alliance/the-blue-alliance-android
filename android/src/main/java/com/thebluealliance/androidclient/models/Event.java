@@ -497,4 +497,12 @@ public class Event implements BasicModel {
         }
         return WEEKLESS_LABEL;
     }
+
+    public static int weekNumFromLabel(HashMap<String, ArrayList<SimpleEvent>> groupedEvents, String label){
+        if(groupedEvents.containsKey(label)){
+            return groupedEvents.get(label).get(0).getCompetitionWeek();
+        }else{
+            return -1;
+        }
+    }
 }

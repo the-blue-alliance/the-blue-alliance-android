@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * File created by phil on 4/20/14.
@@ -29,15 +30,16 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private int mYear = -1, mWeek = -1;
-    private String mTeamKey = null;
+    private String mTeamKey = null, mHeader;
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
+    private static HashMap<String, ArrayList<SimpleEvent>> allEvents;
 
-    public PopulateEventList(EventListFragment fragment, int year, int week, String teamKey) {
+    public PopulateEventList(EventListFragment fragment, int year, String weekHeader, String teamKey) {
         mFragment = fragment;
         mYear = year;
-        mWeek = week;
         mTeamKey = teamKey;
+        mHeader = weekHeader;
     }
 
     @Override
@@ -45,11 +47,21 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         if (mFragment == null) {
             throw new IllegalArgumentException("Fragment must not be null!");
         }
-        /* Here, we would normally check if the events are stored locally, and fetch/store them if not.
-         * Also, here is where we check if the remote data set has changed and update accordingly
-         * Then, we'd go through the data and build the listview adapters
-         * For now, it'll just be static data for demonstrative purposes
-         */
+
+
+        //first, let's generate the event week based on its header (event weeks aren't constant over the years)
+        if(mHeader.equals("")){
+            mWeek = -1;
+        }else {
+            if (allEvents == null) {
+                try {
+                    allEvents = DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData();
+                } catch (DataManager.NoDataException e) {
+                    return APIResponse.CODE.NODATA;
+                }
+            }
+            mWeek = Event.weekNumFromLabel(allEvents, mHeader);
+        }
 
         eventKeys = new ArrayList<>();
         events = new ArrayList<>();
