@@ -84,8 +84,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             ListView stats = (ListView) view.findViewById(R.id.list);
             stats.setAdapter(adapter);
 
-            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
-                //TODO only show warning for currently competing event (there's likely missing data)
+            if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 

@@ -76,8 +76,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             ListView eventList = (ListView) fragment.getView().findViewById(R.id.list);
             eventList.setAdapter(adapter);
 
-            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
-                //TODO only show warning for currently competing event (there's likely missing data)
+            if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
             view.findViewById(R.id.progress).setVisibility(View.GONE);

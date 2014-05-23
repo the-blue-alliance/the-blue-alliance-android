@@ -130,8 +130,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 }
             }
 
-            if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
-                //TODO only show warning for currently competing event (there's likely missing data)
+            if (code == APIResponse.CODE.OFFLINECACHE) {
                 ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
