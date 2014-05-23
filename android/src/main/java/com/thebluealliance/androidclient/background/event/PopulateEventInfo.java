@@ -85,12 +85,16 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     APIResponse<ArrayList<JsonArray>> rankResponse = DataManager.getEventRankings(activity, eventKey);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
+                    if(rankList.size() == 0){
+                        showRanks = false;
+                    }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
                         rankString += ((i) + ". " + rankList.get(i).get(1).getAsString()) + "\n";
                     }
                     ranks.setText(rankString);
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "Unable to load event rankings");
+                    showRanks = false;
                     return APIResponse.CODE.NODATA;
                 }
 
@@ -106,9 +110,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                             statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
                         }
                         stats.setText(statsString);
+                    }else{
+                        showStats = false;
                     }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to load event stats");
+                    showStats = false;
                     return APIResponse.CODE.NODATA;
                 }
             }
@@ -158,7 +165,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         if (event != null && mFragment.getActivity() != null) {
             eventName.setText(event.getEventName());
             eventDate.setText(event.getDateString());
-            eventLoc.setText(event.getLocation());
+            if(event.getLocation().isEmpty()){
+                activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
+            }else{
+                eventLoc.setText(event.getLocation());
+            }
             if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);
                 if(nextLayout.getChildCount() > 1) {
