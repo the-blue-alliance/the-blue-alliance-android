@@ -108,9 +108,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
-        if (view != null && mFragment.getActivity() != null) {
+        if (view != null && activity != null) {
             ListView rankings = (ListView) view.findViewById(R.id.list);
-            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), teams);
+            ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             rankings.setAdapter(adapter);
 
             if (code == APIResponse.CODE.OFFLINECACHE /* && event is current */) {

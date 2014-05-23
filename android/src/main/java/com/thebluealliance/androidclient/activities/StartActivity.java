@@ -59,7 +59,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activty_start);
+        setContentView(R.layout.activity_start);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();

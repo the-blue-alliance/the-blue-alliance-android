@@ -34,12 +34,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> allEvents = new HashMap<>();
+    private RefreshableHostActivity activity;
 
     public PopulateEventList(EventListFragment fragment, int year, String weekHeader, String teamKey) {
         mFragment = fragment;
         mYear = year;
         mTeamKey = teamKey;
         mHeader = weekHeader;
+        activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
     @Override
@@ -132,18 +134,18 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         super.onPostExecute(c);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-
-        if (mFragment.getView() != null && mFragment.getActivity() != null) {
-            ListView eventList = (ListView) mFragment.getView().findViewById(R.id.list);
-            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), events);
+        View view = mFragment.getView();
+        if (view != null && activity != null) {
+            ListView eventList = (ListView) view.findViewById(R.id.list);
+            ListViewAdapter adapter = new ListViewAdapter(activity, events);
             eventList.setAdapter(adapter);
 
             if (c == APIResponse.CODE.OFFLINECACHE /* && event is current */) {
                 //TODO only show warning for currently competing event (there's likely missing data)
-                ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+                activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
-            mFragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 }

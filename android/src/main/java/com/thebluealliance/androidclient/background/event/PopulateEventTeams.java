@@ -59,9 +59,9 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     protected void onPostExecute(APIResponse.CODE c) {
         super.onPostExecute(c);
         View view = mFragment.getView();
-        if (view != null && mFragment.getActivity() != null) {
+        if (view != null && activity != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-            ListViewAdapter adapter = new ListViewAdapter(mFragment.getActivity(), teams);
+            ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             adapter.notifyDataSetChanged();
             ListView teamList = (ListView) view.findViewById(R.id.list);
             teamList.setAdapter(adapter);
