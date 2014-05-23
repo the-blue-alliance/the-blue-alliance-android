@@ -165,7 +165,7 @@ public class DataManager {
         Log.d("get events for week", "getting for week: " + week);
 
         APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getEventsByYear(c, year);
-        String weekLabel = Event.weekLabelFromNum(events.getData(), week);
+        String weekLabel = Event.weekLabelFromNum(year, week);
 
         if(eventsByYear.get(year).containsKey(weekLabel)){
             return new APIResponse<>(eventsByYear.get(year).get(weekLabel), events.getCode());

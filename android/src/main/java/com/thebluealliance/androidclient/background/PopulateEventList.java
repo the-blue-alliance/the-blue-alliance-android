@@ -33,7 +33,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private String mTeamKey = null, mHeader;
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
-    private static HashMap<String, ArrayList<SimpleEvent>> allEvents;
+    private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> allEvents = new HashMap<>();
 
     public PopulateEventList(EventListFragment fragment, int year, String weekHeader, String teamKey) {
         mFragment = fragment;
@@ -53,14 +53,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         if(mHeader.equals("")){
             mWeek = -1;
         }else {
-            if (allEvents == null) {
+            if (!allEvents.containsKey(mYear)) {
                 try {
-                    allEvents = DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData();
+                    allEvents.put(mYear, DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData());
                 } catch (DataManager.NoDataException e) {
                     return APIResponse.CODE.NODATA;
                 }
             }
-            mWeek = Event.weekNumFromLabel(allEvents, mHeader);
+            mWeek = Event.weekNumFromLabel(allEvents.get(mYear), mHeader);
         }
 
         eventKeys = new ArrayList<>();
@@ -75,18 +75,20 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
-                Collections.sort(eventData, new EventSortByTypeAndDateComparator());
-                Event.TYPE lastType = null, currentType;
-                for (SimpleEvent event : eventData) {
-                    currentType = event.getEventType();
-                    // TODO: finish implementing this once we have event type info available
-                    if (currentType != lastType) {
-                        eventKeys.add(currentType.toString());
-                        events.add(new EventWeekHeader(currentType.toString()));
+                if(eventData.size() > 0) {
+                    Collections.sort(eventData, new EventSortByTypeAndDateComparator());
+                    Event.TYPE lastType = null, currentType;
+                    for (SimpleEvent event : eventData) {
+                        currentType = event.getEventType();
+                        // TODO: finish implementing this once we have event type info available
+                        if (currentType != lastType) {
+                            eventKeys.add(currentType.toString());
+                            events.add(new EventWeekHeader(currentType.toString()));
+                        }
+                        eventKeys.add(event.getEventKey());
+                        events.add(event.render());
+                        lastType = currentType;
                     }
-                    eventKeys.add(event.getEventKey());
-                    events.add(event.render());
-                    lastType = currentType;
                 }
                 return response.getCode();
             } catch (Exception e) {

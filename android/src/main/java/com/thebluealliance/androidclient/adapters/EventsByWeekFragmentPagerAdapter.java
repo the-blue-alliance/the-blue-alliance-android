@@ -59,12 +59,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return EventListFragment.newInstance(mYear, (position >= 8 ? position + 1 : position), null, getPageTitle(position).toString());
-        /**
-         * Not sure of a better way to do this ATM, but the gap week between the last event and CMP is throwing things off
-         * I don't think it'll be affected by prior years' schedules, but I can fix that when it comes
-         * That constant 8 should eventually be replaced with the week number before CMP
-         */
+        return EventListFragment.newInstance(mYear, position, null, getPageTitle(position).toString());
     }
 
     public ArrayList<String> getLabels(){
