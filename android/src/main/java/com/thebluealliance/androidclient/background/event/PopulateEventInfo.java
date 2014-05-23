@@ -57,7 +57,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventKey = params[0];
 
         View view = mFragment.getView();
-        if (view != null && activity != null) {
+        if (view != null && activity != null && eventKey != null) {
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
             eventLoc = (TextView) view.findViewById(R.id.event_location);
