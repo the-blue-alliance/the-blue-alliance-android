@@ -165,5 +165,8 @@
         android:visibility="visible"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
-
+    <TextView
+        android:id="@+id/warning_container"
+        style="@style/ActivityWarningStyle"
+        android:visibility="gone" />
 </RelativeLayout>

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
@@ -18,6 +20,8 @@ public class ViewMatchActivity extends RefreshableHostActivity {
     private static final String VIDEO_FRAGMENT_TAG = "videoFragment";
 
     private String mMatchKey;
+
+    private TextView warningMessage;
 
     public static Intent newInstance(Context context, String matchKey) {
         Intent intent = new Intent(context, ViewMatchActivity.class);
@@ -36,6 +40,8 @@ public class ViewMatchActivity extends RefreshableHostActivity {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
 
+        warningMessage = (TextView) findViewById(R.id.warning_container);
+
         new PopulateMatchInfo(this).execute(mMatchKey);
     }
 
@@ -51,12 +57,13 @@ public class ViewMatchActivity extends RefreshableHostActivity {
 
     @Override
     public void showWarningMessage(String message) {
-
+        warningMessage.setText(message);
+        warningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
-
+        warningMessage.setVisibility(View.GONE);
     }
 
     @Override
