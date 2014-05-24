@@ -76,25 +76,24 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
 
     @Override
     public void onClick(View v) {
-        if(v.getTag().equals("top_teams")){
-            ((ViewEventActivity)getActivity()).getPager().setCurrentItem(2);
-        }else if(v.getTag().equals("top_opr")){
-            ((ViewEventActivity)getActivity()).getPager().setCurrentItem(4);
-        }else {
-            PackageManager manager = getActivity().getPackageManager();
-            if (v.getTag() != null) {
-
+        if (v.getTag() != null) {
+            if (v.getTag().equals("top_teams")) {
+                ((ViewEventActivity) getActivity()).getPager().setCurrentItem(2);
+            } else if (v.getTag().equals("top_opr")) {
+                ((ViewEventActivity) getActivity()).getPager().setCurrentItem(4);
+            } else {
+                PackageManager manager = getActivity().getPackageManager();
                 String uri = v.getTag().toString();
                 Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
                 List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
                 if (handlers.size() > 0) {
-                    // There is an application to handle this intent intent
+                // There is an application to handle this intent intent
                     startActivity(i);
-                } else {
-                    // No application can handle this intent
-                    Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+                } else
+                {
+                // No application can handle this intent
+                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
                 }
-
             }
         }
     }
