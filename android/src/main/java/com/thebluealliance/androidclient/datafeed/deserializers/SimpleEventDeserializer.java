@@ -45,14 +45,14 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
         // Start/End date is null sometimes (when spamming year changes)
         if (object.get("start_date").isJsonNull())
         {
-            event.setStartDate("");
+            event.setStartDate("1900-01-01");
         }
         else {
             event.setStartDate(object.get("start_date").getAsString());
         }
 
         if (object.get("end_date").isJsonNull()) {
-            event.setEndDate("");
+            event.setEndDate("1900-01-02");
         }
         else {
             event.setEndDate(object.get("end_date").getAsString());
