@@ -78,41 +78,54 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             JsonObject redAlliance = mMatch.getAlliances().getAsJsonObject("red");
             JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
 
-            // Red 1
             TextView red1 = ((TextView) mActivity.findViewById(R.id.red1));
-            final String red1Key = redAllianceTeamKeys.get(0).getAsString();
-            red1.setText(red1Key.replace("frc", ""));
-            red1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red1Key));
-                }
-            });
-
-            // Red 2
             TextView red2 = ((TextView) mActivity.findViewById(R.id.red2));
-            final String red2Key = redAllianceTeamKeys.get(1).getAsString();
-            red2.setText(red2Key.replace("frc", ""));
-            red2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red2Key));
-                }
-            });
-
-            // Red 3
             TextView red3 = ((TextView) mActivity.findViewById(R.id.red3));
-            final String red3Key = redAllianceTeamKeys.get(2).getAsString();
-            red3.setText(red3Key.replace("frc", ""));
-            red3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red3Key));
-                }
-            });
 
+            // Don't set any text or listeners if there's no teams in the red alliance for some reason.
+            if (redAllianceTeamKeys.size() == 0)
+            {
+              red1.setText("");
+              red2.setText("");
+              red3.setText("");
+            }
+            else {
+                // Red 1
+                final String red1Key = redAllianceTeamKeys.get(0).getAsString();
+                red1.setText(red1Key.replace("frc", ""));
+                red1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red1Key));
+                    }
+                });
+
+                // Red 2
+                final String red2Key = redAllianceTeamKeys.get(1).getAsString();
+                red2.setText(red2Key.replace("frc", ""));
+                red2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red2Key));
+                    }
+                });
+                // Only add the third team if the alliance has three teams.
+                if (redAllianceTeamKeys.size() > 2) {
+                    // Red 3
+                    final String red3Key = redAllianceTeamKeys.get(2).getAsString();
+                    red3.setText(red3Key.replace("frc", ""));
+                    red3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red3Key));
+                        }
+                    });
+                } else {
+                    red3.setText("");
+                }
+            }
             // Red Score
-            if (redAlliance.get("score").getAsInt() < 0) {
+            if (redAlliance.get("score").getAsInt() < 0) { // if there is no score, add "?"
                 ((TextView) mActivity.findViewById(R.id.red_score)).setText("?");
             }
             else
@@ -120,42 +133,55 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 ((TextView) mActivity.findViewById(R.id.red_score)).setText(redAlliance.get("score").getAsString());
             }
 
+            // Repeat process for blue alliance.
             JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
             JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
 
-            // Blue 1
             TextView blue1 = ((TextView) mActivity.findViewById(R.id.blue1));
-            final String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
-            blue1.setText(blue1Key.replace("frc", ""));
-            blue1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue1Key));
-                }
-            });
-
-            // Blue 2
             TextView blue2 = ((TextView) mActivity.findViewById(R.id.blue2));
-            final String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
-            blue2.setText(blue2Key.replace("frc", ""));
-            blue2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue2Key));
-                }
-            });
-
-            // Blue 3
             TextView blue3 = ((TextView) mActivity.findViewById(R.id.blue3));
-            final String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
-            blue3.setText(blue3Key.replace("frc", ""));
-            blue3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue3Key));
-                }
-            });
 
+            if (blueAllianceTeamKeys.size() == 0)
+            {
+                blue1.setText("");
+                blue2.setText("");
+                blue3.setText("");
+            }
+            else {
+                // Blue 1
+                final String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
+                blue1.setText(blue1Key.replace("frc", ""));
+                blue1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue1Key));
+                    }
+                });
+
+                // Blue 2
+                final String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
+                blue2.setText(blue2Key.replace("frc", ""));
+                blue2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue2Key));
+                    }
+                });
+
+                if (blueAllianceTeamKeys.size() > 2) {
+                    // Blue 3
+                    final String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
+                    blue3.setText(blue3Key.replace("frc", ""));
+                    blue3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue3Key));
+                        }
+                    });
+                } else {
+                    blue3.setText("");
+                }
+            }
             // Blue score
             if (blueAlliance.get("score").getAsInt() < 0) {
                 ((TextView) mActivity.findViewById(R.id.blue_score)).setText("?");

@@ -289,9 +289,37 @@ public class Match implements BasicModel {
                 youTubeVideoKey = video.get("key").getAsString();
             }
         }
+
+        String[] redAlliance, blueAlliance;
+        // Add teams based on alliance size (or none if there isn't for some reason)
+        if (redTeams.size() == 3)
+        {
+            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)};
+        }
+        else if (redTeams.size() == 2)
+        {
+            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3)};
+        }
+        else
+        {
+            redAlliance = new String[]{"","",""};
+        }
+
+        if (blueTeams.size() == 3)
+        {
+            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)};
+        }
+        else if (blueTeams.size() == 2)
+        {
+            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3)};
+        }
+        else
+        {
+            blueAlliance = new String[]{"","",""};
+        }
+
         return new MatchListElement(youTubeVideoKey, getTitle(),
-                new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
-                new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
+                redAlliance,blueAlliance,
                 redScore, blueScore, key);
     }
 

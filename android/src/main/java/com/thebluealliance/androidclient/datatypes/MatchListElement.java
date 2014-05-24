@@ -68,14 +68,36 @@ public class MatchListElement extends ListElement {
         }
 
         holder.matchTitle.setText(matchTitle);
-        holder.red1.setText(redTeams[0]);
-        holder.red2.setText(redTeams[1]);
-        holder.red3.setText(redTeams[2]);
-        holder.blue1.setText(blueTeams[0]);
-        holder.blue2.setText(blueTeams[1]);
-        holder.blue3.setText(blueTeams[2]);
+
+        // Set team text depending on alliance size.
+        if (redTeams.length == 0)
+        {
+            holder.red1.setText("");
+            holder.red2.setText("");
+            holder.red3.setText("");
+        }
+        else {
+            holder.red1.setText(redTeams[0]);
+            holder.red2.setText(redTeams[1]);
+            if (redTeams.length == 2) holder.red3.setText("");
+            else holder.red3.setText(redTeams[2]);
+        }
+
+        if (blueTeams.length == 0)
+        {
+            holder.blue1.setText("");
+            holder.blue2.setText("");
+            holder.blue3.setText("");
+        }
+        else {
+            holder.blue1.setText(blueTeams[0]);
+            holder.blue2.setText(blueTeams[1]);
+            if (blueTeams.length == 2) holder.blue3.setText("");
+            else holder.blue3.setText(blueTeams[2]);
+        }
         holder.redScore.setText(redScore);
         holder.blueScore.setText(blueScore);
+
         return convertView;
     }
 
