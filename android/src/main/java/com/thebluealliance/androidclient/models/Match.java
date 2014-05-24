@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
+import com.thebluealliance.androidclient.fragments.InsightsFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -142,15 +143,15 @@ public class Match implements BasicModel {
         blueTeams.add(new JsonPrimitive("frc" + blue2));
         blueTeams.add(new JsonPrimitive("frc" + blue3));
         blueAlliance.add("teams", blueTeams);
-        JsonObject redAllaince = new JsonObject();
-        redAllaince.addProperty("score", redScore);
+        JsonObject redAlliance = new JsonObject();
+        redAlliance.addProperty("score", redScore);
         JsonArray redTeams = new JsonArray();
         redTeams.add(new JsonPrimitive("frc" + red1));
         redTeams.add(new JsonPrimitive("frc" + red2));
         redTeams.add(new JsonPrimitive("frc" + red3));
-        redAllaince.add("teams", redTeams);
+        redAlliance.add("teams", redTeams);
         alliances.add("blue", blueAlliance);
-        alliances.add("red", redAllaince);
+        alliances.add("red", redAlliance);
         this.videos = new JsonArray();
         this.year = Integer.parseInt(key.substring(0, 3));
         this.matchNumber = matchNumber;
@@ -275,8 +276,12 @@ public class Match implements BasicModel {
     public MatchListElement render() {
         JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-        int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+        String redScore = alliances.get("red").getAsJsonObject().get("score").getAsString(),
+                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsString();
+
+        if (Integer.parseInt(redScore) < 0) redScore = "?";
+        if (Integer.parseInt(blueScore) < 0) blueScore = "?";
+
         String youTubeVideoKey = null;
         for (int i = 0; i < videos.size(); i++) {
             JsonObject video = videos.get(i).getAsJsonObject();
@@ -308,8 +313,8 @@ public class Match implements BasicModel {
      */
     public static Match getNextMatchPlayed(ArrayList<Match> matches) {
         for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
                 //match is unplayed
                 return m;
             }
@@ -327,8 +332,8 @@ public class Match implements BasicModel {
     public static Match getLastMatchPlayed(ArrayList<Match> matches) {
         Match last = null;
         for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
                 break;
             } else {
                 last = m;

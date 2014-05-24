@@ -112,7 +112,13 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             });
 
             // Red Score
-            ((TextView) mActivity.findViewById(R.id.red_score)).setText(redAlliance.get("score").getAsString());
+            if (redAlliance.get("score").getAsInt() < 0) {
+                ((TextView) mActivity.findViewById(R.id.red_score)).setText("?");
+            }
+            else
+            {
+                ((TextView) mActivity.findViewById(R.id.red_score)).setText(redAlliance.get("score").getAsString());
+            }
 
             JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
             JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
@@ -151,7 +157,12 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             });
 
             // Blue score
-            ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
+            if (blueAlliance.get("score").getAsInt() < 0) {
+                ((TextView) mActivity.findViewById(R.id.blue_score)).setText("?");
+            }
+            else {
+                ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
+            }
 
             SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
             if (event != null) {

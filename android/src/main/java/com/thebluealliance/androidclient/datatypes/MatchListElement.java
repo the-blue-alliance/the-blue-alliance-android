@@ -16,10 +16,9 @@ import com.thebluealliance.androidclient.R;
 public class MatchListElement extends ListElement {
 
     private String videoKey;
-    String matchTitle, redTeams[], blueTeams[], matchKey;
-    int redScore, blueScore;
+    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore;
 
-    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey) {
         super();
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
@@ -75,8 +74,8 @@ public class MatchListElement extends ListElement {
         holder.blue1.setText(blueTeams[0]);
         holder.blue2.setText(blueTeams[1]);
         holder.blue3.setText(blueTeams[2]);
-        holder.redScore.setText(Integer.toString(redScore));
-        holder.blueScore.setText(Integer.toString(blueScore));
+        holder.redScore.setText(redScore);
+        holder.blueScore.setText(blueScore);
         return convertView;
     }
 
