@@ -16,10 +16,9 @@ import com.thebluealliance.androidclient.R;
 public class MatchListElement extends ListElement {
 
     private String videoKey;
-    String matchTitle, redTeams[], blueTeams[], matchKey;
-    int redScore, blueScore;
+    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore;
 
-    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey) {
         super();
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
@@ -69,14 +68,36 @@ public class MatchListElement extends ListElement {
         }
 
         holder.matchTitle.setText(matchTitle);
-        holder.red1.setText(redTeams[0]);
-        holder.red2.setText(redTeams[1]);
-        holder.red3.setText(redTeams[2]);
-        holder.blue1.setText(blueTeams[0]);
-        holder.blue2.setText(blueTeams[1]);
-        holder.blue3.setText(blueTeams[2]);
-        holder.redScore.setText(Integer.toString(redScore));
-        holder.blueScore.setText(Integer.toString(blueScore));
+
+        // Set team text depending on alliance size.
+        if (redTeams.length == 0)
+        {
+            holder.red1.setText("");
+            holder.red2.setText("");
+            holder.red3.setText("");
+        }
+        else {
+            holder.red1.setText(redTeams[0]);
+            holder.red2.setText(redTeams[1]);
+            if (redTeams.length == 2) holder.red3.setText("");
+            else holder.red3.setText(redTeams[2]);
+        }
+
+        if (blueTeams.length == 0)
+        {
+            holder.blue1.setText("");
+            holder.blue2.setText("");
+            holder.blue3.setText("");
+        }
+        else {
+            holder.blue1.setText(blueTeams[0]);
+            holder.blue2.setText(blueTeams[1]);
+            if (blueTeams.length == 2) holder.blue3.setText("");
+            else holder.blue3.setText(blueTeams[2]);
+        }
+        holder.redScore.setText(redScore);
+        holder.blueScore.setText(blueScore);
+
         return convertView;
     }
 

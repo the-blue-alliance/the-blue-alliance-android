@@ -57,7 +57,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventKey = params[0];
 
         View view = mFragment.getView();
-        if (view != null && activity != null) {
+        if (view != null && activity != null && eventKey != null) {
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
             eventLoc = (TextView) view.findViewById(R.id.event_location);
@@ -102,7 +102,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 try {
                     APIResponse<JsonObject> statsResponse = DataManager.getEventStats(activity, eventKey);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
-                    if(statsResponse.getData().has("oprs")) {
+                    if(statsResponse.getData().has("oprs") &&
+                       statsResponse.getData().get("oprs").getAsJsonObject().entrySet().size() > 0) {
+                        // ^ Make sure we actually have OPRs in our set!
                         opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
                         Collections.sort(opr, new TeamSortByOPRComparator());
                         String statsString = "";

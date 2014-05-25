@@ -17,8 +17,22 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
         final JsonObject object = json.getAsJsonObject();
         final SimpleEvent event = new SimpleEvent();
 
-        event.setEventKey(object.get("key").getAsString());
-        event.setEventName(object.get("name").getAsString());
+        // Key and name shouldn't be null but doesn't hurt to check
+        // in case something goes terribly wrong.
+        if (object.get("key").isJsonNull()) {
+            event.setEventKey("");
+        }
+        else {
+            event.setEventKey(object.get("key").getAsString());
+        }
+
+        if (object.get("name").isJsonNull())
+        {
+            event.setEventName("");
+        }
+        else{
+            event.setEventName(object.get("name").getAsString());
+        }
         // Location is null sometimes.
         if (object.get("location").isJsonNull()) {
             event.setLocation("");
@@ -27,8 +41,22 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
         }
         event.setEventType(object.get("event_type").getAsInt());
         event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
-        event.setStartDate(object.get("start_date").getAsString());
-        event.setEndDate(object.get("end_date").getAsString());
+
+        // Start/End date is null sometimes (when spamming year changes)
+        if (object.get("start_date").isJsonNull())
+        {
+            event.setStartDate("1900-01-01");
+        }
+        else {
+            event.setStartDate(object.get("start_date").getAsString());
+        }
+
+        if (object.get("end_date").isJsonNull()) {
+            event.setEndDate("1900-01-02");
+        }
+        else {
+            event.setEndDate(object.get("end_date").getAsString());
+        }
         // For some reason "official" is sometimes null. Default to "false" in those cases
         if (object.get("official").isJsonNull()) {
             event.setOfficial(false);
