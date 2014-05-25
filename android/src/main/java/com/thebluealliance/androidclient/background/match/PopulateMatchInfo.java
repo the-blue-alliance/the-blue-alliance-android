@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background.match;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.Constants;
@@ -112,7 +114,9 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             });
 
             // Red Score
-            ((TextView) mActivity.findViewById(R.id.red_score)).setText(redAlliance.get("score").getAsString());
+            JsonElement redScore = redAlliance.get("score");
+            TextView red_score = ((TextView) mActivity.findViewById(R.id.red_score));
+            red_score.setText(redScore.getAsString());
 
             JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
             JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
@@ -151,7 +155,24 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             });
 
             // Blue score
-            ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
+            JsonElement blueScore = blueAlliance.get("score");
+            TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
+            blue_score.setText(blueScore.getAsString());
+
+            if(blueScore.getAsInt() > redScore.getAsInt()){
+                //blue wins
+                mActivity.findViewById(R.id.blue_alliance).setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
+                blue_score.setBackgroundColor(mActivity.getResources().getColor(R.color.blue));
+                blue_score.setTextColor(mActivity.getResources().getColor(R.color.white));
+                blue_score.setTypeface(Typeface.DEFAULT_BOLD);
+            }else if(blueScore.getAsInt() < redScore.getAsInt()){
+                //red wins
+                mActivity.findViewById(R.id.red_allaince).setBackgroundColor(mActivity.getResources().getColor(R.color.light_red));
+                red_score.setBackgroundColor(mActivity.getResources().getColor(R.color.red));
+                red_score.setTextColor(mActivity.getResources().getColor(R.color.white));
+                red_score.setTypeface(Typeface.DEFAULT_BOLD);
+            }
+
 
             SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
             if (event != null) {
