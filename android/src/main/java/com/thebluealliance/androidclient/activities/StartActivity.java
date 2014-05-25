@@ -41,6 +41,8 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
+    private boolean fromSavedInstance = false;
+
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
 
@@ -66,7 +68,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
 
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         dropdownItems = new String[currentYear - oldestYearToDisplay + 1];
-        for(int i=0; i<dropdownItems.length; i++){
+        for (int i = 0; i < dropdownItems.length; i++) {
             dropdownItems[i] = Integer.toString(currentYear - i);
         }
 
@@ -81,6 +83,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
         }
 
         if (savedInstanceState != null) {
+            fromSavedInstance = true;
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
                 initNavId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
             }
@@ -100,7 +103,9 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
     @Override
     public void onCreateNavigationDrawer() {
         useActionBarToggle(true);
-        encourageLearning(true);
+        // Only encourage learning on the launch of the app, not when the activity is
+        // recreated from orientation changes
+        encourageLearning(fromSavedInstance ? false : true);
     }
 
     @Override
@@ -188,6 +193,10 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
 
     @Override
     public boolean onNavigationItemSelected(int position, long id) {
+        // Only handle this if the year has actually changed
+        if (position == mCurrentSelectedYearPosition) {
+            return true;
+        }
         Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedYearPosition = position;
