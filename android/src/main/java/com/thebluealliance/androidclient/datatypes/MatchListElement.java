@@ -70,30 +70,34 @@ public class MatchListElement extends ListElement {
         holder.matchTitle.setText(matchTitle);
 
         // Set team text depending on alliance size.
-        if (redTeams.length == 0)
-        {
+        if (redTeams.length == 0) {
             holder.red1.setText("");
             holder.red2.setText("");
             holder.red3.setText("");
-        }
-        else {
+        } else {
             holder.red1.setText(redTeams[0]);
             holder.red2.setText(redTeams[1]);
-            if (redTeams.length == 2) holder.red3.setText("");
-            else holder.red3.setText(redTeams[2]);
+            if (redTeams.length == 2){
+                holder.red3.setVisibility(View.GONE);
+            }else{
+                holder.red3.setVisibility(View.VISIBLE);
+                holder.red3.setText(redTeams[2]);
+            }
         }
 
-        if (blueTeams.length == 0)
-        {
+        if (blueTeams.length == 0) {
             holder.blue1.setText("");
             holder.blue2.setText("");
             holder.blue3.setText("");
-        }
-        else {
+        } else {
             holder.blue1.setText(blueTeams[0]);
             holder.blue2.setText(blueTeams[1]);
-            if (blueTeams.length == 2) holder.blue3.setText("");
-            else holder.blue3.setText(blueTeams[2]);
+            if (blueTeams.length == 2){
+                holder.blue3.setVisibility(View.GONE);
+            }else{
+                holder.blue3.setVisibility(View.VISIBLE);
+                holder.blue3.setText(blueTeams[2]);
+            }
         }
         holder.redScore.setText(redScore);
         holder.blueScore.setText(blueScore);

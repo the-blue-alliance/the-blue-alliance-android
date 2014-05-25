@@ -83,13 +83,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             TextView red3 = ((TextView) mActivity.findViewById(R.id.red3));
 
             // Don't set any text or listeners if there's no teams in the red alliance for some reason.
-            if (redAllianceTeamKeys.size() == 0)
-            {
-              red1.setText("");
-              red2.setText("");
-              red3.setText("");
-            }
-            else {
+            if (redAllianceTeamKeys.size() == 0) {
+                red1.setText("");
+                red2.setText("");
+                red3.setText("");
+            } else {
                 // Red 1
                 final String red1Key = redAllianceTeamKeys.get(0).getAsString();
                 red1.setText(red1Key.replace("frc", ""));
@@ -121,15 +119,13 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                         }
                     });
                 } else {
-                    red3.setText("");
+                    red3.setVisibility(View.GONE);
                 }
             }
             // Red Score
             if (redAlliance.get("score").getAsInt() < 0) { // if there is no score, add "?"
                 ((TextView) mActivity.findViewById(R.id.red_score)).setText("?");
-            }
-            else
-            {
+            } else {
                 ((TextView) mActivity.findViewById(R.id.red_score)).setText(redAlliance.get("score").getAsString());
             }
 
@@ -141,13 +137,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             TextView blue2 = ((TextView) mActivity.findViewById(R.id.blue2));
             TextView blue3 = ((TextView) mActivity.findViewById(R.id.blue3));
 
-            if (blueAllianceTeamKeys.size() == 0)
-            {
+            if (blueAllianceTeamKeys.size() == 0) {
                 blue1.setText("");
                 blue2.setText("");
                 blue3.setText("");
-            }
-            else {
+            } else {
                 // Blue 1
                 final String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
                 blue1.setText(blue1Key.replace("frc", ""));
@@ -179,14 +173,13 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                         }
                     });
                 } else {
-                    blue3.setText("");
+                    blue3.setVisibility(View.GONE);
                 }
             }
             // Blue score
             if (blueAlliance.get("score").getAsInt() < 0) {
                 ((TextView) mActivity.findViewById(R.id.blue_score)).setText("?");
-            }
-            else {
+            } else {
                 ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
             }
 
@@ -219,11 +212,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     picasso.load(thumbnailURL).into(thumbnail);
                 }
             }
-            for(int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); i++) {
                 ImageView thumbnail = images.get(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 // Add padding between thumbnails if the list of thumbnail has multiple items
-                if(images.size() > 1 && i > 0) {
+                if (images.size() > 1 && i > 0) {
                     layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
                 }
                 ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, layoutParams);

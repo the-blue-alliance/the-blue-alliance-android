@@ -6,7 +6,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
-import com.thebluealliance.androidclient.fragments.InsightsFragment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -292,34 +291,24 @@ public class Match implements BasicModel {
 
         String[] redAlliance, blueAlliance;
         // Add teams based on alliance size (or none if there isn't for some reason)
-        if (redTeams.size() == 3)
-        {
+        if (redTeams.size() == 3) {
             redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)};
-        }
-        else if (redTeams.size() == 2)
-        {
+        } else if (redTeams.size() == 2) {
             redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3)};
-        }
-        else
-        {
-            redAlliance = new String[]{"","",""};
+        } else {
+            redAlliance = new String[]{"", "", ""};
         }
 
-        if (blueTeams.size() == 3)
-        {
+        if (blueTeams.size() == 3) {
             blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)};
-        }
-        else if (blueTeams.size() == 2)
-        {
+        } else if (blueTeams.size() == 2) {
             blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3)};
-        }
-        else
-        {
-            blueAlliance = new String[]{"","",""};
+        } else {
+            blueAlliance = new String[]{"", "", ""};
         }
 
         return new MatchListElement(youTubeVideoKey, getTitle(),
-                redAlliance,blueAlliance,
+                redAlliance, blueAlliance,
                 redScore, blueScore, key);
     }
 
