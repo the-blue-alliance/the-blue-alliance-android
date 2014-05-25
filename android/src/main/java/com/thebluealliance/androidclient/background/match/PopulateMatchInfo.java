@@ -18,10 +18,10 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
@@ -82,6 +82,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             TextView red2 = ((TextView) mActivity.findViewById(R.id.red2));
             TextView red3 = ((TextView) mActivity.findViewById(R.id.red3));
 
+            TeamClickListener listener = new TeamClickListener(mActivity);
+
             // Don't set any text or listeners if there's no teams in the red alliance for some reason.
             if (redAllianceTeamKeys.size() == 0) {
                 red1.setText("");
@@ -89,35 +91,25 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 red3.setText("");
             } else {
                 // Red 1
-                final String red1Key = redAllianceTeamKeys.get(0).getAsString();
-                red1.setText(red1Key.replace("frc", ""));
-                red1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red1Key));
-                    }
-                });
+                String red1Key = redAllianceTeamKeys.get(0).getAsString();
+                red1.setText(red1Key.substring(3));
+                red1.setTag(red1Key);
+                red1.setOnClickListener(listener);
 
                 // Red 2
-                final String red2Key = redAllianceTeamKeys.get(1).getAsString();
-                red2.setText(red2Key.replace("frc", ""));
-                red2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red2Key));
-                    }
-                });
+                String red2Key = redAllianceTeamKeys.get(1).getAsString();
+                red2.setText(red2Key.substring(3));
+                red2.setTag(red2Key);
+                red2.setOnClickListener(listener);
+
                 // Only add the third team if the alliance has three teams.
                 if (redAllianceTeamKeys.size() > 2) {
                     // Red 3
-                    final String red3Key = redAllianceTeamKeys.get(2).getAsString();
-                    red3.setText(red3Key.replace("frc", ""));
-                    red3.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, red3Key));
-                        }
-                    });
+                    String red3Key = redAllianceTeamKeys.get(2).getAsString();
+                    red3.setText(red3Key.substring(3));
+                    red3.setTag(red3Key);
+                    red3.setOnClickListener(listener);
+
                 } else {
                     red3.setVisibility(View.GONE);
                 }
@@ -143,35 +135,24 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 blue3.setText("");
             } else {
                 // Blue 1
-                final String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
-                blue1.setText(blue1Key.replace("frc", ""));
-                blue1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue1Key));
-                    }
-                });
+                String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
+                blue1.setText(blue1Key.substring(3));
+                blue1.setTag(blue1Key);
+                blue1.setOnClickListener(listener);
 
                 // Blue 2
-                final String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
-                blue2.setText(blue2Key.replace("frc", ""));
-                blue2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue2Key));
-                    }
-                });
+                String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
+                blue2.setText(blue2Key.substring(3));
+                blue2.setTag(blue2Key);
+                blue2.setOnClickListener(listener);
 
                 if (blueAllianceTeamKeys.size() > 2) {
                     // Blue 3
-                    final String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
-                    blue3.setText(blue3Key.replace("frc", ""));
-                    blue3.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            mActivity.startActivity(ViewTeamActivity.newInstance(mActivity, blue3Key));
-                        }
-                    });
+                    String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
+                    blue3.setText(blue3Key.substring(3));
+                    blue3.setTag(blue3Key);
+                    blue3.setOnClickListener(listener);
+
                 } else {
                     blue3.setVisibility(View.GONE);
                 }

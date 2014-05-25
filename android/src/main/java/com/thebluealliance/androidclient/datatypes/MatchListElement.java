@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
 
 /**
  * File created by phil on 4/20/14.
@@ -69,6 +70,8 @@ public class MatchListElement extends ListElement {
 
         holder.matchTitle.setText(matchTitle);
 
+        TeamClickListener listener = new TeamClickListener(c);
+
         // Set team text depending on alliance size.
         if (redTeams.length == 0) {
             holder.red1.setText("");
@@ -76,12 +79,20 @@ public class MatchListElement extends ListElement {
             holder.red3.setText("");
         } else {
             holder.red1.setText(redTeams[0]);
+            holder.red1.setTag("frc" + redTeams[0]);
+            holder.red1.setOnClickListener(listener);
+
             holder.red2.setText(redTeams[1]);
-            if (redTeams.length == 2){
+            holder.red2.setTag("frc" + redTeams[1]);
+            holder.red2.setOnClickListener(listener);
+
+            if (redTeams.length == 2) {
                 holder.red3.setVisibility(View.GONE);
-            }else{
+            } else {
                 holder.red3.setVisibility(View.VISIBLE);
                 holder.red3.setText(redTeams[2]);
+                holder.red3.setTag("frc" + redTeams[2]);
+                holder.red3.setOnClickListener(listener);
             }
         }
 
@@ -91,12 +102,20 @@ public class MatchListElement extends ListElement {
             holder.blue3.setText("");
         } else {
             holder.blue1.setText(blueTeams[0]);
+            holder.blue1.setTag("frc" + blueTeams[0]);
+            holder.blue1.setOnClickListener(listener);
+
             holder.blue2.setText(blueTeams[1]);
-            if (blueTeams.length == 2){
+            holder.blue2.setTag("frc" + blueTeams[1]);
+            holder.blue2.setOnClickListener(listener);
+
+            if (blueTeams.length == 2) {
                 holder.blue3.setVisibility(View.GONE);
-            }else{
+            } else {
                 holder.blue3.setVisibility(View.VISIBLE);
                 holder.blue3.setText(blueTeams[2]);
+                holder.blue3.setTag("frc"+blueTeams[2]);
+                holder.blue3.setOnClickListener(listener);
             }
         }
         holder.redScore.setText(redScore);
