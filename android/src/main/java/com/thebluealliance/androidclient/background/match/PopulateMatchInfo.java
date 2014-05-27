@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background.match;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -159,17 +160,22 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
             blue_score.setText(blueScore.getAsString());
 
+            Resources resources = mActivity.getResources();
             if(blueScore.getAsInt() > redScore.getAsInt()){
                 //blue wins
-                mActivity.findViewById(R.id.blue_alliance).setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
-                blue_score.setBackgroundColor(mActivity.getResources().getColor(R.color.blue));
-                blue_score.setTextColor(mActivity.getResources().getColor(R.color.white));
+                View blue_alliance = mActivity.findViewById(R.id.blue_alliance);
+                if(blue_alliance != null) {
+                    blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
+                }
+                blue_score.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
                 blue_score.setTypeface(Typeface.DEFAULT_BOLD);
             }else if(blueScore.getAsInt() < redScore.getAsInt()){
                 //red wins
-                mActivity.findViewById(R.id.red_allaince).setBackgroundColor(mActivity.getResources().getColor(R.color.light_red));
-                red_score.setBackgroundColor(mActivity.getResources().getColor(R.color.red));
-                red_score.setTextColor(mActivity.getResources().getColor(R.color.white));
+                View red_alliance = mActivity.findViewById(R.id.red_alliance);
+                if(red_alliance != null) {
+                    red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                }
+                red_score.setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
                 red_score.setTypeface(Typeface.DEFAULT_BOLD);
             }
 

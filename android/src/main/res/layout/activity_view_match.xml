@@ -47,7 +47,8 @@
 
                     <TableRow
                         android:background="@color/column_header_gray"
-                        android:minHeight="32dp">
+                        android:minHeight="32dp"
+                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium">
 
                         <TextView
                             android:layout_width="0dp"
@@ -66,7 +67,7 @@
 
                     <TableRow
                         android:layout_height="wrap_content"
-                        android:id="@+id/red_allaince"
+                        android:id="@+id/red_alliance"
                         android:background="@color/lighter_red"
                         android:minHeight="48dp">
 
@@ -75,6 +76,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
@@ -82,6 +84,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
@@ -89,6 +92,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
@@ -96,6 +100,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1.5"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:background="@color/light_red"
                             android:gravity="center_vertical|center_horizontal"/>
                     </TableRow>
@@ -111,6 +116,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
@@ -118,6 +124,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
@@ -125,6 +132,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
@@ -132,6 +140,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1.5"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:background="@color/light_blue"
                             android:gravity="center_vertical|center_horizontal"/>
                     </TableRow>
