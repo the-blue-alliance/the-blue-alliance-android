@@ -11,11 +11,13 @@
         android:orientation="horizontal"
         android:visibility="gone"
         android:weightSum="2">
-
-        <RelativeLayout
+        <ScrollView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="16dp">
@@ -105,6 +107,7 @@
                         android:layout_weight="1.5"
                         android:background="@color/light_red"
                         android:gravity="center_vertical|center_horizontal"
+                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                         android:text="Red Score"
                         android:textStyle="bold" />
                 </TableRow>
@@ -156,6 +159,7 @@
                 </TableRow>
             </TableLayout>
         </RelativeLayout>
+        </ScrollView>
 
         <ScrollView
             android:id="@+id/youtube_fragment"
