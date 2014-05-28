@@ -18,6 +18,7 @@ public class SimpleEvent extends Event implements BasicModel {
         if (!Event.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
+        this.eventYear = Integer.parseInt(eventKey.substring(0,4));
         this.eventName = eventName;
         this.location = location;
         this.eventType = eventType;
@@ -35,8 +36,6 @@ public class SimpleEvent extends Event implements BasicModel {
 
     public static HashMap<String, ArrayList<SimpleEvent>> groupByWeek(ArrayList<SimpleEvent> events){
         HashMap<String, ArrayList<SimpleEvent>> groups = new HashMap<>();
-        int currentWeek = 1;
-        Date weekStart = null;
         ArrayList<SimpleEvent> offseason = new ArrayList<>(),
                                preseason = new ArrayList<>(),
                                weekless = new ArrayList<>();

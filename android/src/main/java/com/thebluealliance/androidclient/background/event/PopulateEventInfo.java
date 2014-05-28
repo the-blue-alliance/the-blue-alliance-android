@@ -57,7 +57,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventKey = params[0];
 
         View view = mFragment.getView();
-        if (view != null && activity != null) {
+        if (view != null && activity != null && eventKey != null) {
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
             eventLoc = (TextView) view.findViewById(R.id.event_location);
@@ -85,12 +85,16 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     APIResponse<ArrayList<JsonArray>> rankResponse = DataManager.getEventRankings(activity, eventKey);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
+                    if(rankList.size() == 0){
+                        showRanks = false;
+                    }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
                         rankString += ((i) + ". " + rankList.get(i).get(1).getAsString()) + "\n";
                     }
                     ranks.setText(rankString);
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "Unable to load event rankings");
+                    showRanks = false;
                     return APIResponse.CODE.NODATA;
                 }
 
@@ -98,7 +102,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 try {
                     APIResponse<JsonObject> statsResponse = DataManager.getEventStats(activity, eventKey);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
-                    if(statsResponse.getData().has("oprs")) {
+                    if(statsResponse.getData().has("oprs") &&
+                       statsResponse.getData().get("oprs").getAsJsonObject().entrySet().size() > 0) {
+                        // ^ Make sure we actually have OPRs in our set!
                         opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
                         Collections.sort(opr, new TeamSortByOPRComparator());
                         String statsString = "";
@@ -106,9 +112,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                             statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
                         }
                         stats.setText(statsString);
+                    }else{
+                        showStats = false;
                     }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to load event stats");
+                    showStats = false;
                     return APIResponse.CODE.NODATA;
                 }
             }
@@ -159,8 +168,16 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             eventName.setText(event.getEventName());
-            eventDate.setText(event.getDateString());
-            eventLoc.setText(event.getLocation());
+            if(event.getDateString().isEmpty()) {
+                activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
+            }else{
+                eventDate.setText(event.getDateString());
+            }
+            if(event.getLocation().isEmpty()){
+                activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
+            }else{
+                eventLoc.setText(event.getLocation());
+            }
             if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);
                 if(nextLayout.getChildCount() > 1) {

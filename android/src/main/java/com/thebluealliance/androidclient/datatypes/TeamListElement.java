@@ -34,7 +34,13 @@ public class TeamListElement extends ListElement {
             title.setText("" + mTeamNumber);
 
             TextView dates = (TextView) view.findViewById(R.id.team_name);
-            dates.setText(mTeamName);
+            if (mTeamName.equals(""))
+            {
+                dates.setText("Team " + mTeamNumber);
+            }
+            else {
+                dates.setText(mTeamName);
+            }
 
             TextView location = (TextView) view.findViewById(R.id.team_location);
             location.setText(mTeamLocation);

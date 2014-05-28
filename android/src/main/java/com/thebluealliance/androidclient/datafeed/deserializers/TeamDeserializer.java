@@ -17,10 +17,21 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         final JsonObject object = json.getAsJsonObject();
         final Team team = new Team();
 
-        team.setTeamKey(object.get("key").getAsString());
-        team.setTeamNumber(object.get("team_number").getAsInt());
-        team.setFullName(object.get("name").getAsString());
-        team.setNickname(object.get("nickname").getAsString());
+        // All the teams should have an associated key and team number,
+        // but it doesn't hurt to check in the rare case something goes terribly wrong.
+        if (object.has("key") && !object.get("key").isJsonNull()) {
+            team.setTeamKey(object.get("key").getAsString());
+        }
+        if (object.has("team_number") && !object.get("team_number").isJsonNull()) {
+            team.setTeamNumber(object.get("team_number").getAsInt());
+        }
+        // Some of the old teams don't have names and/or locations.
+        if (object.has("name") && !object.get("name").isJsonNull()) {
+            team.setFullName(object.get("name").getAsString());
+        }
+        if (object.has("nickname") && !object.get("nickname").isJsonNull()) {
+            team.setNickname(object.get("nickname").getAsString());
+        }
         if (object.has("location") && !object.get("location").isJsonNull()) {
             team.setLocation(object.get("location").getAsString());
         }
