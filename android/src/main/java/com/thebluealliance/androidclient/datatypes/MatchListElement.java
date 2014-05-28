@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datatypes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ public class MatchListElement extends ListElement {
     private String videoKey;
     String matchTitle, redTeams[], blueTeams[], matchKey;
     int redScore, blueScore;
+    private ViewHolder holder;
 
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
         super();
@@ -32,8 +34,7 @@ public class MatchListElement extends ListElement {
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        ViewHolder holder;
-        if (convertView == null) {
+        if (convertView == null || holder == null) {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 
             holder = new ViewHolder();
@@ -48,9 +49,22 @@ public class MatchListElement extends ListElement {
             holder.blueScore = (TextView) convertView.findViewById(R.id.blue_score);
             holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
 
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+            Resources resources = c.getResources();
+            if(blueScore> redScore){
+                //blue wins
+                View blue_alliance = convertView.findViewById(R.id.blue_alliance);
+                if(blue_alliance != null) {
+                    blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
+                }
+                convertView.findViewById(R.id.blue_score).setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
+            }else if(blueScore < redScore){
+                //red wins
+                View red_alliance = convertView.findViewById(R.id.red_alliance);
+                if(red_alliance != null) {
+                    red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                }
+                convertView.findViewById(R.id.red_score).setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
+            }
         }
 
         //if we have video for this match, show an icon
@@ -80,7 +94,7 @@ public class MatchListElement extends ListElement {
         return convertView;
     }
 
-    private static class ViewHolder {
+    private class ViewHolder {
         TextView matchTitle;
         TextView red1;
         TextView red2;
