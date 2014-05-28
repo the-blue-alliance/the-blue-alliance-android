@@ -137,4 +137,8 @@ public class Team implements BasicModel {
     public ContentValues getParams() {
         return null;
     }
+
+    public static boolean validateTeamKey(String key){
+        return key.matches("^frc\\d{1,4}$");
+    }
 }

@@ -2,7 +2,9 @@ package com.thebluealliance.androidclient.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 
 import java.util.HashSet;
@@ -22,8 +24,11 @@ public class DownloadEventList extends AsyncTask<Integer, Void, Set<String>> {
     @Override
     protected Set<String> doInBackground(Integer... params) {
         try {
+            Log.d(Constants.LOG_TAG, "Loading event list...");
             return DataManager.getEventsByYear(c, params[0]).getData().keySet();
         } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
+            Log.d(Constants.LOG_TAG, "Loading failed!");
             return new HashSet<>();
         }
     }

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
@@ -12,6 +13,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -155,12 +157,14 @@ public class Event implements BasicModel {
             teams,
             matches;
     JsonObject stats;
+    int eventYear;
 
     public Event() {
         this.eventKey = "";
         this.eventName = "";
         this.shortName = "";
         this.abbreviation = "";
+        this.eventYear = -1;
         this.location = "";
         this.eventType = TYPE.NONE;
         this.eventDistrict = DISTRICT.NONE;
@@ -180,6 +184,7 @@ public class Event implements BasicModel {
         if (!Event.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
+        this.eventYear = Integer.parseInt(eventKey.substring(0, 4));
         this.eventName = eventName;
         this.shortName = shortName;
         this.abbreviation = abbreviation;
@@ -199,6 +204,10 @@ public class Event implements BasicModel {
 
     public String getWebsite() {
         return website;
+    }
+
+    public int getEventYear(){
+        return eventYear;
     }
 
     public void setWebsite(String website) {
@@ -260,6 +269,7 @@ public class Event implements BasicModel {
         if (!Event.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
+        this.eventYear = Integer.parseInt(eventKey.substring(0,4));
     }
 
     public String getEventName() {
@@ -342,13 +352,15 @@ public class Event implements BasicModel {
 
     public int getCompetitionWeek() {
         if (startDate == null) return -1;
-        int week = Integer.parseInt(weekFormat.format(startDate)) - 8;
+        int week = Integer.parseInt(weekFormat.format(startDate)) - Utilities.getFirstCompWeek(eventYear);
         return week < 0 ? 0 : week;
     }
-
     public static int competitionWeek(Date date){
         if (date == null) return -1;
-        int week = Integer.parseInt(weekFormat.format(date)) - 8;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int week = Integer.parseInt(weekFormat.format(date)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         return week < 0 ? 0 : week;
     }
 
@@ -406,12 +418,6 @@ public class Event implements BasicModel {
         return shortRenderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
     }
 
-    public int getWeek() {
-        if (startDate == null) return -1;
-        int week = Integer.parseInt(weekFormat.format(startDate)) - 8;
-        return week < 0 ? 0 : week;
-    }
-
     @Override
     public EventListElement render() {
         return new EventListElement(eventKey, eventName, getDateString(), location);
@@ -428,7 +434,7 @@ public class Event implements BasicModel {
         values.put(Database.Events.START, eventDateFormat.format(startDate));
         values.put(Database.Events.END, eventDateFormat.format(endDate));
         values.put(Database.Events.OFFICIAL, official ? 1 : 0);
-        values.put(Database.Events.WEEK, getWeek());
+        values.put(Database.Events.WEEK, getCompetitionWeek());
 
         return values;
     }
@@ -439,7 +445,6 @@ public class Event implements BasicModel {
             case NONE:
                 return 99;
             case REGIONAL:
-                return 2;
             case DISTRICT:
                 return 2;
             case DISTRICT_CMP:
@@ -473,28 +478,34 @@ public class Event implements BasicModel {
         }
     }
 
-    public static String weekLabelFromNum(HashMap<String, ArrayList<SimpleEvent>> events, int num){
-        /**
-         * the whole event list is required because CMP doesn't happen the same week every year
-         */
+    public static String weekLabelFromNum(int year, int weekNum){
 
-        if(num <= 0){
+        if(weekNum <= 0){
             return PRESEASON_LABEL;
         }
 
         //let's find the week of CMP and base everything else off that
         //there should always be something in the CMP set for every year
-        int cmpWeek = events.get(CHAMPIONSHIP_LABEL).get(0).getCompetitionWeek();
+        int cmpWeek = Utilities.getCmpWeek(year);
 
-        if(num > 0 && num < cmpWeek){
-            return String.format(REGIONAL_LABEL, num);
+        if(weekNum > 0 && weekNum < cmpWeek){
+            return String.format(REGIONAL_LABEL, weekNum);
         }
-        if(num == cmpWeek){
+        if(weekNum == cmpWeek){
             return CHAMPIONSHIP_LABEL;
         }
-        if(num > cmpWeek){
+        if(weekNum > cmpWeek){
             return OFFSEASON_LABEL;
         }
         return WEEKLESS_LABEL;
+    }
+
+    public static int weekNumFromLabel(HashMap<String, ArrayList<SimpleEvent>> groupedEvents, String label){
+        if(groupedEvents.containsKey(label)){
+            SimpleEvent e = groupedEvents.get(label).get(0);
+            return e.getCompetitionWeek();
+        }else{
+            return -1;
+        }
     }
 }

@@ -19,12 +19,22 @@ public class EventDeserializer implements JsonDeserializer<Event> {
 
         event.setEventKey(object.get("key").getAsString());
         event.setEventName(object.get("name").getAsString());
-        event.setLocation(object.get("location").getAsString());
+        // Location is null sometimes.
+        if (object.get("location").isJsonNull()) {
+            event.setLocation("");
+        } else {
+            event.setLocation(object.get("location").getAsString());
+        }
         event.setEventType(object.get("event_type").getAsInt());
         event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
         event.setStartDate(object.get("start_date").getAsString());
         event.setEndDate(object.get("end_date").getAsString());
-        event.setOfficial(object.get("official").getAsBoolean());
+        // For some reason "official" is sometimes null. Default to "false" in those cases
+        if(object.get("official").isJsonNull()) {
+            event.setOfficial(false);
+        } else {
+            event.setOfficial(object.get("official").getAsBoolean());
+        }
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
         if (object.get("short_name").isJsonNull()) {

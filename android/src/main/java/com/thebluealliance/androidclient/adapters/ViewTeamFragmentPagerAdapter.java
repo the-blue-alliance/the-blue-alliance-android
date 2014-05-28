@@ -44,7 +44,7 @@ public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
                 f.setArguments(args);
                 return f;
             case 1: // events
-                return EventListFragment.newInstance(2014, -1, mTeamKey);
+                return EventListFragment.newInstance(2014, -1, mTeamKey, "");
             case 2: // media
             default:
                 return new Fragment();

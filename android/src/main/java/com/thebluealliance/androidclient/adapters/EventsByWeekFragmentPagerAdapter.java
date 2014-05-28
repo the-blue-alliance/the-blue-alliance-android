@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
@@ -34,6 +35,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
             Collections.sort(thisYearsWeekLabels, new EventWeekLabelSortComparator());
             mCount = thisYearsWeekLabels.size();
         } catch (Exception e){
+            e.printStackTrace();
             mCount = 0;
         }
     }
@@ -41,7 +43,9 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         Date now = new Date();
-        if (Event.competitionWeek(now) == (position)) {
+        Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(now);
+        if (Event.competitionWeek(now) == position && nowCalendar.get(Calendar.YEAR) == mYear) {
             return "Current Week";
         } else {
             return thisYearsWeekLabels.get(position);
@@ -55,11 +59,10 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return EventListFragment.newInstance(mYear, (position >= 8 ? position + 1 : position), null);
-        /**
-         * Not sure of a better way to do this ATM, but the gap week between the last event and CMP is throwing things off
-         * I don't think it'll be affected by prior years' schedules, but I can fix that when it comes
-         * That constant 8 should eventually be replaced with the week number before CMP
-         */
+        return EventListFragment.newInstance(mYear, position, null, getPageTitle(position).toString());
+    }
+
+    public ArrayList<String> getLabels(){
+        return thisYearsWeekLabels;
     }
 }
