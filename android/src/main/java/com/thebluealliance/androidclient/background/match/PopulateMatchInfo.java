@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.background.match;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -168,7 +167,6 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
                 }
                 blue_score.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
-                blue_score.setTypeface(Typeface.DEFAULT_BOLD);
             }else if(blueScore.getAsInt() < redScore.getAsInt()){
                 //red wins
                 View red_alliance = mActivity.findViewById(R.id.red_alliance);
@@ -176,7 +174,6 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
                 }
                 red_score.setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
-                red_score.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
 
