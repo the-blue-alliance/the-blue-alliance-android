@@ -105,7 +105,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
         useActionBarToggle(true);
         // Only encourage learning on the launch of the app, not when the activity is
         // recreated from orientation changes
-        encourageLearning(fromSavedInstance ? false : true);
+        encourageLearning(!fromSavedInstance);
     }
 
     @Override
