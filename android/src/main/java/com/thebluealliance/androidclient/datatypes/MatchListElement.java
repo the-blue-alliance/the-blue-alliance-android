@@ -52,29 +52,30 @@ public class MatchListElement extends ListElement {
             holder.blueScore = (TextView) convertView.findViewById(R.id.blue_score);
             holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
 
-            Resources resources = c.getResources();
-            if(!redScore.contains("?") && !blueScore.contains("?")) {
-                try {
-                    int bScore = Integer.parseInt(blueScore),
+        }
+        
+        Resources resources = c.getResources();
+        if (!redScore.contains("?") && !blueScore.contains("?")) {
+            try {
+                int bScore = Integer.parseInt(blueScore),
                         rScore = Integer.parseInt(redScore);
-                    if (bScore > rScore) {
-                        //blue wins
-                        View blue_alliance = convertView.findViewById(R.id.blue_alliance);
-                        if (blue_alliance != null) {
-                            blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
-                        }
-                        convertView.findViewById(R.id.blue_score).setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
-                    } else if (bScore < rScore) {
-                        //red wins
-                        View red_alliance = convertView.findViewById(R.id.red_alliance);
-                        if (red_alliance != null) {
-                            red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
-                        }
-                        convertView.findViewById(R.id.red_score).setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
+                if (bScore > rScore) {
+                    //blue wins
+                    View blue_alliance = convertView.findViewById(R.id.blue_alliance);
+                    if (blue_alliance != null) {
+                        blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
                     }
-                }catch(NumberFormatException e){
-                    Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
+                    convertView.findViewById(R.id.blue_score).setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
+                } else if (bScore < rScore) {
+                    //red wins
+                    View red_alliance = convertView.findViewById(R.id.red_alliance);
+                    if (red_alliance != null) {
+                        red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                    }
+                    convertView.findViewById(R.id.red_score).setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
                 }
+            } catch (NumberFormatException e) {
+                Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
             }
         }
 
@@ -139,7 +140,7 @@ public class MatchListElement extends ListElement {
             } else {
                 holder.blue3.setVisibility(View.VISIBLE);
                 holder.blue3.setText(blueTeams[2]);
-                holder.blue3.setTag("frc"+blueTeams[2]);
+                holder.blue3.setTag("frc" + blueTeams[2]);
                 holder.blue3.setOnClickListener(listener);
             }
         }
@@ -149,7 +150,7 @@ public class MatchListElement extends ListElement {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         TextView matchTitle;
         TextView red1;
         TextView red2;
