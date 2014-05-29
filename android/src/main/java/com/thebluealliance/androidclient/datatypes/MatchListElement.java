@@ -20,8 +20,7 @@ import com.thebluealliance.androidclient.listeners.TeamClickListener;
 public class MatchListElement extends ListElement {
 
     private String videoKey;
-    String matchTitle, redTeams[], blueTeams[], matchKey;
-    String redScore, blueScore;
+    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore;
     private ViewHolder holder;
 
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey) {
@@ -53,7 +52,7 @@ public class MatchListElement extends ListElement {
             holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
 
         }
-        
+
         Resources resources = c.getResources();
         if (!redScore.contains("?") && !blueScore.contains("?")) {
             try {

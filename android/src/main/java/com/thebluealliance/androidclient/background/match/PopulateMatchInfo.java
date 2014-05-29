@@ -162,14 +162,14 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 }
             }
             // Blue score
+            TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
             if (blueAlliance.get("score").getAsInt() < 0) {
-                ((TextView) mActivity.findViewById(R.id.blue_score)).setText("?");
+                blue_score.setText("?");
             } else {
-                ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
+               blue_score.setText(blueAlliance.get("score").getAsString());
             }
 
             JsonElement blueScore = blueAlliance.get("score");
-            TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
             blue_score.setText(blueScore.getAsString());
 
             Resources resources = mActivity.getResources();
