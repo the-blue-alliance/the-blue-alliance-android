@@ -123,117 +123,118 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 red_score.setText("?");
             } else {
                 red_score.setText(redAlliance.get("score").getAsString());
-
-                // Repeat process for blue alliance.
-                JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
-                JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
-
-                TextView blue1 = ((TextView) mActivity.findViewById(R.id.blue1));
-                TextView blue2 = ((TextView) mActivity.findViewById(R.id.blue2));
-                TextView blue3 = ((TextView) mActivity.findViewById(R.id.blue3));
-
-                if (blueAllianceTeamKeys.size() == 0) {
-                    blue1.setText("");
-                    blue2.setText("");
-                    blue3.setText("");
-                } else {
-                    // Blue 1
-                    String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
-                    blue1.setText(blue1Key.substring(3));
-                    blue1.setTag(blue1Key);
-                    blue1.setOnClickListener(listener);
-
-                    // Blue 2
-                    String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
-                    blue2.setText(blue2Key.substring(3));
-                    blue2.setTag(blue2Key);
-                    blue2.setOnClickListener(listener);
-
-                    if (blueAllianceTeamKeys.size() > 2) {
-                        // Blue 3
-                        String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
-                        blue3.setText(blue3Key.substring(3));
-                        blue3.setTag(blue3Key);
-                        blue3.setOnClickListener(listener);
-
-                    } else {
-                        blue3.setVisibility(View.GONE);
-                    }
-                }
-                // Blue score
-                if (blueAlliance.get("score").getAsInt() < 0) {
-                    ((TextView) mActivity.findViewById(R.id.blue_score)).setText("?");
-                } else {
-                    ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
-                }
-
-                JsonElement blueScore = blueAlliance.get("score");
-                TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
-                blue_score.setText(blueScore.getAsString());
-
-                Resources resources = mActivity.getResources();
-                if (blueScore.getAsInt() > redScore.getAsInt()) {
-                    //blue wins
-                    View blue_alliance = mActivity.findViewById(R.id.blue_alliance);
-                    if (blue_alliance != null) {
-                        blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
-                    }
-                    blue_score.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
-                } else if (blueScore.getAsInt() < redScore.getAsInt()) {
-                    //red wins
-                    View red_alliance = mActivity.findViewById(R.id.red_alliance);
-                    if (red_alliance != null) {
-                        red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
-                    }
-                    red_score.setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
-                }
-
-                SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
-                if (event != null) {
-                    ((TextView) mActivity.findViewById(R.id.event_name)).setText(event.getEventName());
-                }
-
-                ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatch.getTitle());
-
-                JsonArray videos = mMatch.getVideos();
-                Picasso picasso = Picasso.with(mActivity);
-                List<ImageView> images = new ArrayList();
-                for (int i = 0; i < videos.size(); i++) {
-                    JsonObject video = videos.get(i).getAsJsonObject();
-                    if (video.get("type").getAsString().equals("youtube")) {
-                        final String videoKey = video.get("key").getAsString();
-                        String thumbnailURL = "http://img.youtube.com/vi/" + videoKey + "/0.jpg";
-                        ImageView thumbnail = new ImageView(mActivity);
-                        thumbnail.setAdjustViewBounds(true);
-                        thumbnail.setClickable(true);
-                        thumbnail.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + videoKey));
-                                mActivity.startActivity(intent);
-                            }
-                        });
-                        images.add(thumbnail);
-                        picasso.load(thumbnailURL).into(thumbnail);
-                    }
-                }
-                for (int i = 0; i < images.size(); i++) {
-                    ImageView thumbnail = images.get(i);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    // Add padding between thumbnails if the list of thumbnail has multiple items
-                    if (images.size() > 1 && i > 0) {
-                        layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
-                    }
-                    ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, layoutParams);
-                }
-
-                if (code == APIResponse.CODE.OFFLINECACHE) {
-                    ((RefreshableHostActivity) mActivity).showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
-                }
-
-                mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
-                mActivity.findViewById(R.id.match_container).setVisibility(View.VISIBLE);
             }
+
+            // Repeat process for blue alliance.
+            JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
+            JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
+
+            TextView blue1 = ((TextView) mActivity.findViewById(R.id.blue1));
+            TextView blue2 = ((TextView) mActivity.findViewById(R.id.blue2));
+            TextView blue3 = ((TextView) mActivity.findViewById(R.id.blue3));
+
+            if (blueAllianceTeamKeys.size() == 0) {
+                blue1.setText("");
+                blue2.setText("");
+                blue3.setText("");
+            } else {
+                // Blue 1
+                String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
+                blue1.setText(blue1Key.substring(3));
+                blue1.setTag(blue1Key);
+                blue1.setOnClickListener(listener);
+
+                // Blue 2
+                String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
+                blue2.setText(blue2Key.substring(3));
+                blue2.setTag(blue2Key);
+                blue2.setOnClickListener(listener);
+
+                if (blueAllianceTeamKeys.size() > 2) {
+                    // Blue 3
+                    String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
+                    blue3.setText(blue3Key.substring(3));
+                    blue3.setTag(blue3Key);
+                    blue3.setOnClickListener(listener);
+
+                } else {
+                    blue3.setVisibility(View.GONE);
+                }
+            }
+            // Blue score
+            if (blueAlliance.get("score").getAsInt() < 0) {
+                ((TextView) mActivity.findViewById(R.id.blue_score)).setText("?");
+            } else {
+                ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
+            }
+
+            JsonElement blueScore = blueAlliance.get("score");
+            TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
+            blue_score.setText(blueScore.getAsString());
+
+            Resources resources = mActivity.getResources();
+            if (blueScore.getAsInt() > redScore.getAsInt()) {
+                //blue wins
+                View blue_alliance = mActivity.findViewById(R.id.blue_alliance);
+                if (blue_alliance != null) {
+                    blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
+                }
+                blue_score.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
+            } else if (blueScore.getAsInt() < redScore.getAsInt()) {
+                //red wins
+                View red_alliance = mActivity.findViewById(R.id.red_alliance);
+                if (red_alliance != null) {
+                    red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                }
+                red_score.setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
+            }
+
+            SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
+            if (event != null) {
+                ((TextView) mActivity.findViewById(R.id.event_name)).setText(event.getEventName());
+            }
+
+            ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatch.getTitle());
+
+            JsonArray videos = mMatch.getVideos();
+            Picasso picasso = Picasso.with(mActivity);
+            List<ImageView> images = new ArrayList();
+            for (int i = 0; i < videos.size(); i++) {
+                JsonObject video = videos.get(i).getAsJsonObject();
+                if (video.get("type").getAsString().equals("youtube")) {
+                    final String videoKey = video.get("key").getAsString();
+                    String thumbnailURL = "http://img.youtube.com/vi/" + videoKey + "/0.jpg";
+                    ImageView thumbnail = new ImageView(mActivity);
+                    thumbnail.setAdjustViewBounds(true);
+                    thumbnail.setClickable(true);
+                    thumbnail.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + videoKey));
+                            mActivity.startActivity(intent);
+                        }
+                    });
+                    images.add(thumbnail);
+                    picasso.load(thumbnailURL).into(thumbnail);
+                }
+            }
+            for (int i = 0; i < images.size(); i++) {
+                ImageView thumbnail = images.get(i);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                // Add padding between thumbnails if the list of thumbnail has multiple items
+                if (images.size() > 1 && i > 0) {
+                    layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
+                }
+                ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, layoutParams);
+            }
+
+            if (code == APIResponse.CODE.OFFLINECACHE) {
+                ((RefreshableHostActivity) mActivity).showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
+            }
+
+            mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
+            mActivity.findViewById(R.id.match_container).setVisibility(View.VISIBLE);
+
         }
 
 
