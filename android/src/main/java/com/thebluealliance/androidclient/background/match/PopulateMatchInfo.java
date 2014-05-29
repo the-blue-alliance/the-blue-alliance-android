@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background.match;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.Constants;
@@ -115,10 +117,12 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 }
             }
             // Red Score
-            if (redAlliance.get("score").getAsInt() < 0) { // if there is no score, add "?"
-                ((TextView) mActivity.findViewById(R.id.red_score)).setText("?");
+            JsonElement redScore = redAlliance.get("score");
+            TextView red_score = ((TextView) mActivity.findViewById(R.id.red_score));
+            if (redScore.getAsInt() < 0) { // if there is no score, add "?"
+                red_score.setText("?");
             } else {
-                ((TextView) mActivity.findViewById(R.id.red_score)).setText(redAlliance.get("score").getAsString());
+                red_score.setText(redAlliance.get("score").getAsString());
             }
 
             // Repeat process for blue alliance.
@@ -158,10 +162,31 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 }
             }
             // Blue score
+            TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
             if (blueAlliance.get("score").getAsInt() < 0) {
-                ((TextView) mActivity.findViewById(R.id.blue_score)).setText("?");
+                blue_score.setText("?");
             } else {
-                ((TextView) mActivity.findViewById(R.id.blue_score)).setText(blueAlliance.get("score").getAsString());
+               blue_score.setText(blueAlliance.get("score").getAsString());
+            }
+
+            JsonElement blueScore = blueAlliance.get("score");
+            blue_score.setText(blueScore.getAsString());
+
+            Resources resources = mActivity.getResources();
+            if (blueScore.getAsInt() > redScore.getAsInt()) {
+                //blue wins
+                View blue_alliance = mActivity.findViewById(R.id.blue_alliance);
+                if (blue_alliance != null) {
+                    blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
+                }
+                blue_score.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
+            } else if (blueScore.getAsInt() < redScore.getAsInt()) {
+                //red wins
+                View red_alliance = mActivity.findViewById(R.id.red_alliance);
+                if (red_alliance != null) {
+                    red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                }
+                red_score.setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
             }
 
             SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
@@ -185,7 +210,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     thumbnail.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + videoKey));
                             mActivity.startActivity(intent);
                         }
                     });
@@ -209,8 +234,9 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
             mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
             mActivity.findViewById(R.id.match_container).setVisibility(View.VISIBLE);
+
         }
+
+
     }
-
-
 }

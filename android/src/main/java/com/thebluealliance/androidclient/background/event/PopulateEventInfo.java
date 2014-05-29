@@ -168,7 +168,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             eventName.setText(event.getEventName());
-            eventDate.setText(event.getDateString());
+            if(event.getDateString().isEmpty()) {
+                activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
+            }else{
+                eventDate.setText(event.getDateString());
+            }
             if(event.getLocation().isEmpty()){
                 activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
             }else{

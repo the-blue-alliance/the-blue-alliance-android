@@ -325,6 +325,10 @@ public class Event implements BasicModel {
     }
 
     public void setStartDate(String startString) {
+        if(startString == null || startString.isEmpty()){
+            startDate = null;
+            return;
+        }
         try {
             this.startDate = eventDateFormat.parse(startString);
         } catch (ParseException ex) {
@@ -342,6 +346,10 @@ public class Event implements BasicModel {
     }
 
     public void setEndDate(String endString) {
+        if(endString == null || endString.isEmpty()){
+            endDate = null;
+            return;
+        }
         try {
             this.endDate = eventDateFormat.parse(endString);
         } catch (ParseException ex) {
@@ -365,11 +373,13 @@ public class Event implements BasicModel {
     }
 
     public boolean isHappeningNow() {
+        if(startDate == null || endDate == null) return false;
         Date now = new Date();
         return now.after(startDate) && now.before(endDate);
     }
 
     public boolean hasStarted(){
+        if(startDate == null) return false;
         Date now = new Date();
         return now.after(startDate);
     }
@@ -415,6 +425,7 @@ public class Event implements BasicModel {
     }
 
     public String getDateString() {
+        if(startDate == null || endDate == null) return "";
         return shortRenderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
     }
 

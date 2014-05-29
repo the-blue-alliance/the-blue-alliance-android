@@ -59,14 +59,18 @@ public class EventsByWeekFragment extends Fragment {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         //set the currently selected tab to the current week or week 1
         int week1Index = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter()).getLabels().indexOf(String.format(Event.REGIONAL_LABEL, 1));
-        mViewPager.setCurrentItem((currentWeek > Utilities.getCmpWeek(mYear) + 1 && currentYear == mYear)
-                ? Math.min(mViewPager.getAdapter().getCount(), week1Index)
-                : currentWeek);
-        /** Explanation for above lines:
-         * If the current week is past CMP,, then
-         * show week 1 (which is either index 1 or 2, which we'll get from the adapter by finding its label
-         * Else, we display the current week
-         */
+        if(currentYear != mYear){
+            mViewPager.setCurrentItem(week1Index);
+        }else {
+            mViewPager.setCurrentItem((currentWeek > Utilities.getCmpWeek(mYear) + 1)
+                    ? Math.min(mViewPager.getAdapter().getCount(), week1Index)
+                    : currentWeek);
+            /** Explanation for above lines:
+             * If the current week is past CMP,, then
+             * show week 1 (which is either index 1 or 2, which we'll get from the adapter by finding its label
+             * Else, we display the current week
+             */
+        }
         return view;
     }
 }

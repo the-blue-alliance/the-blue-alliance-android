@@ -48,6 +48,7 @@ public class Match implements BasicModel {
             switch (str) {
                 case "qm":
                     return QUAL;
+                case "ef":
                 case "qf":
                     return QUARTER;
                 case "sf":
@@ -319,7 +320,7 @@ public class Match implements BasicModel {
     }
 
     public static boolean validateMatchKey(String key) {
-        return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 
     /**

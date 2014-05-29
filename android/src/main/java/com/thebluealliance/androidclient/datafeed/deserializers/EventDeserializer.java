@@ -27,8 +27,16 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
         event.setEventType(object.get("event_type").getAsInt());
         event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
-        event.setStartDate(object.get("start_date").getAsString());
-        event.setEndDate(object.get("end_date").getAsString());
+        if(object.get("start_date").isJsonNull()){
+            event.setStartDate("");
+        }else{
+            event.setStartDate(object.get("start_date").getAsString());
+        }
+        if(object.get("end_date").isJsonNull()) {
+            event.setEndDate("");
+        }else{
+            event.setEndDate(object.get("end_date").getAsString());
+        }
         // For some reason "official" is sometimes null. Default to "false" in those cases
         if(object.get("official").isJsonNull()) {
             event.setOfficial(false);
