@@ -426,6 +426,9 @@ public class Event implements BasicModel {
 
     public String getDateString() {
         if(startDate == null || endDate == null) return "";
+        if(startDate.equals(endDate)){
+            return renderDateFormat.format(startDate);
+        }
         return shortRenderDateFormat.format(startDate) + " to " + renderDateFormat.format(endDate);
     }
 
