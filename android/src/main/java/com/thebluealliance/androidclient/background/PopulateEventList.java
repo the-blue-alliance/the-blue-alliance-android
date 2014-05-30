@@ -59,6 +59,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 try {
                     allEvents.put(mYear, DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData());
                 } catch (DataManager.NoDataException e) {
+                    Log.w(Constants.LOG_TAG, "unable to get any events in "+mYear);
                     return APIResponse.CODE.NODATA;
                 }
             }
@@ -77,7 +78,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
-                if(eventData.size() > 0) {
+                if(eventData != null && eventData.size() > 0) {
                     Collections.sort(eventData, new EventSortByTypeAndDateComparator());
                     Event.TYPE lastType = null, currentType;
                     for (SimpleEvent event : eventData) {
@@ -94,10 +95,8 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 }
                 return response.getCode();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.w(Constants.LOG_TAG, "unable to find events for week" + mWeek +" "+mYear);
             }
-
-            return null;
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             try {
                 response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
@@ -119,8 +118,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load event list");
             }
-
-            return null;
         } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
             // Return a list of all events for a given team in a given week in a given year
         }
