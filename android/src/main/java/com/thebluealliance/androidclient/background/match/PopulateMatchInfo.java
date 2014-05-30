@@ -163,14 +163,12 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             }
             // Blue score
             TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
-            if (blueAlliance.get("score").getAsInt() < 0) {
+            JsonElement blueScore = blueAlliance.get("score");
+            if (blueScore.getAsInt() < 0) {
                 blue_score.setText("?");
             } else {
-               blue_score.setText(blueAlliance.get("score").getAsString());
+               blue_score.setText(blueScore.getAsString());
             }
-
-            JsonElement blueScore = blueAlliance.get("score");
-            blue_score.setText(blueScore.getAsString());
 
             Resources resources = mActivity.getResources();
             if (blueScore.getAsInt() > redScore.getAsInt()) {

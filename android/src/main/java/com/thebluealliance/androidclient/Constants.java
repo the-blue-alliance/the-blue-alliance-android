@@ -32,7 +32,7 @@ public class Constants {
 
     //the week of the year that each event starts competition on, starting with 1992
     public static final int[] FIRST_COMP_WEEK =
-            {6, 8, 8, 8, 12, 9, 9, 8, 10, 8, 9, 9, 9, 9, 9, 8, 8, 8, 9, 9, 8, 8, 8};
+            {6, 8, 8, 8, 12, 9, 9, 8, 10, 8, 9, 9, 9, 9, 8, 8, 8, 8, 9, 9, 8, 8, 8};
 
     //the competition week of CMP that year, starting with 1992
     public static final int[] CMP_WEEK =
