@@ -22,6 +22,12 @@
             android:summary="@string/github_summary" />
 
         <Preference
+            android:key="changelog"
+            android:persistent="false"
+            android:selectable="true"
+            android:title="@string/changelog" />
+
+        <Preference
             android:key="app_version"
             android:persistent="false"
             android:selectable="false"

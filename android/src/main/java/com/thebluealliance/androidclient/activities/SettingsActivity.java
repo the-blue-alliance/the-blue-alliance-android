@@ -38,6 +38,14 @@ public class SettingsActivity extends PreferenceActivity {
             Preference licenses = findPreference("licenses");
             licenses.setIntent(new Intent(getActivity(), OpenSourceLicensesActivity.class));
 
+            Preference changelog = findPreference("changelog");
+            String version = BuildConfig.VERSION_NAME;
+            if(version.contains("-")){
+                //if debug build, the version string will be like v0.1-<sha hash>
+                version = version.split("-")[0];
+            }
+            changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v"+version)));
+
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
         }
