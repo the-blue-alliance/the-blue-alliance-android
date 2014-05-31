@@ -2,13 +2,17 @@ package com.thebluealliance.androidclient.datatypes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
 
 /**
  * File created by phil on 4/20/14.
@@ -16,10 +20,10 @@ import com.thebluealliance.androidclient.R;
 public class MatchListElement extends ListElement {
 
     private String videoKey;
-    String matchTitle, redTeams[], blueTeams[], matchKey;
-    int redScore, blueScore;
+    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore;
+    private ViewHolder holder;
 
-    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, int redScore, int blueScore, String matchKey) {
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey) {
         super();
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
@@ -32,8 +36,7 @@ public class MatchListElement extends ListElement {
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        ViewHolder holder;
-        if (convertView == null) {
+        if (convertView == null || holder == null) {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 
             holder = new ViewHolder();
@@ -48,9 +51,31 @@ public class MatchListElement extends ListElement {
             holder.blueScore = (TextView) convertView.findViewById(R.id.blue_score);
             holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
 
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+        }
+
+        Resources resources = c.getResources();
+        if (!redScore.contains("?") && !blueScore.contains("?")) {
+            try {
+                int bScore = Integer.parseInt(blueScore),
+                        rScore = Integer.parseInt(redScore);
+                if (bScore > rScore) {
+                    //blue wins
+                    View blue_alliance = convertView.findViewById(R.id.blue_alliance);
+                    if (blue_alliance != null) {
+                        blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
+                    }
+                    convertView.findViewById(R.id.blue_score).setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
+                } else if (bScore < rScore) {
+                    //red wins
+                    View red_alliance = convertView.findViewById(R.id.red_alliance);
+                    if (red_alliance != null) {
+                        red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                    }
+                    convertView.findViewById(R.id.red_score).setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
+                }
+            } catch (NumberFormatException e) {
+                Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
+            }
         }
 
         //if we have video for this match, show an icon
@@ -60,7 +85,7 @@ public class MatchListElement extends ListElement {
             holder.videoIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoKey));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + videoKey));
                     view.getContext().startActivity(intent);
                 }
             });
@@ -69,14 +94,58 @@ public class MatchListElement extends ListElement {
         }
 
         holder.matchTitle.setText(matchTitle);
-        holder.red1.setText(redTeams[0]);
-        holder.red2.setText(redTeams[1]);
-        holder.red3.setText(redTeams[2]);
-        holder.blue1.setText(blueTeams[0]);
-        holder.blue2.setText(blueTeams[1]);
-        holder.blue3.setText(blueTeams[2]);
-        holder.redScore.setText(Integer.toString(redScore));
-        holder.blueScore.setText(Integer.toString(blueScore));
+
+        TeamClickListener listener = new TeamClickListener(c);
+
+        // Set team text depending on alliance size.
+        if (redTeams.length == 0) {
+            holder.red1.setText("");
+            holder.red2.setText("");
+            holder.red3.setText("");
+        } else {
+            holder.red1.setText(redTeams[0]);
+            holder.red1.setTag("frc" + redTeams[0]);
+            holder.red1.setOnClickListener(listener);
+
+            holder.red2.setText(redTeams[1]);
+            holder.red2.setTag("frc" + redTeams[1]);
+            holder.red2.setOnClickListener(listener);
+
+            if (redTeams.length == 2) {
+                holder.red3.setVisibility(View.GONE);
+            } else {
+                holder.red3.setVisibility(View.VISIBLE);
+                holder.red3.setText(redTeams[2]);
+                holder.red3.setTag("frc" + redTeams[2]);
+                holder.red3.setOnClickListener(listener);
+            }
+        }
+
+        if (blueTeams.length == 0) {
+            holder.blue1.setText("");
+            holder.blue2.setText("");
+            holder.blue3.setText("");
+        } else {
+            holder.blue1.setText(blueTeams[0]);
+            holder.blue1.setTag("frc" + blueTeams[0]);
+            holder.blue1.setOnClickListener(listener);
+
+            holder.blue2.setText(blueTeams[1]);
+            holder.blue2.setTag("frc" + blueTeams[1]);
+            holder.blue2.setOnClickListener(listener);
+
+            if (blueTeams.length == 2) {
+                holder.blue3.setVisibility(View.GONE);
+            } else {
+                holder.blue3.setVisibility(View.VISIBLE);
+                holder.blue3.setText(blueTeams[2]);
+                holder.blue3.setTag("frc" + blueTeams[2]);
+                holder.blue3.setOnClickListener(listener);
+            }
+        }
+        holder.redScore.setText(redScore);
+        holder.blueScore.setText(blueScore);
+
         return convertView;
     }
 

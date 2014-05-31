@@ -25,8 +25,8 @@ import java.util.Iterator;
  */
 public class DataManager {
 
-    public static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
-            ALL_EVENTS_LOADED_TO_DATABASE = "all_events_loaded";
+    private static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
+            ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
 
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> eventsByYear = new HashMap<>();
 
@@ -163,8 +163,9 @@ public class DataManager {
     public synchronized static APIResponse<ArrayList<SimpleEvent>> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException {
         Log.d("get events for week", "getting for week: " + week);
 
-        APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getSimpleEventsForYear(c, year);
-        String weekLabel = Event.weekLabelFromNum(events.getData(), week);
+        APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getEventsByYear(c, year);
+        Log.d(Constants.LOG_TAG, "found "+events.getData().toString()+" in "+year);
+        String weekLabel = Event.weekLabelFromNum(year, week);
 
         if (eventsByYear.get(year).containsKey(weekLabel)) {
             return new APIResponse<>(eventsByYear.get(year).get(weekLabel), events.getCode());
@@ -181,7 +182,7 @@ public class DataManager {
             return new APIResponse<>(eventsByYear.get(year), APIResponse.CODE.CACHED304);
         } else {
             ArrayList<SimpleEvent> events = new ArrayList<>();
-            boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE, false);
+            boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, false);
             HashMap<String, ArrayList<SimpleEvent>> groupedEvents;
             APIResponse<String> eventListResponse;
             //TODO check for updates and update response accordingly
@@ -192,11 +193,12 @@ public class DataManager {
                 groupedEvents = SimpleEvent.groupByWeek(events);
             } else {
                 eventListResponse = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/events/" + year, false);
+                Log.d(Constants.LOG_TAG, "Response: " + eventListResponse.getData().toString());
                 events = TBAv2.getEventList(eventListResponse.getData());
                 Database.getInstance(c).storeEvents(events);
                 groupedEvents = SimpleEvent.groupByWeek(events);
                 if (eventListResponse.getCode() != APIResponse.CODE.NODATA) {
-                    PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE, true).commit();
+                    PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true).commit();
                 }
             }
             eventsByYear.put(year, groupedEvents);

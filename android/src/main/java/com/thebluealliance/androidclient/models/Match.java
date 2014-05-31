@@ -48,6 +48,7 @@ public class Match implements BasicModel {
             switch (str) {
                 case "qm":
                     return QUAL;
+                case "ef":
                 case "qf":
                     return QUARTER;
                 case "sf":
@@ -142,15 +143,15 @@ public class Match implements BasicModel {
         blueTeams.add(new JsonPrimitive("frc" + blue2));
         blueTeams.add(new JsonPrimitive("frc" + blue3));
         blueAlliance.add("teams", blueTeams);
-        JsonObject redAllaince = new JsonObject();
-        redAllaince.addProperty("score", redScore);
+        JsonObject redAlliance = new JsonObject();
+        redAlliance.addProperty("score", redScore);
         JsonArray redTeams = new JsonArray();
         redTeams.add(new JsonPrimitive("frc" + red1));
         redTeams.add(new JsonPrimitive("frc" + red2));
         redTeams.add(new JsonPrimitive("frc" + red3));
-        redAllaince.add("teams", redTeams);
+        redAlliance.add("teams", redTeams);
         alliances.add("blue", blueAlliance);
-        alliances.add("red", redAllaince);
+        alliances.add("red", redAlliance);
         this.videos = new JsonArray();
         this.year = Integer.parseInt(key.substring(0, 3));
         this.matchNumber = matchNumber;
@@ -275,8 +276,12 @@ public class Match implements BasicModel {
     public MatchListElement render() {
         JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-        int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+        String redScore = alliances.get("red").getAsJsonObject().get("score").getAsString(),
+                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsString();
+
+        if (Integer.parseInt(redScore) < 0) redScore = "?";
+        if (Integer.parseInt(blueScore) < 0) blueScore = "?";
+
         String youTubeVideoKey = null;
         for (int i = 0; i < videos.size(); i++) {
             JsonObject video = videos.get(i).getAsJsonObject();
@@ -284,9 +289,27 @@ public class Match implements BasicModel {
                 youTubeVideoKey = video.get("key").getAsString();
             }
         }
+
+        String[] redAlliance, blueAlliance;
+        // Add teams based on alliance size (or none if there isn't for some reason)
+        if (redTeams.size() == 3) {
+            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)};
+        } else if (redTeams.size() == 2) {
+            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3)};
+        } else {
+            redAlliance = new String[]{"", "", ""};
+        }
+
+        if (blueTeams.size() == 3) {
+            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)};
+        } else if (blueTeams.size() == 2) {
+            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3)};
+        } else {
+            blueAlliance = new String[]{"", "", ""};
+        }
+
         return new MatchListElement(youTubeVideoKey, getTitle(),
-                new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)},
-                new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)},
+                redAlliance, blueAlliance,
                 redScore, blueScore, key);
     }
 
@@ -297,7 +320,7 @@ public class Match implements BasicModel {
     }
 
     public static boolean validateMatchKey(String key) {
-        return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef|qf\\dm|sf\\dm|f\\dm)\\d+$");
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 
     /**
@@ -308,8 +331,8 @@ public class Match implements BasicModel {
      */
     public static Match getNextMatchPlayed(ArrayList<Match> matches) {
         for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
                 //match is unplayed
                 return m;
             }
@@ -327,8 +350,8 @@ public class Match implements BasicModel {
     public static Match getLastMatchPlayed(ArrayList<Match> matches) {
         Match last = null;
         for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() == -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() == -1) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
                 break;
             } else {
                 last = m;

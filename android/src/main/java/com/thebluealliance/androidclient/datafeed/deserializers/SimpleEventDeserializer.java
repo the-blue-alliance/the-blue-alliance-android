@@ -17,22 +17,52 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
         final JsonObject object = json.getAsJsonObject();
         final SimpleEvent event = new SimpleEvent();
 
-        event.setEventKey(object.get("key").getAsString());
-        event.setEventName(object.get("name").getAsString());
-        event.setLocation(object.get("location").getAsString());
+        // Key and name shouldn't be null but doesn't hurt to check
+        // in case something goes terribly wrong.
+        if (object.get("key").isJsonNull()) {
+            event.setEventKey("");
+        }
+        else {
+            event.setEventKey(object.get("key").getAsString());
+        }
+
+        if (object.get("name").isJsonNull())
+        {
+            event.setEventName("");
+        }
+        else{
+            event.setEventName(object.get("name").getAsString());
+        }
+        // Location is null sometimes.
+        if (object.get("location").isJsonNull()) {
+            event.setLocation("");
+        } else {
+            event.setLocation(object.get("location").getAsString());
+        }
         event.setEventType(object.get("event_type").getAsInt());
         event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
-        if(object.get("start_date").isJsonNull()) {
-            event.setStartDate("1111-11-11");
-        } else {
+
+        // Start/End date is null sometimes (when spamming year changes)
+        if (object.get("start_date").isJsonNull())
+        {
+            event.setStartDate("1900-01-01");
+        }
+        else {
             event.setStartDate(object.get("start_date").getAsString());
         }
-        if(object.get("end_date").isJsonNull()) {
-            event.setEndDate("1111-11-11");
-        } else {
+
+        if (object.get("end_date").isJsonNull()) {
+            event.setEndDate("1900-01-02");
+        }
+        else {
             event.setEndDate(object.get("end_date").getAsString());
         }
-        event.setOfficial(object.get("official").getAsBoolean());
+        // For some reason "official" is sometimes null. Default to "false" in those cases
+        if (object.get("official").isJsonNull()) {
+            event.setOfficial(false);
+        } else {
+            event.setOfficial(object.get("official").getAsBoolean());
+        }
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
         if (object.get("short_name").isJsonNull()) {

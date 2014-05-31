@@ -26,7 +26,6 @@
                     android:id="@+id/match_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quals 4"
                     android:textSize="48sp" />
 
                 <TextView
@@ -36,7 +35,6 @@
                     android:layout_below="@id/match_name"
                     android:paddingBottom="16dp"
                     android:paddingTop="16dp"
-                    android:text="2008 Midwest Regional"
                     android:textSize="24sp" />
 
                 <TableLayout
@@ -49,13 +47,15 @@
 
                     <TableRow
                         android:background="@color/column_header_gray"
-                        android:minHeight="32dp">
+                        android:minHeight="32dp"
+                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="3"
                             android:gravity="center_vertical|center_horizontal"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:text="@string/teams" />
 
                         <TextView
@@ -63,11 +63,13 @@
                             android:layout_height="fill_parent"
                             android:layout_weight="1.5"
                             android:gravity="center_vertical|center_horizontal"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:text="@string/score" />
                     </TableRow>
 
                     <TableRow
                         android:layout_height="wrap_content"
+                        android:id="@+id/red_alliance"
                         android:background="@color/lighter_red"
                         android:minHeight="48dp">
 
@@ -76,38 +78,39 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Red 1" />
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
                             android:id="@+id/red2"
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Red 2" />
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
                             android:id="@+id/red3"
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Red 3" />
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
                             android:id="@+id/red_score"
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1.5"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:background="@color/light_red"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Red Score"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:gravity="center_vertical|center_horizontal"/>
                     </TableRow>
 
                     <TableRow
                         android:layout_height="wrap_content"
+                        android:id="@+id/blue_alliance"
                         android:background="@color/lighter_blue"
                         android:minHeight="48dp">
 
@@ -116,34 +119,34 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Blue 1" />
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
                             android:id="@+id/blue2"
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Blue 2" />
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
                             android:id="@+id/blue3"
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Blue 3" />
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:gravity="center_vertical|center_horizontal"/>
 
                         <TextView
                             android:id="@+id/blue_score"
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1.5"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                             android:background="@color/light_blue"
-                            android:gravity="center_vertical|center_horizontal"
-                            android:text="Blue Score"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:gravity="center_vertical|center_horizontal"/>
                     </TableRow>
                 </TableLayout>
 

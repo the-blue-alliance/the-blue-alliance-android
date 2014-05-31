@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * File created by phil on 4/20/14.
@@ -29,16 +30,17 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private int mYear = -1, mWeek = -1;
-    private String mTeamKey = null;
+    private String mTeamKey = null, mHeader;
     private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
+    private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> allEvents = new HashMap<>();
     private RefreshableHostActivity activity;
 
-    public PopulateEventList(EventListFragment fragment, int year, int week, String teamKey) {
+    public PopulateEventList(EventListFragment fragment, int year, String weekHeader, String teamKey) {
         mFragment = fragment;
         mYear = year;
-        mWeek = week;
         mTeamKey = teamKey;
+        mHeader = weekHeader;
         activity = (RefreshableHostActivity) mFragment.getActivity();
     }
 
@@ -47,11 +49,22 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         if (mFragment == null) {
             throw new IllegalArgumentException("Fragment must not be null!");
         }
-        /* Here, we would normally check if the events are stored locally, and fetch/store them if not.
-         * Also, here is where we check if the remote data set has changed and update accordingly
-         * Then, we'd go through the data and build the listview adapters
-         * For now, it'll just be static data for demonstrative purposes
-         */
+
+
+        //first, let's generate the event week based on its header (event weeks aren't constant over the years)
+        if(mHeader.equals("")){
+            mWeek = -1;
+        }else {
+            if (!allEvents.containsKey(mYear)) {
+                try {
+                    allEvents.put(mYear, DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData());
+                } catch (DataManager.NoDataException e) {
+                    Log.w(Constants.LOG_TAG, "unable to get any events in "+mYear);
+                    return APIResponse.CODE.NODATA;
+                }
+            }
+            mWeek = Event.weekNumFromLabel(allEvents.get(mYear), mHeader);
+        }
 
         eventKeys = new ArrayList<>();
         events = new ArrayList<>();
@@ -65,25 +78,25 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
-                Collections.sort(eventData, new EventSortByTypeAndDateComparator());
-                Event.TYPE lastType = null, currentType;
-                for (SimpleEvent event : eventData) {
-                    currentType = event.getEventType();
-                    // TODO: finish implementing this once we have event type info available
-                    if (currentType != lastType) {
-                        eventKeys.add(currentType.toString());
-                        events.add(new EventWeekHeader(currentType.toString()));
+                if(eventData != null && eventData.size() > 0) {
+                    Collections.sort(eventData, new EventSortByTypeAndDateComparator());
+                    Event.TYPE lastType = null, currentType;
+                    for (SimpleEvent event : eventData) {
+                        currentType = event.getEventType();
+                        // TODO: finish implementing this once we have event type info available
+                        if (currentType != lastType) {
+                            eventKeys.add(currentType.toString());
+                            events.add(new EventWeekHeader(currentType.toString()));
+                        }
+                        eventKeys.add(event.getEventKey());
+                        events.add(event.render());
+                        lastType = currentType;
                     }
-                    eventKeys.add(event.getEventKey());
-                    events.add(event.render());
-                    lastType = currentType;
                 }
                 return response.getCode();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.w(Constants.LOG_TAG, "unable to find events for week" + mWeek +" "+mYear);
             }
-
-            return null;
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             try {
                 response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
@@ -105,8 +118,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load event list");
             }
-
-            return null;
         } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
             // Return a list of all events for a given team in a given week in a given year
         }

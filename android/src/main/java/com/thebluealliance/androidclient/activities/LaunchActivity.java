@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 /**
  * Created by Nathan on 5/25/2014.
  */
-public class FirstLaunchActivity extends FragmentActivity {
+public class LaunchActivity extends FragmentActivity {
 
     private static final String ALL_DATA_LOADED = "all_data_loaded";
 

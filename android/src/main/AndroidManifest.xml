@@ -29,13 +29,13 @@
         </activity-->
         <activity android:name="com.thebluealliance.androidclient.activities.ViewEventActivity" />
         <activity android:name="com.thebluealliance.androidclient.activities.ViewTeamActivity" />
-        <activity android:name="com.thebluealliance.androidclient.activities.ViewMatchActivity" />
+        <activity android:name="com.thebluealliance.androidclient.activities.ViewMatchActivity"/>
         <activity
             android:name="com.thebluealliance.androidclient.activities.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings"/>
         <activity
             android:name="com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity"
-            android:label="@string/license_label"></activity>
+            android:label="@string/license_label"/>
     </application>
 
 </manifest>
