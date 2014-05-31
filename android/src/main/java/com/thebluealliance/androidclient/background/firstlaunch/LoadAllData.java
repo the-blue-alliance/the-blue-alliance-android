@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.CSVManager;
@@ -49,7 +50,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             ArrayList<SimpleEvent> events = new ArrayList();
 
             // First we will load all the teams
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, "Teams"));
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, activity.getString(R.string.loading_teams)));
             APIResponse<String> response;
             final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader();
             response = TBAv2.getResponseFromURLOrThrow(activity, URL, true);
@@ -59,7 +60,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
 
             // Now we load all events
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
-                publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, year + " Events"));
+                publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_events), Integer.toString(year))));
                 APIResponse<String> eventListResponse;
                 eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://thebluealliance.com/api/v2/events/" + year, true);
                 JsonElement responseObject = new JsonParser().parse(eventListResponse.getData());
@@ -84,10 +85,10 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 editor.putBoolean(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.commit();
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, "Finished"));
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, activity.getString(R.string.loading_finished)));
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, "Internet connection lost."));
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, activity.getString(R.string.connection_lost)));
             // Wipe any partially cached responses
             Database.getInstance(activity).deleteAllResponses();
         } catch (Exception e) {

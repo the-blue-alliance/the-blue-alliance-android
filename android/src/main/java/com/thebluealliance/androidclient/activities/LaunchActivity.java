@@ -69,12 +69,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
             alertDialogBuilder.setTitle("Check connection");
 
             // Set dialog message
-            alertDialogBuilder.setMessage("No internet connection was found. Please check your conneciton and try again.").setCancelable(false).setPositiveButton("Try again", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setMessage(getString(R.string.warning_no_internet_connection)).setCancelable(false).setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     beginLoadingIfConnected();
                     dialog.dismiss();
                 }
-            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     finish();
                 }
@@ -109,19 +109,19 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         // Set title
-        alertDialogBuilder.setTitle("Fatal error");
+        alertDialogBuilder.setTitle(getString(R.string.fatal_error));
 
         // Set dialog message
-        alertDialogBuilder.setMessage("Well, this is really bad. We don't know what happened. If you want, you can contact the developer with the error code.").setCancelable(false).setPositiveButton("Contact Developer", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setMessage(getString(R.string.fatal_error_message)).setCancelable(false).setPositiveButton(R.string.contact_developer, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto", "contact@thebluealliance.com", null));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "FATAL ERROR");
                 emailIntent.putExtra(Intent.EXTRA_TEXT, "Version: " + BuildConfig.VERSION_NAME + "\nStacktrace:\n" + stacktrace);
-                startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
                 finish();
             }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 finish();
             }
