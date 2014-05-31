@@ -22,7 +22,7 @@ public class DownloadEventList extends AsyncTask<Integer, Void, Set<String>> {
     @Override
     protected Set<String> doInBackground(Integer... params) {
         try {
-            return DataManager.getEventsByYear(c, params[0]).getData().keySet();
+            return DataManager.getSimpleEventsForYear(c, params[0]).getData().keySet();
         } catch (DataManager.NoDataException e) {
             return new HashSet<>();
         }

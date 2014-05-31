@@ -22,8 +22,16 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
         event.setLocation(object.get("location").getAsString());
         event.setEventType(object.get("event_type").getAsInt());
         event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
-        event.setStartDate(object.get("start_date").getAsString());
-        event.setEndDate(object.get("end_date").getAsString());
+        if(object.get("start_date").isJsonNull()) {
+            event.setStartDate("1111-11-11");
+        } else {
+            event.setStartDate(object.get("start_date").getAsString());
+        }
+        if(object.get("end_date").isJsonNull()) {
+            event.setEndDate("1111-11-11");
+        } else {
+            event.setEndDate(object.get("end_date").getAsString());
+        }
         event.setOfficial(object.get("official").getAsBoolean());
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name

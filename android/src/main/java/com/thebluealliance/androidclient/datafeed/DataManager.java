@@ -25,7 +25,7 @@ import java.util.Iterator;
  */
 public class DataManager {
 
-    private static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
+    public static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
             ALL_EVENTS_LOADED_TO_DATABASE = "all_events_loaded";
 
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> eventsByYear = new HashMap<>();
@@ -152,7 +152,6 @@ public class DataManager {
         ArrayList<Award> awards = new ArrayList<>();
         Log.d("event awards", "Fetching awards for " + eventKey);
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards", true);
-        ;
         Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response.getData()).iterator();
         while (iterator.hasNext()) {
             Award award = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Award.class);
@@ -164,23 +163,23 @@ public class DataManager {
     public synchronized static APIResponse<ArrayList<SimpleEvent>> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException {
         Log.d("get events for week", "getting for week: " + week);
 
-        APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getEventsByYear(c, year);
+        APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getSimpleEventsForYear(c, year);
         String weekLabel = Event.weekLabelFromNum(events.getData(), week);
 
-        if(eventsByYear.get(year).containsKey(weekLabel)){
+        if (eventsByYear.get(year).containsKey(weekLabel)) {
             return new APIResponse<>(eventsByYear.get(year).get(weekLabel), events.getCode());
-        }else{
+        } else {
             //nothing found...
-            Log.w(Constants.LOG_TAG, "Unable to find events for tag "+ weekLabel);
+            Log.w(Constants.LOG_TAG, "Unable to find events for tag " + weekLabel);
             return new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
 
     }
 
-    public synchronized static APIResponse<HashMap<String, ArrayList<SimpleEvent>>> getEventsByYear(Context c, int year) throws NoDataException {
-        if(eventsByYear.containsKey(year)){
+    public synchronized static APIResponse<HashMap<String, ArrayList<SimpleEvent>>> getSimpleEventsForYear(Context c, int year) throws NoDataException {
+        if (eventsByYear.containsKey(year)) {
             return new APIResponse<>(eventsByYear.get(year), APIResponse.CODE.CACHED304);
-        }else {
+        } else {
             ArrayList<SimpleEvent> events = new ArrayList<>();
             boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE, false);
             HashMap<String, ArrayList<SimpleEvent>> groupedEvents;

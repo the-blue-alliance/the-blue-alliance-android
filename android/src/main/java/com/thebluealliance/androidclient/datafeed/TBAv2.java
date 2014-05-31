@@ -74,7 +74,7 @@ public class TBAv2 {
         }
         Log.d("datamanager", "Loading URL: " + URL);
         Database db = Database.getInstance(c);
-        boolean existsInDb = db.exists(URL);
+        boolean existsInDb = db.responseExists(URL);
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
         if (existsInDb) {
             if (connectedToInternet) {
@@ -112,7 +112,7 @@ public class TBAv2 {
             } else {
                 // There is no locally stored data and we are not connected to the internet.
                 Log.d("datamanager", "Offline; no data!");
-                throw new DataManager.NoDataException("There is no internet connection and no local cache for this team!");
+                throw new DataManager.NoDataException("There is no internet connection and the response is not cached!");
             }
         }
     }

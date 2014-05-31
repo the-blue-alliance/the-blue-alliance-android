@@ -260,9 +260,20 @@ public class Database extends SQLiteOpenHelper {
         return db.insert(TABLE_API, null, cv);
     }
 
-    public boolean exists(String url) {
+    public boolean responseExists(String url) {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
         return (cursor.moveToFirst()) || (cursor.getCount() != 0);
+    }
+
+    public int deleteResponse(String url) {
+        if(responseExists(url)){
+            return db.delete(TABLE_API, Response.URL + "=?", new String[]{url});
+        }
+        return 0;
+    }
+
+    public void deleteAllResponses() {
+        getWritableDatabase().execSQL("delete from " + TABLE_API);
     }
 
     public int updateResponse(String url, String response, long updated) {

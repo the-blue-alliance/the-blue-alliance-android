@@ -29,4 +29,6 @@ public class Constants {
     public static String getApiHeader() {
         return "the-blue-alliance:android:v" + BuildConfig.VERSION_NAME;
     }
+
+    public static final int FIRST_COMP_YEAR = 1992;
 }
