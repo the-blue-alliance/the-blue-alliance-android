@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
@@ -201,14 +202,15 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 JsonObject video = videos.get(i).getAsJsonObject();
                 if (video.get("type").getAsString().equals("youtube")) {
                     final String videoKey = video.get("key").getAsString();
-                    String thumbnailURL = "http://img.youtube.com/vi/" + videoKey + "/0.jpg";
+                    String thumbnailURL = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(Media.TYPE.YOUTUBE), videoKey);
                     ImageView thumbnail = new ImageView(mActivity);
                     thumbnail.setAdjustViewBounds(true);
                     thumbnail.setClickable(true);
                     thumbnail.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + videoKey));
+                            Intent intent = new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse(String.format(Constants.MEDIA_LINK_URL_PATTERN.get(Media.TYPE.YOUTUBE),videoKey)));
                             mActivity.startActivity(intent);
                         }
                     });

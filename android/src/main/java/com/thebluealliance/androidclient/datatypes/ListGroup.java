@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datatypes;
 
+import com.thebluealliance.androidclient.models.BasicModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,7 @@ import java.util.List;
  */
 public class ListGroup {
     public String string;
-    public final List<String> children = new ArrayList<String>();
+    public final List<BasicModel> children = new ArrayList<BasicModel>();
     public final List<String> childrenKeys = new ArrayList<String>();
 
     public ListGroup(String string) {

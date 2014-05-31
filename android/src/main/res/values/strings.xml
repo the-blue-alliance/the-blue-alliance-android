@@ -49,6 +49,10 @@
     <string name="teams">Teams</string>
     <string name="score">Score</string>
 
+    <!-- Team Media -->
+    <string name="cd_header">Chief Delphi Photos</string>
+    <string name="yt_header">YouTube Videos</string>
+
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
 
