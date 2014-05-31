@@ -52,14 +52,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
 
         //first, let's generate the event week based on its header (event weeks aren't constant over the years)
-        if(mHeader.equals("")){
+        if (mHeader.equals("")) {
             mWeek = -1;
-        }else {
+        } else {
             if (!allEvents.containsKey(mYear)) {
                 try {
-                    allEvents.put(mYear, DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData());
+                    allEvents.put(mYear, DataManager.getSimpleEventsForYear(mFragment.getActivity(), mYear).getData());
                 } catch (DataManager.NoDataException e) {
-                    Log.w(Constants.LOG_TAG, "unable to get any events in "+mYear);
+                    Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
                     return APIResponse.CODE.NODATA;
                 }
             }
@@ -78,7 +78,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
-                if(eventData != null && eventData.size() > 0) {
+                if (eventData != null && eventData.size() > 0) {
                     Collections.sort(eventData, new EventSortByTypeAndDateComparator());
                     Event.TYPE lastType = null, currentType;
                     for (SimpleEvent event : eventData) {
@@ -95,7 +95,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 }
                 return response.getCode();
             } catch (Exception e) {
-                Log.w(Constants.LOG_TAG, "unable to find events for week" + mWeek +" "+mYear);
+                Log.w(Constants.LOG_TAG, "unable to find events for week" + mWeek + " " + mYear);
             }
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             try {

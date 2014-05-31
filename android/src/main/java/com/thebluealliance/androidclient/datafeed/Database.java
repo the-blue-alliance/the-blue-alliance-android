@@ -162,7 +162,7 @@ public class Database extends SQLiteOpenHelper {
                         Events.END, Events.LOCATION, Events.OFFICIAL},
                 Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null
         );
-        if(cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             SimpleEvent event = new SimpleEvent();
             event.setEventKey(cursor.getString(0));
             event.setEventName(cursor.getString(1));
@@ -266,7 +266,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int deleteResponse(String url) {
-        if(responseExists(url)){
+        if (responseExists(url)) {
             return db.delete(TABLE_API, Response.URL + "=?", new String[]{url});
         }
         return 0;

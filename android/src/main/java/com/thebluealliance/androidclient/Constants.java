@@ -11,7 +11,7 @@ public class Constants {
     public static final HashMap<String, String> MATCH_LEVELS;
 
     static {
-        MATCH_LEVELS = new HashMap<String, String>();
+        MATCH_LEVELS = new HashMap<>();
         MATCH_LEVELS.put("Quals", "q");
         MATCH_LEVELS.put("q", "q");
         MATCH_LEVELS.put("qm", "q");

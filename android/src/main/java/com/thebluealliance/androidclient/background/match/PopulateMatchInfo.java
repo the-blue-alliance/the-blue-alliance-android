@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.background.match;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -167,24 +166,23 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             if (blueScore.getAsInt() < 0) {
                 blue_score.setText("?");
             } else {
-               blue_score.setText(blueScore.getAsString());
+                blue_score.setText(blueScore.getAsString());
             }
 
-            Resources resources = mActivity.getResources();
             if (blueScore.getAsInt() > redScore.getAsInt()) {
                 //blue wins
                 View blue_alliance = mActivity.findViewById(R.id.blue_alliance);
                 if (blue_alliance != null) {
-                    blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
+                    blue_alliance.setBackgroundResource(R.drawable.blue_border);
                 }
-                blue_score.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
+                blue_score.setBackgroundResource(R.drawable.blue_score_border);
             } else if (blueScore.getAsInt() < redScore.getAsInt()) {
                 //red wins
                 View red_alliance = mActivity.findViewById(R.id.red_alliance);
                 if (red_alliance != null) {
-                    red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                    red_alliance.setBackgroundResource(R.drawable.red_border);
                 }
-                red_score.setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
+                red_score.setBackgroundResource(R.drawable.red_score_border);
             }
 
             SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);

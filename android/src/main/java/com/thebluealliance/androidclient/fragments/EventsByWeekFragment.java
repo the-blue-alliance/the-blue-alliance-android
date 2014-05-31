@@ -51,17 +51,15 @@ public class EventsByWeekFragment extends Fragment {
         mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         final Context c = getActivity();
-        final int mShortAnimationDuration = getResources().getInteger(
-                android.R.integer.config_shortAnimTime);
         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
         tabs.setViewPager(mViewPager);
         int currentWeek = Event.competitionWeek(new Date());
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         //set the currently selected tab to the current week or week 1
         int week1Index = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter()).getLabels().indexOf(String.format(Event.REGIONAL_LABEL, 1));
-        if(currentYear != mYear){
+        if (currentYear != mYear) {
             mViewPager.setCurrentItem(week1Index);
-        }else {
+        } else {
             mViewPager.setCurrentItem((currentWeek > Utilities.getCmpWeek(mYear) + 1)
                     ? Math.min(mViewPager.getAdapter().getCount(), week1Index)
                     : currentWeek);

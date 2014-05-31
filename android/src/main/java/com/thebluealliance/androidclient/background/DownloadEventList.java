@@ -17,7 +17,7 @@ public class DownloadEventList extends AsyncTask<Integer, Void, Set<String>> {
 
     private Context c;
 
-    public DownloadEventList(Context c){
+    public DownloadEventList(Context c) {
         this.c = c;
     }
 

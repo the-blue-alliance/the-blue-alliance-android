@@ -51,13 +51,13 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
                     ccwm = new ArrayList<>();
-            if(stats.has("oprs")) {
+            if (stats.has("oprs")) {
                 opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
             }
-            if(stats.has("dprs")) {
+            if (stats.has("dprs")) {
                 dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
             }
-            if(stats.has("ccwms")) {
+            if (stats.has("ccwms")) {
                 ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
             }
 

@@ -61,7 +61,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_start);
+        setContentView(R.layout.activity_home);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -130,7 +130,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = new EventsByWeekFragment().newInstance(2014);
+                fragment = EventsByWeekFragment.newInstance(2014);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();

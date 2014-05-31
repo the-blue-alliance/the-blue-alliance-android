@@ -70,7 +70,7 @@ public class ViewEventActivity extends RefreshableHostActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public ViewPager getPager(){
+    public ViewPager getPager() {
         return pager;
     }
 

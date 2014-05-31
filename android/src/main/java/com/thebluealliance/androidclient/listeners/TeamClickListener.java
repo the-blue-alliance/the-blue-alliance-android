@@ -13,7 +13,7 @@ public class TeamClickListener implements View.OnClickListener {
 
     private Context c;
 
-    public TeamClickListener(Context c){
+    public TeamClickListener(Context c) {
         super();
         this.c = c;
     }
@@ -21,7 +21,7 @@ public class TeamClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String teamKey = v.getTag().toString();
-        if(teamKey != null && !teamKey.isEmpty() && Team.validateTeamKey(teamKey)){
+        if (teamKey != null && !teamKey.isEmpty() && Team.validateTeamKey(teamKey)) {
             c.startActivity(ViewTeamActivity.newInstance(c, teamKey));
         }
     }

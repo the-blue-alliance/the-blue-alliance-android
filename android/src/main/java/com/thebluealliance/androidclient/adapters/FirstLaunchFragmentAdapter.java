@@ -1,22 +1,22 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.app.Activity;
+import android.support.v4.view.PagerAdapter;
+import android.view.View;
+import android.view.ViewGroup;
 
-import com.thebluealliance.androidclient.fragments.firstlaunch.LoadFinishedFragment;
-import com.thebluealliance.androidclient.fragments.firstlaunch.LoadingFragment;
-import com.thebluealliance.androidclient.fragments.firstlaunch.WelcomeFragment;
+import com.thebluealliance.androidclient.R;
 
 /**
  * Created by Nathan on 4/22/2014.
  */
-public class FirstLaunchFragmentAdapter extends FragmentPagerAdapter {
+public class FirstLaunchFragmentAdapter extends PagerAdapter {
 
     private int mCount = 3;
+    private Activity activity;
 
-    public FirstLaunchFragmentAdapter(FragmentManager fm) {
-        super(fm);
+    public FirstLaunchFragmentAdapter(Activity activity) {
+        this.activity = activity;
     }
 
     @Override
@@ -24,17 +24,30 @@ public class FirstLaunchFragmentAdapter extends FragmentPagerAdapter {
         return mCount;
     }
 
-    @Override
-    public Fragment getItem(int position) {
-        switch(position) {
+    public Object instantiateItem(ViewGroup collection, int position) {
+
+        int resId = 0;
+        switch (position) {
             case 0:
-                return new WelcomeFragment();
+                resId = R.id.welcome_page;
+                break;
             case 1:
-                return new LoadingFragment();
+                resId = R.id.loading_page;
+                break;
             case 2:
-                return new LoadFinishedFragment();
-            default:
-                return new Fragment();
+                resId = R.id.load_finished_page;
+                break;
         }
+        return activity.findViewById(resId);
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        // Do nothing
+    }
+
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return view == object;
     }
 }

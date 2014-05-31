@@ -14,7 +14,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
@@ -85,7 +84,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     APIResponse<ArrayList<JsonArray>> rankResponse = DataManager.getEventRankings(activity, eventKey);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
-                    if(rankList.size() == 0){
+                    if (rankList.size() == 0) {
                         showRanks = false;
                     }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
@@ -102,8 +101,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 try {
                     APIResponse<JsonObject> statsResponse = DataManager.getEventStats(activity, eventKey);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
-                    if(statsResponse.getData().has("oprs") &&
-                       statsResponse.getData().get("oprs").getAsJsonObject().entrySet().size() > 0) {
+                    if (statsResponse.getData().has("oprs") &&
+                            statsResponse.getData().get("oprs").getAsJsonObject().entrySet().size() > 0) {
                         // ^ Make sure we actually have OPRs in our set!
                         opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
                         Collections.sort(opr, new TeamSortByOPRComparator());
@@ -112,7 +111,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                             statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
                         }
                         stats.setText(statsString);
-                    }else{
+                    } else {
                         showStats = false;
                     }
                 } catch (DataManager.NoDataException e) {
@@ -146,10 +145,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
-            view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty()?event.getWebsite():"https://www.google.com/search?q="+event.getEventName());
-            view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23"+event.getEventKey());
-            view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query="+event.getEventKey());
-            view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/"+event.getEventKey());
+            view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
+            view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
+            view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
+            view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
         }
         return APIResponse.CODE.NODATA;
     }
@@ -159,42 +158,36 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPostExecute(c);
 
         if (event != null && activity != null) {
-            // If the activity is a NavigationDrawerActivity, set the action bar title using this method
-            // so that it properly handles changing the title when the nav drawer is opened or closed.
-            if(activity instanceof NavigationDrawerActivity) {
-                ((NavigationDrawerActivity) activity).setActionBarTitle(event.getEventName());
-            } else {
-                activity.getActionBar().setTitle(event.getEventName());
-            }
+            activity.setActionBarTitle(event.getEventName());
 
             eventName.setText(event.getEventName());
-            if(event.getDateString().isEmpty()) {
+            if (event.getDateString().isEmpty()) {
                 activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
-            }else{
+            } else {
                 eventDate.setText(event.getDateString());
             }
-            if(event.getLocation().isEmpty()){
+            if (event.getLocation().isEmpty()) {
                 activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
-            }else{
+            } else {
                 eventLoc.setText(event.getLocation());
             }
             if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);
-                if(nextLayout.getChildCount() > 1) {
+                if (nextLayout.getChildCount() > 1) {
                     nextLayout.removeViewAt(1);
                 }
                 nextLayout.addView(next);
             }
             if (showLastMatch) {
                 lastLayout.setVisibility(View.VISIBLE);
-                if(lastLayout.getChildCount() > 1) {
+                if (lastLayout.getChildCount() > 1) {
                     lastLayout.removeViewAt(1);
                 }
                 lastLayout.addView(last);
             }
             if (showRanks) {
                 topTeams.setVisibility(View.VISIBLE);
-                if(topTeams.getChildCount() > 1) {
+                if (topTeams.getChildCount() > 1) {
                     topTeams.removeViewAt(1);
                 }
                 topTeams.addView(ranks);
@@ -202,7 +195,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
             if (showStats) {
                 topOpr.setVisibility(View.VISIBLE);
-                if(topOpr.getChildCount() > 1) {
+                if (topOpr.getChildCount() > 1) {
                     topOpr.removeViewAt(1);
                 }
                 topOpr.addView(stats);

@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
-            android:text="Welcome to\nThe Blue Alliance!"
+            android:text="@string/welcome"
             android:textSize="35sp" />
 
         <ImageView
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="Next" />
+            android:text="@string/next" />
 
         <TextView
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
             android:gravity="center_horizontal"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text='Before you can use the app, I have to download some data from our servers first, Please make sure you have a good network connection and press "Next" when ready.'
+            android:text="@string/welcome_message"
             android:textSize="20sp" />
     </RelativeLayout>
 
@@ -51,15 +51,6 @@
         android:id="@+id/loading_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Checking network connection"
-            android:textSize="30sp"
-            android:padding="16dp"/>
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -72,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Teams"
+            android:text="@string/teams"
             android:layout_below="@id/progress_bar"
             android:textSize="40sp"/>
     </RelativeLayout>
@@ -98,7 +89,7 @@
             android:gravity="center_horizontal"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="You're all set! Enjoy the app."
+            android:text="@string/load_finished_message"
             android:textSize="20sp" />
 
         <Button
@@ -106,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="Finish" />
+            android:text="@string/finish" />
     </RelativeLayout>
 
 </com.thebluealliance.androidclient.views.DisableSwipeViewPager>
