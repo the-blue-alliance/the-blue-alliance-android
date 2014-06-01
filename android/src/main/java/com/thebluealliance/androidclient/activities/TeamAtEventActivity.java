@@ -46,6 +46,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.team_at_event, menu);
         return true;
@@ -56,9 +57,15 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()){
+            case R.id.action_view_event:
+                startActivity(ViewEventActivity.newInstance(this, eventKey));
+                break;
+            case R.id.refresh:
+                startRefresh();
+                break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
