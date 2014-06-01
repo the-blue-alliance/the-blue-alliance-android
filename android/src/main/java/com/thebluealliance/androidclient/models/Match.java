@@ -85,9 +85,11 @@ public class Match implements BasicModel {
     }
 
 
-    String key,
-            eventKey,
-            timeString;
+    String key;
+    String eventKey;
+    String timeString;
+
+    String selectedTeam;
     Match.TYPE type;
     JsonObject alliances;
     JsonArray videos;
@@ -101,6 +103,7 @@ public class Match implements BasicModel {
         this.key = "";
         this.eventKey = "";
         this.timeString = "";
+        this.selectedTeam = "";
         this.time = new Date(0);
         this.type = TYPE.NONE;
         this.alliances = new JsonObject();
@@ -124,6 +127,7 @@ public class Match implements BasicModel {
         this.matchNumber = matchNumber;
         this.setNumber = setNumber;
         this.last_updated = last_updated;
+        this.selectedTeam = "";
     }
 
     /* Temporary constructor for fake data. Probably to be removed... */
@@ -156,6 +160,7 @@ public class Match implements BasicModel {
         this.year = Integer.parseInt(key.substring(0, 3));
         this.matchNumber = matchNumber;
         this.setNumber = setNumber;
+        this.selectedTeam = "";
         this.last_updated = -1;
     }
 
@@ -266,6 +271,14 @@ public class Match implements BasicModel {
         return PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
     }
 
+    public String getSelectedTeam() {
+        return selectedTeam;
+    }
+
+    public void setSelectedTeam(String selectedTeam) {
+        this.selectedTeam = selectedTeam;
+    }
+
     /**
      * Renders a MatchListElement for displaying this match.
      * ASSUMES 3v3 match structure with red/blue alliances
@@ -310,7 +323,7 @@ public class Match implements BasicModel {
 
         return new MatchListElement(youTubeVideoKey, getTitle(),
                 redAlliance, blueAlliance,
-                redScore, blueScore, key);
+                redScore, blueScore, key, selectedTeam);
     }
 
     @Override

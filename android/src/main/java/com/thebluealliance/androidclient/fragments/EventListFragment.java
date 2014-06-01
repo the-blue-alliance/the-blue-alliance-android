@@ -88,7 +88,7 @@ public class EventListFragment extends Fragment {
                     // (as opposed to something inheriting from ListHeader, which shouldn't do anything on user click
                     Intent intent;
                     String eventKey = ((ListElement) item).getKey();
-                    if(mTeamKey.isEmpty()) {
+                    if(mTeamKey == null || mTeamKey.isEmpty()) {
                         //no team is selected, go to the event details
                         intent = ViewEventActivity.newInstance(getActivity(), eventKey);
                     }else{

@@ -11,6 +11,7 @@ import android.widget.CheckedTextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
 import com.thebluealliance.androidclient.datatypes.MatchGroup;
+import com.thebluealliance.androidclient.models.Match;
 
 /**
  * File created by phil on 4/22/14.
@@ -20,10 +21,12 @@ public class MatchListAdapter extends BaseExpandableListAdapter {
     public final SparseArray<MatchGroup> groups;
     private Context context;
     private LayoutInflater inflater;
+    private String teamKey;
 
-    public MatchListAdapter(Context c, SparseArray<MatchGroup> groups) {
+    public MatchListAdapter(Context c, SparseArray<MatchGroup> groups, String selectedTeam) {
         this.groups = groups;
         context = c;
+        teamKey = selectedTeam;
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -97,6 +100,8 @@ public class MatchListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        return groups.get(groupPosition).children.get(childPosition).render().getView(context, inflater, convertView);
+        Match child = groups.get(groupPosition).children.get(childPosition);
+        child.setSelectedTeam(teamKey);
+        return child.render().getView(context, inflater, convertView);
     }
 }

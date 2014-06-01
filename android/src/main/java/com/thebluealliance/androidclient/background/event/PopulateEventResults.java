@@ -103,7 +103,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            MatchListAdapter adapter = new MatchListAdapter(activity, groups);
+            MatchListAdapter adapter = new MatchListAdapter(activity, groups, teamKey);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
 
