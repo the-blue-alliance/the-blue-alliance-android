@@ -20,8 +20,8 @@ import com.thebluealliance.androidclient.background.event.PopulateEventResults;
  */
 public class EventResultsFragment extends Fragment {
 
-    private String eventKey;
-    private static final String KEY = "eventKey";
+    private String eventKey, teamKey;
+    private static final String KEY = "eventKey", TEAM = "teamKey";
 
     private Parcelable mListState;
     private MatchListAdapter mAdapter;
@@ -31,12 +31,17 @@ public class EventResultsFragment extends Fragment {
 
     private PopulateEventResults mTask;
 
-    public static EventResultsFragment newInstance(String eventKey) {
+    public static EventResultsFragment newInstance(String eventKey, String teamKey){
         EventResultsFragment f = new EventResultsFragment();
         Bundle data = new Bundle();
         data.putString(KEY, eventKey);
+        data.putString(TEAM, teamKey);
         f.setArguments(data);
         return f;
+    }
+
+    public static EventResultsFragment newInstance(String eventKey) {
+        return newInstance(eventKey, "");
     }
 
     @Override
@@ -44,6 +49,7 @@ public class EventResultsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             eventKey = getArguments().getString(KEY, "");
+            teamKey = getArguments().getString(TEAM, "");
         }
     }
 
@@ -60,7 +66,7 @@ public class EventResultsFragment extends Fragment {
             mProgressBar.setVisibility(View.GONE);
         } else {
             mTask = new PopulateEventResults(this);
-            mTask.execute(eventKey);
+            mTask.execute(eventKey, teamKey);
             Log.d("onCreateView", "creating new adapter");
         }
         mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {

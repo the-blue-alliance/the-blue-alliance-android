@@ -53,7 +53,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
         try {
-            response = DataManager.getEventResults(activity, eventKey);
+            response = DataManager.getEventResults(activity, eventKey, teamKey);
             HashMap<Match.TYPE, ArrayList<Match>> results = response.getData();
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
             for (Match m : results.get(Match.TYPE.QUAL)) {

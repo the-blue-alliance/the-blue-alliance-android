@@ -114,8 +114,10 @@ public class DataManager {
         }
         return new APIResponse<>(rankings, response.getCode());
     }
-
     public static synchronized APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> getEventResults(Context c, String eventKey) throws NoDataException {
+        return getEventResults(c, eventKey, "");
+    }
+    public static synchronized APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> getEventResults(Context c, String eventKey, String teamKey) throws NoDataException {
         HashMap<Match.TYPE, ArrayList<Match>> results = new HashMap<Match.TYPE, ArrayList<Match>>();
         results.put(Match.TYPE.QUAL, new ArrayList<Match>());
         results.put(Match.TYPE.QUARTER, new ArrayList<Match>());
@@ -126,7 +128,10 @@ public class DataManager {
         Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response.getData()).iterator();
         while (iterator.hasNext()) {
             Match match = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Match.class);
-            results.get(match.getType()).add(match);
+            if(match.getAlliances().toString().contains(teamKey)) {
+                //if team key is empty, it'll be contained so we add all matches. Perfect.
+                results.get(match.getType()).add(match);
+            }
         }
         return new APIResponse<>(results, response.getCode());
     }
