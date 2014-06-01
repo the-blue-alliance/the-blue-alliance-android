@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
@@ -85,10 +86,17 @@ public class EventListFragment extends Fragment {
                 if(item != null && item instanceof ListElement) {
                     // only open up the view event activity if the user actually clicks on a ListElement
                     // (as opposed to something inheriting from ListHeader, which shouldn't do anything on user click
-                    Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+                    Intent intent;
                     String eventKey = ((ListElement) item).getKey();
-                    intent.putExtra("eventKey", eventKey);
+                    if(mTeamKey.isEmpty()) {
+                        //no team is selected, go to the event details
+                        intent = ViewEventActivity.newInstance(getActivity(), eventKey);
+                    }else{
+                        //team is selected, open up the results for that specific team at the event
+                        intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey);
+                    }
                     startActivity(intent);
+
                 }else{
                     Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
                 }
