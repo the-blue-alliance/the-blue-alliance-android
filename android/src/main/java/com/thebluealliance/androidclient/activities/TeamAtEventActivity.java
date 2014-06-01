@@ -38,6 +38,8 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         getSupportFragmentManager().beginTransaction().add(R.id.content, EventResultsFragment.newInstance(eventKey, teamKey)).commit();
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -64,6 +66,8 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
             case R.id.refresh:
                 startRefresh();
                 break;
+            case android.R.id.home:
+                this.finish();
             default:
                 break;
         }
