@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.MatchGroup;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     private RefreshableHostActivity activity;
     private String eventKey, teamKey;
     SparseArray<MatchGroup> groups;
+    private Event event;
 
     public PopulateEventResults(Fragment f) {
         mFragment = f;
@@ -45,6 +47,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             teamKey = "";
         }
 
+
         groups = new SparseArray<>();
         MatchGroup qualMatches = new MatchGroup("Qualification Matches");
         MatchGroup quarterMatches = new MatchGroup("Quarterfinal Matches");
@@ -53,6 +56,8 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
         try {
+            event = DataManager.getEvent(activity, eventKey).getData();
+
             response = DataManager.getEventResults(activity, eventKey, teamKey);
             HashMap<Match.TYPE, ArrayList<Match>> results = response.getData();
             Collections.sort(results.get(Match.TYPE.QUAL), comparator);
@@ -106,6 +111,13 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             MatchListAdapter adapter = new MatchListAdapter(activity, groups, teamKey);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
+
+            //set action bar title
+            if(teamKey.isEmpty()){
+                activity.getActionBar().setTitle(event.getEventName());
+            }else{
+                activity.getActionBar().setTitle(teamKey.substring(3)+" @ "+event.getShortName());
+            }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));

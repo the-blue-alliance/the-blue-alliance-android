@@ -62,8 +62,5 @@
     <!-- Warnings -->
     <string name="warning_using_cached_data">You are offline and may be viewing outdated information.</string>
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
-    
-    <!-- Team @ Event -->
-    <string name="title_activity_team_at_event">Team @ Event</string>
 
 </resources>

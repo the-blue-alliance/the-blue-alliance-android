@@ -66,7 +66,7 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
         if (object.get("short_name").isJsonNull()) {
-            event.setShortName(object.get("name").getAsString());
+            event.setShortName("");
         } else {
             event.setShortName(object.get("short_name").getAsString());
         }
