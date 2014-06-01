@@ -128,7 +128,7 @@ public class DataManager {
         Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response.getData()).iterator();
         while (iterator.hasNext()) {
             Match match = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Match.class);
-            if(match.getAlliances().toString().contains(teamKey)) {
+            if(match.getAlliances().toString().contains(teamKey+"\"")) {
                 //if team key is empty, it'll be contained so we add all matches. Perfect.
                 results.get(match.getType()).add(match);
             }
