@@ -136,6 +136,19 @@ public class DataManager {
         return new APIResponse<>(results, response.getCode());
     }
 
+    public static synchronized APIResponse<Integer> getRankForTeamAtEvent(Context c, String teamKey, String eventKey) throws NoDataException {
+        APIResponse<ArrayList<JsonArray>> allRankings = getEventRankings(c, eventKey);
+        String teamNumber = teamKey.substring(3);
+
+        ArrayList<JsonArray> data = allRankings.getData();
+        for(int i=0; i<data.size(); i++){
+            if(data.get(i).get(1).getAsString().equals(teamNumber)){
+                return new APIResponse<>(i, allRankings.getCode());
+            }
+        }
+        return new APIResponse<>(-1, allRankings.getCode());
+    }
+
     public static synchronized APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey) throws NoDataException {
         ArrayList<Match> results = new ArrayList<>();
         Log.d("match list", "fetching matches for " + eventKey);

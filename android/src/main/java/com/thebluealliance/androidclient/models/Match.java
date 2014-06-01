@@ -279,10 +279,49 @@ public class Match implements BasicModel {
         this.selectedTeam = selectedTeam;
     }
 
+    public boolean didSelectedTeamWin(){
+        if(selectedTeam.isEmpty()) return false;
+        JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
+                blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
+        int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
+                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+
+        if(redTeams.toString().contains(selectedTeam+"\"")){
+            return redScore > blueScore;
+        }else{
+            return blueScore > redScore;
+        }
+    }
+
+    public void addToRecord(String teamKey, int[] currentRecord /* {win, loss, tie} */){
+        JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
+                blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
+        int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
+                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+
+        if(redTeams.toString().contains(teamKey+"\"")){
+            if(redScore > blueScore){
+                currentRecord[0]++;
+            }else if(redScore < blueScore){
+                currentRecord[1]++;
+            }else{
+                currentRecord[2]++;
+            }
+        }else if(blueTeams.toString().contains(teamKey+"\"")){
+            if(blueScore > redScore){
+                currentRecord[0]++;
+            }else if(blueScore < redScore){
+                currentRecord[1]++;
+            }else{
+                currentRecord[2]++;
+            }
+        }
+    }
+
     /**
      * Renders a MatchListElement for displaying this match.
      * ASSUMES 3v3 match structure with red/blue alliances
-     * Use different render methods for other structured
+     * Use different render methods for other structures
      *
      * @return A MatchListElement to be used to display this match
      */
