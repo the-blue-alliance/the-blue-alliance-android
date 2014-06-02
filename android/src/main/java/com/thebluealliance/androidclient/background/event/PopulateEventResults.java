@@ -54,11 +54,11 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
 
         groups = new SparseArray<>();
-        ListGroup awards = new ListGroup("Awards");
-        ListGroup qualMatches = new ListGroup("Qualification Matches");
-        ListGroup quarterMatches = new ListGroup("Quarterfinal Matches");
-        ListGroup semiMatches = new ListGroup("Semifinal Matches");
-        ListGroup finalMatches = new ListGroup("Finals Matches");
+        ListGroup awards = new ListGroup(activity.getString(R.string.awards_header));
+        ListGroup qualMatches = new ListGroup(activity.getString(R.string.quals_header));
+        ListGroup quarterMatches = new ListGroup(activity.getString(R.string.quarters_header));
+        ListGroup semiMatches = new ListGroup(activity.getString(R.string.semis_header));
+        ListGroup finalMatches = new ListGroup(activity.getString(R.string.finals_header));
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties

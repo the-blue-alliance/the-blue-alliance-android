@@ -46,6 +46,11 @@
     <!-- View Match Details -->
     <string name="teams">Teams</string>
     <string name="score">Score</string>
+    <string name="awards_header">Awards</string>
+    <string name="quals_header">Qualification Matches</string>
+    <string name="quarters_header">Quarterfinal Matches</string>
+    <string name="semis_header">Semifinal Matches</string>
+    <string name="finals_header">Finals Matches</string>
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
