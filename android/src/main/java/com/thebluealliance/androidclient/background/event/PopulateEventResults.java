@@ -152,7 +152,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                                 teamKey.substring(3), rank, recordString)
                 ));
 
-                activity.findViewById(R.id.content_view).setVisibility(View.VISIBLE);
+                activity.findViewById(R.id.team_at_event_info).setVisibility(View.VISIBLE);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {

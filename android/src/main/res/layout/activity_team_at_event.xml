@@ -9,12 +9,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/content_view"
-            android:visibility="gone"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:id="@+id/team_at_event_info">
 
                 <TextView
