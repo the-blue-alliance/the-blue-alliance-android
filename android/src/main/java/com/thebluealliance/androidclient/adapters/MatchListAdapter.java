@@ -1,107 +1,32 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckedTextView;
 
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
-import com.thebluealliance.androidclient.datatypes.MatchGroup;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
 /**
  * File created by phil on 4/22/14.
  */
-public class MatchListAdapter extends BaseExpandableListAdapter {
+public class MatchListAdapter extends ExpandableListAdapter {
 
-    public final SparseArray<MatchGroup> groups;
-    private Context context;
-    private LayoutInflater inflater;
     private String teamKey;
 
-    public MatchListAdapter(Context c, SparseArray<MatchGroup> groups, String selectedTeam) {
-        this.groups = groups;
-        context = c;
+    public MatchListAdapter(Activity a, SparseArray<ListGroup> groups, String selectedTeam) {
+        super(a, groups);
         teamKey = selectedTeam;
-        inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        return groups.get(groupPosition).children.get(childPosition);
-    }
-
-    public Object getChildKey(int groupPosition, int childPosition) {
-        return groups.get(groupPosition).childrenKeys.get(childPosition);
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return 0;
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        if (groups == null || groups.get(groupPosition) == null)
-            return 0;
-        return groups.get(groupPosition).children.size();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-        return groups.get(groupPosition);
-    }
-
-    @Override
-    public int getGroupCount() {
-        return groups.size();
-    }
-
-    @Override
-    public void onGroupCollapsed(int groupPosition) {
-        super.onGroupCollapsed(groupPosition);
-    }
-
-    @Override
-    public void onGroupExpanded(int groupPosition) {
-        super.onGroupExpanded(groupPosition);
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return 0;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.expandable_list_group, null);
-        }
-        ListGroup group = (ListGroup) getGroup(groupPosition);
-        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setText(group.string);
-        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setChecked(isExpanded);
-
-        return convertView;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        Match child = groups.get(groupPosition).children.get(childPosition);
-        child.setSelectedTeam(teamKey);
-        return child.render().getView(context, inflater, convertView);
+        BasicModel child = groups.get(groupPosition).children.get(childPosition);
+        if(child instanceof Match) {
+            ((Match)child).setSelectedTeam(teamKey);
+        }
+        return child.render().getView(activity, inflater, convertView);
     }
 }

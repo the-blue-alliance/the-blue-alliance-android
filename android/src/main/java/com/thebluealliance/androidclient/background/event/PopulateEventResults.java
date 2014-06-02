@@ -16,7 +16,8 @@ import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
-import com.thebluealliance.androidclient.datatypes.MatchGroup;
+import com.thebluealliance.androidclient.datatypes.ListGroup;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -33,7 +34,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     private Fragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey, teamKey, recordString;
-    SparseArray<MatchGroup> groups;
+    SparseArray<ListGroup> groups;
     private Event event;
     private int rank;
 
@@ -53,10 +54,11 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
 
         groups = new SparseArray<>();
-        MatchGroup qualMatches = new MatchGroup("Qualification Matches");
-        MatchGroup quarterMatches = new MatchGroup("Quarterfinal Matches");
-        MatchGroup semiMatches = new MatchGroup("Semifinal Matches");
-        MatchGroup finalMatches = new MatchGroup("Finals Matches");
+        ListGroup awards = new ListGroup("Awards");
+        ListGroup qualMatches = new ListGroup("Qualification Matches");
+        ListGroup quarterMatches = new ListGroup("Quarterfinal Matches");
+        ListGroup semiMatches = new ListGroup("Semifinal Matches");
+        ListGroup finalMatches = new ListGroup("Finals Matches");
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
@@ -71,15 +73,23 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             Collections.sort(results.get(Match.TYPE.SEMI), comparator);
             Collections.sort(results.get(Match.TYPE.FINAL), comparator);
 
-            MatchGroup currentGroup = qualMatches;
-            for(Map.Entry<Match.TYPE, ArrayList<Match>> entry : results.entrySet()){
-                switch (entry.getKey()){
-                    case QUAL: currentGroup = qualMatches; break;
-                    case QUARTER: currentGroup = quarterMatches; break;
-                    case SEMI: currentGroup = semiMatches; break;
-                    case FINAL: currentGroup = semiMatches; break;
+            ListGroup currentGroup = qualMatches;
+            for (Map.Entry<Match.TYPE, ArrayList<Match>> entry : results.entrySet()) {
+                switch (entry.getKey()) {
+                    case QUAL:
+                        currentGroup = qualMatches;
+                        break;
+                    case QUARTER:
+                        currentGroup = quarterMatches;
+                        break;
+                    case SEMI:
+                        currentGroup = semiMatches;
+                        break;
+                    case FINAL:
+                        currentGroup = finalMatches;
+                        break;
                 }
-                for(Match m: entry.getValue()){
+                for (Match m : entry.getValue()) {
                     currentGroup.children.add(m);
                     currentGroup.childrenKeys.add(m.getKey());
 
@@ -87,9 +97,12 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 }
             }
 
-            if(!teamKey.isEmpty()) {
+            if (!teamKey.isEmpty()) {
                 recordString = record[0] + "-" + record[1] + "-" + record[2];
                 rank = DataManager.getRankForTeamAtEvent(activity, teamKey, eventKey).getData();
+
+                ArrayList<Award> awardList = DataManager.getEventAwards(activity, eventKey, teamKey).getData();
+                awards.children.addAll(awardList);
             }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
@@ -97,6 +110,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         }
 
         int numGroups = 0;
+        if(awards.children.size() > 0){
+            groups.append(numGroups, awards);
+            numGroups++;
+        }
         if (qualMatches.children.size() > 0) {
             groups.append(numGroups, qualMatches);
             numGroups++;
@@ -124,15 +141,16 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             listView.setAdapter(adapter);
 
             //set action bar title
-            if(teamKey.isEmpty()){
+            if (teamKey.isEmpty()) {
                 activity.getActionBar().setTitle(event.getEventName());
-            }else{
-                activity.getActionBar().setTitle(teamKey.substring(3)+" @ "+event.getShortName());
+            } else {
+                activity.getActionBar().setTitle(teamKey.substring(3) + " @ " + event.getShortName());
 
                 //set the other UI elements specific to team@event
-                ((TextView)activity.findViewById(R.id.team_record)).setText(Html.fromHtml(
+                ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(
                         String.format(activity.getString(R.string.team_record),
-                        teamKey.substring(3), rank, recordString)));
+                                teamKey.substring(3), rank, recordString)
+                ));
 
                 activity.findViewById(R.id.content_view).setVisibility(View.VISIBLE);
             }

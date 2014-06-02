@@ -62,17 +62,27 @@ public class Award implements BasicModel {
         this.eventKey = eventKey;
     }
 
+    public ArrayList<Award> splitByWinner() {
+        ArrayList<Award> out = new ArrayList<>();
+        for (JsonElement winner : winners) {
+            JsonArray winnerArray = new JsonArray();
+            winnerArray.add(winner);
+            out.add(new Award(eventKey, name, year, winnerArray));
+        }
+        return out;
+    }
+
     public ArrayList<AwardListElement> renderAll() {
         ArrayList<AwardListElement> output = new ArrayList<>();
         Iterator<JsonElement> iterator = winners.iterator();
-        int teamNumber;
+        String teamNumber;
         String awardee;
         while (iterator.hasNext()) {
             JsonObject winner = iterator.next().getAsJsonObject();
             if (winner.get("team_number").isJsonNull()) {
-                teamNumber = -1;
+                teamNumber = "";
             } else {
-                teamNumber = winner.get("team_number").getAsInt();
+                teamNumber = winner.get("team_number").getAsString();
             }
             if (winner.get("awardee").isJsonNull()) {
                 awardee = "";
@@ -85,10 +95,10 @@ public class Award implements BasicModel {
         return output;
     }
 
-    public static String buildWinnerString(String awardee, int team) {
+    public static String buildWinnerString(String awardee, String team) {
         if (awardee.isEmpty()) {
             return "" + team;
-        } else if (team == -1) {
+        } else if (team.isEmpty()) {
             return awardee;
         } else {
             return awardee + " (" + team + ")";
@@ -97,7 +107,29 @@ public class Award implements BasicModel {
 
     @Override
     public AwardListElement render() {
-        return null;
+        Iterator<JsonElement> iterator = winners.iterator();
+        String teamNumber = "";
+        String awardee = "";
+        while (iterator.hasNext()) {
+            JsonObject winner = iterator.next().getAsJsonObject();
+            if (winner.get("team_number").isJsonNull()) {
+                teamNumber = "";
+            } else {
+                teamNumber += winner.get("team_number").getAsInt()+", ";
+            }
+            if (winner.get("awardee").isJsonNull()) {
+                awardee = "";
+            } else {
+                awardee += winner.get("awardee").getAsString()+", ";
+            }
+        }
+        if(!teamNumber.isEmpty()) {
+            teamNumber = teamNumber.substring(0, teamNumber.length() - 2);
+        }
+        if(!awardee.isEmpty()) {
+            awardee = awardee.substring(0, awardee.length() - 2);
+        }
+        return new AwardListElement("frc" + teamNumber, name, buildWinnerString(awardee, teamNumber), teamNumber);
     }
 
     @Override

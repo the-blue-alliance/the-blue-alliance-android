@@ -14,11 +14,15 @@ import com.thebluealliance.androidclient.datatypes.ListGroup;
 /**
  * File created by phil on 4/22/14.
  */
-public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public final SparseArray<ListGroup> groups;
     public LayoutInflater inflater;
     public Activity activity;
     private boolean mIsChildSelectable = false;
+
+    public ExpandableListAdapter(){
+        groups = new SparseArray<>();
+    }
 
     public ExpandableListAdapter(Activity act, SparseArray<ListGroup> groups) {
         activity = act;
@@ -78,8 +82,8 @@ public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.expandable_list_group, null);
         }
         ListGroup group = (ListGroup) getGroup(groupPosition);
-        ((CheckedTextView) convertView).setText(group.string);
-        ((CheckedTextView) convertView).setChecked(isExpanded);
+        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setText(group.string);
+        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setChecked(isExpanded);
 
         return convertView;
     }
@@ -96,5 +100,10 @@ public abstract class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     public void setChildSelectable(boolean isSelectable) {
         mIsChildSelectable = isSelectable;
+    }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        return groups.get(groupPosition).children.get(childPosition).render().getView(activity, inflater, convertView);
     }
 }

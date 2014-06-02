@@ -166,17 +166,21 @@ public class DataManager {
         return new APIResponse<>(JSONManager.getasJsonObject(results.getData()), results.getCode());
     }
 
-    public synchronized static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey) throws NoDataException {
+    public synchronized static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, String teamKey) throws NoDataException {
         ArrayList<Award> awards = new ArrayList<>();
         Log.d("event awards", "Fetching awards for " + eventKey);
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards", true);
-        ;
-        Iterator<JsonElement> iterator = JSONManager.getasJsonArray(response.getData()).iterator();
-        while (iterator.hasNext()) {
-            Award award = JSONManager.getGson().fromJson(iterator.next().getAsJsonObject(), Award.class);
-            awards.add(award);
+        for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
+            Award award = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Award.class);
+            if(award.getWinners().toString().contains(teamKey.substring(3)+",")){
+                awards.add(award);
+            }
         }
         return new APIResponse<>(awards, response.getCode());
+    }
+
+    public synchronized static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey) throws NoDataException {
+        return getEventAwards(c, eventKey, "");
     }
 
     public synchronized static APIResponse<ArrayList<SimpleEvent>> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException {
