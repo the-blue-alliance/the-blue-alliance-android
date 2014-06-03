@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.adapters;
 
 import android.app.Activity;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.datatypes.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
+
+import java.util.ArrayList;
 
 /**
  * File created by phil on 4/22/14.
@@ -16,7 +17,7 @@ public class MatchListAdapter extends ExpandableListAdapter {
 
     private String teamKey;
 
-    public MatchListAdapter(Activity a, SparseArray<ListGroup> groups, String selectedTeam) {
+    public MatchListAdapter(Activity a, ArrayList<ListGroup> groups, String selectedTeam) {
         super(a, groups);
         teamKey = selectedTeam;
     }

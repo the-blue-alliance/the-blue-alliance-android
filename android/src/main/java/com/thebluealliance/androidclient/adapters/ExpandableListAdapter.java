@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.adapters;
 
 import android.app.Activity;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,20 +10,22 @@ import android.widget.CheckedTextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
 
+import java.util.ArrayList;
+
 /**
  * File created by phil on 4/22/14.
  */
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
-    public final SparseArray<ListGroup> groups;
+    public final ArrayList<ListGroup> groups;
     public LayoutInflater inflater;
     public Activity activity;
     private boolean mIsChildSelectable = false;
 
     public ExpandableListAdapter(){
-        groups = new SparseArray<>();
+        groups = new ArrayList<>();
     }
 
-    public ExpandableListAdapter(Activity act, SparseArray<ListGroup> groups) {
+    public ExpandableListAdapter(Activity act, ArrayList<ListGroup> groups) {
         activity = act;
         this.groups = groups;
         inflater = act.getLayoutInflater();
@@ -54,6 +55,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getGroup(int groupPosition) {
         return groups.get(groupPosition);
+    }
+
+    public void addGroup(int position, ListGroup group){
+        groups.add(position, group);
+    }
+
+    public void addGroup(ListGroup group){
+        groups.add(group);
     }
 
     @Override

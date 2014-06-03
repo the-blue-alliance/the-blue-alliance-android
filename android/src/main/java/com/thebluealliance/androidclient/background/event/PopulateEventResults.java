@@ -2,23 +2,19 @@ package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
+import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
-import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
@@ -34,9 +30,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     private Fragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey, teamKey, recordString;
-    SparseArray<ListGroup> groups;
-    private Event event;
-    private int rank;
+    ArrayList<ListGroup> groups;
 
     public PopulateEventResults(Fragment f) {
         mFragment = f;
@@ -53,8 +47,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         }
 
 
-        groups = new SparseArray<>();
-        ListGroup awards = new ListGroup(activity.getString(R.string.awards_header));
+        groups = new ArrayList<>();
         ListGroup qualMatches = new ListGroup(activity.getString(R.string.quals_header));
         ListGroup quarterMatches = new ListGroup(activity.getString(R.string.quarters_header));
         ListGroup semiMatches = new ListGroup(activity.getString(R.string.semis_header));
@@ -63,8 +56,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
-            event = DataManager.getEvent(activity, eventKey).getData();
-
             response = DataManager.getEventResults(activity, eventKey, teamKey);
             HashMap<Match.TYPE, ArrayList<Match>> results = response.getData();
 
@@ -93,41 +84,34 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                     currentGroup.children.add(m);
                     currentGroup.childrenKeys.add(m.getKey());
 
+                    /**
+                     * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
+                     * we'd have to iterate through every match again to calculate the
+                     * record, and that's just wasteful
+                     */
                     m.addToRecord(teamKey, record);
                 }
             }
 
             if (!teamKey.isEmpty()) {
                 recordString = record[0] + "-" + record[1] + "-" + record[2];
-                rank = DataManager.getRankForTeamAtEvent(activity, teamKey, eventKey).getData();
-
-                ArrayList<Award> awardList = DataManager.getEventAwards(activity, eventKey, teamKey).getData();
-                awards.children.addAll(awardList);
             }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
             response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
 
-        int numGroups = 0;
-        if(awards.children.size() > 0){
-            groups.append(numGroups, awards);
-            numGroups++;
-        }
         if (qualMatches.children.size() > 0) {
-            groups.append(numGroups, qualMatches);
-            numGroups++;
+            groups.add(qualMatches);
         }
         if (quarterMatches.children.size() > 0) {
-            groups.append(numGroups, quarterMatches);
-            numGroups++;
+            groups.add(quarterMatches);
         }
         if (semiMatches.children.size() > 0) {
-            groups.append(numGroups, semiMatches);
-            numGroups++;
+            groups.add(semiMatches);
         }
         if (finalMatches.children.size() > 0) {
-            groups.append(numGroups, finalMatches);
+            groups.add(finalMatches);
         }
 
         return response.getCode();
@@ -142,24 +126,14 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             //set action bar title
             if (teamKey.isEmpty()) {
-                activity.getActionBar().setTitle(event.getEventName());
+                view.findViewById(R.id.progress).setVisibility(View.GONE);
             } else {
-                activity.getActionBar().setTitle(teamKey.substring(3) + " @ " + event.getShortName());
-
-                //set the other UI elements specific to team@event
-                ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(
-                        String.format(activity.getString(R.string.team_record),
-                                teamKey.substring(3), rank, recordString)
-                ));
-
-                activity.findViewById(R.id.team_at_event_info).setVisibility(View.VISIBLE);
+                new PopulateTeamAtEvent(activity, adapter).execute(teamKey, eventKey, recordString);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-
-            view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 }
