@@ -294,26 +294,31 @@ public class Match implements BasicModel {
     }
 
     public void addToRecord(String teamKey, int[] currentRecord /* {win, loss, tie} */){
+        if(currentRecord == null || alliances == null || !(alliances.has("red") && alliances.has("blue"))){
+            return;
+        }
         JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
 
-        if(redTeams.toString().contains(teamKey+"\"")){
-            if(redScore > blueScore){
-                currentRecord[0]++;
-            }else if(redScore < blueScore){
-                currentRecord[1]++;
-            }else{
-                currentRecord[2]++;
-            }
-        }else if(blueTeams.toString().contains(teamKey+"\"")){
-            if(blueScore > redScore){
-                currentRecord[0]++;
-            }else if(blueScore < redScore){
-                currentRecord[1]++;
-            }else{
-                currentRecord[2]++;
+        if(redScore >= 0 && blueScore >= 0) {
+            if (redTeams.toString().contains(teamKey + "\"")) {
+                if (redScore > blueScore) {
+                    currentRecord[0]++;
+                } else if (redScore < blueScore) {
+                    currentRecord[1]++;
+                } else {
+                    currentRecord[2]++;
+                }
+            } else if (blueTeams.toString().contains(teamKey + "\"")) {
+                if (blueScore > redScore) {
+                    currentRecord[0]++;
+                } else if (blueScore < redScore) {
+                    currentRecord[1]++;
+                } else {
+                    currentRecord[2]++;
+                }
             }
         }
     }
