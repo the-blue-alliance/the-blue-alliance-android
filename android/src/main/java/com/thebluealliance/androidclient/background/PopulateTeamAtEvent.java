@@ -27,7 +27,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     RefreshableHostActivity activity;
     ExpandableListAdapter adapter;
     int rank;
-    boolean listViewUpdated;
+    ListGroup awards;
 
     public PopulateTeamAtEvent(RefreshableHostActivity activity, ExpandableListAdapter adapter){
         super();
@@ -42,8 +42,6 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         teamKey = params[0];
         eventKey = params[1];
         recordString = params[2];
-
-        listViewUpdated = false;
 
         APIResponse<Event> eventResponse;
         Event event;
@@ -69,12 +67,8 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         try {
             awardResponse = DataManager.getEventAwards(activity, eventKey, teamKey);
             ArrayList< Award > awardList = awardResponse.getData();
-            ListGroup awards = new ListGroup(activity.getString(R.string.awards_header));
+            awards = new ListGroup(activity.getString(R.string.awards_header));
             awards.children.addAll(awardList);
-            if(awardList.size() > 0){
-                adapter.addGroup(0, awards);
-                listViewUpdated = true;
-            }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch award data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
@@ -88,7 +82,8 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
         if(activity != null) {
-            if (eventShort != null && !eventShort.isEmpty()) {
+            boolean listViewUpdated=false;
+            if (activity.getActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
                 activity.getActionBar().setTitle(teamKey.substring(3) + " @ " + eventShort);
             }
             //set the other UI elements specific to team@event
@@ -96,8 +91,12 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                     String.format(activity.getString(R.string.team_record),
                             teamKey.substring(3), rank, recordString)
             ));
-
             activity.findViewById(R.id.team_at_event_info).setVisibility(View.VISIBLE);
+
+            if(awards.children.size() > 0){
+                adapter.addGroup(0, awards);
+                listViewUpdated = true;
+            }
 
             activity.findViewById(R.id.progress).setVisibility(View.GONE);
 
