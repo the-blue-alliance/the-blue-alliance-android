@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thebluealliance.androidclient">
+    package="com.thebluealliance.androidclient" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,24 +9,28 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="com.thebluealliance.androidclient.activities.StartActivity"
-            android:label="@string/app_name">
+            android:name=".activities.StartActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.thebluealliance.androidclient.activities.ViewEventActivity" />
-        <activity android:name="com.thebluealliance.androidclient.activities.ViewTeamActivity" />
-        <activity android:name="com.thebluealliance.androidclient.activities.ViewMatchActivity"/>
+        <activity android:name=".activities.ViewEventActivity" />
+        <activity android:name=".activities.ViewTeamActivity" />
+        <activity android:name=".activities.ViewMatchActivity" />
         <activity
-            android:name="com.thebluealliance.androidclient.activities.SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_settings" />
         <activity
-            android:name="com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity"
-            android:label="@string/license_label"/>
+            android:name=".activities.OpenSourceLicensesActivity"
+            android:label="@string/license_label" />
+        <activity
+            android:name=".activities.TeamAtEventActivity" >
+        </activity>
     </application>
 
 </manifest>

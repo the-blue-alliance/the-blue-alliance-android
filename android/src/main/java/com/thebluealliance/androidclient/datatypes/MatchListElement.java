@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datatypes;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +21,7 @@ import com.thebluealliance.androidclient.listeners.TeamClickListener;
 public class MatchListElement extends ListElement {
 
     private String videoKey;
-    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore;
+    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
     private ViewHolder holder;
 
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey) {
@@ -32,10 +33,22 @@ public class MatchListElement extends ListElement {
         this.redScore = redScore;
         this.blueScore = blueScore;
         this.matchKey = matchKey;
+        this.selectedTeamKey = "";
+    }
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, String selectedTeamKey) {
+        super();
+        this.videoKey = youTubeVideoKey;
+        this.matchTitle = matchTitle;
+        this.redTeams = redTeams;
+        this.blueTeams = blueTeams;
+        this.redScore = redScore;
+        this.blueScore = blueScore;
+        this.matchKey = matchKey;
+        this.selectedTeamKey = selectedTeamKey;
     }
 
     @Override
-    public View getView(Context c, LayoutInflater inflater, View convertView) {
+    public View getView(final Context c, LayoutInflater inflater, View convertView) {
         if (convertView == null || holder == null) {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 
@@ -106,10 +119,16 @@ public class MatchListElement extends ListElement {
             holder.red1.setText(redTeams[0]);
             holder.red1.setTag("frc" + redTeams[0]);
             holder.red1.setOnClickListener(listener);
+            if(!selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[0])){
+                holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
+            }
 
             holder.red2.setText(redTeams[1]);
             holder.red2.setTag("frc" + redTeams[1]);
             holder.red2.setOnClickListener(listener);
+            if(!selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[1])){
+                holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
+            }
 
             if (redTeams.length == 2) {
                 holder.red3.setVisibility(View.GONE);
@@ -118,6 +137,9 @@ public class MatchListElement extends ListElement {
                 holder.red3.setText(redTeams[2]);
                 holder.red3.setTag("frc" + redTeams[2]);
                 holder.red3.setOnClickListener(listener);
+                if(!selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[2])){
+                    holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
+                }
             }
         }
 
@@ -129,10 +151,16 @@ public class MatchListElement extends ListElement {
             holder.blue1.setText(blueTeams[0]);
             holder.blue1.setTag("frc" + blueTeams[0]);
             holder.blue1.setOnClickListener(listener);
+            if(!selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[0])){
+                holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
+            }
 
             holder.blue2.setText(blueTeams[1]);
             holder.blue2.setTag("frc" + blueTeams[1]);
             holder.blue2.setOnClickListener(listener);
+            if(!selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[1])){
+                holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
+            }
 
             if (blueTeams.length == 2) {
                 holder.blue3.setVisibility(View.GONE);
@@ -141,11 +169,15 @@ public class MatchListElement extends ListElement {
                 holder.blue3.setText(blueTeams[2]);
                 holder.blue3.setTag("frc" + blueTeams[2]);
                 holder.blue3.setOnClickListener(listener);
+                if(!selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[2])){
+                    holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
+                }
             }
         }
         holder.redScore.setText(redScore);
         holder.blueScore.setText(blueScore);
 
+        convertView.setTag(matchKey);
         return convertView;
     }
 

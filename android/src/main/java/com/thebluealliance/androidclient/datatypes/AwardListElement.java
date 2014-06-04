@@ -14,9 +14,9 @@ public class AwardListElement extends ListElement {
 
     private String mAwardName;
     private String mAwardWinner;
-    private int mAwardTeam;
+    private String mAwardTeam;
 
-    public AwardListElement(String key, String name, String winnerString, int team) {
+    public AwardListElement(String key, String name, String winnerString, String team) {
         super(key);
         mAwardName = name;
         mAwardWinner = winnerString;
@@ -28,7 +28,9 @@ public class AwardListElement extends ListElement {
 
         if (view == null) {
             view = inflater.inflate(R.layout.list_item_award, null);
-            view.setTag("frc" + mAwardTeam);
+            if(!mAwardTeam.contains(",")) {
+                view.setTag("frc" + mAwardTeam);
+            }
 
             TextView title = (TextView) view.findViewById(R.id.award_name);
             title.setText(mAwardName);
