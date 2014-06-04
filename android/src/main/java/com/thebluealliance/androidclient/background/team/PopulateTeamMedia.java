@@ -27,7 +27,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
     private RefreshableHostActivity activity;
     SparseArray<ListGroup> groups;
 
-    public PopulateTeamMedia(Fragment f){
+    public PopulateTeamMedia(Fragment f) {
         fragment = f;
         activity = (RefreshableHostActivity) f.getActivity();
     }
@@ -39,7 +39,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
     @Override
     protected APIResponse.CODE doInBackground(Object... params) {
-        if(params.length != 2 || !(params[0] instanceof String) || !(params[1] instanceof Integer)){
+        if (params.length != 2 || !(params[0] instanceof String) || !(params[1] instanceof Integer)) {
             throw new IllegalArgumentException("PopulateTeamMedia must be called with the team key and year (String, int)");
         }
 
@@ -54,8 +54,8 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                     ytVideos = new ListGroup(activity.getString(R.string.yt_header));
 
             ArrayList<Media> medias = response.getData();
-            for(Media m: medias){
-                switch(m.getMediaType()){
+            for (Media m : medias) {
+                switch (m.getMediaType()) {
                     case CD_PHOTO_THREAD:
                         cdPhotos.children.add(m);
                         break;
@@ -68,17 +68,17 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             }
 
             int numGroups = 0;
-            if(cdPhotos.children.size() > 0){
+            if (cdPhotos.children.size() > 0) {
                 groups.append(numGroups, cdPhotos);
-                numGroups ++;
+                numGroups++;
             }
-            if(ytVideos.children.size() > 0){
+            if (ytVideos.children.size() > 0) {
                 groups.append(numGroups, ytVideos);
             }
 
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            Log.w(Constants.LOG_TAG, "Unable to fetch media for "+team+" in "+year);
+            Log.w(Constants.LOG_TAG, "Unable to fetch media for " + team + " in " + year);
         }
         return APIResponse.CODE.NODATA;
     }
@@ -92,7 +92,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             listView.setAdapter(adapter);
 
             //expand all the groups
-            for(int i=0;i<groups.size(); i++){
+            for (int i = 0; i < groups.size(); i++) {
                 listView.expandGroup(i);
             }
 

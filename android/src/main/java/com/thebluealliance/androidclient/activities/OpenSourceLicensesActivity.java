@@ -21,7 +21,7 @@ public class OpenSourceLicensesActivity extends Activity {
         setContentView(R.layout.activity_open_source_licenses);
         TextView text = (TextView) findViewById(R.id.text);
 
-        try{
+        try {
             BufferedReader br = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.licenses)));
             try {
                 StringBuilder sb = new StringBuilder();

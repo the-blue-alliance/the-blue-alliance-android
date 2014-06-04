@@ -17,7 +17,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
-    public static Fragment newInstance(String teamKey, int year){
+    public static Fragment newInstance(String teamKey, int year) {
         Bundle args = new Bundle();
         args.putString(TEAM_KEY, teamKey);
         args.putInt(YEAR, year);
@@ -31,7 +31,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     private int year;
     private PopulateTeamMedia task;
 
-    public TeamMediaFragment(){
+    public TeamMediaFragment() {
 
     }
 
@@ -39,7 +39,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        if(args == null || !args.containsKey(TEAM_KEY) || !args.containsKey(YEAR)){
+        if (args == null || !args.containsKey(TEAM_KEY) || !args.containsKey(YEAR)) {
             throw new IllegalArgumentException("TeamMediaFragment must be constructed with a team key and year");
         }
         teamKey = args.getString(TEAM_KEY);

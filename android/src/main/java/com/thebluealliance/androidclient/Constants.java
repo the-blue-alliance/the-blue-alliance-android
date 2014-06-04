@@ -12,7 +12,7 @@ public class Constants {
 
     public static final HashMap<String, String> MATCH_LEVELS;
     public static final HashMap<Media.TYPE, String> MEDIA_IMG_URL_PATTERN,
-        MEDIA_LINK_URL_PATTERN;
+            MEDIA_LINK_URL_PATTERN;
 
     static {
         MATCH_LEVELS = new HashMap<String, String>();

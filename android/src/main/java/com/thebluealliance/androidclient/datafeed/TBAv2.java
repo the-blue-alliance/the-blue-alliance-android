@@ -16,7 +16,7 @@ import java.util.Iterator;
 
 public class TBAv2 {
 
-    public static enum QUERY{
+    public static enum QUERY {
         CSV_TEAMS,
         TEAM, //TODO modify appropriately whenever teams get their own endpoint
         TEAM_MEDIA,
@@ -28,8 +28,10 @@ public class TBAv2 {
         EVENT_RANKS,
         EVENT_AWARDS;
     }
+
     public static final HashMap<QUERY, String> API_URL;
-    static{
+
+    static {
         API_URL = new HashMap<>();
         API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
         API_URL.put(QUERY.TEAM, "http://thebluealliance.com/api/v2/team/%s");

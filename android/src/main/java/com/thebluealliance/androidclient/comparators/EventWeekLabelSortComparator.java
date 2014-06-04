@@ -7,7 +7,7 @@ import java.util.Comparator;
 /**
  * File created by phil on 5/21/14.
  */
-public class EventWeekLabelSortComparator implements Comparator<String>{
+public class EventWeekLabelSortComparator implements Comparator<String> {
 
     static EventTypeComparator typeSort = new EventTypeComparator();
 
@@ -21,10 +21,10 @@ public class EventWeekLabelSortComparator implements Comparator<String>{
     }
 }
 
-class EventTypeComparator implements Comparator<Event.TYPE>{
+class EventTypeComparator implements Comparator<Event.TYPE> {
 
     @Override
     public int compare(Event.TYPE lhs, Event.TYPE rhs) {
-        return ((Integer)Event.getEventOrder(lhs)).compareTo(Event.getEventOrder(rhs));
+        return ((Integer) Event.getEventOrder(lhs)).compareTo(Event.getEventOrder(rhs));
     }
 }

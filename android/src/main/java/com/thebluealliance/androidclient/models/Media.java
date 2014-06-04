@@ -16,8 +16,8 @@ public class Media implements BasicModel {
         YOUTUBE,
         CD_PHOTO_THREAD;
 
-        public static TYPE fromString(String string){
-            switch(string){
+        public static TYPE fromString(String string) {
+            switch (string) {
                 case "cdphotothread":
                     return CD_PHOTO_THREAD;
                 case "youtube":
@@ -57,7 +57,7 @@ public class Media implements BasicModel {
         return mediaType;
     }
 
-    public void setMediaType(String typeString){
+    public void setMediaType(String typeString) {
         mediaType = TYPE.fromString(typeString);
     }
 
@@ -108,9 +108,9 @@ public class Media implements BasicModel {
     @Override
     public ListElement render() {
         String imageUrl;
-        if(mediaType == TYPE.CD_PHOTO_THREAD){
-            imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.getAsJsonObject().get("image_partial").getAsString().replace("_l.jpg","_m.jpg"));
-        }else{
+        if (mediaType == TYPE.CD_PHOTO_THREAD) {
+            imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.getAsJsonObject().get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
+        } else {
             imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
         }
         return new ImageListElement(imageUrl,

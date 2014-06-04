@@ -17,18 +17,18 @@ public class ImageListElement extends ListElement {
 
     private String imageUrl, linkUrl;
 
-    public ImageListElement(String imageUrl, String linkUrl){
+    public ImageListElement(String imageUrl, String linkUrl) {
         this.imageUrl = imageUrl;
         this.linkUrl = linkUrl;
     }
 
     @Override
     public View getView(final Context c, LayoutInflater inflater, View convertView) {
-        if(convertView == null){
+        if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_item_image, null);
         }
 
-        ImageView image = (ImageView)convertView.findViewById(R.id.image);
+        ImageView image = (ImageView) convertView.findViewById(R.id.image);
 
         //TODO these images should eventually be cached locally somewhere
         //so they don't have to be loaded every time

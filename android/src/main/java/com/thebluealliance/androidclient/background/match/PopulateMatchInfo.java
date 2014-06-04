@@ -168,7 +168,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             if (blueScore.getAsInt() < 0) {
                 blue_score.setText("?");
             } else {
-               blue_score.setText(blueScore.getAsString());
+                blue_score.setText(blueScore.getAsString());
             }
 
             Resources resources = mActivity.getResources();
@@ -210,7 +210,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(String.format(Constants.MEDIA_LINK_URL_PATTERN.get(Media.TYPE.YOUTUBE),videoKey)));
+                                    Uri.parse(String.format(Constants.MEDIA_LINK_URL_PATTERN.get(Media.TYPE.YOUTUBE), videoKey)));
                             mActivity.startActivity(intent);
                         }
                     });

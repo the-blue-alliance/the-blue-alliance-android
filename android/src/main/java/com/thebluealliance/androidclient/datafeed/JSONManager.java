@@ -54,7 +54,7 @@ public class JSONManager {
         if (input == null || input.equals(""))
             return new JsonObject();
         JsonElement e = getParser().parse(input);
-        if(e == null || e.isJsonNull()){
+        if (e == null || e.isJsonNull()) {
             return new JsonObject();
         }
         return e.getAsJsonObject();

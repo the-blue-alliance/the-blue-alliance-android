@@ -162,7 +162,7 @@ public class Database extends SQLiteOpenHelper {
                         Events.END, Events.LOCATION, Events.OFFICIAL},
                 Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null
         );
-        if(cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             SimpleEvent event = new SimpleEvent();
             event.setEventKey(cursor.getString(0));
             event.setEventName(cursor.getString(1));

@@ -59,7 +59,7 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
      * @return The position of the item in the adapter, or -1 if it is not found.
      */
     public int getPositionForId(int id) {
-        for (int i=0; i<getCount(); i++) {
+        for (int i = 0; i < getCount(); i++) {
             if (getItem(i).getId() == id) {
                 return i;
             }

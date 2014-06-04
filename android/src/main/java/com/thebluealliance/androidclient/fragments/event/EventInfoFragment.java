@@ -87,12 +87,11 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
                 Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
                 List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
                 if (handlers.size() > 0) {
-                // There is an application to handle this intent intent
+                    // There is an application to handle this intent intent
                     startActivity(i);
-                } else
-                {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
+                } else {
+                    // No application can handle this intent
+                    Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
                 }
             }
         }
