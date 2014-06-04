@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.TeamAtEventActivity">
+    <item
+        android:id="@+id/action_view_event"
+        android:title="@string/action_view_event"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_about_light"/>
+</menu>

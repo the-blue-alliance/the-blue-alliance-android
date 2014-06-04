@@ -258,6 +258,7 @@ public class Event implements BasicModel {
 
 
     public static boolean validateEventKey(String key) {
+        if(key == null || key.isEmpty()) return false;
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
@@ -402,6 +403,19 @@ public class Event implements BasicModel {
     }
 
     public String getShortName() {
+        if(shortName.isEmpty()){
+            String[] match = shortName.split("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)(FIRST Robotics|FRC)?(District|Regional|Region|State|Tournament|FRC|Field)( Competition| Event| Championship)?");
+            if(match.length > 0){
+                String s = match[3];
+                match = s.split("(.*)(FIRST Robotics|FRC)");
+                if(match.length > 0){
+                    shortName = match[1].trim();
+                }else{
+                    shortName = s.trim();
+                }
+            }
+        }
+
         return shortName;
     }
 

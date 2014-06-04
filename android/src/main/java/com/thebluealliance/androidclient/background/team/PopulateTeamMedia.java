@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.background.team;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ExpandableListView;
 
@@ -25,7 +24,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
     private Fragment fragment;
     private RefreshableHostActivity activity;
-    SparseArray<ListGroup> groups;
+    ArrayList<ListGroup> groups;
 
     public PopulateTeamMedia(Fragment f) {
         fragment = f;
@@ -49,7 +48,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         APIResponse<ArrayList<Media>> response = null;
         try {
             response = DataManager.getTeamMedia(activity, team, year);
-            groups = new SparseArray<>();
+            groups = new ArrayList<>();
             ListGroup cdPhotos = new ListGroup(activity.getString(R.string.cd_header)),
                     ytVideos = new ListGroup(activity.getString(R.string.yt_header));
 
@@ -67,13 +66,11 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 }
             }
 
-            int numGroups = 0;
             if (cdPhotos.children.size() > 0) {
-                groups.append(numGroups, cdPhotos);
-                numGroups++;
+                groups.add(cdPhotos);
             }
             if (ytVideos.children.size() > 0) {
-                groups.append(numGroups, ytVideos);
+                groups.add(ytVideos);
             }
 
             return response.getCode();

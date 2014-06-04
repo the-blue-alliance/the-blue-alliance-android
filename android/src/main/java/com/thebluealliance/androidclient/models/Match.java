@@ -4,7 +4,6 @@ import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datatypes.MatchListElement;
 
 import java.util.ArrayList;
@@ -85,9 +84,11 @@ public class Match implements BasicModel {
     }
 
 
-    String key,
-            eventKey,
-            timeString;
+    String key;
+    String eventKey;
+    String timeString;
+
+    String selectedTeam;
     Match.TYPE type;
     JsonObject alliances;
     JsonArray videos;
@@ -101,6 +102,7 @@ public class Match implements BasicModel {
         this.key = "";
         this.eventKey = "";
         this.timeString = "";
+        this.selectedTeam = "";
         this.time = new Date(0);
         this.type = TYPE.NONE;
         this.alliances = new JsonObject();
@@ -124,39 +126,7 @@ public class Match implements BasicModel {
         this.matchNumber = matchNumber;
         this.setNumber = setNumber;
         this.last_updated = last_updated;
-    }
-
-    /* Temporary constructor for fake data. Probably to be removed... */
-
-    public Match(String key, TYPE type, int matchNumber, int setNumber, int red1, int red2, int red3, int blue1, int blue2, int blue3, int redScore, int blueScore) {
-        if (!validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: " + key);
-        this.key = key;
-        this.eventKey = key.split("_")[0];
-        this.timeString = "";
-        this.time = new Date(0);
-        this.type = type;
-        this.alliances = new JsonObject();
-        JsonObject blueAlliance = new JsonObject();
-        blueAlliance.addProperty("score", blueScore);
-        JsonArray blueTeams = new JsonArray();
-        blueTeams.add(new JsonPrimitive("frc" + blue1));
-        blueTeams.add(new JsonPrimitive("frc" + blue2));
-        blueTeams.add(new JsonPrimitive("frc" + blue3));
-        blueAlliance.add("teams", blueTeams);
-        JsonObject redAlliance = new JsonObject();
-        redAlliance.addProperty("score", redScore);
-        JsonArray redTeams = new JsonArray();
-        redTeams.add(new JsonPrimitive("frc" + red1));
-        redTeams.add(new JsonPrimitive("frc" + red2));
-        redTeams.add(new JsonPrimitive("frc" + red3));
-        redAlliance.add("teams", redTeams);
-        alliances.add("blue", blueAlliance);
-        alliances.add("red", redAlliance);
-        this.videos = new JsonArray();
-        this.year = Integer.parseInt(key.substring(0, 3));
-        this.matchNumber = matchNumber;
-        this.setNumber = setNumber;
-        this.last_updated = -1;
+        this.selectedTeam = "";
     }
 
     public String getKey() {
@@ -266,10 +236,76 @@ public class Match implements BasicModel {
         return PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
     }
 
+    public String getSelectedTeam() {
+        return selectedTeam;
+    }
+
+    public void setSelectedTeam(String selectedTeam) {
+        this.selectedTeam = selectedTeam;
+    }
+
+    public boolean didSelectedTeamWin(){
+        if(selectedTeam.isEmpty()) return false;
+        JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
+                blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
+        int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
+                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+
+        if(redTeams.toString().contains(selectedTeam+"\"")){
+            return redScore > blueScore;
+        }else if(blueTeams.toString().contains(selectedTeam+"\"")){
+            return blueScore > redScore;
+        }else{
+            //match tie;
+            return false;
+        }
+    }
+
+    public void addToRecord(String teamKey, int[] currentRecord /* {win, loss, tie} */){
+        if(currentRecord == null || alliances == null || !(alliances.has("red") && alliances.has("blue"))){
+            return;
+        }
+        JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
+                blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
+        int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
+                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+
+        if(hasBeenPlayed(redScore, blueScore)) {
+            if (redTeams.toString().contains(teamKey + "\"")) {
+                if (redScore > blueScore) {
+                    currentRecord[0]++;
+                } else if (redScore < blueScore) {
+                    currentRecord[1]++;
+                } else {
+                    currentRecord[2]++;
+                }
+            } else if (blueTeams.toString().contains(teamKey + "\"")) {
+                if (blueScore > redScore) {
+                    currentRecord[0]++;
+                } else if (blueScore < redScore) {
+                    currentRecord[1]++;
+                } else {
+                    currentRecord[2]++;
+                }
+            }
+        }
+    }
+
+    private boolean hasBeenPlayed(int redScore, int blueScore){
+        return redScore >= 0 && blueScore >= 0;
+    }
+
+    public boolean hasBeenPlayed(){
+        int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
+                blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+
+        return redScore >= 0 && blueScore >= 0;
+    }
+
     /**
      * Renders a MatchListElement for displaying this match.
      * ASSUMES 3v3 match structure with red/blue alliances
-     * Use different render methods for other structured
+     * Use different render methods for other structures
      *
      * @return A MatchListElement to be used to display this match
      */
@@ -310,7 +346,7 @@ public class Match implements BasicModel {
 
         return new MatchListElement(youTubeVideoKey, getTitle(),
                 redAlliance, blueAlliance,
-                redScore, blueScore, key);
+                redScore, blueScore, key, selectedTeam);
     }
 
     @Override
@@ -320,6 +356,8 @@ public class Match implements BasicModel {
     }
 
     public static boolean validateMatchKey(String key) {
+        if(key == null || key.isEmpty()) return false;
+
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 

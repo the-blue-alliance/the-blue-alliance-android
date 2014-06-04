@@ -138,7 +138,8 @@ public class Team implements BasicModel {
         return null;
     }
 
-    public static boolean validateTeamKey(String key) {
+    public static boolean validateTeamKey(String key){
+        if(key == null || key.isEmpty()) return false;
         return key.matches("^frc\\d{1,4}$");
     }
 }
