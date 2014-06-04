@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 
 /**
- * Runs tests on a FRC event page to ensure data is being handled properly.
+ * Runs tests on a FRC match page to ensure data is being handled properly.
  *
  * Created by Bryce Matsuda on 6/3/14.
  */
@@ -21,7 +21,7 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
     private TextView blue1, blue2, blue3, blueScore;
 
     public TestTBAMatch() {
-        super(ViewMatchActivity.class);
+       super(ViewMatchActivity.class);
     }
 
     protected void setUp() throws Exception {
