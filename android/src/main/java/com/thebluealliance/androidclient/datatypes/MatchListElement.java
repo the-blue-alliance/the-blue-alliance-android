@@ -48,7 +48,7 @@ public class MatchListElement extends ListElement {
     }
 
     @Override
-    public View getView(Context c, LayoutInflater inflater, View convertView) {
+    public View getView(final Context c, LayoutInflater inflater, View convertView) {
         if (convertView == null || holder == null) {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 

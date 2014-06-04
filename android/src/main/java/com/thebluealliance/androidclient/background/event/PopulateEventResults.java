@@ -18,9 +18,6 @@ import com.thebluealliance.androidclient.datatypes.ListGroup;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * File created by phil on 4/22/14.
@@ -31,6 +28,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     private RefreshableHostActivity activity;
     private String eventKey, teamKey, recordString;
     ArrayList<ListGroup> groups;
+    Match nextMatch, lastMatch;
 
     public PopulateEventResults(Fragment f) {
         mFragment = f;
@@ -53,43 +51,54 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         ListGroup semiMatches = new ListGroup(activity.getString(R.string.semis_header));
         ListGroup finalMatches = new ListGroup(activity.getString(R.string.finals_header));
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
-        APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response;
+        APIResponse<ArrayList<Match>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
-            response = DataManager.getEventResults(activity, eventKey, teamKey);
-            HashMap<Match.TYPE, ArrayList<Match>> results = response.getData();
-
-            Collections.sort(results.get(Match.TYPE.QUAL), comparator);
-            Collections.sort(results.get(Match.TYPE.QUARTER), comparator);
-            Collections.sort(results.get(Match.TYPE.SEMI), comparator);
-            Collections.sort(results.get(Match.TYPE.FINAL), comparator);
+            response = DataManager.getMatchList(activity, eventKey, teamKey);
+            ArrayList<Match> results = response.getData(); //sorted by play order
 
             ListGroup currentGroup = qualMatches;
-            for (Map.Entry<Match.TYPE, ArrayList<Match>> entry : results.entrySet()) {
-                switch (entry.getKey()) {
-                    case QUAL:
-                        currentGroup = qualMatches;
-                        break;
-                    case QUARTER:
-                        currentGroup = quarterMatches;
-                        break;
-                    case SEMI:
-                        currentGroup = semiMatches;
-                        break;
-                    case FINAL:
-                        currentGroup = finalMatches;
-                        break;
-                }
-                for (Match m : entry.getValue()) {
-                    currentGroup.children.add(m);
+            Match.TYPE lastType = null;
+            Match previousIteration = null;
+            boolean lastMatchPlayed = false;
+            for (Match match : results) {
 
-                    /**
-                     * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
-                     * we'd have to iterate through every match again to calculate the
-                     * record, and that's just wasteful
-                     */
-                    m.addToRecord(teamKey, record);
+                if(lastType != match.getType()){
+                    switch (match.getType()){
+                        case QUAL:
+                            currentGroup = qualMatches;
+                            break;
+                        case QUARTER:
+                            currentGroup = quarterMatches;
+                            break;
+                        case SEMI:
+                            currentGroup = semiMatches;
+                            break;
+                        case FINAL:
+                            currentGroup = finalMatches;
+                            break;
+                    }
                 }
+
+                currentGroup.children.add(match);
+
+                if(lastMatchPlayed && !match.hasBeenPlayed()){
+                    lastMatch = previousIteration;
+                    nextMatch = match;
+                }
+
+                /**
+                 * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
+                 * we'd have to iterate through every match again to calculate the
+                 * record, and that's just wasteful
+                 */
+                match.addToRecord(teamKey, record);
+                lastType = match.getType();
+                previousIteration = match;
+                lastMatchPlayed = match.hasBeenPlayed();
+            }
+            if(lastMatch == null && results.size() > 0){
+                lastMatch = results.get(results.size() -1);
             }
 
             if (!teamKey.isEmpty()) {
@@ -127,7 +136,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if (teamKey.isEmpty()) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
             } else {
-                new PopulateTeamAtEvent(activity, adapter).execute(teamKey, eventKey, recordString);
+                PopulateTeamAtEvent task = new PopulateTeamAtEvent(activity, adapter);
+                task.setLastMatch(lastMatch);
+                task.setNextMatch(nextMatch);
+                task.execute(teamKey, eventKey, recordString);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {

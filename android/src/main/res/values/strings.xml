@@ -53,6 +53,9 @@
     <string name="quarters_header">Quarterfinal Matches</string>
     <string name="semis_header">Semifinal Matches</string>
     <string name="finals_header">Finals Matches</string>
+    <string name="recent_match_header">Recent Matches</string>
+    <string name="title_next_match">Next Match</string>
+    <string name="title_last_match">Last Match</string>
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>

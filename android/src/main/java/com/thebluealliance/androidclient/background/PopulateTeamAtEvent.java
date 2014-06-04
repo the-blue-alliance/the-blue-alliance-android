@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
@@ -29,12 +30,22 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     RefreshableHostActivity activity;
     ExpandableListAdapter adapter;
     int rank;
-    ListGroup awards, stats;
+    ListGroup awards, stats, recentMatches;
+    Match lastMatch, nextMatch;
+    boolean activeEvent;
 
     public PopulateTeamAtEvent(RefreshableHostActivity activity, ExpandableListAdapter adapter){
         super();
         this.activity = activity;
         this.adapter = adapter;
+    }
+
+    public void setNextMatch(Match nextMatch) {
+        this.nextMatch = nextMatch;
+    }
+
+    public void setLastMatch(Match lastMatch) {
+        this.lastMatch = lastMatch;
     }
 
     @Override
@@ -51,6 +62,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             eventResponse = DataManager.getEvent(activity, eventKey);
             event = eventResponse.getData();
             eventShort = event.getShortName();
+            activeEvent = event.isHappeningNow();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for "+teamKey+"@"+eventKey);
             return APIResponse.CODE.NODATA;
@@ -117,13 +129,26 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             ));
             activity.findViewById(R.id.team_at_event_info).setVisibility(View.VISIBLE);
 
-            if(stats.children.size() > 0){
+           if(stats.children.size() > 0){
                 adapter.addGroup(0, stats);
                 listViewUpdated = true;
             }
 
             if(awards.children.size() > 0){
                 adapter.addGroup(0, awards);
+                listViewUpdated = true;
+            }
+
+            if(activeEvent && nextMatch != null){
+                ListGroup nextMatches = new ListGroup(activity.getString(R.string.title_next_match));
+                nextMatches.children.add(nextMatch);
+                adapter.addGroup(0, nextMatches);
+                listViewUpdated = true;
+            }
+            if(activeEvent && lastMatch != null){
+                ListGroup lastMatches = new ListGroup(activity.getString(R.string.title_last_match));
+                lastMatches.children.add(lastMatch);
+                adapter.addGroup(0, lastMatches);
                 listViewUpdated = true;
             }
 
