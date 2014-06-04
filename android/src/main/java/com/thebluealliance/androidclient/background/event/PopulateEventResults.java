@@ -82,7 +82,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 }
                 for (Match m : entry.getValue()) {
                     currentGroup.children.add(m);
-                    currentGroup.childrenKeys.add(m.getKey());
 
                     /**
                      * the only reason this isn't moved to PopulateTeamAtEvent is that if so,

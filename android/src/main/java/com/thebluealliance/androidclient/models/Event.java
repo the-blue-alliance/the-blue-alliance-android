@@ -258,6 +258,7 @@ public class Event implements BasicModel {
 
 
     public static boolean validateEventKey(String key) {
+        if(key == null || key.isEmpty()) return false;
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 

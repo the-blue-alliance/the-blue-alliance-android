@@ -177,6 +177,7 @@ public class MatchListElement extends ListElement {
         holder.redScore.setText(redScore);
         holder.blueScore.setText(blueScore);
 
+        convertView.setTag(matchKey);
         return convertView;
     }
 

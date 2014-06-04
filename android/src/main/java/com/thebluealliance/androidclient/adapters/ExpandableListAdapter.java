@@ -19,7 +19,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public final ArrayList<ListGroup> groups;
     public LayoutInflater inflater;
     public Activity activity;
-    private boolean mIsChildSelectable = false;
+    private boolean mIsChildSelectable = true;
 
     public ExpandableListAdapter(){
         groups = new ArrayList<>();
@@ -34,10 +34,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         return groups.get(groupPosition).children.get(childPosition);
-    }
-
-    public Object getChildKey(int groupPosition, int childPosition) {
-        return groups.get(groupPosition).childrenKeys.get(childPosition);
     }
 
     @Override
