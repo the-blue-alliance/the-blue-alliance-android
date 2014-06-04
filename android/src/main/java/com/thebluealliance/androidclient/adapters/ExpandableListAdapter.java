@@ -16,6 +16,7 @@ import java.util.ArrayList;
  * File created by phil on 4/22/14.
  */
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
+
     public final ArrayList<ListGroup> groups;
     public LayoutInflater inflater;
     public Activity activity;
@@ -112,3 +113,4 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return groups.get(groupPosition).children.get(childPosition).render().getView(activity, inflater, convertView);
     }
 }
+

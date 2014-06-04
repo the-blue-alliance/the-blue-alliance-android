@@ -127,7 +127,6 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                     String.format(activity.getString(R.string.team_record),
                             teamKey.substring(3), rank, recordString)
             ));
-            activity.findViewById(R.id.team_at_event_info).setVisibility(View.VISIBLE);
 
            if(stats.children.size() > 0){
                 adapter.addGroup(0, stats);
@@ -152,7 +151,8 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 listViewUpdated = true;
             }
 
-            activity.findViewById(R.id.progress).setVisibility(View.GONE);
+            activity.findViewById(R.id.team_at_event_progress).setVisibility(View.GONE);
+            activity.findViewById(R.id.content_view).setVisibility(View.VISIBLE);
 
             if(listViewUpdated){
                 adapter.notifyDataSetChanged();

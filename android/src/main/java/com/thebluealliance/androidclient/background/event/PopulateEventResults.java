@@ -133,9 +133,8 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             listView.setAdapter(adapter);
 
             //set action bar title
-            if (teamKey.isEmpty()) {
-                view.findViewById(R.id.progress).setVisibility(View.GONE);
-            } else {
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
+            if (!teamKey.isEmpty()) {
                 PopulateTeamAtEvent task = new PopulateTeamAtEvent(activity, adapter);
                 task.setLastMatch(lastMatch);
                 task.setNextMatch(nextMatch);

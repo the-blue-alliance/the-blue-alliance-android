@@ -108,17 +108,17 @@ public class Team implements BasicModel {
         this.last_updated = last_updated;
     }
 
-    public SimpleEvent getCurrentEvent(){
+    public SimpleEvent getCurrentEvent() {
         Event event = null;
         Date now = new Date(), eventStart, eventEnd;
         Iterator<JsonElement> iterator = events.iterator();
         JsonObject e;
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             try {
                 e = iterator.next().getAsJsonObject();
                 eventStart = Event.eventDateFormat.parse(e.get("start_date").getAsString());
                 eventEnd = Event.eventDateFormat.parse(e.get("end_date").getAsString());
-                if(now.after(eventStart) && now.before(eventEnd)){
+                if (now.after(eventStart) && now.before(eventEnd)) {
                     return JSONManager.getGson().fromJson(e, SimpleEvent.class);
                 }
             } catch (ParseException ex) {

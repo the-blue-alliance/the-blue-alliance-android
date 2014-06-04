@@ -41,7 +41,9 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
         if(codes.length == 0) return CODE.NODATA;
         CODE merged = CODE.CACHED304; //start with least precedence
         for(CODE code: codes){
-            merged = CODE.values()[merged.compareTo(code)];
+            int newIndex = merged.compareTo(code);
+            if(newIndex == -1) continue;
+            merged = CODE.values()[newIndex];
         }
         return merged;
     }

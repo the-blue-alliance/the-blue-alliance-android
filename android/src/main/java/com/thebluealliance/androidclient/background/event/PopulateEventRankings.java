@@ -46,7 +46,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         try {
             APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey);
             ArrayList<JsonArray> rankList = response.getData();
-            if(rankList.size() > 0) {
+            if (rankList.size() > 0) {
                 JsonArray headerRow = rankList.remove(0);
                 for (JsonArray row : rankList) {
                 /* Assume that the list of lists has rank first
@@ -95,7 +95,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                     //TODO get team name for given number
                 }
                 return response.getCode();
-            }else{
+            } else {
                 //TODO indicate that no rankings exist (same for other fragments)
                 return APIResponse.CODE.NODATA;
             }
