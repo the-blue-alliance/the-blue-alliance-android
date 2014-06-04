@@ -9,12 +9,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/content_view"
+            android:visibility="gone"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:id="@+id/team_at_event_info">
 
                 <TextView
@@ -46,6 +46,13 @@
                 android:layout_height="fill_parent"
                 android:id="@+id/content" />
         </LinearLayout>
+    <ProgressBar style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:id="@+id/team_at_event_progress"
+        android:visibility="visible"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
     <TextView
         android:id="@+id/warning_container"
         style="@style/ActivityWarningStyle"
