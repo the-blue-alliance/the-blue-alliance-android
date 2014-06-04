@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -15,6 +16,7 @@ import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
 
@@ -27,7 +29,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     RefreshableHostActivity activity;
     ExpandableListAdapter adapter;
     int rank;
-    ListGroup awards;
+    ListGroup awards, stats;
 
     public PopulateTeamAtEvent(RefreshableHostActivity activity, ExpandableListAdapter adapter){
         super();
@@ -67,21 +69,43 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         try {
             awardResponse = DataManager.getEventAwards(activity, eventKey, teamKey);
             ArrayList< Award > awardList = awardResponse.getData();
-            awards = new ListGroup(activity.getString(R.string.awards_header));
+            awards = new ListGroup(activity.getString(R.string.tab_event_awards));
             awards.children.addAll(awardList);
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch award data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
         }
 
+        APIResponse<JsonObject> statsResponse;
+        try {
+            statsResponse = DataManager.getEventStats(activity, eventKey, teamKey);
+            JsonObject statData = statsResponse.getData();
+            String statString = "";
+            if(statData.has("opr")){
+                statString += activity.getString(R.string.opr)+" "+Stat.displayFormat.format(statData.get("opr").getAsDouble());
+            }
+            if(statData.has("dpr")){
+                statString += "\n"+activity.getString(R.string.dpr)+" "+Stat.displayFormat.format(statData.get("dpr").getAsDouble());
+            }
+            if(statData.has("ccwm")){
+                statString += "\n"+activity.getString(R.string.ccwm)+" "+Stat.displayFormat.format(statData.get("ccwm").getAsDouble());
+            }
+            stats = new ListGroup(activity.getString(R.string.tab_event_stats));
+            if(!statString.isEmpty()){
+                stats.children.add(new Stat(teamKey, "", "", statString));
+            }
+        } catch (DataManager.NoDataException e) {
+            Log.w(Constants.LOG_TAG, "Unable to fetch stats data for " + teamKey + "@" + eventKey);
+            return APIResponse.CODE.NODATA;
+        }
 
-        return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), awardResponse.getCode());
+        return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), awardResponse.getCode(), statsResponse.getCode());
     }
 
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
-        if(activity != null) {
+        if(activity != null && code != APIResponse.CODE.NODATA) {
             boolean listViewUpdated=false;
             if (activity.getActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
                 activity.getActionBar().setTitle(teamKey.substring(3) + " @ " + eventShort);
@@ -92,6 +116,11 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                             teamKey.substring(3), rank, recordString)
             ));
             activity.findViewById(R.id.team_at_event_info).setVisibility(View.VISIBLE);
+
+            if(stats.children.size() > 0){
+                adapter.addGroup(0, stats);
+                listViewUpdated = true;
+            }
 
             if(awards.children.size() > 0){
                 adapter.addGroup(0, awards);

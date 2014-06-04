@@ -162,8 +162,37 @@ public class DataManager {
     }
 
     public synchronized static APIResponse<JsonObject> getEventStats(Context c, String eventKey) throws NoDataException {
+        return getEventStats(c, eventKey, "");
+    }
+
+    public synchronized static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey) throws NoDataException {
         APIResponse<String> results = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/stats", true);
-        return new APIResponse<>(JSONManager.getasJsonObject(results.getData()), results.getCode());
+        JsonObject allStats = JSONManager.getasJsonObject(results.getData());
+        if(teamKey.isEmpty()){
+            return new APIResponse<>(allStats, results.getCode());
+        }else{
+            JsonObject teamStats = new JsonObject();
+            String teamNumber = teamKey.substring(3);
+            if(allStats.has("oprs")){
+                JsonObject oprs = allStats.get("oprs").getAsJsonObject();
+                if(oprs.has(teamNumber)){
+                    teamStats.addProperty("opr", oprs.get(teamNumber).getAsDouble());
+                }
+            }
+            if(allStats.has("dprs")){
+                JsonObject oprs = allStats.get("dprs").getAsJsonObject();
+                if(oprs.has(teamNumber)){
+                    teamStats.addProperty("dpr", oprs.get(teamNumber).getAsDouble());
+                }
+            }
+            if(allStats.has("ccwms")){
+                JsonObject oprs = allStats.get("ccwms").getAsJsonObject();
+                if(oprs.has(teamNumber)){
+                    teamStats.addProperty("ccwm", oprs.get(teamNumber).getAsDouble());
+                }
+            }
+            return new APIResponse<>(teamStats, results.getCode());
+        }
     }
 
     public synchronized static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, String teamKey) throws NoDataException {
@@ -172,7 +201,7 @@ public class DataManager {
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards", true);
         for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
             Award award = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Award.class);
-            if(award.getWinners().toString().contains(teamKey.substring(3)+",")){
+            if(award.getWinners().toString().contains(teamKey.isEmpty()?"":teamKey.substring(3)+",")){
                 awards.add(award);
             }
         }

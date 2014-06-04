@@ -38,6 +38,9 @@
     <string name="top_teams">Top Teams:</string>
     <string name="top_opr">Top OPRs:</string>
     <string name="at">at</string>
+    <string name="opr">OPR:</string>
+    <string name="dpr">DPR:</string>
+    <string name="ccwm">CCWM:</string>
 
     <!-- View Team -->
     <string name="from">from</string>
@@ -46,7 +49,6 @@
     <!-- View Match Details -->
     <string name="teams">Teams</string>
     <string name="score">Score</string>
-    <string name="awards_header">Awards</string>
     <string name="quals_header">Qualification Matches</string>
     <string name="quarters_header">Quarterfinal Matches</string>
     <string name="semis_header">Semifinal Matches</string>
