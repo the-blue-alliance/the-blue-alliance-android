@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
@@ -16,17 +18,27 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
  */
 public class ViewEventActivity extends RefreshableHostActivity {
 
+    public static final String EVENTKEY = "eventKey";
+
     private String mEventKey;
     private TextView warningMessage;
     private ViewPager pager;
+
+    public static Intent newInstance(Context c, String eventKey){
+        Intent intent = new Intent(c, ViewEventActivity.class);
+        intent.putExtra(EVENTKEY, eventKey);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
 
-        if (getIntent().getExtras() != null) {
-            mEventKey = getIntent().getExtras().getString("eventKey", "");
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
+            mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
+        }else{
+            throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
@@ -70,7 +82,7 @@ public class ViewEventActivity extends RefreshableHostActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public ViewPager getPager(){
+    public ViewPager getPager() {
         return pager;
     }
 

@@ -18,7 +18,6 @@
     <string name="nav_drawer_teams_label">Teams</string>
     <string name="nav_drawer_insights_label">Insights</string>
     <string name="nav_drawer_settings_label">Settings</string>
-
     <string name="week_selector">Week </string>
     <string name="title_main_activity">The Blue Alliance</string>
     <string name="tab_events">Events</string>
@@ -26,9 +25,8 @@
     <string name="tab_insights">Insights</string>
     <string name="title_activity_view_event">View Event</string>
     <string name="events_label">Events</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <!--View Event -->
+    <!-- View Event -->
     <string name="tab_event_info">Info</string>
     <string name="tab_event_results">Results</string>
     <string name="tab_event_rankings">Rankings</string>
@@ -40,6 +38,9 @@
     <string name="top_teams">Top Teams:</string>
     <string name="top_opr">Top OPRs:</string>
     <string name="at">at</string>
+    <string name="opr">OPR:</string>
+    <string name="dpr">DPR:</string>
+    <string name="ccwm">CCWM:</string>
 
     <!-- View Team -->
     <string name="from">from</string>
@@ -48,6 +49,17 @@
     <!-- View Match Details -->
     <string name="teams">Teams</string>
     <string name="score">Score</string>
+    <string name="quals_header">Qualification Matches</string>
+    <string name="quarters_header">Quarterfinal Matches</string>
+    <string name="semis_header">Semifinal Matches</string>
+    <string name="finals_header">Finals Matches</string>
+    <string name="recent_match_header">Recent Matches</string>
+    <string name="title_next_match">Next Match</string>
+    <string name="title_last_match">Last Match</string>
+
+    <!-- Team Media -->
+    <string name="cd_header">Chief Delphi Photos</string>
+    <string name="yt_header">YouTube Videos</string>
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
@@ -64,4 +76,10 @@
     <!-- Warnings -->
     <string name="warning_using_cached_data">You are offline and may be viewing outdated information.</string>
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
+
+    <!-- Team at Event -->
+    <string name="action_view_event">View Full Event</string>
+    <string name="match_results_header">Results:</string>
+    <string name="team_record" formatted="false"><![CDATA[Overall, Team %s was <b>Rank %d</b> <br/> and had a record of <b>%s</b>]]></string>
+
 </resources>

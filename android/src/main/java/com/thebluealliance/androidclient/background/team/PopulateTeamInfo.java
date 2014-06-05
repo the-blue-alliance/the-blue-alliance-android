@@ -86,9 +86,9 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             // Tag is used to create an ACTION_VIEW intent for a maps application
             view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
             view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
-            view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query="+mTeamKey);
-            view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/"+mTeamKey);
-            view.findViewById(R.id.team_website_button).setTag(!mTeamWebsite.isEmpty()?mTeamWebsite:"https://www.google.com/search?q="+mTeamKey);
+            view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query=" + mTeamKey);
+            view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + mTeamKey);
+            view.findViewById(R.id.team_website_button).setTag(!mTeamWebsite.isEmpty() ? mTeamWebsite : "https://www.google.com/search?q=" + mTeamKey);
             if (mFullName.isEmpty()) {
                 // No full name specified, hide the view
                 view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
@@ -102,7 +102,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 view.findViewById(R.id.team_current_event_container).setVisibility(View.GONE);
                 view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
             } else {
-                ((TextView)view.findViewById(R.id.team_current_event_name)).setText(mCurrentEvent.getEventName());
+                ((TextView) view.findViewById(R.id.team_current_event_name)).setText(mCurrentEvent.getEventName());
                 ArrayList<Match> matches;
                 try {
                     matches = DataManager.getMatchList(activity, mCurrentEvent.getEventKey()).getData();
@@ -114,7 +114,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 Match lastMatch = Match.getLastMatchPlayed(matches);
                 Match nextMatch = Match.getNextMatchPlayed(matches);
                 if (lastMatch != null) {
-                    ((LinearLayout)view.findViewById(R.id.team_most_recent_match_details)).addView(lastMatch.render().getView(activity, inflater, null));
+                    ((LinearLayout) view.findViewById(R.id.team_most_recent_match_details)).addView(lastMatch.render().getView(activity, inflater, null));
                 } else {
                     // Hide most recent match views, this team has not yet had a match at this competition
                     view.findViewById(R.id.team_most_recent_match_label).setVisibility(View.GONE);
@@ -122,7 +122,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 }
 
                 if (nextMatch != null) {
-                    ((LinearLayout)view.findViewById(R.id.team_next_match_details)).addView(nextMatch.render().getView(activity, inflater, null));
+                    ((LinearLayout) view.findViewById(R.id.team_next_match_details)).addView(nextMatch.render().getView(activity, inflater, null));
                 } else {
                     // Hide next match views, this team has no more matches at this competition
                     view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);

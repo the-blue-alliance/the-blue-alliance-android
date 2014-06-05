@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient;
 
+import com.thebluealliance.androidclient.models.Media;
+
 import java.util.HashMap;
 
 /**
@@ -9,6 +11,8 @@ public class Constants {
     public static final String LOG_TAG = "com.thebluealliance.androidclient";
 
     public static final HashMap<String, String> MATCH_LEVELS;
+    public static final HashMap<Media.TYPE, String> MEDIA_IMG_URL_PATTERN,
+            MEDIA_LINK_URL_PATTERN;
 
     static {
         MATCH_LEVELS = new HashMap<String, String>();
@@ -24,6 +28,13 @@ public class Constants {
         MATCH_LEVELS.put("Finals", "f");
         MATCH_LEVELS.put("Final", "f");
         MATCH_LEVELS.put("f", "f");
+
+        MEDIA_IMG_URL_PATTERN = new HashMap<>();
+        MEDIA_LINK_URL_PATTERN = new HashMap<>();
+        MEDIA_IMG_URL_PATTERN.put(Media.TYPE.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/img/%s");
+        MEDIA_LINK_URL_PATTERN.put(Media.TYPE.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/photos/%s");
+        MEDIA_IMG_URL_PATTERN.put(Media.TYPE.YOUTUBE, "http://img.youtube.com/vi/%s/0.jpg");
+        MEDIA_LINK_URL_PATTERN.put(Media.TYPE.YOUTUBE, "https://www.youtube.com/watch?v=%s");
     }
 
     public static String getApiHeader() {
