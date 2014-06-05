@@ -3,13 +3,17 @@ package com.thebluealliance.androidclient.test.datafeed;
 import android.test.suitebuilder.annotation.MediumTest;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
 
 import junit.framework.TestCase;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -40,7 +44,39 @@ public class TestTBAApi extends TestCase {
 
     @MediumTest
     public void testParseMedia(){
-        //TODO implement once https://github.com/the-blue-alliance/the-blue-alliance/issues/1012 happens
+        String mediaJson = "[" +
+                "  {" +
+                "    \"type\": \"cdphotothread\"," +
+                "    \"details\": {" +
+                "      \"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"" +
+                "    }," +
+                "    \"foreign_key\": \"39894\"" +
+                "  }," +
+                "  {" +
+                "    \"type\": \"youtube\"," +
+                "    \"details\": {}," +
+                "    \"foreign_key\": \"RpSgUrsghv4\"" +
+                "  }" +
+                "]";
+
+        ArrayList<Media> medias = new ArrayList<>();
+        JsonArray mediaArray = JSONManager.getasJsonArray(mediaJson);
+        for (JsonElement media : mediaArray) {
+            medias.add(JSONManager.getGson().fromJson(media, Media.class));
+        }
+
+        assertEquals(medias.size(), mediaArray.size());
+        assertEquals(medias.size(), 2);
+
+        Media cd = medias.get(0);
+        assertEquals(cd.getForeignKey(), "39894");
+        assertEquals(cd.getMediaType(), Media.TYPE.CD_PHOTO_THREAD);
+        assertEquals(cd.getDetails(), JSONManager.getasJsonObject("{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"}"));
+
+        Media yt = medias.get(1);
+        assertEquals(yt.getMediaType(), Media.TYPE.YOUTUBE);
+        assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
+        assertEquals(yt.getDetails(), new JsonObject());
     }
 
     @MediumTest
