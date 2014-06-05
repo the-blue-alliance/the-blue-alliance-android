@@ -14,7 +14,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
@@ -161,11 +160,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         if (event != null && activity != null) {
             // If the activity is a NavigationDrawerActivity, set the action bar title using this method
             // so that it properly handles changing the title when the nav drawer is opened or closed.
-            if (activity instanceof NavigationDrawerActivity) {
-                ((NavigationDrawerActivity) activity).setActionBarTitle(event.getEventName());
-            } else {
-                activity.getActionBar().setTitle(event.getEventName());
-            }
+            activity.setActionBarTitle(event.getEventName());
 
             eventName.setText(event.getEventName());
             if (event.getDateString().isEmpty()) {
