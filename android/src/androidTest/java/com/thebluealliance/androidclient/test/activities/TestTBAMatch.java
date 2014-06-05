@@ -49,9 +49,6 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
      * Make sure correct match info is being displayed
      */
     public void testMatchInfoDisplay(){
-        assertNotNull(matchActivity);
-        assertNotNull(eventName);
-        assertNotNull(matchName);
 
         assertEquals("Quals 4",matchName.getText().toString());
         assertEquals("Greater Toronto East Regional", eventName.getText().toString());
@@ -64,5 +61,13 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
         assertEquals(!("1337".equals(blue2.getText().toString())), true);
         assertEquals("2198", blue3.getText().toString());
         assertEquals("57", blueScore.getText().toString());
+    }
+
+    public void testNotNull(){
+
+        assertNotNull(matchActivity);
+        assertNotNull(eventName);
+        assertNotNull(matchName);
+
     }
 }

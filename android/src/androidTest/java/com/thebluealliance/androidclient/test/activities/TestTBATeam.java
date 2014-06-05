@@ -38,10 +38,6 @@ public class TestTBATeam extends ActivityInstrumentationTestCase2<ViewTeamActivi
      * Makes sure correct team info is displayed.
      */
     public void testTeamInfoDisplay(){
-        assertNotNull(teamActivity);
-        assertNotNull(teamName);
-        assertNotNull(teamFullName);
-        assertNotNull(location);
 
         assertEquals("Flaming Chickens", teamName.getText().toString());
         assertEquals("aka Catlin Gabel High School", teamFullName.getText().toString());
@@ -51,6 +47,18 @@ public class TestTBATeam extends ActivityInstrumentationTestCase2<ViewTeamActivi
         assertEquals("aka Spirent Communications & Hawaii Baptist Academy".equals
                                         (teamFullName.getText().toString()), false);
         assertEquals("Honolulu, HI, USA".equals(location.getText().toString()), false);
+    }
+
+    /**
+     * Make sure info is not null
+     */
+    public void testNotNull(){
+
+        assertNotNull(teamActivity);
+        assertNotNull(teamName);
+        assertNotNull(teamFullName);
+        assertNotNull(location);
+
     }
 
 }
