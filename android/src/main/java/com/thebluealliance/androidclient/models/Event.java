@@ -469,7 +469,7 @@ public class Event implements BasicModel {
         ArrayList<AllianceListElement> output = new ArrayList<>();
         int counter = 1;
         for(JsonElement alliance: alliances){
-            JsonArray teams = alliances.getAsJsonObject().get("picks").getAsJsonArray();
+            JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
             output.add(new AllianceListElement(counter, teams));
             counter ++;
         }

@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 /**
@@ -30,23 +31,39 @@ public class AllianceListElement extends ListElement implements BasicModel{
             convertView = inflater.inflate(R.layout.list_item_alliance, null, false);
         }
 
-        ((TextView)convertView.findViewById(R.id.alliance_name)).setText(String.format(c.getString(R.string.alliance_title), number));
+        if(convertView != null) {
+            ((TextView) convertView.findViewById(R.id.alliance_name)).setText(String.format(c.getString(R.string.alliance_title), number));
 
-        ((TextView)convertView.findViewById(R.id.member_one)).setText(teams.get(0).getAsString());
-        ((TextView)convertView.findViewById(R.id.member_two)).setText(teams.get(1).getAsString());
+            TextView team1 = ((TextView) convertView.findViewById(R.id.member_one));
+            String team1Key = teams.get(0).getAsString();
+            team1.setText(team1Key.substring(3));
+            team1.setTag(team1Key);
+            team1.setOnClickListener(new TeamClickListener(c));
 
-        if(teams.size() >= 3){
-            View team3 = convertView.findViewById(R.id.member_three);
-            ((TextView)team3).setText(teams.get(2).getAsString());
-            team3.setVisibility(View.VISIBLE);
+            TextView team2 = ((TextView) convertView.findViewById(R.id.member_two));
+            String team2Key = teams.get(1).getAsString();
+            team2.setText(team2Key.substring(3));
+            team2.setTag(team2Key);
+            team2.setOnClickListener(new TeamClickListener(c));
+
+            if (teams.size() >= 3) {
+                TextView team3 = ((TextView) convertView.findViewById(R.id.member_three));
+                String team3Key = teams.get(2).getAsString();
+                team3.setText(team3Key.substring(3));
+                team3.setTag(team3Key);
+                team3.setVisibility(View.VISIBLE);
+                team3.setOnClickListener(new TeamClickListener(c));
+            }
+
+            if (teams.size() >= 4) {
+                TextView team4 = ((TextView) convertView.findViewById(R.id.member_four));
+                String team4Key = teams.get(3).getAsString();
+                team4.setText(team4Key.substring(3));
+                team4.setTag(team4Key);
+                team4.setVisibility(View.VISIBLE);
+                team4.setOnClickListener(new TeamClickListener(c));
+            }
         }
-
-        if(teams.size() >= 4){
-            View team3 = convertView.findViewById(R.id.member_four);
-            ((TextView)team3).setText(teams.get(3).getAsString());
-            team3.setVisibility(View.VISIBLE);
-        }
-
         return convertView;
     }
 
