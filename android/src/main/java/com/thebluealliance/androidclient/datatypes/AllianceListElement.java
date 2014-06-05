@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.datatypes;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -36,7 +38,9 @@ public class AllianceListElement extends ListElement implements BasicModel{
 
             TextView team1 = ((TextView) convertView.findViewById(R.id.member_one));
             String team1Key = teams.get(0).getAsString();
-            team1.setText(team1Key.substring(3));
+            SpannableString underLine = new SpannableString(team1Key.substring(3));
+            underLine.setSpan(new UnderlineSpan(), 0, underLine.length(), 0);
+            team1.setText(underLine);
             team1.setTag(team1Key);
             team1.setOnClickListener(new TeamClickListener(c));
 
