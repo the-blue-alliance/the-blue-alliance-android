@@ -14,7 +14,9 @@ import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.datatypes.AllianceListElement;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     private String eventKey, teamKey, recordString;
     ArrayList<ListGroup> groups;
     Match nextMatch, lastMatch;
+    Event event;
 
     public PopulateEventResults(Fragment f) {
         mFragment = f;
@@ -109,9 +112,26 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
 
+        APIResponse<Event> eventResponse;
+        try {
+            eventResponse = DataManager.getEvent(activity, eventKey);
+            event = eventResponse.getData();
+        } catch (DataManager.NoDataException e) {
+            Log.w(Constants.LOG_TAG, "Unable to fetch event data for "+teamKey+"@"+eventKey);
+            return APIResponse.CODE.NODATA;
+        }
+
         if (qualMatches.children.size() > 0) {
             groups.add(qualMatches);
         }
+
+        ArrayList<AllianceListElement> alliances = event.renderAlliances();
+        if(alliances.size() > 0){
+            ListGroup allianceGroup = new ListGroup(activity.getString(R.string.alliances_header));
+            allianceGroup.children.addAll(alliances);
+            groups.add(allianceGroup);
+        }
+
         if (quarterMatches.children.size() > 0) {
             groups.add(quarterMatches);
         }
@@ -122,7 +142,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             groups.add(finalMatches);
         }
 
-        return response.getCode();
+        return APIResponse.mergeCodes(eventResponse.getCode(), response.getCode());
     }
 
     protected void onPostExecute(APIResponse.CODE code) {
@@ -135,7 +155,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             //set action bar title
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             if (!teamKey.isEmpty()) {
-                PopulateTeamAtEvent task = new PopulateTeamAtEvent(activity, adapter);
+                PopulateTeamAtEvent task = new PopulateTeamAtEvent(activity, adapter, event);
                 task.setLastMatch(lastMatch);
                 task.setNextMatch(nextMatch);
                 task.execute(teamKey, eventKey, recordString);

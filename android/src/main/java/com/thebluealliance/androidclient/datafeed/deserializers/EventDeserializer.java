@@ -70,6 +70,10 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setStats(object.get("stats").getAsJsonObject());
         }
 
+        if(object.has("alliances")){
+            event.setAlliances(object.get("alliances").getAsJsonArray());
+        }
+
         return event;
     }
 }
