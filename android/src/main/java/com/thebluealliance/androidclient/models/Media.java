@@ -4,6 +4,8 @@ import android.content.ContentValues;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datatypes.ImageListElement;
 import com.thebluealliance.androidclient.datatypes.ListElement;
 
 
@@ -12,7 +14,18 @@ public class Media implements BasicModel {
     public enum TYPE {
         NONE,
         YOUTUBE,
-        CD_PHOTO_THREAD
+        CD_PHOTO_THREAD;
+
+        public static TYPE fromString(String string) {
+            switch (string) {
+                case "cdphotothread":
+                    return CD_PHOTO_THREAD;
+                case "youtube":
+                    return YOUTUBE;
+                default:
+                    return NONE;
+            }
+        }
     }
 
     Media.TYPE mediaType;
@@ -42,6 +55,10 @@ public class Media implements BasicModel {
 
     public Media.TYPE getMediaType() {
         return mediaType;
+    }
+
+    public void setMediaType(String typeString) {
+        mediaType = TYPE.fromString(typeString);
     }
 
     public void setMediaType(Media.TYPE mediaType) {
@@ -90,8 +107,14 @@ public class Media implements BasicModel {
 
     @Override
     public ListElement render() {
-        //TODO implement this, eventually
-        return null;
+        String imageUrl;
+        if (mediaType == TYPE.CD_PHOTO_THREAD) {
+            imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.getAsJsonObject().get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
+        } else {
+            imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
+        }
+        return new ImageListElement(imageUrl,
+                String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey));
     }
 
     @Override

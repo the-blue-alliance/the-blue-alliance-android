@@ -27,18 +27,18 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
         event.setEventType(object.get("event_type").getAsInt());
         event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
-        if(object.get("start_date").isJsonNull()){
+        if (object.get("start_date").isJsonNull()) {
             event.setStartDate("");
-        }else{
+        } else {
             event.setStartDate(object.get("start_date").getAsString());
         }
-        if(object.get("end_date").isJsonNull()) {
+        if (object.get("end_date").isJsonNull()) {
             event.setEndDate("");
-        }else{
+        } else {
             event.setEndDate(object.get("end_date").getAsString());
         }
         // For some reason "official" is sometimes null. Default to "false" in those cases
-        if(object.get("official").isJsonNull()) {
+        if (object.get("official").isJsonNull()) {
             event.setOfficial(false);
         } else {
             event.setOfficial(object.get("official").getAsBoolean());
@@ -46,7 +46,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
         if (object.get("short_name").isJsonNull()) {
-            event.setShortName(object.get("name").getAsString());
+            event.setShortName("");
         } else {
             event.setShortName(object.get("short_name").getAsString());
         }

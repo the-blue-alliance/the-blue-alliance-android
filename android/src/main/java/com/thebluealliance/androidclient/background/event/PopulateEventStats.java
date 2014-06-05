@@ -16,8 +16,8 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.datatypes.StatsListElement;
+import com.thebluealliance.androidclient.models.Stat;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -42,8 +42,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
         teams = new ArrayList<>();
 
-        DecimalFormat displayFormat = new DecimalFormat("#.##");
-
         try {
             APIResponse<JsonObject> response = DataManager.getEventStats(activity, eventKey);
             JsonObject stats = response.getData();
@@ -51,20 +49,20 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
                     ccwm = new ArrayList<>();
-            if(stats.has("oprs")) {
+            if (stats.has("oprs")) {
                 opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
             }
-            if(stats.has("dprs")) {
+            if (stats.has("dprs")) {
                 dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
             }
-            if(stats.has("ccwms")) {
+            if (stats.has("ccwms")) {
                 ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
             }
 
             for (int i = 0; i < opr.size(); i++) {
-                String statsString = "OPR: " + displayFormat.format(opr.get(i).getValue().getAsDouble())
-                        + ", DPR: " + displayFormat.format(dpr.get(i).getValue().getAsDouble())
-                        + ", CCWM: " + displayFormat.format(ccwm.get(i).getValue().getAsDouble());
+                String statsString = activity.getString(R.string.opr)+" " + Stat.displayFormat.format(opr.get(i).getValue().getAsDouble())
+                        + ", "+activity.getString(R.string.dpr)+" " + Stat.displayFormat.format(dpr.get(i).getValue().getAsDouble())
+                        + ", "+activity.getString(R.string.ccwm)+" " + Stat.displayFormat.format(ccwm.get(i).getValue().getAsDouble());
                 String teamKey = "frc" + opr.get(i).getKey();
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
                 //TODO the blank fields above are team name and location

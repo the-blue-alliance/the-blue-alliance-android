@@ -34,7 +34,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
             thisYearsWeekLabels.addAll(task.get());
             Collections.sort(thisYearsWeekLabels, new EventWeekLabelSortComparator());
             mCount = thisYearsWeekLabels.size();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             mCount = 0;
         }
@@ -62,7 +62,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         return EventListFragment.newInstance(mYear, position, null, getPageTitle(position).toString());
     }
 
-    public ArrayList<String> getLabels(){
+    public ArrayList<String> getLabels() {
         return thisYearsWeekLabels;
     }
 }
