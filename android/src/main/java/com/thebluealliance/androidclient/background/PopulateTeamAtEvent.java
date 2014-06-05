@@ -31,13 +31,15 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     ExpandableListAdapter adapter;
     int rank;
     ListGroup awards, stats, recentMatches;
+    Event event;
     Match lastMatch, nextMatch;
     boolean activeEvent;
 
-    public PopulateTeamAtEvent(RefreshableHostActivity activity, ExpandableListAdapter adapter){
+    public PopulateTeamAtEvent(RefreshableHostActivity activity, ExpandableListAdapter adapter, Event event){
         super();
         this.activity = activity;
         this.adapter = adapter;
+        this.event = event;
     }
 
     public void setNextMatch(Match nextMatch) {
@@ -56,15 +58,10 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         eventKey = params[1];
         recordString = params[2];
 
-        APIResponse<Event> eventResponse;
-        Event event;
-        try {
-            eventResponse = DataManager.getEvent(activity, eventKey);
-            event = eventResponse.getData();
+        if(event != null){
             eventShort = event.getShortName();
             activeEvent = event.isHappeningNow();
-        } catch (DataManager.NoDataException e) {
-            Log.w(Constants.LOG_TAG, "Unable to fetch event data for "+teamKey+"@"+eventKey);
+        }else{
             return APIResponse.CODE.NODATA;
         }
 
@@ -111,7 +108,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             return APIResponse.CODE.NODATA;
         }
 
-        return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), awardResponse.getCode(), statsResponse.getCode());
+        return APIResponse.mergeCodes(rankResponse.getCode(), awardResponse.getCode(), statsResponse.getCode());
     }
 
     @Override
