@@ -16,24 +16,23 @@ import com.thebluealliance.androidclient.models.BasicModel;
 /**
  * File created by phil on 6/4/14.
  */
-public class AllianceListElement extends ListElement implements BasicModel{
+public class AllianceListElement extends ListElement implements BasicModel {
 
     private int number;
     private JsonArray teams;
 
-    public AllianceListElement(int number, JsonArray teams){
-        if(teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");
+    public AllianceListElement(int number, JsonArray teams) {
+        if (teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");
         this.number = number;
         this.teams = teams;
     }
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        if(convertView == null){
-            convertView = inflater.inflate(R.layout.list_item_alliance, null, false);
-        }
 
-        if(convertView != null) {
+        convertView = inflater.inflate(R.layout.list_item_alliance, null, false);
+
+        if (convertView != null) {
             ((TextView) convertView.findViewById(R.id.alliance_name)).setText(String.format(c.getString(R.string.alliance_title), number));
 
             TextView team1 = ((TextView) convertView.findViewById(R.id.member_one));
