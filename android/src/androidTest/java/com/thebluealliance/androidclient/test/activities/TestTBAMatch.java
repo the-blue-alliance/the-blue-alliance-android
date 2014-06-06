@@ -16,7 +16,7 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
 
     private ViewMatchActivity matchActivity;
     private static final String matchKey = "2014onto_qm4";
-    private TextView eventName, matchName;
+    private TextView matchName;
     private TextView red1, red2, red3, redScore;
     private TextView blue1, blue2, blue3, blueScore;
 
@@ -31,7 +31,6 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
         setActivityIntent(intent);
         matchActivity = getActivity();
 
-        eventName = (TextView) matchActivity.findViewById(R.id.event_name);
         matchName = (TextView) matchActivity.findViewById(R.id.match_name);
 
         red1 = (TextView) matchActivity.findViewById(R.id.red1);
@@ -65,7 +64,6 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
         pauseActivity.run();
 
         assertEquals("Quals 4",matchName.getText().toString());
-        assertEquals("Greater Toronto East Regional", eventName.getText().toString());
         assertEquals("1114", red1.getText().toString());
         assertEquals("3683", red2.getText().toString());
         assertEquals("2044omgrobots".equals(red3.getText().toString()), false);
@@ -83,7 +81,6 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
     public void testNotNull(){
 
         assertNotNull(matchActivity);
-        assertNotNull(eventName);
         assertNotNull(matchName);
 
     }
