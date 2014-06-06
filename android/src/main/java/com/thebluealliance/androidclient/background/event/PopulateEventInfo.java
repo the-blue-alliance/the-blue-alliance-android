@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -211,6 +212,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             if (view != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
+            }
+            if(mFragment.getActivity() instanceof RefreshableHostActivity && mFragment instanceof RefreshListener) {
+                ((RefreshableHostActivity)mFragment.getActivity()).notifyRefreshComplete((RefreshListener) mFragment);
             }
         }
     }

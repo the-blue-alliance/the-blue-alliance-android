@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -41,6 +43,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         if (getArguments() != null) {
             eventKey = getArguments().getString(KEY, "");
         }
+        Activity parent = getActivity();
+        if(parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        }
     }
 
     @Override
@@ -67,6 +73,12 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public void onRefreshStart() {
         task = new PopulateEventInfo(this);
         task.execute(eventKey);
+        View view = getView();
+        if (view != null) {
+            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.event_info_container).setVisibility(View.GONE);
+        }
     }
 
     @Override

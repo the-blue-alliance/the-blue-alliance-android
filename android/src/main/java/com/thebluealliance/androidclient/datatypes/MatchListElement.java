@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datatypes;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
@@ -35,6 +34,7 @@ public class MatchListElement extends ListElement {
         this.matchKey = matchKey;
         this.selectedTeamKey = "";
     }
+
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, String selectedTeamKey) {
         super();
         this.videoKey = youTubeVideoKey;
@@ -48,7 +48,7 @@ public class MatchListElement extends ListElement {
     }
 
     @Override
-    public View getView(final Context c, LayoutInflater inflater, View convertView) {
+    public View getView(final Context context, LayoutInflater inflater, View convertView) {
         if (convertView == null || holder == null) {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 
@@ -66,7 +66,6 @@ public class MatchListElement extends ListElement {
 
         }
 
-        Resources resources = c.getResources();
         if (!redScore.contains("?") && !blueScore.contains("?")) {
             try {
                 int bScore = Integer.parseInt(blueScore),
@@ -75,16 +74,16 @@ public class MatchListElement extends ListElement {
                     //blue wins
                     View blue_alliance = convertView.findViewById(R.id.blue_alliance);
                     if (blue_alliance != null) {
-                        blue_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.blue_border));
+                        blue_alliance.setBackgroundResource(R.drawable.blue_border);
                     }
-                    convertView.findViewById(R.id.blue_score).setBackgroundDrawable(resources.getDrawable(R.drawable.blue_score_border));
+                    convertView.findViewById(R.id.blue_score).setBackgroundResource(R.drawable.blue_score_border);
                 } else if (bScore < rScore) {
                     //red wins
                     View red_alliance = convertView.findViewById(R.id.red_alliance);
                     if (red_alliance != null) {
-                        red_alliance.setBackgroundDrawable(resources.getDrawable(R.drawable.red_border));
+                        red_alliance.setBackgroundResource(R.drawable.red_border);
                     }
-                    convertView.findViewById(R.id.red_score).setBackgroundDrawable(resources.getDrawable(R.drawable.red_score_border));
+                    convertView.findViewById(R.id.red_score).setBackgroundResource(R.drawable.red_score_border);
                 }
             } catch (NumberFormatException e) {
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
@@ -108,7 +107,7 @@ public class MatchListElement extends ListElement {
 
         holder.matchTitle.setText(matchTitle);
 
-        TeamClickListener listener = new TeamClickListener(c);
+        TeamClickListener listener = new TeamClickListener(context);
 
         // Set team text depending on alliance size.
         if (redTeams.length == 0) {
