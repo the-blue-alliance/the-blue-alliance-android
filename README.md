@@ -5,9 +5,7 @@ The Blue Alliance - Android App
 
 An Android app for accessing information about the FIRST Robotics Competition. This is a native mobile version of [The Blue Alliance](http://www.thebluealliance.com). 
 
-**WARNING:**
-
-This app in still in initial development: currently it is only working with static data while we nail down the UI. You can see screenshots of progress here: http://imgur.com/a/m162K
+The app is currently in beta state. If you want to check it out, you can join out [beta tester community](https://plus.google.com/communities/108444518980185742549) and opt into the Play Store beta program. Just rememver, there may still be issues. If you find any, please report them on the issue tracker so we can fix them.
 
 Contributing
 ============
