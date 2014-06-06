@@ -23,10 +23,6 @@ public class EventListElement extends ListElement {
         mEventLocation = location;
     }
 
-    public String getEventName() { return mEventName;}
-    public String getEventLocation() { return mEventLocation;}
-    public String getEventDates() { return mEventDates; }
-
     @Override
     public View getView(Context context, LayoutInflater inflater, View convertView) {
         if (view == null) {

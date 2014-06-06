@@ -19,6 +19,18 @@ public class TestTBATeamAtEvent extends ActivityInstrumentationTestCase2<TeamAtE
     private static final String teamKey = "frc359";
     private static final String eventKey = "2014mndu2";
     private TextView results;
+    // Pause the activity for a bit while the information loads (in case of slow device/emulator)
+    private Thread pauseActivity = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(8000);
+                // Catch if something goes terribly wrong
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
 
     public TestTBATeamAtEvent() {
         super(TeamAtEventActivity.class);
@@ -34,25 +46,17 @@ public class TestTBATeamAtEvent extends ActivityInstrumentationTestCase2<TeamAtE
         results = (TextView) atEventActivity.findViewById(R.id.team_record);
     }
 
+    protected void tearDown() throws Exception{
+        atEventActivity.finish();
+        super.tearDown();
+    }
+
     /**
      * Make sure correct info is displayed.
      */
     public void testAtEventInfoDisplay()
     {
-        // Pause the activity for a bit while the information loads (in case of slow device/emulator)
-        Thread pauseActivity = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    // Catch if something goes terribly wrong
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         pauseActivity.run();
-
         assertEquals("Overall, Team 359 was Rank 4 \nand had a record of 14-2-0", results.getText().toString());
     }
 

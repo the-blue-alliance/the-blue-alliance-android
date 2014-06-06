@@ -19,6 +19,18 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
     private TextView matchName;
     private TextView red1, red2, red3, redScore;
     private TextView blue1, blue2, blue3, blueScore;
+    // Pause the activity for a bit while the information loads (in case of slow device/emulator)
+    private Thread pauseActivity = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(5000);
+                // Catch if something goes terribly wrong
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
 
     public TestTBAMatch() {
        super(ViewMatchActivity.class);
@@ -44,23 +56,16 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
         blueScore = (TextView) matchActivity.findViewById(R.id.blue_score);
     }
 
+    protected void tearDown() throws Exception{
+        matchActivity.finish();
+        super.tearDown();
+    }
+
     /**
      * Make sure correct match info is being displayed
      */
     public void testMatchInfoDisplay(){
 
-        // Pause the activity for a bit while the information loads (in case of slow device/emulator)
-        Thread pauseActivity = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    // Catch if something goes terribly wrong
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         pauseActivity.run();
 
         assertEquals("Quals 4",matchName.getText().toString());

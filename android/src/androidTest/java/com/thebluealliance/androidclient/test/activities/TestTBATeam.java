@@ -17,6 +17,18 @@ public class TestTBATeam extends ActivityInstrumentationTestCase2<ViewTeamActivi
     private ViewTeamActivity teamActivity;
     private static final String teamKey = "frc1540";
     private TextView teamName, teamFullName, location;
+    // Pause the activity for a bit while the information loads (in case of slow device/emulator)
+    private Thread pauseActivity = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(8000);
+                // Catch if something goes terribly wrong
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
 
     public TestTBATeam() {
         super(ViewTeamActivity.class);
@@ -34,25 +46,16 @@ public class TestTBATeam extends ActivityInstrumentationTestCase2<ViewTeamActivi
 
     }
 
+    protected void tearDown() throws Exception{
+        teamActivity.finish();
+        super.tearDown();
+    }
+
     /**
      * Makes sure correct team info is displayed.
      */
     public void testTeamInfoDisplay(){
-
-        // Pause the activity for a bit while the information loads (in case of slow device/emulator)
-        Thread pauseActivity = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    // Catch if something goes terribly wrong
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         pauseActivity.run();
-
         assertEquals("Flaming Chickens", teamName.getText().toString());
         assertEquals("aka Catlin Gabel High School", teamFullName.getText().toString());
         assertEquals("Portland, OR, USA", location.getText().toString());
