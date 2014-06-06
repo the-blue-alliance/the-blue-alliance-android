@@ -64,13 +64,13 @@ public class Match implements BasicModel {
     public static final HashMap<TYPE, Integer> PLAY_ORDER;
 
     static {
-        SHORT_TYPES = new HashMap<TYPE, String>();
+        SHORT_TYPES = new HashMap<>();
         SHORT_TYPES.put(TYPE.QUAL, "qm");
         SHORT_TYPES.put(TYPE.QUARTER, "qf");
         SHORT_TYPES.put(TYPE.SEMI, "sf");
         SHORT_TYPES.put(TYPE.FINAL, "f");
 
-        LONG_TYPES = new HashMap<TYPE, String>();
+        LONG_TYPES = new HashMap<>();
         LONG_TYPES.put(TYPE.QUAL, "Quals");
         LONG_TYPES.put(TYPE.QUARTER, "Quarters");
         LONG_TYPES.put(TYPE.SEMI, "Semis");
@@ -244,25 +244,25 @@ public class Match implements BasicModel {
         this.selectedTeam = selectedTeam;
     }
 
-    public boolean didSelectedTeamWin(){
-        if(selectedTeam.isEmpty()) return false;
+    public boolean didSelectedTeamWin() {
+        if (selectedTeam.isEmpty()) return false;
         JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                 blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
 
-        if(redTeams.toString().contains(selectedTeam+"\"")){
+        if (redTeams.toString().contains(selectedTeam + "\"")) {
             return redScore > blueScore;
-        }else if(blueTeams.toString().contains(selectedTeam+"\"")){
+        } else if (blueTeams.toString().contains(selectedTeam + "\"")) {
             return blueScore > redScore;
-        }else{
-            //match tie;
+        } else {
+            // team did not play in match
             return false;
         }
     }
 
-    public void addToRecord(String teamKey, int[] currentRecord /* {win, loss, tie} */){
-        if(currentRecord == null || alliances == null || !(alliances.has("red") && alliances.has("blue"))){
+    public void addToRecord(String teamKey, int[] currentRecord /* {win, loss, tie} */) {
+        if (currentRecord == null || alliances == null || !(alliances.has("red") && alliances.has("blue"))) {
             return;
         }
         JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
@@ -270,7 +270,7 @@ public class Match implements BasicModel {
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
 
-        if(hasBeenPlayed(redScore, blueScore)) {
+        if (hasBeenPlayed(redScore, blueScore)) {
             if (redTeams.toString().contains(teamKey + "\"")) {
                 if (redScore > blueScore) {
                     currentRecord[0]++;
@@ -291,11 +291,11 @@ public class Match implements BasicModel {
         }
     }
 
-    private boolean hasBeenPlayed(int redScore, int blueScore){
+    private boolean hasBeenPlayed(int redScore, int blueScore) {
         return redScore >= 0 && blueScore >= 0;
     }
 
-    public boolean hasBeenPlayed(){
+    public boolean hasBeenPlayed() {
         int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
 
@@ -356,7 +356,7 @@ public class Match implements BasicModel {
     }
 
     public static boolean validateMatchKey(String key) {
-        if(key == null || key.isEmpty()) return false;
+        if (key == null || key.isEmpty()) return false;
 
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }

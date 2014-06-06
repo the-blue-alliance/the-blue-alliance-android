@@ -3,15 +3,15 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
+import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
+import com.thebluealliance.androidclient.models.Match;
 
 public class TeamAtEventActivity extends RefreshableHostActivity {
 
@@ -20,7 +20,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
     private TextView warningMessage;
     private String eventKey, teamKey;
 
-    public static Intent newInstance(Context c, String eventKey, String teamKey){
+    public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
         intent.putExtra(EVENT, eventKey);
         intent.putExtra(TEAM, teamKey);
@@ -33,23 +33,27 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         setContentView(R.layout.activity_team_at_event);
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))){
+        if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
             teamKey = extras.getString(TEAM);
             eventKey = extras.getString(EVENT);
-        }else{
+        } else {
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FragmentManager manager = getSupportFragmentManager();
-        Fragment f = manager.findFragmentByTag("match_results");
-        if(f == null) {
-            manager.beginTransaction().add(R.id.content, EventResultsFragment.newInstance(eventKey, teamKey), "match_results").commit();
-        }else{
-            //prevent the fragment from being added twice
-            f.onResume();
-        }
+        new PopulateTeamAtEvent(this).execute(teamKey, eventKey);
+
+        ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
+                String matchKey = (String)view.getTag();
+                if(matchKey != null && Match.validateMatchKey(matchKey)){
+                    startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
+                }
+                return true;
+            }
+        });
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
     }
@@ -72,7 +76,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_view_event:
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 break;

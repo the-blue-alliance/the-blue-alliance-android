@@ -41,10 +41,10 @@
                     android:background="#c0c0c0"
                     android:layout_below="@id/matches_header" />
             </RelativeLayout>
-            <RelativeLayout
+            <ExpandableListView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:id="@+id/content" />
+                android:id="@+id/results" />
         </LinearLayout>
     <ProgressBar style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
