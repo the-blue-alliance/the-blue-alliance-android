@@ -50,6 +50,20 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
      */
     public void testMatchInfoDisplay(){
 
+        // Pause the activity for a bit while the information loads (in case of slow device/emulator)
+        Thread pauseActivity = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    // Catch if something goes terribly wrong
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        pauseActivity.run();
+
         assertEquals("Quals 4",matchName.getText().toString());
         assertEquals("Greater Toronto East Regional", eventName.getText().toString());
         assertEquals("1114", red1.getText().toString());
@@ -63,6 +77,9 @@ public class TestTBAMatch extends ActivityInstrumentationTestCase2<ViewMatchActi
         assertEquals("57", blueScore.getText().toString());
     }
 
+    /**
+     * Check if items aren't null
+     */
     public void testNotNull(){
 
         assertNotNull(matchActivity);

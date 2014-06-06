@@ -39,6 +39,20 @@ public class TestTBATeam extends ActivityInstrumentationTestCase2<ViewTeamActivi
      */
     public void testTeamInfoDisplay(){
 
+        // Pause the activity for a bit while the information loads (in case of slow device/emulator)
+        Thread pauseActivity = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    // Catch if something goes terribly wrong
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        pauseActivity.run();
+
         assertEquals("Flaming Chickens", teamName.getText().toString());
         assertEquals("aka Catlin Gabel High School", teamFullName.getText().toString());
         assertEquals("Portland, OR, USA", location.getText().toString());

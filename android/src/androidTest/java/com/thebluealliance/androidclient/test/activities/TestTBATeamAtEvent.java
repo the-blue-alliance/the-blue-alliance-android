@@ -39,12 +39,12 @@ public class TestTBATeamAtEvent extends ActivityInstrumentationTestCase2<TeamAtE
      */
     public void testAtEventInfoDisplay()
     {
-        // Pause the activity for a bit while the information loads
+        // Pause the activity for a bit while the information loads (in case of slow device/emulator)
         Thread pauseActivity = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                     // Catch if something goes terribly wrong
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -45,6 +45,21 @@ public class TestTBAStartActivity extends ActivityInstrumentationTestCase2<Start
      * Test if correct text is being displayed
      */
     public void testEventInfoDisplay() {
+
+        // Pause the activity for a bit while the information loads (in case of slow device/emulator)
+        Thread pauseActivity = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    // Catch if something goes terribly wrong
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        pauseActivity.run();
+
         assertEquals("2014", yearTextView.getText().toString());
         assertEquals("2014ilil", eventKey);
         assertEquals("Central Illinois Regional", eventName);
