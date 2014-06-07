@@ -23,6 +23,8 @@ public class TeamClickListener implements View.OnClickListener {
         String teamKey = v.getTag().toString();
         if (teamKey != null && !teamKey.isEmpty() && Team.validateTeamKey(teamKey)) {
             c.startActivity(ViewTeamActivity.newInstance(c, teamKey));
+        } else {
+            throw new IllegalArgumentException("TeamClickListener must be attached to a view with a valid team key set as the tag!");
         }
     }
 }

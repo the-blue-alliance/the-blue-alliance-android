@@ -20,7 +20,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
     private TextView warningMessage;
     private String eventKey, teamKey;
 
-    public static Intent newInstance(Context c, String eventKey, String teamKey){
+    public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
         intent.putExtra(EVENT, eventKey);
         intent.putExtra(TEAM, teamKey);
@@ -33,10 +33,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         setContentView(R.layout.activity_team_at_event);
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))){
+        if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
             teamKey = extras.getString(TEAM);
             eventKey = extras.getString(EVENT);
-        }else{
+        } else {
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
 
@@ -44,9 +44,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
 
         FragmentManager manager = getSupportFragmentManager();
         Fragment f = manager.findFragmentByTag("match_results");
-        if(f == null) {
+        if (f == null) {
             manager.beginTransaction().add(R.id.content, EventResultsFragment.newInstance(eventKey, teamKey), "match_results").commit();
-        }else{
+        } else {
             //prevent the fragment from being added twice
             f.onResume();
         }
@@ -72,7 +72,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_view_event:
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 break;

@@ -1,11 +1,14 @@
 package com.thebluealliance.androidclient.datatypes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 
 /**
  * File created by phil on 4/23/14.
@@ -15,6 +18,7 @@ public class TeamListElement extends ListElement {
     private int mTeamNumber;
     private String mTeamName;
     private String mTeamLocation;
+    private boolean mShowLinkToTeamDetails = false;
 
     public TeamListElement(String key, int number, String name, String location) {
         super(key);
@@ -23,8 +27,16 @@ public class TeamListElement extends ListElement {
         mTeamLocation = location;
     }
 
+    public TeamListElement(String key, int number, String name, String location, boolean showLinkToTeamDetails) {
+        super(key);
+        mTeamNumber = number;
+        mTeamName = name;
+        mTeamLocation = location;
+        mShowLinkToTeamDetails = showLinkToTeamDetails;
+    }
+
     @Override
-    public View getView(Context context, LayoutInflater inflater, View convertView) {
+    public View getView(final Context context, LayoutInflater inflater, View convertView) {
         if (view == null) {
             view = inflater.inflate(R.layout.list_item_team, null);
             view.setTag(key);
@@ -42,6 +54,20 @@ public class TeamListElement extends ListElement {
 
             TextView location = (TextView) view.findViewById(R.id.team_location);
             location.setText(mTeamLocation);
+
+            ImageView info = (ImageView) view.findViewById(R.id.team_info);
+            if(mShowLinkToTeamDetails) {
+                info.setVisibility(View.VISIBLE);
+                info.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = ViewTeamActivity.newInstance(context, "frc" + mTeamNumber);
+                        context.startActivity(intent);
+                    }
+                });
+            } else {
+                info.setVisibility(View.GONE);
+            }
         }
         return view;
     }

@@ -38,7 +38,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
-        teams = new ArrayList<ListItem>();
+        teams = new ArrayList<>();
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
@@ -46,7 +46,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             ArrayList<Team> teamList = response.getData();
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {
-                teams.add(t.render());
+                teams.add(t.render(true));
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
