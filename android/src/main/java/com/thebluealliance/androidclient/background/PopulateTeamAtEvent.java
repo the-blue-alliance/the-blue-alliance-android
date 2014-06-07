@@ -153,19 +153,9 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             ExpandableListView listView = (ExpandableListView) activity.findViewById(R.id.results);
             listView.setAdapter(adapter);
 
-            //set the other UI elements specific to team@event
-            ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(
-                    String.format(activity.getString(R.string.team_record),
-                            teamKey.substring(3), rank, recordString)
-            ));
-
-            long startTime = System.nanoTime();
             MatchHelper.EventPerformance performance =
                     MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
-            long endTime = System.nanoTime();
-            Log.d(Constants.LOG_TAG, "Elapsed time calculating event performance: "
-                                      + (endTime - startTime) + " nanos");
-            String summary = generateTeamSummary(teamKey, event, eventMatches, rank,
+            String summary = generateTeamSummary(teamKey, rank,
                                                  recordString, allianceNumber, alliancePick, performance);
             ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
 
@@ -198,8 +188,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         }
     }
 
-    private String generateTeamSummary(String teamKey, Event event,
-                                       ArrayList<Match> eventMatches, int rank,
+    private String generateTeamSummary(String teamKey, int rank,
                                        String record, int allianceNumber, int alliancePick,
                                        MatchHelper.EventPerformance performance) {
         String summary = "";
@@ -210,7 +199,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_SEMIS
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_FINALS) {
             summary = "Team " + teamKey.substring(3) + " is ranked <b>" + rank + getOrdinalFor(rank) +
-                                                    " and has a record of <b>" + recordString + "</b>.";
+                                                    " and has a record of <b>" + record + "</b>.";
             if (allianceNumber > 0) {
                 summary += "<br />They are the <b>";
                 switch (alliancePick) {
@@ -230,7 +219,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 || performance == MatchHelper.EventPerformance.ELIMINATED_IN_FINALS
                 || performance == MatchHelper.EventPerformance.WON_EVENT) {
             summary = "<br />Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) +
-                      "</b> and had a record of <b>" + recordString + "</b>.";
+                      "</b> and had a record of <b>" + record + "</b>.";
             if (allianceNumber > 0) {
                 summary += "<br /> They were the <b>";
                 switch (alliancePick) {
@@ -251,7 +240,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             }
         } else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
             summary = "Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) +
-                       "</b> and had a record of <b>" + recordString +
+                       "</b> and had a record of <b>" + record +
                        "</b>.<br /> They were <b>not picked</b> for an alliance.";
         }
         return summary;
