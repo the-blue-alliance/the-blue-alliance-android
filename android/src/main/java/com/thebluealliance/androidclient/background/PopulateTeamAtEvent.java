@@ -137,7 +137,8 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             return APIResponse.CODE.NODATA;
         }
 
-        return APIResponse.mergeCodes(matchResponse.getCode(), eventResponse.getCode(), rankResponse.getCode(), awardResponse.getCode(), statsResponse.getCode());
+        return APIResponse.mergeCodes(matchResponse.getCode(), eventResponse.getCode(),
+                rankResponse.getCode(), awardResponse.getCode(), statsResponse.getCode());
     }
 
     @Override
@@ -159,10 +160,13 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             ));
 
             long startTime = System.nanoTime();
-            MatchHelper.EventPerformance performance = MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
+            MatchHelper.EventPerformance performance =
+                    MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
             long endTime = System.nanoTime();
-            Log.d(Constants.LOG_TAG, "Elapsed time calculating event performance: " + (endTime - startTime) + " nanos");
-            String summary = generateTeamSummary(teamKey, event,eventMatches,  rank,  recordString, allianceNumber, alliancePick, performance);
+            Log.d(Constants.LOG_TAG, "Elapsed time calculating event performance: "
+                                      + (endTime - startTime) + " nanos");
+            String summary = generateTeamSummary(teamKey, event, eventMatches, rank,
+                                                 recordString, allianceNumber, alliancePick, performance);
             ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
 
             if (stats.children.size() > 0) {
@@ -194,50 +198,61 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         }
     }
 
-    private String generateTeamSummary(String teamKey, Event event, ArrayList<Match> eventMatches, int rank, String record, int allianceNumber, int alliancePick, MatchHelper.EventPerformance performance) {
+    private String generateTeamSummary(String teamKey, Event event,
+                                       ArrayList<Match> eventMatches, int rank,
+                                       String record, int allianceNumber, int alliancePick,
+                                       MatchHelper.EventPerformance performance) {
         String summary = "";
         if (performance == MatchHelper.EventPerformance.NOT_AVAILABLE) {
-            return "No data available";
+            return "<br />No data available.";
         } else if (performance == MatchHelper.EventPerformance.PLAYING_IN_QUALS
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_QUARTERS
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_SEMIS
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_FINALS) {
-            summary = "Team " + teamKey.substring(3) + " is ranked <b>" + rank + getOrdinalFor(rank) + " and has a record of <b>" + recordString + "</b>. ";
+            summary = "Team " + teamKey.substring(3) + " is ranked <b>" + rank + getOrdinalFor(rank) +
+                                                    " and has a record of <b>" + recordString + "</b>.";
             if (allianceNumber > 0) {
-                summary += "They are the <b>";
+                summary += "<br />They are the <b>";
                 switch (alliancePick) {
                     case 0:
-                        summary += "captain</b> of the " + allianceNumber + getOrdinalFor(allianceNumber) + " alliance.";
+                        summary += "captain</b> of the " + allianceNumber + getOrdinalFor(allianceNumber) +
+                                   " alliance.";
                         break;
                     default:
-                        summary += alliancePick + getOrdinalFor(alliancePick) + " pick</b> of the <b>" + allianceNumber + getOrdinalFor(allianceNumber) + " alliance</b>.";
+                        summary += alliancePick + getOrdinalFor(alliancePick) + " pick</b> of the <b>"
+                                + allianceNumber + getOrdinalFor(allianceNumber) + " alliance</b>.";
                         break;
                 }
             }
-            summary += " They are currently <b>" + performance.description + "</b>.";
+            summary += "<br /> They are currently <b>" + performance.description + "</b>.";
         } else if (performance == MatchHelper.EventPerformance.ELIMINATED_IN_QUARTERS
                 || performance == MatchHelper.EventPerformance.ELIMINATED_IN_SEMIS
                 || performance == MatchHelper.EventPerformance.ELIMINATED_IN_FINALS
                 || performance == MatchHelper.EventPerformance.WON_EVENT) {
-            summary = "Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) + "</b> and had a record of <b>" + recordString + "</b>. ";
+            summary = "<br />Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) +
+                      "</b> and had a record of <b>" + recordString + "</b>.";
             if (allianceNumber > 0) {
-                summary += "They were the <b>";
+                summary += "<br /> They were the <b>";
                 switch (alliancePick) {
                     case 0:
-                        summary += "captain</b> of the <b>" + allianceNumber + getOrdinalFor(allianceNumber) + "</b> alliance.";
+                        summary += "captain</b> of the <b>" + allianceNumber + getOrdinalFor(allianceNumber) +
+                                    "</b> alliance.";
                         break;
                     default:
-                        summary += alliancePick + getOrdinalFor(alliancePick) + " pick</b> of the <b>" + allianceNumber + getOrdinalFor(allianceNumber) + "</b> alliance.";
+                        summary += alliancePick + getOrdinalFor(alliancePick) + " pick</b> of the <b>" +
+                                   allianceNumber + getOrdinalFor(allianceNumber) + "</b> alliance.";
                         break;
                 }
             }
             if (performance != MatchHelper.EventPerformance.WON_EVENT) {
-                summary += " They were <b>" + performance.description + "</b>.";
+                summary += "<br /> They were <b>" + performance.description + "</b>.";
             } else {
-                summary += " They <b>won the event</b>!";
+                summary += "<br /> They <b>won the event</b>!";
             }
         } else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
-            summary = "Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) + "</b> and had a record of <b>" + recordString + "</b>. They were <b>not picked</b> for an alliance.";
+            summary = "Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) +
+                       "</b> and had a record of <b>" + recordString +
+                       "</b>.<br /> They were <b>not picked</b> for an alliance.";
         }
         return summary;
     }
