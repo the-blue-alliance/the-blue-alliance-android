@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datatypes.AllianceListElement;
 import com.thebluealliance.androidclient.datatypes.EventListElement;
 
 import java.text.DateFormat;
@@ -155,7 +156,8 @@ public class Event implements BasicModel {
     JsonArray rankings,
             webcasts,
             teams,
-            matches;
+            matches,
+            alliances;
     JsonObject stats;
     int eventYear;
 
@@ -177,10 +179,11 @@ public class Event implements BasicModel {
         webcasts = new JsonArray();
         teams = new JsonArray();
         stats = new JsonObject();
+        alliances = new JsonArray();
     }
 
     public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
-                 String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, long last_updated) {
+                 String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, JsonArray alliances, long last_updated) {
         if (!Event.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
@@ -200,6 +203,15 @@ public class Event implements BasicModel {
         this.webcasts = webcasts;
         this.stats = stats;
         this.teams = teams;
+        this.alliances = alliances;
+    }
+
+    public JsonArray getAlliances(){
+        return alliances;
+    }
+
+    public void setAlliances(JsonArray alliances) {
+        this.alliances = alliances;
     }
 
     public String getWebsite() {
@@ -257,6 +269,7 @@ public class Event implements BasicModel {
 
 
     public static boolean validateEventKey(String key) {
+        if(key == null || key.isEmpty()) return false;
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
@@ -401,6 +414,19 @@ public class Event implements BasicModel {
     }
 
     public String getShortName() {
+        if(shortName.isEmpty()){
+            String[] match = shortName.split("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)(FIRST Robotics|FRC)?(District|Regional|Region|State|Tournament|FRC|Field)( Competition| Event| Championship)?");
+            if(match.length > 0){
+                String s = match[3];
+                match = s.split("(.*)(FIRST Robotics|FRC)");
+                if(match.length > 0){
+                    shortName = match[1].trim();
+                }else{
+                    shortName = s.trim();
+                }
+            }
+        }
+
         return shortName;
     }
 
@@ -435,6 +461,17 @@ public class Event implements BasicModel {
     @Override
     public EventListElement render() {
         return new EventListElement(eventKey, eventName, getDateString(), location);
+    }
+
+    public ArrayList<AllianceListElement> renderAlliances(){
+        ArrayList<AllianceListElement> output = new ArrayList<>();
+        int counter = 1;
+        for(JsonElement alliance: alliances){
+            JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
+            output.add(new AllianceListElement(counter, teams));
+            counter ++;
+        }
+        return output;
     }
 
     @Override

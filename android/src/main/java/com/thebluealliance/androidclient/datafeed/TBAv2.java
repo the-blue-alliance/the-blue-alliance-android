@@ -7,54 +7,42 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
-import com.thebluealliance.androidclient.models.SimpleTeam;
-import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 
 public class TBAv2 {
-    public static SimpleTeam getSimpleTeam(String key) {
-        String data = HTTP.GET("http://thebluealliance.com/api/v2/team/" + key);
-        return JSONManager.getGson().fromJson(data, SimpleTeam.class);
+
+    public static enum QUERY {
+        CSV_TEAMS,
+        TEAM, //TODO modify appropriately whenever teams get their own endpoint
+        TEAM_MEDIA,
+        EVENT_LIST,
+        EVENT_INFO,
+        EVENT_TEAMS,
+        EVENT_MATCHES,
+        EVENT_STATS,
+        EVENT_RANKS,
+        EVENT_AWARDS;
     }
 
-    public static Team getTeam(String key) {
-        String data = HTTP.GET("http://thebluealliance.com/api/v2/team/" + key);
-        return JSONManager.getGson().fromJson(data, Team.class);
-    }
+    public static final HashMap<QUERY, String> API_URL;
 
-    public static SimpleEvent getSimpleEvent(String key) {
-        String data = HTTP.GET("http://thebluealliance.com/api/v2/event/" + key);
-        return JSONManager.getGson().fromJson(data, SimpleEvent.class);
-    }
-
-    public static Event getEvent(String key) {
-        Log.d(Constants.LOG_TAG, "Loading data for " + key);
-        JsonObject data = JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key));
-
-
-        //data.add("matches", JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key + "/matches")));
-        //data.add("stats", JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/" + key + "/stats")));
-        /*
-         * NOT YET IMPLEMENTED:
-		 * data.add("rankings", JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/"+key+"/rankings")));
-		   data.add("webcasts", JSONManager.getasJsonObject(HTTP.GET("http://thebluealliance.com/api/v2/event/"+key+"/webcasts")));
-		 */
-        return JSONManager.getGson().fromJson(data, Event.class);
-    }
-
-    public static ArrayList<Team> getEventTeams(String eventKey) {
-        ArrayList<Team> teams = new ArrayList<>();
-        JsonArray teamList = JSONManager.getasJsonArray(HTTP.GET("http://thebluealliance.com/api/v2/event/" + eventKey + "/teams"));
-        Iterator iterator = teamList.iterator();
-        while (iterator.hasNext()) {
-            teams.add(JSONManager.getGson().fromJson((JsonObject) iterator.next(), Team.class));
-        }
-        return teams;
+    static {
+        API_URL = new HashMap<>();
+        API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
+        API_URL.put(QUERY.TEAM, "http://thebluealliance.com/api/v2/team/%s");
+        API_URL.put(QUERY.EVENT_INFO, "http://thebluealliance.com/api/v2/event/%s");
+        API_URL.put(QUERY.EVENT_TEAMS, "http://thebluealliance.com/api/v2/event/%s/teams");
+        API_URL.put(QUERY.EVENT_RANKS, "http://thebluealliance.com/api/v2/event/%s/rankings");
+        API_URL.put(QUERY.EVENT_MATCHES, "http://thebluealliance.com/api/v2/event/%s/matches");
+        API_URL.put(QUERY.EVENT_STATS, "http://thebluealliance.com/api/v2/event/%s/stats");
+        API_URL.put(QUERY.EVENT_AWARDS, "http://thebluealliance.com/api/v2/event/%s/awards");
+        API_URL.put(QUERY.EVENT_LIST, "http://thebluealliance.com/api/v2/events/%d");
+        API_URL.put(QUERY.TEAM_MEDIA, "http://thebluealliance.com/api/v2/team/%s/%d/media");
     }
 
     public static ArrayList<SimpleEvent> getEventList(String json) {

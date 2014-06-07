@@ -57,7 +57,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else {
             if (!allEvents.containsKey(mYear)) {
                 try {
-                    allEvents.put(mYear, DataManager.getSimpleEventsForYear(mFragment.getActivity(), mYear).getData());
+                    allEvents.put(mYear, DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData());
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
                     return APIResponse.CODE.NODATA;

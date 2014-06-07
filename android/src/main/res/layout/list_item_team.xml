@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:orientation="vertical"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:paddingLeft="8dp">
 
     <TextView
         android:id="@+id/team_number"
@@ -38,5 +37,18 @@
             android:text="San Jose, CA" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/team_info"
+        style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="0dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_action_about" />
 
 </RelativeLayout>

@@ -8,15 +8,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
+import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -30,7 +34,7 @@ public class DataManager {
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> eventsByYear = new HashMap<>();
 
     public synchronized static APIResponse<Team> getTeam(Context c, String teamKey) throws NoDataException {
-        final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey;
+        final String URL = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM), teamKey);
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, URL, true);
         Team team = JSONManager.getGson().fromJson(response.getData(), Team.class);
 
@@ -70,7 +74,7 @@ public class DataManager {
         } else {
             // We need to load teams from the API
             //TODO move to TBAv2 class
-            final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader();
+            final String URL = TBAv2.API_URL.get(TBAv2.QUERY.CSV_TEAMS);
             response = TBAv2.getResponseFromURLOrThrow(c, URL, false);
             Log.d("get simple teams", "starting parse");
             teams = CSVManager.parseTeamsFromCSV(response.getData());
@@ -89,7 +93,7 @@ public class DataManager {
     }
 
     public static synchronized APIResponse<Event> getEvent(Context c, String key) throws NoDataException {
-        final String URL = "http://thebluealliance.com/api/v2/event/" + key;
+        final String URL = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_INFO), key);
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, URL, true);
         Event event = JSONManager.getGson().fromJson(response.getData(), Event.class);
         return new APIResponse<>(event, response.getCode());
@@ -98,7 +102,7 @@ public class DataManager {
     public static synchronized APIResponse<ArrayList<Team>> getEventTeams(Context c, String eventKey) throws NoDataException {
         ArrayList<Team> teams = new ArrayList<>();
         Log.d("event teams", "Fetching teams for " + eventKey);
-        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/teams", true);
+        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_TEAMS), eventKey), true);
         //Log.d("get event teams: ","data: "+response);
         JsonArray teamList = JSONManager.getasJsonArray(response.getData());
         for (JsonElement aTeamList : teamList) {
@@ -110,7 +114,7 @@ public class DataManager {
     public static synchronized APIResponse<ArrayList<JsonArray>> getEventRankings(Context c, String eventKey) throws NoDataException {
         ArrayList<JsonArray> rankings = new ArrayList<>();
         Log.d("event ranks", "Fetching rankings for " + eventKey);
-        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/rankings", true);
+        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_RANKS), eventKey), true);
         JsonArray rankList = JSONManager.getasJsonArray(response.getData());
         for (JsonElement aRankList : rankList) {
             rankings.add(aRankList.getAsJsonArray());
@@ -125,7 +129,7 @@ public class DataManager {
         results.put(Match.TYPE.SEMI, new ArrayList<Match>());
         results.put(Match.TYPE.FINAL, new ArrayList<Match>());
         Log.d("event results", "Fetching results for " + eventKey);
-        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/matches", true);
+        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey), true);
         for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
             Match match = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Match.class);
             results.get(match.getType()).add(match);
@@ -133,37 +137,94 @@ public class DataManager {
         return new APIResponse<>(results, response.getCode());
     }
 
+    public static synchronized APIResponse<Integer> getRankForTeamAtEvent(Context c, String teamKey, String eventKey) throws NoDataException {
+        APIResponse<ArrayList<JsonArray>> allRankings = getEventRankings(c, eventKey);
+        String teamNumber = teamKey.substring(3);
+
+        ArrayList<JsonArray> data = allRankings.getData();
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).get(1).getAsString().equals(teamNumber)) {
+                return new APIResponse<>(i, allRankings.getCode());
+            }
+        }
+        return new APIResponse<>(-1, allRankings.getCode());
+    }
+
     public static synchronized APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey) throws NoDataException {
+        return getMatchList(c, eventKey, "");
+    }
+
+    public static synchronized APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey, String teamKey) throws NoDataException {
         ArrayList<Match> results = new ArrayList<>();
         Log.d("match list", "fetching matches for " + eventKey);
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/matches", true);
         for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
-            Match match = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Match.class);
-            results.add(match);
+            JsonObject matchObject = jsonElement.getAsJsonObject();
+            if (matchObject.get(MatchDeserializer.ALLIANCE_TAG).toString().contains(teamKey + "\"")) {
+                //if team key is empty, it'll be contained so we add all matches. Perfect.
+                Match match = JSONManager.getGson().fromJson(matchObject, Match.class);
+                results.add(match);
+            }
         }
+        Collections.sort(results, new MatchSortByPlayOrderComparator());
         return new APIResponse<>(results, response.getCode());
     }
 
     public synchronized static APIResponse<JsonObject> getEventStats(Context c, String eventKey) throws NoDataException {
-        APIResponse<String> results = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/stats", true);
-        return new APIResponse<>(JSONManager.getasJsonObject(results.getData()), results.getCode());
+        return getEventStats(c, eventKey, "");
     }
 
-    public synchronized static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey) throws NoDataException {
+    public synchronized static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey) throws NoDataException {
+        APIResponse<String> results = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/stats", true);
+        JsonObject allStats = JSONManager.getasJsonObject(results.getData());
+        if (teamKey.isEmpty()) {
+            return new APIResponse<>(allStats, results.getCode());
+        } else {
+            JsonObject teamStats = new JsonObject();
+            String teamNumber = teamKey.substring(3);
+            if (allStats.has("oprs")) {
+                JsonObject oprs = allStats.get("oprs").getAsJsonObject();
+                if (oprs.has(teamNumber)) {
+                    teamStats.addProperty("opr", oprs.get(teamNumber).getAsDouble());
+                }
+            }
+            if (allStats.has("dprs")) {
+                JsonObject oprs = allStats.get("dprs").getAsJsonObject();
+                if (oprs.has(teamNumber)) {
+                    teamStats.addProperty("dpr", oprs.get(teamNumber).getAsDouble());
+                }
+            }
+            if (allStats.has("ccwms")) {
+                JsonObject oprs = allStats.get("ccwms").getAsJsonObject();
+                if (oprs.has(teamNumber)) {
+                    teamStats.addProperty("ccwm", oprs.get(teamNumber).getAsDouble());
+                }
+            }
+            return new APIResponse<>(teamStats, results.getCode());
+        }
+    }
+
+    public synchronized static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, String teamKey) throws NoDataException {
         ArrayList<Award> awards = new ArrayList<>();
         Log.d("event awards", "Fetching awards for " + eventKey);
         APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards", true);
         for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
             Award award = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Award.class);
-            awards.add(award);
+            if (award.getWinners().toString().contains(teamKey.isEmpty() ? "" : teamKey.substring(3) + ",")) {
+                awards.add(award);
+            }
         }
         return new APIResponse<>(awards, response.getCode());
+    }
+
+    public synchronized static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey) throws NoDataException {
+        return getEventAwards(c, eventKey, "");
     }
 
     public synchronized static APIResponse<ArrayList<SimpleEvent>> getSimpleEventsInWeek(Context c, int year, int week) throws NoDataException {
         Log.d("get events for week", "getting for week: " + week);
 
-        APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getSimpleEventsForYear(c, year);
+        APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getEventsByYear(c, year);
         Log.d(Constants.LOG_TAG, "found " + events.getData().toString() + " in " + year);
         String weekLabel = Event.weekLabelFromNum(year, week);
 
@@ -177,11 +238,11 @@ public class DataManager {
 
     }
 
-    public synchronized static APIResponse<HashMap<String, ArrayList<SimpleEvent>>> getSimpleEventsForYear(Context c, int year) throws NoDataException {
+    public synchronized static APIResponse<HashMap<String, ArrayList<SimpleEvent>>> getEventsByYear(Context c, int year) throws NoDataException {
         if (eventsByYear.containsKey(year)) {
             return new APIResponse<>(eventsByYear.get(year), APIResponse.CODE.CACHED304);
         } else {
-            ArrayList<SimpleEvent> events;
+            ArrayList<SimpleEvent> events = new ArrayList<>();
             boolean allEventsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, false);
             HashMap<String, ArrayList<SimpleEvent>> groupedEvents;
             APIResponse<String> eventListResponse;
@@ -192,8 +253,7 @@ public class DataManager {
                 eventListResponse = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
                 groupedEvents = SimpleEvent.groupByWeek(events);
             } else {
-                eventListResponse = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/events/" + year, false);
-                Log.d(Constants.LOG_TAG, "Response: " + eventListResponse.getData());
+                eventListResponse = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_LIST), year), false);
                 events = TBAv2.getEventList(eventListResponse.getData());
                 Database.getInstance(c).storeEvents(events);
                 groupedEvents = SimpleEvent.groupByWeek(events);
@@ -204,6 +264,17 @@ public class DataManager {
             eventsByYear.put(year, groupedEvents);
             return new APIResponse<>(groupedEvents, eventListResponse.getCode());
         }
+    }
+
+    public synchronized static APIResponse<ArrayList<Media>> getTeamMedia(Context c, String teamKey, int year) throws NoDataException {
+        ArrayList<Media> output = new ArrayList<>();
+        String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_MEDIA), teamKey, year);
+        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, apiUrl, true);
+        JsonArray mediaArray = JSONManager.getasJsonArray(response.getData());
+        for (JsonElement media : mediaArray) {
+            output.add(JSONManager.getGson().fromJson(media, Media.class));
+        }
+        return new APIResponse<>(output, response.getCode());
     }
 
     public static class NoDataException extends Exception {

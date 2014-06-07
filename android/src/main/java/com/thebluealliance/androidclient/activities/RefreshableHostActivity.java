@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.activities;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -110,6 +111,10 @@ public abstract class RefreshableHostActivity extends NavigationDrawerActivity {
             // Hide refresh indicator
             MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
             refresh.setActionView(null);
+        }
+        // Only show "Refresh complete" if a refresh event was actually started
+        if(mRefreshInProgress) {
+            Toast.makeText(this, R.string.refresh_complete, Toast.LENGTH_SHORT).show();
         }
         mRefreshInProgress = false;
     }
