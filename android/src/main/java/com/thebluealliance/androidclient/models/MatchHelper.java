@@ -17,17 +17,23 @@ import java.util.ArrayList;
  */
 public class MatchHelper {
 
-    public static enum EventPerformance {
-        PLAYING_IN_QUALS,
-        NOT_PICKED,
-        PLAYING_IN_QUARTERS,
-        ELIMINATED_IN_QUARTERS,
-        PLAYING_IN_SEMIS,
-        ELIMINATED_IN_SEMIS,
-        PLAYING_IN_FINALS,
-        ELIMINATED_IN_FINALS,
-        WON_EVENT,
-        NOT_AVAILABLE
+    public enum EventPerformance {
+        PLAYING_IN_QUALS("playing in the qualification matches"),
+        NOT_PICKED("not picked"),
+        PLAYING_IN_QUARTERS("playing in the quarterfinals"),
+        ELIMINATED_IN_QUARTERS("eliminated in the quarterfinals"),
+        PLAYING_IN_SEMIS("playing in the semifinals"),
+        ELIMINATED_IN_SEMIS("eliminated in the semifinals"),
+        PLAYING_IN_FINALS("playing in the finals"),
+        ELIMINATED_IN_FINALS("eliminated in the finals"),
+        WON_EVENT("won the event"),
+        NOT_AVAILABLE("not available");
+
+        public String description;
+
+        EventPerformance(String description) {
+            this.description = description;
+        }
     }
 
     public static ArrayList<ListGroup> constructMatchList(Context c, ArrayList<Match> matches) {
@@ -136,38 +142,38 @@ public class MatchHelper {
             return EventPerformance.PLAYING_IN_QUALS;
         }
 
-        if(qualMatches.size() == 0) {
+        if (qualMatches.size() == 0) {
             return EventPerformance.NOT_AVAILABLE;
         }
 
         boolean allQualMatchesPlayed = true;
-        for(Match match : qualMatches) {
-            if(!match.hasBeenPlayed()) {
+        for (Match match : qualMatches) {
+            if (!match.hasBeenPlayed()) {
                 allQualMatchesPlayed = false;
                 break;
             }
         }
-        if (e.isHappeningNow() && allQualMatchesPlayed && !inAlliance) {
+        if (allQualMatchesPlayed && !inAlliance) {
             return EventPerformance.NOT_PICKED;
         }
 
-        if(quarterMatches.size() > 0) {
+        if (quarterMatches.size() > 0) {
             int countPlayed = 0, countWon = 0;
-            for(Match match : quarterMatches) {
-                if(match.hasBeenPlayed()) {
+            for (Match match : quarterMatches) {
+                if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                             blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if(!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
                         continue;
                     }
                     countPlayed++;
-                    if(match.didSelectedTeamWin()) {
+                    if (match.didSelectedTeamWin()) {
                         countWon++;
                     }
                 }
             }
-            if(countPlayed > 1 && countWon > 1) {
+            if (countPlayed > 1 && countWon > 1) {
                 // Won quarterfinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
                 return EventPerformance.ELIMINATED_IN_QUARTERS;
@@ -176,23 +182,23 @@ public class MatchHelper {
             }
         }
 
-        if(semiMatches.size() > 0) {
+        if (semiMatches.size() > 0) {
             int countPlayed = 0, countWon = 0;
-            for(Match match : semiMatches) {
-                if(match.hasBeenPlayed()) {
+            for (Match match : semiMatches) {
+                if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                             blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if(!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
                         continue;
                     }
                     countPlayed++;
-                    if(match.didSelectedTeamWin()) {
+                    if (match.didSelectedTeamWin()) {
                         countWon++;
                     }
                 }
             }
-            if(countPlayed > 1 && countWon > 1) {
+            if (countPlayed > 1 && countWon > 1) {
                 // Won semifinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
                 return EventPerformance.ELIMINATED_IN_SEMIS;
@@ -201,23 +207,23 @@ public class MatchHelper {
             }
         }
 
-        if(finalMatches.size() > 0) {
+        if (finalMatches.size() > 0) {
             int countPlayed = 0, countWon = 0;
-            for(Match match : finalMatches) {
-                if(match.hasBeenPlayed()) {
+            for (Match match : finalMatches) {
+                if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                             blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if(!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
                         continue;
                     }
                     countPlayed++;
-                    if(match.didSelectedTeamWin()) {
+                    if (match.didSelectedTeamWin()) {
                         countWon++;
                     }
                 }
             }
-            if(countPlayed > 1 && countWon > 1) {
+            if (countPlayed > 1 && countWon > 1) {
                 // Won event
                 return EventPerformance.WON_EVENT;
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
