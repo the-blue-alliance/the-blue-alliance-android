@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.background;
 
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -23,6 +24,8 @@ import com.thebluealliance.androidclient.models.MatchHelper;
 import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * File created by phil on 6/3/14.
@@ -192,58 +195,60 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                                        String record, int allianceNumber, int alliancePick,
                                        MatchHelper.EventPerformance performance) {
         String summary = "";
+        List<Object> summaryArgs = new ArrayList<>();
+        Resources r = activity.getResources();
         if (performance == MatchHelper.EventPerformance.NOT_AVAILABLE) {
-            return "<br />No data available.";
+            return r.getString(R.string.team_at_event_no_data);
+        }  else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
+            summary = r.getString(R.string.team_at_event_past_tense_not_picked);
+            summaryArgs.add(teamKey.substring(3));
+            summaryArgs.add(rank + getOrdinalFor(rank));
+            summaryArgs.add(record);
         } else if (performance == MatchHelper.EventPerformance.PLAYING_IN_QUALS
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_QUARTERS
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_SEMIS
                 || performance == MatchHelper.EventPerformance.PLAYING_IN_FINALS) {
-            summary = "Team " + teamKey.substring(3) + " is ranked <b>" + rank + getOrdinalFor(rank) +
-                                                    " and has a record of <b>" + record + "</b>.";
-            if (allianceNumber > 0) {
-                summary += "<br />They are the <b>";
-                switch (alliancePick) {
-                    case 0:
-                        summary += "captain</b> of the " + allianceNumber + getOrdinalFor(allianceNumber) +
-                                   " alliance.";
-                        break;
-                    default:
-                        summary += alliancePick + getOrdinalFor(alliancePick) + " pick</b> of the <b>"
-                                + allianceNumber + getOrdinalFor(allianceNumber) + " alliance</b>.";
-                        break;
-                }
-            }
-            summary += "<br /> They are currently <b>" + performance.description + "</b>.";
+            summary = r.getString(R.string.team_at_event_present_tense);
+            summaryArgs.add(teamKey.substring(3));
+            summaryArgs.add(rank + getOrdinalFor(rank));
+            summaryArgs.add(record);
+            summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
+            summaryArgs.add(performance.description);
         } else if (performance == MatchHelper.EventPerformance.ELIMINATED_IN_QUARTERS
                 || performance == MatchHelper.EventPerformance.ELIMINATED_IN_SEMIS
-                || performance == MatchHelper.EventPerformance.ELIMINATED_IN_FINALS
-                || performance == MatchHelper.EventPerformance.WON_EVENT) {
-            summary = "<br />Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) +
-                      "</b> and had a record of <b>" + record + "</b>.";
-            if (allianceNumber > 0) {
-                summary += "<br /> They were the <b>";
-                switch (alliancePick) {
-                    case 0:
-                        summary += "captain</b> of the <b>" + allianceNumber + getOrdinalFor(allianceNumber) +
-                                    "</b> alliance.";
-                        break;
-                    default:
-                        summary += alliancePick + getOrdinalFor(alliancePick) + " pick</b> of the <b>" +
-                                   allianceNumber + getOrdinalFor(allianceNumber) + "</b> alliance.";
-                        break;
-                }
-            }
-            if (performance != MatchHelper.EventPerformance.WON_EVENT) {
-                summary += "<br /> They were <b>" + performance.description + "</b>.";
-            } else {
-                summary += "<br /> They <b>won the event</b>!";
-            }
-        } else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
-            summary = "Team " + teamKey.substring(3) + " was ranked <b>" + rank + getOrdinalFor(rank) +
-                       "</b> and had a record of <b>" + record +
-                       "</b>.<br /> They were <b>not picked</b> for an alliance.";
+                || performance == MatchHelper.EventPerformance.ELIMINATED_IN_FINALS) {
+            summary = r.getString(R.string.team_at_event_past_tense);
+            summaryArgs.add(teamKey.substring(3));
+            summaryArgs.add(rank + getOrdinalFor(rank));
+            summaryArgs.add(record);
+            summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
+            summaryArgs.add(performance.description);
+        } else if (performance == MatchHelper.EventPerformance.WON_EVENT) {
+            summary = r.getString(R.string.team_at_event_past_tense_won_event);
+            summaryArgs.add(teamKey.substring(3));
+            summaryArgs.add(rank + getOrdinalFor(rank));
+            summaryArgs.add(record);
+            summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
         }
-        return summary;
+        return String.format(summary, summaryArgs.toArray());
+    }
+
+
+    private static Collection<Object> getAllianceArgs(int allianceNumber, int alliancePick, Resources r) {
+        ArrayList<Object> args = new ArrayList<>();
+        if (allianceNumber > 0) {
+            switch (alliancePick) {
+                case 0:
+                    args.add(r.getString(R.string.team_at_event_captain));
+                    args.add(allianceNumber + getOrdinalFor(allianceNumber));
+                    break;
+                default:
+                    args.add(alliancePick + getOrdinalFor(alliancePick) + " " + r.getString(R.string.team_at_event_pick));
+                    args.add(allianceNumber + getOrdinalFor(allianceNumber));
+                    break;
+            }
+        }
+        return args;
     }
 
     private static String getOrdinalFor(int value) {
