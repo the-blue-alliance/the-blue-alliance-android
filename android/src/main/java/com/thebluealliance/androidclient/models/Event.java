@@ -474,6 +474,10 @@ public class Event implements BasicModel {
         return output;
     }
 
+    public String getSearchTitles(){
+        return eventKey+","+eventYear+" "+eventName+","+eventYear+" "+shortName;
+    }
+
     @Override
     public ContentValues getParams() {
         ContentValues values = new ContentValues();

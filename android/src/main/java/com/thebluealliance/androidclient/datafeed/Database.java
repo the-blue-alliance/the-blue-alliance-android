@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
@@ -20,17 +21,48 @@ import java.util.ArrayList;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
+    private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
             TABLE_TEAMS = "teams",
-            TABLE_EVENTS = "events";
+            TABLE_EVENTS = "events",
+            TABLE_SEARCH = "search";
+
+    String CREATE_API = "CREATE TABLE " + TABLE_API + "("
+            + Response.URL + " TEXT PRIMARY KEY, "
+            + Response.RESPONSE + " TEXT, "
+            + Response.LASTUPDATE + " TIMESTAMP "
+            + ")";
+    String CREATE_TEAMS = "CREATE TABLE " + TABLE_TEAMS + "("
+            + Teams.KEY + " TEXT PRIMARY KEY, "
+            + Teams.NUMBER + " INTEGER NOT NULL, "
+            + Teams.NAME + " TEXT, "
+            + Teams.SHORTNAME + " TEXT, "
+            + Teams.LOCATION + " TEXT"
+            + ")";
+    String CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + "("
+            + Events.KEY + " TEXT PRIMARY KEY, "
+            + Events.NAME + " TEXT, "
+            + Events.LOCATION + " TEXT, "
+            + Events.TYPE + " INTEGER, "
+            + Events.DISTRICT + " INTEGER, "
+            + Events.START + " TIMESTAMP, "
+            + Events.END + " TIMESTAMP, "
+            + Events.OFFICIAL + " INTEGER, "
+            + Events.WEEK + " INTEGER"
+            + ")";
+    String CREATE_SEARCH = "CREATE VIRTUAL TABLE " + TABLE_SEARCH +
+            " USING fts3 (" +
+            Search.KEY + "," +
+            Search.TITLES + ")";
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
         db = getWritableDatabase();
     }
 
@@ -52,46 +84,28 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_API = "CREATE TABLE " + TABLE_API + "("
-                + Response.URL + " TEXT PRIMARY KEY, "
-                + Response.RESPONSE + " TEXT, "
-                + Response.LASTUPDATE + " TIMESTAMP "
-                + ")";
         db.execSQL(CREATE_API);
-
-        String CREATE_TEAMS = "CREATE TABLE " + TABLE_TEAMS + "("
-                + Teams.KEY + " TEXT PRIMARY KEY, "
-                + Teams.NUMBER + " INTEGER NOT NULL, "
-                + Teams.NAME + " TEXT, "
-                + Teams.SHORTNAME + " TEXT, "
-                + Teams.LOCATION + " TEXT"
-                + ")";
         db.execSQL(CREATE_TEAMS);
-
-        String CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + "("
-                + Events.KEY + " TEXT PRIMARY KEY, "
-                + Events.NAME + " TEXT, "
-                + Events.LOCATION + " TEXT, "
-                + Events.TYPE + " INTEGER, "
-                + Events.DISTRICT + " INTEGER, "
-                + Events.START + " TIMESTAMP, "
-                + Events.END + " TIMESTAMP, "
-                + Events.OFFICIAL + " INTEGER, "
-                + Events.WEEK + " INTEGER"
-                + ")";
         db.execSQL(CREATE_EVENTS);
+        db.execSQL(CREATE_SEARCH);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
+        //clear sharedprefs
+        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+        onCreate(db);
     }
 
     public class Response {
         public static final String URL = "url",       //text
                 RESPONSE = "response",      //text
                 LASTUPDATE = "lastUpdated";    //timestamp
-
     }
 
     public class Teams {
@@ -100,7 +114,6 @@ public class Database extends SQLiteOpenHelper {
                 NAME = "name",
                 SHORTNAME = "shortname",
                 LOCATION = "location";
-
     }
 
     public class Events {
@@ -115,7 +128,14 @@ public class Database extends SQLiteOpenHelper {
                 WEEK = "competitionWeek";
     }
 
+    public class Search {
+        public static final String
+                KEY = "key",
+                TITLES = "titles";
+    }
+
     public long storeTeam(SimpleTeam team) {
+        insertSearchItem(team.getTeamKey(), team.getSearchTitles());
         return db.insert(TABLE_TEAMS, null, team.getParams());
     }
 
@@ -142,6 +162,7 @@ public class Database extends SQLiteOpenHelper {
 
     public long storeEvent(SimpleEvent event) {
         if (!eventExists(event.getEventKey())) {
+            insertSearchItem(event.getEventKey(), event.getSearchTitles());
             return db.insert(TABLE_EVENTS, null, event.getParams());
         } else {
             return 0;//updateEvent(event);
@@ -238,6 +259,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int updateEvent(SimpleEvent in) {
+        updateSearchItem(in.getEventKey(), in.getSearchTitles());
         return db.update(TABLE_EVENTS, in.getParams(), Events.KEY + "=?", new String[]{in.getEventKey()});
     }
 
@@ -281,5 +303,33 @@ public class Database extends SQLiteOpenHelper {
         cv.put(Response.RESPONSE, response);
         cv.put(Response.LASTUPDATE, updated);
         return db.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
+    }
+
+    public long insertSearchItem(String key, String titles){
+        ContentValues cv = new ContentValues();
+        cv.put(Search.KEY, key);
+        cv.put(Search.TITLES, titles);
+        return db.insert(TABLE_SEARCH, null, cv);
+    }
+
+    public long updateSearchItem(String key, String titles){
+        ContentValues cv = new ContentValues();
+        cv.put(Search.KEY, key);
+        cv.put(Search.TITLES, titles);
+        return db.update(TABLE_SEARCH, cv, Search.KEY + "=?", new String[]{key});
+    }
+
+    public ArrayList<String> getSearchKey(String title) {
+        Cursor cursor = db.query(TABLE_SEARCH, new String[]{Search.KEY},
+                Search.TITLES + "=%?%", new String[]{title}, null, null, null, null);
+        ArrayList<String> out = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do{
+                out.add(cursor.getString(0));
+            }while(cursor.moveToNext());
+        } else {
+            Log.w(Constants.LOG_TAG, "Failed to find item in search database from " + title);
+        }
+        return out;
     }
 }
