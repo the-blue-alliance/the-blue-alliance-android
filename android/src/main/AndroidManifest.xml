@@ -29,20 +29,9 @@
         <activity
             android:name=".activities.OpenSourceLicensesActivity"
             android:label="@string/license_label" />
-=======
-        <activity android:name=".activities.ViewEventActivity" />
-        <activity android:name=".activities.ViewTeamActivity" />
-        <activity android:name=".activities.ViewMatchActivity" />
-        <activity
-            android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
-            android:name=".activities.OpenSourceLicensesActivity"
-            android:label="@string/license_label" />
         <activity
             android:name=".activities.TeamAtEventActivity" >
         </activity>
->>>>>>> master
     </application>
 
 </manifest>
