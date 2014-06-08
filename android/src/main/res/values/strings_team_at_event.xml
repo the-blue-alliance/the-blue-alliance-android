@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Team at Event -->
+    <string name="action_view_event">View Full Event</string>
+    <string name="match_results_header">Results:</string>
     <string name="team_at_event_no_data"><![CDATA[<br />No data available]]></string>
-    <string name="team_at_event_present_tense"><![CDATA[Team %1$s is ranked <b>%2$s</b> and has a record of </>%3$s</b>. <br />They are the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They are currently <b>%6$s</b>.]]></string>
-    <string name="team_at_event_past_tense"><![CDATA[Team %1$s was ranked <b>%2$s</b> and had a record of <b>%3$s</b>. <br />They were the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They were <b>%6$s</b>.]]></string>
-    <string name="team_at_event_past_tense_won_event"><![CDATA[Team %1$s was ranked <b>%2$s</b> and had a record of <b>%3$s</b>. <br />They were the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They <b>won the event</b>.]]></string>
-    <string name="team_at_event_past_tense_not_picked"><![CDATA[Team %1$s was ranked <b>%2$s</b> and had a record of <b>%3$s</b>. <br />They were <b>not picked</b> for an alliance.]]></string>
+    <string name="team_at_event_present_tense"><![CDATA[Team %1$s is ranked <b>%2$s</b><br/>and has a record of </>%3$s</b>. <br />They are the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They are currently <b>%6$s</b>.]]></string>
+    <string name="team_at_event_past_tense"><![CDATA[Team %1$s was ranked <b>%2$s</b><br/>and had a record of <b>%3$s</b>. <br />They were the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They were <b>%6$s</b>.]]></string>
+    <string name="team_at_event_past_tense_won_event"><![CDATA[Team %1$s was ranked <b>%2$s</b><br/>and had a record of <b>%3$s</b>. <br />They were the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They <b>won the event</b>.]]></string>
+    <string name="team_at_event_past_tense_not_picked"><![CDATA[Team %1$s was ranked <b>%2$s</b><br/>and had a record of <b>%3$s</b>. <br />They were <b>not picked</b> for an alliance.]]></string>
     <string name="team_at_event_captain">captain</string>
     <string name="team_at_event_pick">pick</string>
 </resources>
