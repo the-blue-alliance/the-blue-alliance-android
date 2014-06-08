@@ -24,7 +24,7 @@ public class ViewEventActivity extends RefreshableHostActivity {
     private TextView warningMessage;
     private ViewPager pager;
 
-    public static Intent newInstance(Context c, String eventKey){
+    public static Intent newInstance(Context c, String eventKey) {
         Intent intent = new Intent(c, ViewEventActivity.class);
         intent.putExtra(EVENTKEY, eventKey);
         return intent;
@@ -37,7 +37,7 @@ public class ViewEventActivity extends RefreshableHostActivity {
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
             mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
-        }else{
+        } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
 
@@ -46,6 +46,9 @@ public class ViewEventActivity extends RefreshableHostActivity {
 
         pager = (ViewPager) findViewById(R.id.view_pager);
         pager.setAdapter(new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey));
+        // To support refreshing, all pages must be held in memory at once
+        // This should be increased if we ever add more pages
+        pager.setOffscreenPageLimit(5);
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);

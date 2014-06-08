@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
 import com.thebluealliance.androidclient.datatypes.ListElement;
@@ -65,9 +64,7 @@ public class EventTeamsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                Intent i = new Intent(getActivity(), ViewTeamActivity.class);
-                i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
-                startActivity(i);
+                startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
             }
         });
         return view;
