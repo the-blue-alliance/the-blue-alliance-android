@@ -1,10 +1,12 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
@@ -19,6 +21,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Event implements BasicModel {
@@ -207,7 +211,7 @@ public class Event implements BasicModel {
         this.alliances = alliances;
     }
 
-    public JsonArray getAlliances(){
+    public JsonArray getAlliances() {
         return alliances;
     }
 
@@ -271,7 +275,7 @@ public class Event implements BasicModel {
 
 
     public static boolean validateEventKey(String key) {
-        if(key == null || key.isEmpty()) return false;
+        if (key == null || key.isEmpty()) return false;
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
@@ -416,14 +420,20 @@ public class Event implements BasicModel {
     }
 
     public String getShortName() {
-        if(shortName.isEmpty()){
-            String[] match = shortName.split("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)(FIRST Robotics|FRC)?(District|Regional|Region|State|Tournament|FRC|Field)( Competition| Event| Championship)?");
-            if(match.length > 0){
-                String s = match[3];
-                match = s.split("(.*)(FIRST Robotics|FRC)");
-                if(match.length > 0){
-                    shortName = match[1].trim();
-                }else{
+        // Preseason and offseason events will probably fail our regex matcher
+        if(this.getEventType() == TYPE.PRESEASON || getEventType() == TYPE.OFFSEASON) {
+            return eventName;
+        }
+        if (shortName.isEmpty()) {
+            Pattern regexPattern = Pattern.compile("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)( FIRST Robotics| FRC)?( District| Regional| Region| State| Tournament| FRC| Field| Division)( Competition| Event| Championship)?( sponsored by.*)?");
+            Matcher m = regexPattern.matcher(eventName);
+            if (m.matches()) {
+                String s = m.group(3);
+                regexPattern = Pattern.compile("(.*)(FIRST Robotics|FRC)");
+                m = regexPattern.matcher(s);
+                if (m.matches()) {
+                    shortName = m.group(1).trim();
+                } else {
                     shortName = s.trim();
                 }
             }
@@ -465,13 +475,18 @@ public class Event implements BasicModel {
         return new EventListElement(eventKey, eventName, getDateString(), location);
     }
 
-    public ArrayList<AllianceListElement> renderAlliances(){
+    public EventListElement renderWithShortName() {
+        Log.d(Constants.LOG_TAG, "event rendered with short name: " + getShortName());
+        return new EventListElement(eventKey, getShortName(), getDateString(), location);
+    }
+
+    public ArrayList<AllianceListElement> renderAlliances() {
         ArrayList<AllianceListElement> output = new ArrayList<>();
         int counter = 1;
-        for(JsonElement alliance: alliances){
+        for (JsonElement alliance : alliances) {
             JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
             output.add(new AllianceListElement(counter, teams));
-            counter ++;
+            counter++;
         }
         return output;
     }

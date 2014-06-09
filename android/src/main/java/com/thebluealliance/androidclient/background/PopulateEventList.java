@@ -89,15 +89,17 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                             events.add(new EventWeekHeader(currentType.toString()));
                         }
                         eventKeys.add(event.getEventKey());
-                        events.add(event.render());
+                        events.add(event.renderWithShortName());
                         lastType = currentType;
                     }
                 }
                 return response.getCode();
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to find events for week" + mWeek + " " + mYear);
+                e.printStackTrace();
             }
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
+            // Return a list of all events for a team for a given year
             try {
                 response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
@@ -111,12 +113,13 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                         events.add(new EventWeekHeader(currentType.toString()));
                     }
                     eventKeys.add(event.getEventKey());
-                    events.add(event.render());
+                    events.add(event.renderWithShortName());
                     lastType = currentType;
                 }
                 return response.getCode();
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load event list");
+                e.printStackTrace();
             }
         } else if (mYear != -1 && mWeek != -1 && mTeamKey != null) {
             // Return a list of all events for a given team in a given week in a given year

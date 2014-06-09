@@ -84,13 +84,16 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
 
         if (savedInstanceState != null) {
             fromSavedInstance = true;
+            Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
                 initNavId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
             }
 
-            if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION) && getActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST) {
-                getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION));
+            if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
+                mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             }
+        } else {
+            mCurrentSelectedYearPosition = 0;
         }
 
         switchToModeForId(initNavId);
@@ -130,7 +133,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = new EventsByWeekFragment().newInstance(2014);
+                fragment = EventsByWeekFragment.newInstance(2014);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
@@ -143,7 +146,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
                 return;
         }
         fragment.setRetainInstance(true);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         // This must be done before we lose the drawer
         mCurrentSelectedNavigationItemId = id;
     }
@@ -198,7 +201,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
             return true;
         }
         Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.container, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedYearPosition = position;
         return true;
     }
