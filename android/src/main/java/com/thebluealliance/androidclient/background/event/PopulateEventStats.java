@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -21,6 +22,9 @@ import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -59,6 +63,10 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     dpr = new ArrayList<>(),
                     ccwm = new ArrayList<>();
 
+            LinkedHashMap<String, Double>
+                       dprSorted = new LinkedHashMap<>(),
+                       ccwmSorted = new LinkedHashMap<>();
+
             // Put each stat into its own array list,
             // but make sure it actually has stats (and not just an empty set).
             if (stats.has("oprs") &&
@@ -70,21 +78,38 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 Collections.reverse(opr);
             }
 
+            // Put the DPRs & CCWMs into a linked hashmap in the same order as the sorted OPRs.
             if (stats.has("dprs") &&
                 stats.get("dprs").getAsJsonObject().entrySet().size() > 0) {
+
                 dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
+
+                for (int i = 0; i < opr.size(); i++){
+                  String dprKey = opr.get(i).getKey();
+                  Double dprValue = stats.get("dprs").getAsJsonObject().get(dprKey).getAsDouble();
+                  dprSorted.put(dprKey, dprValue);
+                }
+
             }
 
             if (stats.has("ccwms") &&
                 stats.get("ccwms").getAsJsonObject().entrySet().size() > 0) {
+
                 ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
+
+                for (int i = 0; i < opr.size(); i++){
+                    String ccwmKey = opr.get(i).getKey();
+                    Double ccwmValue = stats.get("ccwms").getAsJsonObject().get(ccwmKey).getAsDouble();
+                    ccwmSorted.put(ccwmKey, ccwmValue);
+                }
+
             }
 
             // Combine the stats into one string to be displayed onscreen.
             for (int i = 0; i < opr.size(); i++) {
                 String statsString = activity.getString(R.string.opr)+" " + Stat.displayFormat.format(opr.get(i).getValue().getAsDouble())
-                        + ", "+activity.getString(R.string.dpr)+" " + Stat.displayFormat.format(dpr.get(i).getValue().getAsDouble())
-                        + ", "+activity.getString(R.string.ccwm)+" " + Stat.displayFormat.format(ccwm.get(i).getValue().getAsDouble());
+                        + ", "+activity.getString(R.string.dpr)+" " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
+                        + ", "+activity.getString(R.string.ccwm)+" " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
                 String teamKey = "frc" + opr.get(i).getKey();
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
                 //TODO the blank fields above are team name and location
