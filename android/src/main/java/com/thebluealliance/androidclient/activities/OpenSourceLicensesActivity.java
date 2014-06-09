@@ -20,7 +20,7 @@ public class OpenSourceLicensesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_source_licenses);
         TextView text = (TextView) findViewById(R.id.text);
-
+        setupActionBar();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.licenses)));
             try {

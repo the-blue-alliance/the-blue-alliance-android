@@ -239,11 +239,12 @@ public class Event implements BasicModel {
     }
 
     public ArrayList<Match> getMatchList() {
-        ArrayList<Match> matchList = new ArrayList<>();
-        for(JsonElement o : matches) {
-            matchList.add(JSONManager.getGson().fromJson(o, Match.class));
+        ArrayList<Match> matches = new ArrayList<>();
+        if (this.matches == null) return matches;
+        for (JsonElement element : this.matches.getAsJsonArray()) {
+            matches.add(JSONManager.getGson().fromJson(element, Match.class));
         }
-        return matchList;
+        return matches;
     }
 
     public void setRankings(JsonArray rankings) {
@@ -471,6 +472,10 @@ public class Event implements BasicModel {
             counter ++;
         }
         return output;
+    }
+
+    public String getSearchTitles(){
+        return eventKey+","+eventYear+" "+eventName+","+eventYear+" "+shortName;
     }
 
     @Override

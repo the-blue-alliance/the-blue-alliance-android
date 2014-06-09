@@ -15,7 +15,7 @@ public class Constants {
             MEDIA_LINK_URL_PATTERN;
 
     static {
-        MATCH_LEVELS = new HashMap<String, String>();
+        MATCH_LEVELS = new HashMap<>();
         MATCH_LEVELS.put("Quals", "q");
         MATCH_LEVELS.put("q", "q");
         MATCH_LEVELS.put("qm", "q");
@@ -49,4 +49,6 @@ public class Constants {
     public static final int[] CMP_WEEK =
             {1, 1, 1, 6, 4, 6, 5, 9, 5, 6, 8, 6, 7, 8, 7, 7, 8, 8, 7, 9, 9, 9, 9};
 
+
+    public static final int FIRST_COMP_YEAR = 1992;
 }
