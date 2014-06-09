@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.ListItem;
@@ -19,9 +20,16 @@ import com.thebluealliance.androidclient.datatypes.StatsListElement;
 import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 /**
+ * Retrieves performance statistics on teams competing at an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/23/14.
  */
 public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -43,22 +51,36 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         teams = new ArrayList<>();
 
         try {
+            // Retrieve the data
             APIResponse<JsonObject> response = DataManager.getEventStats(activity, eventKey);
             JsonObject stats = response.getData();
             ArrayList<Map.Entry<String, JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
                     ccwm = new ArrayList<>();
-            if (stats.has("oprs")) {
+
+            // Put each stat into its own array list,
+            // but make sure it actually has stats (and not just an empty set).
+            if (stats.has("oprs") &&
+                stats.get("oprs").getAsJsonObject().entrySet().size() > 0) {
                 opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
+
+                // Sort OPRs in decreasing order (highest to lowest)
+                Collections.sort(opr, new TeamSortByOPRComparator());
+                Collections.reverse(opr);
             }
-            if (stats.has("dprs")) {
+
+            if (stats.has("dprs") &&
+                stats.get("dprs").getAsJsonObject().entrySet().size() > 0) {
                 dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
             }
-            if (stats.has("ccwms")) {
+
+            if (stats.has("ccwms") &&
+                stats.get("ccwms").getAsJsonObject().entrySet().size() > 0) {
                 ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
             }
 
+            // Combine the stats into one string to be displayed onscreen.
             for (int i = 0; i < opr.size(); i++) {
                 String statsString = activity.getString(R.string.opr)+" " + Stat.displayFormat.format(opr.get(i).getValue().getAsDouble())
                         + ", "+activity.getString(R.string.dpr)+" " + Stat.displayFormat.format(dpr.get(i).getValue().getAsDouble())
@@ -67,8 +89,10 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
                 //TODO the blank fields above are team name and location
             }
+
             return response.getCode();
         } catch (DataManager.NoDataException e) {
+            // Return an error, since we can't get the data for some reason.
             Log.w(Constants.LOG_TAG, "unable to load event stats");
             return APIResponse.CODE.NODATA;
         }
@@ -78,14 +102,17 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
+            // Set the new info.
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             ListView stats = (ListView) view.findViewById(R.id.list);
             stats.setAdapter(adapter);
 
+            // Display warning if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
+            // Remove progress spinner, since we're done loading the data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
