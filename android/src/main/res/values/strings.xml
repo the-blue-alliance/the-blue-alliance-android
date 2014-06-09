@@ -5,6 +5,7 @@
     <string name="app_name_short">TBA</string>
     <string name="action_settings">Settings</string>
     <string name="menuitem_refresh">Refresh</string>
+    <string name="cancel">Cancel</string>
     <string name="refresh_complete">Refresh complete</string>
 
     <!-- Main Activity -->
@@ -79,10 +80,5 @@
     <!-- Warnings -->
     <string name="warning_using_cached_data">You are offline and may be viewing outdated information.</string>
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
-
-    <!-- Team at Event -->
-    <string name="action_view_event">View Full Event</string>
-    <string name="match_results_header">Results:</string>
-    <string name="team_record" formatted="false"><![CDATA[Overall, Team %s was <b>Rank %d</b> <br/> and had a record of <b>%s</b>]]></string>
 
 </resources>

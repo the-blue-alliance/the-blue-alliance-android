@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Welcome screens -->
+    <string name="welcome">Welcome to\nThe Blue Alliance!</string>
+    <string name="welcome_message">Before you can use the app, I have to download some data from our servers first, Please make sure you have a good network connection and press \"Next\" when ready.</string>
+    <string name="load_finished_message">You\'re all set! Enjoy the app.</string>
+    <string name="finish">Finish</string>
+    <string name="next">Next</string>
+
+    <!-- No Connection Dialog -->
+    <string name="warning_no_internet_connection">No internet connection was found. Please check your connection and try again.</string>
+    <string name="retry">Retry</string>
+
+    <!-- Fatal Error Dialog -->
+    <string name="fatal_error">Fatal Error</string>
+    <string name="fatal_error_message">Well, this is really bad. We don\'t know what happened. If you want, you can contact the developer with the error code.</string>
+    <string name="contact_developer">Contact Developer</string>
+    <string name="send_email">Send email&#8230;</string>
+
+    <!-- Status Messages -->
+    <string name="loading_teams">Loading teams</string>
+    <string name="loading_events">Loading %s events</string>
+    <string name="loading_finished">Loading complete</string>
+    <string name="connection_lost">Internet connection lost</string>
+
+</resources>

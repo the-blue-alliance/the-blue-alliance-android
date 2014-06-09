@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -66,8 +65,8 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             boolean lastMatchPlayed = false;
             for (Match match : results) {
 
-                if(lastType != match.getType()){
-                    switch (match.getType()){
+                if (lastType != match.getType()) {
+                    switch (match.getType()) {
                         case QUAL:
                             currentGroup = qualMatches;
                             break;
@@ -85,7 +84,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
                 currentGroup.children.add(match);
 
-                if(lastMatchPlayed && !match.hasBeenPlayed()){
+                if (lastMatchPlayed && !match.hasBeenPlayed()) {
                     lastMatch = previousIteration;
                     nextMatch = match;
                 }
@@ -100,8 +99,8 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 previousIteration = match;
                 lastMatchPlayed = match.hasBeenPlayed();
             }
-            if(lastMatch == null && results.size() > 0){
-                lastMatch = results.get(results.size() -1);
+            if (lastMatch == null && results.size() > 0) {
+                lastMatch = results.get(results.size() - 1);
             }
 
             if (!teamKey.isEmpty()) {
@@ -117,7 +116,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             eventResponse = DataManager.getEvent(activity, eventKey);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
-            Log.w(Constants.LOG_TAG, "Unable to fetch event data for "+teamKey+"@"+eventKey);
+            Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
         }
 
@@ -126,7 +125,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         }
 
         ArrayList<AllianceListElement> alliances = event.renderAlliances();
-        if(alliances.size() > 0){
+        if (alliances.size() > 0) {
             ListGroup allianceGroup = new ListGroup(activity.getString(R.string.alliances_header));
             allianceGroup.children.addAll(alliances);
             groups.add(allianceGroup);
@@ -152,14 +151,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
 
-            //set action bar title
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            if (!teamKey.isEmpty()) {
-                PopulateTeamAtEvent task = new PopulateTeamAtEvent(activity, adapter, event);
-                task.setLastMatch(lastMatch);
-                task.setNextMatch(nextMatch);
-                task.execute(teamKey, eventKey, recordString);
-            }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
