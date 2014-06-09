@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 
 
 public class Event implements BasicModel {
@@ -240,13 +239,11 @@ public class Event implements BasicModel {
     }
 
     public ArrayList<Match> getMatchList() {
-        ArrayList<Match> matches = new ArrayList<>();
-        if (matches == null) return matches;
-        Iterator iterator = matches.iterator();
-        while (iterator != null) {
-            matches.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), Match.class));
+        ArrayList<Match> matchList = new ArrayList<>();
+        for(JsonElement o : matches) {
+            matchList.add(JSONManager.getGson().fromJson(o, Match.class));
         }
-        return matches;
+        return matchList;
     }
 
     public void setRankings(JsonArray rankings) {
