@@ -13,10 +13,19 @@ import com.thebluealliance.androidclient.datatypes.ListGroup;
 import java.util.ArrayList;
 
 /**
+ * Helps determine a team's record & past/current performance at an FRC event.
+ *
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * Created by Nathan on 6/6/2014.
  */
 public class MatchHelper {
 
+    /**
+     * Possible outcomes of a team's performance,
+     *
+     */
     public enum EventPerformance {
         PLAYING_IN_QUALS("playing in the qualification matches"),
         NOT_PICKED("not picked"),
@@ -36,6 +45,12 @@ public class MatchHelper {
         }
     }
 
+    /**
+     * Constructs a match list for a team competing at an event
+     * @param c activity
+     * @param matches list of matches
+     * @return match list
+     */
     public static ArrayList<ListGroup> constructMatchList(Context c, ArrayList<Match> matches) {
 
         ArrayList<ListGroup> groups = new ArrayList<>();
@@ -85,6 +100,13 @@ public class MatchHelper {
         return groups;
     }
 
+    /**
+     * Gets the record for a team competing at an event
+     *
+     * @param matches match list for an event
+     * @param teamKey key associated with team
+     * @return team record for that event
+     */
     public static int[] getRecordForTeam(ArrayList<Match> matches, String teamKey) {
         int[] record = new int[3];
         for (Match match : matches) {
@@ -93,7 +115,18 @@ public class MatchHelper {
         return record;
     }
 
+    /**
+     * Determines the past/current performance of a team at an event.
+     *
+     * @param e the event the team is competing at
+     * @param matches team's match list
+     * @param teamKey key associated with team
+     * @return team's past/current event performance
+     */
     public static EventPerformance evaluatePerformanceForTeam(Event e, ArrayList<Match> matches, String teamKey) {
+
+        // There might be match info available,
+        // but no alliance selection data (for old events)
         boolean allianceData = true;
         JsonArray alliances = e.getAlliances();
 
@@ -157,6 +190,7 @@ public class MatchHelper {
                 break;
             }
         }
+
         if (allQualMatchesPlayed && !allianceData)
         {
             return EventPerformance.NO_ALLIANCE_DATA;
