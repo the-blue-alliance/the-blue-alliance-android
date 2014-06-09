@@ -229,6 +229,11 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             summaryArgs.add(rank + getOrdinalFor(rank));
             summaryArgs.add(record);
             summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
+        } else if (performance == MatchHelper.EventPerformance.NO_ALLIANCE_DATA){
+            summary = r.getString(R.string.team_at_event_no_alliance_data);
+            summaryArgs.add(teamKey.substring(3));
+            summaryArgs.add(rank + getOrdinalFor(rank));
+            summaryArgs.add(record);
         }
         return String.format(summary, summaryArgs.toArray());
     }
