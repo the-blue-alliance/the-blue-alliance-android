@@ -124,7 +124,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
          * We manually add the start activity to the back stack so that we maintain proper
          * back button functionality and so we get the proper "activity finish" animation
          */
-        TaskStackBuilder.create(this).addNextIntent(StartActivity.newInstance(this, id)).startActivities();
+        TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, id)).startActivities();
     }
 
     @Override

@@ -11,12 +11,20 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
 import com.thebluealliance.androidclient.datatypes.ListElement;
 
 /**
+ *
+ * Fragment that displays the rankings for an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/22/14.
  */
 public class EventRankingsFragment extends Fragment {
@@ -31,6 +39,11 @@ public class EventRankingsFragment extends Fragment {
 
     private PopulateEventRankings mTask;
 
+    /**
+     * Creates new rankings fragment for an event
+     * @param eventKey the key that represents an FRC event
+     * @return new event rankings fragment
+     */
     public static EventRankingsFragment newInstance(String eventKey) {
         EventRankingsFragment f = new EventRankingsFragment();
         Bundle data = new Bundle();
@@ -42,6 +55,7 @@ public class EventRankingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Reload key if returning from another activity/fragment
         if (getArguments() != null) {
             eventKey = getArguments().getString(KEY, "");
         }
@@ -49,9 +63,13 @@ public class EventRankingsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Setup views & listener
         View v = inflater.inflate(R.layout.list_fragment_with_spinner, null);
         mListView = (ListView) v.findViewById(R.id.list);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+
+        // Either reload data if returning from another fragment/activity
+        // Or get data if viewing fragment for the first time.
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
@@ -60,11 +78,12 @@ public class EventRankingsFragment extends Fragment {
             mTask = new PopulateEventRankings(this);
             mTask.execute(eventKey);
         }
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String eventKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                startActivity(ViewTeamActivity.newInstance(getActivity(), eventKey));
+                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
+                startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey));
             }
         });
         return v;
@@ -73,6 +92,7 @@ public class EventRankingsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        // Save the data if moving away from fragment.
         mTask.cancel(false);
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();

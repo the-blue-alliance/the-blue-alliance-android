@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -245,10 +244,9 @@ public class Event implements BasicModel {
 
     public ArrayList<Match> getMatchList() {
         ArrayList<Match> matches = new ArrayList<>();
-        if (matches == null) return matches;
-        Iterator iterator = matches.iterator();
-        while (iterator != null) {
-            matches.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), Match.class));
+        if (this.matches == null) return matches;
+        for (JsonElement element : this.matches.getAsJsonArray()) {
+            matches.add(JSONManager.getGson().fromJson(element, Match.class));
         }
         return matches;
     }
@@ -489,6 +487,10 @@ public class Event implements BasicModel {
             counter++;
         }
         return output;
+    }
+
+    public String getSearchTitles(){
+        return eventKey+","+eventYear+" "+eventName+","+eventYear+" "+shortName;
     }
 
     @Override

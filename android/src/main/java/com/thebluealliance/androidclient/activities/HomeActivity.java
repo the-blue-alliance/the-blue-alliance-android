@@ -24,7 +24,7 @@ import java.util.Calendar;
 /**
  * File created by phil on 4/20/14.
  */
-public class StartActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener {
+public class HomeActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener {
 
     /**
      * Saved instance state key representing the last select navigation drawer item
@@ -52,7 +52,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
     private TextView warningMessage;
 
     public static Intent newInstance(Context context, int requestedMode) {
-        Intent i = new Intent(context, StartActivity.class);
+        Intent i = new Intent(context, HomeActivity.class);
         i.putExtra(REQUESTED_MODE, requestedMode);
         return i;
     }
@@ -61,7 +61,7 @@ public class StartActivity extends RefreshableHostActivity implements ActionBar.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_start);
+        setContentView(R.layout.activity_home);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
