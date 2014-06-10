@@ -109,7 +109,6 @@ public class Team implements BasicModel {
     }
 
     public SimpleEvent getCurrentEvent() {
-        Event event = null;
         Date now = new Date(), eventStart, eventEnd;
         Iterator<JsonElement> iterator = events.iterator();
         JsonObject e;
@@ -128,9 +127,17 @@ public class Team implements BasicModel {
         return null;
     }
 
+    public String getSearchTitles(){
+        return teamKey+","+nickname+","+teamNumber;
+    }
+
     @Override
     public TeamListElement render() {
         return new TeamListElement(teamKey, teamNumber, nickname, location);
+    }
+
+    public TeamListElement render(boolean showTeamInfoButton) {
+        return new TeamListElement(teamKey, teamNumber, nickname, location, showTeamInfoButton);
     }
 
     @Override
@@ -139,7 +146,6 @@ public class Team implements BasicModel {
     }
 
     public static boolean validateTeamKey(String key){
-        if(key == null || key.isEmpty()) return false;
-        return key.matches("^frc\\d{1,4}$");
+        return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,4}$");
     }
 }

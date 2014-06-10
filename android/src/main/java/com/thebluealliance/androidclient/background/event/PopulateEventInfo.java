@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -27,6 +28,12 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * Retrieves general information about an FRC event, like name, location, and social media links.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/22/14.
  */
 public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.CODE> {
@@ -47,7 +54,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
     @Override
     protected void onPreExecute() {
-        super.onPreExecute();
+        super.onPreExecute(); // reset event settings
         showLastMatch = showNextMatch = showRanks = showStats = false;
     }
 
@@ -56,6 +63,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventKey = params[0];
 
         View view = mFragment.getView();
+        // Initialize the views.
         if (view != null && activity != null && eventKey != null) {
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
@@ -105,7 +113,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                             statsResponse.getData().get("oprs").getAsJsonObject().entrySet().size() > 0) {
                         // ^ Make sure we actually have OPRs in our set!
                         opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
+
+                        // Sort OPRs in decreasing order (highest to lowest)
                         Collections.sort(opr, new TeamSortByOPRComparator());
+                        Collections.reverse(opr);
+
                         String statsString = "";
                         for (int i = 0; i < Math.min(5, opr.size()); i++) {
                             statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
@@ -144,6 +156,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
             }
 
+            // setup social media intents
             view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
             view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
             view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
@@ -158,17 +171,17 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPostExecute(c);
 
         if (event != null && activity != null) {
-            // If the activity is a NavigationDrawerActivity, set the action bar title using this method
-            // so that it properly handles changing the title when the nav drawer is opened or closed.
             activity.setActionBarTitle(event.getEventName());
 
+            // Set the new info (if necessary)
             eventName.setText(event.getEventName());
             if (event.getDateString().isEmpty()) {
                 activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
             } else {
                 eventDate.setText(event.getDateString());
             }
-            if (event.getLocation().isEmpty()) {
+            if (event.getLocation().isEmpty() &&
+                activity.findViewById(R.id.event_location_container) != null) {
                 activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
             } else {
                 eventLoc.setText(event.getLocation());
@@ -203,14 +216,21 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 topOpr.addView(stats);
             }
 
+            // Display warning if offline.
             if (c == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
+            // Remove progress spinner and show info, since we're done loading the data.
             View view = mFragment.getView();
             if (view != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
+            }
+
+            // Show notification if we've refreshed data.
+            if(mFragment.getActivity() instanceof RefreshableHostActivity && mFragment instanceof RefreshListener) {
+                ((RefreshableHostActivity)mFragment.getActivity()).notifyRefreshComplete((RefreshListener) mFragment);
             }
         }
     }

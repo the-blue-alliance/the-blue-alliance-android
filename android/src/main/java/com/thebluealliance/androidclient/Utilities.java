@@ -5,6 +5,9 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.util.TypedValue;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * Created by Nathan on 5/20/2014.
  */
@@ -12,9 +15,15 @@ public class Utilities {
 
     public static int getPixelsFromDp(Context c, int dipValue) {
         Resources r = c.getResources();
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue,
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue,
                 r.getDisplayMetrics());
-        return px;
+    }
+
+    public static String exceptionStacktraceToString(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 
     public static int getFirstCompWeek(int year) {

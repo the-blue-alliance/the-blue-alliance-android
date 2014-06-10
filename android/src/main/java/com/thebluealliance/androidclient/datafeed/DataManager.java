@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 public class DataManager {
 
-    private static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
+    public static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
             ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
 
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> eventsByYear = new HashMap<>();
@@ -41,11 +41,17 @@ public class DataManager {
         return new APIResponse<>(team, response.getCode());
     }
 
+    public synchronized static APIResponse<Team> getTeam(Context c, String teamKey, int year) throws NoDataException {
+        final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey + "/" + year;
+        APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, URL, true);
+        Team team = JSONManager.getGson().fromJson(response.getData(), Team.class);
+
+        return new APIResponse<>(team, response.getCode());
+    }
+
     public synchronized static APIResponse<ArrayList<SimpleEvent>> getSimpleEventsForTeamInYear(Context c, String teamKey, int year) throws NoDataException {
         ArrayList<SimpleEvent> events = new ArrayList<>();
-        // This will throw an exception if there is no local data and no internet connection
-        // We want this to propagate up the stack
-        APIResponse<Team> response = getTeam(c, teamKey);
+        APIResponse<Team> response = getTeam(c, teamKey, year);
         JsonArray jsonEvents = response.getData().getEvents();
         for (int i = 0; i < jsonEvents.size(); i++) {
             JsonObject currentEvent = jsonEvents.get(i).getAsJsonObject();
@@ -219,6 +225,7 @@ public class DataManager {
         Log.d("get events for week", "getting for week: " + week);
 
         APIResponse<HashMap<String, ArrayList<SimpleEvent>>> events = getEventsByYear(c, year);
+        Log.d(Constants.LOG_TAG, "found " + events.getData().toString() + " in " + year);
         String weekLabel = Event.weekLabelFromNum(year, week);
 
         if (eventsByYear.get(year).containsKey(weekLabel)) {
