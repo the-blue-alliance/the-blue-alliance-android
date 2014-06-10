@@ -199,7 +199,13 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         Resources r = activity.getResources();
         if (performance == MatchHelper.EventPerformance.NOT_AVAILABLE) {
             return r.getString(R.string.team_at_event_no_data);
-        }  else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
+        } else if (rank == -1 && !record.equals("0-0-0"))
+        {
+            summary = r.getString(R.string.team_at_event_no_ranking_data);
+            summaryArgs.add(teamKey.substring(3));
+            summaryArgs.add(record);
+        }
+        else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
             summary = r.getString(R.string.team_at_event_past_tense_not_picked);
             summaryArgs.add(teamKey.substring(3));
             summaryArgs.add(rank + getOrdinalFor(rank));
