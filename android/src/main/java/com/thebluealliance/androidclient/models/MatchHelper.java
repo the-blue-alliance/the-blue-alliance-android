@@ -148,8 +148,21 @@ public class MatchHelper {
 
         ArrayList<Match> currentGroup = qualMatches;
         Match.TYPE lastType = null;
+
+        // Team might be a no-show/drop out last minute at an event,
+        // and might not play any matches as a result.
+        boolean teamIsHere = false;
         for (Match match : matches) {
             match.setSelectedTeam(teamKey);
+
+            JsonObject matchAlliances = match.getAlliances();
+            JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
+                    blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
+
+            if (redTeams.toString().contains(teamKey) ||
+                    blueTeams.toString().contains(teamKey)){
+                teamIsHere = true;
+            }
 
             if (lastType != match.getType()) {
                 switch (match.getType()) {
@@ -179,9 +192,6 @@ public class MatchHelper {
             return EventPerformance.PLAYING_IN_QUALS;
         }
 
-        if (qualMatches.size() == 0) {
-            return EventPerformance.NOT_AVAILABLE;
-        }
 
         boolean allQualMatchesPlayed = true;
         for (Match match : qualMatches) {
@@ -191,7 +201,11 @@ public class MatchHelper {
             }
         }
 
-        if (allQualMatchesPlayed && !allianceData)
+        if (qualMatches.size() == 0 ||
+           (allQualMatchesPlayed && !teamIsHere)) {
+            return EventPerformance.NOT_AVAILABLE;
+        }
+        else if (allQualMatchesPlayed && !allianceData)
         {
             return EventPerformance.NO_ALLIANCE_DATA;
         }
