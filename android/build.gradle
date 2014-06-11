@@ -1,4 +1,6 @@
 apply plugin: 'android'
+apply plugin: 'robolectric'
+
 
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 
@@ -71,4 +73,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/YouTubeAndroidPlayerApi.jar')
+    androidTestCompile 'junit:junit:4.10'
+    androidTestCompile 'org.robolectric:robolectric:2.3+'
+    androidTestCompile 'com.squareup:fest-android:1.0.+'
+
 }
