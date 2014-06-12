@@ -89,7 +89,13 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                             events.add(new EventWeekHeader(currentType.toString()));
                         }
                         eventKeys.add(event.getEventKey());
-                        events.add(event.renderWithShortName());
+                        if (event.getShortName().isEmpty() || event.getShortName() == null)
+                        {
+                            events.add(event.render());
+                        }
+                        else {
+                            events.add(event.renderWithShortName());
+                        }
                         lastType = currentType;
                     }
                 }
