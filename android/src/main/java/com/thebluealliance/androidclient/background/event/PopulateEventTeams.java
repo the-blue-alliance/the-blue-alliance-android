@@ -21,6 +21,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
+ * Retrieves team list for an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/22/14.
  */
 public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CODE> {
@@ -69,16 +75,18 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
+            // If there's no teams in the adapter, display an indicator
             if (adapter.values.size() == 0)
             {
                 noDataText.setText(R.string.no_team_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 
+            // Display warning if offline.
             if (c == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-
+            // Remove progress spinner, since we're done loading the data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }

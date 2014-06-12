@@ -24,6 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Retrieves event rankings for an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/23/14.
  */
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -31,7 +37,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private Fragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
-    private ArrayList<ListItem> teams;;
+    private ArrayList<ListItem> teams;
 
     public PopulateEventRankings(Fragment f) {
         mFragment = f;
@@ -121,16 +127,19 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             rankings.setAdapter(adapter);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
+            // If there's no rankings in the adapter, display a message.
             if (adapter.values.size() == 0)
             {
                 noDataText.setText(R.string.no_ranking_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 
+            // Display a warning if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
+            // Remove progress indicator since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }

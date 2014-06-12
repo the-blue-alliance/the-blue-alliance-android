@@ -20,6 +20,12 @@ import com.thebluealliance.androidclient.models.Award;
 import java.util.ArrayList;
 
 /**
+ * Retrieves awards data for an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/23/14.
  */
 public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -66,15 +72,19 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
+            // If there's no awards in the adapter, display a message.
             if (adapter.values.size() == 0)
             {
                 noDataText.setText(R.string.no_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 
+            // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
+
+            // Remove progress spinner since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }

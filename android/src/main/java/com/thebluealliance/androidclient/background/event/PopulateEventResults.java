@@ -22,6 +22,12 @@ import com.thebluealliance.androidclient.models.Match;
 import java.util.ArrayList;
 
 /**
+ * Retrieves event results for an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/22/14.
  */
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -154,14 +160,17 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
 
+            // If there are no matches in the adapter, display an indicator.
             if (adapter.groups.isEmpty())
             {
                 noDataText.setText(R.string.no_match_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 
+            // Remove progress spinner since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
 
+            // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
