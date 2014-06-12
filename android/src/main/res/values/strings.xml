@@ -46,6 +46,14 @@
     <string name="alliances_header">Alliances</string>
     <string name="alliance_title">Alliance #%d:</string>
 
+    <!-- No Data -->
+    <string name="no_data">No data was found for this event.</string>
+    <string name="no_team_data">No team list was found for this event.</string>
+    <string name="no_match_data">No match results were found for this event.</string>
+    <string name="no_ranking_data">No rankings were found for this event.</string>
+    <string name="no_stats_data">No stats data was found for this event.</string>
+    <string name="no_awards_data">No awards list was found for this event.</string>
+
     <!-- View Team -->
     <string name="from">from</string>
     <string name="currently_competing">currently competing at</string>

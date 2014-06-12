@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
@@ -30,7 +31,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private Fragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
-    private ArrayList<ListItem> teams;
+    private ArrayList<ListItem> teams;;
 
     public PopulateEventRankings(Fragment f) {
         mFragment = f;
@@ -118,6 +119,13 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             ListView rankings = (ListView) view.findViewById(R.id.list);
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             rankings.setAdapter(adapter);
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+
+            if (adapter.values.size() == 0)
+            {
+                noDataText.setText(R.string.no_ranking_data);
+                noDataText.setVisibility(View.VISIBLE);
+            }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -150,6 +151,14 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             MatchListAdapter adapter = new MatchListAdapter(activity, groups, teamKey);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
             listView.setAdapter(adapter);
+
+            TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
+
+            if (adapter.groups.isEmpty())
+            {
+                noDataText.setText(R.string.no_match_data);
+                noDataText.setVisibility(View.VISIBLE);
+            }
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
 

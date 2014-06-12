@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -131,6 +132,14 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             ListView stats = (ListView) view.findViewById(R.id.list);
             stats.setAdapter(adapter);
+
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+
+            if (adapter.values.size() == 0)
+            {
+                noDataText.setText(R.string.no_stats_data);
+                noDataText.setVisibility(View.VISIBLE);
+            }
 
             // Display warning if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
