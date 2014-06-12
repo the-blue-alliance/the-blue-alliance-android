@@ -13,7 +13,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -23,8 +22,6 @@ import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -71,7 +68,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             // Put each stat into its own array list,
             // but make sure it actually has stats (and not just an empty set).
             if (stats.has("oprs") &&
-                stats.get("oprs").getAsJsonObject().entrySet().size() > 0) {
+               !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
                 opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
 
                 // Sort OPRs in decreasing order (highest to lowest)
@@ -81,7 +78,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
             // Put the DPRs & CCWMs into a linked hashmap in the same order as the sorted OPRs.
             if (stats.has("dprs") &&
-                stats.get("dprs").getAsJsonObject().entrySet().size() > 0) {
+               !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
 
                 dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
 
@@ -94,7 +91,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             }
 
             if (stats.has("ccwms") &&
-                stats.get("ccwms").getAsJsonObject().entrySet().size() > 0) {
+               !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
 
                 ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
 
@@ -136,7 +133,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no stats in the adapter, display an indicator.
-            if (adapter.values.size() == 0)
+            if (adapter.values.isEmpty())
             {
                 noDataText.setText(R.string.no_stats_data);
                 noDataText.setVisibility(View.VISIBLE);

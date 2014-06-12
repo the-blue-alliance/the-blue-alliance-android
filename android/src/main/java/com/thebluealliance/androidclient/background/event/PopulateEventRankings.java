@@ -53,7 +53,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         try {
             APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey);
             ArrayList<JsonArray> rankList = response.getData();
-            if (rankList.size() > 0) {
+            if (!rankList.isEmpty()) {
                 JsonArray headerRow = rankList.remove(0);
                 for (JsonArray row : rankList) {
                 /* Assume that the list of lists has rank first
@@ -128,7 +128,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no rankings in the adapter, display a message.
-            if (adapter.values.size() == 0)
+            if (adapter.values.isEmpty())
             {
                 noDataText.setText(R.string.no_ranking_data);
                 noDataText.setVisibility(View.VISIBLE);

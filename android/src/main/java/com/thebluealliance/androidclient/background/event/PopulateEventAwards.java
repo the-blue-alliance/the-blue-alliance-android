@@ -73,7 +73,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter, display a message.
-            if (adapter.values.size() == 0)
+            if (adapter.values.isEmpty())
             {
                 noDataText.setText(R.string.no_awards_data);
                 noDataText.setVisibility(View.VISIBLE);

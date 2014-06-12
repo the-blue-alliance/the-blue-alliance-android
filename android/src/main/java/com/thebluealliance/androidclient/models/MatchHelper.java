@@ -84,17 +84,17 @@ public class MatchHelper {
             currentGroup.children.add(match);
         }
 
-        if (qualMatches.children.size() > 0) {
+        if (!qualMatches.children.isEmpty()) {
             groups.add(qualMatches);
         }
 
-        if (quarterMatches.children.size() > 0) {
+        if (!quarterMatches.children.isEmpty()) {
             groups.add(quarterMatches);
         }
-        if (semiMatches.children.size() > 0) {
+        if (!semiMatches.children.isEmpty()) {
             groups.add(semiMatches);
         }
-        if (finalMatches.children.size() > 0) {
+        if (!finalMatches.children.isEmpty()) {
             groups.add(finalMatches);
         }
         return groups;
@@ -201,7 +201,7 @@ public class MatchHelper {
             }
         }
 
-        if (qualMatches.size() == 0 ||
+        if (qualMatches.isEmpty() ||
            (allQualMatchesPlayed && !teamIsHere)) {
             return EventPerformance.NOT_AVAILABLE;
         }
@@ -214,7 +214,7 @@ public class MatchHelper {
         }
 
 
-        if (quarterMatches.size() > 0) {
+        if (!quarterMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
             for (Match match : quarterMatches) {
                 if (match.hasBeenPlayed()) {
@@ -239,7 +239,7 @@ public class MatchHelper {
             }
         }
 
-        if (semiMatches.size() > 0) {
+        if (!semiMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
             for (Match match : semiMatches) {
                 if (match.hasBeenPlayed()) {
@@ -264,7 +264,7 @@ public class MatchHelper {
             }
         }
 
-        if (finalMatches.size() > 0) {
+        if (!finalMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
             for (Match match : finalMatches) {
                 if (match.hasBeenPlayed()) {

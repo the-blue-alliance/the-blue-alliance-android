@@ -76,7 +76,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no teams in the adapter, display an indicator
-            if (adapter.values.size() == 0)
+            if (adapter.values.isEmpty())
             {
                 noDataText.setText(R.string.no_team_data);
                 noDataText.setVisibility(View.VISIBLE);

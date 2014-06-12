@@ -106,7 +106,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 previousIteration = match;
                 lastMatchPlayed = match.hasBeenPlayed();
             }
-            if (lastMatch == null && results.size() > 0) {
+            if (lastMatch == null && !results.isEmpty()) {
                 lastMatch = results.get(results.size() - 1);
             }
 
@@ -127,24 +127,24 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             return APIResponse.CODE.NODATA;
         }
 
-        if (qualMatches.children.size() > 0) {
+        if (!qualMatches.children.isEmpty()) {
             groups.add(qualMatches);
         }
 
         ArrayList<AllianceListElement> alliances = event.renderAlliances();
-        if (alliances.size() > 0) {
+        if (!alliances.isEmpty()) {
             ListGroup allianceGroup = new ListGroup(activity.getString(R.string.alliances_header));
             allianceGroup.children.addAll(alliances);
             groups.add(allianceGroup);
         }
 
-        if (quarterMatches.children.size() > 0) {
+        if (!quarterMatches.children.isEmpty()) {
             groups.add(quarterMatches);
         }
-        if (semiMatches.children.size() > 0) {
+        if (!semiMatches.children.isEmpty()) {
             groups.add(semiMatches);
         }
-        if (finalMatches.children.size() > 0) {
+        if (!finalMatches.children.isEmpty()) {
             groups.add(finalMatches);
         }
 

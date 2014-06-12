@@ -162,11 +162,11 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                                                  recordString, allianceNumber, alliancePick, performance);
             ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
 
-            if (stats.children.size() > 0) {
+            if (!stats.children.isEmpty()) {
                 adapter.addGroup(0, stats);
             }
 
-            if (awards.children.size() > 0) {
+            if (!awards.children.isEmpty()) {
                 adapter.addGroup(0, awards);
             }
 

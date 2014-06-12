@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -18,6 +19,12 @@ import com.thebluealliance.androidclient.models.Media;
 import java.util.ArrayList;
 
 /**
+ * Retrieves media links (video/pictures) for an FRC team's robot.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ *
+ *
  * File created by phil on 5/31/14.
  */
 public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE> {
@@ -66,10 +73,10 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 }
             }
 
-            if (cdPhotos.children.size() > 0) {
+            if (!cdPhotos.children.isEmpty()) {
                 groups.add(cdPhotos);
             }
-            if (ytVideos.children.size() > 0) {
+            if (!ytVideos.children.isEmpty()) {
                 groups.add(ytVideos);
             }
 
@@ -93,10 +100,21 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 listView.expandGroup(i);
             }
 
+            TextView noDataText = (TextView) view.findViewById(R.id.no_media);
+
+            // If there is no media, display a message.
+            if (adapter.groups.isEmpty())
+            {
+                noDataText.setText(R.string.no_media_data);
+                noDataText.setVisibility(View.VISIBLE);
+            }
+
+            // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
+            // Remove progress spinner since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }

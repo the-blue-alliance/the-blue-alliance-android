@@ -98,7 +98,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
                 String uri = v.getTag().toString();
                 Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
                 List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-                if (handlers.size() > 0) {
+                if (!handlers.isEmpty()) {
                     // There is an application to handle this intent intent
                     startActivity(i);
                 } else {

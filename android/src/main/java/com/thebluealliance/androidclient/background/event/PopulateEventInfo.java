@@ -110,7 +110,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     APIResponse<JsonObject> statsResponse = DataManager.getEventStats(activity, eventKey);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
                     if (statsResponse.getData().has("oprs") &&
-                            statsResponse.getData().get("oprs").getAsJsonObject().entrySet().size() > 0) {
+                       !statsResponse.getData().get("oprs").getAsJsonObject().entrySet().isEmpty()) {
                         // ^ Make sure we actually have OPRs in our set!
                         opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
 

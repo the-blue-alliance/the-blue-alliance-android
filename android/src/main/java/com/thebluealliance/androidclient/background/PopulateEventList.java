@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -78,7 +79,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
-                if (eventData != null && eventData.size() > 0) {
+                if (eventData != null && !eventData.isEmpty()) {
                     Collections.sort(eventData, new EventSortByTypeAndDateComparator());
                     Event.TYPE lastType = null, currentType;
                     for (SimpleEvent event : eventData) {
@@ -145,6 +146,13 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             ListView eventList = (ListView) view.findViewById(R.id.list);
             ListViewAdapter adapter = new ListViewAdapter(activity, events);
             eventList.setAdapter(adapter);
+
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+
+            if (adapter.values.isEmpty()){
+                noDataText.setText(R.string.no_event_data);
+                noDataText.setVisibility(View.VISIBLE);
+            }
 
             if (c == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
