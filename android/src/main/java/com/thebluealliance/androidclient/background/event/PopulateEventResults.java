@@ -160,10 +160,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
 
-            // If there are no matches in the adapter, display an indicator.
-            if (adapter.groups.isEmpty())
+            // If there's no results in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty())
             {
-                noDataText.setText(R.string.no_match_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 

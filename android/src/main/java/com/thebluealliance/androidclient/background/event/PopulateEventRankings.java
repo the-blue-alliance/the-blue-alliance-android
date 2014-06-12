@@ -127,8 +127,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             rankings.setAdapter(adapter);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
-            // If there's no rankings in the adapter, display a message.
-            if (adapter.values.isEmpty())
+            // If there's no rankings in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
             {
                 noDataText.setText(R.string.no_ranking_data);
                 noDataText.setVisibility(View.VISIBLE);

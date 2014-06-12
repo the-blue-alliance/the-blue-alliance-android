@@ -55,6 +55,7 @@
     <string name="no_awards_data">No awards list was found for this event.</string>
     <string name="no_event_data">No events were found.</string>
     <string name="no_media_data">No media was found for this team.</string>
+    <string name="no_team_list">Unable to load team list.</string>
 
     <!-- View Team -->
     <string name="from">from</string>

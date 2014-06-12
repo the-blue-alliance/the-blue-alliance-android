@@ -132,8 +132,9 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
-            // If there's no stats in the adapter, display an indicator.
-            if (adapter.values.isEmpty())
+            // If there's no stats in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
             {
                 noDataText.setText(R.string.no_stats_data);
                 noDataText.setVisibility(View.VISIBLE);

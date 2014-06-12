@@ -103,9 +103,8 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             TextView noDataText = (TextView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.
-            if (adapter.groups.isEmpty())
+            if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty())
             {
-                noDataText.setText(R.string.no_media_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 

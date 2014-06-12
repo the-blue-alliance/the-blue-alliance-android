@@ -63,8 +63,8 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     }
 
     @Override
-    protected void onPostExecute(APIResponse.CODE c) {
-        super.onPostExecute(c);
+    protected void onPostExecute(APIResponse.CODE code) {
+        super.onPostExecute(code);
         View view = mFragment.getView();
         if (view != null && activity != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
@@ -75,15 +75,16 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
-            // If there's no teams in the adapter, display an indicator
-            if (adapter.values.isEmpty())
+            // If there's no awards in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
             {
                 noDataText.setText(R.string.no_team_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 
             // Display warning if offline.
-            if (c == APIResponse.CODE.OFFLINECACHE) {
+            if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
             // Remove progress spinner, since we're done loading the data.

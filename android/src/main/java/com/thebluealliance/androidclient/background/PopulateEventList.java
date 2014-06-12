@@ -90,13 +90,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                             events.add(new EventWeekHeader(currentType.toString()));
                         }
                         eventKeys.add(event.getEventKey());
-                        if (event.getShortName().isEmpty() || event.getShortName() == null)
-                        {
-                            events.add(event.render());
-                        }
-                        else {
-                            events.add(event.renderWithShortName());
-                        }
+                        events.add(event.renderWithShortName());
                         lastType = currentType;
                     }
                 }
@@ -137,8 +131,8 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     }
 
     @Override
-    protected void onPostExecute(APIResponse.CODE c) {
-        super.onPostExecute(c);
+    protected void onPostExecute(APIResponse.CODE code) {
+        super.onPostExecute(code);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         View view = mFragment.getView();
@@ -149,12 +143,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
-            if (adapter.values.isEmpty()){
+            // If there's no event data in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()){
                 noDataText.setText(R.string.no_event_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
 
-            if (c == APIResponse.CODE.OFFLINECACHE) {
+            if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 

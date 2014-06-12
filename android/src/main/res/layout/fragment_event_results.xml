@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/no_match_data"
-        android:text="@string/no_data"
+        android:text="@string/no_match_data"
         android:visibility="gone"
         android:singleLine="false"
         android:layout_marginLeft="10dp"
