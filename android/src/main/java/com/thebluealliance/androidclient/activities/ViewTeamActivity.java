@@ -29,7 +29,8 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
     private TextView warningMessage;
 
-    private int mCurrentSelectedYearPosition = -1;
+    private int mCurrentSelectedYearPosition = -1,
+                mSelectedTab = -1;
 
     private String[] dropdownItems;
 
@@ -65,6 +66,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         }
 
         mCurrentSelectedYearPosition = 0;
+        mSelectedTab = 0;
 
         pager = (ViewPager) findViewById(R.id.view_pager);
         int year = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
@@ -150,6 +152,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         getSupportFragmentManager().getFragments().clear();
         int year = Integer.parseInt(dropdownItems[position]);
         pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, year));
+        pager.setCurrentItem(mSelectedTab);
         mCurrentSelectedYearPosition = position;
 
         return true;
@@ -162,6 +165,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     @Override
     public void onPageSelected(int position) {
+        if(position == mSelectedTab)
+            return;
+        
         switch(position){
             case 0:
                 resetActionBar();
@@ -173,6 +179,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
                 setupActionBarForYear();
                 break;
         }
+        mSelectedTab = position;
     }
 
     @Override
