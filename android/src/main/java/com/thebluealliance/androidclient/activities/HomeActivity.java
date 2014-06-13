@@ -47,7 +47,6 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     private int mCurrentSelectedYearPosition = -1;
 
     private String[] dropdownItems;
-    private int oldestYearToDisplay = 1992;
 
     private TextView warningMessage;
 
@@ -67,7 +66,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         hideWarningMessage();
 
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        dropdownItems = new String[currentYear - oldestYearToDisplay + 1];
+        dropdownItems = new String[currentYear - Constants.FIRST_COMP_YEAR + 1];
         for (int i = 0; i < dropdownItems.length; i++) {
             dropdownItems[i] = Integer.toString(currentYear - i);
         }
@@ -182,7 +181,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     private void setupActionBarForEvents() {
         getActionBar().setDisplayShowTitleEnabled(false);
 
-        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner, R.id.year, dropdownItems);
+        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner_events, R.id.year, dropdownItems);
         actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getActionBar().setListNavigationCallbacks(actionBarAdapter, this);

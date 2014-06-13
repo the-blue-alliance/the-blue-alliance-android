@@ -49,6 +49,7 @@
     <!-- View Team -->
     <string name="from">from</string>
     <string name="currently_competing">currently competing at</string>
+    <string name="team_actionbar_title">Team %s</string>
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>
