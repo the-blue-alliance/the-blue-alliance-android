@@ -3,7 +3,7 @@
 
     <!-- Welcome screens -->
     <string name="welcome">Welcome to\nThe Blue Alliance!</string>
-    <string name="welcome_message">Before you can use the app, I have to download some data from our servers first, Please make sure you have a good network connection and press \"Next\" when ready.</string>
+    <string name="welcome_message">Before you can use the app, I have to download some data from our servers first. Please make sure you have a good network connection and press \"Next\" when ready.</string>
     <string name="load_finished_message">You\'re all set! Enjoy the app.</string>
     <string name="finish">Finish</string>
     <string name="next">Next</string>
