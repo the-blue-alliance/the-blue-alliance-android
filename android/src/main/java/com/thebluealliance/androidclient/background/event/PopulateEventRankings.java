@@ -94,7 +94,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                         Map.Entry entry = (Map.Entry) it.next();
                         String value = entry.getValue().toString();
                         // If we have a number like 235.00, remove the useless .00 so it looks cleaner
-                        Log.d(Constants.LOG_TAG, "value: " + value);
                         if (value.contains(".00")) {
                             value = value.replace(".00", "");
                         }

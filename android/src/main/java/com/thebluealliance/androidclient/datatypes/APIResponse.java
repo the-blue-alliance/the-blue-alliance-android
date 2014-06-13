@@ -34,6 +34,7 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
         int left, right;
         left = code.ordinal();
         right = another.ordinal();
+        System.out.println(left + " "+ right);
         return Math.max(left, right);
     }
 
@@ -42,8 +43,9 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
         CODE merged = CODE.CACHED304; //start with least precedence
         for(CODE code: codes){
             int newIndex = merged.compareTo(code);
-            if(newIndex == -1) continue;
-            merged = CODE.values()[newIndex];
+            CODE[] values = CODE.values();
+            if(newIndex < 0 || newIndex > values.length) continue;
+            merged = values[newIndex];
         }
         return merged;
     }

@@ -18,10 +18,12 @@ public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
     private final String[] TITLES = {"Info", "Events", "Media"};
 
     private String mTeamKey;
+    private int mYear;
 
-    public ViewTeamFragmentPagerAdapter(FragmentManager fm, String teamKey) {
+    public ViewTeamFragmentPagerAdapter(FragmentManager fm, String teamKey, int year) {
         super(fm);
         mTeamKey = teamKey;
+        mYear = year;
     }
 
     @Override
@@ -45,10 +47,10 @@ public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
                 f.setArguments(args);
                 return f;
             case 1: // events
-                return EventListFragment.newInstance(2014, -1, mTeamKey, "");
+                return EventListFragment.newInstance(mYear, -1, mTeamKey, "");
             case 2: // media
             default:
-                return TeamMediaFragment.newInstance(mTeamKey, 2014);
+                return TeamMediaFragment.newInstance(mTeamKey, mYear);
         }
 
     }
