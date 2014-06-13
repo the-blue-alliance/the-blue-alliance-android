@@ -220,7 +220,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 ImageView thumbnail = images.get(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 // Add padding between thumbnails if the list of thumbnail has multiple items
-                if (images.size() > 1 && i > 0) {
+                if (!images.isEmpty() && i > 0) {
                     layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
                 }
                 ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, layoutParams);

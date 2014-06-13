@@ -474,6 +474,12 @@ public class Event implements BasicModel {
     }
 
     public EventListElement renderWithShortName() {
+
+        if (getShortName().isEmpty()){
+            Log.d(Constants.LOG_TAG, "event has no short name. rendering with regular name: " + eventName);
+            return new EventListElement(eventKey, eventName, getDateString(), location);
+        }
+
         Log.d(Constants.LOG_TAG, "event rendered with short name: " + getShortName());
         return new EventListElement(eventKey, getShortName(), getDateString(), location);
     }

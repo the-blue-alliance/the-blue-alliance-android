@@ -70,13 +70,13 @@ public class SimpleEvent extends Event implements BasicModel {
             }
         }
 
-        if (weekless.size() > 0) {
+        if (!weekless.isEmpty()) {
             groups.put(WEEKLESS_LABEL, weekless);
         }
-        if (offseason.size() > 0) {
+        if (!offseason.isEmpty()) {
             groups.put(OFFSEASON_LABEL, offseason);
         }
-        if (preseason.size() > 0) {
+        if (!preseason.isEmpty()) {
             groups.put(PRESEASON_LABEL, preseason);
         }
 

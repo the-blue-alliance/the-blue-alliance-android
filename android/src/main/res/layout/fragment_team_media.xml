@@ -10,6 +10,16 @@
         android:layout_height="fill_parent"
         android:id="@+id/team_media_list" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/no_media_data"
+        android:id="@+id/no_media"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone" />
+
     <ProgressBar style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"

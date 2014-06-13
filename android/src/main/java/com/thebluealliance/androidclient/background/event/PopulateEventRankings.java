@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
@@ -23,6 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Retrieves event rankings for an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/23/14.
  */
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -46,7 +53,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         try {
             APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey);
             ArrayList<JsonArray> rankList = response.getData();
-            if (rankList.size() > 0) {
+            if (!rankList.isEmpty()) {
                 JsonArray headerRow = rankList.remove(0);
                 for (JsonArray row : rankList) {
                 /* Assume that the list of lists has rank first
@@ -115,14 +122,28 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            ListView rankings = (ListView) view.findViewById(R.id.list);
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
-            rankings.setAdapter(adapter);
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
+            // If there's no rankings in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
+            {
+                noDataText.setText(R.string.no_ranking_data);
+                noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView rankings = (ListView) view.findViewById(R.id.list);
+                rankings.setAdapter(adapter);
+            }
+
+            // Display a warning if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
+            // Remove progress indicator since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }

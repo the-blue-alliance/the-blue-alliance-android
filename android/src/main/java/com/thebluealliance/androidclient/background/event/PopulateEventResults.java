@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -21,6 +22,12 @@ import com.thebluealliance.androidclient.models.Match;
 import java.util.ArrayList;
 
 /**
+ * Retrieves event results for an FRC event.
+ *
+ * @author Phil Lopreiato
+ * @author Bryce Matsuda
+ * @author Nathan Walters
+ *
  * File created by phil on 4/22/14.
  */
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -99,7 +106,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 previousIteration = match;
                 lastMatchPlayed = match.hasBeenPlayed();
             }
-            if (lastMatch == null && results.size() > 0) {
+            if (lastMatch == null && !results.isEmpty()) {
                 lastMatch = results.get(results.size() - 1);
             }
 
@@ -120,24 +127,24 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             return APIResponse.CODE.NODATA;
         }
 
-        if (qualMatches.children.size() > 0) {
+        if (!qualMatches.children.isEmpty()) {
             groups.add(qualMatches);
         }
 
         ArrayList<AllianceListElement> alliances = event.renderAlliances();
-        if (alliances.size() > 0) {
+        if (!alliances.isEmpty()) {
             ListGroup allianceGroup = new ListGroup(activity.getString(R.string.alliances_header));
             allianceGroup.children.addAll(alliances);
             groups.add(allianceGroup);
         }
 
-        if (quarterMatches.children.size() > 0) {
+        if (!quarterMatches.children.isEmpty()) {
             groups.add(quarterMatches);
         }
-        if (semiMatches.children.size() > 0) {
+        if (!semiMatches.children.isEmpty()) {
             groups.add(semiMatches);
         }
-        if (finalMatches.children.size() > 0) {
+        if (!finalMatches.children.isEmpty()) {
             groups.add(finalMatches);
         }
 
@@ -148,11 +155,23 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         View view = mFragment.getView();
         if (view != null && activity != null) {
             MatchListAdapter adapter = new MatchListAdapter(activity, groups, teamKey);
-            ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
-            listView.setAdapter(adapter);
+            TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
 
+            // If there's no results in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty())
+            {
+                noDataText.setVisibility(View.VISIBLE);
+            }
+            else {
+                ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
+                listView.setAdapter(adapter);
+            }
+
+            // Remove progress spinner since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
 
+            // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }

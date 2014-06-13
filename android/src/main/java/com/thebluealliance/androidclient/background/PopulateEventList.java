@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -78,7 +79,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
-                if (eventData != null && eventData.size() > 0) {
+                if (eventData != null && !eventData.isEmpty()) {
                     Collections.sort(eventData, new EventSortByTypeAndDateComparator());
                     Event.TYPE lastType = null, currentType;
                     for (SimpleEvent event : eventData) {
@@ -130,17 +131,28 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     }
 
     @Override
-    protected void onPostExecute(APIResponse.CODE c) {
-        super.onPostExecute(c);
+    protected void onPostExecute(APIResponse.CODE code) {
+        super.onPostExecute(code);
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            ListView eventList = (ListView) view.findViewById(R.id.list);
             ListViewAdapter adapter = new ListViewAdapter(activity, events);
-            eventList.setAdapter(adapter);
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
-            if (c == APIResponse.CODE.OFFLINECACHE) {
+            // If there's no event data in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()){
+                noDataText.setText(R.string.no_event_data);
+                noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView eventList = (ListView) view.findViewById(R.id.list);
+                eventList.setAdapter(adapter);
+            }
+
+            if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 

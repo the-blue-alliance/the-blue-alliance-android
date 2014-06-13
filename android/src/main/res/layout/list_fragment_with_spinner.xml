@@ -19,4 +19,14 @@
         android:layout_centerVertical="true"
         android:visibility="visible"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/no_data"
+        android:visibility="gone"
+        android:singleLine="false"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp" />
+
 </RelativeLayout>

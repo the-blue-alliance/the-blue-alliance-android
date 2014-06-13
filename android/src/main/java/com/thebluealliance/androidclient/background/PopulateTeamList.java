@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -72,9 +73,21 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
         View view = fragment.getView();
         if (activity != null && view != null) {
-            adapter = new ListViewAdapter(fragment.getActivity(), teamItems);
-            ListView eventList = (ListView) fragment.getView().findViewById(R.id.list);
-            eventList.setAdapter(adapter);
+            adapter = new ListViewAdapter(activity, teamItems);
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+
+            // If there's no teams in the adapter or if we can't download info
+            // off the web, display a message.
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
+            {
+                noDataText.setText(R.string.no_team_list);
+                noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView eventList = (ListView) view.findViewById(R.id.list);
+                eventList.setAdapter(adapter);
+            }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
