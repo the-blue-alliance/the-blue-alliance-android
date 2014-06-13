@@ -93,19 +93,19 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         if (view != null && activity != null) {
             ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
             ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.team_media_list);
-            listView.setAdapter(adapter);
-
-            //expand all the groups
-            for (int i = 0; i < groups.size(); i++) {
-                listView.expandGroup(i);
-            }
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty())
             {
                 noDataText.setVisibility(View.VISIBLE);
+            }
+            else {
+                listView.setAdapter(adapter);
+                //expand all the groups
+                for (int i = 0; i < groups.size(); i++) {
+                    listView.expandGroup(i);
+                }
             }
 
             // Display warning message if offline.

@@ -127,9 +127,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         if (view != null && activity != null) {
             // Set the new info.
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
-            ListView stats = (ListView) view.findViewById(R.id.list);
-            stats.setAdapter(adapter);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no stats in the adapter or if we can't download info
@@ -138,6 +135,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             {
                 noDataText.setText(R.string.no_stats_data);
                 noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView stats = (ListView) view.findViewById(R.id.list);
+                stats.setAdapter(adapter);
             }
 
             // Display warning if offline.

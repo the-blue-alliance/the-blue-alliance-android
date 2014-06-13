@@ -74,9 +74,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         View view = fragment.getView();
         if (activity != null && view != null) {
             adapter = new ListViewAdapter(activity, teamItems);
-            ListView eventList = (ListView) view.findViewById(R.id.list);
-            eventList.setAdapter(adapter);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no teams in the adapter or if we can't download info
@@ -85,6 +82,11 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             {
                 noDataText.setText(R.string.no_team_list);
                 noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView eventList = (ListView) view.findViewById(R.id.list);
+                eventList.setAdapter(adapter);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {

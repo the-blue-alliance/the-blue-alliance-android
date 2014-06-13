@@ -137,10 +137,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            ListView eventList = (ListView) view.findViewById(R.id.list);
             ListViewAdapter adapter = new ListViewAdapter(activity, events);
-            eventList.setAdapter(adapter);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no event data in the adapter or if we can't download info
@@ -148,6 +145,11 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()){
                 noDataText.setText(R.string.no_event_data);
                 noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView eventList = (ListView) view.findViewById(R.id.list);
+                eventList.setAdapter(adapter);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {

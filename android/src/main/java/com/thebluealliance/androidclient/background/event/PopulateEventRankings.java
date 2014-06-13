@@ -122,9 +122,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            ListView rankings = (ListView) view.findViewById(R.id.list);
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
-            rankings.setAdapter(adapter);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no rankings in the adapter or if we can't download info
@@ -133,6 +131,11 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             {
                 noDataText.setText(R.string.no_ranking_data);
                 noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView rankings = (ListView) view.findViewById(R.id.list);
+                rankings.setAdapter(adapter);
             }
 
             // Display a warning if offline.

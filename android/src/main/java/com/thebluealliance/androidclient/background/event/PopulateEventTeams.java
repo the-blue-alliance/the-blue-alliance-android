@@ -70,9 +70,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             adapter.notifyDataSetChanged();
-            ListView teamList = (ListView) view.findViewById(R.id.list);
-            teamList.setAdapter(adapter);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter or if we can't download info
@@ -81,6 +78,11 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             {
                 noDataText.setText(R.string.no_team_data);
                 noDataText.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                ListView teamList = (ListView) view.findViewById(R.id.list);
+                teamList.setAdapter(adapter);
             }
 
             // Display warning if offline.

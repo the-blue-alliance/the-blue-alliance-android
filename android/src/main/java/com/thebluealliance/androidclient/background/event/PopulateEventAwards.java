@@ -67,9 +67,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         View view = mFragment.getView();
         if (view != null) {
             adapter = new ListViewAdapter(activity, awards);
-            ListView rankings = (ListView) view.findViewById(R.id.list);
-            rankings.setAdapter(adapter);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter or if we can't download info
@@ -79,7 +76,10 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                 noDataText.setText(R.string.no_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
             }
-
+            else {
+                ListView rankings = (ListView) view.findViewById(R.id.list);
+                rankings.setAdapter(adapter);
+            }
             // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));

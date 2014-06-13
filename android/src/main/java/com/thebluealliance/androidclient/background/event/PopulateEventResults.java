@@ -155,16 +155,17 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         View view = mFragment.getView();
         if (view != null && activity != null) {
             MatchListAdapter adapter = new MatchListAdapter(activity, groups, teamKey);
-            ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
-            listView.setAdapter(adapter);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty())
+            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty())
             {
                 noDataText.setVisibility(View.VISIBLE);
+            }
+            else {
+                ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
+                listView.setAdapter(adapter);
             }
 
             // Remove progress spinner since we're done loading data.
