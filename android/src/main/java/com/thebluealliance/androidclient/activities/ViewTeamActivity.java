@@ -25,8 +25,10 @@ import java.util.Calendar;
  */
 public class ViewTeamActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
 
-    public static final String TEAM_KEY = "team_key";
-    private static final String MAIN_FRAGMENT_TAG = "mainFragment";
+    public static final String TEAM_KEY = "team_key",
+            SELECTED_YEAR = "year",
+            SELECTED_TAB = "tab";
+
     private TextView warningMessage;
 
     private int mCurrentSelectedYearPosition = -1,
@@ -65,8 +67,17 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
             dropdownItems[i] = Integer.toString(currentYear - i);
         }
 
-        mCurrentSelectedYearPosition = 0;
-        mSelectedTab = 0;
+        if(savedInstanceState != null){
+            if(savedInstanceState.containsKey(SELECTED_TAB)){
+                mSelectedTab = savedInstanceState.getInt(SELECTED_TAB);
+            }
+            if(savedInstanceState.containsKey(SELECTED_YEAR)){
+                mCurrentSelectedYearPosition = savedInstanceState.getInt(SELECTED_YEAR);
+            }
+        }else {
+            mCurrentSelectedYearPosition = 0;
+            mSelectedTab = 0;
+        }
 
         pager = (ViewPager) findViewById(R.id.view_pager);
         int year = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
@@ -83,6 +94,13 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SELECTED_YEAR, mCurrentSelectedYearPosition);
+        outState.putInt(SELECTED_TAB, mSelectedTab);
     }
 
     @Override
@@ -167,7 +185,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     public void onPageSelected(int position) {
         if(position == mSelectedTab)
             return;
-        
+
         switch(position){
             case 0:
                 resetActionBar();
