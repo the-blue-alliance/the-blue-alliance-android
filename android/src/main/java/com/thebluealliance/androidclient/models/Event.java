@@ -1,12 +1,10 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
@@ -470,18 +468,11 @@ public class Event implements BasicModel {
 
     @Override
     public EventListElement render() {
-        return new EventListElement(eventKey, eventName, getDateString(), location);
-    }
-
-    public EventListElement renderWithShortName() {
-
-        if (getShortName().isEmpty()){
-            Log.d(Constants.LOG_TAG, "event has no short name. rendering with regular name: " + eventName);
+        if(getShortName() == null || shortName.isEmpty()){
             return new EventListElement(eventKey, eventName, getDateString(), location);
+        }else{
+            return new EventListElement(eventKey, getShortName(), getDateString(), location);
         }
-
-        Log.d(Constants.LOG_TAG, "event rendered with short name: " + getShortName());
-        return new EventListElement(eventKey, getShortName(), getDateString(), location);
     }
 
     public ArrayList<AllianceListElement> renderAlliances() {

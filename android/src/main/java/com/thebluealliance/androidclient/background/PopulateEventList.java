@@ -90,7 +90,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                             events.add(new EventWeekHeader(currentType.toString()));
                         }
                         eventKeys.add(event.getEventKey());
-                        events.add(event.renderWithShortName());
+                        events.add(event.render());
                         lastType = currentType;
                     }
                 }
@@ -114,7 +114,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                         events.add(new EventWeekHeader(currentType.toString()));
                     }
                     eventKeys.add(event.getEventKey());
-                    events.add(event.renderWithShortName());
+                    events.add(event.render());
                     lastType = currentType;
                 }
                 return response.getCode();
