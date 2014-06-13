@@ -36,6 +36,8 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     // Should come in the format frc####
     private String mTeamKey;
 
+    private ViewPager pager;
+
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
         Intent intent = new Intent(context, ViewTeamActivity.class);
@@ -62,8 +64,11 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
             dropdownItems[i] = Integer.toString(currentYear - i);
         }
 
-        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey));
+        mCurrentSelectedYearPosition = 0;
+
+        pager = (ViewPager) findViewById(R.id.view_pager);
+        int year = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
+        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, year));
         pager.setOnPageChangeListener(this);
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -141,6 +146,11 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
             return true;
         }
         Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
+
+        getSupportFragmentManager().getFragments().clear();
+        int year = Integer.parseInt(dropdownItems[position]);
+        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, year));
+        mCurrentSelectedYearPosition = position;
 
         return true;
     }
