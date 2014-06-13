@@ -89,11 +89,22 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         tabs.setOnPageChangeListener(this);
 
         // Setup the action bar
-        setupActionBar();
+        resetActionBar();
+        if(mSelectedTab == 0) {
+            setupActionBar();
+        }else{
+            setupActionBarForYear();
+        }
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getSupportFragmentManager().getFragments().clear();
     }
 
     @Override
