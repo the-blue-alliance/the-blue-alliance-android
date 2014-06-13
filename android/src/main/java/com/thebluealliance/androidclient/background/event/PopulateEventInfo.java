@@ -92,7 +92,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     APIResponse<ArrayList<JsonArray>> rankResponse = DataManager.getEventRankings(activity, eventKey);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
-                    if (rankList.size() == 0) {
+                    if (rankList.isEmpty() || rankList.size() == 1) {
                         showRanks = false;
                     }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
