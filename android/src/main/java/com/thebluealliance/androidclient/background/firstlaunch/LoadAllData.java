@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.CSVManager;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -58,10 +59,10 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 start = start == 0 ? 1 : start;
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_teams), start, end)));
                 APIResponse<String> teamListResponse;
-                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://thebluealliance.com/api/v2/teams/" + pageNum, true);
-                JsonElement responseObject = new JsonParser().parse(teamListResponse.getData());
+                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), true);
+                JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
                 if (responseObject instanceof JsonArray) {
-                    if (((JsonArray) responseObject).size() == 0) {
+                    if (responseObject.size() == 0) {
                         // No teams found for a page; we are done
                         break;
                     }
