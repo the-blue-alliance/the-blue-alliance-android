@@ -124,11 +124,29 @@ public class Event implements BasicModel {
         NE,   /* New England */
         PNW;  /* Pacific Northwest */
 
-        public static DISTRICT fromString(String str) {
+        public static DISTRICT fromEnum(int in) {
             /*
-             * Not implemented on TBA yet. Write it here whenever it is...
+             * Get an enum from district enum
+             * From https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/district_type.py
 			 */
-            return NONE;
+            switch(in){
+                case 0: default: return  NONE;
+                case 1: return FIM;
+                case 2: return MAR;
+                case 3: return NE;
+                case 4: return PNW;
+            }
+        }
+
+        public String toString(){
+            switch(this){
+                default:
+                case NONE: return "No District";
+                case FIM: return "Michigan";
+                case MAR: return "Mid Atlantic";
+                case NE: return "New England";
+                case PNW: return "Pacific Northwest";
+            }
         }
     }
 
@@ -326,8 +344,8 @@ public class Event implements BasicModel {
         this.eventDistrict = eventDistrict;
     }
 
-    public void setEventDistrict(String districtString) {
-        this.eventDistrict = DISTRICT.fromString(districtString);
+    public void setEventDistrict(int districtEnum) {
+        this.eventDistrict = DISTRICT.fromEnum(districtEnum);
     }
 
     public Date getStartDate() {

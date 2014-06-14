@@ -26,7 +26,6 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setLocation(object.get("location").getAsString());
         }
         event.setEventType(object.get("event_type").getAsInt());
-        event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
         if (object.get("start_date").isJsonNull()) {
             event.setStartDate("");
         } else {
@@ -54,14 +53,10 @@ public class EventDeserializer implements JsonDeserializer<Event> {
 
         //event.setWebsite(""); /* NOT EXPOSED BY API YET */
         if (object.has("matches")) {
-            /* This data won't actually get added into the matches table
-             * It'll be added into its own table, but it just needs to be associated with the match model here
-             * So don't go expecting this field to always have matches populated
-             */
             event.setMatches(object.get("matches").getAsJsonArray());
         }
-        if (object.has("webcasts")) {
-            //event.setWebcasts(); /* NOT EXPOSED BY API YET */
+        if (object.has("webcast")) {
+            event.setWebcasts(object.get("webcast").getAsJsonArray());
         }
         if (object.has("rankings")) {
             event.setRankings(object.get("rankings").getAsJsonArray()); /* Will be exposed to API via pull #1011 */
@@ -69,9 +64,11 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         if (object.has("stats")) {
             event.setStats(object.get("stats").getAsJsonObject());
         }
-
         if(object.has("alliances")){
             event.setAlliances(object.get("alliances").getAsJsonArray());
+        }
+        if(object.has("event_district")){
+            event.setEventDistrict(object.get("event_district").getAsInt());
         }
 
         return event;

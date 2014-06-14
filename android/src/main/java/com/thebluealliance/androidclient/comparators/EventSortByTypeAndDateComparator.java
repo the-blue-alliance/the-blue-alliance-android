@@ -14,7 +14,12 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
         if (event.getEventType() == event2.getEventType()) {
             return event.getStartDate().compareTo(event2.getStartDate());
         } else {
-            return event.getEventType().compareTo(event2.getEventType());
+            int typeCompare = event.getEventType().compareTo(event2.getEventType());
+            if(typeCompare == 0 && event.getEventType() == Event.TYPE.DISTRICT){
+                return event.getEventDistrict().compareTo(event2.getEventDistrict());
+            }else{
+                return typeCompare;
+            }
         }
     }
 
