@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
@@ -61,9 +62,9 @@ public class TBAv2 {
     public static ArrayList<SimpleTeam> getTeamList(String json) {
         ArrayList<SimpleTeam> teams = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
-        Iterator iterator = data.iterator();
+        Iterator<JsonElement> iterator = data.iterator();
         while (iterator.hasNext()) {
-            teams.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), SimpleTeam.class));
+            teams.add(JSONManager.getGson().fromJson(iterator.next(), SimpleTeam.class));
         }
         return teams;
     }
