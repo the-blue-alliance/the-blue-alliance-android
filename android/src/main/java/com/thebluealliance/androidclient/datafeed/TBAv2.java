@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
+import com.thebluealliance.androidclient.models.SimpleTeam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class TBAv2 {
     public static enum QUERY {
         CSV_TEAMS,
         TEAM, //TODO modify appropriately whenever teams get their own endpoint
+        TEAM_LIST,
         TEAM_MEDIA,
         EVENT_LIST,
         EVENT_INFO,
@@ -35,6 +37,7 @@ public class TBAv2 {
         API_URL = new HashMap<>();
         API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
         API_URL.put(QUERY.TEAM, "http://thebluealliance.com/api/v2/team/%s");
+        API_URL.put(QUERY.TEAM_LIST, "http://thebluealliance.com/api/v2/teams/%s");
         API_URL.put(QUERY.EVENT_INFO, "http://thebluealliance.com/api/v2/event/%s");
         API_URL.put(QUERY.EVENT_TEAMS, "http://thebluealliance.com/api/v2/event/%s/teams");
         API_URL.put(QUERY.EVENT_RANKS, "http://thebluealliance.com/api/v2/event/%s/rankings");
@@ -53,6 +56,16 @@ public class TBAv2 {
             events.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), SimpleEvent.class));
         }
         return events;
+    }
+
+    public static ArrayList<SimpleTeam> getTeamList(String json) {
+        ArrayList<SimpleTeam> teams = new ArrayList<>();
+        JsonArray data = JSONManager.getasJsonArray(json);
+        Iterator iterator = data.iterator();
+        while (iterator.hasNext()) {
+            teams.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), SimpleTeam.class));
+        }
+        return teams;
     }
 
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {
