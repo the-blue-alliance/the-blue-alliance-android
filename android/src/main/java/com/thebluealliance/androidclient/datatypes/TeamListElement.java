@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.models.Team;
 
 /**
  * File created by phil on 4/23/14.
@@ -19,6 +20,13 @@ public class TeamListElement extends ListElement {
     private String mTeamName;
     private String mTeamLocation;
     private boolean mShowLinkToTeamDetails = false;
+
+    public TeamListElement(Team team) {
+        super(team.getTeamKey());
+        mTeamNumber = team.getTeamNumber();
+        mTeamName = team.getNickname();
+        mTeamLocation = team.getLocation();
+    }
 
     public TeamListElement(String key, int number, String name, String location) {
         super(key);

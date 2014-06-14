@@ -279,6 +279,15 @@ public class Event implements BasicModel {
         return eventKey;
     }
 
+    /**
+     * Gets the event key with the year stripped out.
+     *
+     * @return Event key without the year
+     */
+    public String getYearAgnosticEventKey() {
+        return eventKey.replaceAll("[0-9]", "");
+    }
+
     public void setEventKey(String eventKey) {
         if (!Event.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
@@ -417,7 +426,7 @@ public class Event implements BasicModel {
 
     public String getShortName() {
         // Preseason and offseason events will probably fail our regex matcher
-        if(this.getEventType() == TYPE.PRESEASON || getEventType() == TYPE.OFFSEASON) {
+        if (this.getEventType() == TYPE.PRESEASON || getEventType() == TYPE.OFFSEASON) {
             return eventName;
         }
         if (shortName.isEmpty()) {
@@ -468,9 +477,9 @@ public class Event implements BasicModel {
 
     @Override
     public EventListElement render() {
-        if(getShortName() == null || shortName.isEmpty()){
+        if (getShortName() == null || shortName.isEmpty()) {
             return new EventListElement(eventKey, eventName, getDateString(), location);
-        }else{
+        } else {
             return new EventListElement(eventKey, getShortName(), getDateString(), location);
         }
     }
@@ -486,8 +495,8 @@ public class Event implements BasicModel {
         return output;
     }
 
-    public String getSearchTitles(){
-        return eventKey+","+eventYear+" "+eventName+","+eventYear+" "+shortName;
+    public String getSearchTitles() {
+        return eventKey + "," + eventYear + " " + eventName + "," + eventYear + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + eventYear;
     }
 
     @Override
