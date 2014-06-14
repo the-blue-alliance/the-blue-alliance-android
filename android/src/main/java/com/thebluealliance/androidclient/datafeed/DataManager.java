@@ -63,7 +63,7 @@ public class DataManager {
 
     public synchronized static APIResponse<ArrayList<SimpleTeam>> getSimpleTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
         ArrayList<Integer> requiredPageNums = new ArrayList();
-        for (int pageNum = lowerBound / 500; pageNum <= upperBound / 500; pageNum++) {
+        for (int pageNum = lowerBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum <= upperBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum++) {
             requiredPageNums.add(pageNum);
         }
         Log.d("get simple teams", "getting teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());

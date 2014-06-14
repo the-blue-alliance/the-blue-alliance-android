@@ -53,8 +53,8 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
 
             // First we will load all the teams
             for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
-                int start = pageNum * 500;
-                int end = start + 499;
+                int start = pageNum * Constants.API_TEAM_LIST_PAGE_SIZE;
+                int end = start + Constants.API_TEAM_LIST_PAGE_SIZE - 1;
                 start = start == 0 ? 1 : start;
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_teams), start, end)));
                 APIResponse<String> teamListResponse;
