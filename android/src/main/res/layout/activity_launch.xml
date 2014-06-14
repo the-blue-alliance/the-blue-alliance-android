@@ -27,7 +27,7 @@
             android:layout_marginBottom="10dp"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/textView"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/logo_highres" />
 
         <Button
             android:id="@+id/welcome_next_page"
