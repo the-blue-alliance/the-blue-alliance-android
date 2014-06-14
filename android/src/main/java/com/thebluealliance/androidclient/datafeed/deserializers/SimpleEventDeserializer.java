@@ -37,7 +37,6 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
             event.setLocation(object.get("location").getAsString());
         }
         event.setEventType(object.get("event_type").getAsInt());
-        event.setEventDistrict(""); /* NOT IMPLEMENTED IN API. Modify whenever it is... */
 
         // Start/End date is null sometimes (when spamming year changes)
         if (object.get("start_date").isJsonNull()) {
@@ -63,6 +62,9 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
             event.setShortName("");
         } else {
             event.setShortName(object.get("short_name").getAsString());
+        }
+        if(object.has("event_district")){
+            event.setEventDistrict(object.get("event_district").getAsInt());
         }
         event.setLastUpdated(System.currentTimeMillis());
 
