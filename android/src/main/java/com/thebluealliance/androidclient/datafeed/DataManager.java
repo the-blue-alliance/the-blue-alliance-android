@@ -69,6 +69,7 @@ public class DataManager {
         Log.d("get simple teams", "getting teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());
 
         ArrayList<SimpleTeam> teams = new ArrayList<>();
+        ArrayList<APIResponse.CODE> teamListResponseCodes = new ArrayList<>();
 
         for (int i = 0; i < requiredPageNums.size(); i++) {
             int pageNum = requiredPageNums.get(i);
@@ -76,10 +77,14 @@ public class DataManager {
             //TODO move to PreferenceHandler class
             boolean allTeamsLoadedForPage = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, false);
             // TODO check for updated data from the API and update response accordingly
-            if (!allTeamsLoadedForPage) {
+            if (allTeamsLoadedForPage) {
+                teamListResponseCodes.add(ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
+            } else {
                 // We need to load teams from the API
                 final String URL = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum);
                 APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, false);
+                teamListResponseCodes.add(teamListResponse.getCode());
+
                 teams = TBAv2.getTeamList(teamListResponse.getData());
                 Database.getInstance(c).storeTeams(teams);
                 teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
@@ -91,7 +96,8 @@ public class DataManager {
         }
 
         teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
-        APIResponse<String> response = new APIResponse<>("", APIResponse.CODE.UPDATED);
+        APIResponse.CODE[] a = new APIResponse.CODE[teamListResponseCodes.size()];
+        APIResponse<String> response = new APIResponse<>("", APIResponse.mergeCodes(teamListResponseCodes.toArray(a)));
 
         return new APIResponse<>(teams, response.getCode());
     }
