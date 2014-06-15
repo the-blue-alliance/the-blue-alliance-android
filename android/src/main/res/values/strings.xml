@@ -95,7 +95,7 @@
 
     <!-- Search -->
     <string name="search_title">Search</string>
-    <string name="search_hint">Search for teams and events</string>
+    <string name="search_hint">Search teams and events</string>
     <string name="no_events_found">No events found</string>
     <string name="no_teams_found">No teams found</string>
     <string name="teams_header">Teams</string>
