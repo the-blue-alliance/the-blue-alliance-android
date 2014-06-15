@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -78,7 +77,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
             teamQueryResults.moveToPosition(-1);
 
             teamsHeader = new SearchResultsHeaderListElement(getString(R.string.teams_header));
-            if (teamQueryResults.getCount() >= MAX_RESULTS_PER_CATEGORY) {
+            if (teamQueryResults.getCount() > MAX_RESULTS_PER_CATEGORY) {
                 teamsHeader.showMoreButton(true);
                 teamsHeader.setMoreCount(teamQueryResults.getCount() - MAX_RESULTS_PER_CATEGORY);
 
@@ -110,9 +109,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
             eventQueryResults.moveToPosition(-1);
 
             eventsHeader = new SearchResultsHeaderListElement(getString(R.string.events_header));
-            if (eventQueryResults.getCount() >= MAX_RESULTS_PER_CATEGORY) {
+            if (eventQueryResults.getCount() > MAX_RESULTS_PER_CATEGORY) {
                 eventsHeader.showMoreButton(true);
-                eventsHeader.setMoreCount(teamQueryResults.getCount() - MAX_RESULTS_PER_CATEGORY);
+                eventsHeader.setMoreCount(eventQueryResults.getCount() - MAX_RESULTS_PER_CATEGORY);
 
             } else {
                 eventsHeader.showMoreButton(false);
