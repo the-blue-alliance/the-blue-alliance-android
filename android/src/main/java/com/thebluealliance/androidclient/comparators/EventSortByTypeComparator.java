@@ -12,7 +12,7 @@ public class EventSortByTypeComparator implements Comparator<Event> {
     public int compare(Event event, Event event2) {
         int typeCompare = event.getEventType().compareTo(event2.getEventType());
         if(typeCompare == 0){
-            return event.getEventDistrict().compareTo(event2.getEventDistrict());
+            return ((Integer)event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
         }else{
             return typeCompare;
         }

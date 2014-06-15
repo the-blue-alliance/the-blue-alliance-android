@@ -82,14 +82,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 if (eventData != null && !eventData.isEmpty()) {
                     Collections.sort(eventData, new EventSortByTypeAndDateComparator());
                     Event.TYPE lastType = null, currentType;
-                    Event.DISTRICT lastDistrict = null, currentDistrict;
+                    int lastDistrict = -1, currentDistrict;
                     for (SimpleEvent event : eventData) {
                         currentType = event.getEventType();
-                        currentDistrict = event.getEventDistrict();
-                        if (currentType != lastType) {
-                            eventKeys.add(currentType.toString()+"_"+currentDistrict.toString());
-                            if(currentDistrict != lastDistrict) {
-                                events.add(new EventWeekHeader(currentDistrict.toString()+" District Events"));
+                        currentDistrict = event.getDistrictEnum();
+                        if (currentType != lastType || (currentType == Event.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
+                            eventKeys.add(currentType.toString()+"_"+currentDistrict);
+                            if(currentType == Event.TYPE.DISTRICT) {
+                                events.add(new EventWeekHeader(event.getDistrictTitle()+" District Events"));
                             }else{
                                 events.add(new EventWeekHeader(currentType.toString()));
                             }
@@ -112,15 +112,15 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 ArrayList<SimpleEvent> eventsArray = response.getData();
                 Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
                 Event.TYPE lastType = null, currentType;
-                Event.DISTRICT lastDistrict = null, currentDistrict;
+                int lastDistrict = -1, currentDistrict;
                 for (SimpleEvent event : eventsArray) {
                     currentType = event.getEventType();
-                    currentDistrict = event.getEventDistrict();
+                    currentDistrict = event.getDistrictEnum();
                     if (currentType != lastType) {
-                        eventKeys.add(currentType.toString() + "_" + currentDistrict.toString());
-                        if (currentDistrict != lastDistrict) {
-                            events.add(new EventWeekHeader(currentDistrict.toString() + " District Events"));
-                        } else {
+                        eventKeys.add(currentType.toString()+"_"+currentDistrict);
+                        if(currentType == Event.TYPE.DISTRICT && currentDistrict != lastDistrict) {
+                            events.add(new EventWeekHeader(event.getDistrictTitle()+" District Events"));
+                        }else{
                             events.add(new EventWeekHeader(currentType.toString()));
                         }
                     }

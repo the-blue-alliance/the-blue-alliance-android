@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -13,7 +12,6 @@ import com.thebluealliance.androidclient.models.SimpleTeam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 
 public class TBAv2 {
@@ -52,9 +50,8 @@ public class TBAv2 {
     public static ArrayList<SimpleEvent> getEventList(String json) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
-        Iterator iterator = data.iterator();
-        while (iterator.hasNext()) {
-            events.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), SimpleEvent.class));
+        for (JsonElement aData : data) {
+            events.add(JSONManager.getGson().fromJson(aData, SimpleEvent.class));
         }
         return events;
     }
@@ -62,9 +59,8 @@ public class TBAv2 {
     public static ArrayList<SimpleTeam> getTeamList(String json) {
         ArrayList<SimpleTeam> teams = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
-        Iterator<JsonElement> iterator = data.iterator();
-        while (iterator.hasNext()) {
-            teams.add(JSONManager.getGson().fromJson(iterator.next(), SimpleTeam.class));
+        for (JsonElement aData : data) {
+            teams.add(JSONManager.getGson().fromJson(aData, SimpleTeam.class));
         }
         return teams;
     }

@@ -64,7 +64,25 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
             event.setShortName(object.get("short_name").getAsString());
         }
         if(object.has("event_district")){
-            event.setEventDistrict(object.get("event_district").getAsInt());
+            JsonElement districtEnum = object.get("event_district");
+            if(districtEnum.isJsonNull()){
+                event.setDistrictEnum(0);
+            }else {
+                event.setDistrictEnum(districtEnum.getAsInt());
+            }
+        }else{
+            event.setDistrictEnum(0);
+        }
+        if(object.has("event_district_string")){
+            JsonElement districtString = object.get("event_district_string");
+            if(districtString.isJsonNull()){
+                event.setDistrictTitle("");
+            }else{
+                String title = districtString.getAsString();
+                event.setDistrictTitle(title.equals("null")?"":title);
+            }
+        }else{
+            event.setDistrictTitle("");
         }
         event.setLastUpdated(System.currentTimeMillis());
 

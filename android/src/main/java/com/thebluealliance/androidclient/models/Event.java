@@ -117,39 +117,6 @@ public class Event implements BasicModel {
         }
     }
 
-    public static enum DISTRICT {
-        NONE,
-        FIM,  /* Michigan */
-        MAR,  /* Mid Atlantic */
-        NE,   /* New England */
-        PNW;  /* Pacific Northwest */
-
-        public static DISTRICT fromEnum(int in) {
-            /*
-             * Get an enum from district enum
-             * From https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/district_type.py
-			 */
-            switch(in){
-                case 0: default: return  NONE;
-                case 1: return FIM;
-                case 2: return MAR;
-                case 3: return NE;
-                case 4: return PNW;
-            }
-        }
-
-        public String toString(){
-            switch(this){
-                default:
-                case NONE: return "No District";
-                case FIM: return "Michigan";
-                case MAR: return "Mid Atlantic";
-                case NE: return "New England";
-                case PNW: return "Pacific Northwest";
-            }
-        }
-    }
-
     public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH);
     public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy"),
             shortRenderDateFormat = new SimpleDateFormat("MMM d"),
@@ -168,7 +135,8 @@ public class Event implements BasicModel {
             abbreviation,
             website;
     TYPE eventType;
-    DISTRICT eventDistrict;
+    int districtEnum;
+    String districtTitle;
     Date startDate,
             endDate;
     boolean official;
@@ -189,7 +157,8 @@ public class Event implements BasicModel {
         this.eventYear = -1;
         this.location = "";
         this.eventType = TYPE.NONE;
-        this.eventDistrict = DISTRICT.NONE;
+        this.districtEnum = 0;
+        this.districtTitle = "";
         this.startDate = new Date(0);
         this.endDate = new Date(0);
         this.official = false;
@@ -202,7 +171,7 @@ public class Event implements BasicModel {
         alliances = new JsonArray();
     }
 
-    public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate,
+    public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, TYPE eventType, int districtEnum, String districtTitle, Date startDate, Date endDate,
                  String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, JsonArray alliances, long last_updated) {
         if (!Event.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
@@ -213,7 +182,8 @@ public class Event implements BasicModel {
         this.abbreviation = abbreviation;
         this.location = location;
         this.eventType = eventType;
-        this.eventDistrict = eventDistrict;
+        this.districtTitle = districtTitle;
+        this.districtEnum = districtEnum;
         this.startDate = startDate;
         this.endDate = endDate;
         this.official = official;
@@ -336,16 +306,20 @@ public class Event implements BasicModel {
         this.eventType = TYPE.fromInt(num);
     }
 
-    public DISTRICT getEventDistrict() {
-        return eventDistrict;
+    public int getDistrictEnum() {
+        return districtEnum;
     }
 
-    public void setEventDistrict(DISTRICT eventDistrict) {
-        this.eventDistrict = eventDistrict;
+    public void setDistrictEnum(int districtEnum) {
+        this.districtEnum = districtEnum;
     }
 
-    public void setEventDistrict(int districtEnum) {
-        this.eventDistrict = DISTRICT.fromEnum(districtEnum);
+    public String getDistrictTitle() {
+        return districtTitle;
+    }
+
+    public void setDistrictTitle(String districtTitle) {
+        this.districtTitle = districtTitle;
     }
 
     public Date getStartDate() {
@@ -515,7 +489,8 @@ public class Event implements BasicModel {
         values.put(Database.Events.NAME, eventName);
         values.put(Database.Events.LOCATION, location);
         values.put(Database.Events.TYPE, eventType.ordinal());
-        values.put(Database.Events.DISTRICT, eventDistrict.ordinal());
+        values.put(Database.Events.DISTRICT, districtEnum);
+        values.put(Database.Events.DISTRICT_STRING, districtTitle);
         values.put(Database.Events.START, eventDateFormat.format(startDate));
         values.put(Database.Events.END, eventDateFormat.format(endDate));
         values.put(Database.Events.OFFICIAL, official ? 1 : 0);
