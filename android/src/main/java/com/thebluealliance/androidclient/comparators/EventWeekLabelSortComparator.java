@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.comparators;
 
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.util.Comparator;
 
@@ -16,15 +16,15 @@ public class EventWeekLabelSortComparator implements Comparator<String> {
         if (lhs.startsWith("Week") && rhs.startsWith("Week")) {
             return lhs.compareTo(rhs);
         } else {
-            return typeSort.compare(Event.TYPE.fromLabel(lhs), Event.TYPE.fromLabel(rhs));
+            return typeSort.compare(EventHelper.TYPE.fromLabel(lhs), EventHelper.TYPE.fromLabel(rhs));
         }
     }
 }
 
-class EventTypeComparator implements Comparator<Event.TYPE> {
+class EventTypeComparator implements Comparator<EventHelper.TYPE> {
 
     @Override
-    public int compare(Event.TYPE lhs, Event.TYPE rhs) {
-        return ((Integer) Event.getEventOrder(lhs)).compareTo(Event.getEventOrder(rhs));
+    public int compare(EventHelper.TYPE lhs, EventHelper.TYPE rhs) {
+        return ((Integer) EventHelper.getEventOrder(lhs)).compareTo(EventHelper.getEventOrder(rhs));
     }
 }

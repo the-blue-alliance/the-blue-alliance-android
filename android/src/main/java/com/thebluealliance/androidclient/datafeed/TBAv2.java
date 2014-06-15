@@ -4,14 +4,13 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.listitems.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
+import com.thebluealliance.androidclient.models.SimpleTeam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 
 public class TBAv2 {
@@ -19,6 +18,7 @@ public class TBAv2 {
     public static enum QUERY {
         CSV_TEAMS,
         TEAM, //TODO modify appropriately whenever teams get their own endpoint
+        TEAM_LIST,
         TEAM_MEDIA,
         EVENT_LIST,
         EVENT_INFO,
@@ -35,6 +35,7 @@ public class TBAv2 {
         API_URL = new HashMap<>();
         API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
         API_URL.put(QUERY.TEAM, "http://thebluealliance.com/api/v2/team/%s");
+        API_URL.put(QUERY.TEAM_LIST, "http://thebluealliance.com/api/v2/teams/%s");
         API_URL.put(QUERY.EVENT_INFO, "http://thebluealliance.com/api/v2/event/%s");
         API_URL.put(QUERY.EVENT_TEAMS, "http://thebluealliance.com/api/v2/event/%s/teams");
         API_URL.put(QUERY.EVENT_RANKS, "http://thebluealliance.com/api/v2/event/%s/rankings");
@@ -48,11 +49,19 @@ public class TBAv2 {
     public static ArrayList<SimpleEvent> getEventList(String json) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
-        Iterator iterator = data.iterator();
-        while (iterator.hasNext()) {
-            events.add(JSONManager.getGson().fromJson((JsonObject) (iterator.next()), SimpleEvent.class));
+        for (JsonElement aData : data) {
+            events.add(JSONManager.getGson().fromJson(aData, SimpleEvent.class));
         }
         return events;
+    }
+
+    public static ArrayList<SimpleTeam> getTeamList(String json) {
+        ArrayList<SimpleTeam> teams = new ArrayList<>();
+        JsonArray data = JSONManager.getasJsonArray(json);
+        for (JsonElement aData : data) {
+            teams.add(JSONManager.getGson().fromJson(aData, SimpleTeam.class));
+        }
+        return teams;
     }
 
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {

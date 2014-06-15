@@ -16,7 +16,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.listitems.APIResponse;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
@@ -111,8 +112,8 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                     return;
                 }
                 Collections.sort(matches, new MatchSortByPlayOrderComparator());
-                Match lastMatch = Match.getLastMatchPlayed(matches);
-                Match nextMatch = Match.getNextMatchPlayed(matches);
+                Match lastMatch = MatchHelper.getLastMatchPlayed(matches);
+                Match nextMatch = MatchHelper.getNextMatchPlayed(matches);
                 if (lastMatch != null) {
                     ((LinearLayout) view.findViewById(R.id.team_most_recent_match_details)).addView(lastMatch.render().getView(activity, inflater, null));
                 } else {

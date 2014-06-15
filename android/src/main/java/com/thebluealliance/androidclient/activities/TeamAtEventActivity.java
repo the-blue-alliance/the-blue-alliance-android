@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
-import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 
 public class TeamAtEventActivity extends RefreshableHostActivity {
 
@@ -48,7 +48,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
                 String matchKey = (String)view.getTag();
-                if(matchKey != null && Match.validateMatchKey(matchKey)){
+                if(matchKey != null && MatchHelper.validateMatchKey(matchKey)){
                     startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
                 }
                 return true;

@@ -19,8 +19,18 @@ public class SimpleTeamDeserializer implements JsonDeserializer<SimpleTeam> {
 
         team.setTeamKey(object.get("key").getAsString());
         team.setTeamNumber(object.get("team_number").getAsInt());
-        team.setNickname(object.get("nickname").getAsString());
-        team.setLocation(object.get("location").getAsString());
+
+        if (object.get("nickname").isJsonNull()) {
+            team.setNickname("");
+        } else {
+            team.setNickname(object.get("nickname").getAsString());
+        }
+
+        if (object.get("location").isJsonNull()) {
+            team.setLocation("");
+        } else {
+            team.setLocation(object.get("location").getAsString());
+        }
         team.setLastUpdated(System.currentTimeMillis());
 
         return team;

@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
+import com.thebluealliance.androidclient.helpers.EventHelper;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,16 +15,17 @@ public class SimpleEvent extends Event implements BasicModel {
         super();
     }
 
-    public SimpleEvent(String eventKey, String eventName, String location, boolean official, TYPE eventType, DISTRICT eventDistrict, Date startDate, Date endDate, long last_updated) {
+    public SimpleEvent(String eventKey, String eventName, String location, boolean official, EventHelper.TYPE eventType, int districtEnum, String districtTitle, Date startDate, Date endDate, long last_updated) {
         super();
-        if (!Event.validateEventKey(eventKey))
+        if (!EventHelper.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
         this.eventYear = Integer.parseInt(eventKey.substring(0, 4));
         this.eventName = eventName;
         this.location = location;
         this.eventType = eventType;
-        this.eventDistrict = eventDistrict;
+        this.districtEnum = districtEnum;
+        this.districtTitle = districtTitle;
         this.startDate = startDate;
         this.endDate = endDate;
         this.official = official;
@@ -42,19 +45,19 @@ public class SimpleEvent extends Event implements BasicModel {
 
         for (SimpleEvent e : events) {
             ArrayList<SimpleEvent> list;
-            if (e.isOfficial() && (e.getEventType() == TYPE.CMP_DIVISION || e.getEventType() == TYPE.CMP_FINALS)) {
-                if (!groups.containsKey(CHAMPIONSHIP_LABEL) || groups.get(CHAMPIONSHIP_LABEL) == null) {
+            if (e.isOfficial() && (e.getEventType() == EventHelper.TYPE.CMP_DIVISION || e.getEventType() == EventHelper.TYPE.CMP_FINALS)) {
+                if (!groups.containsKey(EventHelper.CHAMPIONSHIP_LABEL) || groups.get(EventHelper.CHAMPIONSHIP_LABEL) == null) {
                     list = new ArrayList<>();
-                    groups.put(CHAMPIONSHIP_LABEL, list);
+                    groups.put(EventHelper.CHAMPIONSHIP_LABEL, list);
                 } else {
-                    list = groups.get(CHAMPIONSHIP_LABEL);
+                    list = groups.get(EventHelper.CHAMPIONSHIP_LABEL);
                 }
                 list.add(e);
-            } else if (e.isOfficial() && (e.getEventType() == TYPE.REGIONAL || e.getEventType() == TYPE.DISTRICT || e.getEventType() == TYPE.DISTRICT_CMP)) {
+            } else if (e.isOfficial() && (e.getEventType() == EventHelper.TYPE.REGIONAL || e.getEventType() == EventHelper.TYPE.DISTRICT || e.getEventType() == EventHelper.TYPE.DISTRICT_CMP)) {
                 if (e.getStartDate() == null) {
                     weekless.add(e);
                 } else {
-                    String label = String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                    String label = String.format(EventHelper.REGIONAL_LABEL, e.getCompetitionWeek());
                     if (groups.containsKey(label) && groups.get(label) != null) {
                         groups.get(label).add(e);
                     } else {
@@ -63,7 +66,7 @@ public class SimpleEvent extends Event implements BasicModel {
                         groups.put(label, list);
                     }
                 }
-            } else if (e.getEventType() == TYPE.PRESEASON) {
+            } else if (e.getEventType() == EventHelper.TYPE.PRESEASON) {
                 preseason.add(e);
             } else {
                 offseason.add(e);
@@ -71,13 +74,13 @@ public class SimpleEvent extends Event implements BasicModel {
         }
 
         if (!weekless.isEmpty()) {
-            groups.put(WEEKLESS_LABEL, weekless);
+            groups.put(EventHelper.WEEKLESS_LABEL, weekless);
         }
         if (!offseason.isEmpty()) {
-            groups.put(OFFSEASON_LABEL, offseason);
+            groups.put(EventHelper.OFFSEASON_LABEL, offseason);
         }
         if (!preseason.isEmpty()) {
-            groups.put(PRESEASON_LABEL, preseason);
+            groups.put(EventHelper.PRESEASON_LABEL, preseason);
         }
 
         return groups;

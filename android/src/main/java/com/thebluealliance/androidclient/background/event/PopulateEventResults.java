@@ -13,9 +13,10 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.listitems.APIResponse;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -67,7 +68,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             ArrayList<Match> results = response.getData(); //sorted by play order
 
             ListGroup currentGroup = qualMatches;
-            Match.TYPE lastType = null;
+            MatchHelper.TYPE lastType = null;
             Match previousIteration = null;
             boolean lastMatchPlayed = false;
             for (Match match : results) {

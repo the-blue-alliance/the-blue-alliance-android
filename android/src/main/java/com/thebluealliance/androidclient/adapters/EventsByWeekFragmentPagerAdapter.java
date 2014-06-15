@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.DownloadEventList;
 import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,7 +45,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         Date now = new Date();
         Calendar nowCalendar = Calendar.getInstance();
         nowCalendar.setTime(now);
-        if (Event.competitionWeek(now) == position && nowCalendar.get(Calendar.YEAR) == mYear) {
+        if (EventHelper.competitionWeek(now) == position && nowCalendar.get(Calendar.YEAR) == mYear) {
             return "Current Week";
         } else {
             return thisYearsWeekLabels.get(position);

@@ -21,7 +21,8 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.listitems.APIResponse;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -51,11 +52,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         mMatchKey = params[0];
         mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
         try {
-            APIResponse<HashMap<Match.TYPE, ArrayList<Match>>> response = DataManager.getEventResults(mActivity, mEventKey);
-            HashMap<Match.TYPE, ArrayList<Match>> matches = response.getData();
+            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.getEventResults(mActivity, mEventKey);
+            HashMap<MatchHelper.TYPE, ArrayList<Match>> matches = response.getData();
             // Extract the specified match from the list
             mMatch = null;
-            for (Map.Entry<Match.TYPE, ArrayList<Match>> matchListEntry : matches.entrySet()) {
+            for (Map.Entry<MatchHelper.TYPE, ArrayList<Match>> matchListEntry : matches.entrySet()) {
                 ArrayList<Match> matchList = matchListEntry.getValue();
                 for (Match match : matchList) {
                     if (match.getKey().equals(mMatchKey)) {

@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -53,10 +53,10 @@ public class EventsByWeekFragment extends Fragment {
         final Context c = getActivity();
         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
         tabs.setViewPager(mViewPager);
-        int currentWeek = Event.competitionWeek(new Date());
+        int currentWeek = EventHelper.competitionWeek(new Date());
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         //set the currently selected tab to the current week or week 1
-        int week1Index = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter()).getLabels().indexOf(String.format(Event.REGIONAL_LABEL, 1));
+        int week1Index = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter()).getLabels().indexOf(String.format(EventHelper.REGIONAL_LABEL, 1));
         if (currentYear != mYear) {
             mViewPager.setCurrentItem(week1Index);
         } else {
