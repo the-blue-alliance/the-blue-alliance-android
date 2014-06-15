@@ -110,7 +110,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
             eventQueryResults.moveToPosition(-1);
 
             eventsHeader = new SearchResultsHeaderListElement(getString(R.string.events_header));
-            if (teamQueryResults.getCount() >= MAX_RESULTS_PER_CATEGORY) {
+            if (eventQueryResults.getCount() >= MAX_RESULTS_PER_CATEGORY) {
                 eventsHeader.showMoreButton(true);
                 eventsHeader.setMoreCount(teamQueryResults.getCount() - MAX_RESULTS_PER_CATEGORY);
 
