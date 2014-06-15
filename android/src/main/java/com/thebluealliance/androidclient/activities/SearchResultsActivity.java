@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -52,6 +53,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
         searchView = new SearchView(getActionBar().getThemedContext());
         searchView.setOnQueryTextListener(this);
+        searchView.setIconifiedByDefault(false);
         searchView.setIconified(false);
         searchView.setQueryHint(getString(R.string.search_hint));
         // Prevent the "X" from iconifying the SearchView
@@ -68,6 +70,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
         getActionBar().setDisplayShowCustomEnabled(true);
         getActionBar().setCustomView(searchView, layoutParams);
+        int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
+        // Hide the magnifying glass icon
+        searchView.findViewById(searchIconId).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
     }
 
     @Override
