@@ -104,21 +104,6 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Launch the search activity
-        if(item.getItemId() == R.id.search) {
-            startActivity(new Intent(this, SearchResultsActivity.class));
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onCreateNavigationDrawer() {
         useActionBarToggle(true);
         // Only encourage learning on the launch of the app, not when the activity is

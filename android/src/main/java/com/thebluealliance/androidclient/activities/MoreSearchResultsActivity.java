@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
@@ -58,18 +59,7 @@ public class MoreSearchResultsActivity extends Activity {
             throw new IllegalArgumentException("MoreSearchResultsActivity most be created with a mode and query string!");
         }
 
-        // Prepare text for query. We will split the query by spaces, append an asterisk to the end of
-        // each component, and the put the string back together.
-        String[] splitQuery = query.split("\\s+");
-
-        for (int i = 0; i < splitQuery.length; i++) {
-            splitQuery[i] = splitQuery[i] + "*";
-        }
-
-        String finalQuery = "";
-        for (String aSplitQuery : splitQuery) {
-            finalQuery += (aSplitQuery + " ");
-        }
+        String finalQuery = Utilities.getPreparedQueryForSearch(query);
 
         ArrayList<ListItem> listItems = new ArrayList<>();
         switch (resultsType) {

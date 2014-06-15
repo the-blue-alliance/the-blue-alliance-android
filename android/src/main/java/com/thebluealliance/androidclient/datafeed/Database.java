@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -347,7 +348,7 @@ public class Database extends SQLiteOpenHelper {
     public long insertSearchItemTeam(Team team) {
         ContentValues cv = new ContentValues();
         cv.put(SearchTeam.KEY, team.getTeamKey());
-        cv.put(SearchTeam.TITLES, team.getSearchTitles());
+        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
         cv.put(SearchTeam.NUMBER, team.getTeamNumber());
         return db.insert(TABLE_SEARCH_TEAMS, null, cv);
     }
@@ -355,7 +356,7 @@ public class Database extends SQLiteOpenHelper {
     public long insertSearchItemEvent(Event event) {
         ContentValues cv = new ContentValues();
         cv.put(SearchEvent.KEY, event.getEventKey());
-        cv.put(SearchEvent.TITLES, event.getSearchTitles());
+        cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
         cv.put(SearchEvent.YEAR, event.getEventYear());
         return db.insert(TABLE_SEARCH_EVENTS, null, cv);
     }
@@ -363,7 +364,7 @@ public class Database extends SQLiteOpenHelper {
     public long updateSearchItemTeam(Team team) {
         ContentValues cv = new ContentValues();
         cv.put(SearchTeam.KEY, team.getTeamKey());
-        cv.put(SearchTeam.TITLES, team.getSearchTitles());
+        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
         cv.put(SearchTeam.NUMBER, team.getTeamNumber());
         return db.update(TABLE_SEARCH_TEAMS, cv, SearchTeam.KEY + "=?", new String[]{team.getTeamKey()});
     }
@@ -371,7 +372,7 @@ public class Database extends SQLiteOpenHelper {
     public long updateSearchItemEvent(Event event) {
         ContentValues cv = new ContentValues();
         cv.put(SearchEvent.KEY, event.getEventKey());
-        cv.put(SearchEvent.TITLES, event.getSearchTitles());
+        cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
         cv.put(SearchEvent.YEAR, event.getEventYear());
         return db.update(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
     }

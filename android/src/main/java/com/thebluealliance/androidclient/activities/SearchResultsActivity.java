@@ -5,13 +5,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
@@ -28,7 +31,7 @@ import java.util.ArrayList;
 /**
  * Created by Nathan on 6/14/2014.
  */
-public class SearchResultsActivity extends Activity implements SearchView.OnQueryTextListener {
+public class SearchResultsActivity extends NavigationDrawerActivity implements SearchView.OnQueryTextListener {
 
     private static final int MAX_RESULTS_PER_CATEGORY = 5;
 
@@ -65,18 +68,7 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
 
     private void updateQuery(final String query) {
 
-        // Prepare text for query. We will split the query by spaces, append an asterisk to the end of
-        // each component, and the put the string back together.
-        String[] splitQuery = query.split("\\s+");
-
-        for (int i = 0; i < splitQuery.length; i++) {
-            splitQuery[i] = splitQuery[i] + "*";
-        }
-
-        String finalQuery = "";
-        for (String aSplitQuery : splitQuery) {
-            finalQuery += (aSplitQuery + " ");
-        }
+        String finalQuery = Utilities.getPreparedQueryForSearch(query);
 
         ArrayList<ListItem> listItems = new ArrayList<>();
 
@@ -103,6 +95,7 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
                 Team team = Database.getInstance(this).getTeam(key);
                 TeamListElement element = new TeamListElement(team);
                 listItems.add(element);
+                Log.d(Constants.LOG_TAG, "titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
             }
         } else {
             teamsHeader = new SearchResultsHeaderListElement(getString(R.string.teams_header));
