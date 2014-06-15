@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,6 +16,7 @@ import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.CSVManager;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -46,17 +48,29 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
          * database and insert all the new teams and events.        *
          */
         try {
-            ArrayList<SimpleTeam> teams;
+            ArrayList<SimpleTeam> teams = new ArrayList();
             ArrayList<SimpleEvent> events = new ArrayList();
+            int maxPageNum = 0;
 
             // First we will load all the teams
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, activity.getString(R.string.loading_teams)));
-            APIResponse<String> response;
-            final String URL = "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader();
-            response = TBAv2.getResponseFromURLOrThrow(activity, URL, true);
-            Log.d("get simple teams", "starting parse");
-            teams = CSVManager.parseTeamsFromCSV(response.getData());
-            Log.d("get simple teams", "ending parse");
+            for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
+                int start = pageNum * Constants.API_TEAM_LIST_PAGE_SIZE;
+                int end = start + Constants.API_TEAM_LIST_PAGE_SIZE - 1;
+                start = start == 0 ? 1 : start;
+                publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_teams), start, end)));
+                APIResponse<String> teamListResponse;
+                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), true);
+                JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
+                if (responseObject instanceof JsonArray) {
+                    if (responseObject.size() == 0) {
+                        // No teams found for a page; we are done
+                        break;
+                    }
+                }
+                maxPageNum = Math.max(maxPageNum, pageNum);
+                ArrayList<SimpleTeam> pageTeams = TBAv2.getTeamList(teamListResponse.getData());
+                teams.addAll(pageTeams);
+            }
 
             // Now we load all events
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
@@ -79,7 +93,10 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             Database.getInstance(activity).storeTeams(teams);
             Database.getInstance(activity).storeEvents(events);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
-            editor.putBoolean(DataManager.ALL_TEAMS_LOADED_TO_DATABASE, true);
+            // Loop through all pages
+            for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
+                editor.putBoolean(DataManager.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
+            }
             // Loop through all years
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
                 editor.putBoolean(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);

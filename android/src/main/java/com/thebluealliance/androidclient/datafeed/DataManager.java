@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 public class DataManager {
 
-    public static final String ALL_TEAMS_LOADED_TO_DATABASE = "all_teams_loaded",
+    public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_",
             ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
 
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> eventsByYear = new HashMap<>();
@@ -62,32 +62,42 @@ public class DataManager {
     }
 
     public synchronized static APIResponse<ArrayList<SimpleTeam>> getSimpleTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
-        Log.d("get simple teams", "getting teams in range " + lowerBound + " - " + upperBound);
+        ArrayList<Integer> requiredPageNums = new ArrayList();
+        for (int pageNum = lowerBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum <= upperBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum++) {
+            requiredPageNums.add(pageNum);
+        }
+        Log.d("get simple teams", "getting teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());
+
         ArrayList<SimpleTeam> teams = new ArrayList<>();
-        //TODO move to PreferenceHandler class
-        boolean allTeamsLoaded = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE, false);
-        // TODO check for updated data from the API and update response accordingly
-        APIResponse<String> response;
-        if (allTeamsLoaded) {
-            teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
-            response = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
-        } else {
-            // We need to load teams from the API
-            //TODO move to TBAv2 class
-            final String URL = TBAv2.API_URL.get(TBAv2.QUERY.CSV_TEAMS);
-            response = TBAv2.getResponseFromURLOrThrow(c, URL, false);
-            Log.d("get simple teams", "starting parse");
-            teams = CSVManager.parseTeamsFromCSV(response.getData());
-            Log.d("get simple teams", "ending parse");
-            Log.d("get simple teams", "starting insert");
-            Database.getInstance(c).storeTeams(teams);
-            Log.d("get simple teams", "ending insert");
-            teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
-            if (response.getCode() != APIResponse.CODE.NODATA) {
-                //only update preference if actual data was loaded
-                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_TEAMS_LOADED_TO_DATABASE, true).commit();
+        ArrayList<APIResponse.CODE> teamListResponseCodes = new ArrayList<>();
+
+        for (int i = 0; i < requiredPageNums.size(); i++) {
+            int pageNum = requiredPageNums.get(i);
+
+            //TODO move to PreferenceHandler class
+            boolean allTeamsLoadedForPage = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, false);
+            // TODO check for updated data from the API and update response accordingly
+            if (allTeamsLoadedForPage) {
+                teamListResponseCodes.add(ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
+            } else {
+                // We need to load teams from the API
+                final String URL = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum);
+                APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, false);
+                teamListResponseCodes.add(teamListResponse.getCode());
+
+                teams = TBAv2.getTeamList(teamListResponse.getData());
+                Database.getInstance(c).storeTeams(teams);
+                teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
+                if (teamListResponse.getCode() != APIResponse.CODE.NODATA) {
+                    //only update preference if actual data was loaded
+                    PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true).commit();
+                }
             }
         }
+
+        teams = Database.getInstance(c).getTeamsInRange(lowerBound, upperBound);
+        APIResponse.CODE[] a = new APIResponse.CODE[teamListResponseCodes.size()];
+        APIResponse<String> response = new APIResponse<>("", APIResponse.mergeCodes(teamListResponseCodes.toArray(a)));
 
         return new APIResponse<>(teams, response.getCode());
     }
