@@ -29,3 +29,6 @@ proguard/
 ./idea/
 .idea
 *.iml
+
+# Windows thumbnail cache
+Thumbs.db

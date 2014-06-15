@@ -20,11 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.HomeActivity">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activities.SearchResultsActivity" />
-        </activity>
+        <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.ViewEventActivity" />
         <activity android:name=".activities.ViewTeamActivity" />
         <activity android:name=".activities.ViewMatchActivity" />
@@ -35,17 +31,7 @@
             android:name=".activities.OpenSourceLicensesActivity"
             android:label="@string/license_label" />
         <activity android:name=".activities.TeamAtEventActivity" />
-        <activity
-            android:name=".activities.SearchResultsActivity"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
+        <activity android:name=".activities.SearchResultsActivity" />
     </application>
 
 </manifest>
