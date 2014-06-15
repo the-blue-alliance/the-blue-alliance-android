@@ -1,6 +1,9 @@
 package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
+import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
+import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
@@ -8,6 +11,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -201,5 +205,27 @@ public class EventHelper {
                     return REGIONAL;
             }
         }
+    }
+
+    public static ArrayList<ListItem> renderEventList(ArrayList<SimpleEvent> events){
+        ArrayList<ListItem> out = new ArrayList<>();
+        Collections.sort(events, new EventSortByTypeAndDateComparator());
+        EventHelper.TYPE lastType = null, currentType;
+        int lastDistrict = -1, currentDistrict;
+        for (SimpleEvent event : events) {
+            currentType = event.getEventType();
+            currentDistrict = event.getDistrictEnum();
+            if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
+                if(currentType == EventHelper.TYPE.DISTRICT) {
+                    out.add(new EventWeekHeader(event.getDistrictTitle()+" District Events"));
+                }else{
+                    out.add(new EventWeekHeader(currentType.toString()));
+                }
+            }
+            out.add(event.render());
+            lastType = currentType;
+            lastDistrict = currentDistrict;
+        }
+        return out;
     }
 }
