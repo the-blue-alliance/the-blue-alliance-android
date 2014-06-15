@@ -36,6 +36,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
     ListView resultsList;
 
+    SearchView searchView;
+
     private SearchResultsHeaderListElement teamsHeader, eventsHeader;
 
     @Override
@@ -46,9 +48,14 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        SearchView searchView = new SearchView(getActionBar().getThemedContext());
+        searchView = new SearchView(getActionBar().getThemedContext());
         searchView.setIconified(false);
         searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint(getString(R.string.search_hint));
+        // The SearchView is empty; hide the close/clear button.
+        // This will be shown once there is text in the field
+        int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+        searchView.findViewById(closeButtonId).setVisibility(View.GONE);
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
         getActionBar().setDisplayShowCustomEnabled(true);
         getActionBar().setCustomView(searchView, layoutParams);
@@ -96,6 +103,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 listItems.add(element);
                 Log.d(Constants.LOG_TAG, "titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
             }
+            teamQueryResults.close();
         } else {
             teamsHeader = new SearchResultsHeaderListElement(getString(R.string.teams_header));
             teamsHeader.showMoreButton(false);
@@ -128,6 +136,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 EventListElement element = new EventListElement(event);
                 listItems.add(element);
             }
+            eventQueryResults.close();
         } else {
             eventsHeader = new SearchResultsHeaderListElement(getString(R.string.events_header));
             eventsHeader.showMoreButton(false);
@@ -176,9 +185,16 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         if (query.isEmpty()) {
             // If the user clears the search results, remove the adapter
             resultsList.setAdapter(null);
+            // Hide the close button so the SearchView can't be iconified
+            int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+            searchView.findViewById(closeButtonId).setVisibility(View.GONE);
+            return true;
+        } else {
+            // Show the close button so the SearchView can be cleared
+            int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+            searchView.findViewById(closeButtonId).setVisibility(View.VISIBLE);
+            updateQuery(query);
             return true;
         }
-        updateQuery(query);
-        return true;
     }
 }
