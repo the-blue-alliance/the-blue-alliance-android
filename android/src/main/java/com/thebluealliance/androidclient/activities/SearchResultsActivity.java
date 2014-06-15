@@ -14,12 +14,12 @@ import android.widget.SearchView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datatypes.EmptyListElement;
-import com.thebluealliance.androidclient.datatypes.EventListElement;
-import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
-import com.thebluealliance.androidclient.datatypes.ListElement;
-import com.thebluealliance.androidclient.datatypes.ListItem;
-import com.thebluealliance.androidclient.datatypes.TeamListElement;
+import com.thebluealliance.androidclient.listitems.EmptyListElement;
+import com.thebluealliance.androidclient.listitems.EventListElement;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.SearchResultsHeaderListElement;
+import com.thebluealliance.androidclient.listitems.TeamListElement;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -33,6 +33,8 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
     private static final int MAX_RESULTS_PER_CATEGORY = 5;
 
     ListView resultsList;
+
+    private SearchResultsHeaderListElement teamsHeader, eventsHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateQuery(String query) {
+    private void updateQuery(final String query) {
 
         // Prepare text for query. We will split the query by spaces, append an asterisk to the end of
         // each component, and the put the string back together.
@@ -80,9 +82,18 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
 
         // Teams
         Cursor teamQueryResults = Database.getInstance(this).getMatchesForTeamQuery(finalQuery);
-        listItems.add(new EventWeekHeader(getString(R.string.teams_header)));
         if (teamQueryResults != null && teamQueryResults.moveToFirst()) {
             teamQueryResults.moveToPosition(-1);
+
+            teamsHeader = new SearchResultsHeaderListElement(getString(R.string.teams_header));
+            if (teamQueryResults.getCount() >= MAX_RESULTS_PER_CATEGORY) {
+                teamsHeader.showMoreButton(true);
+                teamsHeader.setMoreCount(teamQueryResults.getCount() - MAX_RESULTS_PER_CATEGORY);
+
+            } else {
+                teamsHeader.showMoreButton(false);
+            }
+            listItems.add(teamsHeader);
             while (teamQueryResults.moveToNext()) {
                 // Limit ourselves to a certain number of teams
                 if (teamQueryResults.getPosition() >= MAX_RESULTS_PER_CATEGORY) {
@@ -94,14 +105,26 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
                 listItems.add(element);
             }
         } else {
+            teamsHeader = new SearchResultsHeaderListElement(getString(R.string.teams_header));
+            teamsHeader.showMoreButton(false);
+            listItems.add(teamsHeader);
             listItems.add(new EmptyListElement(getString(R.string.no_teams_found)));
         }
 
         // Events
         Cursor eventQueryResults = Database.getInstance(this).getMatchesForEventQuery(finalQuery);
-        listItems.add(new EventWeekHeader(getString(R.string.events_header)));
         if (eventQueryResults != null && eventQueryResults.moveToFirst()) {
             eventQueryResults.moveToPosition(-1);
+
+            eventsHeader = new SearchResultsHeaderListElement(getString(R.string.events_header));
+            if (teamQueryResults.getCount() >= MAX_RESULTS_PER_CATEGORY) {
+                eventsHeader.showMoreButton(true);
+                eventsHeader.setMoreCount(teamQueryResults.getCount() - MAX_RESULTS_PER_CATEGORY);
+
+            } else {
+                eventsHeader.showMoreButton(false);
+            }
+            listItems.add(eventsHeader);
 
             while (eventQueryResults.moveToNext()) {
                 // Limit ourselves to a certain number of events
@@ -114,6 +137,9 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
                 listItems.add(element);
             }
         } else {
+            eventsHeader = new SearchResultsHeaderListElement(getString(R.string.events_header));
+            eventsHeader.showMoreButton(false);
+            listItems.add(eventsHeader);
             listItems.add(new EmptyListElement(getString(R.string.no_events_found)));
         }
 
@@ -134,6 +160,14 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
                     String eventKey = ((ListElement) clickedItem).getKey();
                     Intent intent = ViewEventActivity.newInstance(SearchResultsActivity.this, eventKey);
                     startActivity(intent);
+                } else if (clickedItem == teamsHeader) {
+                    if (teamsHeader.isShowingMoreButton()) {
+                        startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.TEAM_RESULTS, query));
+                    }
+                } else if (clickedItem == eventsHeader) {
+                    if (eventsHeader.isShowingMoreButton()) {
+                        startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.EVENT_RESULTS, query));
+                    }
                 }
             }
         });
@@ -147,7 +181,7 @@ public class SearchResultsActivity extends Activity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String query) {
-        if(query.isEmpty()) {
+        if (query.isEmpty()) {
             // If the user clears the search results, remove the adapter
             resultsList.setAdapter(null);
             return true;

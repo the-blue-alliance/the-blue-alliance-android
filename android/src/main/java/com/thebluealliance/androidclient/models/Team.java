@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.datatypes.TeamListElement;
+import com.thebluealliance.androidclient.listitems.TeamListElement;
 
 import java.text.ParseException;
 import java.util.Date;

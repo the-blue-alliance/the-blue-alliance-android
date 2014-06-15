@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.datafeed.CSVManager;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.listitems.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 

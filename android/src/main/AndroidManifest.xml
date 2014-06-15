@@ -32,6 +32,7 @@
             android:label="@string/license_label" />
         <activity android:name=".activities.TeamAtEventActivity" />
         <activity android:name=".activities.SearchResultsActivity" />
+        <activity android:name=".activities.MoreSearchResultsActivity" />
     </application>
 
 </manifest>

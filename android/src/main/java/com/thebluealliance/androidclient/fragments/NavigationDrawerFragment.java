@@ -20,8 +20,8 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
-import com.thebluealliance.androidclient.datatypes.ListItem;
-import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.ArrayList;
 import java.util.List;

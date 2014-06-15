@@ -18,7 +18,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
-import com.thebluealliance.androidclient.datatypes.ListElement;
+import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/20/14.

@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datatypes;
+package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
 import android.view.LayoutInflater;

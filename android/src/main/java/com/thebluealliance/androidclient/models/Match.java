@@ -4,7 +4,7 @@ import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.datatypes.MatchListElement;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.ArrayList;
 import java.util.Date;

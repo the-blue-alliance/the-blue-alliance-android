@@ -8,8 +8,8 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.datatypes.AllianceListElement;
-import com.thebluealliance.androidclient.datatypes.EventListElement;
+import com.thebluealliance.androidclient.listitems.AllianceListElement;
+import com.thebluealliance.androidclient.listitems.EventListElement;
 
 import java.text.DateFormat;
 import java.text.ParseException;

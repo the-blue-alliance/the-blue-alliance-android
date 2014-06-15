@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.listitems.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
