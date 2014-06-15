@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
-import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
-import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.listitems.EventWeekHeader;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 

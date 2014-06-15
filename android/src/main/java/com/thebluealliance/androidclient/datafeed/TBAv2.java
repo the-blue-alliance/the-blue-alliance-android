@@ -26,7 +26,7 @@ public class TBAv2 {
         EVENT_MATCHES,
         EVENT_STATS,
         EVENT_RANKS,
-        EVENT_AWARDS;
+        EVENT_AWARDS
     }
 
     public static final HashMap<QUERY, String> API_URL;
