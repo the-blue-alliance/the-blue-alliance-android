@@ -38,6 +38,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
     SearchView searchView;
 
+    int closeButtonId;
+
     private SearchResultsHeaderListElement teamsHeader, eventsHeader;
 
     @Override
@@ -49,12 +51,19 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         searchView = new SearchView(getActionBar().getThemedContext());
-        searchView.setIconified(false);
         searchView.setOnQueryTextListener(this);
+        searchView.setIconified(false);
         searchView.setQueryHint(getString(R.string.search_hint));
+        // Prevent the "X" from iconifying the SearchView
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return true;
+            }
+        });
         // The SearchView is empty; hide the close/clear button.
         // This will be shown once there is text in the field
-        int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+        closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
         searchView.findViewById(closeButtonId).setVisibility(View.GONE);
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
         getActionBar().setDisplayShowCustomEnabled(true);
@@ -186,12 +195,10 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
             // If the user clears the search results, remove the adapter
             resultsList.setAdapter(null);
             // Hide the close button so the SearchView can't be iconified
-            int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
             searchView.findViewById(closeButtonId).setVisibility(View.GONE);
             return true;
         } else {
             // Show the close button so the SearchView can be cleared
-            int closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
             searchView.findViewById(closeButtonId).setVisibility(View.VISIBLE);
             updateQuery(query);
             return true;
