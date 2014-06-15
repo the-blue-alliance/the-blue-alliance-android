@@ -101,7 +101,7 @@
     <string name="teams_header">Teams</string>
     <string name="events_header">Events</string>
     <string name="search_action_bar_title">Results for %1$s</string>
-    <string name="more_results">%1$d more</string>
+    <string name="more_results">%1$d MORE</string>
     <string name="teams_matching">Teams matching \"%1$s\"</string>
     <string name="events_matching">Events matching \"%1$s\"</string>
 
