@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
@@ -189,7 +189,7 @@ public class Database extends SQLiteOpenHelper {
             SimpleEvent event = new SimpleEvent();
             event.setEventKey(cursor.getString(0));
             event.setEventName(cursor.getString(1));
-            event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
+            event.setEventType(EventHelper.TYPE.values()[cursor.getInt(2)]);
             event.setDistrictEnum(cursor.getInt(3));
             event.setStartDate(cursor.getString(4));
             event.setEndDate(cursor.getString(5));
@@ -213,7 +213,7 @@ public class Database extends SQLiteOpenHelper {
                 SimpleEvent event = new SimpleEvent();
                 event.setEventKey(cursor.getString(0));
                 event.setEventName(cursor.getString(1));
-                event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
+                event.setEventType(EventHelper.TYPE.values()[cursor.getInt(2)]);
                 event.setDistrictEnum(cursor.getInt(3));
                 event.setStartDate(cursor.getString(4));
                 event.setEndDate(cursor.getString(5));
@@ -241,7 +241,7 @@ public class Database extends SQLiteOpenHelper {
                 SimpleEvent event = new SimpleEvent();
                 event.setEventKey(cursor.getString(0));
                 event.setEventName(cursor.getString(1));
-                event.setEventType(Event.TYPE.values()[cursor.getInt(2)]);
+                event.setEventType(EventHelper.TYPE.values()[cursor.getInt(2)]);
                 event.setDistrictEnum(cursor.getInt(3));
                 event.setStartDate(cursor.getString(4));
                 event.setEndDate(cursor.getString(5));

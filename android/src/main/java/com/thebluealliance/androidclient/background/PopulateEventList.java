@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                     return APIResponse.CODE.NODATA;
                 }
             }
-            mWeek = Event.weekNumFromLabel(allEvents.get(mYear), mHeader);
+            mWeek = EventHelper.weekNumFromLabel(allEvents.get(mYear), mHeader);
         }
 
         eventKeys = new ArrayList<>();
@@ -81,14 +81,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 ArrayList<SimpleEvent> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
                     Collections.sort(eventData, new EventSortByTypeAndDateComparator());
-                    Event.TYPE lastType = null, currentType;
+                    EventHelper.TYPE lastType = null, currentType;
                     int lastDistrict = -1, currentDistrict;
                     for (SimpleEvent event : eventData) {
                         currentType = event.getEventType();
                         currentDistrict = event.getDistrictEnum();
-                        if (currentType != lastType || (currentType == Event.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
+                        if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
                             eventKeys.add(currentType.toString()+"_"+currentDistrict);
-                            if(currentType == Event.TYPE.DISTRICT) {
+                            if(currentType == EventHelper.TYPE.DISTRICT) {
                                 events.add(new EventWeekHeader(event.getDistrictTitle()+" District Events"));
                             }else{
                                 events.add(new EventWeekHeader(currentType.toString()));
@@ -111,14 +111,14 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
                 Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
-                Event.TYPE lastType = null, currentType;
+                EventHelper.TYPE lastType = null, currentType;
                 int lastDistrict = -1, currentDistrict;
                 for (SimpleEvent event : eventsArray) {
                     currentType = event.getEventType();
                     currentDistrict = event.getDistrictEnum();
                     if (currentType != lastType) {
                         eventKeys.add(currentType.toString()+"_"+currentDistrict);
-                        if(currentType == Event.TYPE.DISTRICT && currentDistrict != lastDistrict) {
+                        if(currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict) {
                             events.add(new EventWeekHeader(event.getDistrictTitle()+" District Events"));
                         }else{
                             events.add(new EventWeekHeader(currentType.toString()));

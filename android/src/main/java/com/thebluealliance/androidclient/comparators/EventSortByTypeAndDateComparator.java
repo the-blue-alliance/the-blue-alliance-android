@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.comparators;
 
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.Comparator;
@@ -20,7 +21,7 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
             }
         } else {
             int typeCompare = event.getEventType().compareTo(event2.getEventType());
-            if(typeCompare == 0 && event.getEventType() == Event.TYPE.DISTRICT){
+            if(typeCompare == 0 && event.getEventType() == EventHelper.TYPE.DISTRICT){
                 return ((Integer)event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
             }else{
                 return typeCompare;

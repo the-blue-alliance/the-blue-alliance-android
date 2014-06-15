@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.models;
+package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,18 +9,137 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datatypes.ListGroup;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
- * Helps determine a team's record & past/current performance at an FRC event.
+ * Support methods for dealing with Match models
  *
  * @author Bryce Matsuda
  * @author Nathan Walters
+ * @author Phil Lopreiato
  *
  * Created by Nathan on 6/6/2014.
  */
 public class MatchHelper {
+
+    public static enum TYPE {
+        NONE,
+        QUAL {
+            @Override
+            public TYPE previous() {
+                return null; // see below for options for this line
+            }
+        },
+        QUARTER,
+        SEMI,
+        FINAL {
+            @Override
+            public TYPE next() {
+                return null; // see below for options for this line
+            }
+        };
+
+        public TYPE next() {
+            // No bounds checking required here, because the last instance overrides
+            return values()[ordinal() + 1];
+        }
+
+        public TYPE previous() {
+            // No bounds checking required here, because the last instance overrides
+            return values()[ordinal() - 1];
+        }
+
+        public TYPE get(String str) {
+            return valueOf(str);
+        }
+
+        public static TYPE fromShortType(String str) {
+            switch (str) {
+                case "qm":
+                    return QUAL;
+                case "ef":
+                case "qf":
+                    return QUARTER;
+                case "sf":
+                    return SEMI;
+                case "f":
+                    return FINAL;
+                default:
+                    throw new IllegalArgumentException("Invalid short type");
+            }
+        }
+    }
+
+    public static final HashMap<TYPE, String> SHORT_TYPES;
+    public static final HashMap<TYPE, String> LONG_TYPES;
+    public static final HashMap<TYPE, Integer> PLAY_ORDER;
+
+    static {
+        SHORT_TYPES = new HashMap<>();
+        SHORT_TYPES.put(MatchHelper.TYPE.QUAL, "qm");
+        SHORT_TYPES.put(MatchHelper.TYPE.QUARTER, "qf");
+        SHORT_TYPES.put(MatchHelper.TYPE.SEMI, "sf");
+        SHORT_TYPES.put(MatchHelper.TYPE.FINAL, "f");
+
+        LONG_TYPES = new HashMap<>();
+        LONG_TYPES.put(MatchHelper.TYPE.QUAL, "Quals");
+        LONG_TYPES.put(MatchHelper.TYPE.QUARTER, "Quarters");
+        LONG_TYPES.put(MatchHelper.TYPE.SEMI, "Semis");
+        LONG_TYPES.put(MatchHelper.TYPE.FINAL, "Finals");
+
+        PLAY_ORDER = new HashMap<>();
+        PLAY_ORDER.put(MatchHelper.TYPE.QUAL, 1);
+        PLAY_ORDER.put(MatchHelper.TYPE.QUARTER, 2);
+        PLAY_ORDER.put(MatchHelper.TYPE.SEMI, 3);
+        PLAY_ORDER.put(MatchHelper.TYPE.FINAL, 4);
+    }
+
+    public static boolean validateMatchKey(String key) {
+        if (key == null || key.isEmpty()) return false;
+
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
+    }
+
+    /**
+     * Returns the match object of the match next to be played
+     *
+     * @param matches ArrayList of matches. Assumes the list is sorted by play order
+     * @return Next match
+     */
+    public static Match getNextMatchPlayed(ArrayList<Match> matches) {
+        for (Match m : matches) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
+                //match is unplayed
+                return m;
+            }
+        }
+        //all matches have been played
+        return null;
+    }
+
+    /**
+     * Returns the match object of the last match played
+     *
+     * @param matches ArrayList of matches. Assumes the list is sorted by play order
+     * @return Last match played
+     */
+    public static Match getLastMatchPlayed(ArrayList<Match> matches) {
+        Match last = null;
+        for (Match m : matches) {
+            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
+                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
+                break;
+            } else {
+                last = m;
+            }
+        }
+        return last;
+    }
 
     /**
      * Possible outcomes of a team's performance,
@@ -61,7 +180,7 @@ public class MatchHelper {
         MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
 
         ListGroup currentGroup = qualMatches;
-        Match.TYPE lastType = null;
+        TYPE lastType = null;
         for (Match match : matches) {
 
             if (lastType != match.getType()) {
@@ -147,7 +266,7 @@ public class MatchHelper {
         ArrayList<Match> finalMatches = new ArrayList<>();
 
         ArrayList<Match> currentGroup = qualMatches;
-        Match.TYPE lastType = null;
+        TYPE lastType = null;
 
         // Team might be a no-show/drop out last minute at an event,
         // and might not play any matches as a result.

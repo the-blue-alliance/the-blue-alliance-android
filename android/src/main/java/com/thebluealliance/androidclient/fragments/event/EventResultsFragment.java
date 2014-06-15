@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventResults;
-import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 
 /**
  * File created by phil on 4/22/14.
@@ -75,7 +75,7 @@ public class EventResultsFragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
                 String matchKey = (String)view.getTag();
-                if(matchKey != null && Match.validateMatchKey(matchKey)){
+                if(matchKey != null && MatchHelper.validateMatchKey(matchKey)){
                     startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
                 }
                 return true;

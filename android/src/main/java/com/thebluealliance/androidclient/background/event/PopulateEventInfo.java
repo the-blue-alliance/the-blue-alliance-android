@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -139,8 +140,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     APIResponse<ArrayList<Match>> matchResult = DataManager.getMatchList(activity, eventKey);
                     ArrayList<Match> matches = matchResult.getData();
                     Collections.sort(matches, new MatchSortByPlayOrderComparator());
-                    Match nextMatch = Match.getNextMatchPlayed(matches);
-                    Match lastMatch = Match.getLastMatchPlayed(matches);
+                    Match nextMatch = MatchHelper.getNextMatchPlayed(matches);
+                    Match lastMatch = MatchHelper.getLastMatchPlayed(matches);
 
                     if (nextMatch != null) {
                         showNextMatch = true;
