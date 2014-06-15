@@ -6,6 +6,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -34,7 +36,7 @@ public class TestTBAApi extends TestCase {
         assertEquals(event.getShortName(), "Groton");
         assertEquals(event.isOfficial(), true);
         assertEquals(event.getLocation(), "Groton, CT, USA");
-        assertEquals(event.getEventType(), Event.TYPE.DISTRICT);
+        assertEquals(event.getEventType(), EventHelper.TYPE.DISTRICT);
     }
 
     @MediumTest
@@ -88,7 +90,7 @@ public class TestTBAApi extends TestCase {
         assertEquals(match.getEventKey(), "2014ctgro");
         assertEquals(match.getMatchNumber(), 1);
         assertEquals(match.getSetNumber(), 1);
-        assertEquals(match.getType(), Match.TYPE.FINAL);
+        assertEquals(match.getType(), MatchHelper.TYPE.FINAL);
         assertEquals(match.getAlliances(), JSONManager.getasJsonObject("{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}"));
         assertEquals(match.getTimeString(), "3:36 PM");
         assertEquals(match.getTime(), new Date(1394393760));

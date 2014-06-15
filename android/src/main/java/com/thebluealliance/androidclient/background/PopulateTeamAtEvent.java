@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.datatypes.ListGroup;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;

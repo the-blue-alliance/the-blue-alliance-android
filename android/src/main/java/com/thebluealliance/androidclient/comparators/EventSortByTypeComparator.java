@@ -10,7 +10,12 @@ import java.util.Comparator;
 public class EventSortByTypeComparator implements Comparator<Event> {
     @Override
     public int compare(Event event, Event event2) {
-        return event.getEventType().compareTo(event2.getEventType());
+        int typeCompare = event.getEventType().compareTo(event2.getEventType());
+        if(typeCompare == 0){
+            return ((Integer)event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
+        }else{
+            return typeCompare;
+        }
     }
 
     @Override

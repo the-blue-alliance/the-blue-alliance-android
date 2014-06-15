@@ -11,17 +11,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datatypes.APIResponse;
-import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
 import com.thebluealliance.androidclient.datatypes.ListItem;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -32,7 +29,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private Fragment mFragment;
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null, mHeader;
-    private ArrayList<String> eventKeys;
     private ArrayList<ListItem> events;
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> allEvents = new HashMap<>();
     private RefreshableHostActivity activity;
@@ -64,10 +60,9 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                     return APIResponse.CODE.NODATA;
                 }
             }
-            mWeek = Event.weekNumFromLabel(allEvents.get(mYear), mHeader);
+            mWeek = EventHelper.weekNumFromLabel(allEvents.get(mYear), mHeader);
         }
 
-        eventKeys = new ArrayList<>();
         events = new ArrayList<>();
 
         APIResponse<ArrayList<SimpleEvent>> response;
@@ -80,23 +75,11 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
-                    Collections.sort(eventData, new EventSortByTypeAndDateComparator());
-                    Event.TYPE lastType = null, currentType;
-                    for (SimpleEvent event : eventData) {
-                        currentType = event.getEventType();
-                        // TODO: finish implementing this once we have event type info available
-                        if (currentType != lastType) {
-                            eventKeys.add(currentType.toString());
-                            events.add(new EventWeekHeader(currentType.toString()));
-                        }
-                        eventKeys.add(event.getEventKey());
-                        events.add(event.render());
-                        lastType = currentType;
-                    }
+                    events = EventHelper.renderEventList(eventData);
                 }
                 return response.getCode();
             } catch (Exception e) {
-                Log.w(Constants.LOG_TAG, "unable to find events for week" + mWeek + " " + mYear);
+                Log.w(Constants.LOG_TAG, "unable to find events for week " + mWeek + " " + mYear);
                 e.printStackTrace();
             }
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
@@ -104,18 +87,8 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
-                Collections.sort(eventsArray, new EventSortByTypeAndDateComparator());
-                Event.TYPE lastType = null, currentType;
-                for (SimpleEvent event : eventsArray) {
-                    currentType = event.getEventType();
-                    // TODO: finish implementing this once we have event type info available
-                    if (currentType != lastType) {
-                        eventKeys.add(currentType.toString());
-                        events.add(new EventWeekHeader(currentType.toString()));
-                    }
-                    eventKeys.add(event.getEventKey());
-                    events.add(event.render());
-                    lastType = currentType;
+                if(eventsArray != null && !eventsArray.isEmpty()) {
+                    events = EventHelper.renderEventList(eventsArray);
                 }
                 return response.getCode();
             } catch (Exception e) {

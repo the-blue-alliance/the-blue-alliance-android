@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datatypes.TeamListElement;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -115,8 +116,8 @@ public class Team implements BasicModel {
         while (iterator.hasNext()) {
             try {
                 e = iterator.next().getAsJsonObject();
-                eventStart = Event.eventDateFormat.parse(e.get("start_date").getAsString());
-                eventEnd = Event.eventDateFormat.parse(e.get("end_date").getAsString());
+                eventStart = EventHelper.eventDateFormat.parse(e.get("start_date").getAsString());
+                eventEnd = EventHelper.eventDateFormat.parse(e.get("end_date").getAsString());
                 if (now.after(eventStart) && now.before(eventEnd)) {
                     return JSONManager.getGson().fromJson(e, SimpleEvent.class);
                 }
@@ -145,7 +146,4 @@ public class Team implements BasicModel {
         return null;
     }
 
-    public static boolean validateTeamKey(String key){
-        return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,4}$");
-    }
 }
