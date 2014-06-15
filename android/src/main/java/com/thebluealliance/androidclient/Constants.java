@@ -51,4 +51,6 @@ public class Constants {
 
 
     public static final int FIRST_COMP_YEAR = 1992;
+
+    public static final int API_TEAM_LIST_PAGE_SIZE = 500;
 }
