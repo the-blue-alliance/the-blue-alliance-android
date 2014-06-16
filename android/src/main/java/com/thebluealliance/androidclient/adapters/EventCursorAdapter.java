@@ -48,9 +48,7 @@ public class EventCursorAdapter extends CursorAdapter {
         dates.setText(EventHelper.getDateString(startDate, endDate));
 
         TextView name = (TextView) view.findViewById(R.id.event_name);
-        String eventName = cursor.getString(cursor.getColumnIndex(Database.Events.NAME));
-        int eventType = cursor.getInt(cursor.getColumnIndex(Database.Events.TYPE));
-        name.setText(EventHelper.getShortNameForEvent(eventName, eventType));
+        name.setText(cursor.getString(cursor.getColumnIndex(Database.Events.NAME)));
 
         TextView location = (TextView) view.findViewById(R.id.event_location);
         location.setText(cursor.getString(cursor.getColumnIndex(Database.Events.LOCATION)));
