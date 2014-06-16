@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
@@ -260,7 +261,14 @@ public class Database extends SQLiteOpenHelper {
 
     public boolean eventExists(String key) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
-        return cursor != null && cursor.moveToFirst();
+        boolean result;
+        if(cursor != null){
+            result = cursor.moveToFirst();
+            cursor.close();
+        }else{
+            result = false;
+        }
+        return result;
     }
 
     public int updateEvent(SimpleEvent in) {
@@ -268,11 +276,11 @@ public class Database extends SQLiteOpenHelper {
         return db.update(TABLE_EVENTS, in.getParams(), Events.KEY + "=?", new String[]{in.getEventKey()});
     }
 
-    public String getResponse(String url) {
+    public APIResponse<String> getResponse(String url) {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE},
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            return cursor.getString(1);
+            return new APIResponse<>(cursor.getString(1), APIResponse.CODE.LOCAL, cursor.getLong(2));
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
             return null;
