@@ -184,6 +184,10 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                         startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.EVENT_RESULTS, query));
                     }
                 }
+                else {
+                    searchView.setVisibility(View.INVISIBLE);
+                    searchView.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
