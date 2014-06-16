@@ -67,7 +67,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         if(object.has("alliances")){
             event.setAlliances(object.get("alliances").getAsJsonArray());
         }
-        if(object.has("event_district")){
+        if(object.has("event_district") && !object.get("event_district").isJsonNull()){
             event.setDistrictEnum(object.get("event_district").getAsInt());
         }else{
             event.setDistrictEnum(0);
