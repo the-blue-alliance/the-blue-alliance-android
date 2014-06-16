@@ -190,7 +190,11 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        // Search already handled by onQueryTextChange, return true.
+        // Search is already handled by onQueryTextChange,
+        // but hide the soft keyboard regardless when the user hits the search button.
+        // Also return true.
+        searchView.setVisibility(View.INVISIBLE);
+        searchView.setVisibility(View.VISIBLE);
         return true;
     }
 
