@@ -280,14 +280,14 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE},
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            return new APIResponse<>(cursor.getString(1), APIResponse.CODE.LOCAL, cursor.getLong(2));
+            return new APIResponse<>(cursor.getString(1), APIResponse.CODE.LOCAL, cursor.getString(2));
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
             return null;
         }
     }
 
-    public long storeResponse(String url, String response, long updated) {
+    public long storeResponse(String url, String response, String updated) {
         ContentValues cv = new ContentValues();
         cv.put(Response.URL, url);
         cv.put(Response.RESPONSE, response);
@@ -311,7 +311,7 @@ public class Database extends SQLiteOpenHelper {
         getWritableDatabase().execSQL("delete from " + TABLE_API);
     }
 
-    public int updateResponse(String url, String response, long updated) {
+    public int updateResponse(String url, String response, String updated) {
         ContentValues cv = new ContentValues();
         cv.put(Response.RESPONSE, response);
         cv.put(Response.LASTUPDATE, updated);

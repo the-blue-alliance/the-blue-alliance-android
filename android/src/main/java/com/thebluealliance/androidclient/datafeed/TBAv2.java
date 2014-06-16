@@ -10,10 +10,10 @@ import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 
@@ -84,16 +84,21 @@ public class TBAv2 {
                 //and return our local content
 
                 APIResponse<String> cachedData = db.getResponse(URL);
-                HttpResponse dataResponse = HTTP.getResponse(URL, new Date(cachedData.getLastUpdate()));
+                HttpResponse cachedResponse = HTTP.getResponse(URL,cachedData.getLastUpdate());
                 //if we get a 200-OK back, then we need to cache that new data
                 //otherwise, it's a 304-Not-Modified
-                boolean dataRequiresUpdate = (dataResponse != null) && (dataResponse.getStatusLine().getStatusCode() == 200);
+                boolean dataRequiresUpdate = (cachedResponse != null) && (cachedResponse.getStatusLine().getStatusCode() == 200);
 
                 if (dataRequiresUpdate) {
                     // Load team data, cache it in the database, return it to caller
-                    String response = HTTP.dataFromResponse(dataResponse);
+                    String response = HTTP.dataFromResponse(cachedResponse),
+                            lastUpdate = "";
+                    Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
+                    if(lastModified != null){
+                        lastUpdate = lastModified.getValue();
+                    }
                     if (cacheInDatabase) {
-                        db.updateResponse(URL, response, System.currentTimeMillis());
+                        db.updateResponse(URL, response, lastUpdate);
                     }
                     Log.d("datamanager", "Online; updated from internet");
                     return new APIResponse<>(response, APIResponse.CODE.UPDATED);
@@ -108,9 +113,16 @@ public class TBAv2 {
         } else {
             if (connectedToInternet) {
                 // Load team data, cache it in the database, return it to caller
-                String response = HTTP.GET(URL);
+                HttpResponse cachedResponse = HTTP.getResponse(URL);
+                String response = HTTP.dataFromResponse(cachedResponse),
+                        lastUpdate = "";
+                Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
+                if(lastModified != null){
+                    lastUpdate = lastModified.getValue();
+                }
+
                 if (cacheInDatabase) {
-                    db.storeResponse(URL, response, System.currentTimeMillis());
+                    db.storeResponse(URL, response, lastUpdate);
                 }
                 Log.d("datamanager", "Online; loaded from internet");
                 return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);

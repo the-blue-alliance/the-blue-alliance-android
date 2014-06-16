@@ -13,31 +13,23 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.TimeZone;
 
 
 public class HTTP {
-
-    public static final SimpleDateFormat apiDateFormat = new SimpleDateFormat("E, d MMM y HH:mm:ss zzz");
-    static{
-        apiDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
 
     public static HttpResponse getResponse(String url){
         return getResponse(url, null);
     }
 
-    public static HttpResponse getResponse(String url, Date lastUpdated){
+    public static HttpResponse getResponse(String url, String lastUpdated){
         // HTTP
         try {
             HttpClient httpclient = new DefaultHttpClient(); // for port 80 requests!
             HttpGet httpget = new HttpGet(url);
             httpget.addHeader("X-TBA-App-Id", Constants.getApiHeader());
             if(lastUpdated != null){
-                httpget.addHeader("If-Modified-Since", apiDateFormat.format(lastUpdated));
+                httpget.addHeader("If-Modified-Since", lastUpdated);
             }
             return httpclient.execute(httpget);
         } catch (Exception e) {

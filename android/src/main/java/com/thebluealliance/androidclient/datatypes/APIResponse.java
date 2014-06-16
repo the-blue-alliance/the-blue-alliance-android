@@ -16,9 +16,9 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
 
     A data;
     CODE code;
-    long lastUpdate;
+    String lastUpdate;
 
-    public APIResponse(A data, CODE code, long lastUpdate) {
+    public APIResponse(A data, CODE code, String lastUpdate) {
         this.lastUpdate = lastUpdate;
         this.data = data;
         this.code = code;
@@ -27,7 +27,7 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
     public APIResponse(A data, CODE code) {
         this.code = code;
         this.data = data;
-        this.lastUpdate = -1;
+        this.lastUpdate = "";
     }
 
     public A getData() {
@@ -43,7 +43,7 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
         return this;
     }
 
-    public long getLastUpdate(){
+    public String getLastUpdate(){
         return lastUpdate;
     }
 
