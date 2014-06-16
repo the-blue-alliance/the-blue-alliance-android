@@ -6,7 +6,6 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datatypes.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
@@ -27,7 +26,7 @@ public class TBAv2 {
         EVENT_MATCHES,
         EVENT_STATS,
         EVENT_RANKS,
-        EVENT_AWARDS;
+        EVENT_AWARDS
     }
 
     public static final HashMap<QUERY, String> API_URL;

@@ -93,4 +93,16 @@
     <string name="warning_using_cached_data">You are offline and may be viewing outdated information.</string>
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
 
+    <!-- Search -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search teams and events</string>
+    <string name="no_events_found">No events found</string>
+    <string name="no_teams_found">No teams found</string>
+    <string name="teams_header">Teams</string>
+    <string name="events_header">Events</string>
+    <string name="search_action_bar_title">Results for %1$s</string>
+    <string name="more_results">%1$d MORE</string>
+    <string name="teams_matching">Teams matching \"%1$s\"</string>
+    <string name="events_matching">Events matching \"%1$s\"</string>
+
 </resources>

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by Nathan on 4/29/2014.
  */
-public abstract class RefreshableHostActivity extends NavigationDrawerActivity {
+public abstract class RefreshableHostActivity extends BaseActivity {
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
@@ -113,7 +113,7 @@ public abstract class RefreshableHostActivity extends NavigationDrawerActivity {
             refresh.setActionView(null);
         }
         // Only show "Refresh complete" if a refresh event was actually started
-        if(mRefreshInProgress) {
+        if (mRefreshInProgress) {
             Toast.makeText(this, R.string.refresh_complete, Toast.LENGTH_SHORT).show();
         }
         mRefreshInProgress = false;
@@ -163,8 +163,4 @@ public abstract class RefreshableHostActivity extends NavigationDrawerActivity {
         }
         mRefreshInProgress = true;
     }
-
-    public abstract void showWarningMessage(String message);
-
-    public abstract void hideWarningMessage();
 }

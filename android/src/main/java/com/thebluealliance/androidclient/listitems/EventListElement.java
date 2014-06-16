@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datatypes;
+package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.models.Event;
 
 /**
  * File created by phil on 4/23/14.
@@ -15,6 +16,13 @@ public class EventListElement extends ListElement {
     private String mEventName;
     private String mEventDates;
     private String mEventLocation;
+
+    public EventListElement(Event event) {
+        super(event.getEventKey());
+        mEventName = event.getEventName();
+        mEventDates = event.getDateString();
+        mEventLocation = event.getLocation();
+    }
 
     public EventListElement(String key, String name, String dates, String location) {
         super(key);
@@ -38,12 +46,6 @@ public class EventListElement extends ListElement {
 
             TextView location = (TextView) view.findViewById(R.id.event_location);
             location.setText(mEventLocation);
-
-            if (view.isSelected()) {
-                view.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));
-            } else {
-                view.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-            }
         }
         return view;
     }

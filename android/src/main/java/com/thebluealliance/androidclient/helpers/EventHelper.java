@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
-import com.thebluealliance.androidclient.datatypes.EventWeekHeader;
-import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.listitems.EventWeekHeader;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
@@ -14,6 +14,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * File created by phil on 6/15/14.
@@ -207,7 +209,7 @@ public class EventHelper {
         }
     }
 
-    public static ArrayList<ListItem> renderEventList(ArrayList<SimpleEvent> events){
+    public static ArrayList<ListItem> renderEventList(ArrayList<SimpleEvent> events) {
         ArrayList<ListItem> out = new ArrayList<>();
         Collections.sort(events, new EventSortByTypeAndDateComparator());
         EventHelper.TYPE lastType = null, currentType;
@@ -216,9 +218,9 @@ public class EventHelper {
             currentType = event.getEventType();
             currentDistrict = event.getDistrictEnum();
             if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
-                if(currentType == EventHelper.TYPE.DISTRICT) {
-                    out.add(new EventWeekHeader(event.getDistrictTitle()+" District Events"));
-                }else{
+                if (currentType == EventHelper.TYPE.DISTRICT) {
+                    out.add(new EventWeekHeader(event.getDistrictTitle() + " District Events"));
+                } else {
                     out.add(new EventWeekHeader(currentType.toString()));
                 }
             }
@@ -227,5 +229,35 @@ public class EventHelper {
             lastDistrict = currentDistrict;
         }
         return out;
+    }
+
+    public static String getShortNameForEvent(String eventName, int eventType) {
+        // Preseason and offseason events will probably fail our regex matcher
+        if (EventHelper.TYPE.values()[eventType] == EventHelper.TYPE.PRESEASON || EventHelper.TYPE.values()[eventType] == EventHelper.TYPE.OFFSEASON) {
+            return eventName;
+        }
+        String shortName = "";
+        Pattern regexPattern = Pattern.compile("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)( FIRST Robotics| FRC)?( District| Regional| Region| State| Tournament| FRC| Field| Division)( Competition| Event| Championship)?( sponsored by.*)?");
+        Matcher m = regexPattern.matcher(eventName);
+        if (m.matches()) {
+            String s = m.group(3);
+            regexPattern = Pattern.compile("(.*)(FIRST Robotics|FRC)");
+            m = regexPattern.matcher(s);
+            if (m.matches()) {
+                shortName = m.group(1).trim();
+            } else {
+                shortName = s.trim();
+            }
+        }
+
+        return shortName;
+    }
+
+    public static String getDateString(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null) return "";
+        if (startDate.equals(endDate)) {
+            return EventHelper.renderDateFormat.format(startDate);
+        }
+        return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
     }
 }

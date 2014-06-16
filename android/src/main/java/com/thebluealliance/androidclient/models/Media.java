@@ -5,8 +5,8 @@ import android.content.ContentValues;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datatypes.ImageListElement;
-import com.thebluealliance.androidclient.datatypes.ListElement;
+import com.thebluealliance.androidclient.listitems.ImageListElement;
+import com.thebluealliance.androidclient.listitems.ListElement;
 
 
 public class Media implements BasicModel {

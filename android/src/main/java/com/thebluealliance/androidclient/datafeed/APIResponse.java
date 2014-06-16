@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datatypes;
+package com.thebluealliance.androidclient.datafeed;
 
 /**
  * File created by phil on 5/11/14.

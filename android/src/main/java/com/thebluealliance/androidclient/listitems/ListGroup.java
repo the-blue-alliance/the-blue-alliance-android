@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datatypes;
+package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.models.BasicModel;
 

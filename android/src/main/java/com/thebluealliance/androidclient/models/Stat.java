@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
-import com.thebluealliance.androidclient.datatypes.StatsListElement;
+import com.thebluealliance.androidclient.listitems.StatsListElement;
 
 import java.text.DecimalFormat;
 

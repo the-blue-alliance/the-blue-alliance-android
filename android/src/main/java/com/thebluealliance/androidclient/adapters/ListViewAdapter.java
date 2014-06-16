@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.thebluealliance.androidclient.datatypes.ListItem;
+import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.List;
 
