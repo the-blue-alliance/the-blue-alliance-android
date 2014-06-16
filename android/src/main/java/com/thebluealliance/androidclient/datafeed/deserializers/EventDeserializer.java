@@ -51,7 +51,9 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
         event.setLastUpdated(System.currentTimeMillis());
 
-        //event.setWebsite(""); /* NOT EXPOSED BY API YET */
+        if (object.has("website")) {
+            event.setWebsite(object.get("website").getAsString());
+        }
         if (object.has("matches")) {
             event.setMatches(object.get("matches").getAsJsonArray());
         }
@@ -59,7 +61,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setWebcasts(object.get("webcast").getAsJsonArray());
         }
         if (object.has("rankings")) {
-            event.setRankings(object.get("rankings").getAsJsonArray()); /* Will be exposed to API via pull #1011 */
+            event.setRankings(object.get("rankings").getAsJsonArray());
         }
         if (object.has("stats")) {
             event.setStats(object.get("stats").getAsJsonObject());
