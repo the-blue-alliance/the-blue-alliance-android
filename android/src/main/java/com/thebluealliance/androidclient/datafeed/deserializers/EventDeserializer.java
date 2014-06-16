@@ -68,7 +68,12 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setAlliances(object.get("alliances").getAsJsonArray());
         }
         if(object.has("event_district")){
-            event.setDistrictEnum(object.get("event_district").getAsInt());
+            JsonElement districtEnum = object.get("event_district");
+            if(districtEnum.isJsonNull()){
+                event.setDistrictEnum(0);
+            }else {
+                event.setDistrictEnum(districtEnum.getAsInt());
+            }
         }else{
             event.setDistrictEnum(0);
         }
@@ -77,7 +82,8 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             if(districtString.isJsonNull()){
                 event.setDistrictTitle("");
             }else{
-                event.setDistrictTitle(districtString.getAsString());
+                String title = districtString.getAsString();
+                event.setDistrictTitle(title.equals("null")?"":title);
             }
         }else{
             event.setDistrictTitle("");
