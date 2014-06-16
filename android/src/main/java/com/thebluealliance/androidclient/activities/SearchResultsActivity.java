@@ -88,12 +88,12 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
     private void updateQuery(final String query) {
 
-        String finalQuery = Utilities.getPreparedQueryForSearch(query);
+        String preparedQuery = Utilities.getPreparedQueryForSearch(query);
 
         ArrayList<ListItem> listItems = new ArrayList<>();
 
         // Teams
-        Cursor teamQueryResults = Database.getInstance(this).getMatchesForTeamQuery(finalQuery);
+        Cursor teamQueryResults = Database.getInstance(this).getMatchesForTeamQuery(preparedQuery);
         if (teamQueryResults != null && teamQueryResults.moveToFirst()) {
             teamQueryResults.moveToPosition(-1);
 
@@ -126,7 +126,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         }
 
         // Events
-        Cursor eventQueryResults = Database.getInstance(this).getMatchesForEventQuery(finalQuery);
+        Cursor eventQueryResults = Database.getInstance(this).getMatchesForEventQuery(preparedQuery);
         if (eventQueryResults != null && eventQueryResults.moveToFirst()) {
             eventQueryResults.moveToPosition(-1);
 

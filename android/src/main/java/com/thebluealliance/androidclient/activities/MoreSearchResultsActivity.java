@@ -30,7 +30,7 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
 
     public static final String RESULTS_TYPE = "results_type";
     public static final String QUERY = "query";
-    private static final String FINAL_QUERY = "finalQuery";
+    private static final String PREPARED_QUERY = "preparedQuery";
 
     private ListView resultsList;
 
@@ -58,10 +58,10 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
             throw new IllegalArgumentException("MoreSearchResultsActivity most be created with a mode and query string!");
         }
 
-        String finalQuery = Utilities.getPreparedQueryForSearch(query);
+        String preparedQuery = Utilities.getPreparedQueryForSearch(query);
 
         Bundle loaderBundle = new Bundle();
-        loaderBundle.putString(FINAL_QUERY, finalQuery);
+        loaderBundle.putString(PREPARED_QUERY, preparedQuery);
 
         getSupportLoaderManager().restartLoader(resultsType, loaderBundle, this);
         switch(resultsType) {
@@ -107,20 +107,20 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        final String finalQuery = bundle.getString(FINAL_QUERY);
+        final String preparedQuery = bundle.getString(PREPARED_QUERY);
         switch (i) {
             case TEAM_RESULTS:
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getTeamsForTeamQuery(finalQuery);
+                        return Database.getInstance(MoreSearchResultsActivity.this).getTeamsForTeamQuery(preparedQuery);
                     }
                 };
             case EVENT_RESULTS:
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getEventsForQuery(finalQuery);
+                        return Database.getInstance(MoreSearchResultsActivity.this).getEventsForQuery(preparedQuery);
                     }
                 };
         }
