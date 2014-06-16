@@ -10,8 +10,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
@@ -420,6 +420,57 @@ public class Database extends SQLiteOpenHelper {
 
         Cursor cursor = builder.query(this.getReadableDatabase(),
                 new String[]{SearchEvent.KEY, SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
+    }
+
+    public Cursor getTeamsForTeamQuery(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS tempteams");
+        String createTempTeams = "CREATE TEMP TABLE tempteams (tempkey TEXT)";
+        db.execSQL(createTempTeams);
+        db.execSQL("INSERT INTO tempteams SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_TEAMS + " WHERE " + SearchTeam.TITLES + " MATCH ?", new String[]{query});
+        Cursor cursor = db.rawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
+                + Teams.KEY + ","
+                + Teams.NUMBER + ","
+                + Teams.NAME + ","
+                + Teams.SHORTNAME + ","
+                + Teams.LOCATION
+                + " FROM " + TABLE_TEAMS + " JOIN tempteams ON tempteams.tempkey = " + TABLE_TEAMS + "." + Teams.KEY + " ORDER BY ? ASC", new String[]{Teams.NUMBER});
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
+    }
+
+    public Cursor getEventsForQuery(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS tempevents");
+        String createTempTeams = "CREATE TEMP TABLE tempevents (tempkey TEXT)";
+        db.execSQL(createTempTeams);
+        db.execSQL("INSERT INTO tempevents SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_EVENTS + " WHERE " + SearchEvent.TITLES + " MATCH ?", new String[]{query});
+        Cursor cursor = db.rawQuery("SELECT " + TABLE_EVENTS + ".rowid as '_id',"
+                        + Events.KEY + ","
+                        + Events.NAME + ","
+                        + Events.TYPE + ","
+                        + Events.DISTRICT + ","
+                        + Events.START + ","
+                        + Events.END + ","
+                        + Events.LOCATION + ","
+                        + Events.OFFICIAL + ","
+                        + Events.DISTRICT_STRING
+                        + " FROM " + TABLE_EVENTS + " JOIN tempevents ON tempevents.tempkey = " + TABLE_EVENTS + "." + Events.KEY + " ORDER BY ? DESC", new String[]{SearchEvent.YEAR}
+        );
 
         if (cursor == null) {
             return null;

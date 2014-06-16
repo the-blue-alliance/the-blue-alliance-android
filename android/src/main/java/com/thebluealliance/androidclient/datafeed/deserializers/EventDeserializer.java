@@ -64,22 +64,27 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         if (object.has("stats")) {
             event.setStats(object.get("stats").getAsJsonObject());
         }
-        if(object.has("alliances")){
+        if (object.has("alliances")) {
             event.setAlliances(object.get("alliances").getAsJsonArray());
         }
-        if(object.has("event_district")){
-            event.setDistrictEnum(object.get("event_district").getAsInt());
-        }else{
+        if (object.has("event_district")) {
+            JsonElement eventDistrict = object.get("event_district");
+            if(eventDistrict.isJsonNull()) {
+                event.setDistrictEnum(0);
+            } else {
+                event.setDistrictEnum(eventDistrict.getAsInt());
+            }
+        } else {
             event.setDistrictEnum(0);
         }
-        if(object.has("event_district_string")){
+        if (object.has("event_district_string")) {
             JsonElement districtString = object.get("event_district_string");
-            if(districtString.isJsonNull()){
+            if (districtString.isJsonNull()) {
                 event.setDistrictTitle("");
-            }else{
+            } else {
                 event.setDistrictTitle(districtString.getAsString());
             }
-        }else{
+        } else {
             event.setDistrictTitle("");
         }
 

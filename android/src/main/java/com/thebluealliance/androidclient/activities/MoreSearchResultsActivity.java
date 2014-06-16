@@ -1,41 +1,40 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
+import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
+import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.listitems.EmptyListElement;
-import com.thebluealliance.androidclient.listitems.EventListElement;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.TeamListElement;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Team;
-
-import java.util.ArrayList;
 
 /**
  * Created by Nathan on 6/15/2014.
  */
-public class MoreSearchResultsActivity extends Activity {
+public class MoreSearchResultsActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int TEAM_RESULTS = 1;
     public static final int EVENT_RESULTS = 2;
 
     public static final String RESULTS_TYPE = "results_type";
     public static final String QUERY = "query";
+    private static final String FINAL_QUERY = "finalQuery";
 
     private ListView resultsList;
+
+    private int resultsType;
 
     public static Intent newInstance(Context c, int mode, String query) {
         Intent i = new Intent(c, MoreSearchResultsActivity.class);
@@ -54,70 +53,40 @@ public class MoreSearchResultsActivity extends Activity {
         getActionBar().setTitle("");
 
         String query = getIntent().getStringExtra(QUERY);
-        int resultsType = getIntent().getIntExtra(RESULTS_TYPE, -1);
+        resultsType = getIntent().getIntExtra(RESULTS_TYPE, -1);
         if (query == null || resultsType == -1) {
             throw new IllegalArgumentException("MoreSearchResultsActivity most be created with a mode and query string!");
         }
 
         String finalQuery = Utilities.getPreparedQueryForSearch(query);
 
-        ArrayList<ListItem> listItems = new ArrayList<>();
-        switch (resultsType) {
-            case TEAM_RESULTS:
-                // Teams
-                getActionBar().setTitle(String.format(getString(R.string.teams_matching), query));
+        Bundle loaderBundle = new Bundle();
+        loaderBundle.putString(FINAL_QUERY, finalQuery);
 
-                Cursor teamQueryResults = Database.getInstance(this).getMatchesForTeamQuery(finalQuery);
-                if (teamQueryResults != null && teamQueryResults.moveToFirst()) {
-                    teamQueryResults.moveToPosition(-1);
-                    while (teamQueryResults.moveToNext()) {
-                        String key = teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.KEY));
-                        Team team = Database.getInstance(this).getTeam(key);
-                        TeamListElement element = new TeamListElement(team);
-                        listItems.add(element);
-                    }
-                    teamQueryResults.close();
-                } else {
-                    listItems.add(new EmptyListElement(getString(R.string.no_teams_found)));
-                }
+        getSupportLoaderManager().restartLoader(resultsType, loaderBundle, this);
+        switch(resultsType) {
+            case TEAM_RESULTS:
+                getActionBar().setTitle(String.format(getString(R.string.teams_matching), query));
                 break;
             case EVENT_RESULTS:
-                // Events
                 getActionBar().setTitle(String.format(getString(R.string.events_matching), query));
-
-                Cursor eventQueryResults = Database.getInstance(this).getMatchesForEventQuery(finalQuery);
-                if (eventQueryResults != null && eventQueryResults.moveToFirst()) {
-                    eventQueryResults.moveToPosition(-1);
-                    while (eventQueryResults.moveToNext()) {
-                        String key = eventQueryResults.getString(eventQueryResults.getColumnIndex(Database.SearchEvent.KEY));
-                        Event event = Database.getInstance(this).getEvent(key);
-                        EventListElement element = new EventListElement(event);
-                        listItems.add(element);
-                    }
-                    eventQueryResults.close();
-                } else {
-                    listItems.add(new EmptyListElement(getString(R.string.no_events_found)));
-                }
                 break;
         }
-
-        ListViewAdapter adapter = new ListViewAdapter(this, listItems);
-        resultsList.setAdapter(adapter);
 
         resultsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                ListViewAdapter adapter = (ListViewAdapter) adapterView.getAdapter();
-                ListItem clickedItem = adapter.getItem(position);
-                if (clickedItem instanceof TeamListElement) {
-                    String teamKey = ((ListElement) clickedItem).getKey();
-                    Intent i = new Intent(MoreSearchResultsActivity.this, ViewTeamActivity.class);
-                    i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
-                    startActivity(i);
-                } else if (clickedItem instanceof EventListElement) {
-                    String eventKey = ((ListElement) clickedItem).getKey();
-                    Intent intent = ViewEventActivity.newInstance(MoreSearchResultsActivity.this, eventKey);
-                    startActivity(intent);
+                switch (resultsType) {
+                    case TEAM_RESULTS:
+                        TeamCursorAdapter teamAdapter = (TeamCursorAdapter) adapterView.getAdapter();
+                        String teamKey = teamAdapter.getKey(position);
+                        startActivity(ViewTeamActivity.newInstance(MoreSearchResultsActivity.this, teamKey));
+                        break;
+                    case EVENT_RESULTS:
+                        EventCursorAdapter eventAdapter = (EventCursorAdapter) adapterView.getAdapter();
+                        String eventKey = eventAdapter.getKey(position);
+                        startActivity(ViewEventActivity.newInstance(MoreSearchResultsActivity.this, eventKey));
+                        break;
                 }
             }
         });
@@ -134,5 +103,44 @@ public class MoreSearchResultsActivity extends Activity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        final String finalQuery = bundle.getString(FINAL_QUERY);
+        switch (i) {
+            case TEAM_RESULTS:
+                return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
+                    @Override
+                    public Cursor loadInBackground() {
+                        return Database.getInstance(MoreSearchResultsActivity.this).getTeamsForTeamQuery(finalQuery);
+                    }
+                };
+            case EVENT_RESULTS:
+                return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
+                    @Override
+                    public Cursor loadInBackground() {
+                        return Database.getInstance(MoreSearchResultsActivity.this).getEventsForQuery(finalQuery);
+                    }
+                };
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        switch(resultsType) {
+            case TEAM_RESULTS:
+                resultsList.setAdapter(new TeamCursorAdapter(this, cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
+                break;
+            case EVENT_RESULTS:
+                resultsList.setAdapter(new EventCursorAdapter(this, cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        resultsList.setAdapter(null);
     }
 }

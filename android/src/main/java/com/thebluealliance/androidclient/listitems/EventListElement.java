@@ -46,12 +46,6 @@ public class EventListElement extends ListElement {
 
             TextView location = (TextView) view.findViewById(R.id.event_location);
             location.setText(mEventLocation);
-
-            if (view.isSelected()) {
-                view.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));
-            } else {
-                view.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-            }
         }
         return view;
     }

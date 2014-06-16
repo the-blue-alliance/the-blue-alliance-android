@@ -54,7 +54,7 @@ public class TeamListElement extends ListElement {
             title.setText("" + mTeamNumber);
 
             TextView dates = (TextView) view.findViewById(R.id.team_name);
-            if (mTeamName.equals("")) {
+            if (mTeamName.isEmpty()) {
                 dates.setText("Team " + mTeamNumber);
             } else {
                 dates.setText(mTeamName);
