@@ -76,6 +76,7 @@ public class MoreSearchResultsActivity extends Activity {
                         TeamListElement element = new TeamListElement(team);
                         listItems.add(element);
                     }
+                    teamQueryResults.close();
                 } else {
                     listItems.add(new EmptyListElement(getString(R.string.no_teams_found)));
                 }
@@ -93,6 +94,7 @@ public class MoreSearchResultsActivity extends Activity {
                         EventListElement element = new EventListElement(event);
                         listItems.add(element);
                     }
+                    eventQueryResults.close();
                 } else {
                     listItems.add(new EmptyListElement(getString(R.string.no_events_found)));
                 }

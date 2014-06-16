@@ -185,6 +185,7 @@ public class Database extends SQLiteOpenHelper {
             team.setFullName(cursor.getString(2));
             team.setNickname(cursor.getString(3));
             team.setLocation(cursor.getString(4));
+            cursor.close();
             return team;
         } else {
             return null;
@@ -200,6 +201,7 @@ public class Database extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             teams.add(new SimpleTeam(cursor.getString(0), cursor.getInt(1), cursor.getString(3), cursor.getString(4), -1));
         }
+        cursor.close();
         return teams;
     }
 
@@ -237,6 +239,7 @@ public class Database extends SQLiteOpenHelper {
             event.setLocation(cursor.getString(6));
             event.setOfficial(cursor.getInt(7) == 1);
             event.setDistrictTitle(cursor.getString(8));
+            cursor.close();
             return event;
         } else {
             return null;
@@ -261,9 +264,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setLocation(cursor.getString(6));
                 event.setOfficial(cursor.getInt(7) == 1);
                 event.setDistrictTitle(cursor.getString(8));
-
                 events.add(event);
             } while (cursor.moveToNext());
+            cursor.close();
             return events;
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find events in " + year + " week " + week);
@@ -289,9 +292,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setLocation(cursor.getString(6));
                 event.setOfficial(cursor.getInt(7) == 1);
                 event.setDistrictTitle(cursor.getString(8));
-
                 events.add(event);
             } while (cursor.moveToNext());
+            cursor.close();
             return events;
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
@@ -301,7 +304,9 @@ public class Database extends SQLiteOpenHelper {
 
     public boolean eventExists(String key) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
-        return cursor != null && cursor.moveToFirst();
+        boolean exists = cursor != null && cursor.moveToFirst();
+        cursor.close();
+        return exists;
     }
 
     public int updateEvent(SimpleEvent event) {
@@ -313,7 +318,9 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE},
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            return cursor.getString(1);
+            String response = cursor.getString(1);
+            cursor.close();
+            return response;
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
             return null;
@@ -330,7 +337,9 @@ public class Database extends SQLiteOpenHelper {
 
     public boolean responseExists(String url) {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
-        return (cursor.moveToFirst()) || (cursor.getCount() != 0);
+        boolean exists = (cursor.moveToFirst()) || (cursor.getCount() != 0);
+        cursor.close();
+        return exists;
     }
 
     public int deleteResponse(String url) {
