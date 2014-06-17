@@ -9,6 +9,9 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -76,36 +79,52 @@ public class TBAv2 {
         if (existsInDb) {
             if (connectedToInternet) {
                 // We are connected to the internet and have a record in the database.
-                // Check if the local copy is up-to-date; if it is, return it.
-                // Otherwise, requery the API, cache the new data, and return the data.
-                // TODO: once we support the If-Modified-Since header, use that to check if our local copy is up-to-date.
-                // For now, we just load the new data every time.
-                boolean dataRequiresUpdate = false;
+                //query the API - if it returns 304-Not-Modified, then query the database
+                //and return our local content
+
+                APIResponse<String> cachedData = db.getResponse(URL);
+                HttpResponse cachedResponse = HTTP.getResponse(URL,cachedData.getLastUpdate());
+                //if we get a 200-OK back, then we need to cache that new data
+                //otherwise, it's a 304-Not-Modified
+                boolean dataRequiresUpdate = (cachedResponse != null) && (cachedResponse.getStatusLine().getStatusCode() == 200);
+
                 if (dataRequiresUpdate) {
                     // Load team data, cache it in the database, return it to caller
-                    String response = HTTP.GET(URL);
+                    String response = HTTP.dataFromResponse(cachedResponse),
+                            lastUpdate = "";
+                    Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
+                    if(lastModified != null){
+                        lastUpdate = lastModified.getValue();
+                    }
                     if (cacheInDatabase) {
-                        db.storeResponse(URL, response, -1);
+                        db.updateResponse(URL, response, lastUpdate);
                     }
                     Log.d("datamanager", "Online; updated from internet");
-                    return new APIResponse<String>(response, APIResponse.CODE.UPDATED);
+                    return new APIResponse<>(response, APIResponse.CODE.UPDATED);
                 } else {
                     Log.d("datamanager", "Online; no update required, loaded from database");
-                    return new APIResponse<String>(db.getResponse(URL), APIResponse.CODE.CACHED304);
+                    return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
             } else {
                 Log.d("datamanager", "Offline; loaded from database");
-                return new APIResponse<String>(db.getResponse(URL), APIResponse.CODE.OFFLINECACHE);
+                return db.getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
             }
         } else {
             if (connectedToInternet) {
                 // Load team data, cache it in the database, return it to caller
-                String response = HTTP.GET(URL);
+                HttpResponse cachedResponse = HTTP.getResponse(URL);
+                String response = HTTP.dataFromResponse(cachedResponse),
+                        lastUpdate = "";
+                Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
+                if(lastModified != null){
+                    lastUpdate = lastModified.getValue();
+                }
+
                 if (cacheInDatabase) {
-                    db.storeResponse(URL, response, -1);
+                    db.storeResponse(URL, response, lastUpdate);
                 }
                 Log.d("datamanager", "Online; loaded from internet");
-                return new APIResponse<String>(response, APIResponse.CODE.WEBLOAD);
+                return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);
             } else {
                 // There is no locally stored data and we are not connected to the internet.
                 Log.d("datamanager", "Offline; no data!");

@@ -10,15 +10,24 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
         WEBLOAD, //data was first loaded from the web
         UPDATED, //data was updated from the API
         OFFLINECACHE, //client is offline, loaded from local cache
+        LOCAL, //loaded locally. Could be either CACHED304 or OFFLINECACHE
         NODATA //nothing! uh ohs
     }
 
     A data;
     CODE code;
+    String lastUpdate;
+
+    public APIResponse(A data, CODE code, String lastUpdate) {
+        this.lastUpdate = lastUpdate;
+        this.data = data;
+        this.code = code;
+    }
 
     public APIResponse(A data, CODE code) {
         this.code = code;
         this.data = data;
+        this.lastUpdate = "";
     }
 
     public A getData() {
@@ -27,6 +36,15 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
 
     public CODE getCode() {
         return code;
+    }
+
+    public APIResponse<A> updateCode(CODE code){
+        this.code = code;
+        return this;
+    }
+
+    public String getLastUpdate(){
+        return lastUpdate;
     }
 
     @Override

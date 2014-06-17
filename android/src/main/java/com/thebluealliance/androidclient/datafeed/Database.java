@@ -304,9 +304,14 @@ public class Database extends SQLiteOpenHelper {
 
     public boolean eventExists(String key) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
-        boolean exists = cursor != null && cursor.moveToFirst();
-        cursor.close();
-        return exists;
+        boolean result;
+        if(cursor != null){
+            result = cursor.moveToFirst();
+            cursor.close();
+        }else{
+            result = false;
+        }
+        return result;
     }
 
     public int updateEvent(SimpleEvent event) {
@@ -314,20 +319,21 @@ public class Database extends SQLiteOpenHelper {
         return db.update(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
     }
 
-    public String getResponse(String url) {
+    public APIResponse<String> getResponse(String url) {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE},
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            String response = cursor.getString(1);
+            String response = cursor.getString(1),
+                   lastUpdate = cursor.getString(3);
             cursor.close();
-            return response;
+            return new APIResponse<>(response, APIResponse.CODE.LOCAL, lastUpdate);
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
             return null;
         }
     }
 
-    public long storeResponse(String url, String response, long updated) {
+    public long storeResponse(String url, String response, String updated) {
         ContentValues cv = new ContentValues();
         cv.put(Response.URL, url);
         cv.put(Response.RESPONSE, response);
@@ -353,7 +359,7 @@ public class Database extends SQLiteOpenHelper {
         getWritableDatabase().execSQL("delete from " + TABLE_API);
     }
 
-    public int updateResponse(String url, String response, long updated) {
+    public int updateResponse(String url, String response, String updated) {
         ContentValues cv = new ContentValues();
         cv.put(Response.RESPONSE, response);
         cv.put(Response.LASTUPDATE, updated);
