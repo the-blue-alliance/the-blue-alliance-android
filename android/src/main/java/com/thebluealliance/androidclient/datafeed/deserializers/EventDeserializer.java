@@ -51,7 +51,9 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
         event.setLastUpdated(System.currentTimeMillis());
 
-        //event.setWebsite(""); /* NOT EXPOSED BY API YET */
+        if (object.has("website")) {
+            event.setWebsite(object.get("website").getAsString());
+        }
         if (object.has("matches")) {
             event.setMatches(object.get("matches").getAsJsonArray());
         }
@@ -59,27 +61,33 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setWebcasts(object.get("webcast").getAsJsonArray());
         }
         if (object.has("rankings")) {
-            event.setRankings(object.get("rankings").getAsJsonArray()); /* Will be exposed to API via pull #1011 */
+            event.setRankings(object.get("rankings").getAsJsonArray());
         }
         if (object.has("stats")) {
             event.setStats(object.get("stats").getAsJsonObject());
         }
-        if(object.has("alliances")){
+        if (object.has("alliances")) {
             event.setAlliances(object.get("alliances").getAsJsonArray());
         }
         if(object.has("event_district")){
-            event.setDistrictEnum(object.get("event_district").getAsInt());
+            JsonElement districtEnum = object.get("event_district");
+            if(districtEnum.isJsonNull()){
+                event.setDistrictEnum(0);
+            }else {
+                event.setDistrictEnum(districtEnum.getAsInt());
+            }
         }else{
             event.setDistrictEnum(0);
         }
-        if(object.has("event_district_string")){
+        if (object.has("event_district_string")) {
             JsonElement districtString = object.get("event_district_string");
-            if(districtString.isJsonNull()){
+            if (districtString.isJsonNull()) {
                 event.setDistrictTitle("");
             }else{
-                event.setDistrictTitle(districtString.getAsString());
+                String title = districtString.getAsString();
+                event.setDistrictTitle(title.equals("null")?"":title);
             }
-        }else{
+        } else {
             event.setDistrictTitle("");
         }
 

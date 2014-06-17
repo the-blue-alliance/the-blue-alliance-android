@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
-import com.thebluealliance.androidclient.datatypes.ListElement;
+import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/28/14.

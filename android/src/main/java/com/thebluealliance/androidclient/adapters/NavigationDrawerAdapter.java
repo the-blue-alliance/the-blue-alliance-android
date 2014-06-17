@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datatypes.ListItem;
-import com.thebluealliance.androidclient.datatypes.NavDrawerItem;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.List;
 

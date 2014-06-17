@@ -5,14 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datatypes.APIResponse;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
+import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 
@@ -22,13 +25,15 @@ import java.util.ArrayList;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
             TABLE_TEAMS = "teams",
             TABLE_EVENTS = "events",
-            TABLE_SEARCH = "search";
+            TABLE_SEARCH = "search",
+            TABLE_SEARCH_TEAMS = "search_teams",
+            TABLE_SEARCH_EVENTS = "search_events";
 
     String CREATE_API = "CREATE TABLE " + TABLE_API + "("
             + Response.URL + " TEXT PRIMARY KEY, "
@@ -54,10 +59,17 @@ public class Database extends SQLiteOpenHelper {
             + Events.OFFICIAL + " INTEGER, "
             + Events.WEEK + " INTEGER"
             + ")";
-    String CREATE_SEARCH = "CREATE VIRTUAL TABLE " + TABLE_SEARCH +
+    String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
-            Search.KEY + "," +
-            Search.TITLES + ")";
+            SearchTeam.KEY + "," +
+            SearchTeam.TITLES + "," +
+            SearchTeam.NUMBER + ")";
+
+    String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE " + TABLE_SEARCH_EVENTS +
+            " USING fts3 (" +
+            SearchEvent.KEY + "," +
+            SearchEvent.TITLES + "," +
+            SearchEvent.YEAR + ")";
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
@@ -89,7 +101,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_API);
         db.execSQL(CREATE_TEAMS);
         db.execSQL(CREATE_EVENTS);
-        db.execSQL(CREATE_SEARCH);
+        db.execSQL(CREATE_SEARCH_TEAMS);
+        db.execSQL(CREATE_SEARCH_EVENTS);
     }
 
     @Override
@@ -99,6 +112,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
         //clear sharedprefs
         PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
         onCreate(db);
@@ -131,14 +146,22 @@ public class Database extends SQLiteOpenHelper {
                 WEEK = "competitionWeek";
     }
 
-    public class Search {
+    public class SearchTeam {
         public static final String
                 KEY = "key",
-                TITLES = "titles";
+                TITLES = "titles",
+                NUMBER = "number";
+    }
+
+    public class SearchEvent {
+        public static final String
+                KEY = "key",
+                TITLES = "titles",
+                YEAR = "year";
     }
 
     public long storeTeam(SimpleTeam team) {
-        insertSearchItem(team.getTeamKey(), team.getSearchTitles());
+        insertSearchItemTeam(team);
         return db.insert(TABLE_TEAMS, null, team.getParams());
     }
 
@@ -151,6 +174,24 @@ public class Database extends SQLiteOpenHelper {
         db.endTransaction();
     }
 
+    public SimpleTeam getTeam(String teamKey) {
+        Cursor cursor = db.query(TABLE_TEAMS, new String[]{Teams.KEY, Teams.NUMBER, Teams.NAME, Teams.SHORTNAME, Teams.LOCATION},
+                Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null
+        );
+        if (cursor != null && cursor.moveToFirst()) {
+            SimpleTeam team = new SimpleTeam();
+            team.setTeamKey(cursor.getString(0));
+            team.setTeamNumber(cursor.getInt(1));
+            team.setFullName(cursor.getString(2));
+            team.setNickname(cursor.getString(3));
+            team.setLocation(cursor.getString(4));
+            cursor.close();
+            return team;
+        } else {
+            return null;
+        }
+    }
+
     public ArrayList<SimpleTeam> getTeamsInRange(int lowerBound, int upperBound) {
         ArrayList<SimpleTeam> teams = new ArrayList<>();
         // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
@@ -160,12 +201,13 @@ public class Database extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             teams.add(new SimpleTeam(cursor.getString(0), cursor.getInt(1), cursor.getString(3), cursor.getString(4), -1));
         }
+        cursor.close();
         return teams;
     }
 
     public long storeEvent(SimpleEvent event) {
         if (!eventExists(event.getEventKey())) {
-            insertSearchItem(event.getEventKey(), event.getSearchTitles());
+            insertSearchItemEvent(event);
             return db.insert(TABLE_EVENTS, null, event.getParams());
         } else {
             return 0;//updateEvent(event);
@@ -197,6 +239,7 @@ public class Database extends SQLiteOpenHelper {
             event.setLocation(cursor.getString(6));
             event.setOfficial(cursor.getInt(7) == 1);
             event.setDistrictTitle(cursor.getString(8));
+            cursor.close();
             return event;
         } else {
             return null;
@@ -221,9 +264,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setLocation(cursor.getString(6));
                 event.setOfficial(cursor.getInt(7) == 1);
                 event.setDistrictTitle(cursor.getString(8));
-
                 events.add(event);
             } while (cursor.moveToNext());
+            cursor.close();
             return events;
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find events in " + year + " week " + week);
@@ -249,9 +292,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setLocation(cursor.getString(6));
                 event.setOfficial(cursor.getInt(7) == 1);
                 event.setDistrictTitle(cursor.getString(8));
-
                 events.add(event);
             } while (cursor.moveToNext());
+            cursor.close();
             return events;
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
@@ -271,16 +314,19 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public int updateEvent(SimpleEvent in) {
-        updateSearchItem(in.getEventKey(), in.getSearchTitles());
-        return db.update(TABLE_EVENTS, in.getParams(), Events.KEY + "=?", new String[]{in.getEventKey()});
+    public int updateEvent(SimpleEvent event) {
+        updateSearchItemEvent(event);
+        return db.update(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
     }
 
     public APIResponse<String> getResponse(String url) {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE},
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            return new APIResponse<>(cursor.getString(1), APIResponse.CODE.LOCAL, cursor.getString(2));
+            String response = cursor.getString(1),
+                   lastUpdate = cursor.getString(3);
+            cursor.close();
+            return new APIResponse<>(response, APIResponse.CODE.LOCAL, lastUpdate);
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
             return null;
@@ -297,7 +343,9 @@ public class Database extends SQLiteOpenHelper {
 
     public boolean responseExists(String url) {
         Cursor cursor = db.query(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
-        return (cursor.moveToFirst()) || (cursor.getCount() != 0);
+        boolean exists = (cursor.moveToFirst()) || (cursor.getCount() != 0);
+        cursor.close();
+        return exists;
     }
 
     public int deleteResponse(String url) {
@@ -318,31 +366,124 @@ public class Database extends SQLiteOpenHelper {
         return db.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
     }
 
-    public long insertSearchItem(String key, String titles){
+    public long insertSearchItemTeam(Team team) {
         ContentValues cv = new ContentValues();
-        cv.put(Search.KEY, key);
-        cv.put(Search.TITLES, titles);
-        return db.insert(TABLE_SEARCH, null, cv);
+        cv.put(SearchTeam.KEY, team.getTeamKey());
+        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+        cv.put(SearchTeam.NUMBER, team.getTeamNumber());
+        return db.insert(TABLE_SEARCH_TEAMS, null, cv);
     }
 
-    public long updateSearchItem(String key, String titles){
+    public long insertSearchItemEvent(Event event) {
         ContentValues cv = new ContentValues();
-        cv.put(Search.KEY, key);
-        cv.put(Search.TITLES, titles);
-        return db.update(TABLE_SEARCH, cv, Search.KEY + "=?", new String[]{key});
+        cv.put(SearchEvent.KEY, event.getEventKey());
+        cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+        cv.put(SearchEvent.YEAR, event.getEventYear());
+        return db.insert(TABLE_SEARCH_EVENTS, null, cv);
     }
 
-    public ArrayList<String> getSearchKey(String title) {
-        Cursor cursor = db.query(TABLE_SEARCH, new String[]{Search.KEY},
-                Search.TITLES + "=%?%", new String[]{title}, null, null, null, null);
-        ArrayList<String> out = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do{
-                out.add(cursor.getString(0));
-            }while(cursor.moveToNext());
-        } else {
-            Log.w(Constants.LOG_TAG, "Failed to find item in search database from " + title);
+    public long updateSearchItemTeam(Team team) {
+        ContentValues cv = new ContentValues();
+        cv.put(SearchTeam.KEY, team.getTeamKey());
+        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+        cv.put(SearchTeam.NUMBER, team.getTeamNumber());
+        return db.update(TABLE_SEARCH_TEAMS, cv, SearchTeam.KEY + "=?", new String[]{team.getTeamKey()});
+    }
+
+    public long updateSearchItemEvent(Event event) {
+        ContentValues cv = new ContentValues();
+        cv.put(SearchEvent.KEY, event.getEventKey());
+        cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+        cv.put(SearchEvent.YEAR, event.getEventYear());
+        return db.update(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
+    }
+
+    public Cursor getMatchesForTeamQuery(String query) {
+        String selection = SearchTeam.TITLES + " MATCH ?";
+        String[] selectionArgs = new String[]{query};
+
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(TABLE_SEARCH_TEAMS);
+
+        Cursor cursor = builder.query(this.getReadableDatabase(),
+                new String[]{SearchTeam.KEY, SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
         }
-        return out;
+        return cursor;
+    }
+
+    public Cursor getMatchesForEventQuery(String query) {
+        String selection = SearchEvent.TITLES + " MATCH ?";
+        String[] selectionArgs = new String[]{query};
+
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(TABLE_SEARCH_EVENTS);
+
+        Cursor cursor = builder.query(this.getReadableDatabase(),
+                new String[]{SearchEvent.KEY, SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
+    }
+
+    public Cursor getTeamsForTeamQuery(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS tempteams");
+        String createTempTeams = "CREATE TEMP TABLE tempteams (tempkey TEXT)";
+        db.execSQL(createTempTeams);
+        db.execSQL("INSERT INTO tempteams SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_TEAMS + " WHERE " + SearchTeam.TITLES + " MATCH ?", new String[]{query});
+        Cursor cursor = db.rawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
+                + Teams.KEY + ","
+                + Teams.NUMBER + ","
+                + Teams.NAME + ","
+                + Teams.SHORTNAME + ","
+                + Teams.LOCATION
+                + " FROM " + TABLE_TEAMS + " JOIN tempteams ON tempteams.tempkey = " + TABLE_TEAMS + "." + Teams.KEY + " ORDER BY ? ASC", new String[]{Teams.NUMBER});
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
+    }
+
+    public Cursor getEventsForQuery(String query) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS tempevents");
+        String createTempTeams = "CREATE TEMP TABLE tempevents (tempkey TEXT)";
+        db.execSQL(createTempTeams);
+        db.execSQL("INSERT INTO tempevents SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_EVENTS + " WHERE " + SearchEvent.TITLES + " MATCH ?", new String[]{query});
+        Cursor cursor = db.rawQuery("SELECT " + TABLE_EVENTS + ".rowid as '_id',"
+                        + Events.KEY + ","
+                        + Events.NAME + ","
+                        + Events.TYPE + ","
+                        + Events.DISTRICT + ","
+                        + Events.START + ","
+                        + Events.END + ","
+                        + Events.LOCATION + ","
+                        + Events.OFFICIAL + ","
+                        + Events.DISTRICT_STRING
+                        + " FROM " + TABLE_EVENTS + " JOIN tempevents ON tempevents.tempkey = " + TABLE_EVENTS + "." + Events.KEY + " ORDER BY ? DESC", new String[]{SearchEvent.YEAR}
+        );
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
     }
 }

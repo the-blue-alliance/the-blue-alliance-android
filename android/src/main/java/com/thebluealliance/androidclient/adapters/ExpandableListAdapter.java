@@ -8,7 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datatypes.ListGroup;
+import com.thebluealliance.androidclient.listitems.ListGroup;
 
 import java.util.ArrayList;
 

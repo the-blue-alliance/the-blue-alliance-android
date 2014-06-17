@@ -8,9 +8,9 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.datatypes.AllianceListElement;
-import com.thebluealliance.androidclient.datatypes.EventListElement;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.listitems.AllianceListElement;
+import com.thebluealliance.androidclient.listitems.EventListElement;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -155,6 +155,15 @@ public class Event implements BasicModel {
         return eventKey;
     }
 
+    /**
+     * Gets the event key with the year stripped out.
+     *
+     * @return Event key without the year
+     */
+    public String getYearAgnosticEventKey() {
+        return eventKey.replaceAll("[0-9]", "");
+    }
+
     public void setEventKey(String eventKey) {
         if (!EventHelper.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
@@ -288,7 +297,7 @@ public class Event implements BasicModel {
 
     public String getShortName() {
         // Preseason and offseason events will probably fail our regex matcher
-        if(this.getEventType() == EventHelper.TYPE.PRESEASON || getEventType() == EventHelper.TYPE.OFFSEASON) {
+        if (this.getEventType() == EventHelper.TYPE.PRESEASON || getEventType() == EventHelper.TYPE.OFFSEASON) {
             return eventName;
         }
         if (shortName.isEmpty()) {
@@ -339,9 +348,9 @@ public class Event implements BasicModel {
 
     @Override
     public EventListElement render() {
-        if(getShortName() == null || shortName.isEmpty()){
+        if (getShortName() == null || shortName.isEmpty()) {
             return new EventListElement(eventKey, eventName, getDateString(), location);
-        }else{
+        } else {
             return new EventListElement(eventKey, getShortName(), getDateString(), location);
         }
     }
@@ -357,8 +366,8 @@ public class Event implements BasicModel {
         return output;
     }
 
-    public String getSearchTitles(){
-        return eventKey+","+eventYear+" "+eventName+","+eventYear+" "+shortName;
+    public String getSearchTitles() {
+        return eventKey + "," + eventYear + " " + eventName + "," + eventYear + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + eventYear;
     }
 
     @Override

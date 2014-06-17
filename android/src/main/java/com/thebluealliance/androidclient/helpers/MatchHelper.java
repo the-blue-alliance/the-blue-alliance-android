@@ -8,9 +8,9 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
-import com.thebluealliance.androidclient.datatypes.ListGroup;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.listitems.ListGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;

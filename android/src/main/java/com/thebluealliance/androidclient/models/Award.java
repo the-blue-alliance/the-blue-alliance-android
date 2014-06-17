@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.datatypes.AwardListElement;
+import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
 import java.util.Iterator;

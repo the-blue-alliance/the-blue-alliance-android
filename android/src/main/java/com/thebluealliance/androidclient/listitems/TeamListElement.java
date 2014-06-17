@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datatypes;
+package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.models.Team;
 
 /**
  * File created by phil on 4/23/14.
@@ -19,6 +20,13 @@ public class TeamListElement extends ListElement {
     private String mTeamName;
     private String mTeamLocation;
     private boolean mShowLinkToTeamDetails = false;
+
+    public TeamListElement(Team team) {
+        super(team.getTeamKey());
+        mTeamNumber = team.getTeamNumber();
+        mTeamName = team.getNickname();
+        mTeamLocation = team.getLocation();
+    }
 
     public TeamListElement(String key, int number, String name, String location) {
         super(key);
@@ -46,7 +54,7 @@ public class TeamListElement extends ListElement {
             title.setText("" + mTeamNumber);
 
             TextView dates = (TextView) view.findViewById(R.id.team_name);
-            if (mTeamName.equals("")) {
+            if (mTeamName.isEmpty()) {
                 dates.setText("Team " + mTeamNumber);
             } else {
                 dates.setText(mTeamName);

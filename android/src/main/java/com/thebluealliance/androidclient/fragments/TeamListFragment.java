@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
-import com.thebluealliance.androidclient.datatypes.ListElement;
+import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/20/14.

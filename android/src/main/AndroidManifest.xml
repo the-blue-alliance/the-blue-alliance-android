@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thebluealliance.androidclient" >
+    package="com.thebluealliance.androidclient">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,7 +9,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+
         <activity
             android:name=".activities.LaunchActivity"
             android:label="@string/app_name">
@@ -29,9 +30,9 @@
         <activity
             android:name=".activities.OpenSourceLicensesActivity"
             android:label="@string/license_label" />
-        <activity
-            android:name=".activities.TeamAtEventActivity" >
-        </activity>
+        <activity android:name=".activities.TeamAtEventActivity" />
+        <activity android:name=".activities.SearchResultsActivity" />
+        <activity android:name=".activities.MoreSearchResultsActivity" />
     </application>
 
 </manifest>
