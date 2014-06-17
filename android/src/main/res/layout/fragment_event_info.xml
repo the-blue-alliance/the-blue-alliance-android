@@ -2,20 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/event_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:divider="?android:attr/dividerHorizontal"
+            android:orientation="vertical"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:id="@+id/event_info_container"
-            android:visibility="gone"
-            android:divider="?android:attr/dividerHorizontal"
-            android:showDividers="middle">
+            android:showDividers="middle"
+            android:visibility="gone">
 
             <RelativeLayout
                 android:id="@+id/event_name_container"
@@ -52,9 +53,9 @@
             <RelativeLayout
                 android:id="@+id/event_location_container"
                 style="@style/InfoItemStyle"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:focusable="true">
 
                 <ImageView
                     android:id="@+id/event_location_icon"
@@ -65,16 +66,16 @@
                     android:id="@+id/event_location_label"
                     style="@style/InfoItemTextStyle"
                     android:layout_toRightOf="@id/event_location_icon"
-                    android:textSize="14sp"
-                    android:textStyle="italic"
                     android:paddingRight="5dp"
-                    android:text="@string/at" />
+                    android:text="@string/at"
+                    android:textSize="14sp"
+                    android:textStyle="italic" />
 
                 <TextView
                     android:id="@+id/event_location"
                     style="@style/InfoItemTextStyle"
-                    android:layout_toRightOf="@id/event_location_label"
-                    android:layout_toLeftOf="@+id/event_location_nav_arrow"/>
+                    android:layout_toLeftOf="@+id/event_location_nav_arrow"
+                    android:layout_toRightOf="@id/event_location_label" />
 
                 <ImageView
                     android:id="@id/event_location_nav_arrow"
@@ -84,10 +85,10 @@
             <LinearLayout
                 android:id="@+id/event_social_container"
                 style="@style/InfoItemStyle"
-                android:orientation="horizontal"
-                android:showDividers="middle"
                 android:divider="?android:attr/dividerVertical"
-                android:padding="0dp">
+                android:orientation="horizontal"
+                android:padding="0dp"
+                android:showDividers="middle">
 
                 <ImageView
                     android:id="@+id/event_website_button"
@@ -113,85 +114,93 @@
                     android:id="@+id/event_usfirst_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:src="@drawable/ic_usfirst"
-                    android:visibility="gone" /> <!-- not sure what website to use here, so hide it for now -->         </LinearLayout>
+                    android:visibility="gone" />
+                <!-- not sure what website to use here, so hide it for now -->
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/event_last_match_container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
                     style="@android:style/TextAppearance.DeviceDefault.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/last_match"
+                    android:layout_gravity="center"
                     android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:layout_gravity="center" />
+                    android:text="@string/last_match" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/event_next_match_container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
                     style="@android:style/TextAppearance.DeviceDefault.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/next_match"
+                    android:layout_gravity="center"
                     android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:layout_gravity="center" />
+                    android:text="@string/next_match" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/event_top_teams_container"
-                android:tag="top_teams"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_gravity="center"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_horizontal"
+                android:orientation="horizontal"
                 android:visibility="gone">
 
                 <TextView
                     style="@android:style/TextAppearance.DeviceDefault.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/top_teams"
+                    android:layout_gravity="center"
                     android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:layout_gravity="center" />
+                    android:text="@string/top_teams" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/top_opr_container"
-                android:tag="top_opr"
+                android:id="@+id/event_top_opr_container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_horizontal"
+                android:orientation="horizontal"
                 android:visibility="gone">
 
                 <TextView
                     style="@android:style/TextAppearance.DeviceDefault.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/top_opr"
+                    android:layout_gravity="center"
                     android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:layout_gravity="center" />
+                    android:text="@string/top_opr" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-    <ProgressBar style="?android:attr/progressBarStyleLarge"
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:id="@+id/progress"
-        android:visibility="visible"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:visibility="visible" />
 </RelativeLayout>
