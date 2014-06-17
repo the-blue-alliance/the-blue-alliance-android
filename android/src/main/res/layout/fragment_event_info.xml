@@ -102,8 +102,7 @@
 
                 <ImageView
                     android:id="@id/event_location_nav_arrow"
-                    style="@style/InfoItemNavigationArrowStyle"
-                    android:clickable="false" />
+                    style="@style/InfoItemNavigationArrowStyle" />
             </RelativeLayout>
 
             <LinearLayout
