@@ -25,7 +25,7 @@ import java.util.ArrayList;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -265,8 +265,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setStartDate(cursor.getString(4));
                 event.setEndDate(cursor.getString(5));
                 event.setLocation(cursor.getString(6));
-                event.setOfficial(cursor.getInt(7) == 1);
-                event.setDistrictTitle(cursor.getString(8));
+                event.setVenue(cursor.getString(7));
+                event.setOfficial(cursor.getInt(8) == 1);
+                event.setDistrictTitle(cursor.getString(9));
                 events.add(event);
             } while (cursor.moveToNext());
             cursor.close();
