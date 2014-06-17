@@ -17,8 +17,6 @@ public class ViewMatchActivity extends RefreshableHostActivity {
 
     public static final String MATCH_KEY = "match_key";
 
-    private static final String VIDEO_FRAGMENT_TAG = "videoFragment";
-
     private String mMatchKey;
 
     private TextView warningMessage;
