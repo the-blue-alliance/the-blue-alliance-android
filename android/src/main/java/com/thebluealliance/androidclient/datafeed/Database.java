@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -18,6 +19,8 @@ import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Map;
 
 
 /**
@@ -35,19 +38,19 @@ public class Database extends SQLiteOpenHelper {
             TABLE_SEARCH_TEAMS = "search_teams",
             TABLE_SEARCH_EVENTS = "search_events";
 
-    String CREATE_API = "CREATE TABLE " + TABLE_API + "("
+    String CREATE_API = "CREATE TABLE IF NOT EXISTS " + TABLE_API + "("
             + Response.URL + " TEXT PRIMARY KEY, "
             + Response.RESPONSE + " TEXT, "
             + Response.LASTUPDATE + " TIMESTAMP "
             + ")";
-    String CREATE_TEAMS = "CREATE TABLE " + TABLE_TEAMS + "("
+    String CREATE_TEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS + "("
             + Teams.KEY + " TEXT PRIMARY KEY, "
             + Teams.NUMBER + " INTEGER NOT NULL, "
             + Teams.NAME + " TEXT, "
             + Teams.SHORTNAME + " TEXT, "
             + Teams.LOCATION + " TEXT"
             + ")";
-    String CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + "("
+    String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + Events.KEY + " TEXT PRIMARY KEY, "
             + Events.NAME + " TEXT, "
             + Events.LOCATION + " TEXT, "
@@ -60,13 +63,13 @@ public class Database extends SQLiteOpenHelper {
             + Events.OFFICIAL + " INTEGER, "
             + Events.WEEK + " INTEGER"
             + ")";
-    String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE " + TABLE_SEARCH_TEAMS +
+    String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
             SearchTeam.KEY + "," +
             SearchTeam.TITLES + "," +
             SearchTeam.NUMBER + ")";
 
-    String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE " + TABLE_SEARCH_EVENTS +
+    String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
             " USING fts3 (" +
             SearchEvent.KEY + "," +
             SearchEvent.TITLES + "," +
@@ -109,14 +112,34 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
-        //clear sharedprefs
-        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+
+        if (oldVersion == 7){
+            // drop the events table (since we added the venues in the next version)
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+
+            //clear the appropriate preferences
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            for (int year = Constants.FIRST_COMP_YEAR; year <= currentYear; year++)
+            {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().
+                     remove(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year).commit();
+            }
+
+            PreferenceManager.getDefaultSharedPreferences(context).edit().
+                    remove(LaunchActivity.ALL_DATA_LOADED).commit();
+        }
+        else{
+            //d-d-d-d-drop the tables (ノಠ益ಠ)ノ彡┻━┻ #dubstepwubwubz
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
+            //clear all sharedprefs
+            PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+        }
+
         onCreate(db);
     }
 
@@ -472,6 +495,7 @@ public class Database extends SQLiteOpenHelper {
                         + Events.START + ","
                         + Events.END + ","
                         + Events.LOCATION + ","
+                        + Events.VENUE + ","
                         + Events.OFFICIAL + ","
                         + Events.DISTRICT_STRING
                         + " FROM " + TABLE_EVENTS + " JOIN tempevents ON tempevents.tempkey = " + TABLE_EVENTS + "." + Events.KEY + " ORDER BY ? DESC", new String[]{SearchEvent.YEAR}
