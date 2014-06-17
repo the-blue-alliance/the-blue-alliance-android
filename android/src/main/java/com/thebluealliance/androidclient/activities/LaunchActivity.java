@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.support.v4.app.TaskStackBuilder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,6 +10,7 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.View;
 import android.widget.TextView;
 
@@ -182,7 +182,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         if (m.matches()) {
             String eventKey = m.group(1);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
             finish();
             return;
         }
@@ -191,7 +192,20 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         if (m.matches()) {
             String teamKey = m.group(1);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).addNextIntent(ViewTeamActivity.newInstance(this, teamKey)).startActivities();
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
+                    .addNextIntent(ViewTeamActivity.newInstance(this, teamKey)).startActivities();
+            finish();
+            return;
+        }
+        regexPattern = Pattern.compile(NfcUris.URI_TEAM_AT_EVENT_MATCHER);
+        m = regexPattern.matcher(uri);
+        if (m.matches()) {
+            String eventKey = m.group(1);
+            String teamKey = m.group(2);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewEventActivity.newInstance(this, eventKey))
+                    .addNextIntent(TeamAtEventActivity.newInstance(this, eventKey, teamKey)).startActivities();
             finish();
             return;
         }
