@@ -324,7 +324,7 @@ public class Database extends SQLiteOpenHelper {
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             String response = cursor.getString(1),
-                   lastUpdate = cursor.getString(3);
+                   lastUpdate = cursor.getString(2);
             cursor.close();
             return new APIResponse<>(response, APIResponse.CODE.LOCAL, lastUpdate);
         } else {
