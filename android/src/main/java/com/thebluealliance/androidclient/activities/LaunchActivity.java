@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -31,6 +32,20 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getIntent() != null){
+            Uri data = getIntent().getData();
+            if(data != null && data.getHost()!= null && data.getHost().equals(getString(R.string.web_url_host))){
+                //we caught an Action.VIEW intent, so
+                //now we generate the proper intent to view
+                //the requested content
+                Intent intent = Utilities.getIntentForTBAUrl(this, data);
+                if(intent != null){
+                    startActivity(intent);
+                    finish();
+                    return;
+                }
+            }
+        }
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false)) {
             startActivity(new Intent(this, HomeActivity.class));
             finish();
