@@ -51,6 +51,7 @@ public class Database extends SQLiteOpenHelper {
             + Events.KEY + " TEXT PRIMARY KEY, "
             + Events.NAME + " TEXT, "
             + Events.LOCATION + " TEXT, "
+            + Events.VENUE + " TEXT, "
             + Events.TYPE + " INTEGER, "
             + Events.DISTRICT + " INTEGER, "
             + Events.DISTRICT_STRING + " TEXT, "
@@ -137,6 +138,7 @@ public class Database extends SQLiteOpenHelper {
         public static final String KEY = "key",
                 NAME = "name",
                 LOCATION = "location",
+                VENUE = "venue",
                 TYPE = "eventType",
                 DISTRICT = "eventDistrict",
                 DISTRICT_STRING = "districtString",
@@ -225,7 +227,7 @@ public class Database extends SQLiteOpenHelper {
 
     public SimpleEvent getEvent(String eventKey) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
-                        Events.END, Events.LOCATION, Events.OFFICIAL, Events.DISTRICT_STRING},
+                        Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
@@ -237,8 +239,9 @@ public class Database extends SQLiteOpenHelper {
             event.setStartDate(cursor.getString(4));
             event.setEndDate(cursor.getString(5));
             event.setLocation(cursor.getString(6));
-            event.setOfficial(cursor.getInt(7) == 1);
-            event.setDistrictTitle(cursor.getString(8));
+            event.setVenue(cursor.getString(7));
+            event.setOfficial(cursor.getInt(8) == 1);
+            event.setDistrictTitle(cursor.getString(9));
             cursor.close();
             return event;
         } else {
@@ -249,7 +252,7 @@ public class Database extends SQLiteOpenHelper {
     public ArrayList<SimpleEvent> getEventsInWeek(int year, int week) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
-                        Events.END, Events.LOCATION, Events.OFFICIAL, Events.DISTRICT_STRING},
+                        Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
@@ -277,7 +280,7 @@ public class Database extends SQLiteOpenHelper {
     public ArrayList<SimpleEvent> getEventsInYear(int year) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
-                        Events.END, Events.LOCATION, Events.OFFICIAL, Events.DISTRICT_STRING},
+                        Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
@@ -290,8 +293,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setStartDate(cursor.getString(4));
                 event.setEndDate(cursor.getString(5));
                 event.setLocation(cursor.getString(6));
-                event.setOfficial(cursor.getInt(7) == 1);
-                event.setDistrictTitle(cursor.getString(8));
+                event.setVenue(cursor.getString(7));
+                event.setOfficial(cursor.getInt(8) == 1);
+                event.setDistrictTitle(cursor.getString(9));
                 events.add(event);
             } while (cursor.moveToNext());
             cursor.close();
