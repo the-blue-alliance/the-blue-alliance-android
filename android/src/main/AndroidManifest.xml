@@ -31,16 +31,13 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="@string/web_url_host_www" android:pathPattern="/teams"/>
-                <data android:scheme="http" android:host="@string/web_url_host_www" android:pathPattern="/team/.*"/>
-                <data android:scheme="http" android:host="@string/web_url_host_www" android:pathPattern="/events"/>
-                <data android:scheme="http" android:host="@string/web_url_host_www" android:pathPattern="/event/.*"/>
-                <data android:scheme="http" android:host="@string/web_url_host_www" android:pathPattern="/match/.*"/>
-                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/teams"/>
-                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/team/.*"/>
-                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/events"/>
-                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/event/.*"/>
-                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/match/.*"/>
+                <data android:scheme="http" />
+                <data android:host="@string/web_url_host" />
+                <data android:host="@string/web_url_host_www" />
+                <data android:path="/" />
+                <data android:pathPrefix="/team" />
+                <data android:pathPrefix="/event" />
+                <data android:pathPrefix="/match" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.HomeActivity" />
