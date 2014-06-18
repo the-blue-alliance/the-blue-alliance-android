@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -11,15 +12,19 @@ import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventResults;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * File created by phil on 4/22/14.
  */
-public class EventResultsFragment extends Fragment {
+public class EventResultsFragment extends Fragment implements RefreshListener{
+
+    private Activity parent;
 
     private String eventKey, teamKey;
     private static final String KEY = "eventKey", TEAM = "teamKey";
@@ -52,6 +57,10 @@ public class EventResultsFragment extends Fragment {
             eventKey = getArguments().getString(KEY, "");
             teamKey = getArguments().getString(TEAM, "");
         }
+        parent = getActivity();
+        if(parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        }
     }
 
     @Override
@@ -65,10 +74,6 @@ public class EventResultsFragment extends Fragment {
             mListView.setSelection(mFirstVisiblePosition);
             Log.d("onCreateView", "using existing adapter");
             mProgressBar.setVisibility(View.GONE);
-        } else {
-            mTask = new PopulateEventResults(this, true);
-            mTask.execute(eventKey, teamKey);
-            Log.d("onCreateView", "creating new adapter");
         }
         System.out.println("setting on click adapter");
         mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -85,6 +90,14 @@ public class EventResultsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(parent instanceof RefreshableHostActivity){
+            ((RefreshableHostActivity) parent).startRefresh();
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mTask.cancel(false);
@@ -94,5 +107,22 @@ public class EventResultsFragment extends Fragment {
             mListState = mListView.onSaveInstanceState();
             mFirstVisiblePosition = mListView.getFirstVisiblePosition();
         }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        mTask = new PopulateEventResults(this, true);
+        mTask.execute(eventKey, teamKey);
+        View view = getView();
+        if (view != null) {
+            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.match_results).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onRefreshStop() {
+        mTask.cancel(false);
     }
 }

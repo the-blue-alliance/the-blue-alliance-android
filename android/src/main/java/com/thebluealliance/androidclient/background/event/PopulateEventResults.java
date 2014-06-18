@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -172,12 +173,18 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 listView.setAdapter(adapter);
             }
 
-            // Remove progress spinner since we're done loading data.
+            // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.match_results).setVisibility(View.VISIBLE);
 
             // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
+            }
+
+            // Show notification if we've refreshed data.
+            if(mFragment instanceof RefreshListener) {
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
             }
         }
 

@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
@@ -144,6 +145,11 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
+        }
+
+        // Show notification if we've refreshed data.
+        if(mFragment instanceof RefreshListener) {
+            activity.notifyRefreshComplete((RefreshListener) mFragment);
         }
 
         if(code == APIResponse.CODE.LOCAL){

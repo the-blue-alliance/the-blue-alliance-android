@@ -122,7 +122,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     /*
     Notifies all registered listeners that they should start their refresh.
      */
-    protected void startRefresh() {
+    public void startRefresh() {
         mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
             return;

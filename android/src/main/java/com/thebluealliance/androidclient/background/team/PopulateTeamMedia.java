@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
 
@@ -117,8 +118,14 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
-            // Remove progress spinner since we're done loading data.
+            // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.team_media_list).setVisibility(View.VISIBLE);
+
+            // Show notification if we've refreshed data.
+            if(fragment instanceof RefreshListener) {
+                activity.notifyRefreshComplete((RefreshListener) fragment);
+            }
         }
 
         if(code == APIResponse.CODE.LOCAL){

@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -11,15 +12,22 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+
+import java.sql.Ref;
 
 /**
  * File created by phil on 4/22/14.
  */
-public class EventTeamsFragment extends Fragment {
+public class EventTeamsFragment extends Fragment implements RefreshListener {
+
+    private Activity parent;
 
     private String mEventKey;
     private static final String KEY = "event_key";
@@ -45,6 +53,10 @@ public class EventTeamsFragment extends Fragment {
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
+        parent = getActivity();
+        if(parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        }
     }
 
     @Override
@@ -56,9 +68,6 @@ public class EventTeamsFragment extends Fragment {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
-        } else {
-            mTask = new PopulateEventTeams(this, true);
-            mTask.execute(mEventKey);
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -78,5 +87,30 @@ public class EventTeamsFragment extends Fragment {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(parent instanceof RefreshableHostActivity){
+            ((RefreshableHostActivity) parent).startRefresh();
+        }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        mTask = new PopulateEventTeams(this, true);
+        mTask.execute(mEventKey);
+        View view = getView();
+        if (view != null) {
+            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.list).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onRefreshStop() {
+        mTask.cancel(false);
     }
 }

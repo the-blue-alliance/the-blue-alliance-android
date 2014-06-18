@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
 
@@ -143,8 +144,14 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
-            // Remove progress indicator since we're done loading data.
+            // Remove progress indicator and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
+
+            // Show notification if we've refreshed data.
+            if(mFragment instanceof RefreshListener) {
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
 
         if(code == APIResponse.CODE.LOCAL){

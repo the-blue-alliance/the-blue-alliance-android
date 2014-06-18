@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
@@ -189,6 +190,11 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
+        }
+
+        // Show notification if we've refreshed data.
+        if(activity instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity)activity).notifyRefreshComplete((RefreshListener) activity);
         }
 
         if(code == APIResponse.CODE.LOCAL){

@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
@@ -131,6 +132,12 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             }
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
+
+            // Show notification if we've refreshed data.
+            if(mFragment instanceof RefreshListener) {
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
 
         if(code == APIResponse.CODE.LOCAL){

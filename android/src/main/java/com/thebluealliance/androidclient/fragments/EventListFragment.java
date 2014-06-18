@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -14,21 +15,26 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class EventListFragment extends Fragment {
+public class EventListFragment extends Fragment implements RefreshListener {
 
     public static final String YEAR = "YEAR";
     public static final String WEEK = "WEEK";
     public static final String TEAM_KEY = "TEAM_KEY";
     public static final String WEEK_HEADER = "HEADER";
+
+    private Activity parent;
 
     private int mYear;
     private int mWeek;
@@ -59,6 +65,10 @@ public class EventListFragment extends Fragment {
         mWeek = getArguments().getInt(WEEK, -1);
         mTeamKey = getArguments().getString(TEAM_KEY);
         mHeader = getArguments().getString(WEEK_HEADER);
+        parent = getActivity();
+        if(parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        }
     }
 
     @Override
@@ -112,5 +122,30 @@ public class EventListFragment extends Fragment {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(parent instanceof RefreshableHostActivity){
+            ((RefreshableHostActivity) parent).startRefresh();
+        }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
+        mTask.execute();
+        View view = getView();
+        if (view != null) {
+            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.list).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onRefreshStop() {
+        mTask.cancel(false);
     }
 }

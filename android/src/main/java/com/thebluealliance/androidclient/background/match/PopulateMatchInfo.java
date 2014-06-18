@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -236,6 +237,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
             mActivity.findViewById(R.id.match_container).setVisibility(View.VISIBLE);
 
+        }
+
+        // Show notification if we've refreshed data.
+        if(mActivity instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity)mActivity).notifyRefreshComplete((RefreshListener) mActivity);
         }
 
         if(code == APIResponse.CODE.LOCAL){
