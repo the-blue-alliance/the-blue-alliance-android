@@ -84,7 +84,9 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        mTask.cancel(false);
+        if(mTask != null) {
+            mTask.cancel(false);
+        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();

@@ -97,6 +97,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onRefreshStop() {
-        task.cancel(false);
+        if(task != null) {
+            task.cancel(false);
+        }
     }
 }

@@ -100,7 +100,9 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     public void onPause() {
         // Save the data if moving away from fragment.
         super.onPause();
-        mTask.cancel(false);
+        if(mTask != null) {
+            mTask.cancel(false);
+        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();

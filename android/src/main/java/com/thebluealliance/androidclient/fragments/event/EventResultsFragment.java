@@ -100,7 +100,9 @@ public class EventResultsFragment extends Fragment implements RefreshListener{
     @Override
     public void onPause() {
         super.onPause();
-        mTask.cancel(false);
+        if(mTask != null) {
+            mTask.cancel(false);
+        }
         if (mListView != null) {
             Log.d("onPause", "saving adapter");
             mAdapter = (MatchListAdapter) mListView.getExpandableListAdapter();

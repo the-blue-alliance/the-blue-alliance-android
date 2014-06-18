@@ -115,6 +115,8 @@ public class TeamListFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStop() {
-        mTask.cancel(false);
+        if(mTask != null) {
+            mTask.cancel(false);
+        }
     }
 }

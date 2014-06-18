@@ -23,9 +23,11 @@ public abstract class RefreshableHostActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
-        return super.onCreateOptionsMenu(menu);
+        System.out.println("menu created: "+mOptionsMenu);
+        return true;
     }
 
     @Override
@@ -134,6 +136,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }
+        System.out.println(mOptionsMenu+" OPTIONS");
         if (mOptionsMenu != null) {
             // Show refresh indicator
             MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);

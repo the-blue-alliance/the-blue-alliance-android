@@ -81,6 +81,8 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStop() {
-        task.cancel(false);
+        if(task != null) {
+            task.cancel(false);
+        }
     }
 }
