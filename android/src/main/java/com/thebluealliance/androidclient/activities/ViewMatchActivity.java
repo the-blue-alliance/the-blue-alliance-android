@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
 
@@ -16,8 +17,6 @@ import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
 public class ViewMatchActivity extends RefreshableHostActivity {
 
     public static final String MATCH_KEY = "match_key";
-
-    private static final String VIDEO_FRAGMENT_TAG = "videoFragment";
 
     private String mMatchKey;
 
@@ -43,6 +42,8 @@ public class ViewMatchActivity extends RefreshableHostActivity {
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
         new PopulateMatchInfo(this).execute(mMatchKey);
+
+        setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
     }
 
     @Override
