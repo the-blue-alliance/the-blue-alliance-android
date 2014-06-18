@@ -26,7 +26,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setLocation(object.get("location").getAsString());
         }
 
-        if (object.get("venue_address").isJsonNull()){
+        if (!object.has("venue_address") || object.get("venue_address").isJsonNull()){
             event.setVenue("");
         }
         else{

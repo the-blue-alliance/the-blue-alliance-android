@@ -62,7 +62,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else {
             if (!allEvents.containsKey(mYear)) {
                 try {
-                    allEvents.put(mYear, DataManager.getEventsByYear(mFragment.getActivity(), mYear).getData());
+                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear).getData());
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
                     return APIResponse.CODE.NODATA;
@@ -80,7 +80,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
-                response = DataManager.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
+                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
                     events = EventHelper.renderEventList(eventData);
@@ -93,7 +93,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             // Return a list of all events for a team for a given year
             try {
-                response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
+                response = DataManager.Teams.getEventsForTeam(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
                     events = EventHelper.renderEventList(eventsArray);
@@ -144,7 +144,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, forceFromCache).execute();
+                new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
                 if (mFragment instanceof RefreshListener) {

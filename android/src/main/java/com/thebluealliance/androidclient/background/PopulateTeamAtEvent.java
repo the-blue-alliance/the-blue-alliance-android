@@ -66,9 +66,8 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Match>> matchResponse;
         try {
-            matchResponse = DataManager.getMatchList(activity, eventKey, teamKey, forceFromCache);
+            matchResponse = DataManager.Teams.getMatchesForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             ArrayList<Match> matches = matchResponse.getData(); //sorted by play order
-            matchResponse = DataManager.getMatchList(activity, eventKey, forceFromCache);
             eventMatches = matchResponse.getData(); //sorted by play order
             matchGroups = MatchHelper.constructMatchList(activity, matches);
             int[] record = MatchHelper.getRecordForTeam(matches, teamKey);
@@ -80,7 +79,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
@@ -107,7 +106,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<Integer> rankResponse;
         try {
-            rankResponse = DataManager.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
+            rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             rank = rankResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch ranking data for " + teamKey + "@" + eventKey);
@@ -116,7 +115,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Award>> awardResponse;
         try {
-            awardResponse = DataManager.getEventAwards(activity, eventKey, teamKey, forceFromCache);
+            awardResponse = DataManager.Teams.getAwardsForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             ArrayList<Award> awardList = awardResponse.getData();
             awards = new ListGroup(activity.getString(R.string.tab_event_awards));
             awards.children.addAll(awardList);
@@ -127,7 +126,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<JsonObject> statsResponse;
         try {
-            statsResponse = DataManager.getEventStats(activity, eventKey, teamKey, forceFromCache);
+            statsResponse = DataManager.Events.getEventStats(activity, eventKey, teamKey, forceFromCache);
             JsonObject statData = statsResponse.getData();
             String statString = "";
             if (statData.has("opr")) {

@@ -63,7 +63,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
         try {
             // Retrieve the data
-            APIResponse<JsonObject> response = DataManager.getEventStats(activity, eventKey, forceFromCache);
+            APIResponse<JsonObject> response = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
             JsonObject stats = response.getData();
             ArrayList<Map.Entry<String, JsonElement>>
                     opr = new ArrayList<>(),

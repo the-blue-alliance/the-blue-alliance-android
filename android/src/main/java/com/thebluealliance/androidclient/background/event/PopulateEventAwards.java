@@ -58,7 +58,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Award>> response;
         try {
-            response = DataManager.getEventAwards(activity, eventKey, forceFromCache);
+            response = DataManager.Events.getEventAwards(activity, eventKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
             for (Award a : awardList) {
                 ArrayList<AwardListElement> allWinners = a.renderAll();

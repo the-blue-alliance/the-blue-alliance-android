@@ -74,7 +74,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         APIResponse<ArrayList<Match>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
-            response = DataManager.getMatchList(activity, eventKey, teamKey, forceFromCache);
+            response = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
 
             ListGroup currentGroup = qualMatches;
@@ -131,7 +131,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);

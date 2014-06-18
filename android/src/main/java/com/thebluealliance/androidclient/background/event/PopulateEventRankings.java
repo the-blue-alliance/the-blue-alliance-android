@@ -60,7 +60,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         teams = new ArrayList<>();
 
         try {
-            APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey, forceFromCache);
+            APIResponse<ArrayList<JsonArray>> response = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
             ArrayList<JsonArray> rankList = response.getData();
             if (!rankList.isEmpty()) {
                 JsonArray headerRow = rankList.remove(0);

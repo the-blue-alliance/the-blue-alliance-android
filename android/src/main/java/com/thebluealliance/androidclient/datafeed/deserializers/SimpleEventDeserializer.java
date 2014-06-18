@@ -36,6 +36,12 @@ public class SimpleEventDeserializer implements JsonDeserializer<SimpleEvent> {
         } else {
             event.setLocation(object.get("location").getAsString());
         }
+        if (object.get("venue_address").isJsonNull()){
+            event.setVenue("");
+        }
+        else{
+            event.setVenue(object.get("venue_address").getAsString());
+        }
         event.setEventType(object.get("event_type").getAsInt());
 
         // Start/End date is null sometimes (when spamming year changes)

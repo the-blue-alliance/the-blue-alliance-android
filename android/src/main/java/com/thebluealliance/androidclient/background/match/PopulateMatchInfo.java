@@ -63,7 +63,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         mMatchKey = params[0];
         mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
         try {
-            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.getEventResults(mActivity, mEventKey, forceFromCache);
+            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.Events.getEventResults(mActivity, mEventKey, forceFromCache);
             HashMap<MatchHelper.TYPE, ArrayList<Match>> matches = response.getData();
             // Extract the specified match from the list
             mMatch = null;

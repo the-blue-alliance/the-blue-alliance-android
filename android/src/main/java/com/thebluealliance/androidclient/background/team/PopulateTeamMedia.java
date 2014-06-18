@@ -60,7 +60,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
         APIResponse<ArrayList<Media>> response = null;
         try {
-            response = DataManager.getTeamMedia(activity, team, year, forceFromCache);
+            response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
             groups = new ArrayList<>();
             ListGroup cdPhotos = new ListGroup(activity.getString(R.string.cd_header)),
                     ytVideos = new ListGroup(activity.getString(R.string.yt_header));

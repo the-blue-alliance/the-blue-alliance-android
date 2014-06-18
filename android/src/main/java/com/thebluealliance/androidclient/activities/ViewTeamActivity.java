@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -19,6 +18,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
+import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
 import java.util.Calendar;
@@ -159,15 +159,8 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupActionBarForYear() {
-        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, dropdownItems);
-        actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-        String teamNumber = mTeamKey.replace("frc", "");
-        ActionBar bar = getActionBar();
-        setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber) + " - ");
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        bar.setListNavigationCallbacks(actionBarAdapter, this);
-        bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+    private void setupActionBarForYear(){
+        new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
     }
 
     @Override
@@ -251,5 +244,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public int getCurrentSelectedYearPosition() {
+        return mCurrentSelectedYearPosition;
     }
 }

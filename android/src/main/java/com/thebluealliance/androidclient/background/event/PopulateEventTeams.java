@@ -58,7 +58,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
-            APIResponse<ArrayList<Team>> response = DataManager.getEventTeams(activity, eventKey, forceFromCache);
+            APIResponse<ArrayList<Team>> response = DataManager.Events.getEventTeams(activity, eventKey, forceFromCache);
             ArrayList<Team> teamList = response.getData();
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {

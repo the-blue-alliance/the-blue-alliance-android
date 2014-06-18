@@ -93,11 +93,11 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
-                editor.putBoolean(DataManager.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
+                editor.putBoolean(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
             }
             // Loop through all years
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
-                editor.putBoolean(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
+                editor.putBoolean(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.commit();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, activity.getString(R.string.loading_finished)));
