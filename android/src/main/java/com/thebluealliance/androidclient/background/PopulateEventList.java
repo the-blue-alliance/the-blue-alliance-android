@@ -12,8 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
-import com.thebluealliance.androidclient.datafeed.datamanger.Events;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -63,7 +62,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else {
             if (!allEvents.containsKey(mYear)) {
                 try {
-                    allEvents.put(mYear, Events.getEventsByYear(mFragment.getActivity(), mYear).getData());
+                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear).getData());
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
                     return APIResponse.CODE.NODATA;
@@ -81,7 +80,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
-                response = Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
+                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
                 ArrayList<SimpleEvent> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
                     events = EventHelper.renderEventList(eventData);
@@ -94,7 +93,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             // Return a list of all events for a team for a given year
             try {
-                response = Events.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
+                response = DataManager.Events.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
                     events = EventHelper.renderEventList(eventsArray);

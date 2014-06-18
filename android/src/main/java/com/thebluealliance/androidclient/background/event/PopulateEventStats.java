@@ -15,8 +15,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
-import com.thebluealliance.androidclient.datafeed.datamanger.Events;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
@@ -64,7 +63,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
         try {
             // Retrieve the data
-            APIResponse<JsonObject> response = Events.getEventStats(activity, eventKey, forceFromCache);
+            APIResponse<JsonObject> response = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
             JsonObject stats = response.getData();
             ArrayList<Map.Entry<String, JsonElement>>
                     opr = new ArrayList<>(),

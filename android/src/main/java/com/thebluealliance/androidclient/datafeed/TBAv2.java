@@ -6,7 +6,6 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
@@ -87,7 +86,7 @@ public class TBAv2 {
      * @param cacheInDatabase boolean - do we want to store the response locally if we need to load it from the web?
      * @param forceFromCache  (optional, defaults to FALSE). If set, the data exists locally, we won't query the web ever - just return what we have.
      * @return An APIRespnse containing the data we fetched from the internet
-     * @throws com.thebluealliance.androidclient.datafeed.datamanger.DataManager.NoDataException
+     * @throws DataManager.NoDataException
      */
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase, boolean forceFromCache) throws DataManager.NoDataException {
         if (c == null) {

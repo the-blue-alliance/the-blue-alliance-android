@@ -16,9 +16,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
-import com.thebluealliance.androidclient.datafeed.datamanger.Events;
-import com.thebluealliance.androidclient.datafeed.datamanger.Teams;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Match;
@@ -62,7 +60,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
-            APIResponse<Team> teamResponse = Teams.getTeam(activity, mTeamKey, forceFromCache);
+            APIResponse<Team> teamResponse = DataManager.Teams.getTeam(activity, mTeamKey, forceFromCache);
             Team team = teamResponse.getData();
             Long end = System.nanoTime();
             Log.d("doInBackground", "Total time to load team: " + (end - start));
@@ -77,7 +75,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             APIResponse<ArrayList<Match>> eventResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
             if (mIsCurrentlyCompeting) {
                 try {
-                    eventResponse = Events.getMatchList(activity, mCurrentEvent.getEventKey(), forceFromCache);
+                    eventResponse = DataManager.Events.getMatchList(activity, mCurrentEvent.getEventKey(), forceFromCache);
                     matches = eventResponse.getData();
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to fetch event data");

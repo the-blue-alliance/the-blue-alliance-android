@@ -18,8 +18,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
-import com.thebluealliance.androidclient.datafeed.datamanger.Events;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Event;
@@ -86,7 +85,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
-                eventResponse = Events.getEvent(activity, eventKey, forceFromCache);
+                eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
                 event = eventResponse.getData();
                 //return response.getCode();
             } catch (DataManager.NoDataException e) {
@@ -100,7 +99,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 showRanks = showStats = true;
                 ranks = new TextView(activity);
                 try {
-                    rankResponse = Events.getEventRankings(activity, eventKey, forceFromCache);
+                    rankResponse = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
                     if (rankList.isEmpty() || rankList.size() == 1) {
@@ -121,7 +120,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                 stats = new TextView(activity);
                 try {
-                    statsResponse = Events.getEventStats(activity, eventKey, forceFromCache);
+                    statsResponse = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
                     if (statsResponse.getData().has("oprs") &&
                             !statsResponse.getData().get("oprs").getAsJsonObject().entrySet().isEmpty()) {
@@ -153,7 +152,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             if (event.isHappeningNow()) {
                 //show the next/last matches, if applicable
                 try {
-                    matchResult = Events.getMatchList(activity, eventKey, forceFromCache);
+                    matchResult = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
                     ArrayList<Match> matches = matchResult.getData();
                     Collections.sort(matches, new MatchSortByPlayOrderComparator());
                     Match nextMatch = MatchHelper.getNextMatchPlayed(matches);

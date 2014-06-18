@@ -13,12 +13,10 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.datafeed.datamanger.Events;
-import com.thebluealliance.androidclient.datafeed.datamanger.Teams;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
@@ -95,11 +93,11 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
-                editor.putBoolean(Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
+                editor.putBoolean(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
             }
             // Loop through all years
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
-                editor.putBoolean(Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
+                editor.putBoolean(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.commit();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, activity.getString(R.string.loading_finished)));
