@@ -69,6 +69,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
                     } else {
                         goToHome();
                         finish();
+                        return;
                     }
                 } else {
                     goToHome();
@@ -150,7 +151,6 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     }
 
     private void beginLoading() {
-
         new LoadAllData(this).execute();
     }
 
