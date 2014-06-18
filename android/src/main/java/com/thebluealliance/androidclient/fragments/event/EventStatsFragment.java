@@ -74,7 +74,7 @@ public class EventStatsFragment extends Fragment {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         } else {
-            mTask = new PopulateEventStats(this);
+            mTask = new PopulateEventStats(this, true);
             mTask.execute(mEventKey);
         }
 

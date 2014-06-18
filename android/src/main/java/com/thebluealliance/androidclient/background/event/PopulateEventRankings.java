@@ -38,10 +38,12 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
+    private boolean forceFromCache;
 
-    public PopulateEventRankings(Fragment f) {
+    public PopulateEventRankings(Fragment f, boolean forceFromCache){
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         teams = new ArrayList<>();
 
         try {
-            APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey);
+            APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey, forceFromCache);
             ArrayList<JsonArray> rankList = response.getData();
             if (!rankList.isEmpty()) {
                 JsonArray headerRow = rankList.remove(0);
@@ -108,7 +110,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 }
                 return response.getCode();
             } else {
-                //TODO indicate that no rankings exist (same for other fragments)
                 return APIResponse.CODE.NODATA;
             }
         } catch (DataManager.NoDataException e) {
@@ -144,6 +145,15 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
 
             // Remove progress indicator since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+        }
+
+        if(code == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventRankings(mFragment, false).execute(eventKey);
         }
     }
 

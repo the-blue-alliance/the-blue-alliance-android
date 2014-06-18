@@ -57,7 +57,7 @@ public class EventAwardsFragment extends Fragment {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         } else {
-            mTask = new PopulateEventAwards(this);
+            mTask = new PopulateEventAwards(this, true);
             mTask.execute(mEventKey);
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

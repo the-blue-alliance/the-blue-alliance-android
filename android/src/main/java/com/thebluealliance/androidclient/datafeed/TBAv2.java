@@ -67,7 +67,16 @@ public class TBAv2 {
         return teams;
     }
 
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {
+    /**
+     * This is the main datafeed method - you speciy a URL and this will either return it from our cache or fetch and store it.
+     * @param c App context
+     * @param URL URL to fetch
+     * @param cacheInDatabase boolean - do we want to store the response locally if we need to load it from the web?
+     * @param forceFromCache (optional, defaults to FALSE). If set, the data exists locally, we won't query the web ever - just return what we have.
+     * @return An APIRespnse containing the data we fetched from the internet
+     * @throws DataManager.NoDataException
+     */
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase, boolean forceFromCache) throws DataManager.NoDataException {
         if (c == null) {
             Log.d("datamanager", "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
@@ -83,6 +92,13 @@ public class TBAv2 {
                 //and return our local content
 
                 APIResponse<String> cachedData = db.getResponse(URL);
+
+                //we want whatever's in the cache. Forget everything else...
+                if(forceFromCache){
+                    Log.d("datamanager", "Online; force reading from cache");
+                    return cachedData;
+                }
+
                 HttpResponse cachedResponse = HTTP.getResponse(URL,cachedData.getLastUpdate());
                 //if we get a 200-OK back, then we need to cache that new data
                 //otherwise, it's a 304-Not-Modified

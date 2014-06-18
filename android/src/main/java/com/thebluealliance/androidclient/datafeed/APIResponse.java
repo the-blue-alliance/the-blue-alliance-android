@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 /**
  * File created by phil on 5/11/14.
  */
-public class APIResponse<A> implements Comparable<APIResponse.CODE>{
+public class APIResponse<A>{
 
     public static enum CODE { /* DO NOT CHANGE ORDER. USED FOR COMPARING (ordered least to most precedence) */
         CACHED304, //data was found to have not changed (API returned 304-Not-Modified)
@@ -11,7 +11,14 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
         UPDATED, //data was updated from the API
         OFFLINECACHE, //client is offline, loaded from local cache
         LOCAL, //loaded locally. Could be either CACHED304 or OFFLINECACHE
-        NODATA //nothing! uh ohs
+        NODATA; //nothing! uh ohs
+
+        public static int compareCodes(CODE one, CODE another) {
+            int left, right;
+            left = one.ordinal();
+            right = another.ordinal();
+            return Math.max(left, right);
+        }
     }
 
     A data;
@@ -47,20 +54,11 @@ public class APIResponse<A> implements Comparable<APIResponse.CODE>{
         return lastUpdate;
     }
 
-    @Override
-    public int compareTo(CODE another) {
-        int left, right;
-        left = code.ordinal();
-        right = another.ordinal();
-        System.out.println(left + " "+ right);
-        return Math.max(left, right);
-    }
-
     public static CODE mergeCodes(CODE... codes){
         if(codes.length == 0) return CODE.NODATA;
         CODE merged = CODE.CACHED304; //start with least precedence
         for(CODE code: codes){
-            int newIndex = merged.compareTo(code);
+            int newIndex = CODE.compareCodes(merged, code);
             CODE[] values = CODE.values();
             if(newIndex < 0 || newIndex > values.length) continue;
             merged = values[newIndex];

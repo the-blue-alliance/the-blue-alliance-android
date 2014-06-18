@@ -42,7 +42,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        new PopulateTeamAtEvent(this).execute(teamKey, eventKey);
+        new PopulateTeamAtEvent(this, true).execute(teamKey, eventKey);
 
         ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override

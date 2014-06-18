@@ -31,11 +31,15 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
     private Fragment fragment;
     private RefreshableHostActivity activity;
+    private String team;
+    private int year;
     ArrayList<ListGroup> groups;
+    private boolean forceFromCache;
 
-    public PopulateTeamMedia(Fragment f) {
+    public PopulateTeamMedia(Fragment f, boolean forceFromCache) {
         fragment = f;
         activity = (RefreshableHostActivity) f.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -49,12 +53,12 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             throw new IllegalArgumentException("PopulateTeamMedia must be called with the team key and year (String, int)");
         }
 
-        String team = (String) params[0];
-        int year = (Integer) params[1];
+        team = (String) params[0];
+        year = (Integer) params[1];
 
         APIResponse<ArrayList<Media>> response = null;
         try {
-            response = DataManager.getTeamMedia(activity, team, year);
+            response = DataManager.getTeamMedia(activity, team, year, forceFromCache);
             groups = new ArrayList<>();
             ListGroup cdPhotos = new ListGroup(activity.getString(R.string.cd_header)),
                     ytVideos = new ListGroup(activity.getString(R.string.yt_header));
@@ -115,6 +119,15 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
             // Remove progress spinner since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+        }
+
+        if(code == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateTeamMedia(fragment, false).execute(team, year);
         }
     }
 }

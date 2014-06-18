@@ -42,7 +42,7 @@ public class ViewMatchActivity extends RefreshableHostActivity {
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
-        new PopulateMatchInfo(this).execute(mMatchKey);
+        new PopulateMatchInfo(this, true).execute(mMatchKey);
     }
 
     @Override

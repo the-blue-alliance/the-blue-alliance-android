@@ -46,11 +46,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     TextView eventName, eventDate, eventLoc, ranks, stats;
     String eventKey;
     Event event;
-    private boolean showLastMatch, showNextMatch, showRanks, showStats;
+    private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
-    public PopulateEventInfo(Fragment f) {
+    public PopulateEventInfo(Fragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -65,6 +66,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
         View view = mFragment.getView();
         // Initialize the views.
+
+        APIResponse<Event> eventResponse = new APIResponse<>(null, APIResponse.CODE.NODATA);
+        APIResponse<ArrayList<JsonArray>> rankResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
+        APIResponse<JsonObject> statsResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
+        APIResponse<ArrayList<Match>> matchResult = new APIResponse<>(null, APIResponse.CODE.CACHED304);
+
         if (view != null && activity != null && eventKey != null) {
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
@@ -76,8 +83,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
-                APIResponse<Event> response = DataManager.getEvent(activity, eventKey);
-                event = response.getData();
+                eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
+                event = eventResponse.getData();
                 //return response.getCode();
             } catch (DataManager.NoDataException e) {
                 Log.w(Constants.LOG_TAG, "unable to load event info");
@@ -90,7 +97,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 showRanks = showStats = true;
                 ranks = new TextView(activity);
                 try {
-                    APIResponse<ArrayList<JsonArray>> rankResponse = DataManager.getEventRankings(activity, eventKey);
+                    rankResponse = DataManager.getEventRankings(activity, eventKey, forceFromCache);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
                     if (rankList.isEmpty() || rankList.size() == 1) {
@@ -108,7 +115,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                 stats = new TextView(activity);
                 try {
-                    APIResponse<JsonObject> statsResponse = DataManager.getEventStats(activity, eventKey);
+                    statsResponse = DataManager.getEventStats(activity, eventKey, forceFromCache);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
                     if (statsResponse.getData().has("oprs") &&
                        !statsResponse.getData().get("oprs").getAsJsonObject().entrySet().isEmpty()) {
@@ -137,7 +144,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             if (event.isHappeningNow()) {
                 //show the next/last matches, if applicable
                 try {
-                    APIResponse<ArrayList<Match>> matchResult = DataManager.getMatchList(activity, eventKey);
+                    matchResult = DataManager.getMatchList(activity, eventKey, forceFromCache);
                     ArrayList<Match> matches = matchResult.getData();
                     Collections.sort(matches, new MatchSortByPlayOrderComparator());
                     Match nextMatch = MatchHelper.getNextMatchPlayed(matches);
@@ -164,7 +171,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
             view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
         }
-        return APIResponse.CODE.NODATA;
+        return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), matchResult.getCode(), statsResponse.getCode());
     }
 
     @Override
@@ -233,6 +240,15 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             if(mFragment.getActivity() instanceof RefreshableHostActivity && mFragment instanceof RefreshListener) {
                 ((RefreshableHostActivity)mFragment.getActivity()).notifyRefreshComplete((RefreshListener) mFragment);
             }
+        }
+
+        if(c == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventInfo(mFragment, false).execute(eventKey);
         }
     }
 }

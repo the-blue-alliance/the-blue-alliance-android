@@ -52,7 +52,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
-        task = new PopulateTeamInfo(this);
+        task = new PopulateTeamInfo(this, true);
         task.execute(mTeamKey);
     }
 
@@ -76,7 +76,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onRefreshStart() {
-        task = new PopulateTeamInfo(this);
+        task = new PopulateTeamInfo(this, true);
         task.execute(mTeamKey);
     }
 

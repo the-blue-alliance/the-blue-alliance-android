@@ -66,7 +66,7 @@ public class EventResultsFragment extends Fragment {
             Log.d("onCreateView", "using existing adapter");
             mProgressBar.setVisibility(View.GONE);
         } else {
-            mTask = new PopulateEventResults(this);
+            mTask = new PopulateEventResults(this, true);
             mTask.execute(eventKey, teamKey);
             Log.d("onCreateView", "creating new adapter");
         }

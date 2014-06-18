@@ -35,10 +35,12 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     private String eventKey;
     private ArrayList<ListItem> awards;
     private ListViewAdapter adapter;
+    private boolean forceFromCache;
 
-    public PopulateEventAwards(Fragment f) {
+    public PopulateEventAwards(Fragment f, boolean forceFromCache){
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Award>> response;
         try {
-            response = DataManager.getEventAwards(activity, eventKey);
+            response = DataManager.getEventAwards(activity, eventKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
             for (Award a : awardList) {
                 ArrayList<AwardListElement> allWinners = a.renderAll();
@@ -87,6 +89,15 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             // Remove progress spinner since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+        }
+
+        if(code == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventAwards(mFragment, false).execute(eventKey);
         }
     }
 }

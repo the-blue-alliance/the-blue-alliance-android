@@ -57,7 +57,7 @@ public class EventTeamsFragment extends Fragment {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         } else {
-            mTask = new PopulateEventTeams(this);
+            mTask = new PopulateEventTeams(this, true);
             mTask.execute(mEventKey);
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

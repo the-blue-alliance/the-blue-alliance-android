@@ -11,11 +11,10 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.fragments.EventListFragment;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
@@ -32,13 +31,15 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private ArrayList<ListItem> events;
     private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> allEvents = new HashMap<>();
     private RefreshableHostActivity activity;
+    private boolean forceFromCache;
 
-    public PopulateEventList(EventListFragment fragment, int year, String weekHeader, String teamKey) {
+    public PopulateEventList(Fragment fragment, int year, String weekHeader, String teamKey, boolean forceFromCache) {
         mFragment = fragment;
         mYear = year;
         mTeamKey = teamKey;
         mHeader = weekHeader;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             // Return a list of all events for a team for a given year
             try {
-                response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear);
+                response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
                 if(eventsArray != null && !eventsArray.isEmpty()) {
                     events = EventHelper.renderEventList(eventsArray);
@@ -130,6 +131,15 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             }
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+        }
+
+        if(code == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, forceFromCache).execute();
         }
     }
 }

@@ -65,13 +65,13 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onResume() {
         super.onResume();
-        task = new PopulateEventInfo(this);
+        task = new PopulateEventInfo(this, true);
         task.execute(eventKey);
     }
 
     @Override
     public void onRefreshStart() {
-        task = new PopulateEventInfo(this);
+        task = new PopulateEventInfo(this, true);
         task.execute(eventKey);
         View view = getView();
         if (view != null) {

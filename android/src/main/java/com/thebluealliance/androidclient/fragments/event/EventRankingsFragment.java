@@ -74,7 +74,7 @@ public class EventRankingsFragment extends Fragment {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         } else {
-            mTask = new PopulateEventRankings(this);
+            mTask = new PopulateEventRankings(this, true);
             mTask.execute(eventKey);
         }
 

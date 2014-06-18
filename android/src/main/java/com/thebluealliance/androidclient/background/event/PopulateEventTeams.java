@@ -35,10 +35,12 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teams;
     private String eventKey;
+    private boolean forceFromCache;
 
-    public PopulateEventTeams(Fragment f) {
+    public PopulateEventTeams(Fragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
-            APIResponse<ArrayList<Team>> response = DataManager.getEventTeams(activity, eventKey);
+            APIResponse<ArrayList<Team>> response = DataManager.getEventTeams(activity, eventKey, forceFromCache);
             ArrayList<Team> teamList = response.getData();
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {
@@ -91,6 +93,15 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             }
             // Remove progress spinner, since we're done loading the data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+        }
+
+        if(code == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventTeams(mFragment, false).execute(eventKey);
         }
     }
 }

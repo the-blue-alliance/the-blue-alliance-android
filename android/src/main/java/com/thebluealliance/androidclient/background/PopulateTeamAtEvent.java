@@ -41,11 +41,12 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     ListGroup awards, stats;
     Event event;
     Match lastMatch, nextMatch;
-    boolean activeEvent;
+    boolean activeEvent, forceFromCache;
 
-    public PopulateTeamAtEvent(RefreshableHostActivity activity) {
+    public PopulateTeamAtEvent(RefreshableHostActivity activity, boolean forceFromCache) {
         super();
         this.activity = activity;
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -58,9 +59,9 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Match>> matchResponse;
         try {
-            matchResponse = DataManager.getMatchList(activity, eventKey, teamKey);
+            matchResponse = DataManager.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> matches = matchResponse.getData(); //sorted by play order
-            matchResponse = DataManager.getMatchList(activity, eventKey);
+            matchResponse = DataManager.getMatchList(activity, eventKey, forceFromCache);
             eventMatches = matchResponse.getData(); //sorted by play order
             matchGroups = MatchHelper.constructMatchList(activity, matches);
             int[] record = MatchHelper.getRecordForTeam(matches, teamKey);
@@ -72,7 +73,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.getEvent(activity, eventKey);
+            eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
@@ -99,7 +100,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<Integer> rankResponse;
         try {
-            rankResponse = DataManager.getRankForTeamAtEvent(activity, teamKey, eventKey);
+            rankResponse = DataManager.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             rank = rankResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch ranking data for " + teamKey + "@" + eventKey);
@@ -108,7 +109,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Award>> awardResponse;
         try {
-            awardResponse = DataManager.getEventAwards(activity, eventKey, teamKey);
+            awardResponse = DataManager.getEventAwards(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Award> awardList = awardResponse.getData();
             awards = new ListGroup(activity.getString(R.string.tab_event_awards));
             awards.children.addAll(awardList);
@@ -119,7 +120,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<JsonObject> statsResponse;
         try {
-            statsResponse = DataManager.getEventStats(activity, eventKey, teamKey);
+            statsResponse = DataManager.getEventStats(activity, eventKey, teamKey, forceFromCache);
             JsonObject statData = statsResponse.getData();
             String statString = "";
             if (statData.has("opr")) {
@@ -189,6 +190,16 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
         }
+
+        if(code == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateTeamAtEvent(activity, false).execute(teamKey, eventKey);
+        }
+
     }
 
     private String generateTeamSummary(String teamKey, int rank,

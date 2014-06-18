@@ -35,14 +35,17 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
     private Fragment mFragment;
     private RefreshableHostActivity activity;
-    private String eventKey, teamKey, recordString;
+    private String eventKey;
+    private String teamKey;
+    private boolean forceFromCache;
     ArrayList<ListGroup> groups;
     Match nextMatch, lastMatch;
     Event event;
 
-    public PopulateEventResults(Fragment f) {
+    public PopulateEventResults(Fragment f, boolean forceFromCache){
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         APIResponse<ArrayList<Match>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
-            response = DataManager.getMatchList(activity, eventKey, teamKey);
+            response = DataManager.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
 
             ListGroup currentGroup = qualMatches;
@@ -112,7 +115,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             }
 
             if (!teamKey.isEmpty()) {
-                recordString = record[0] + "-" + record[1] + "-" + record[2];
+                String recordString = record[0] + "-" + record[1] + "-" + record[2];
             }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
@@ -121,7 +124,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.getEvent(activity, eventKey);
+            eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
@@ -176,6 +179,15 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
+        }
+
+        if(code == APIResponse.CODE.LOCAL){
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventResults(mFragment, false).execute(eventKey, teamKey);
         }
     }
 }

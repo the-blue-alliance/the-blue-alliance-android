@@ -54,13 +54,13 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        task = new PopulateTeamMedia(this);
+        task = new PopulateTeamMedia(this, true);
         task.execute(teamKey, year);
     }
 
     @Override
     public void onRefreshStart() {
-        task = new PopulateTeamMedia(this);
+        task = new PopulateTeamMedia(this, true);
         task.execute(teamKey, year);
     }
 
