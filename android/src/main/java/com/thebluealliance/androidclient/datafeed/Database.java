@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Map;
 
 
 /**
@@ -28,6 +28,7 @@ import java.util.Calendar;
 public class Database extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 8;
+    private static final int VERSIONS_SINCE_EIGHT = 0;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -112,31 +113,37 @@ public class Database extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
-        if (oldVersion == 7){
-            // drop the events table (since we added the venues in the next version)
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        if (newVersion >= DATABASE_VERSION && oldVersion < DATABASE_VERSION){
+            /* For now, we're just gonna drop all data tables and wipe the data-related
+               shared preferences just to put everyone on track starting from v8.
 
-            //clear the appropriate preferences
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            for (int year = Constants.FIRST_COMP_YEAR; year <= currentYear; year++)
-            {
-                PreferenceManager.getDefaultSharedPreferences(context).edit().
-                     remove(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year).commit();
-            }
+               For future versions, a possible idea is adding any previous db changes
+               through a while loop/switch statement, incrementing up until the latest version.
+               like http://blog.adamsbros.org/2012/02/28/upgrade-android-sqlite-database/
 
-            PreferenceManager.getDefaultSharedPreferences(context).edit().
-                    remove(LaunchActivity.ALL_DATA_LOADED).commit();
-        }
-        else{
-            //d-d-d-d-drop the tables (ノಠ益ಠ)ノ彡┻━┻ #dubstepwubwubz
+               If version is less than 8, then wipe remaining tables/data prefs.
+            */
+            // d-d-d-d-drop the tables (ノಠ益ಠ)ノ彡┻━┻ #dubstepwubwubz
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
-            //clear all sharedprefs
-            PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+
+            // Clear the data-related shared prefs
+            Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
+            for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+                if (entry.getKey().toString().contains(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
+                    entry.getKey().toString().contains(DataManager.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE))
+                {
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().
+                            remove(entry.getKey().toString()).commit();
+                }
+            }
+
+            PreferenceManager.getDefaultSharedPreferences(context).edit().
+                    remove(LaunchActivity.ALL_DATA_LOADED).commit();
         }
 
         onCreate(db);

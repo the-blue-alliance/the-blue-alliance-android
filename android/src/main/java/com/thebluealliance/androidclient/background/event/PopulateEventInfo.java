@@ -189,7 +189,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
             else{
                 eventVenue.setText(event.getVenue());
-                activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
+                if (activity.findViewById(R.id.event_location_container) != null) {
+                    activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
+                }
             }
             if (event.getLocation().isEmpty() &&
                 activity.findViewById(R.id.event_location_container) != null) {
