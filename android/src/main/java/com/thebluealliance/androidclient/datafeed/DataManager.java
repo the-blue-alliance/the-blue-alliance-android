@@ -97,13 +97,13 @@ public class DataManager {
             return new APIResponse<>(cursor, APIResponse.mergeCodes(teamListResponseCodes.toArray(a)));
         }
 
-        public synchronized static APIResponse<ArrayList<Integer>> getYearsParticipated(Context c, String teamKey, boolean loadFromCache) throws NoDataException{
-            ArrayList<Integer> output = new ArrayList<>();
+        public synchronized static APIResponse<ArrayList<String>> getYearsParticipated(Context c, String teamKey, boolean loadFromCache) throws NoDataException{
+            ArrayList<String> output = new ArrayList<>();
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_YEARS_PARTICIPATED), teamKey);
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, apiUrl, true, loadFromCache);
             JsonArray yearsArray = JSONManager.getasJsonArray(response.getData());
             for(JsonElement year: yearsArray){
-                output.add(year.getAsInt());
+                output.add(year.getAsString());
             }
             return new APIResponse<>(output, response.getCode());
         }

@@ -144,7 +144,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, forceFromCache).execute();
+                new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
                 if (mFragment instanceof RefreshListener) {
