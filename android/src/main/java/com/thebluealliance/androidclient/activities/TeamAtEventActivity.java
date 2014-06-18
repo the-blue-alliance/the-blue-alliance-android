@@ -3,12 +3,16 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
@@ -80,11 +84,16 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
             case R.id.action_view_event:
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 break;
-            case R.id.refresh:
-                startRefresh();
-                break;
             case android.R.id.home:
-                this.finish();
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                    TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
+                            .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
+                } else {
+                    Log.d(Constants.LOG_TAG, "Navigating up...");
+                    NavUtils.navigateUpTo(this, upIntent);
+                }
+                return true;
             default:
                 break;
         }

@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -170,7 +172,14 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            this.finish();
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
+            } else {
+                Log.d(Constants.LOG_TAG, "Navigating up...");
+                NavUtils.navigateUpTo(this, upIntent);
+            }
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
