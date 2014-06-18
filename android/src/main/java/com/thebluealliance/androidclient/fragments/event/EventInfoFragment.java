@@ -44,8 +44,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             eventKey = getArguments().getString(KEY, "");
         }
         Activity parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -59,7 +59,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         info.findViewById(R.id.event_youtube_button).setOnClickListener(this);
         info.findViewById(R.id.event_cd_button).setOnClickListener(this);
         info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
-        info.findViewById(R.id.top_opr_container).setOnClickListener(this);
+        info.findViewById(R.id.event_top_opr_container).setOnClickListener(this);
         return info;
     }
 
@@ -89,23 +89,25 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
 
     @Override
     public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.event_top_teams_container) {
+            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(2);
+            return;
+        } else if (id == R.id.event_top_opr_container) {
+            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(4);
+            return;
+        }
         if (v.getTag() != null) {
-            if (v.getTag().equals("top_teams")) {
-                ((ViewEventActivity) getActivity()).getPager().setCurrentItem(2);
-            } else if (v.getTag().equals("top_opr")) {
-                ((ViewEventActivity) getActivity()).getPager().setCurrentItem(4);
+            PackageManager manager = getActivity().getPackageManager();
+            String uri = v.getTag().toString();
+            Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
+            if (!handlers.isEmpty()) {
+                // There is an application to handle this intent intent
+                startActivity(i);
             } else {
-                PackageManager manager = getActivity().getPackageManager();
-                String uri = v.getTag().toString();
-                Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-                List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-                if (!handlers.isEmpty()) {
-                    // There is an application to handle this intent intent
-                    startActivity(i);
-                } else {
-                    // No application can handle this intent
-                    Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
-                }
+                // No application can handle this intent
+                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
         }
     }

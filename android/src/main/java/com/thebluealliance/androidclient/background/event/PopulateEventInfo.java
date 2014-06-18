@@ -73,7 +73,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
             lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
             topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
-            topOpr = (LinearLayout) view.findViewById(R.id.top_opr_container);
+            topOpr = (LinearLayout) view.findViewById(R.id.event_top_opr_container);
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
@@ -98,7 +98,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showRanks = false;
                     }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
-                        rankString += ((i) + ". " + rankList.get(i).get(1).getAsString()) + "\n";
+                        rankString += ((i) + ". " + rankList.get(i).get(1).getAsString());
+                        if(i < Math.min(6, rankList.size()) - 1) {
+                            rankString += "\n";
+                        }
                     }
                     ranks.setText(rankString);
                 } catch (DataManager.NoDataException e) {
@@ -122,7 +125,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                         String statsString = "";
                         for (int i = 0; i < Math.min(5, opr.size()); i++) {
-                            statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
+                            statsString += (i + 1) + ". " + opr.get(i).getKey();
+                            if(i < Math.min(5, opr.size()) - 1) {
+                                statsString += "\n";
+                            }
                         }
                         stats.setText(statsString);
                     } else {
