@@ -27,6 +27,7 @@ import java.util.Calendar;
 public class ViewTeamActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
 
     public static final String TEAM_KEY = "team_key",
+            TEAM_YEAR = "team_year",
             SELECTED_YEAR = "year",
             SELECTED_TAB = "tab";
 
@@ -46,6 +47,13 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         System.out.println("making intent for " + teamKey);
         Intent intent = new Intent(context, ViewTeamActivity.class);
         intent.putExtra(TEAM_KEY, teamKey);
+        return intent;
+    }
+
+    public static Intent newInstance(Context context, String teamKey, int year){
+        Intent intent = new Intent(context, ViewTeamActivity.class);
+        intent.putExtra(TEAM_KEY, teamKey);
+        intent.putExtra(TEAM_YEAR, year);
         return intent;
     }
 
@@ -81,7 +89,12 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         }
 
         pager = (ViewPager) findViewById(R.id.view_pager);
-        int year = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
+        int year;
+        if(getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_YEAR)){
+            year = getIntent().getIntExtra(TEAM_YEAR, Calendar.getInstance().get(Calendar.YEAR));
+        }else {
+            year = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
+        }
         pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, year));
         pager.setOnPageChangeListener(this);
 
