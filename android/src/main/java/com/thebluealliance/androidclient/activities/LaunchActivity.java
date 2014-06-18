@@ -240,9 +240,26 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
             String teamKey = m.group(1);
             String teamYear = m.group(2);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).addNextIntent(ViewTeamActivity.newInstance(this, teamKey, Integer.valueOf(teamYear))).startActivities();
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewTeamActivity.newInstance(this, teamKey, Integer.valueOf(teamYear))).startActivities();
             finish();
             return;
         }
+
+        regexPattern = Pattern.compile(NfcUris.URI_MATCH_MATCHER);
+        m = regexPattern.matcher(uri);
+        if (m.matches()) {
+            String matchKey = m.group(1);
+            String eventKey = matchKey.substring(0, matchKey.indexOf("_"));
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewEventActivity.newInstance(this, eventKey))
+                    .addNextIntent(ViewMatchActivity.newInstance(this, matchKey)).startActivities();
+            finish();
+            return;
+        }
+
+        // Default to kicking the user to the events list if none of the URIs match
+        goToHome();
     }
 }

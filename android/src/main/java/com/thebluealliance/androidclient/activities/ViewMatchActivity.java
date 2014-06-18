@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
 
@@ -41,6 +42,8 @@ public class ViewMatchActivity extends RefreshableHostActivity {
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
         new PopulateMatchInfo(this).execute(mMatchKey);
+
+        setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
     }
 
     @Override

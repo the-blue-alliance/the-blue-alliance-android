@@ -20,4 +20,8 @@ public class NfcUris {
     // Formatted as event/EVENT_KEY/team/TEAM_KEY
     public static final String URI_TEAM_AT_EVENT = "event/%1$s/team/%2$s";
     public static final String URI_TEAM_AT_EVENT_MATCHER = "event/([a-zA-Z0-9]+)/team/([a-zA-Z0-9]+)";
+
+    //Formatted as match/MATCH_KEY
+    public static final String URI_MATCH = "match/%1$s";
+    public static final String URI_MATCH_MATCHER = "match/([a-zA-Z0-9_]+)";
 }
