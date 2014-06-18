@@ -53,7 +53,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
                 return;
             } else if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
                 Uri data = getIntent().getData();
-                if (data != null && data.getHost() != null && data.getHost().equals(getString(R.string.web_url_host))) {
+                Log.d(Constants.LOG_TAG, "VIEW URI: " + data.toString());
+                if (data != null) {
                     //we caught an Action.VIEW intent, so
                     //now we generate the proper intent to view
                     //the requested content
@@ -63,13 +64,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
                         finish();
                         return;
                     } else {
-                        // We can't handle this URL. Redirect user to the browser.
-                        String url = data.toString();
-                        if (!url.startsWith("https://") && !url.startsWith("http://")){
-                            url = "http://" + url;
-                        }
-                        Intent openUrlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(openUrlIntent);
+                        goToHome();
+                        finish();
                     }
                 } else {
                     goToHome();

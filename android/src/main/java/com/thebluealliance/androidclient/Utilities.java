@@ -94,10 +94,9 @@ public class Utilities {
 
     public static Intent getIntentForTBAUrl(Context c, Uri data) {
         Log.d(Constants.LOG_TAG, "Uri: " + data.toString());
-        String host = data.getHost();
         List<String> urlParts = data.getPathSegments();
         Intent intent = null;
-        if (host != null && host.equals(c.getString(R.string.web_url_host)) && urlParts != null) {
+        if (urlParts != null) {
             if (urlParts.isEmpty()) {
                 //we caught the homepage (so there's no next part of the URL.
                 //open the home screen
