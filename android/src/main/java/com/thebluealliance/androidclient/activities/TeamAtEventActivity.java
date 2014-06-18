@@ -79,7 +79,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         task = new PopulateTeamAtEvent(this, true);
         task.execute(teamKey, eventKey);
         // Indicate loading; the task will hide the progressbar and show the content when loading is complete
-        findViewById(R.id.progress).setVisibility(View.VISIBLE);
+        findViewById(R.id.team_at_event_progress).setVisibility(View.VISIBLE);
         findViewById(R.id.content_view).setVisibility(View.GONE);
     }
 

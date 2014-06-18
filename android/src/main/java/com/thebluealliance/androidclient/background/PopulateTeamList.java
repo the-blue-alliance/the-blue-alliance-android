@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.background;
 
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,13 +11,11 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.TeamListElement;
-import com.thebluealliance.androidclient.models.SimpleTeam;
 
 import java.util.ArrayList;
 
@@ -29,7 +28,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
-    private ListViewAdapter adapter;
+    private Cursor teams;
 
     public PopulateTeamList(Fragment fragment) {
         this.fragment = fragment;
@@ -48,18 +47,11 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         int start = params[0];
         int end = params[1];
         Log.d("doInBackground", "is cancelled? " + isCancelled());
-        APIResponse<ArrayList<SimpleTeam>> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
+        APIResponse<Cursor> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         if (!isCancelled()) {
             try {
-                response = DataManager.getSimpleTeamsInRange(activity, start, end);
-                ArrayList<SimpleTeam> teams = response.getData();
-                for (SimpleTeam team : teams) {
-                    if (isCancelled()) {
-                        break;
-                    }
-                    TeamListElement e = team.render();
-                    teamItems.add(e);
-                }
+                response = DataManager.getCursorForSimpleTeamsInRange(activity, start, end);
+                teams = response.getData();
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load team list");
             }
@@ -74,12 +66,12 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
         View view = fragment.getView();
         if (activity != null && view != null) {
-            adapter = new ListViewAdapter(activity, teamItems);
+            TeamCursorAdapter adapter = new TeamCursorAdapter(activity, teams, 0);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no teams in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
+            if (code == APIResponse.CODE.NODATA || teams == null || !teams.moveToFirst()) {
                 noDataText.setText(R.string.no_team_list);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
