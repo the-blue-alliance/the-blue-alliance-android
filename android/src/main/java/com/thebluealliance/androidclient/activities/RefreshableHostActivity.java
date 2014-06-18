@@ -123,6 +123,10 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     Notifies all registered listeners that they should start their refresh.
      */
     public void startRefresh() {
+        if(mRefreshInProgress){
+            //if a refresh is already happening, don't start another
+            return;
+        }
         mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
             return;

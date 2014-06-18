@@ -96,7 +96,6 @@ public class TBAv2 {
 
                 Date now = new Date();
                 Date futureTime = new Date(cachedData.lastHit.getTime() + Constants.API_HIT_TIMEOUT);
-                System.out.println("cached: "+cachedData.lastHit+" future: "+futureTime);
                 if(now.before(futureTime)){
                     //if isn't hasn't been longer than the timeout (1 minute now)
                     //just return what we have in cache
