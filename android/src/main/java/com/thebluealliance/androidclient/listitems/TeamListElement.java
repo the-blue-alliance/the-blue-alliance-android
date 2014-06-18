@@ -64,7 +64,7 @@ public class TeamListElement extends ListElement {
             location.setText(mTeamLocation);
 
             ImageView info = (ImageView) view.findViewById(R.id.team_info);
-            if(mShowLinkToTeamDetails) {
+            if (mShowLinkToTeamDetails) {
                 info.setVisibility(View.VISIBLE);
                 info.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -9,7 +9,7 @@ import android.support.v4.content.AsyncTaskLoader;
  * on Android 3.0 or above, this implementation is still used; it does not try
  * to switch to the framework's implementation. See the framework SDK
  * documentation for a class overview.
- *
+ * <p/>
  * This was based on the CursorLoader class
  */
 public abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {

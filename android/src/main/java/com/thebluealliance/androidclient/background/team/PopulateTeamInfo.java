@@ -15,9 +15,10 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
@@ -39,11 +40,19 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private String mTeamKey;
     private String mTeamWebsite;
     private SimpleEvent mCurrentEvent;
-    private boolean mIsCurrentlyCompeting;
+    private ArrayList<Match> matches;
+    private boolean mIsCurrentlyCompeting, forceFromCache;
 
-    public PopulateTeamInfo(Fragment fragment) {
+    public PopulateTeamInfo(Fragment fragment, boolean forceFromCache) {
         mFragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
+        this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -51,8 +60,8 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
-            APIResponse<Team> response = DataManager.getTeam(activity, mTeamKey);
-            Team team = response.getData();
+            APIResponse<Team> teamResponse = DataManager.getTeam(activity, mTeamKey, forceFromCache);
+            Team team = teamResponse.getData();
             Long end = System.nanoTime();
             Log.d("doInBackground", "Total time to load team: " + (end - start));
             mTeamName = team.getNickname();
@@ -62,7 +71,18 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             mTeamNumber = team.getTeamNumber();
             mCurrentEvent = team.getCurrentEvent();
             mIsCurrentlyCompeting = mCurrentEvent != null;
-            return response.getCode();
+
+            APIResponse<ArrayList<Match>> eventResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
+            if (mIsCurrentlyCompeting) {
+                try {
+                    eventResponse = DataManager.getMatchList(activity, mCurrentEvent.getEventKey(), forceFromCache);
+                    matches = eventResponse.getData();
+                } catch (DataManager.NoDataException e) {
+                    Log.w(Constants.LOG_TAG, "unable to fetch event data");
+                }
+            }
+
+            return APIResponse.mergeCodes(teamResponse.getCode(), eventResponse.getCode());
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load team info");
             //some temp data
@@ -104,13 +124,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
             } else {
                 ((TextView) view.findViewById(R.id.team_current_event_name)).setText(mCurrentEvent.getEventName());
-                ArrayList<Match> matches;
-                try {
-                    matches = DataManager.getMatchList(activity, mCurrentEvent.getEventKey()).getData();
-                } catch (DataManager.NoDataException e) {
-                    Log.w(Constants.LOG_TAG, "unable to fetch event data");
-                    return;
-                }
+
                 Collections.sort(matches, new MatchSortByPlayOrderComparator());
                 Match lastMatch = MatchHelper.getLastMatchPlayed(matches);
                 Match nextMatch = MatchHelper.getNextMatchPlayed(matches);
@@ -137,6 +151,20 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
+        }
+
+        if (code == APIResponse.CODE.LOCAL) {
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateTeamInfo(mFragment, false).execute(mTeamKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (mFragment instanceof RefreshListener) {
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
     }
 

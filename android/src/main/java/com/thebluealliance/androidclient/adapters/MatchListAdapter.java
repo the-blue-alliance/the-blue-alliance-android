@@ -25,8 +25,8 @@ public class MatchListAdapter extends ExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         BasicModel child = groups.get(groupPosition).children.get(childPosition);
-        if(child instanceof Match) {
-            ((Match)child).setSelectedTeam(teamKey);
+        if (child instanceof Match) {
+            ((Match) child).setSelectedTeam(teamKey);
         }
         return child.render().getView(activity, inflater, convertView);
     }

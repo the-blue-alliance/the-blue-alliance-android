@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -11,15 +12,19 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/22/14.
  */
-public class EventTeamsFragment extends Fragment {
+public class EventTeamsFragment extends Fragment implements RefreshListener {
+
+    private Activity parent;
 
     private String mEventKey;
     private static final String KEY = "event_key";
@@ -27,7 +32,6 @@ public class EventTeamsFragment extends Fragment {
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
-    private ProgressBar mProgressBar;
 
     private PopulateEventTeams mTask;
 
@@ -45,20 +49,21 @@ public class EventTeamsFragment extends Fragment {
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
+        parent = getActivity();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
-            mProgressBar.setVisibility(View.GONE);
-        } else {
-            mTask = new PopulateEventTeams(this);
-            mTask.execute(mEventKey);
+            progressBar.setVisibility(View.GONE);
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -73,10 +78,39 @@ public class EventTeamsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mTask.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
+        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
+        }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        mTask = new PopulateEventTeams(this, true);
+        mTask.execute(mEventKey);
+        View view = getView();
+        if (view != null) {
+            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.list).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onRefreshStop() {
+        if (mTask != null) {
+            mTask.cancel(false);
         }
     }
 }

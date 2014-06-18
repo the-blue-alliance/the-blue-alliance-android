@@ -12,8 +12,9 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
 
@@ -29,8 +30,8 @@ import java.util.Set;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *
- * File created by phil on 4/23/14.
+ *         <p/>
+ *         File created by phil on 4/23/14.
  */
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
@@ -38,10 +39,18 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
+    private boolean forceFromCache;
 
-    public PopulateEventRankings(Fragment f) {
+    public PopulateEventRankings(Fragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -51,7 +60,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         teams = new ArrayList<>();
 
         try {
-            APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey);
+            APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey, forceFromCache);
             ArrayList<JsonArray> rankList = response.getData();
             if (!rankList.isEmpty()) {
                 JsonArray headerRow = rankList.remove(0);
@@ -108,7 +117,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 }
                 return response.getCode();
             } else {
-                //TODO indicate that no rankings exist (same for other fragments)
                 return APIResponse.CODE.NODATA;
             }
         } catch (DataManager.NoDataException e) {
@@ -126,13 +134,10 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
 
             // If there's no rankings in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
-            {
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
                 noDataText.setText(R.string.no_ranking_data);
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else
-            {
+            } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
                 rankings.setAdapter(adapter);
             }
@@ -142,8 +147,24 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
-            // Remove progress indicator since we're done loading data.
+            // Remove progress indicator and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
+        }
+
+        if (code == APIResponse.CODE.LOCAL) {
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventRankings(mFragment, false).execute(eventKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (mFragment instanceof RefreshListener) {
+                Log.d(Constants.LOG_TAG, "Event Rankings refresh complete");
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
     }
 

@@ -14,13 +14,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
@@ -41,11 +42,18 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     ListGroup awards, stats;
     Event event;
     Match lastMatch, nextMatch;
-    boolean activeEvent;
+    boolean activeEvent, forceFromCache;
 
-    public PopulateTeamAtEvent(RefreshableHostActivity activity) {
+    public PopulateTeamAtEvent(RefreshableHostActivity activity, boolean forceFromCache) {
         super();
         this.activity = activity;
+        this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -58,9 +66,9 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Match>> matchResponse;
         try {
-            matchResponse = DataManager.getMatchList(activity, eventKey, teamKey);
+            matchResponse = DataManager.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> matches = matchResponse.getData(); //sorted by play order
-            matchResponse = DataManager.getMatchList(activity, eventKey);
+            matchResponse = DataManager.getMatchList(activity, eventKey, forceFromCache);
             eventMatches = matchResponse.getData(); //sorted by play order
             matchGroups = MatchHelper.constructMatchList(activity, matches);
             int[] record = MatchHelper.getRecordForTeam(matches, teamKey);
@@ -72,7 +80,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.getEvent(activity, eventKey);
+            eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
@@ -99,7 +107,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<Integer> rankResponse;
         try {
-            rankResponse = DataManager.getRankForTeamAtEvent(activity, teamKey, eventKey);
+            rankResponse = DataManager.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             rank = rankResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch ranking data for " + teamKey + "@" + eventKey);
@@ -108,7 +116,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Award>> awardResponse;
         try {
-            awardResponse = DataManager.getEventAwards(activity, eventKey, teamKey);
+            awardResponse = DataManager.getEventAwards(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Award> awardList = awardResponse.getData();
             awards = new ListGroup(activity.getString(R.string.tab_event_awards));
             awards.children.addAll(awardList);
@@ -119,7 +127,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<JsonObject> statsResponse;
         try {
-            statsResponse = DataManager.getEventStats(activity, eventKey, teamKey);
+            statsResponse = DataManager.getEventStats(activity, eventKey, teamKey, forceFromCache);
             JsonObject statData = statsResponse.getData();
             String statString = "";
             if (statData.has("opr")) {
@@ -159,7 +167,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             MatchHelper.EventPerformance performance =
                     MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
             String summary = generateTeamSummary(teamKey, rank,
-                                                 recordString, allianceNumber, alliancePick, performance);
+                    recordString, allianceNumber, alliancePick, performance);
             ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
 
             if (!stats.children.isEmpty()) {
@@ -189,6 +197,21 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
         }
+
+        if (code == APIResponse.CODE.LOCAL) {
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateTeamAtEvent(activity, false).execute(teamKey, eventKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (activity instanceof RefreshableHostActivity) {
+                ((RefreshableHostActivity) activity).notifyRefreshComplete((RefreshListener) activity);
+            }
+        }
+
     }
 
     private String generateTeamSummary(String teamKey, int rank,
@@ -199,13 +222,11 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         Resources r = activity.getResources();
         if (performance == MatchHelper.EventPerformance.NOT_AVAILABLE) {
             return r.getString(R.string.team_at_event_no_data);
-        } else if (rank == -1 && !record.equals("0-0-0"))
-        {
+        } else if (rank == -1 && !record.equals("0-0-0")) {
             summary = r.getString(R.string.team_at_event_no_ranking_data);
             summaryArgs.add(teamKey.substring(3));
             summaryArgs.add(record);
-        }
-        else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
+        } else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
             summary = r.getString(R.string.team_at_event_past_tense_not_picked);
             summaryArgs.add(teamKey.substring(3));
             summaryArgs.add(rank + getOrdinalFor(rank));
@@ -235,7 +256,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             summaryArgs.add(rank + getOrdinalFor(rank));
             summaryArgs.add(record);
             summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
-        } else if (performance == MatchHelper.EventPerformance.NO_ALLIANCE_DATA){
+        } else if (performance == MatchHelper.EventPerformance.NO_ALLIANCE_DATA) {
             summary = r.getString(R.string.team_at_event_no_alliance_data);
             summaryArgs.add(teamKey.substring(3));
             summaryArgs.add(rank + getOrdinalFor(rank));

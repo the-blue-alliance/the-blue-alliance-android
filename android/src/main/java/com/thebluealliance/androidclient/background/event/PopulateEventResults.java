@@ -12,11 +12,12 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -28,21 +29,30 @@ import java.util.ArrayList;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *
- * File created by phil on 4/22/14.
+ *         <p/>
+ *         File created by phil on 4/22/14.
  */
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private RefreshableHostActivity activity;
-    private String eventKey, teamKey, recordString;
+    private String eventKey;
+    private String teamKey;
+    private boolean forceFromCache;
     ArrayList<ListGroup> groups;
     Match nextMatch, lastMatch;
     Event event;
 
-    public PopulateEventResults(Fragment f) {
+    public PopulateEventResults(Fragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -64,7 +74,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         APIResponse<ArrayList<Match>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
-            response = DataManager.getMatchList(activity, eventKey, teamKey);
+            response = DataManager.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
 
             ListGroup currentGroup = qualMatches;
@@ -112,7 +122,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             }
 
             if (!teamKey.isEmpty()) {
-                recordString = record[0] + "-" + record[1] + "-" + record[2];
+                String recordString = record[0] + "-" + record[1] + "-" + record[2];
             }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
@@ -121,7 +131,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.getEvent(activity, eventKey);
+            eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
@@ -160,21 +170,35 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty())
-            {
+            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
                 listView.setAdapter(adapter);
             }
 
-            // Remove progress spinner since we're done loading data.
+            // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.match_results).setVisibility(View.VISIBLE);
 
             // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
+            }
+        }
+
+        if (code == APIResponse.CODE.LOCAL) {
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateEventResults(mFragment, false).execute(eventKey, teamKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (mFragment instanceof RefreshListener) {
+                Log.d(Constants.LOG_TAG, "Event Results refresh complete");
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
             }
         }
     }

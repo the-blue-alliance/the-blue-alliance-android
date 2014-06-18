@@ -13,6 +13,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -67,7 +68,17 @@ public class TBAv2 {
         return teams;
     }
 
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase) throws DataManager.NoDataException {
+    /**
+     * This is the main datafeed method - you speciy a URL and this will either return it from our cache or fetch and store it.
+     *
+     * @param c               App context
+     * @param URL             URL to fetch
+     * @param cacheInDatabase boolean - do we want to store the response locally if we need to load it from the web?
+     * @param forceFromCache  (optional, defaults to FALSE). If set, the data exists locally, we won't query the web ever - just return what we have.
+     * @return An APIRespnse containing the data we fetched from the internet
+     * @throws DataManager.NoDataException
+     */
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase, boolean forceFromCache) throws DataManager.NoDataException {
         if (c == null) {
             Log.d("datamanager", "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
@@ -83,7 +94,23 @@ public class TBAv2 {
                 //and return our local content
 
                 APIResponse<String> cachedData = db.getResponse(URL);
-                HttpResponse cachedResponse = HTTP.getResponse(URL,cachedData.getLastUpdate());
+
+                Date now = new Date();
+                Date futureTime = new Date(cachedData.lastHit.getTime() + Constants.API_HIT_TIMEOUT);
+                if (now.before(futureTime)) {
+                    //if isn't hasn't been longer than the timeout (1 minute now)
+                    //just return what we have in cache
+                    Log.d("datamanger", "Online; API call too fast, returning from cache");
+                    return cachedData.updateCode(APIResponse.CODE.CACHED304);
+                }
+
+                //we want whatever's in the cache. Forget everything else...
+                if (forceFromCache) {
+                    Log.d("datamanager", "Online; force reading from cache");
+                    return cachedData;
+                }
+
+                HttpResponse cachedResponse = HTTP.getResponse(URL, cachedData.getLastUpdate());
                 //if we get a 200-OK back, then we need to cache that new data
                 //otherwise, it's a 304-Not-Modified
                 boolean dataRequiresUpdate = (cachedResponse != null) && (cachedResponse.getStatusLine().getStatusCode() == 200);
@@ -93,7 +120,7 @@ public class TBAv2 {
                     String response = HTTP.dataFromResponse(cachedResponse),
                             lastUpdate = "";
                     Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
-                    if(lastModified != null){
+                    if (lastModified != null) {
                         lastUpdate = lastModified.getValue();
                     }
                     if (cacheInDatabase) {
@@ -116,7 +143,7 @@ public class TBAv2 {
                 String response = HTTP.dataFromResponse(cachedResponse),
                         lastUpdate = "";
                 Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
-                if(lastModified != null){
+                if (lastModified != null) {
                     lastUpdate = lastModified.getValue();
                 }
 

@@ -183,8 +183,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     if (eventsHeader.isShowingMoreButton()) {
                         startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.EVENT_RESULTS, query));
                     }
-                }
-                else {
+                } else {
                     searchView.setVisibility(View.INVISIBLE);
                     searchView.setVisibility(View.VISIBLE);
                 }

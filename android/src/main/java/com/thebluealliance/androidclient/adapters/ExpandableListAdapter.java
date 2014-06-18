@@ -22,7 +22,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public Activity activity;
     private boolean mIsChildSelectable = true;
 
-    public ExpandableListAdapter(){
+    public ExpandableListAdapter() {
         groups = new ArrayList<>();
     }
 
@@ -54,11 +54,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return groups.get(groupPosition);
     }
 
-    public void addGroup(int position, ListGroup group){
+    public void addGroup(int position, ListGroup group) {
         groups.add(position, group);
     }
 
-    public void addGroup(ListGroup group){
+    public void addGroup(ListGroup group) {
         groups.add(group);
     }
 

@@ -128,8 +128,8 @@ public class Team implements BasicModel {
         return null;
     }
 
-    public String getSearchTitles(){
-        return teamKey+","+nickname+","+teamNumber;
+    public String getSearchTitles() {
+        return teamKey + "," + nickname + "," + teamNumber;
     }
 
     @Override

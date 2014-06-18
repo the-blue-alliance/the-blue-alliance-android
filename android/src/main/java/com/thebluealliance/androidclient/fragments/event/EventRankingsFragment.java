@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -11,22 +12,25 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
- *
  * Fragment that displays the rankings for an FRC event.
  *
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *
- * File created by phil on 4/22/14.
+ *         <p/>
+ *         File created by phil on 4/22/14.
  */
-public class EventRankingsFragment extends Fragment {
+public class EventRankingsFragment extends Fragment implements RefreshListener {
+
+    private Activity parent;
 
     private String eventKey;
     private static final String KEY = "eventKey";
@@ -40,6 +44,7 @@ public class EventRankingsFragment extends Fragment {
 
     /**
      * Creates new rankings fragment for an event
+     *
      * @param eventKey the key that represents an FRC event
      * @return new event rankings fragment
      */
@@ -58,6 +63,10 @@ public class EventRankingsFragment extends Fragment {
         if (getArguments() != null) {
             eventKey = getArguments().getString(KEY, "");
         }
+        parent = getActivity();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+        }
     }
 
     @Override
@@ -73,9 +82,6 @@ public class EventRankingsFragment extends Fragment {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
-        } else {
-            mTask = new PopulateEventRankings(this);
-            mTask.execute(eventKey);
         }
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -92,10 +98,39 @@ public class EventRankingsFragment extends Fragment {
     public void onPause() {
         super.onPause();
         // Save the data if moving away from fragment.
-        mTask.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
+        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
+        }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        mTask = new PopulateEventRankings(this, true);
+        mTask.execute(eventKey);
+        View view = getView();
+        if (view != null) {
+            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.list).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onRefreshStop() {
+        if (mTask != null) {
+            mTask.cancel(false);
         }
     }
 }

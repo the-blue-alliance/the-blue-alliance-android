@@ -17,13 +17,15 @@ import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
-public class TeamAtEventActivity extends RefreshableHostActivity {
+public class TeamAtEventActivity extends RefreshableHostActivity implements RefreshListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
     private TextView warningMessage;
     private String eventKey, teamKey;
+    private PopulateTeamAtEvent task;
 
     public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
@@ -47,13 +49,11 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        new PopulateTeamAtEvent(this).execute(teamKey, eventKey);
-
         ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = (String)view.getTag();
-                if(matchKey != null && MatchHelper.validateMatchKey(matchKey)){
+                String matchKey = (String) view.getTag();
+                if (matchKey != null && MatchHelper.validateMatchKey(matchKey)) {
                     startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
                 }
                 return true;
@@ -62,12 +62,30 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
+        registerRefreshableActivityListener(this);
+
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
+
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
+        startRefresh();
+    }
+
+    @Override
+    public void onRefreshStart() {
+        task = new PopulateTeamAtEvent(this, true);
+        task.execute(teamKey, eventKey);
+        // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+        findViewById(R.id.progress).setVisibility(View.VISIBLE);
+        findViewById(R.id.content_view).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onRefreshStop() {
+        task.cancel(false);
     }
 
     @Override

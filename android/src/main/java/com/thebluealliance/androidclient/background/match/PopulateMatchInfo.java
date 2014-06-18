@@ -19,10 +19,11 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -42,9 +43,19 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private String mEventKey;
     private String mMatchKey;
     private Match mMatch;
+    private boolean forceFromCache;
 
-    public PopulateMatchInfo(Activity activity) {
+    public PopulateMatchInfo(Activity activity, boolean forceFromCache) {
         mActivity = activity;
+        this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (mActivity instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) mActivity).showMenuProgressBar();
+        }
     }
 
     @Override
@@ -52,7 +63,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         mMatchKey = params[0];
         mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
         try {
-            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.getEventResults(mActivity, mEventKey);
+            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.getEventResults(mActivity, mEventKey, forceFromCache);
             HashMap<MatchHelper.TYPE, ArrayList<Match>> matches = response.getData();
             // Extract the specified match from the list
             mMatch = null;
@@ -236,6 +247,20 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
         }
 
+        if (code == APIResponse.CODE.LOCAL) {
+            /**
+             * The data has the possibility of being updated, but we at first loaded
+             * what we have cached locally for performance reasons.
+             * Thus, fire off this task again with a flag saying to actually load from the web
+             */
+            new PopulateMatchInfo(mActivity, false).execute(mMatchKey);
+        } else {
+            // Show notification if we've refreshed data.
+            // Show notification if we've refreshed data.
+            if (mActivity instanceof RefreshableHostActivity) {
+                ((RefreshableHostActivity) mActivity).notifyRefreshComplete((RefreshListener) mActivity);
+            }
+        }
 
     }
 }

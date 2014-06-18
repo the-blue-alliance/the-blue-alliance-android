@@ -8,9 +8,9 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
+import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.listitems.ListGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import java.util.HashMap;
  * @author Bryce Matsuda
  * @author Nathan Walters
  * @author Phil Lopreiato
- *
- * Created by Nathan on 6/6/2014.
+ *         <p/>
+ *         Created by Nathan on 6/6/2014.
  */
 public class MatchHelper {
 
@@ -143,7 +143,6 @@ public class MatchHelper {
 
     /**
      * Possible outcomes of a team's performance,
-     *
      */
     public enum EventPerformance {
         PLAYING_IN_QUALS("playing in the qualification matches"),
@@ -166,7 +165,8 @@ public class MatchHelper {
 
     /**
      * Constructs a match list for a team competing at an event
-     * @param c activity
+     *
+     * @param c       activity
      * @param matches list of matches
      * @return match list
      */
@@ -237,7 +237,7 @@ public class MatchHelper {
     /**
      * Determines the past/current performance of a team at an event.
      *
-     * @param e the event the team is competing at
+     * @param e       the event the team is competing at
      * @param matches team's match list
      * @param teamKey key associated with team
      * @return team's past/current event performance
@@ -279,7 +279,7 @@ public class MatchHelper {
                     blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
 
             if (redTeams.toString().contains(teamKey) ||
-                    blueTeams.toString().contains(teamKey)){
+                    blueTeams.toString().contains(teamKey)) {
                 teamIsHere = true;
             }
 
@@ -321,14 +321,11 @@ public class MatchHelper {
         }
 
         if (qualMatches.isEmpty() ||
-           (allQualMatchesPlayed && !teamIsHere)) {
+                (allQualMatchesPlayed && !teamIsHere)) {
             return EventPerformance.NOT_AVAILABLE;
-        }
-        else if (allQualMatchesPlayed && !allianceData)
-        {
+        } else if (allQualMatchesPlayed && !allianceData) {
             return EventPerformance.NO_ALLIANCE_DATA;
-        }
-        else if (allQualMatchesPlayed && !inAlliance) {
+        } else if (allQualMatchesPlayed && !inAlliance) {
             return EventPerformance.NOT_PICKED;
         }
 

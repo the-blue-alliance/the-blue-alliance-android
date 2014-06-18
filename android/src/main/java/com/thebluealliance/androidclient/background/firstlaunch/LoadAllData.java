@@ -12,11 +12,11 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
@@ -46,8 +46,8 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
          * database and insert all the new teams and events.        *
          */
         try {
-            ArrayList<SimpleTeam> teams = new ArrayList();
-            ArrayList<SimpleEvent> events = new ArrayList();
+            ArrayList<SimpleTeam> teams = new ArrayList<>();
+            ArrayList<SimpleEvent> events = new ArrayList<>();
             int maxPageNum = 0;
 
             // First we will load all the teams
@@ -57,9 +57,9 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 start = start == 0 ? 1 : start;
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_teams), start, end)));
                 APIResponse<String> teamListResponse;
-                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), true);
+                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), true, false);
                 JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
-                if (responseObject instanceof JsonArray) {
+                if (responseObject != null) {
                     if (responseObject.size() == 0) {
                         // No teams found for a page; we are done
                         break;
@@ -74,7 +74,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_events), Integer.toString(year))));
                 APIResponse<String> eventListResponse;
-                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://thebluealliance.com/api/v2/events/" + year, true);
+                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://thebluealliance.com/api/v2/events/" + year, true, false);
                 JsonElement responseObject = new JsonParser().parse(eventListResponse.getData());
                 if (responseObject instanceof JsonObject) {
                     if (((JsonObject) responseObject).has("404")) {

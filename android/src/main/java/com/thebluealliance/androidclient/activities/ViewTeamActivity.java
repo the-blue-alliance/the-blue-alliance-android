@@ -115,7 +115,11 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
         // Setup the action bar
         resetActionBar();
-        setupActionBar();
+        if (mSelectedTab == 0) {
+            setupActionBar();
+        } else {
+            setupActionBarForYear();
+        }
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
@@ -153,11 +157,17 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         String teamNumber = mTeamKey.replace("frc", "");
         setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
         getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupActionBarForYear() {
         ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, dropdownItems);
         actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActionBar().setListNavigationCallbacks(actionBarAdapter, this);
-        getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
+        String teamNumber = mTeamKey.replace("frc", "");
+        ActionBar bar = getActionBar();
+        setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber) + " - ");
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        bar.setListNavigationCallbacks(actionBarAdapter, this);
+        bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
     }
 
     @Override
@@ -221,8 +231,19 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     @Override
     public void onPageSelected(int position) {
-        if (position == mSelectedTab) {
+        if (position == mSelectedTab)
             return;
+
+        switch (position) {
+            case 0:
+                resetActionBar();
+                setupActionBar();
+                break;
+            case 1:
+            case 2:
+                resetActionBar();
+                setupActionBarForYear();
+                break;
         }
         mSelectedTab = position;
     }

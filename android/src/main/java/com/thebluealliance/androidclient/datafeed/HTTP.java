@@ -18,27 +18,27 @@ import java.util.Arrays;
 
 public class HTTP {
 
-    public static HttpResponse getResponse(String url){
+    public static HttpResponse getResponse(String url) {
         return getResponse(url, null);
     }
 
-    public static HttpResponse getResponse(String url, String lastUpdated){
+    public static HttpResponse getResponse(String url, String lastUpdated) {
         // HTTP
         try {
             HttpClient httpclient = new DefaultHttpClient(); // for port 80 requests!
             HttpGet httpget = new HttpGet(url);
             httpget.addHeader("X-TBA-App-Id", Constants.getApiHeader());
-            if(lastUpdated != null){
+            if (lastUpdated != null) {
                 httpget.addHeader("If-Modified-Since", lastUpdated);
             }
             return httpclient.execute(httpget);
         } catch (Exception e) {
-            Log.w(Constants.LOG_TAG, "Exception while fetching "+url+": \n"+ Arrays.toString(e.getStackTrace()));
+            Log.w(Constants.LOG_TAG, "Exception while fetching " + url + ": \n" + Arrays.toString(e.getStackTrace()));
             return null;
         }
     }
 
-    public static String dataFromResponse(HttpResponse response){
+    public static String dataFromResponse(HttpResponse response) {
         InputStream is;
         String result = "";
 
@@ -56,7 +56,7 @@ public class HTTP {
             is.close();
             result = sb.toString();
         } catch (Exception e) {
-            Log.w(Constants.LOG_TAG, "Exception while fetching data from "+response.toString()+": \n"+ Arrays.toString(e.getStackTrace()));
+            Log.w(Constants.LOG_TAG, "Exception while fetching data from " + response.toString() + ": \n" + Arrays.toString(e.getStackTrace()));
             return null;
         }
         return result;
@@ -65,7 +65,7 @@ public class HTTP {
     public static String GET(String url) {
 
         HttpResponse response = getResponse(url);
-        if(response == null) return null;
+        if (response == null) return null;
 
         return dataFromResponse(response);
     }

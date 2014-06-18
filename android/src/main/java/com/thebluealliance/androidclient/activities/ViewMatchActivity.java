@@ -14,17 +14,20 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * Created by Nathan on 5/14/2014.
  */
-public class ViewMatchActivity extends RefreshableHostActivity {
+public class ViewMatchActivity extends RefreshableHostActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
 
     private String mMatchKey;
 
     private TextView warningMessage;
+
+    private PopulateMatchInfo task;
 
     public static Intent newInstance(Context context, String matchKey) {
         Intent intent = new Intent(context, ViewMatchActivity.class);
@@ -45,7 +48,7 @@ public class ViewMatchActivity extends RefreshableHostActivity {
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
-        new PopulateMatchInfo(this).execute(mMatchKey);
+        registerRefreshableActivityListener(this);
 
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
     }
@@ -58,6 +61,26 @@ public class ViewMatchActivity extends RefreshableHostActivity {
     private void setupActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle("Match");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startRefresh();
+    }
+
+    @Override
+    public void onRefreshStart() {
+        task = new PopulateMatchInfo(this, true);
+        task.execute(mMatchKey);
+        // Indicate loading; the task will hide the progressbar and show the content when loading is complete
+        findViewById(R.id.progress).setVisibility(View.VISIBLE);
+        findViewById(R.id.match_container).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onRefreshStop() {
+        task.cancel(false);
     }
 
     @Override
