@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -40,37 +42,43 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getIntent() != null){
-            Uri data = getIntent().getData();
-            if(data != null && data.getHost()!= null && data.getHost().equals(getString(R.string.web_url_host))){
-                //we caught an Action.VIEW intent, so
-                //now we generate the proper intent to view
-                //the requested content
-                Intent intent = Utilities.getIntentForTBAUrl(this, data);
-                if(intent != null){
-                    startActivity(intent);
-                    finish();
-                    return;
-                }
-            }
-        }
+        Log.d(Constants.LOG_TAG, "All data loaded? " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false));
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false)) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
                 String uri = new String(message.getRecords()[0].getPayload());
+                Log.d(Constants.LOG_TAG, "NFC URI: " + uri);
                 processNfcUri(uri);
+                return;
+            } else if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+                Uri data = getIntent().getData();
+                if (data != null && data.getHost() != null && data.getHost().equals(getString(R.string.web_url_host))) {
+                    //we caught an Action.VIEW intent, so
+                    //now we generate the proper intent to view
+                    //the requested content
+                    Intent intent = Utilities.getIntentForTBAUrl(this, data);
+                    if (intent != null) {
+                        startActivity(intent);
+                        finish();
+                        return;
+                    } else {
+                        // We can't handle this URL. Redirect user to the browser.
+                        String url = data.toString();
+                        if (!url.startsWith("https://") && !url.startsWith("http://")){
+                            url = "http://" + url;
+                        }
+                        Intent openUrlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(openUrlIntent);
+                    }
+                } else {
+                    goToHome();
+                    return;
+                }
             } else {
-                startActivity(new Intent(this, HomeActivity.class));
-                finish();
+                goToHome();
                 return;
             }
-        }
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            NdefMessage message = (NdefMessage) rawMsgs[0];
-            String uri = new String(message.getRecords()[0].getPayload());
-            processNfcUri(uri);
         }
         setContentView(R.layout.activity_launch);
         viewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
@@ -82,6 +90,11 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.finish).setOnClickListener(this);
     }
 
+    private void goToHome() {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
+    }
+
     @Override
     public void onClick(View view) {
         int id = view.getId();
@@ -91,6 +104,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.finish:
                 startActivity(new Intent(this, HomeActivity.class));
+                finish();
         }
     }
 
@@ -196,46 +210,43 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         Matcher m = regexPattern.matcher(uri);
         if (m.matches()) {
             String eventKey = m.group(1);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
                     .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
             finish();
             return;
         }
+
         regexPattern = Pattern.compile(NfcUris.URI_TEAM_MATCHER);
         m = regexPattern.matcher(uri);
         if (m.matches()) {
             String teamKey = m.group(1);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
                     .addNextIntent(ViewTeamActivity.newInstance(this, teamKey)).startActivities();
             finish();
             return;
         }
+
         regexPattern = Pattern.compile(NfcUris.URI_TEAM_AT_EVENT_MATCHER);
         m = regexPattern.matcher(uri);
         if (m.matches()) {
             String eventKey = m.group(1);
             String teamKey = m.group(2);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
                     .addNextIntent(ViewEventActivity.newInstance(this, eventKey))
                     .addNextIntent(TeamAtEventActivity.newInstance(this, eventKey, teamKey)).startActivities();
             finish();
             return;
         }
-        /*
-        This should be implemented once the year spinner is shown on all team pages
 
-        Pattern regexPattern = Pattern.compile(NfcUris.URI_TEAM_IN_YEAR_MATCHER);
-        Matcher m = regexPattern.matcher(uri);
+        regexPattern = Pattern.compile(NfcUris.URI_TEAM_IN_YEAR_MATCHER);
+        m = regexPattern.matcher(uri);
         if (m.matches()) {
-            String eventKey = m.group(1);
-            String eventYear = m.group(2);
+            String teamKey = m.group(1);
+            String teamYear = m.group(2);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).addNextIntent(ViewTeamActivity.newInstance(this, teamKey, Integer.valueOf(teamYear))).startActivities();
             finish();
             return;
-        }*/
+        }
     }
 }

@@ -92,28 +92,29 @@ public class Utilities {
     }
 
 
-    public static Intent getIntentForTBAUrl(Context c, Uri data){
+    public static Intent getIntentForTBAUrl(Context c, Uri data) {
+        Log.d(Constants.LOG_TAG, "Uri: " + data.toString());
         String host = data.getHost();
         List<String> urlParts = data.getPathSegments();
         Intent intent = null;
-        if(host != null && host.equals(c.getString(R.string.web_url_host)) && urlParts != null){
-            if(urlParts.isEmpty()){
+        if (host != null && host.equals(c.getString(R.string.web_url_host)) && urlParts != null) {
+            if (urlParts.isEmpty()) {
                 //we caught the homepage (so there's no next part of the URL.
                 //open the home screen
                 //TODO once we get "glancables" up, make this link to special, dynamic content
                 return HomeActivity.newInstance(c, R.id.nav_item_events);
             }
             System.out.println(urlParts.get(0));
-            switch(urlParts.get(0)){
+            switch (urlParts.get(0)) {
                 //switch on areas of tba that we can view here
                 case "teams":
                     intent = HomeActivity.newInstance(c, R.id.nav_item_teams);
                     break;
                 case "team":
-                    if(indexExists(urlParts, 1) && TeamHelper.validateTeamKey(urlParts.get(2))) {
-                        if(indexExists(urlParts, 2) && urlParts.get(2).matches("\\d\\d\\d\\d")){
+                    if (indexExists(urlParts, 1) && TeamHelper.validateTeamKey("frc" + urlParts.get(1))) {
+                        if (indexExists(urlParts, 2) && urlParts.get(2).matches("\\d\\d\\d\\d")) {
                             intent = ViewTeamActivity.newInstance(c, "frc" + urlParts.get(1), Integer.parseInt(urlParts.get(2)));
-                        }else {
+                        } else {
                             intent = ViewTeamActivity.newInstance(c, "frc" + urlParts.get(1));
                         }
                     }
@@ -123,12 +124,12 @@ public class Utilities {
                     intent = HomeActivity.newInstance(c, R.id.nav_item_events);
                     break;
                 case "event":
-                    if(indexExists(urlParts, 1) && EventHelper.validateEventKey(urlParts.get(1))) {
+                    if (indexExists(urlParts, 1) && EventHelper.validateEventKey(urlParts.get(1))) {
                         intent = ViewEventActivity.newInstance(c, urlParts.get(1));
                     }
                     break;
                 case "match":
-                    if(indexExists(urlParts, 1) && MatchHelper.validateMatchKey(urlParts.get(1))){
+                    if (indexExists(urlParts, 1) && MatchHelper.validateMatchKey(urlParts.get(1))) {
                         intent = ViewMatchActivity.newInstance(c, urlParts.get(1));
                     }
                     break;
@@ -144,7 +145,7 @@ public class Utilities {
         return intent;
     }
 
-    private static boolean indexExists(List<String> data, int index){
+    public static boolean indexExists(List<String> data, int index) {
         return data != null &&
                 !data.isEmpty() &&
                 data.size() >= (index + 1) &&

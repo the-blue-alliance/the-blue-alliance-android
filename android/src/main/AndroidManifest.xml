@@ -26,11 +26,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/vnd.com.thebluealliance.androidclient" />
             </intent-filter>
+            <!-- Use multiple "data" elements so we can only filter for URLs we can handle -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="@string/web_url_host" />
+                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/teams"/>
+                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/team/.*"/>
+                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/events"/>
+                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/event/.*"/>
+                <data android:scheme="http" android:host="@string/web_url_host" android:pathPattern="/match/.*"/>
             </intent-filter>
         </activity>
         <activity android:name=".activities.HomeActivity" />

@@ -14,7 +14,7 @@ public class NfcUris {
     public static final String URI_TEAM_MATCHER = "team/([a-zA-Z0-9]+)";
 
     // Formatted as team/TEAM_KEY/YEAR
-    public static final String URI_TEAM_IN_YEAR = "team/%1$s/$2$d";
+    public static final String URI_TEAM_IN_YEAR = "team/%1$s/%2$d";
     public static final String URI_TEAM_IN_YEAR_MATCHER = "team/([a-zA-Z0-9]+)/([0-9]+)";
 
     // Formatted as event/EVENT_KEY/team/TEAM_KEY
