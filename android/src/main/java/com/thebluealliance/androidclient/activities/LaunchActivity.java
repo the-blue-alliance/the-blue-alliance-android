@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 /**
@@ -22,7 +23,7 @@ import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
  */
 public class LaunchActivity extends Activity implements View.OnClickListener {
 
-    private static final String ALL_DATA_LOADED = "all_data_loaded";
+    public static final String ALL_DATA_LOADED = "all_data_loaded";
 
     private DisableSwipeViewPager viewPager;
 
@@ -31,6 +32,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Database.getInstance(this);
+
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false)) {
             startActivity(new Intent(this, HomeActivity.class));
             finish();

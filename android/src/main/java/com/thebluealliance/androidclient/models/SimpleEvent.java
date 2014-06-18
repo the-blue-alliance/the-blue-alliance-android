@@ -15,7 +15,7 @@ public class SimpleEvent extends Event implements BasicModel {
         super();
     }
 
-    public SimpleEvent(String eventKey, String eventName, String location, boolean official, EventHelper.TYPE eventType, int districtEnum, String districtTitle, Date startDate, Date endDate, long last_updated) {
+    public SimpleEvent(String eventKey, String eventName, String location, String venue, boolean official, EventHelper.TYPE eventType, int districtEnum, String districtTitle, Date startDate, Date endDate, long last_updated) {
         super();
         if (!EventHelper.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid match key. Should be format <year><event>, like 2014cthar");
@@ -23,6 +23,7 @@ public class SimpleEvent extends Event implements BasicModel {
         this.eventYear = Integer.parseInt(eventKey.substring(0, 4));
         this.eventName = eventName;
         this.location = location;
+        this.venue = venue;
         this.eventType = eventType;
         this.districtEnum = districtEnum;
         this.districtTitle = districtTitle;

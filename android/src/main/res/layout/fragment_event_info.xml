@@ -50,6 +50,30 @@
             </RelativeLayout>
 
             <RelativeLayout
+                style="@style/InfoItemStyle"
+                android:id="@+id/event_venue_container"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground" >
+
+                <ImageView
+                    style="@style/InfoItemImageStyle"
+                    android:id="@+id/venue_location_icon"
+                    android:src="@drawable/ic_action_place"
+                    android:layout_centerInParent="true" />
+
+                <TextView
+                    style="@style/InfoItemTextStyle"
+                    android:id="@+id/event_venue"
+                    android:layout_toLeftOf="@+id/event_venue_nav_arrow"
+                    android:layout_toRightOf="@+id/venue_location_icon"/>
+
+                <ImageView
+                    style="@style/InfoItemNavigationArrowStyle"
+                    android:id="@+id/event_venue_nav_arrow" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/event_location_container"
                 style="@style/InfoItemStyle"
                 android:clickable="true"
