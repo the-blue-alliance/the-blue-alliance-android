@@ -32,7 +32,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     private TextView warningMessage;
 
     private int mCurrentSelectedYearPosition = -1,
-                mSelectedTab = -1;
+            mSelectedTab = -1;
 
     private String[] dropdownItems;
 
@@ -67,14 +67,14 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
             dropdownItems[i] = Integer.toString(currentYear - i);
         }
 
-        if(savedInstanceState != null){
-            if(savedInstanceState.containsKey(SELECTED_TAB)){
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SELECTED_TAB)) {
                 mSelectedTab = savedInstanceState.getInt(SELECTED_TAB);
             }
-            if(savedInstanceState.containsKey(SELECTED_YEAR)){
+            if (savedInstanceState.containsKey(SELECTED_YEAR)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(SELECTED_YEAR);
             }
-        }else {
+        } else {
             mCurrentSelectedYearPosition = 0;
             mSelectedTab = 0;
         }
@@ -90,9 +90,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
         // Setup the action bar
         resetActionBar();
-        if(mSelectedTab == 0) {
+        if (mSelectedTab == 0) {
             setupActionBar();
-        }else{
+        } else {
             setupActionBarForYear();
         }
 
@@ -132,12 +132,12 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupActionBarForYear(){
+    private void setupActionBarForYear() {
         ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, dropdownItems);
         actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
         String teamNumber = mTeamKey.replace("frc", "");
         ActionBar bar = getActionBar();
-        setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber)+" - ");
+        setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber) + " - ");
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         bar.setListNavigationCallbacks(actionBarAdapter, this);
         bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
@@ -194,10 +194,10 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     @Override
     public void onPageSelected(int position) {
-        if(position == mSelectedTab)
+        if (position == mSelectedTab)
             return;
 
-        switch(position){
+        switch (position) {
             case 0:
                 resetActionBar();
                 setupActionBar();

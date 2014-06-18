@@ -28,7 +28,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     private String eventKey;
     private static final String KEY = "eventKey";
     private PopulateEventInfo task;
-    private  Activity parent;
+    private Activity parent;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -45,8 +45,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             eventKey = getArguments().getString(KEY, "");
         }
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -66,8 +66,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -85,7 +85,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
 
     @Override
     public void onRefreshStop() {
-        if(task != null) {
+        if (task != null) {
             task.cancel(false);
         }
     }

@@ -64,7 +64,7 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
         loaderBundle.putString(PREPARED_QUERY, preparedQuery);
 
         getSupportLoaderManager().restartLoader(resultsType, loaderBundle, this);
-        switch(resultsType) {
+        switch (resultsType) {
             case TEAM_RESULTS:
                 getActionBar().setTitle(String.format(getString(R.string.teams_matching), query));
                 break;
@@ -129,7 +129,7 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        switch(resultsType) {
+        switch (resultsType) {
             case TEAM_RESULTS:
                 resultsList.setAdapter(new TeamCursorAdapter(this, cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
                 break;

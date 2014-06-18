@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventList;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -55,8 +54,8 @@ public class TeamListFragment extends Fragment implements RefreshListener {
         mTeamNumberStart = getArguments().getInt(START);
         mTeamNumberEnd = getArguments().getInt(END);
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -96,8 +95,8 @@ public class TeamListFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -115,7 +114,7 @@ public class TeamListFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStop() {
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
     }

@@ -59,7 +59,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     }
 
     private void beginLoadingIfConnected() {
-        if(ConnectionDetector.isConnectedToInternet(this)) {
+        if (ConnectionDetector.isConnectedToInternet(this)) {
             advanceToNextPage();
             beginLoading();
         } else {

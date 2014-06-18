@@ -49,8 +49,8 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
         teamKey = args.getString(TEAM_KEY);
         year = args.getInt(YEAR);
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -62,8 +62,8 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -81,7 +81,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStop() {
-        if(task != null) {
+        if (task != null) {
             task.cancel(false);
         }
     }

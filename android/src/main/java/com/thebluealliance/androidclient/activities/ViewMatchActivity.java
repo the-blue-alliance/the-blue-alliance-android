@@ -8,14 +8,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * Created by Nathan on 5/14/2014.
  */
-public class ViewMatchActivity extends RefreshableHostActivity implements RefreshListener{
+public class ViewMatchActivity extends RefreshableHostActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
 

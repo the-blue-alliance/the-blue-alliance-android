@@ -11,8 +11,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
@@ -24,9 +24,9 @@ import java.util.ArrayList;
  *
  * @author Phil Lopreiato
  * @author Bryce Matsuda
- *
- *
- * File created by phil on 5/31/14.
+ *         <p/>
+ *         <p/>
+ *         File created by phil on 5/31/14.
  */
 public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE> {
 
@@ -46,6 +46,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -101,11 +102,9 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             TextView noDataText = (TextView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty())
-            {
+            if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 listView.setAdapter(adapter);
                 //expand all the groups
                 for (int i = 0; i < groups.size(); i++) {
@@ -122,19 +121,19 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.team_media_list).setVisibility(View.VISIBLE);
 
-            // Show notification if we've refreshed data.
-            if(fragment instanceof RefreshListener) {
-                activity.notifyRefreshComplete((RefreshListener) fragment);
+            if (code == APIResponse.CODE.LOCAL) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                new PopulateTeamMedia(fragment, false).execute(team, year);
+            } else {
+                // Show notification if we've refreshed data.
+                if (fragment instanceof RefreshListener) {
+                    activity.notifyRefreshComplete((RefreshListener) fragment);
+                }
             }
-        }
-
-        if(code == APIResponse.CODE.LOCAL){
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            new PopulateTeamMedia(fragment, false).execute(team, year);
         }
     }
 }

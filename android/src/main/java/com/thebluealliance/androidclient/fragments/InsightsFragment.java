@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * File created by phil on 4/20/14.
  */
-public class InsightsFragment extends Fragment implements RefreshListener{
+public class InsightsFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
@@ -22,8 +22,8 @@ public class InsightsFragment extends Fragment implements RefreshListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -35,8 +35,8 @@ public class InsightsFragment extends Fragment implements RefreshListener{
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 

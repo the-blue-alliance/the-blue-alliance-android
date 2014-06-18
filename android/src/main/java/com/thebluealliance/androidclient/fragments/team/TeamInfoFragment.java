@@ -40,8 +40,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -60,8 +60,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -97,7 +97,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onRefreshStop() {
-        if(task != null) {
+        if (task != null) {
             task.cancel(false);
         }
     }

@@ -115,18 +115,18 @@ public class Award implements BasicModel {
             if (winner.get("team_number").isJsonNull()) {
                 teamNumber = "";
             } else {
-                teamNumber += winner.get("team_number").getAsInt()+", ";
+                teamNumber += winner.get("team_number").getAsInt() + ", ";
             }
             if (winner.get("awardee").isJsonNull()) {
                 awardee = "";
             } else {
-                awardee += winner.get("awardee").getAsString()+", ";
+                awardee += winner.get("awardee").getAsString() + ", ";
             }
         }
-        if(!teamNumber.isEmpty()) {
+        if (!teamNumber.isEmpty()) {
             teamNumber = teamNumber.substring(0, teamNumber.length() - 2);
         }
-        if(!awardee.isEmpty()) {
+        if (!awardee.isEmpty()) {
             awardee = awardee.substring(0, awardee.length() - 2);
         }
         return new AwardListElement("frc" + teamNumber, name, buildWinnerString(awardee, teamNumber), teamNumber);

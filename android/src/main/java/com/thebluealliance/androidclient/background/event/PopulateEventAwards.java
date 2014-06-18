@@ -11,8 +11,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -26,8 +26,8 @@ import java.util.ArrayList;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *
- * File created by phil on 4/23/14.
+ *         <p/>
+ *         File created by phil on 4/23/14.
  */
 public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.CODE> {
 
@@ -38,10 +38,16 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     private ListViewAdapter adapter;
     private boolean forceFromCache;
 
-    public PopulateEventAwards(Fragment f, boolean forceFromCache){
+    public PopulateEventAwards(Fragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -74,12 +80,10 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
-            {
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
                 noDataText.setText(R.string.no_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
                 rankings.setAdapter(adapter);
             }
@@ -93,18 +97,19 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
         }
 
-        // Show notification if we've refreshed data.
-        if(mFragment instanceof RefreshListener) {
-            activity.notifyRefreshComplete((RefreshListener) mFragment);
-        }
-
-        if(code == APIResponse.CODE.LOCAL){
+        if (code == APIResponse.CODE.LOCAL) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
             new PopulateEventAwards(mFragment, false).execute(eventKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (mFragment instanceof RefreshListener) {
+                Log.d(Constants.LOG_TAG, "Event Awards refresh complete");
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
     }
 }

@@ -56,7 +56,7 @@ public class Utilities {
 
     /**
      * Replaces unicode characters with their ASCII equivalents and appends an asterisk to each term.
-     *
+     * <p/>
      * For example, an input of "Über" would result in the string "Uber*".
      *
      * @param query the query from the user to prepare

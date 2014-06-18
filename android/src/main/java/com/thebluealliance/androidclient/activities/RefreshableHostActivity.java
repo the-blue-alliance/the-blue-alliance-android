@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.activities;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -22,11 +21,16 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     private boolean mRefreshInProgress = false;
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mOptionsMenu = menu;
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
-        System.out.println("menu created: "+mOptionsMenu);
         return true;
     }
 
@@ -87,20 +91,9 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         if (!mCompletedRefreshListeners.contains(completedListener)) {
             mCompletedRefreshListeners.add(completedListener);
         }
-        boolean refreshComplete = true;
-        if (mRefreshListeners.size() == mCompletedRefreshListeners.size()) {
-            for (RefreshListener listener : mRefreshListeners) {
-                if (!mCompletedRefreshListeners.contains(listener)) {
-                    refreshComplete = false;
-                }
-            }
-        } else {
-            refreshComplete = false;
-        }
-        if (refreshComplete) {
-            onRefreshComplete();
-            mCompletedRefreshListeners.clear();
-        }
+
+        onRefreshComplete();
+        mCompletedRefreshListeners.clear();
     }
 
     /*
@@ -109,15 +102,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     call super.onRefreshComplete() to ensure proper behavior.
      */
     protected void onRefreshComplete() {
-        if (mOptionsMenu != null) {
-            // Hide refresh indicator
-            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
-            refresh.setActionView(null);
-        }
-        // Only show "Refresh complete" if a refresh event was actually started
-        if (mRefreshInProgress) {
-            Toast.makeText(this, R.string.refresh_complete, Toast.LENGTH_SHORT).show();
-        }
+        hideMenuProgressBar();
         mRefreshInProgress = false;
     }
 
@@ -125,7 +110,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     Notifies all registered listeners that they should start their refresh.
      */
     public void startRefresh() {
-        if(mRefreshInProgress){
+        if (mRefreshInProgress) {
             //if a refresh is already happening, don't start another
             return;
         }
@@ -136,32 +121,34 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }
-        System.out.println(mOptionsMenu+" OPTIONS");
-        if (mOptionsMenu != null) {
-            // Show refresh indicator
-            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
-            refresh.setActionView(R.layout.actionbar_indeterminate_progress);
+        showMenuProgressBar();
+    }
+
+    /*
+      Refreshes a specific listener
+     */
+    public void startRefresh(RefreshListener listener) {
+        if (!mRefreshListeners.contains(listener)) {
+            mRefreshListeners.add(listener);
         }
+        listener.onRefreshStart();
     }
 
     /*
     Notifies all registered listeners that they should cancel their refresh
      */
-    protected void cancelRefresh() {
+    public void cancelRefresh() {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
-        if (mOptionsMenu != null) {
-            // Hide refresh indicator
-            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
-            refresh.setActionView(null);
-        }
+        mRefreshInProgress = false;
+        hideMenuProgressBar();
     }
 
     /*
     Notifies all refresh listeners that they should stop, and immediately notifies them that they should start again.
      */
-    protected void restartRefresh() {
+    public void restartRefresh() {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
@@ -169,5 +156,22 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             listener.onRefreshStart();
         }
         mRefreshInProgress = true;
+        showMenuProgressBar();
+    }
+
+    public void showMenuProgressBar() {
+        if (mOptionsMenu != null) {
+            // Show refresh indicator
+            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
+            refresh.setActionView(R.layout.actionbar_indeterminate_progress);
+        }
+    }
+
+    public void hideMenuProgressBar() {
+        if (mOptionsMenu != null) {
+            // Hide refresh indicator
+            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
+            refresh.setActionView(null);
+        }
     }
 }

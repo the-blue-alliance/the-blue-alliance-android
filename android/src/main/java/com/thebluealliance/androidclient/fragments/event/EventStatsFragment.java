@@ -15,7 +15,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
 import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -26,8 +25,8 @@ import com.thebluealliance.androidclient.listitems.ListElement;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *
- * File created by phil on 4/22/14.
+ *         <p/>
+ *         File created by phil on 4/22/14.
  */
 public class EventStatsFragment extends Fragment implements RefreshListener {
 
@@ -65,8 +64,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             mEventKey = getArguments().getString(KEY, "");
         }
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -100,7 +99,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     public void onPause() {
         // Save the data if moving away from fragment.
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -112,8 +111,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -131,6 +130,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStop() {
-        mTask.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
+        }
     }
 }

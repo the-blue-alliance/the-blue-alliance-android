@@ -15,8 +15,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Match;
@@ -50,6 +50,12 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
+    }
+
+    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         mTeamKey = params[0];
         try {
@@ -67,7 +73,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             mIsCurrentlyCompeting = mCurrentEvent != null;
 
             APIResponse<ArrayList<Match>> eventResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
-            if(mIsCurrentlyCompeting){
+            if (mIsCurrentlyCompeting) {
                 try {
                     eventResponse = DataManager.getMatchList(activity, mCurrentEvent.getEventKey(), forceFromCache);
                     matches = eventResponse.getData();
@@ -147,18 +153,18 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
         }
 
-        // Show notification if we've refreshed data.
-        if(mFragment instanceof RefreshListener) {
-            activity.notifyRefreshComplete((RefreshListener) mFragment);
-        }
-
-        if(code == APIResponse.CODE.LOCAL){
+        if (code == APIResponse.CODE.LOCAL) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
             new PopulateTeamInfo(mFragment, false).execute(mTeamKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (mFragment instanceof RefreshListener) {
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
     }
 

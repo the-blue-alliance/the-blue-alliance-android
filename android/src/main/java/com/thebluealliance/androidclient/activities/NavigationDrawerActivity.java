@@ -10,8 +10,8 @@ import android.view.Menu;
 import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
+import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 /**
  * Activity that provides a navigation drawer.

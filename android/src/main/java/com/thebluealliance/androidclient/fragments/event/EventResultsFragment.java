@@ -22,7 +22,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * File created by phil on 4/22/14.
  */
-public class EventResultsFragment extends Fragment implements RefreshListener{
+public class EventResultsFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
@@ -37,7 +37,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener{
 
     private PopulateEventResults mTask;
 
-    public static EventResultsFragment newInstance(String eventKey, String teamKey){
+    public static EventResultsFragment newInstance(String eventKey, String teamKey) {
         EventResultsFragment f = new EventResultsFragment();
         Bundle data = new Bundle();
         data.putString(KEY, eventKey);
@@ -58,8 +58,8 @@ public class EventResultsFragment extends Fragment implements RefreshListener{
             teamKey = getArguments().getString(TEAM, "");
         }
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -79,8 +79,8 @@ public class EventResultsFragment extends Fragment implements RefreshListener{
         mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = (String)view.getTag();
-                if(matchKey != null && MatchHelper.validateMatchKey(matchKey)){
+                String matchKey = (String) view.getTag();
+                if (matchKey != null && MatchHelper.validateMatchKey(matchKey)) {
                     startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
                 }
                 return true;
@@ -92,15 +92,15 @@ public class EventResultsFragment extends Fragment implements RefreshListener{
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -125,6 +125,8 @@ public class EventResultsFragment extends Fragment implements RefreshListener{
 
     @Override
     public void onRefreshStop() {
-        mTask.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
+        }
     }
 }

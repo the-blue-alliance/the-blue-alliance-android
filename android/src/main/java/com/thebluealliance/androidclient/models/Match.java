@@ -42,7 +42,8 @@ public class Match implements BasicModel {
     }
 
     public Match(String key, MatchHelper.TYPE type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonArray videos, long last_updated) {
-        if (!MatchHelper.validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key.");
+        if (!MatchHelper.validateMatchKey(key))
+            throw new IllegalArgumentException("Invalid match key.");
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.timeString = timeString;
@@ -62,7 +63,8 @@ public class Match implements BasicModel {
     }
 
     public void setKey(String key) {
-        if (!MatchHelper.validateMatchKey(key)) throw new IllegalArgumentException("Invalid match key: " + key);
+        if (!MatchHelper.validateMatchKey(key))
+            throw new IllegalArgumentException("Invalid match key: " + key);
         this.key = key;
         this.eventKey = key.split("_")[0];
         this.year = Integer.parseInt(key.substring(0, 3));

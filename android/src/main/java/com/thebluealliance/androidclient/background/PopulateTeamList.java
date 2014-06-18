@@ -11,8 +11,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
@@ -79,13 +79,10 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
 
             // If there's no teams in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
-            {
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
                 noDataText.setText(R.string.no_team_list);
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else
-            {
+            } else {
                 ListView eventList = (ListView) view.findViewById(R.id.list);
                 eventList.setAdapter(adapter);
             }
@@ -97,7 +94,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
             // Show notification if we've refreshed data.
-            if(fragment instanceof RefreshListener) {
+            if (fragment instanceof RefreshListener) {
                 activity.notifyRefreshComplete((RefreshListener) fragment);
             }
         }

@@ -16,11 +16,8 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventAwards;
-import com.thebluealliance.androidclient.background.event.PopulateEventResults;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
-
-import java.sql.Ref;
 
 /**
  * File created by phil on 4/22/14.
@@ -54,8 +51,8 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
             mEventKey = getArguments().getString(EVENT_KEY, "");
         }
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -84,7 +81,7 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -96,8 +93,8 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -115,6 +112,8 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStop() {
-        mTask.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
+        }
     }
 }

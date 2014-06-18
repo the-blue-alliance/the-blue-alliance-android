@@ -20,7 +20,6 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
-import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -66,8 +65,8 @@ public class EventListFragment extends Fragment implements RefreshListener {
         mTeamKey = getArguments().getString(TEAM_KEY);
         mHeader = getArguments().getString(WEEK_HEADER);
         parent = getActivity();
-        if(parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)parent).registerRefreshableActivityListener(this);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
     }
 
@@ -127,8 +126,8 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        if(parent instanceof RefreshableHostActivity){
-            ((RefreshableHostActivity) parent).startRefresh();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -146,7 +145,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStop() {
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
     }

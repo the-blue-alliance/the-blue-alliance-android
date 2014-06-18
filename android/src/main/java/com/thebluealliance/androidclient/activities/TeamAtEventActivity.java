@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
-import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -48,8 +47,8 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = (String)view.getTag();
-                if(matchKey != null && MatchHelper.validateMatchKey(matchKey)){
+                String matchKey = (String) view.getTag();
+                if (matchKey != null && MatchHelper.validateMatchKey(matchKey)) {
                     startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
                 }
                 return true;

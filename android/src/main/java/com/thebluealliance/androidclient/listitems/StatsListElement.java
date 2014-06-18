@@ -36,16 +36,16 @@ public class StatsListElement extends ListElement {
             team.setText("" + mTeamNumber);
 
             TextView name = (TextView) view.findViewById(R.id.team_name);
-            if(!mTeamName.isEmpty()) {
+            if (!mTeamName.isEmpty()) {
                 name.setText(mTeamName);
-            }else{
+            } else {
                 name.setVisibility(View.GONE);
             }
 
             TextView location = (TextView) view.findViewById(R.id.team_location);
-            if(!mTeamLocation.isEmpty()) {
+            if (!mTeamLocation.isEmpty()) {
                 location.setText(mTeamLocation);
-            }else{
+            } else {
                 location.setVisibility(View.GONE);
             }
 

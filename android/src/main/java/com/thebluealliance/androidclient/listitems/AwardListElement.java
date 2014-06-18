@@ -28,7 +28,7 @@ public class AwardListElement extends ListElement {
 
         if (view == null) {
             view = inflater.inflate(R.layout.list_item_award, null);
-            if(!mAwardTeam.contains(",")) {
+            if (!mAwardTeam.contains(",")) {
                 view.setTag("frc" + mAwardTeam);
             }
 

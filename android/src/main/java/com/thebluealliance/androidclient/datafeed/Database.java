@@ -308,10 +308,10 @@ public class Database extends SQLiteOpenHelper {
     public boolean eventExists(String key) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
         boolean result;
-        if(cursor != null){
+        if (cursor != null) {
             result = cursor.moveToFirst();
             cursor.close();
-        }else{
+        } else {
             result = false;
         }
         return result;
@@ -327,7 +327,7 @@ public class Database extends SQLiteOpenHelper {
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             String response = cursor.getString(1),
-                   lastUpdate = cursor.getString(2);
+                    lastUpdate = cursor.getString(2);
             long lastHit = cursor.getLong(3);
             cursor.close();
             return new APIResponse<>(response, APIResponse.CODE.LOCAL, lastUpdate, new Date(lastHit));

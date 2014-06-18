@@ -14,8 +14,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
@@ -32,8 +32,8 @@ import java.util.Map;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *
- * File created by phil on 4/23/14.
+ *         <p/>
+ *         File created by phil on 4/23/14.
  */
 public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
 
@@ -43,10 +43,16 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private ArrayList<ListItem> teams;
     private boolean forceFromCache;
 
-    public PopulateEventStats(Fragment f, boolean forceFromCache){
+    public PopulateEventStats(Fragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -65,13 +71,13 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     ccwm = new ArrayList<>();
 
             LinkedHashMap<String, Double>
-                       dprSorted = new LinkedHashMap<>(),
-                       ccwmSorted = new LinkedHashMap<>();
+                    dprSorted = new LinkedHashMap<>(),
+                    ccwmSorted = new LinkedHashMap<>();
 
             // Put each stat into its own array list,
             // but make sure it actually has stats (and not just an empty set).
             if (stats.has("oprs") &&
-               !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
+                    !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
                 opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
 
                 // Sort OPRs in decreasing order (highest to lowest)
@@ -81,24 +87,24 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
             // Put the DPRs & CCWMs into a linked hashmap in the same order as the sorted OPRs.
             if (stats.has("dprs") &&
-               !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
+                    !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
 
                 dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
 
-                for (int i = 0; i < opr.size(); i++){
-                  String dprKey = opr.get(i).getKey();
-                  Double dprValue = stats.get("dprs").getAsJsonObject().get(dprKey).getAsDouble();
-                  dprSorted.put(dprKey, dprValue);
+                for (int i = 0; i < opr.size(); i++) {
+                    String dprKey = opr.get(i).getKey();
+                    Double dprValue = stats.get("dprs").getAsJsonObject().get(dprKey).getAsDouble();
+                    dprSorted.put(dprKey, dprValue);
                 }
 
             }
 
             if (stats.has("ccwms") &&
-               !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
+                    !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
 
                 ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
 
-                for (int i = 0; i < opr.size(); i++){
+                for (int i = 0; i < opr.size(); i++) {
                     String ccwmKey = opr.get(i).getKey();
                     Double ccwmValue = stats.get("ccwms").getAsJsonObject().get(ccwmKey).getAsDouble();
                     ccwmSorted.put(ccwmKey, ccwmValue);
@@ -108,9 +114,9 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
             // Combine the stats into one string to be displayed onscreen.
             for (int i = 0; i < opr.size(); i++) {
-                String statsString = activity.getString(R.string.opr)+" " + Stat.displayFormat.format(opr.get(i).getValue().getAsDouble())
-                        + ", "+activity.getString(R.string.dpr)+" " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
-                        + ", "+activity.getString(R.string.ccwm)+" " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
+                String statsString = activity.getString(R.string.opr) + " " + Stat.displayFormat.format(opr.get(i).getValue().getAsDouble())
+                        + ", " + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
+                        + ", " + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
                 String teamKey = "frc" + opr.get(i).getKey();
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
                 //TODO the blank fields above are team name and location
@@ -134,13 +140,10 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
             // If there's no stats in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty())
-            {
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
                 noDataText.setText(R.string.no_stats_data);
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else
-            {
+            } else {
                 ListView stats = (ListView) view.findViewById(R.id.list);
                 stats.setAdapter(adapter);
             }
@@ -154,19 +157,21 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
-            // Show notification if we've refreshed data.
-            if(mFragment instanceof RefreshListener) {
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
-            }
         }
 
-        if(code == APIResponse.CODE.LOCAL){
+        if (code == APIResponse.CODE.LOCAL) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
             new PopulateEventStats(mFragment, false).execute(eventKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (mFragment instanceof RefreshListener) {
+                Log.d(Constants.LOG_TAG, "Event Stats refresh complete");
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
     }
 }

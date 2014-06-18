@@ -44,6 +44,12 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
+    }
+
+    @Override
     protected APIResponse.CODE doInBackground(Void... params) {
         if (mFragment == null) {
             throw new IllegalArgumentException("Fragment must not be null!");
@@ -89,7 +95,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
-                if(eventsArray != null && !eventsArray.isEmpty()) {
+                if (eventsArray != null && !eventsArray.isEmpty()) {
                     events = EventHelper.renderEventList(eventsArray);
                 }
                 return response.getCode();
@@ -117,12 +123,10 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
             // If there's no event data in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()){
+            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
                 noDataText.setText(R.string.no_event_data);
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else
-            {
+            } else {
                 ListView eventList = (ListView) view.findViewById(R.id.list);
                 eventList.setAdapter(adapter);
             }
@@ -134,19 +138,20 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
-            // Show notification if we've refreshed data.
-            if(mFragment instanceof RefreshListener) {
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            if (code == APIResponse.CODE.LOCAL) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, forceFromCache).execute();
+            } else {
+                // Show notification if we've refreshed data.
+                if (mFragment instanceof RefreshListener) {
+                    activity.notifyRefreshComplete((RefreshListener) mFragment);
+                }
             }
-        }
 
-        if(code == APIResponse.CODE.LOCAL){
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, forceFromCache).execute();
         }
     }
 }

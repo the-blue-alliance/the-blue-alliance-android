@@ -12,12 +12,12 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -29,8 +29,8 @@ import java.util.ArrayList;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *
- * File created by phil on 4/22/14.
+ *         <p/>
+ *         File created by phil on 4/22/14.
  */
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
@@ -43,10 +43,16 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     Match nextMatch, lastMatch;
     Event event;
 
-    public PopulateEventResults(Fragment f, boolean forceFromCache){
+    public PopulateEventResults(Fragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        activity.showMenuProgressBar();
     }
 
     @Override
@@ -164,11 +170,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty())
-            {
+            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
                 listView.setAdapter(adapter);
             }
@@ -181,20 +185,21 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-
-            // Show notification if we've refreshed data.
-            if(mFragment instanceof RefreshListener) {
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
-            }
         }
 
-        if(code == APIResponse.CODE.LOCAL){
+        if (code == APIResponse.CODE.LOCAL) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
             new PopulateEventResults(mFragment, false).execute(eventKey, teamKey);
+        } else {
+            // Show notification if we've refreshed data.
+            if (mFragment instanceof RefreshListener) {
+                Log.d(Constants.LOG_TAG, "Event Results refresh complete");
+                activity.notifyRefreshComplete((RefreshListener) mFragment);
+            }
         }
     }
 }
