@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -58,6 +59,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         hideWarningMessage();
 
         registerRefreshableActivityListener(this);
+
+        setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
+
     }
 
     @Override

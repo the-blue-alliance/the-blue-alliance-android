@@ -25,6 +25,13 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         } else {
             event.setLocation(object.get("location").getAsString());
         }
+
+        if (object.get("venue_address").isJsonNull()){
+            event.setVenue("");
+        }
+        else{
+            event.setVenue(object.get("venue_address").getAsString());
+        }
         event.setEventType(object.get("event_type").getAsInt());
         if (object.get("start_date").isJsonNull()) {
             event.setStartDate("");
@@ -51,7 +58,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
         event.setLastUpdated(System.currentTimeMillis());
 
-        if (object.has("website")) {
+        if (object.has("website") && !object.get("website").isJsonNull()) {
             event.setWebsite(object.get("website").getAsString());
         }
         if (object.has("matches")) {

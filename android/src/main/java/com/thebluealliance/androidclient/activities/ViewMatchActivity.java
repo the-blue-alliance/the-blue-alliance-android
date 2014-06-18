@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -17,8 +18,6 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 public class ViewMatchActivity extends RefreshableHostActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
-
-    private static final String VIDEO_FRAGMENT_TAG = "videoFragment";
 
     private String mMatchKey;
 
@@ -46,6 +45,8 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
         registerRefreshableActivityListener(this);
+
+        setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
     }
 
     @Override

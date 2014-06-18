@@ -43,7 +43,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     private RefreshableHostActivity activity;
     View last, next;
     LinearLayout nextLayout, lastLayout, topTeams, topOpr;
-    TextView eventName, eventDate, eventLoc, ranks, stats;
+    TextView eventName, eventDate, eventLoc, eventVenue, ranks, stats;
     String eventKey;
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
@@ -77,10 +77,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             eventName = (TextView) view.findViewById(R.id.event_name);
             eventDate = (TextView) view.findViewById(R.id.event_date);
             eventLoc = (TextView) view.findViewById(R.id.event_location);
+            eventVenue = (TextView) view.findViewById(R.id.event_venue);
             nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
             lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
             topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
-            topOpr = (LinearLayout) view.findViewById(R.id.top_opr_container);
+            topOpr = (LinearLayout) view.findViewById(R.id.event_top_opr_container);
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
@@ -105,7 +106,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showRanks = false;
                     }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
-                        rankString += ((i) + ". " + rankList.get(i).get(1).getAsString()) + "\n";
+                        rankString += ((i) + ". " + rankList.get(i).get(1).getAsString());
+                        if(i < Math.min(6, rankList.size()) - 1) {
+                            rankString += "\n";
+                        }
                     }
                     ranks.setText(rankString);
                 } catch (DataManager.NoDataException e) {
@@ -129,7 +133,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                         String statsString = "";
                         for (int i = 0; i < Math.min(5, opr.size()); i++) {
-                            statsString += ((i + 1) + ". " + opr.get(i).getKey() + "\n");
+                            statsString += (i + 1) + ". " + opr.get(i).getKey();
+                            if(i < Math.min(5, opr.size()) - 1) {
+                                statsString += "\n";
+                            }
                         }
                         stats.setText(statsString);
                     } else {
@@ -166,6 +173,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             // setup social media intents
+            view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + event.getVenue().replace(" ", "+"));
             view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
             view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
             view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
@@ -188,6 +196,16 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
             } else {
                 eventDate.setText(event.getDateString());
+            }
+            if (event.getVenue().isEmpty() &&
+                activity.findViewById(R.id.event_venue_container) != null){
+                activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
+            }
+            else{
+                eventVenue.setText(event.getVenue());
+                if (activity.findViewById(R.id.event_location_container) != null) {
+                    activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
+                }
             }
             if (event.getLocation().isEmpty() &&
                     activity.findViewById(R.id.event_location_container) != null) {

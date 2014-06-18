@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -58,6 +59,8 @@ public class ViewEventActivity extends RefreshableHostActivity {
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+
+        setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
     }
 
     @Override

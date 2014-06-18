@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -26,6 +27,7 @@ import java.util.Calendar;
 public class ViewTeamActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
 
     public static final String TEAM_KEY = "team_key",
+            TEAM_YEAR = "team_year",
             SELECTED_YEAR = "year",
             SELECTED_TAB = "tab";
 
@@ -39,12 +41,21 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     // Should come in the format frc####
     private String mTeamKey;
 
+    private int mYear;
+
     private ViewPager pager;
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
         Intent intent = new Intent(context, ViewTeamActivity.class);
         intent.putExtra(TEAM_KEY, teamKey);
+        return intent;
+    }
+
+    public static Intent newInstance(Context context, String teamKey, int year) {
+        Intent intent = new Intent(context, ViewTeamActivity.class);
+        intent.putExtra(TEAM_KEY, teamKey);
+        intent.putExtra(TEAM_YEAR, year);
         return intent;
     }
 
@@ -75,13 +86,25 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(SELECTED_YEAR);
             }
         } else {
+            int year;
+            if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_YEAR)) {
+                year = getIntent().getIntExtra(TEAM_YEAR, Calendar.getInstance().get(Calendar.YEAR));
+            } else {
+                year = Calendar.getInstance().get(Calendar.YEAR);
+            }
             mCurrentSelectedYearPosition = 0;
+            for (int i = 0; i < dropdownItems.length; i++) {
+                if (Integer.valueOf(dropdownItems[i]) == year) {
+                    mCurrentSelectedYearPosition = i;
+                    break;
+                }
+            }
             mSelectedTab = 0;
         }
 
         pager = (ViewPager) findViewById(R.id.view_pager);
-        int year = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
-        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, year));
+        mYear = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
+        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mYear));
         pager.setOnPageChangeListener(this);
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -99,6 +122,8 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+
+        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
     }
 
     @Override
@@ -183,6 +208,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, year));
         pager.setCurrentItem(mSelectedTab);
         mCurrentSelectedYearPosition = position;
+        mYear = Integer.valueOf(dropdownItems[mCurrentSelectedYearPosition]);
+
+        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
 
         return true;
     }

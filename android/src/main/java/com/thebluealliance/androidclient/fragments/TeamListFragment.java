@@ -1,17 +1,23 @@
 package com.thebluealliance.androidclient.fragments;
 
+
 import android.app.Activity;
+import android.support.v4.app.LoaderManager;
 import android.content.Intent;
+import android.support.v4.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
@@ -19,25 +25,28 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
+import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
+import com.thebluealliance.androidclient.datafeed.Database;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class TeamListFragment extends Fragment implements RefreshListener {
+
+public class TeamListFragment extends Fragment implements RefreshListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private Activity parent;
+
 
     private static final String START = "START";
     private static final String END = "END";
 
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
     private ListView mListView;
     private ProgressBar mProgressBar;
 
-    private int mTeamNumberStart, mTeamNumberEnd;
-
     private PopulateTeamList mTask;
+
+    private int mTeamNumberStart, mTeamNumberEnd;
 
     public static TeamListFragment newInstance(int startTeamNumber, int endTeamNumber) {
         TeamListFragment f = new TeamListFragment();
@@ -65,15 +74,10 @@ public class TeamListFragment extends Fragment implements RefreshListener {
         mListView = (ListView) view.findViewById(R.id.list);
         mListView.setFastScrollAlwaysVisible(true);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            mProgressBar.setVisibility(View.GONE);
-        }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
+                String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
                 Intent i = new Intent(getActivity(), ViewTeamActivity.class);
                 i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
                 startActivity(i);
@@ -83,13 +87,36 @@ public class TeamListFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mTask.cancel(false);
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Each loader needs a unique id; use the sum of the start and end numbers
+        int id = mTeamNumberStart + mTeamNumberEnd;
+        getActivity().getSupportLoaderManager().initLoader(id, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new SimpleCursorLoader(getActivity()) {
+            @Override
+            public Cursor loadInBackground() {
+                return Database.getInstance(getActivity()).getCursorForTeamsInRange(mTeamNumberStart, mTeamNumberEnd);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        if(cursorLoader.getId() != mTeamNumberStart + mTeamNumberEnd) {
+            return;
         }
+        Log.d(Constants.LOG_TAG, "Load finished!");
+        mProgressBar.setVisibility(View.GONE);
+        mListView.setAdapter(new TeamCursorAdapter(getActivity(), cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        mListView.setAdapter(null);
     }
 
     @Override

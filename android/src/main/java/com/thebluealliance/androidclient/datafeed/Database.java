@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -19,6 +20,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -26,7 +28,7 @@ import java.util.Date;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -36,23 +38,24 @@ public class Database extends SQLiteOpenHelper {
             TABLE_SEARCH_TEAMS = "search_teams",
             TABLE_SEARCH_EVENTS = "search_events";
 
-    String CREATE_API = "CREATE TABLE " + TABLE_API + "("
+    String CREATE_API = "CREATE TABLE IF NOT EXISTS " + TABLE_API + "("
             + Response.URL + " TEXT PRIMARY KEY, "
             + Response.RESPONSE + " TEXT, "
             + Response.LASTUPDATE + " TIMESTAMP, "
             + Response.LASTHIT + " TIMESTAMP "
             + ")";
-    String CREATE_TEAMS = "CREATE TABLE " + TABLE_TEAMS + "("
+    String CREATE_TEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS + "("
             + Teams.KEY + " TEXT PRIMARY KEY, "
             + Teams.NUMBER + " INTEGER NOT NULL, "
             + Teams.NAME + " TEXT, "
             + Teams.SHORTNAME + " TEXT, "
             + Teams.LOCATION + " TEXT"
             + ")";
-    String CREATE_EVENTS = "CREATE TABLE " + TABLE_EVENTS + "("
+    String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + Events.KEY + " TEXT PRIMARY KEY, "
             + Events.NAME + " TEXT, "
             + Events.LOCATION + " TEXT, "
+            + Events.VENUE + " TEXT, "
             + Events.TYPE + " INTEGER, "
             + Events.DISTRICT + " INTEGER, "
             + Events.DISTRICT_STRING + " TEXT, "
@@ -61,13 +64,13 @@ public class Database extends SQLiteOpenHelper {
             + Events.OFFICIAL + " INTEGER, "
             + Events.WEEK + " INTEGER"
             + ")";
-    String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE " + TABLE_SEARCH_TEAMS +
+    String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
             SearchTeam.KEY + "," +
             SearchTeam.TITLES + "," +
             SearchTeam.NUMBER + ")";
 
-    String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE " + TABLE_SEARCH_EVENTS +
+    String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
             " USING fts3 (" +
             SearchEvent.KEY + "," +
             SearchEvent.TITLES + "," +
@@ -93,7 +96,7 @@ public class Database extends SQLiteOpenHelper {
      */
     public static synchronized Database getInstance(Context context) {
         if (sDatabaseInstance == null) {
-            sDatabaseInstance = new Database(context);
+            sDatabaseInstance = new Database(context.getApplicationContext());
         }
         return sDatabaseInstance;
     }
@@ -110,14 +113,40 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
-        //clear sharedprefs
-        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+
+        if (newVersion >= DATABASE_VERSION && oldVersion < DATABASE_VERSION){
+            /* For now, we're just gonna drop all data tables and wipe the data-related
+               shared preferences just to put everyone on track starting from v8.
+
+               For future versions, a possible idea is adding any previous db changes
+               through a while loop/switch statement, incrementing up until the latest version.
+               like http://blog.adamsbros.org/2012/02/28/upgrade-android-sqlite-database/
+
+               If version is less than 8, then wipe remaining tables/data prefs.
+            */
+            // d-d-d-d-drop the tables (ノಠ益ಠ)ノ彡┻━┻ #dubstepwubwubz
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
+
+            // Clear the data-related shared prefs
+            Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
+            for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+                if (entry.getKey().toString().contains(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
+                    entry.getKey().toString().contains(DataManager.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE))
+                {
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().
+                            remove(entry.getKey().toString()).commit();
+                }
+            }
+
+            PreferenceManager.getDefaultSharedPreferences(context).edit().
+                    remove(LaunchActivity.ALL_DATA_LOADED).commit();
+        }
+
         onCreate(db);
     }
 
@@ -140,6 +169,7 @@ public class Database extends SQLiteOpenHelper {
         public static final String KEY = "key",
                 NAME = "name",
                 LOCATION = "location",
+                VENUE = "venue",
                 TYPE = "eventType",
                 DISTRICT = "eventDistrict",
                 DISTRICT_STRING = "districtString",
@@ -199,13 +229,31 @@ public class Database extends SQLiteOpenHelper {
         ArrayList<SimpleTeam> teams = new ArrayList<>();
         // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
         Cursor cursor = db.query(TABLE_TEAMS, new String[]{Teams.KEY, Teams.NUMBER, Teams.NAME, Teams.SHORTNAME, Teams.LOCATION},
-                Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{"" + lowerBound, "" + upperBound}, null, null, null, null);
+                Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
         cursor.moveToPosition(-1);
         while (cursor.moveToNext()) {
             teams.add(new SimpleTeam(cursor.getString(0), cursor.getInt(1), cursor.getString(3), cursor.getString(4), -1));
         }
         cursor.close();
         return teams;
+    }
+
+    public Cursor getCursorForTeamsInRange(int lowerBound, int upperBound) {
+        Cursor cursor = db.rawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
+                + Teams.KEY + ","
+                + Teams.NUMBER + ","
+                + Teams.NAME + ","
+                + Teams.SHORTNAME + ","
+                + Teams.LOCATION
+                + " FROM " + TABLE_TEAMS + " WHERE " + Teams.NUMBER + " BETWEEN ?+0 AND ?+0 ORDER BY ? ASC", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound), Teams.NUMBER});
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
     }
 
     public long storeEvent(SimpleEvent event) {
@@ -228,7 +276,7 @@ public class Database extends SQLiteOpenHelper {
 
     public SimpleEvent getEvent(String eventKey) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
-                        Events.END, Events.LOCATION, Events.OFFICIAL, Events.DISTRICT_STRING},
+                        Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
@@ -240,8 +288,9 @@ public class Database extends SQLiteOpenHelper {
             event.setStartDate(cursor.getString(4));
             event.setEndDate(cursor.getString(5));
             event.setLocation(cursor.getString(6));
-            event.setOfficial(cursor.getInt(7) == 1);
-            event.setDistrictTitle(cursor.getString(8));
+            event.setVenue(cursor.getString(7));
+            event.setOfficial(cursor.getInt(8) == 1);
+            event.setDistrictTitle(cursor.getString(9));
             cursor.close();
             return event;
         } else {
@@ -252,7 +301,7 @@ public class Database extends SQLiteOpenHelper {
     public ArrayList<SimpleEvent> getEventsInWeek(int year, int week) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
-                        Events.END, Events.LOCATION, Events.OFFICIAL, Events.DISTRICT_STRING},
+                        Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
@@ -265,8 +314,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setStartDate(cursor.getString(4));
                 event.setEndDate(cursor.getString(5));
                 event.setLocation(cursor.getString(6));
-                event.setOfficial(cursor.getInt(7) == 1);
-                event.setDistrictTitle(cursor.getString(8));
+                event.setVenue(cursor.getString(7));
+                event.setOfficial(cursor.getInt(8) == 1);
+                event.setDistrictTitle(cursor.getString(9));
                 events.add(event);
             } while (cursor.moveToNext());
             cursor.close();
@@ -280,7 +330,7 @@ public class Database extends SQLiteOpenHelper {
     public ArrayList<SimpleEvent> getEventsInYear(int year) {
         ArrayList<SimpleEvent> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
-                        Events.END, Events.LOCATION, Events.OFFICIAL, Events.DISTRICT_STRING},
+                        Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
@@ -293,8 +343,9 @@ public class Database extends SQLiteOpenHelper {
                 event.setStartDate(cursor.getString(4));
                 event.setEndDate(cursor.getString(5));
                 event.setLocation(cursor.getString(6));
-                event.setOfficial(cursor.getInt(7) == 1);
-                event.setDistrictTitle(cursor.getString(8));
+                event.setVenue(cursor.getString(7));
+                event.setOfficial(cursor.getInt(8) == 1);
+                event.setDistrictTitle(cursor.getString(9));
                 events.add(event);
             } while (cursor.moveToNext());
             cursor.close();
@@ -479,6 +530,7 @@ public class Database extends SQLiteOpenHelper {
                         + Events.START + ","
                         + Events.END + ","
                         + Events.LOCATION + ","
+                        + Events.VENUE + ","
                         + Events.OFFICIAL + ","
                         + Events.DISTRICT_STRING
                         + " FROM " + TABLE_EVENTS + " JOIN tempevents ON tempevents.tempkey = " + TABLE_EVENTS + "." + Events.KEY + " ORDER BY ? DESC", new String[]{SearchEvent.YEAR}

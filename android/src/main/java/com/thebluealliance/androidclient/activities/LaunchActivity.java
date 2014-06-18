@@ -5,24 +5,36 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Nathan on 5/25/2014.
  */
 public class LaunchActivity extends Activity implements View.OnClickListener {
 
-    private static final String ALL_DATA_LOADED = "all_data_loaded";
+    public static final String ALL_DATA_LOADED = "all_data_loaded";
 
     private DisableSwipeViewPager viewPager;
 
@@ -31,10 +43,41 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Database.getInstance(this);
+
+        Log.d(Constants.LOG_TAG, "All data loaded? " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false));
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false)) {
-            startActivity(new Intent(this, HomeActivity.class));
-            finish();
-            return;
+            if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+                Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+                NdefMessage message = (NdefMessage) rawMsgs[0];
+                String uri = new String(message.getRecords()[0].getPayload());
+                Log.d(Constants.LOG_TAG, "NFC URI: " + uri);
+                processNfcUri(uri);
+                return;
+            } else if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+                Uri data = getIntent().getData();
+                Log.d(Constants.LOG_TAG, "VIEW URI: " + data.toString());
+                if (data != null) {
+                    //we caught an Action.VIEW intent, so
+                    //now we generate the proper intent to view
+                    //the requested content
+                    Intent intent = Utilities.getIntentForTBAUrl(this, data);
+                    if (intent != null) {
+                        startActivity(intent);
+                        finish();
+                        return;
+                    } else {
+                        goToHome();
+                        finish();
+                    }
+                } else {
+                    goToHome();
+                    return;
+                }
+            } else {
+                goToHome();
+                return;
+            }
         }
         setContentView(R.layout.activity_launch);
         viewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
@@ -46,6 +89,11 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.finish).setOnClickListener(this);
     }
 
+    private void goToHome() {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
+    }
+
     @Override
     public void onClick(View view) {
         int id = view.getId();
@@ -55,6 +103,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.finish:
                 startActivity(new Intent(this, HomeActivity.class));
+                finish();
         }
     }
 
@@ -153,5 +202,67 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_ERROR) {
             errorLoadingData(info.message);
         }
+    }
+
+    private void processNfcUri(String uri) {
+        Pattern regexPattern = Pattern.compile(NfcUris.URI_EVENT_MATCHER);
+        Matcher m = regexPattern.matcher(uri);
+        if (m.matches()) {
+            String eventKey = m.group(1);
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
+            finish();
+            return;
+        }
+
+        regexPattern = Pattern.compile(NfcUris.URI_TEAM_MATCHER);
+        m = regexPattern.matcher(uri);
+        if (m.matches()) {
+            String teamKey = m.group(1);
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
+                    .addNextIntent(ViewTeamActivity.newInstance(this, teamKey)).startActivities();
+            finish();
+            return;
+        }
+
+        regexPattern = Pattern.compile(NfcUris.URI_TEAM_AT_EVENT_MATCHER);
+        m = regexPattern.matcher(uri);
+        if (m.matches()) {
+            String eventKey = m.group(1);
+            String teamKey = m.group(2);
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewEventActivity.newInstance(this, eventKey))
+                    .addNextIntent(TeamAtEventActivity.newInstance(this, eventKey, teamKey)).startActivities();
+            finish();
+            return;
+        }
+
+        regexPattern = Pattern.compile(NfcUris.URI_TEAM_IN_YEAR_MATCHER);
+        m = regexPattern.matcher(uri);
+        if (m.matches()) {
+            String teamKey = m.group(1);
+            String teamYear = m.group(2);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewTeamActivity.newInstance(this, teamKey, Integer.valueOf(teamYear))).startActivities();
+            finish();
+            return;
+        }
+
+        regexPattern = Pattern.compile(NfcUris.URI_MATCH_MATCHER);
+        m = regexPattern.matcher(uri);
+        if (m.matches()) {
+            String matchKey = m.group(1);
+            String eventKey = matchKey.substring(0, matchKey.indexOf("_"));
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                    .addNextIntent(ViewEventActivity.newInstance(this, eventKey))
+                    .addNextIntent(ViewMatchActivity.newInstance(this, matchKey)).startActivities();
+            finish();
+            return;
+        }
+
+        // Default to kicking the user to the events list if none of the URIs match
+        goToHome();
     }
 }
