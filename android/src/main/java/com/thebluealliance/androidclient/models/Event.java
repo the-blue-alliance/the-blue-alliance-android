@@ -24,6 +24,7 @@ public class Event implements BasicModel {
     String eventKey,
             eventName,
             location,
+            venue,
             shortName,
             abbreviation,
             website;
@@ -49,6 +50,7 @@ public class Event implements BasicModel {
         this.abbreviation = "";
         this.eventYear = -1;
         this.location = "";
+        this.venue = "";
         this.eventType = EventHelper.TYPE.NONE;
         this.districtEnum = 0;
         this.districtTitle = "";
@@ -64,7 +66,7 @@ public class Event implements BasicModel {
         alliances = new JsonArray();
     }
 
-    public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, boolean official, EventHelper.TYPE eventType, int districtEnum, String districtTitle, Date startDate, Date endDate,
+    public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, String venue, boolean official, EventHelper.TYPE eventType, int districtEnum, String districtTitle, Date startDate, Date endDate,
                  String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, JsonArray alliances, long last_updated) {
         if (!EventHelper.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
@@ -74,6 +76,7 @@ public class Event implements BasicModel {
         this.shortName = shortName;
         this.abbreviation = abbreviation;
         this.location = location;
+        this.venue = venue;
         this.eventType = eventType;
         this.districtTitle = districtTitle;
         this.districtEnum = districtEnum;
@@ -185,6 +188,14 @@ public class Event implements BasicModel {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getVenue(){
+        return venue;
+    }
+
+    public void setVenue(String venue) {
+        this.venue = venue;
     }
 
     public EventHelper.TYPE getEventType() {

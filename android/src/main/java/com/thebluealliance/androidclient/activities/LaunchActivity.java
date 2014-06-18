@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.util.regex.Matcher;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
  */
 public class LaunchActivity extends Activity implements View.OnClickListener {
 
-    private static final String ALL_DATA_LOADED = "all_data_loaded";
+    public static final String ALL_DATA_LOADED = "all_data_loaded";
 
     private DisableSwipeViewPager viewPager;
 
@@ -42,6 +43,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Database.getInstance(this);
+
         Log.d(Constants.LOG_TAG, "All data loaded? " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false));
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false)) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
