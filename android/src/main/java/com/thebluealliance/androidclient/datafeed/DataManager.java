@@ -221,18 +221,6 @@ public class DataManager {
             }
         }
 
-        public synchronized static APIResponse<ArrayList<SimpleEvent>> getSimpleEventsForTeamInYear(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
-            ArrayList<SimpleEvent> events = new ArrayList<>();
-            APIResponse<Team> response = Teams.getTeam(c, teamKey, year, loadFromCache);
-            JsonArray jsonEvents = response.getData().getEvents();
-            for (int i = 0; i < jsonEvents.size(); i++) {
-                JsonObject currentEvent = jsonEvents.get(i).getAsJsonObject();
-                SimpleEvent event = JSONManager.getGson().fromJson(currentEvent, SimpleEvent.class);
-                events.add(event);
-            }
-            return new APIResponse<>(events, response.getCode());
-        }
-
         public static synchronized APIResponse<ArrayList<Team>> getEventTeams(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
             ArrayList<Team> teams = new ArrayList<>();
             Log.d("event teams", "Fetching teams for " + eventKey);

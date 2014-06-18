@@ -66,9 +66,8 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Match>> matchResponse;
         try {
-            matchResponse = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
+            matchResponse = DataManager.Teams.getMatchesForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             ArrayList<Match> matches = matchResponse.getData(); //sorted by play order
-            matchResponse = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
             eventMatches = matchResponse.getData(); //sorted by play order
             matchGroups = MatchHelper.constructMatchList(activity, matches);
             int[] record = MatchHelper.getRecordForTeam(matches, teamKey);
@@ -116,7 +115,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Award>> awardResponse;
         try {
-            awardResponse = DataManager.Events.getEventAwards(activity, eventKey, teamKey, forceFromCache);
+            awardResponse = DataManager.Teams.getAwardsForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             ArrayList<Award> awardList = awardResponse.getData();
             awards = new ListGroup(activity.getString(R.string.tab_event_awards));
             awards.children.addAll(awardList);

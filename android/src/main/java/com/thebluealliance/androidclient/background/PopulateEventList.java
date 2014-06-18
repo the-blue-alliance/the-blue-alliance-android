@@ -93,7 +93,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             // Return a list of all events for a team for a given year
             try {
-                response = DataManager.Events.getSimpleEventsForTeamInYear(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
+                response = DataManager.Teams.getEventsForTeam(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
                     events = EventHelper.renderEventList(eventsArray);
