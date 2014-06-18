@@ -20,8 +20,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.datamanger.Events;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
@@ -63,7 +64,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         mMatchKey = params[0];
         mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
         try {
-            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.getEventResults(mActivity, mEventKey, forceFromCache);
+            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = Events.getEventResults(mActivity, mEventKey, forceFromCache);
             HashMap<MatchHelper.TYPE, ArrayList<Match>> matches = response.getData();
             // Extract the specified match from the list
             mMatch = null;

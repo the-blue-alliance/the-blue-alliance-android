@@ -135,8 +135,8 @@ public class Database extends SQLiteOpenHelper {
             // Clear the data-related shared prefs
             Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
             for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-                if (entry.getKey().toString().contains(DataManager.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
-                    entry.getKey().toString().contains(DataManager.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE))
+                if (entry.getKey().toString().contains(com.thebluealliance.androidclient.datafeed.datamanger.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
+                    entry.getKey().toString().contains(com.thebluealliance.androidclient.datafeed.datamanger.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE))
                 {
                     PreferenceManager.getDefaultSharedPreferences(context).edit().
                             remove(entry.getKey().toString()).commit();

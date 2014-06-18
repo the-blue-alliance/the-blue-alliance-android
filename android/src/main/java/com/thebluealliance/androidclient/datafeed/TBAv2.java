@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
 import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.SimpleTeam;
 
@@ -21,8 +22,12 @@ public class TBAv2 {
 
     public static enum QUERY {
         CSV_TEAMS,
-        TEAM, //TODO modify appropriately whenever teams get their own endpoint
         TEAM_LIST,
+        TEAM,
+        TEAM_EVENTS,
+        TEAM_EVENT_AWARDS,
+        TEAM_EVENT_MATCHES,
+        TEAM_YEARS_PARTICIPATED,
         TEAM_MEDIA,
         EVENT_LIST,
         EVENT_INFO,
@@ -38,8 +43,15 @@ public class TBAv2 {
     static {
         API_URL = new HashMap<>();
         API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
-        API_URL.put(QUERY.TEAM, "http://thebluealliance.com/api/v2/team/%s");
         API_URL.put(QUERY.TEAM_LIST, "http://thebluealliance.com/api/v2/teams/%s");
+
+        API_URL.put(QUERY.TEAM, "http://thebluealliance.com/api/v2/team/%s");
+        API_URL.put(QUERY.TEAM_EVENTS, "http://thebluealliance.com/api/v2/team/%s/%d/events");
+        API_URL.put(QUERY.TEAM_EVENT_AWARDS, "http://thebluealliance.com/api/v2/team/%s/event/%s/awards");
+        API_URL.put(QUERY.TEAM_EVENT_MATCHES, "http://thebluealliance.com/api/v2/team/%s/event/%s/matches");
+        API_URL.put(QUERY.TEAM_YEARS_PARTICIPATED, "http://thebluealliance.com/api/v2/team/%s/years_participated");
+        API_URL.put(QUERY.TEAM_MEDIA, "http://thebluealliance.com/api/v2/team/%s/%d/media");
+
         API_URL.put(QUERY.EVENT_INFO, "http://thebluealliance.com/api/v2/event/%s");
         API_URL.put(QUERY.EVENT_TEAMS, "http://thebluealliance.com/api/v2/event/%s/teams");
         API_URL.put(QUERY.EVENT_RANKS, "http://thebluealliance.com/api/v2/event/%s/rankings");
@@ -47,7 +59,6 @@ public class TBAv2 {
         API_URL.put(QUERY.EVENT_STATS, "http://thebluealliance.com/api/v2/event/%s/stats");
         API_URL.put(QUERY.EVENT_AWARDS, "http://thebluealliance.com/api/v2/event/%s/awards");
         API_URL.put(QUERY.EVENT_LIST, "http://thebluealliance.com/api/v2/events/%d");
-        API_URL.put(QUERY.TEAM_MEDIA, "http://thebluealliance.com/api/v2/team/%s/%d/media");
     }
 
     public static ArrayList<SimpleEvent> getEventList(String json) {
@@ -76,7 +87,7 @@ public class TBAv2 {
      * @param cacheInDatabase boolean - do we want to store the response locally if we need to load it from the web?
      * @param forceFromCache  (optional, defaults to FALSE). If set, the data exists locally, we won't query the web ever - just return what we have.
      * @return An APIRespnse containing the data we fetched from the internet
-     * @throws DataManager.NoDataException
+     * @throws com.thebluealliance.androidclient.datafeed.datamanger.DataManager.NoDataException
      */
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase, boolean forceFromCache) throws DataManager.NoDataException {
         if (c == null) {

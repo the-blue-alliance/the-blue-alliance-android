@@ -5,7 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.Events;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class DownloadEventList extends AsyncTask<Integer, Void, Set<String>> {
     protected Set<String> doInBackground(Integer... params) {
         try {
             Log.d(Constants.LOG_TAG, "Loading event list...");
-            return DataManager.getEventsByYear(c, params[0]).getData().keySet();
+            return Events.getEventsByYear(c, params[0]).getData().keySet();
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
             Log.d(Constants.LOG_TAG, "Loading failed!");

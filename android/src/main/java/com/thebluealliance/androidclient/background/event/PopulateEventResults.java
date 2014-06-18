@@ -13,7 +13,8 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.Events;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
@@ -74,7 +75,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         APIResponse<ArrayList<Match>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
-            response = DataManager.getMatchList(activity, eventKey, teamKey, forceFromCache);
+            response = Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
 
             ListGroup currentGroup = qualMatches;
@@ -131,7 +132,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);

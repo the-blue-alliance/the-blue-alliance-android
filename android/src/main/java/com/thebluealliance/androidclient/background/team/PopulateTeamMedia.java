@@ -12,7 +12,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.Teams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
@@ -60,7 +61,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
         APIResponse<ArrayList<Media>> response = null;
         try {
-            response = DataManager.getTeamMedia(activity, team, year, forceFromCache);
+            response = Teams.getTeamMedia(activity, team, year, forceFromCache);
             groups = new ArrayList<>();
             ListGroup cdPhotos = new ListGroup(activity.getString(R.string.cd_header)),
                     ytVideos = new ListGroup(activity.getString(R.string.yt_header));

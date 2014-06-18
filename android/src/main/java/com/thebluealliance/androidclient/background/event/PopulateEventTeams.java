@@ -13,7 +13,8 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.Events;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Team;
@@ -58,7 +59,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
         Log.d("load event teams: ", "event key: " + eventKey);
         try {
-            APIResponse<ArrayList<Team>> response = DataManager.getEventTeams(activity, eventKey, forceFromCache);
+            APIResponse<ArrayList<Team>> response = Events.getEventTeams(activity, eventKey, forceFromCache);
             ArrayList<Team> teamList = response.getData();
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {

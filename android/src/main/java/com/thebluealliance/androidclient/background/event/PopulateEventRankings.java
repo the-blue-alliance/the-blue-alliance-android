@@ -13,7 +13,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.Events;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
@@ -60,7 +61,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         teams = new ArrayList<>();
 
         try {
-            APIResponse<ArrayList<JsonArray>> response = DataManager.getEventRankings(activity, eventKey, forceFromCache);
+            APIResponse<ArrayList<JsonArray>> response = Events.getEventRankings(activity, eventKey, forceFromCache);
             ArrayList<JsonArray> rankList = response.getData();
             if (!rankList.isEmpty()) {
                 JsonArray headerRow = rankList.remove(0);

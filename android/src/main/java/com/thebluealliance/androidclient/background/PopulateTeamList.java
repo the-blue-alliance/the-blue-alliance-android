@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.datamanger.Teams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
@@ -50,7 +50,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         APIResponse<Cursor> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         if (!isCancelled()) {
             try {
-                response = DataManager.getCursorForSimpleTeamsInRange(activity, start, end);
+                response = Teams.getCursorForSimpleTeamsInRange(activity, start, end);
                 teams = response.getData();
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load team list");
