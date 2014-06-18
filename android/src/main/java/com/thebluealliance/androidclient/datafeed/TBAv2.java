@@ -13,6 +13,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -92,6 +93,16 @@ public class TBAv2 {
                 //and return our local content
 
                 APIResponse<String> cachedData = db.getResponse(URL);
+
+                Date now = new Date();
+                Date futureTime = new Date(cachedData.lastHit.getTime() + Constants.API_HIT_TIMEOUT);
+                System.out.println("cached: "+cachedData.lastHit+" future: "+futureTime);
+                if(now.before(futureTime)){
+                    //if isn't hasn't been longer than the timeout (1 minute now)
+                    //just return what we have in cache
+                    Log.d("datamanger", "Online; API call too fast, returning from cache");
+                    return cachedData.updateCode(APIResponse.CODE.CACHED304);
+                }
 
                 //we want whatever's in the cache. Forget everything else...
                 if(forceFromCache){

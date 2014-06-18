@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import java.util.Date;
+
 /**
  * File created by phil on 5/11/14.
  */
@@ -24,11 +26,20 @@ public class APIResponse<A>{
     A data;
     CODE code;
     String lastUpdate;
+    Date lastHit;
+
+    public APIResponse(A data, CODE code, String lastUpdate, Date lastHit) {
+        this.lastUpdate = lastUpdate;
+        this.data = data;
+        this.code = code;
+        this.lastHit = lastHit;
+    }
 
     public APIResponse(A data, CODE code, String lastUpdate) {
         this.lastUpdate = lastUpdate;
         this.data = data;
         this.code = code;
+        this.lastHit = new Date(); //default to now
     }
 
     public APIResponse(A data, CODE code) {
@@ -52,6 +63,14 @@ public class APIResponse<A>{
 
     public String getLastUpdate(){
         return lastUpdate;
+    }
+
+    public Date getLastHit() {
+        return lastHit;
+    }
+
+    public void setLastHit(Date lastHit) {
+        this.lastHit = lastHit;
     }
 
     public static CODE mergeCodes(CODE... codes){

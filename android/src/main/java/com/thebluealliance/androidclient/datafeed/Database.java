@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.models.SimpleTeam;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -25,7 +26,7 @@ import java.util.ArrayList;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -38,7 +39,8 @@ public class Database extends SQLiteOpenHelper {
     String CREATE_API = "CREATE TABLE " + TABLE_API + "("
             + Response.URL + " TEXT PRIMARY KEY, "
             + Response.RESPONSE + " TEXT, "
-            + Response.LASTUPDATE + " TIMESTAMP "
+            + Response.LASTUPDATE + " TIMESTAMP, "
+            + Response.LASTHIT + " TIMESTAMP "
             + ")";
     String CREATE_TEAMS = "CREATE TABLE " + TABLE_TEAMS + "("
             + Teams.KEY + " TEXT PRIMARY KEY, "
@@ -120,9 +122,10 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public class Response {
-        public static final String URL = "url",       //text
-                RESPONSE = "response",      //text
-                LASTUPDATE = "lastUpdated";    //timestamp
+        public static final String URL = "url", //text
+                RESPONSE = "response",          //text
+                LASTUPDATE = "lastUpdated",     //timestamp for Last-Modified from API
+                LASTHIT = "lastHit";           //last time we hit the API
     }
 
     public class Teams {
@@ -320,13 +323,14 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public APIResponse<String> getResponse(String url) {
-        Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE},
+        Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE, Response.LASTHIT},
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             String response = cursor.getString(1),
                    lastUpdate = cursor.getString(2);
+            long lastHit = cursor.getLong(3);
             cursor.close();
-            return new APIResponse<>(response, APIResponse.CODE.LOCAL, lastUpdate);
+            return new APIResponse<>(response, APIResponse.CODE.LOCAL, lastUpdate, new Date(lastHit));
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
             return null;
@@ -338,6 +342,7 @@ public class Database extends SQLiteOpenHelper {
         cv.put(Response.URL, url);
         cv.put(Response.RESPONSE, response);
         cv.put(Response.LASTUPDATE, updated);
+        cv.put(Response.LASTHIT, new Date().getTime());
         return db.insert(TABLE_API, null, cv);
     }
 
@@ -363,6 +368,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(Response.RESPONSE, response);
         cv.put(Response.LASTUPDATE, updated);
+        cv.put(Response.LASTHIT, new Date().getTime());
         return db.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
     }
 
