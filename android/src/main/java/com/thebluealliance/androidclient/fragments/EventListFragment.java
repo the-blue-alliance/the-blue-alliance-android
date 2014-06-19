@@ -79,9 +79,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
-        } else {
-            mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
-            mTask.execute();
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
