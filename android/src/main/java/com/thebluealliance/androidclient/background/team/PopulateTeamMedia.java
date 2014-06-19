@@ -61,6 +61,11 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         APIResponse<ArrayList<Media>> response = null;
         try {
             response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             groups = new ArrayList<>();
             ListGroup cdPhotos = new ListGroup(activity.getString(R.string.cd_header)),
                     ytVideos = new ListGroup(activity.getString(R.string.yt_header));
@@ -121,7 +126,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.team_media_list).setVisibility(View.VISIBLE);
 
-            if (code == APIResponse.CODE.LOCAL) {
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
                  * The data has the possibility of being updated, but we at first loaded
                  * what we have cached locally for performance reasons.

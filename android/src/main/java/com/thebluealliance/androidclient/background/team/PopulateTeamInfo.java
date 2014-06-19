@@ -61,6 +61,11 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         try {
             Long start = System.nanoTime();
             APIResponse<Team> teamResponse = DataManager.Teams.getTeam(activity, mTeamKey, forceFromCache);
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             Team team = teamResponse.getData();
             Long end = System.nanoTime();
             Log.d("doInBackground", "Total time to load team: " + (end - start));
@@ -153,7 +158,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

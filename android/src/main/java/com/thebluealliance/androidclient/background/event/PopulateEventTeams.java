@@ -60,6 +60,11 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
         try {
             APIResponse<ArrayList<Team>> response = DataManager.Events.getEventTeams(activity, eventKey, forceFromCache);
             ArrayList<Team> teamList = response.getData();
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             Collections.sort(teamList, new TeamSortByNumberComparator());
             for (Team t : teamList) {
                 teams.add(t.render(true));
@@ -101,7 +106,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

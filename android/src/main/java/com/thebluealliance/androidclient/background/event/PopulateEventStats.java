@@ -65,6 +65,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             // Retrieve the data
             APIResponse<JsonObject> response = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
             JsonObject stats = response.getData();
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             ArrayList<Map.Entry<String, JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
@@ -159,7 +164,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

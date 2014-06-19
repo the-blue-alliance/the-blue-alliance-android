@@ -62,6 +62,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         try {
             APIResponse<ArrayList<JsonArray>> response = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
             ArrayList<JsonArray> rankList = response.getData();
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
             if (!rankList.isEmpty()) {
                 JsonArray headerRow = rankList.remove(0);
                 for (JsonArray row : rankList) {
@@ -152,7 +155,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

@@ -97,7 +97,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

@@ -77,6 +77,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             response = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
 
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             ListGroup currentGroup = qualMatches;
             MatchHelper.TYPE lastType = null;
             Match previousIteration = null;
@@ -187,7 +191,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             }
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

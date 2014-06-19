@@ -81,6 +81,11 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             // Return a list of all events for a week in a given year
             try {
                 response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
+
+                if(isCancelled()){
+                    return APIResponse.CODE.NODATA;
+                }
+
                 ArrayList<SimpleEvent> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
                     events = EventHelper.renderEventList(eventData);
@@ -138,7 +143,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
-            if (code == APIResponse.CODE.LOCAL) {
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
                  * The data has the possibility of being updated, but we at first loaded
                  * what we have cached locally for performance reasons.

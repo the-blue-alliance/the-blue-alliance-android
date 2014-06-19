@@ -88,6 +88,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
                 event = eventResponse.getData();
                 //return response.getCode();
+                if(isCancelled()){
+                    return APIResponse.CODE.NODATA;
+                }
             } catch (DataManager.NoDataException e) {
                 Log.w(Constants.LOG_TAG, "unable to load event info");
                 return APIResponse.CODE.NODATA;
@@ -112,6 +115,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         }
                     }
                     ranks.setText(rankString);
+                    if(isCancelled()){
+                        return APIResponse.CODE.NODATA;
+                    }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "Unable to load event rankings");
                     showRanks = false;
@@ -142,6 +148,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     } else {
                         showStats = false;
                     }
+                    if(isCancelled()){
+                        return APIResponse.CODE.NODATA;
+                    }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to load event stats");
                     showStats = false;
@@ -166,6 +175,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showLastMatch = true;
                         last = lastMatch.render().getView(activity, inflater, null);
                     }
+                    if(isCancelled()){
+                        return APIResponse.CODE.NODATA;
+                    }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to load match list");
                     return APIResponse.CODE.NODATA;
@@ -180,6 +192,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
             view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
         }
+
         return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), matchResult.getCode(), statsResponse.getCode());
     }
 
@@ -255,7 +268,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
             }
 
-            if (c == APIResponse.CODE.LOCAL) {
+            if (c == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
                  * The data has the possibility of being updated, but we at first loaded
                  * what we have cached locally for performance reasons.
