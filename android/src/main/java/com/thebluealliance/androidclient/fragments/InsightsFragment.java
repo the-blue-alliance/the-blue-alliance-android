@@ -49,4 +49,10 @@ public class InsightsFragment extends Fragment implements RefreshListener {
     public void onRefreshStop() {
 
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
 }

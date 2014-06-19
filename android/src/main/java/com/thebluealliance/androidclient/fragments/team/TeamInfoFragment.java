@@ -101,4 +101,10 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
             task.cancel(false);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
 }

@@ -144,7 +144,6 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
         }
-        fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         // This must be done before we lose the drawer
         mCurrentSelectedNavigationItemId = id;

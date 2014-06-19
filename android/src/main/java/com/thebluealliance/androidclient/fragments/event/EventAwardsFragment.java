@@ -116,4 +116,10 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
             mTask.cancel(false);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
 }

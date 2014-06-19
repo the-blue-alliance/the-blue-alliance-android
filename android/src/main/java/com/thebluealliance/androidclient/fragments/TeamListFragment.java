@@ -2,12 +2,12 @@ package com.thebluealliance.androidclient.fragments;
 
 
 import android.app.Activity;
-import android.support.v4.app.LoaderManager;
 import android.content.Intent;
-import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +21,11 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateTeamList;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
+import com.thebluealliance.androidclient.background.PopulateTeamList;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * File created by phil on 4/20/14.
@@ -144,5 +142,11 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
         if (mTask != null) {
             mTask.cancel(false);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
     }
 }

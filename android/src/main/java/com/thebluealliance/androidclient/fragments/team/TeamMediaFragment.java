@@ -85,4 +85,10 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
             task.cancel(false);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
 }

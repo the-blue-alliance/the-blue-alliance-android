@@ -116,4 +116,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             }
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
 }

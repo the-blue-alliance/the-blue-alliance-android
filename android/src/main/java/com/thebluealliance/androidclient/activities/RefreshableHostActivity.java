@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -31,6 +33,9 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
+        if(mRefreshInProgress) {
+            showMenuProgressBar();
+        }
         return true;
     }
 
@@ -122,6 +127,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             //if a refresh is already happening, don't start another
             return;
         }
+        Log.d(Constants.LOG_TAG, "Refresh listeners: " + mRefreshListeners.size());
         mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
             return;

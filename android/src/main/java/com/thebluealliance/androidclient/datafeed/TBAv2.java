@@ -94,8 +94,10 @@ public class TBAv2 {
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
         }
         Log.d("datamanager", "Loading URL: " + URL);
-        Database db = Database.getInstance(c);
-        boolean existsInDb = db.responseExists(URL);
+        boolean existsInDb;
+        synchronized (Database.getInstance(c)) {
+            existsInDb = Database.getInstance(c).responseExists(URL);
+        }
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
         if (existsInDb) {
             if (connectedToInternet) {
@@ -103,7 +105,10 @@ public class TBAv2 {
                 //query the API - if it returns 304-Not-Modified, then query the database
                 //and return our local content
 
-                APIResponse<String> cachedData = db.getResponse(URL);
+                APIResponse<String> cachedData;
+                synchronized (Database.getInstance(c)) {
+                    cachedData = Database.getInstance(c).getResponse(URL);
+                }
 
                 Date now = new Date();
                 Date futureTime = new Date(cachedData.lastHit.getTime() + Constants.API_HIT_TIMEOUT);
@@ -134,20 +139,26 @@ public class TBAv2 {
                         lastUpdate = lastModified.getValue();
                     }
                     if (cacheInDatabase) {
-                        db.updateResponse(URL, response, lastUpdate);
+                        synchronized (Database.getInstance(c)) {
+                            Database.getInstance(c).updateResponse(URL, response, lastUpdate);
+                        }
                     }
                     Log.d("datamanager", "Online; updated from internet");
                     return new APIResponse<>(response, APIResponse.CODE.UPDATED);
                 } else {
                     if(cacheInDatabase) {
-                        db.touchResponse(URL);
+                        synchronized (Database.getInstance(c)) {
+                            Database.getInstance(c).touchResponse(URL);
+                        }
                     }
                     Log.d("datamanager", "Online; no update required, loaded from database");
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
             } else {
                 Log.d("datamanager", "Offline; loaded from database");
-                return db.getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
+                synchronized (Database.getInstance(c)) {
+                    return Database.getInstance(c).getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
+                }
             }
         } else {
             if (connectedToInternet) {
@@ -161,7 +172,9 @@ public class TBAv2 {
                 }
 
                 if (cacheInDatabase) {
-                    db.storeResponse(URL, response, lastUpdate);
+                    synchronized (Database.getInstance(c)) {
+                        Database.getInstance(c).storeResponse(URL, response, lastUpdate);
+                    }
                 }
                 Log.d("datamanager", "Online; loaded from internet");
                 return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);

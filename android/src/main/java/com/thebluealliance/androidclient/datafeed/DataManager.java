@@ -83,59 +83,62 @@ public class DataManager {
                     teamListResponseCodes.add(teamListResponse.getCode());
 
                     ArrayList<SimpleTeam> teams = TBAv2.getTeamList(teamListResponse.getData());
-                    Database.getInstance(c).storeTeams(teams);
+                    synchronized (Database.getInstance(c)) {
+                        Database.getInstance(c).storeTeams(teams);
+                    }
                     if (teamListResponse.getCode() != APIResponse.CODE.NODATA) {
                         //only update preference if actual data was loaded
                         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true).commit();
                     }
                 }
             }
-
-            cursor = Database.getInstance(c).getCursorForTeamsInRange(lowerBound, upperBound);
+            synchronized (Database.getInstance(c)) {
+                cursor = Database.getInstance(c).getCursorForTeamsInRange(lowerBound, upperBound);
+            }
             APIResponse.CODE[] a = new APIResponse.CODE[teamListResponseCodes.size()];
 
             return new APIResponse<>(cursor, APIResponse.mergeCodes(teamListResponseCodes.toArray(a)));
         }
 
-        public synchronized static APIResponse<ArrayList<String>> getYearsParticipated(Context c, String teamKey, boolean loadFromCache) throws NoDataException{
+        public synchronized static APIResponse<ArrayList<String>> getYearsParticipated(Context c, String teamKey, boolean loadFromCache) throws NoDataException {
             ArrayList<String> output = new ArrayList<>();
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_YEARS_PARTICIPATED), teamKey);
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, apiUrl, true, loadFromCache);
             JsonArray yearsArray = JSONManager.getasJsonArray(response.getData());
-            for(JsonElement year: yearsArray){
+            for (JsonElement year : yearsArray) {
                 output.add(year.getAsString());
             }
             return new APIResponse<>(output, response.getCode());
         }
 
-        public synchronized static APIResponse<ArrayList<SimpleEvent>> getEventsForTeam(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException{
+        public synchronized static APIResponse<ArrayList<SimpleEvent>> getEventsForTeam(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
             ArrayList<SimpleEvent> output = new ArrayList<>();
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENTS), teamKey, year);
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, apiUrl, true, loadFromCache);
             JsonArray eventsArray = JSONManager.getasJsonArray(response.getData());
-            for(JsonElement event: eventsArray){
+            for (JsonElement event : eventsArray) {
                 output.add(JSONManager.getGson().fromJson(event, SimpleEvent.class));
             }
             return new APIResponse<>(output, response.getCode());
         }
 
-        public synchronized static APIResponse<ArrayList<Match>> getMatchesForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException{
+        public synchronized static APIResponse<ArrayList<Match>> getMatchesForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             ArrayList<Match> output = new ArrayList<>();
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_MATCHES), teamKey, eventKey);
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, apiUrl, true, loadFromCache);
             JsonArray matchesArray = JSONManager.getasJsonArray(response.getData());
-            for(JsonElement match: matchesArray){
+            for (JsonElement match : matchesArray) {
                 output.add(JSONManager.getGson().fromJson(match, Match.class));
             }
             return new APIResponse<>(output, response.getCode());
         }
 
-        public synchronized static APIResponse<ArrayList<Award>> getAwardsForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException{
+        public synchronized static APIResponse<ArrayList<Award>> getAwardsForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             ArrayList<Award> output = new ArrayList<>();
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_AWARDS), teamKey, eventKey);
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, apiUrl, true, loadFromCache);
             JsonArray awardsArray = JSONManager.getasJsonArray(response.getData());
-            for(JsonElement award: awardsArray){
+            for (JsonElement award : awardsArray) {
                 output.add(JSONManager.getGson().fromJson(award, Award.class));
             }
             return new APIResponse<>(output, response.getCode());
@@ -204,13 +207,17 @@ public class DataManager {
                 //TODO check for updates and update response accordingly
                 if (allEventsLoaded) {
                     Log.d("get events for week", "loading from db");
-                    events = Database.getInstance(c).getEventsInYear(year);
+                    synchronized (Database.getInstance(c)) {
+                        events = Database.getInstance(c).getEventsInYear(year);
+                    }
                     eventListResponse = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
                     groupedEvents = SimpleEvent.groupByWeek(events);
                 } else {
                     eventListResponse = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_LIST), year), false, false);
                     events = TBAv2.getEventList(eventListResponse.getData());
-                    Database.getInstance(c).storeEvents(events);
+                    synchronized (Database.getInstance(c)) {
+                        Database.getInstance(c).storeEvents(events);
+                    }
                     groupedEvents = SimpleEvent.groupByWeek(events);
                     if (eventListResponse.getCode() != APIResponse.CODE.NODATA) {
                         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true).commit();

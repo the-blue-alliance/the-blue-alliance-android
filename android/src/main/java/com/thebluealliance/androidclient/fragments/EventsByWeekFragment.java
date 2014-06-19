@@ -49,6 +49,8 @@ public class EventsByWeekFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
+        // Make this ridiculously big
+        mViewPager.setOffscreenPageLimit(50);
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         final Context c = getActivity();
         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
