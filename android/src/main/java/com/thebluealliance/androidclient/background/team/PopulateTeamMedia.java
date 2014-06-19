@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.background.team;
 
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
