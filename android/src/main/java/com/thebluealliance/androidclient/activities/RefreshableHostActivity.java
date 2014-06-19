@@ -51,6 +51,12 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cancelRefresh();
+    }
+
     public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
         if (listener != null && !mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
