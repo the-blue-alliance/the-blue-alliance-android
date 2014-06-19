@@ -9,7 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
+import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -130,7 +130,7 @@ public class DataManager {
             for (JsonElement match : matchesArray) {
                 output.add(JSONManager.getGson().fromJson(match, Match.class));
             }
-            Collections.sort(output, new MatchSortByPlayOrderComparator());
+            Collections.sort(output, new MatchSortByDisplayOrderComparator());
             return new APIResponse<>(output, response.getCode());
         }
 
@@ -283,7 +283,7 @@ public class DataManager {
                     results.add(match);
                 }
             }
-            Collections.sort(results, new MatchSortByPlayOrderComparator());
+            Collections.sort(results, new MatchSortByDisplayOrderComparator());
             return new APIResponse<>(results, response.getCode());
         }
 

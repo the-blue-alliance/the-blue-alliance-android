@@ -162,6 +162,9 @@ public class Match implements BasicModel {
         return getTitle(false);
     }
 
+    public Integer getDisplayOrder() {
+        return MatchHelper.PLAY_ORDER.get(type) * 1000000 + setNumber * 1000 + matchNumber;
+    }
     public Integer getPlayOrder() {
         return MatchHelper.PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
     }
