@@ -274,7 +274,7 @@ public class Match implements BasicModel {
             blueAlliance = new String[]{"", "", ""};
         }
 
-        return new MatchListElement(youTubeVideoKey, getTitle(),
+        return new MatchListElement(youTubeVideoKey, getTitle(true),
                 redAlliance, blueAlliance,
                 redScore, blueScore, key, selectedTeam);
     }
