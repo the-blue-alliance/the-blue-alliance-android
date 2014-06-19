@@ -134,6 +134,10 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
         }
     }
 
+    public void updateTask(PopulateEventRankings newTask){
+        mTask = newTask;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

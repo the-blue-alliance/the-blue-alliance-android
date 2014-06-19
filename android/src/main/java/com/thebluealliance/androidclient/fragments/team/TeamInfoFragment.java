@@ -102,6 +102,10 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
+    public void updateTask(PopulateTeamInfo newTask){
+        task = newTask;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

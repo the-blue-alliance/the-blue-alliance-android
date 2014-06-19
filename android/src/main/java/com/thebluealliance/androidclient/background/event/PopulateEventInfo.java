@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Event;
@@ -39,7 +40,7 @@ import java.util.Map;
  */
 public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private EventInfoFragment mFragment;
     private RefreshableHostActivity activity;
     View last, next;
     LinearLayout nextLayout, lastLayout, topTeams, topOpr;
@@ -48,7 +49,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
-    public PopulateEventInfo(Fragment f, boolean forceFromCache) {
+    public PopulateEventInfo(EventInfoFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -274,7 +275,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateEventInfo(mFragment, false).execute(eventKey);
+                PopulateEventInfo secondLoad = new PopulateEventInfo(mFragment, false);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey);
             } else {
                 // Show notification if we've refreshed data.
                 if (mFragment instanceof RefreshListener) {

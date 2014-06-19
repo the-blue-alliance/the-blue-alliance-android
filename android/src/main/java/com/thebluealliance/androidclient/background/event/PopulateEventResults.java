@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
  */
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private EventResultsFragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
     private String teamKey;
@@ -43,7 +44,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     Match nextMatch, lastMatch;
     Event event;
 
-    public PopulateEventResults(Fragment f, boolean forceFromCache) {
+    public PopulateEventResults(EventResultsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -197,7 +198,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateEventResults(mFragment, false).execute(eventKey, teamKey);
+            PopulateEventResults secondLoad;
+            secondLoad =  new PopulateEventResults(mFragment, false);
+            mFragment.updateTask(secondLoad);
+            secondLoad.execute(eventKey, teamKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {

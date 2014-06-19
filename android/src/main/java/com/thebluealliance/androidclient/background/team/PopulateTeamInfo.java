@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Match;
@@ -31,7 +32,7 @@ import java.util.Collections;
  */
 public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private TeamInfoFragment mFragment;
     private RefreshableHostActivity activity;
     private String mTeamName;
     private int mTeamNumber;
@@ -43,7 +44,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private ArrayList<Match> matches;
     private boolean mIsCurrentlyCompeting, forceFromCache;
 
-    public PopulateTeamInfo(Fragment fragment, boolean forceFromCache) {
+    public PopulateTeamInfo(TeamInfoFragment fragment, boolean forceFromCache) {
         mFragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -164,7 +165,9 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateTeamInfo(mFragment, false).execute(mTeamKey);
+            PopulateTeamInfo secondLoad = new PopulateTeamInfo(mFragment, false);
+            mFragment.updateTask(secondLoad);
+            secondLoad.execute(mTeamKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {

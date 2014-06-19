@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
@@ -35,13 +36,13 @@ import java.util.Set;
  */
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private EventRankingsFragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
     private boolean forceFromCache;
 
-    public PopulateEventRankings(Fragment f, boolean forceFromCache) {
+    public PopulateEventRankings(EventRankingsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -161,7 +162,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateEventRankings(mFragment, false).execute(eventKey);
+            PopulateEventRankings secondLoad = new PopulateEventRankings(mFragment, false);
+            mFragment.updateTask(secondLoad);
+            secondLoad.execute(eventKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {

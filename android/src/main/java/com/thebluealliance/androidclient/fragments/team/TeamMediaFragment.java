@@ -86,6 +86,10 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
         }
     }
 
+    public void updateTask(PopulateTeamMedia newTask){
+        task = newTask;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

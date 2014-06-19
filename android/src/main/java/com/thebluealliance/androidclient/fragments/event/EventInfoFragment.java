@@ -92,6 +92,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         }
     }
 
+    public void updateTask(PopulateEventInfo newTask){
+        task = newTask;
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
