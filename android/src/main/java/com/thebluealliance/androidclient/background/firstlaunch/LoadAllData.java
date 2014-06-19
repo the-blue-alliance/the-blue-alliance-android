@@ -74,7 +74,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_events), Integer.toString(year))));
                 APIResponse<String> eventListResponse;
-                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://thebluealliance.com/api/v2/events/" + year, true, false);
+                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://www.thebluealliance.com/api/v2/events/" + year, true, false);
                 JsonElement responseObject = new JsonParser().parse(eventListResponse.getData());
                 if (responseObject instanceof JsonObject) {
                     if (((JsonObject) responseObject).has("404")) {
