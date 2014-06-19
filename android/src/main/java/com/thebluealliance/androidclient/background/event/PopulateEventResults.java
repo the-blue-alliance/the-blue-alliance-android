@@ -138,6 +138,11 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         try {
             eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
