@@ -113,14 +113,6 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
 
-        // Setup the action bar
-        resetActionBar();
-        if (mSelectedTab == 0) {
-            setupActionBar();
-        } else {
-            setupActionBarForYear();
-        }
-
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
@@ -159,7 +151,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupActionBarForYear(){
+    private void setupActionBarForYear() {
         new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
     }
 
@@ -176,7 +168,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         int id = item.getItemId();
         if (id == android.R.id.home) {
             Intent upIntent = NavUtils.getParentActivityIntent(this);
-            if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
             } else {
                 Log.d(Constants.LOG_TAG, "Navigating up...");
@@ -248,5 +240,10 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     public int getCurrentSelectedYearPosition() {
         return mCurrentSelectedYearPosition;
+    }
+
+
+    public void setDropdownItems(String[] items) {
+        this.dropdownItems = items;
     }
 }

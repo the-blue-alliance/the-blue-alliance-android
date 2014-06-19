@@ -20,7 +20,7 @@ import java.util.HashMap;
 /**
  * File created by phil on 6/18/14.
  */
-public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIResponse.CODE> {
+public class MakeActionBarDropdownForTeam extends AsyncTask<String, String[], APIResponse.CODE> {
 
     private ViewTeamActivity activity;
     private String teamKey;
@@ -55,6 +55,7 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
                 Collections.reverse(yearsResponse.getData());
                 String[] years = yearsResponse.getData().toArray(new String[yearsResponse.getData().size()]);
                 yearsByTeam.put(teamKey, years);
+                publishProgress(years);
                 return yearsResponse.getCode();
             } catch (DataManager.NoDataException e) {
                 Log.w(Constants.LOG_TAG, "Unable to fetch years participated for "+teamKey);
@@ -62,6 +63,11 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
             }
         }
         return APIResponse.CODE.LOCAL;
+    }
+
+    @Override
+    protected void onProgressUpdate(String[]... values){
+        this.activity.setDropdownItems(values[0]);
     }
 
     @Override
