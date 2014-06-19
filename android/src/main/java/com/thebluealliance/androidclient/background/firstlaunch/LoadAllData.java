@@ -88,6 +88,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
 
             // If no exception has been thrown at this point, we have all the data. We can now
             // insert it into the database.
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, activity.getString(R.string.loading_almost_finished)));
             Database.getInstance(activity).storeTeams(teams);
             Database.getInstance(activity).storeEvents(events);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
