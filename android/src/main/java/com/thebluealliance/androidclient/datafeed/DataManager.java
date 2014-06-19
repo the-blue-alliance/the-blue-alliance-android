@@ -127,6 +127,7 @@ public class DataManager {
             for(JsonElement match: matchesArray){
                 output.add(JSONManager.getGson().fromJson(match, Match.class));
             }
+            Collections.sort(output, new MatchSortByPlayOrderComparator());
             return new APIResponse<>(output, response.getCode());
         }
 
