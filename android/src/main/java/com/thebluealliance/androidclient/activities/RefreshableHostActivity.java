@@ -92,8 +92,10 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             mCompletedRefreshListeners.add(completedListener);
         }
 
-        onRefreshComplete();
-        mCompletedRefreshListeners.clear();
+        if(mCompletedRefreshListeners.size() >= mRefreshListeners.size()) {
+            onRefreshComplete();
+            mCompletedRefreshListeners.clear();
+        }
     }
 
     /*
@@ -167,7 +169,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         }
     }
 
-    public void hideMenuProgressBar() {
+    private void hideMenuProgressBar() {
         if (mOptionsMenu != null) {
             // Hide refresh indicator
             MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
