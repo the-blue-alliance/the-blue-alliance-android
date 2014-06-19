@@ -139,6 +139,7 @@ public class TBAv2 {
                     Log.d("datamanager", "Online; updated from internet");
                     return new APIResponse<>(response, APIResponse.CODE.UPDATED);
                 } else {
+                    db.touchResponse(URL);
                     Log.d("datamanager", "Online; no update required, loaded from database");
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
