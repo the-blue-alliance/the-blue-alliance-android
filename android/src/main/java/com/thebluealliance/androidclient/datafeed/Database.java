@@ -430,9 +430,13 @@ public class Database extends SQLiteOpenHelper {
      * @return update code
      */
     public int touchResponse(String url){
-        ContentValues cv = new ContentValues();
-        cv.put(Response.LASTHIT, new Date().getTime());
-        return db.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
+        if(responseExists(url)) {
+            ContentValues cv = new ContentValues();
+            cv.put(Response.LASTHIT, new Date().getTime());
+            return db.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
+        }else{
+            return -1;
+        }
     }
 
     public long insertSearchItemTeam(Team team) {
