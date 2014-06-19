@@ -169,7 +169,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
                 Log.d(Constants.LOG_TAG, "Event Rankings refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
+                activity.notifyRefreshComplete(mFragment);
             }
         }
     }

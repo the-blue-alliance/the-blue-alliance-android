@@ -111,7 +111,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
                 Log.d(Constants.LOG_TAG, "Event Awards refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
+                activity.notifyRefreshComplete(mFragment);
             }
         }
     }

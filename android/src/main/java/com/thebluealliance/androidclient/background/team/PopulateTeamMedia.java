@@ -139,7 +139,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             } else {
                 // Show notification if we've refreshed data.
                 if (fragment instanceof RefreshListener) {
-                    activity.notifyRefreshComplete((RefreshListener) fragment);
+                    activity.notifyRefreshComplete(fragment);
                 }
             }
         }

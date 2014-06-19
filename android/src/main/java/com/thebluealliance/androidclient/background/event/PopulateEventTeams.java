@@ -120,7 +120,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
                 Log.d(Constants.LOG_TAG, "Event Teams refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
+                activity.notifyRefreshComplete(mFragment);
             }
         }
     }
