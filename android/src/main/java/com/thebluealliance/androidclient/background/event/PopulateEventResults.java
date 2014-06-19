@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
  */
 public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private EventResultsFragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
     private String teamKey;
@@ -43,7 +44,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     Match nextMatch, lastMatch;
     Event event;
 
-    public PopulateEventResults(Fragment f, boolean forceFromCache) {
+    public PopulateEventResults(EventResultsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -76,6 +77,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         try {
             response = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
 
             ListGroup currentGroup = qualMatches;
             MatchHelper.TYPE lastType = null;
@@ -133,6 +138,11 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         try {
             eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
@@ -187,18 +197,21 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             }
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateEventResults(mFragment, false).execute(eventKey, teamKey);
+            PopulateEventResults secondLoad;
+            secondLoad =  new PopulateEventResults(mFragment, false);
+            mFragment.updateTask(secondLoad);
+            secondLoad.execute(eventKey, teamKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
                 Log.d(Constants.LOG_TAG, "Event Results refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
+                activity.notifyRefreshComplete(mFragment);
             }
         }
     }

@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
@@ -37,13 +38,13 @@ import java.util.Map;
  */
 public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private EventStatsFragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
     private boolean forceFromCache;
 
-    public PopulateEventStats(Fragment f, boolean forceFromCache) {
+    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -65,6 +66,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             // Retrieve the data
             APIResponse<JsonObject> response = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
             JsonObject stats = response.getData();
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             ArrayList<Map.Entry<String, JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
@@ -159,18 +165,20 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateEventStats(mFragment, false).execute(eventKey);
+            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false);
+            mFragment.updateTask(secondLoad);
+            secondLoad.execute(eventKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
                 Log.d(Constants.LOG_TAG, "Event Stats refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
+                activity.notifyRefreshComplete(mFragment);
             }
         }
     }

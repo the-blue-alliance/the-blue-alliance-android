@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.Event;
@@ -39,7 +40,7 @@ import java.util.Map;
  */
 public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private EventInfoFragment mFragment;
     private RefreshableHostActivity activity;
     View last, next;
     LinearLayout nextLayout, lastLayout, topTeams, topOpr;
@@ -48,7 +49,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
-    public PopulateEventInfo(Fragment f, boolean forceFromCache) {
+    public PopulateEventInfo(EventInfoFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -88,6 +89,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
                 event = eventResponse.getData();
                 //return response.getCode();
+                if(isCancelled()){
+                    return APIResponse.CODE.NODATA;
+                }
             } catch (DataManager.NoDataException e) {
                 Log.w(Constants.LOG_TAG, "unable to load event info");
                 return APIResponse.CODE.NODATA;
@@ -112,6 +116,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         }
                     }
                     ranks.setText(rankString);
+                    if(isCancelled()){
+                        return APIResponse.CODE.NODATA;
+                    }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "Unable to load event rankings");
                     showRanks = false;
@@ -142,6 +149,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     } else {
                         showStats = false;
                     }
+                    if(isCancelled()){
+                        return APIResponse.CODE.NODATA;
+                    }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to load event stats");
                     showStats = false;
@@ -166,6 +176,9 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showLastMatch = true;
                         last = lastMatch.render().getView(activity, inflater, null);
                     }
+                    if(isCancelled()){
+                        return APIResponse.CODE.NODATA;
+                    }
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to load match list");
                     return APIResponse.CODE.NODATA;
@@ -180,6 +193,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
             view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
         }
+
         return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), matchResult.getCode(), statsResponse.getCode());
     }
 
@@ -255,18 +269,20 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
             }
 
-            if (c == APIResponse.CODE.LOCAL) {
+            if (c == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
                  * The data has the possibility of being updated, but we at first loaded
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateEventInfo(mFragment, false).execute(eventKey);
+                PopulateEventInfo secondLoad = new PopulateEventInfo(mFragment, false);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey);
             } else {
                 // Show notification if we've refreshed data.
                 if (mFragment instanceof RefreshListener) {
                     Log.d(Constants.LOG_TAG, "Event Info refresh complete");
-                    activity.notifyRefreshComplete((RefreshListener) mFragment);
+                    activity.notifyRefreshComplete(mFragment);
                 }
             }
         }

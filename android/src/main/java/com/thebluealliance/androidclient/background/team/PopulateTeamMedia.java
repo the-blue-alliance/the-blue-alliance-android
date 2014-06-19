@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
@@ -30,14 +31,14 @@ import java.util.ArrayList;
  */
 public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE> {
 
-    private Fragment fragment;
+    private TeamMediaFragment fragment;
     private RefreshableHostActivity activity;
     private String team;
     private int year;
     ArrayList<ListGroup> groups;
     private boolean forceFromCache;
 
-    public PopulateTeamMedia(Fragment f, boolean forceFromCache) {
+    public PopulateTeamMedia(TeamMediaFragment f, boolean forceFromCache) {
         fragment = f;
         activity = (RefreshableHostActivity) f.getActivity();
         this.forceFromCache = forceFromCache;
@@ -61,6 +62,11 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         APIResponse<ArrayList<Media>> response = null;
         try {
             response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             groups = new ArrayList<>();
             ListGroup cdPhotos = new ListGroup(activity.getString(R.string.cd_header)),
                     ytVideos = new ListGroup(activity.getString(R.string.yt_header));
@@ -121,17 +127,19 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.team_media_list).setVisibility(View.VISIBLE);
 
-            if (code == APIResponse.CODE.LOCAL) {
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
                  * The data has the possibility of being updated, but we at first loaded
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateTeamMedia(fragment, false).execute(team, year);
+                PopulateTeamMedia secondLoad = new PopulateTeamMedia(fragment, false);
+                fragment.updateTask(secondLoad);
+                secondLoad.execute(team, year);
             } else {
                 // Show notification if we've refreshed data.
                 if (fragment instanceof RefreshListener) {
-                    activity.notifyRefreshComplete((RefreshListener) fragment);
+                    activity.notifyRefreshComplete(fragment);
                 }
             }
         }

@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -31,14 +32,14 @@ import java.util.ArrayList;
  */
 public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Fragment mFragment;
+    private EventAwardsFragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> awards;
     private ListViewAdapter adapter;
     private boolean forceFromCache;
 
-    public PopulateEventAwards(Fragment f, boolean forceFromCache) {
+    public PopulateEventAwards(EventAwardsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -97,18 +98,20 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateEventAwards(mFragment, false).execute(eventKey);
+            PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, false);
+            mFragment.updateTask(secondLoad);
+            secondLoad.execute(eventKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
                 Log.d(Constants.LOG_TAG, "Event Awards refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) mFragment);
+                activity.notifyRefreshComplete(mFragment);
             }
         }
     }

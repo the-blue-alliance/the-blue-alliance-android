@@ -65,6 +65,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         try {
             APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.Events.getEventResults(mActivity, mEventKey, forceFromCache);
             HashMap<MatchHelper.TYPE, ArrayList<Match>> matches = response.getData();
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             // Extract the specified match from the list
             mMatch = null;
             for (Map.Entry<MatchHelper.TYPE, ArrayList<Match>> matchListEntry : matches.entrySet()) {
@@ -247,7 +252,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

@@ -79,9 +79,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
-        } else {
-            mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
-            mTask.execute();
         }
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -148,5 +145,11 @@ public class EventListFragment extends Fragment implements RefreshListener {
         if (mTask != null) {
             mTask.cancel(false);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
     }
 }

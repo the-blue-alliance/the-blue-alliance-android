@@ -67,6 +67,11 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         APIResponse<ArrayList<Match>> matchResponse;
         try {
             matchResponse = DataManager.Teams.getMatchesForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             ArrayList<Match> matches = matchResponse.getData(); //sorted by play order
             eventMatches = matchResponse.getData(); //sorted by play order
             matchGroups = MatchHelper.constructMatchList(activity, matches);
@@ -81,6 +86,9 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         try {
             eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
@@ -108,6 +116,9 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         try {
             rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             rank = rankResponse.getData();
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch ranking data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
@@ -119,6 +130,9 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             ArrayList<Award> awardList = awardResponse.getData();
             awards = new ListGroup(activity.getString(R.string.tab_event_awards));
             awards.children.addAll(awardList);
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch award data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
@@ -128,6 +142,11 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         try {
             statsResponse = DataManager.Events.getEventStats(activity, eventKey, teamKey, forceFromCache);
             JsonObject statData = statsResponse.getData();
+
+            if(isCancelled()){
+                return APIResponse.CODE.NODATA;
+            }
+
             String statString = "";
             if (statData.has("opr")) {
                 statString += activity.getString(R.string.opr) + " " + Stat.displayFormat.format(statData.get("opr").getAsDouble());
@@ -197,7 +216,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             }
         }
 
-        if (code == APIResponse.CODE.LOCAL) {
+        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
             /**
              * The data has the possibility of being updated, but we at first loaded
              * what we have cached locally for performance reasons.

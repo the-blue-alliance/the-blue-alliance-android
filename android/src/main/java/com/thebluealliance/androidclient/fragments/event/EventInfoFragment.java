@@ -92,6 +92,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         }
     }
 
+    public void updateTask(PopulateEventInfo newTask){
+        task = newTask;
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -115,5 +119,11 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
     }
 }

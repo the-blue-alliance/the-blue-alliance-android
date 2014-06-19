@@ -113,4 +113,14 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
             mTask.cancel(false);
         }
     }
+
+    public void updateTask(PopulateEventTeams newTask){
+        mTask = newTask;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
 }

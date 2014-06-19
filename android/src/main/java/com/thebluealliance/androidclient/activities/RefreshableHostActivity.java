@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -31,6 +33,9 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
+        if(mRefreshInProgress) {
+            showMenuProgressBar();
+        }
         return true;
     }
 
@@ -49,6 +54,12 @@ public abstract class RefreshableHostActivity extends BaseActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cancelRefresh();
     }
 
     public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
@@ -92,8 +103,10 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             mCompletedRefreshListeners.add(completedListener);
         }
 
-        onRefreshComplete();
-        mCompletedRefreshListeners.clear();
+        if(mCompletedRefreshListeners.size() >= mRefreshListeners.size()) {
+            onRefreshComplete();
+            mCompletedRefreshListeners.clear();
+        }
     }
 
     /*
@@ -114,6 +127,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             //if a refresh is already happening, don't start another
             return;
         }
+        Log.d(Constants.LOG_TAG, "Refresh listeners: " + mRefreshListeners.size());
         mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
             return;
@@ -167,7 +181,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         }
     }
 
-    public void hideMenuProgressBar() {
+    private void hideMenuProgressBar() {
         if (mOptionsMenu != null) {
             // Hide refresh indicator
             MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
