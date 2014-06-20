@@ -19,6 +19,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
 
     String beamUri;
 
+    boolean searchEnabled = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +33,9 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu, menu);
+        if (searchEnabled) {
+            getMenuInflater().inflate(R.menu.search_menu, menu);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -59,5 +63,10 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         } else {
             return new NdefMessage(new NdefRecord[]{NdefRecord.createMime("application/vnd.com.thebluealliance.androidclient", beamUri.getBytes())});
         }
+    }
+
+    protected void setSearchEnabled(boolean enabled) {
+        searchEnabled = enabled;
+        invalidateOptionsMenu();
     }
 }

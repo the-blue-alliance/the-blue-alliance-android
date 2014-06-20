@@ -37,6 +37,20 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
             }
         });
 
+        registerRefreshableActivityListener(this);
+
+        setSearchEnabled(false);
+    }
+
+    @Override
+    public void onCreateNavigationDrawer() {
+        setNavigationDrawerEnabled(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         if (ConnectionDetector.isConnectedToInternet(this)) {
             new PopulateContributors(this).execute();
         } else {
@@ -44,8 +58,6 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
             findViewById(R.id.no_data).setVisibility(View.VISIBLE);
             findViewById(R.id.progress).setVisibility(View.GONE);
         }
-
-        registerRefreshableActivityListener(this);
     }
 
     private void setupActionBar() {
