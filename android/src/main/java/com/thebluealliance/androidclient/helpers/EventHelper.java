@@ -139,7 +139,7 @@ public class EventHelper {
                 case 2:
                     return "District Events";
                 case 3:
-                    return "District Championship";
+                    return "District Championships";
                 case 4:
                     return "Championship Divisions";
                 case 5:
