@@ -4,11 +4,9 @@ import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Award implements BasicModel {
 
@@ -72,64 +70,9 @@ public class Award implements BasicModel {
         return out;
     }
 
-    public ArrayList<AwardListElement> renderAll() {
-        ArrayList<AwardListElement> output = new ArrayList<>();
-        Iterator<JsonElement> iterator = winners.iterator();
-        String teamNumber;
-        String awardee;
-        while (iterator.hasNext()) {
-            JsonObject winner = iterator.next().getAsJsonObject();
-            if (winner.get("team_number").isJsonNull()) {
-                teamNumber = "";
-            } else {
-                teamNumber = winner.get("team_number").getAsString();
-            }
-            if (winner.get("awardee").isJsonNull()) {
-                awardee = "";
-            } else {
-                awardee = winner.get("awardee").getAsString();
-            }
-
-            output.add(new AwardListElement("frc" + teamNumber, name, buildWinnerString(awardee, teamNumber), teamNumber));
-        }
-        return output;
-    }
-
-    public static String buildWinnerString(String awardee, String team) {
-        if (awardee.isEmpty()) {
-            return "" + team;
-        } else if (team.isEmpty()) {
-            return awardee;
-        } else {
-            return awardee + " (" + team + ")";
-        }
-    }
-
     @Override
     public AwardListElement render() {
-        Iterator<JsonElement> iterator = winners.iterator();
-        String teamNumber = "";
-        String awardee = "";
-        while (iterator.hasNext()) {
-            JsonObject winner = iterator.next().getAsJsonObject();
-            if (winner.get("team_number").isJsonNull()) {
-                teamNumber = "";
-            } else {
-                teamNumber += winner.get("team_number").getAsInt() + ", ";
-            }
-            if (winner.get("awardee").isJsonNull()) {
-                awardee = "";
-            } else {
-                awardee += winner.get("awardee").getAsString() + ", ";
-            }
-        }
-        if (!teamNumber.isEmpty()) {
-            teamNumber = teamNumber.substring(0, teamNumber.length() - 2);
-        }
-        if (!awardee.isEmpty()) {
-            awardee = awardee.substring(0, awardee.length() - 2);
-        }
-        return new AwardListElement("frc" + teamNumber, name, buildWinnerString(awardee, teamNumber), teamNumber);
+        return new AwardListElement(name, winners);
     }
 
     @Override

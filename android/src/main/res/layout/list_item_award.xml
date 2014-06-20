@@ -18,15 +18,11 @@
         android:singleLine="false"
         android:text="Some Award Name That Can Potentially Be Quite Long" />
 
-    <TextView
-        android:id="@+id/award_winner"
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:textStyle="bold"
-        android:layout_alignParentRight="true"
+    <LinearLayout
+        android:id="@+id/award_recipients"
         android:layout_below="@id/award_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="false"
-        android:text="Person Name (123)" />
-
+        android:orientation="vertical" >
+    </LinearLayout>
 </RelativeLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp" >
+
+    <TextView
+        android:id="@+id/winner_line_1"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textStyle="bold"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:text="Person Name" />
+
+    <TextView
+        android:id="@+id/winner_line_2"
+        style="@android:style/TextAppearance.DeviceDefault.Small"
+        android:textStyle="bold"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/winner_line_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:text="254 The Cheesy Poofs" />
+</RelativeLayout>
