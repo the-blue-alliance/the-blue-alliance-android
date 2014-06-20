@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -101,7 +102,7 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart() {
         mTask = new PopulateEventAwards(this, true);
-        mTask.execute(mEventKey);
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
         View view = getView();
         if (view != null) {
             // Indicate loading; the task will hide the progressbar and show the content when loading is complete

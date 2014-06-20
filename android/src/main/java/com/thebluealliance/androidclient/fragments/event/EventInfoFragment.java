@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -76,7 +77,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onRefreshStart() {
         task = new PopulateEventInfo(this, true);
-        task.execute(eventKey);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
         View view = getView();
         if (view != null) {
             // Indicate loading; the task will hide the progressbar and show the content when loading is complete

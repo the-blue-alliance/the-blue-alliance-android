@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.background.team;
 
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
