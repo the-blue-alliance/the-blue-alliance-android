@@ -10,25 +10,14 @@
     android:paddingRight="8dp"
     android:paddingTop="4dp">
 
-
-    <TextView
-        android:id="@+id/team_rank"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:width="50dp"
-        android:text="100"
-        android:textSize="25dp" />
-
     <LinearLayout
         android:id="@+id/team_number_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/team_rank"
         android:orientation="vertical"
-        android:paddingRight="10dp">
+        android:paddingRight="8dp"
+        android:minWidth="80dp" >
 
         <TextView
             android:id="@+id/team_number"
@@ -36,7 +25,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="254"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/team_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Rank 1" />
 
         <TextView
             android:id="@+id/team_record"
@@ -47,21 +44,31 @@
             android:textColor="@color/blue" />
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/team_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/team_name_and_breakdown_container"
         android:layout_toRightOf="@id/team_number_container"
-        android:text="Teh Chezy Pofs"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/ranking_breakdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/team_name"
-        android:layout_below="@id/team_name"
-        android:text="22 QS, 930 Assist, 725 Auto, 310 Truss &amp; Catch, 518 Teleop" />
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:paddingRight="8dp"
+        android:minWidth="80dp" >
+
+        <TextView
+            android:id="@+id/team_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Teh Chezy Pofs"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ranking_breakdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/team_name"
+            android:layout_below="@id/team_name"
+            android:text="22 QS, 930 Assist, 725 Auto, 310 Truss &amp; Catch, 518 Teleop" />
+    </LinearLayout>
 
 </RelativeLayout>

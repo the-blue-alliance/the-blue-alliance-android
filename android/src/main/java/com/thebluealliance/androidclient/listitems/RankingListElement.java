@@ -45,7 +45,7 @@ public class RankingListElement extends ListElement {
             }
 
             TextView rank = (TextView) view.findViewById(R.id.team_rank);
-            rank.setText("" + mTeamRank);
+            rank.setText("Rank " + mTeamRank);
 
             TextView record = (TextView) view.findViewById(R.id.team_record); /* formatted as (W, L, T) */
             if (mTeamRecord.isEmpty()) {
