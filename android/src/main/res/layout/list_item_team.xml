@@ -3,8 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:paddingLeft="8dp">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
     <TextView
         android:id="@+id/team_number"
