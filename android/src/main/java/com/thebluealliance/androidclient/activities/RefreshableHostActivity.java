@@ -107,6 +107,11 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             onRefreshComplete();
             mCompletedRefreshListeners.clear();
         }
+
+        Log.d(Constants.LOG_TAG, "Notified complete. Listeners size: " + mRefreshListeners.size() + "; completed size: " + mCompletedRefreshListeners.size());
+        for(RefreshListener listener : mCompletedRefreshListeners) {
+            Log.d(Constants.LOG_TAG, "Comleted: " + listener.getClass().getName());
+        }
     }
 
     /*

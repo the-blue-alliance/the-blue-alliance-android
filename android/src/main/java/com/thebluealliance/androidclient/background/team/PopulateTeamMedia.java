@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.background.team;
 
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -56,6 +55,8 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             throw new IllegalArgumentException("PopulateTeamMedia must be called with the team key and year (String, int)");
         }
 
+        Log.d(Constants.LOG_TAG, "Loading team media");
+
         team = (String) params[0];
         year = (Integer) params[1];
 
@@ -92,6 +93,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 groups.add(ytVideos);
             }
 
+            Log.d(Constants.LOG_TAG, "Loading media finished");
             return response.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch media for " + team + " in " + year);
