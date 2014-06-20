@@ -21,15 +21,16 @@
 
         <TextView
             android:id="@+id/team_number"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="254"
-            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/team_rank"
+            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -37,6 +38,7 @@
 
         <TextView
             android:id="@+id/team_record"
+            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -56,14 +58,15 @@
 
         <TextView
             android:id="@+id/team_name"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Teh Chezy Pofs"
-            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/ranking_breakdown"
+            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/team_name"

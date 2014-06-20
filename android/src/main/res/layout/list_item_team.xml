@@ -8,12 +8,12 @@
 
     <TextView
         android:id="@+id/team_number"
+        style="@android:style/TextAppearance.DeviceDefault.Large"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:text="254"
-        android:textStyle="bold"
-        android:textSize="24sp" />
+        android:textStyle="bold"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
