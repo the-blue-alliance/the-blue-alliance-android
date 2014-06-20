@@ -13,7 +13,6 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -116,7 +115,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                             rankingString += ", ";
                         }
                     }
-                    Team team = Database.getInstance(activity).getTeam(teamKey);
+                    Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
                     teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), team.getNickname(), row.get(0).getAsInt(), record, rankingString));
                 }
                 return response.getCode();

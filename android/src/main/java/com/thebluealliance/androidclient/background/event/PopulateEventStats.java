@@ -15,7 +15,6 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -125,7 +124,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         + ", " + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
                         + ", " + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
                 String teamKey = "frc" + opr.get(i).getKey();
-                Team team = Database.getInstance(activity).getTeam(teamKey);
+                Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
                 teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), team.getNickname(), statsString));
             }
 
