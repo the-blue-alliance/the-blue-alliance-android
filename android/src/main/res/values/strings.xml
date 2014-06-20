@@ -47,6 +47,7 @@
     <string name="ccwm">CCWM:</string>
     <string name="alliances_header">Alliances</string>
     <string name="alliance_title">Alliance #%d:</string>
+    <string name="team_rank">Rank %d</string>
 
     <!-- No Data -->
     <string name="no_data">No data was found for this event.</string>
