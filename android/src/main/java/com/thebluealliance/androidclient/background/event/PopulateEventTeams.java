@@ -52,11 +52,11 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
+        Log.d("EventTeamsFragment", "doInBackground started");
         eventKey = params[0];
 
         teams = new ArrayList<>();
 
-        Log.d("load event teams: ", "event key: " + eventKey);
         try {
             APIResponse<ArrayList<Team>> response = DataManager.Events.getEventTeams(activity, eventKey, forceFromCache);
             ArrayList<Team> teamList = response.getData();

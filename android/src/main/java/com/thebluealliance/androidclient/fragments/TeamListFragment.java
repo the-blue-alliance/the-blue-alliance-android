@@ -4,6 +4,7 @@ package com.thebluealliance.androidclient.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -128,7 +129,7 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
     @Override
     public void onRefreshStart() {
         mTask = new PopulateTeamList(this);
-        mTask.execute(mTeamNumberStart, mTeamNumberEnd);
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamNumberStart, mTeamNumberEnd);
         View view = getView();
         if (view != null) {
             // Indicate loading; the task will hide the progressbar and show the content when loading is complete

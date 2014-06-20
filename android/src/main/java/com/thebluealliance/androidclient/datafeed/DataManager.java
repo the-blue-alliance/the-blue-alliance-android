@@ -52,7 +52,7 @@ public class DataManager {
         }
 
         public static APIResponse<Team> getTeam(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
-            final String URL = "http://thebluealliance.com/api/v2/team/" + teamKey + "/" + year;
+            final String URL = "http://www.thebluealliance.com/api/v2/team/" + teamKey + "/" + year;
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, URL, true, loadFromCache);
             Team team = JSONManager.getGson().fromJson(response.getData(), Team.class);
 
@@ -274,7 +274,7 @@ public class DataManager {
         public static APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
             ArrayList<Match> results = new ArrayList<>();
             Log.d("match list", "fetching matches for " + eventKey);
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/matches", true, loadFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://www.thebluealliance.com/api/v2/event/" + eventKey + "/matches", true, loadFromCache);
             for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
                 JsonObject matchObject = jsonElement.getAsJsonObject();
                 if (matchObject.get(MatchDeserializer.ALLIANCE_TAG).toString().contains(teamKey + "\"")) {
@@ -292,7 +292,7 @@ public class DataManager {
         }
 
         public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
-            APIResponse<String> results = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/stats", true, loadFromCache);
+            APIResponse<String> results = TBAv2.getResponseFromURLOrThrow(c, "http://www.thebluealliance.com/api/v2/event/" + eventKey + "/stats", true, loadFromCache);
             JsonObject allStats = JSONManager.getasJsonObject(results.getData());
             if (teamKey.isEmpty()) {
                 return new APIResponse<>(allStats, results.getCode());
@@ -324,7 +324,7 @@ public class DataManager {
         public static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
             ArrayList<Award> awards = new ArrayList<>();
             Log.d("event awards", "Fetching awards for " + eventKey);
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://thebluealliance.com/api/v2/event/" + eventKey + "/awards", true, loadFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://www.thebluealliance.com/api/v2/event/" + eventKey + "/awards", true, loadFromCache);
             for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
                 Award award = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Award.class);
                 if (award.getWinners().toString().contains(teamKey.isEmpty() ? "" : teamKey.substring(3) + ",")) {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -93,7 +94,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onRefreshStart() {
         task = new PopulateTeamInfo(this, true);
-        task.execute(mTeamKey);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamKey);
         View view = getView();
         if (view != null) {
             // Indicate loading; the task will hide the progressbar and show the content when loading is complete
