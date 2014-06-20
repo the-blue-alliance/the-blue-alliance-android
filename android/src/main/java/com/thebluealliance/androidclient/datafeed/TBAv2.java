@@ -42,22 +42,22 @@ public class TBAv2 {
     static {
         API_URL = new HashMap<>();
         API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
-        API_URL.put(QUERY.TEAM_LIST, "http://thebluealliance.com/api/v2/teams/%s");
+        API_URL.put(QUERY.TEAM_LIST, "http://www.thebluealliance.com/api/v2/teams/%s");
 
-        API_URL.put(QUERY.TEAM, "http://thebluealliance.com/api/v2/team/%s");
-        API_URL.put(QUERY.TEAM_EVENTS, "http://thebluealliance.com/api/v2/team/%s/%d/events");
-        API_URL.put(QUERY.TEAM_EVENT_AWARDS, "http://thebluealliance.com/api/v2/team/%s/event/%s/awards");
-        API_URL.put(QUERY.TEAM_EVENT_MATCHES, "http://thebluealliance.com/api/v2/team/%s/event/%s/matches");
-        API_URL.put(QUERY.TEAM_YEARS_PARTICIPATED, "http://thebluealliance.com/api/v2/team/%s/years_participated");
-        API_URL.put(QUERY.TEAM_MEDIA, "http://thebluealliance.com/api/v2/team/%s/%d/media");
+        API_URL.put(QUERY.TEAM, "http://www.thebluealliance.com/api/v2/team/%s");
+        API_URL.put(QUERY.TEAM_EVENTS, "http://www.thebluealliance.com/api/v2/team/%s/%d/events");
+        API_URL.put(QUERY.TEAM_EVENT_AWARDS, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/awards");
+        API_URL.put(QUERY.TEAM_EVENT_MATCHES, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/matches");
+        API_URL.put(QUERY.TEAM_YEARS_PARTICIPATED, "http://www.thebluealliance.com/api/v2/team/%s/years_participated");
+        API_URL.put(QUERY.TEAM_MEDIA, "http://www.thebluealliance.com/api/v2/team/%s/%d/media");
 
-        API_URL.put(QUERY.EVENT_INFO, "http://thebluealliance.com/api/v2/event/%s");
-        API_URL.put(QUERY.EVENT_TEAMS, "http://thebluealliance.com/api/v2/event/%s/teams");
-        API_URL.put(QUERY.EVENT_RANKS, "http://thebluealliance.com/api/v2/event/%s/rankings");
-        API_URL.put(QUERY.EVENT_MATCHES, "http://thebluealliance.com/api/v2/event/%s/matches");
-        API_URL.put(QUERY.EVENT_STATS, "http://thebluealliance.com/api/v2/event/%s/stats");
-        API_URL.put(QUERY.EVENT_AWARDS, "http://thebluealliance.com/api/v2/event/%s/awards");
-        API_URL.put(QUERY.EVENT_LIST, "http://thebluealliance.com/api/v2/events/%d");
+        API_URL.put(QUERY.EVENT_INFO, "http://www.thebluealliance.com/api/v2/event/%s");
+        API_URL.put(QUERY.EVENT_TEAMS, "http://www.thebluealliance.com/api/v2/event/%s/teams");
+        API_URL.put(QUERY.EVENT_RANKS, "http://www.thebluealliance.com/api/v2/event/%s/rankings");
+        API_URL.put(QUERY.EVENT_MATCHES, "http://www.thebluealliance.com/api/v2/event/%s/matches");
+        API_URL.put(QUERY.EVENT_STATS, "http://www.thebluealliance.com/api/v2/event/%s/stats");
+        API_URL.put(QUERY.EVENT_AWARDS, "http://www.thebluealliance.com/api/v2/event/%s/awards");
+        API_URL.put(QUERY.EVENT_LIST, "http://www.thebluealliance.com/api/v2/events/%d");
     }
 
     public static ArrayList<SimpleEvent> getEventList(String json) {
@@ -115,13 +115,13 @@ public class TBAv2 {
                 if (now.before(futureTime)) {
                     //if isn't hasn't been longer than the timeout (1 minute now)
                     //just return what we have in cache
-                    Log.d("datamanger", "Online; API call too fast, returning from cache");
+                    Log.d("datamanger", "Online; API call too fast, returning from cache: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
 
                 //we want whatever's in the cache. Forget everything else...
                 if (forceFromCache) {
-                    Log.d("datamanager", "Online; force reading from cache");
+                    Log.d("datamanager", "Online; force reading from cache: "+ URL);
                     return cachedData;
                 }
 
@@ -143,7 +143,7 @@ public class TBAv2 {
                             Database.getInstance(c).updateResponse(URL, response, lastUpdate);
                         }
                     }
-                    Log.d("datamanager", "Online; updated from internet");
+                    Log.d("datamanager", "Online; updated from internet: " + URL);
                     return new APIResponse<>(response, APIResponse.CODE.UPDATED);
                 } else {
                     if(cacheInDatabase) {
@@ -151,11 +151,11 @@ public class TBAv2 {
                             Database.getInstance(c).touchResponse(URL);
                         }
                     }
-                    Log.d("datamanager", "Online; no update required, loaded from database");
+                    Log.d("datamanager", "Online; no update required, loaded from database: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
             } else {
-                Log.d("datamanager", "Offline; loaded from database");
+                Log.d("datamanager", "Offline; loaded from database: " + URL);
                 synchronized (Database.getInstance(c)) {
                     return Database.getInstance(c).getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
                 }
@@ -176,11 +176,11 @@ public class TBAv2 {
                         Database.getInstance(c).storeResponse(URL, response, lastUpdate);
                     }
                 }
-                Log.d("datamanager", "Online; loaded from internet");
+                Log.d("datamanager", "Online; loaded from internet: " + URL);
                 return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);
             } else {
                 // There is no locally stored data and we are not connected to the internet.
-                Log.d("datamanager", "Offline; no data!");
+                Log.d("datamanager", "Offline; no data: " + URL);
                 throw new DataManager.NoDataException("There is no internet connection and the response is not cached!");
             }
         }
