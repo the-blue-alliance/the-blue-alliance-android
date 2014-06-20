@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 
 /**
@@ -34,13 +35,15 @@ public class Database extends SQLiteOpenHelper {
             TABLE_API = "api",
             TABLE_TEAMS = "teams",
             TABLE_EVENTS = "events",
+            TABLE_AWARDS = "awards",
+            TABLE_MATCHES = "matches",
+            TABLE_MEDIAS = "medias",
             TABLE_SEARCH = "search",
             TABLE_SEARCH_TEAMS = "search_teams",
             TABLE_SEARCH_EVENTS = "search_events";
 
     String CREATE_API = "CREATE TABLE IF NOT EXISTS " + TABLE_API + "("
             + Response.URL + " TEXT PRIMARY KEY, "
-            + Response.RESPONSE + " TEXT, "
             + Response.LASTUPDATE + " TIMESTAMP, "
             + Response.LASTHIT + " TIMESTAMP "
             + ")";
@@ -49,10 +52,13 @@ public class Database extends SQLiteOpenHelper {
             + Teams.NUMBER + " INTEGER NOT NULL, "
             + Teams.NAME + " TEXT, "
             + Teams.SHORTNAME + " TEXT, "
-            + Teams.LOCATION + " TEXT"
+            + Teams.LOCATION + " TEXT,"
+            + Teams.WEBSITE + " TEXT, "
+            + Teams.EVENTS + " TEXT, "
             + ")";
     String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + Events.KEY + " TEXT PRIMARY KEY, "
+            + Events.YEAR + " INTEGER NOT NULL, "
             + Events.NAME + " TEXT, "
             + Events.LOCATION + " TEXT, "
             + Events.VENUE + " TEXT, "
@@ -62,7 +68,31 @@ public class Database extends SQLiteOpenHelper {
             + Events.START + " TIMESTAMP, "
             + Events.END + " TIMESTAMP, "
             + Events.OFFICIAL + " INTEGER, "
-            + Events.WEEK + " INTEGER"
+            + Events.WEEK + " INTEGER, "
+            + Events.RANKINGS + " STRING, "
+            + Events.ALLIANCES + " STRING, "
+            + Events.STATS + " STRING, "
+            + ")";
+    String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
+            + Awards.KEY + " TEXT PRIMARY KEY, "
+            + Awards.NAME + " TEXT, "
+            + Awards.YEAR + " INTEGER, "
+            + Awards.WINNERS + " TEXT"
+            + ")";
+    String CREATE_MATCHES = "CREATE TABLE IF NOT EXISTS " + TABLE_MATCHES + "("
+            + Matches.KEY + " TEXT PRIMARY KEY, "
+            + Matches.EVENT + " TEXT, "
+            + Matches.TIMESTRING + " TEXT, "
+            + Matches.TIME + " TIMESTAMP, "
+            + Matches.ALLIANCES + " TEXT, "
+            + Matches.VIDEOS + " TEXT"
+            + ")";
+    String CREATE_MEDIAS = "CREATE TABLE IF NOT EXISTS " + TABLE_MEDIAS + "("
+            + Medias.TYPE + " TEXT, "
+            + Medias.FOREIGNKEY + " TEXT, "
+            + Medias.TEAMKEY +" TEXT, "
+            + Medias.DETAILS + " TEXT, "
+            + Medias.YEAR + " INTEGER"
             + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
@@ -78,27 +108,28 @@ public class Database extends SQLiteOpenHelper {
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
+    private static Semaphore sSemaphore;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
         db = getWritableDatabase();
+        sSemaphore = new Semaphore(1);
     }
 
-    /**
-     * USE THIS METHOD TO GAIN DATABASE REFERENCES!!11!!!
-     * This makes sure that db accesses stay thread-safe
-     * (which becomes important with multiple AsyncTasks working simultaneously).
-     * Should work, per http://touchlabblog.tumblr.com/post/24474750219/single-sqlite-connection
-     *
-     * @param context Context used to create Database object, if necessary
-     * @return Your synchronized reference to use.
-     */
-    public static synchronized Database getInstance(Context context) {
-        if (sDatabaseInstance == null) {
+    public static Semaphore getSemaphore(Context context){
+        if(sDatabaseInstance == null){
             sDatabaseInstance = new Database(context.getApplicationContext());
         }
+        return sSemaphore;
+    }
+
+    public static synchronized Database getInstance(Context context) {
         return sDatabaseInstance;
+    }
+
+    public SQLiteDatabase getDb(){
+        return db;
     }
 
     @Override
@@ -106,6 +137,9 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_API);
         db.execSQL(CREATE_TEAMS);
         db.execSQL(CREATE_EVENTS);
+        db.execSQL(CREATE_AWARDS);
+        db.execSQL(CREATE_MATCHES);
+        db.execSQL(CREATE_MEDIAS);
         db.execSQL(CREATE_SEARCH_TEAMS);
         db.execSQL(CREATE_SEARCH_EVENTS);
     }
@@ -127,6 +161,9 @@ public class Database extends SQLiteOpenHelper {
             // d-d-d-d-drop the tables (ノಠ益ಠ)ノ彡┻━┻ #dubstepwubwubz
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_AWARDS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCHES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIAS);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
@@ -152,7 +189,6 @@ public class Database extends SQLiteOpenHelper {
 
     public class Response {
         public static final String URL = "url", //text
-                RESPONSE = "response",          //text
                 LASTUPDATE = "lastUpdated",     //timestamp for Last-Modified from API
                 LASTHIT = "lastHit";           //last time we hit the API
     }
@@ -162,11 +198,14 @@ public class Database extends SQLiteOpenHelper {
                 NUMBER = "number",
                 NAME = "name",
                 SHORTNAME = "shortname",
-                LOCATION = "location";
+                LOCATION = "location",
+                WEBSITE = "website",
+                EVENTS = "events";
     }
 
     public class Events {
         public static final String KEY = "key",
+                YEAR = "year",
                 NAME = "name",
                 LOCATION = "location",
                 VENUE = "venue",
@@ -176,7 +215,34 @@ public class Database extends SQLiteOpenHelper {
                 START = "startDate",
                 END = "endDate",
                 OFFICIAL = "official",
-                WEEK = "competitionWeek";
+                WEEK = "competitionWeek",
+                RANKINGS = "rankings",
+                ALLIANCES = "alliances",
+                STATS = "stats";
+    }
+
+    public class Awards{
+        public static final String KEY = "key",
+                NAME = "name",
+                YEAR = "year",
+                WINNERS = "winners";
+    }
+
+    public class Matches{
+        public static final String KEY = "key",
+            EVENT = "eventKey",
+            TIMESTRING = "timeString",
+            TIME = "time",
+            ALLIANCES = "alliances",
+            VIDEOS = "videos";
+    }
+
+    public class Medias{
+        public static final String TYPE = "type",
+            FOREIGNKEY = "foreignKey",
+            TEAMKEY = "teamKey",
+            DETAILS = "details",
+            YEAR = "year";
     }
 
     public class SearchTeam {
@@ -374,24 +440,25 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public APIResponse<String> getResponse(String url) {
-        Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.RESPONSE, Response.LASTUPDATE, Response.LASTHIT},
+        Cursor cursor = db.query(TABLE_API, new String[]{Response.URL, Response.LASTUPDATE, Response.LASTHIT},
                 Response.URL + "=?", new String[]{url}, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            String response = cursor.getString(1),
-                    lastUpdate = cursor.getString(2);
-            long lastHit = cursor.getLong(3);
+            String lastUpdate = cursor.getString(1);
+            long lastHit = cursor.getLong(2);
             cursor.close();
-            return new APIResponse<>(response, APIResponse.CODE.LOCAL, lastUpdate, new Date(lastHit));
+            return new APIResponse<>("", APIResponse.CODE.LOCAL, lastUpdate, new Date(lastHit));
         } else {
             Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
             return null;
         }
     }
 
-    public long storeResponse(String url, String response, String updated) {
+    public long storeResponse(String url, String updated) {
+        if(responseExists(url)){
+            return updateResponse(url, updated);
+        }
         ContentValues cv = new ContentValues();
         cv.put(Response.URL, url);
-        cv.put(Response.RESPONSE, response);
         cv.put(Response.LASTUPDATE, updated);
         cv.put(Response.LASTHIT, new Date().getTime());
         return db.insert(TABLE_API, null, cv);
@@ -415,9 +482,8 @@ public class Database extends SQLiteOpenHelper {
         getWritableDatabase().execSQL("delete from " + TABLE_API);
     }
 
-    public int updateResponse(String url, String response, String updated) {
+    public int updateResponse(String url, String updated) {
         ContentValues cv = new ContentValues();
-        cv.put(Response.RESPONSE, response);
         cv.put(Response.LASTUPDATE, updated);
         cv.put(Response.LASTHIT, new Date().getTime());
         return db.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
