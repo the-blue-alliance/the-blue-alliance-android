@@ -85,10 +85,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
                 mSelectedTab = savedInstanceState.getInt(SELECTED_TAB);
             }
             if (savedInstanceState.containsKey(SELECTED_YEAR)) {
-                mCurrentSelectedYearPosition = savedInstanceState.getInt(SELECTED_YEAR);
+                mYear = savedInstanceState.getInt(SELECTED_YEAR);
             }
         } else {
-            int year;
             if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_YEAR)) {
                 mYear = getIntent().getIntExtra(TEAM_YEAR, Calendar.getInstance().get(Calendar.YEAR));
             } else {
@@ -124,7 +123,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_YEAR, mCurrentSelectedYearPosition);
+        outState.putInt(SELECTED_YEAR, Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition]));
         outState.putInt(SELECTED_TAB, mSelectedTab);
     }
 
