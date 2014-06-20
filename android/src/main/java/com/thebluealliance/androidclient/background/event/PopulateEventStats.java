@@ -123,7 +123,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         + ", " + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
                         + ", " + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
                 String teamKey = "frc" + opr.get(i).getKey();
-                teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
+                teams.add(new StatsListElement(teamKey, opr.get(i).getKey(), "", "", statsString));
                 //TODO the blank fields above are team name and location
             }
 

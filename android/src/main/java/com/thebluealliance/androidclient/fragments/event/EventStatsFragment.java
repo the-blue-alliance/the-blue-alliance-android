@@ -17,8 +17,12 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventStats;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Fragment that displays the team statistics for an FRC event.
@@ -89,6 +93,13 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
+                if (!(TeamHelper.validateTeamKey(teamKey))) {
+                    Pattern pattern = Pattern.compile("^frc\\d{1,4}");
+                    Matcher matcher = pattern.matcher(teamKey);
+                    if (matcher.find()){
+                        teamKey = matcher.group(0);
+                    }
+                }
                 startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
             }
         });
