@@ -21,9 +21,6 @@ import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Fragment that displays the team statistics for an FRC event.
  *
@@ -93,14 +90,16 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                if (!(TeamHelper.validateTeamKey(teamKey))) {
-                    Pattern pattern = Pattern.compile("^frc\\d{1,4}");
-                    Matcher matcher = pattern.matcher(teamKey);
-                    if (matcher.find()){
-                        teamKey = matcher.group(0);
+                if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
+                    if (TeamHelper.validateMultiTeamKey(teamKey)) {
+                        // Take out extra letter at end to make team key valid.
+                        teamKey = teamKey.substring(0, teamKey.length() - 1);
                     }
+                        startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
                 }
-                startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+                else{
+                    throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
+                }
             }
         });
 
