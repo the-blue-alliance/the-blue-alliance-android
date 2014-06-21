@@ -12,7 +12,11 @@ import android.util.Log;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.interfaces.ModelTable;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
@@ -107,10 +111,21 @@ public class Database extends SQLiteOpenHelper {
     private static Database sDatabaseInstance;
     private static Semaphore sSemaphore;
 
+    private Teams teamsTable;
+    private Events eventsTable;
+    private Awards awardsTable;
+    private Matches matchesTable;
+    private Medias mediasTable;
+
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
         db = getWritableDatabase();
+        teamsTable = new Teams();
+        eventsTable = new Events();
+        awardsTable = new Awards();
+        matchesTable = new Matches();
+        mediasTable = new Medias();
         sSemaphore = new Semaphore(1);
     }
 
@@ -120,6 +135,22 @@ public class Database extends SQLiteOpenHelper {
 
     public static synchronized Database getInstance(Context context) {
         return sDatabaseInstance;
+    }
+
+    public Teams getTeamsTable() {
+        return teamsTable;
+    }
+    public Events getEventsTable() {
+        return eventsTable;
+    }
+    public Awards getAwardsTable() {
+        return awardsTable;
+    }
+    public Matches getMatchesTable() {
+        return matchesTable;
+    }
+    public Medias getMediasTable() {
+        return mediasTable;
     }
 
     @Override
@@ -183,7 +214,7 @@ public class Database extends SQLiteOpenHelper {
                 LASTHIT = "lastHit";           //last time we hit the API
     }
 
-    public class Teams {
+    public class Teams implements ModelTable<Team>{
         public static final String KEY = "key",
                 NUMBER = "number",
                 NAME = "name",
@@ -191,9 +222,77 @@ public class Database extends SQLiteOpenHelper {
                 LOCATION = "location",
                 WEBSITE = "website",
                 EVENTS = "events";
+
+        public long add(Team team) {
+            insertSearchItemTeam(team);
+            return safeInsert(TABLE_TEAMS, null, team.getParams());
+        }
+
+        public void storeTeams(ArrayList<Team> teams) {
+            Semaphore dbSemaphore = null;
+            try{
+                dbSemaphore = getSemaphore();
+                dbSemaphore.acquire();
+                db.beginTransaction();
+                for (Team team : teams) {
+                    db.insert(TABLE_TEAMS, null, team.getParams());
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to aquire database semaphore");
+            }finally {
+                if(dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+
+        public Team get(String teamKey, String[] fields) {
+            Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                Team team = new Team();
+                //TODO inflate!
+                cursor.close();
+                return team;
+            } else {
+                return null;
+            }
+        }
+
+        public ArrayList<Team> getInRange(int lowerBound, int upperBound, String[] fields) {
+            ArrayList<Team> teams = new ArrayList<>();
+            // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
+            Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
+            if(cursor != null && cursor.moveToFirst()) {
+                while (cursor.moveToNext()) {
+                    //TODO inflate!
+                }
+                cursor.close();
+            }
+            return teams;
+        }
+
+        public Cursor getCursorForTeamsInRange(int lowerBound, int upperBound) {
+            Cursor cursor = safeRawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
+                    + Teams.KEY + ","
+                    + Teams.NUMBER + ","
+                    + Teams.NAME + ","
+                    + Teams.SHORTNAME + ","
+                    + Teams.LOCATION
+                    + " FROM " + TABLE_TEAMS + " WHERE " + Teams.NUMBER + " BETWEEN ?+0 AND ?+0 ORDER BY ? ASC", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound), Teams.NUMBER});
+
+            if (cursor == null) {
+                return null;
+            } else if (!cursor.moveToFirst()) {
+                cursor.close();
+                return null;
+            }
+            return cursor;
+        }
     }
 
-    public class Events {
+    public class Events implements ModelTable<Event>{
         public static final String KEY = "key",
                 YEAR = "year",
                 NAME = "name",
@@ -209,16 +308,109 @@ public class Database extends SQLiteOpenHelper {
                 RANKINGS = "rankings",
                 ALLIANCES = "alliances",
                 STATS = "stats";
+
+        public long add(Event event) {
+            if (!exists(event.getEventKey())) {
+                insertSearchItemEvent(event);
+                return db.insert(TABLE_EVENTS, null, event.getParams());
+            } else {
+                return 0;//updateEvent(event);
+            }
+        }
+
+        public void storeEvents(ArrayList<Event> events) {
+            Semaphore dbSemaphore = null;
+            try{
+                dbSemaphore = getSemaphore();
+                dbSemaphore.acquire();
+                db.beginTransaction();
+                for (Event event : events) {
+                    db.insert(TABLE_EVENTS, null, event.getParams());
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to aquire database semaphore");
+            }finally {
+                if(dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+
+        public Event get(String eventKey, String[] fields) {
+            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                Event event = new Event();
+                //TODO inflate!
+                cursor.close();
+                return event;
+            } else {
+                return null;
+            }
+        }
+
+        public ArrayList<Event> getInWeek(int year, int week, String[] fields) {
+            ArrayList<Event> events = new ArrayList<>();
+            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Event event = new Event();
+                    //TODO inflate!
+                    events.add(event);
+                } while (cursor.moveToNext());
+                cursor.close();
+                return events;
+            } else {
+                Log.w(Constants.LOG_TAG, "Failed to find events in " + year + " week " + week);
+                return null;
+            }
+        }
+
+        public ArrayList<Event> getInYear(int year, String[] fields) {
+            ArrayList<Event> events = new ArrayList<>();
+            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Event event = new Event();
+                    //TODO inflate!
+                    events.add(event);
+                } while (cursor.moveToNext());
+                cursor.close();
+                return events;
+            } else {
+                Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
+                return null;
+            }
+        }
+
+        public boolean exists(String key) {
+            Cursor cursor = safeQuery(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public int update(Event event) {
+            updateSearchItemEvent(event);
+            return safeUpdate(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
+        }
+
     }
 
-    public class Awards{
+    public class Awards implements ModelTable<Award>{
         public static final String KEY = "key",
                 NAME = "name",
                 YEAR = "year",
                 WINNERS = "winners";
     }
 
-    public class Matches{
+    public class Matches implements ModelTable<Match>{
         public static final String KEY = "key",
             EVENT = "eventKey",
             TIMESTRING = "timeString",
@@ -227,7 +419,7 @@ public class Database extends SQLiteOpenHelper {
             VIDEOS = "videos";
     }
 
-    public class Medias{
+    public class Medias implements ModelTable<Media>{
         public static final String TYPE = "type",
             FOREIGNKEY = "foreignKey",
             TEAMKEY = "teamKey",
@@ -265,7 +457,6 @@ public class Database extends SQLiteOpenHelper {
         }
         return cursor;
     }
-
     public Cursor safeRawQuery(String query, String[] args){
         Semaphore dbSemaphore = null;
         Cursor cursor = null;
@@ -282,7 +473,6 @@ public class Database extends SQLiteOpenHelper {
         }
         return cursor;
     }
-
     public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs){
         Semaphore dbSemaphore = null;
         int response = -1;
@@ -299,7 +489,6 @@ public class Database extends SQLiteOpenHelper {
         }
         return response;
     }
-
     public long safeInsert(String table, String nullColumnHack, ContentValues values){
         Semaphore dbSemaphore = null;
         long response = -1;
@@ -316,7 +505,6 @@ public class Database extends SQLiteOpenHelper {
         }
         return response;
     }
-
     public int safeDelete(String table, String whereClause, String[] whereArgs){
         Semaphore dbSemaphore = null;
         int response = -1;
@@ -332,144 +520,6 @@ public class Database extends SQLiteOpenHelper {
             }
         }
         return response;
-    }
-
-    public long storeTeam(Team team) {
-        insertSearchItemTeam(team);
-        return db.insert(TABLE_TEAMS, null, team.getParams());
-    }
-
-    public void storeTeams(ArrayList<Team> teams) {
-        db.beginTransaction();
-        for (Team team : teams) {
-            storeTeam(team);
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
-
-    public Team getTeam(String teamKey, String[] fields) {
-        Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            Team team = new Team();
-            //TODO inflate!
-            cursor.close();
-            return team;
-        } else {
-            return null;
-        }
-    }
-
-    public ArrayList<Team> getTeamsInRange(int lowerBound, int upperBound, String[] fields) {
-        ArrayList<Team> teams = new ArrayList<>();
-        // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
-        Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
-        if(cursor != null && cursor.moveToFirst()) {
-            while (cursor.moveToNext()) {
-                //TODO inflate!
-            }
-            cursor.close();
-        }
-        return teams;
-    }
-
-    public Cursor getCursorForTeamsInRange(int lowerBound, int upperBound) {
-        Cursor cursor = safeRawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
-                + Teams.KEY + ","
-                + Teams.NUMBER + ","
-                + Teams.NAME + ","
-                + Teams.SHORTNAME + ","
-                + Teams.LOCATION
-                + " FROM " + TABLE_TEAMS + " WHERE " + Teams.NUMBER + " BETWEEN ?+0 AND ?+0 ORDER BY ? ASC", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound), Teams.NUMBER});
-
-        if (cursor == null) {
-            return null;
-        } else if (!cursor.moveToFirst()) {
-            cursor.close();
-            return null;
-        }
-        return cursor;
-    }
-
-    public long storeEvent(Event event) {
-        if (!eventExists(event.getEventKey())) {
-            insertSearchItemEvent(event);
-            return db.insert(TABLE_EVENTS, null, event.getParams());
-        } else {
-            return 0;//updateEvent(event);
-        }
-    }
-
-    public void storeEvents(ArrayList<Event> events) {
-        db.beginTransaction();
-        for (Event event : events) {
-            storeEvent(event);
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
-
-    public Event getEvent(String eventKey, String[] fields) {
-        Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            Event event = new Event();
-            //TODO inflate!
-            cursor.close();
-            return event;
-        } else {
-            return null;
-        }
-    }
-
-    public ArrayList<Event> getEventsInWeek(int year, int week, String[] fields) {
-        ArrayList<Event> events = new ArrayList<>();
-        Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Event event = new Event();
-                //TODO inflate!
-                events.add(event);
-            } while (cursor.moveToNext());
-            cursor.close();
-            return events;
-        } else {
-            Log.w(Constants.LOG_TAG, "Failed to find events in " + year + " week " + week);
-            return null;
-        }
-    }
-
-    public ArrayList<Event> getEventsInYear(int year, String[] fields) {
-        ArrayList<Event> events = new ArrayList<>();
-        Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                Event event = new Event();
-                //TODO inflate!
-                events.add(event);
-            } while (cursor.moveToNext());
-            cursor.close();
-            return events;
-        } else {
-            Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
-            return null;
-        }
-    }
-
-    public boolean eventExists(String key) {
-        Cursor cursor = safeQuery(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
-        boolean result;
-        if (cursor != null) {
-            result = cursor.moveToFirst();
-            cursor.close();
-        } else {
-            result = false;
-        }
-        return result;
-    }
-
-    public int updateEvent(Event event) {
-        updateSearchItemEvent(event);
-        return safeUpdate(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
     }
 
     public APIResponse<String> getResponse(String url) {
