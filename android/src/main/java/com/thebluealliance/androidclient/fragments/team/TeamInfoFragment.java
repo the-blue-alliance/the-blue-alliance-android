@@ -95,12 +95,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     public void onRefreshStart() {
         task = new PopulateTeamInfo(this, true);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamKey);
-        View view = getView();
-        if (view != null) {
-            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
-            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.team_info_container).setVisibility(View.GONE);
-        }
     }
 
     @Override
