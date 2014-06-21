@@ -4,13 +4,14 @@ import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.Date;
 
 
-public class Match implements BasicModel {
+public class Match extends BasicModel<Match> {
 
     String key;
     String eventKey;
@@ -27,6 +28,7 @@ public class Match implements BasicModel {
     long last_updated;
 
     public Match() {
+        super(Database.TABLE_MATCHES);
         this.key = "";
         this.eventKey = "";
         this.timeString = "";
@@ -42,6 +44,7 @@ public class Match implements BasicModel {
     }
 
     public Match(String key, MatchHelper.TYPE type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonArray videos, long last_updated) {
+        super(Database.TABLE_MATCHES);
         if (!MatchHelper.validateMatchKey(key))
             throw new IllegalArgumentException("Invalid match key.");
         this.key = key;
@@ -233,6 +236,11 @@ public class Match implements BasicModel {
                 blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
 
         return redScore >= 0 && blueScore >= 0;
+    }
+
+    @Override
+    public void addFields(String... fields) {
+
     }
 
     /**

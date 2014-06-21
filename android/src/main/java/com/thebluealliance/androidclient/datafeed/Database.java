@@ -14,8 +14,8 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.SimpleEvent;
-import com.thebluealliance.androidclient.models.SimpleTeam;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
@@ -259,26 +259,26 @@ public class Database extends SQLiteOpenHelper {
                 YEAR = "year";
     }
 
-    public long storeTeam(SimpleTeam team) {
+    public long storeTeam(Team team) {
         insertSearchItemTeam(team);
         return db.insert(TABLE_TEAMS, null, team.getParams());
     }
 
-    public void storeTeams(ArrayList<SimpleTeam> teams) {
+    public void storeTeams(ArrayList<Team> teams) {
         db.beginTransaction();
-        for (SimpleTeam team : teams) {
+        for (Team team : teams) {
             storeTeam(team);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
     }
 
-    public SimpleTeam getTeam(String teamKey) {
+    public Team getTeam(String teamKey) {
         Cursor cursor = db.query(TABLE_TEAMS, new String[]{Teams.KEY, Teams.NUMBER, Teams.NAME, Teams.SHORTNAME, Teams.LOCATION},
                 Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
-            SimpleTeam team = new SimpleTeam();
+            Team team = new Team();
             team.setTeamKey(cursor.getString(0));
             team.setTeamNumber(cursor.getInt(1));
             team.setFullName(cursor.getString(2));
@@ -291,14 +291,14 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<SimpleTeam> getTeamsInRange(int lowerBound, int upperBound) {
-        ArrayList<SimpleTeam> teams = new ArrayList<>();
+    public ArrayList<Team> getTeamsInRange(int lowerBound, int upperBound) {
+        ArrayList<Team> teams = new ArrayList<>();
         // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
         Cursor cursor = db.query(TABLE_TEAMS, new String[]{Teams.KEY, Teams.NUMBER, Teams.NAME, Teams.SHORTNAME, Teams.LOCATION},
                 Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
         cursor.moveToPosition(-1);
         while (cursor.moveToNext()) {
-            teams.add(new SimpleTeam(cursor.getString(0), cursor.getInt(1), cursor.getString(3), cursor.getString(4), -1));
+            teams.add(new Team(cursor.getString(0), cursor.getInt(1), cursor.getString(3), cursor.getString(4), -1));
         }
         cursor.close();
         return teams;
@@ -322,7 +322,7 @@ public class Database extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public long storeEvent(SimpleEvent event) {
+    public long storeEvent(Event event) {
         if (!eventExists(event.getEventKey())) {
             insertSearchItemEvent(event);
             return db.insert(TABLE_EVENTS, null, event.getParams());
@@ -331,22 +331,22 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public void storeEvents(ArrayList<SimpleEvent> events) {
+    public void storeEvents(ArrayList<Event> events) {
         db.beginTransaction();
-        for (SimpleEvent event : events) {
+        for (Event event : events) {
             storeEvent(event);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
     }
 
-    public SimpleEvent getEvent(String eventKey) {
+    public Event getEvent(String eventKey) {
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
                         Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
-            SimpleEvent event = new SimpleEvent();
+            Event event = new Event();
             event.setEventKey(cursor.getString(0));
             event.setEventName(cursor.getString(1));
             event.setEventType(EventHelper.TYPE.values()[cursor.getInt(2)]);
@@ -364,15 +364,15 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<SimpleEvent> getEventsInWeek(int year, int week) {
-        ArrayList<SimpleEvent> events = new ArrayList<>();
+    public ArrayList<Event> getEventsInWeek(int year, int week) {
+        ArrayList<Event> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
                         Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                SimpleEvent event = new SimpleEvent();
+                Event event = new Event();
                 event.setEventKey(cursor.getString(0));
                 event.setEventName(cursor.getString(1));
                 event.setEventType(EventHelper.TYPE.values()[cursor.getInt(2)]);
@@ -393,15 +393,15 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<SimpleEvent> getEventsInYear(int year) {
-        ArrayList<SimpleEvent> events = new ArrayList<>();
+    public ArrayList<Event> getEventsInYear(int year) {
+        ArrayList<Event> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY, Events.NAME, Events.TYPE, Events.DISTRICT, Events.START,
                         Events.END, Events.LOCATION, Events.VENUE, Events.OFFICIAL, Events.DISTRICT_STRING},
                 Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null
         );
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                SimpleEvent event = new SimpleEvent();
+                Event event = new Event();
                 event.setEventKey(cursor.getString(0));
                 event.setEventName(cursor.getString(1));
                 event.setEventType(EventHelper.TYPE.values()[cursor.getInt(2)]);
@@ -434,7 +434,7 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public int updateEvent(SimpleEvent event) {
+    public int updateEvent(Event event) {
         updateSearchItemEvent(event);
         return db.update(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
     }

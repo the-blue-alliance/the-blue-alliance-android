@@ -14,7 +14,7 @@ import java.util.concurrent.Semaphore;
 /**
  * File created by phil on 4/28/14.
  */
-public abstract class BasicModel<T> {
+public abstract class BasicModel<T extends BasicModel> {
 
     /* Map of the requested fields for this object
      * This is done for two reasons - since different parts of the model are loaded from different API queries,

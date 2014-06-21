@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
@@ -13,7 +14,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 
-public class Team implements BasicModel {
+public class Team extends BasicModel<Team> {
     String teamKey,
             nickname,
             location,
@@ -24,6 +25,7 @@ public class Team implements BasicModel {
     long last_updated;
 
     public Team() {
+        super(Database.TABLE_TEAMS);
         this.teamKey = "";
         this.nickname = "";
         this.location = "";
@@ -34,7 +36,18 @@ public class Team implements BasicModel {
         this.events = new JsonArray();
     }
 
+    public Team(String teamKey, int teamNumber, String nickname, String location, long last_updated) {
+        super(Database.TABLE_TEAMS);
+        this.teamKey = teamKey;
+        this.nickname = nickname;
+        this.location = location;
+        this.teamNumber = teamNumber;
+        this.last_updated = last_updated;
+    }
+
+
     public Team(String teamKey, int teamNumber, String fullName, String nickname, String location, String website, JsonArray events, long last_updated) {
+        super(Database.TABLE_TEAMS);
         this.teamKey = teamKey;
         this.nickname = nickname;
         this.location = location;
@@ -109,7 +122,7 @@ public class Team implements BasicModel {
         this.last_updated = last_updated;
     }
 
-    public SimpleEvent getCurrentEvent() {
+    public Event getCurrentEvent() {
         Date now = new Date(), eventStart, eventEnd;
         Iterator<JsonElement> iterator = events.iterator();
         JsonObject e;
@@ -119,7 +132,7 @@ public class Team implements BasicModel {
                 eventStart = EventHelper.eventDateFormat.parse(e.get("start_date").getAsString());
                 eventEnd = EventHelper.eventDateFormat.parse(e.get("end_date").getAsString());
                 if (now.after(eventStart) && now.before(eventEnd)) {
-                    return JSONManager.getGson().fromJson(e, SimpleEvent.class);
+                    return JSONManager.getGson().fromJson(e, Event.class);
                 }
             } catch (ParseException ex) {
                 //can't parse the date. Give up.
@@ -130,6 +143,11 @@ public class Team implements BasicModel {
 
     public String getSearchTitles() {
         return teamKey + "," + nickname + "," + teamNumber;
+    }
+
+    @Override
+    public void addFields(String... fields) {
+
     }
 
     @Override

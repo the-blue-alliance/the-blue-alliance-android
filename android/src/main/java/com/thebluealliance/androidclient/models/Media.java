@@ -5,11 +5,12 @@ import android.content.ContentValues;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 
-public class Media implements BasicModel {
+public class Media extends BasicModel<Media> {
 
     public enum TYPE {
         NONE,
@@ -36,6 +37,7 @@ public class Media implements BasicModel {
     long last_updated;
 
     public Media() {
+        super(Database.TABLE_MEDIAS);
         this.mediaType = TYPE.NONE;
         this.foreignKey = "";
         this.teamKey = "";
@@ -45,6 +47,7 @@ public class Media implements BasicModel {
     }
 
     public Media(TYPE mediaType, String foreignKey, String teamKey, JsonElement details, int year, long last_updated) {
+        super(Database.TABLE_MEDIAS);
         this.mediaType = mediaType;
         this.foreignKey = foreignKey;
         this.teamKey = teamKey;
@@ -103,6 +106,11 @@ public class Media implements BasicModel {
 
     public void setLastUpdated(long last_updated) {
         this.last_updated = last_updated;
+    }
+
+    @Override
+    public void addFields(String... fields) {
+
     }
 
     @Override

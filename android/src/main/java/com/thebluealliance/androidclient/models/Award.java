@@ -5,18 +5,20 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Award implements BasicModel {
+public class Award extends BasicModel<Award> {
 
     String eventKey, name;
     int year;
     JsonArray winners;
 
     public Award() {
+        super(Database.TABLE_AWARDS);
         this.eventKey = "";
         this.name = "";
         this.year = -1;
@@ -24,6 +26,7 @@ public class Award implements BasicModel {
     }
 
     public Award(String eventKey, String name, int year, JsonArray winners) {
+        super(Database.TABLE_AWARDS);
         this.eventKey = eventKey;
         this.name = name;
         this.year = year;
@@ -103,6 +106,11 @@ public class Award implements BasicModel {
         } else {
             return awardee + " (" + team + ")";
         }
+    }
+
+    @Override
+    public void addFields(String... fields) {
+
     }
 
     @Override

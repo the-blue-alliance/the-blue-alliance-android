@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Event implements BasicModel {
+public class Event extends BasicModel<Event> {
 
     String eventKey,
             eventName,
@@ -44,6 +44,7 @@ public class Event implements BasicModel {
     int eventYear;
 
     public Event() {
+        super(Database.TABLE_EVENTS);
         this.eventKey = "";
         this.eventName = "";
         this.shortName = "";
@@ -68,6 +69,7 @@ public class Event implements BasicModel {
 
     public Event(String eventKey, String eventName, String shortName, String abbreviation, String location, String venue, boolean official, EventHelper.TYPE eventType, int districtEnum, String districtTitle, Date startDate, Date endDate,
                  String website, JsonArray teams, JsonArray rankings, JsonArray webcasts, JsonObject stats, JsonArray alliances, long last_updated) {
+        super(Database.TABLE_EVENTS);
         if (!EventHelper.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
         this.eventKey = eventKey;
@@ -355,6 +357,11 @@ public class Event implements BasicModel {
             return EventHelper.renderDateFormat.format(startDate);
         }
         return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
+    }
+
+    @Override
+    public void addFields(String... fields) {
+
     }
 
     @Override

@@ -9,18 +9,23 @@ import java.text.DecimalFormat;
 /**
  * File created by phil on 6/3/14.
  */
-public class Stat implements BasicModel {
+public class Stat extends BasicModel<Stat> {
 
     String teamKey, teamName, location, statString;
 
     public static DecimalFormat displayFormat = new DecimalFormat("#.##");
 
     public Stat(String teamKey, String teamName, String location, String statString) {
-        super();
+        super("");
         this.teamKey = teamKey;
         this.teamName = teamName;
         this.location = location;
         this.statString = statString;
+    }
+
+    @Override
+    public void addFields(String... fields) {
+
     }
 
     @Override
