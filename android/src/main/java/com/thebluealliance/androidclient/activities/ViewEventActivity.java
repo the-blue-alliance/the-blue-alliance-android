@@ -87,6 +87,10 @@ public class ViewEventActivity extends RefreshableHostActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            if(isDrawerOpen()) {
+                closeDrawer();
+                return true;
+            }
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();

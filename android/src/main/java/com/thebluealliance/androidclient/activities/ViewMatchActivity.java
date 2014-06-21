@@ -101,6 +101,10 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            if(isDrawerOpen()) {
+                closeDrawer();
+                return true;
+            }
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {

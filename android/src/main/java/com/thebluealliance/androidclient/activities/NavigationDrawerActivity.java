@@ -169,6 +169,24 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
     }
 
     /**
+     * Closes the navigation drawer
+     */
+    public void closeDrawer() {
+        if(isDrawerOpen()) {
+            getDrawerLayout().closeDrawer(Gravity.LEFT);
+        }
+    }
+
+    /**
+     * Opens the navigation drawer
+     */
+    public void openDrawer() {
+        if(!isDrawerOpen()) {
+            getDrawerLayout().openDrawer(Gravity.LEFT);
+        }
+    }
+
+    /**
      * Allows access to the DrawerLayout that this activity hosts
      *
      * @return the DrawerLayout of this activity
