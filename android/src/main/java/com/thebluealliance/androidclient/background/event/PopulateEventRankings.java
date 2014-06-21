@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -142,7 +143,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
+                Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
+                rankings.onRestoreInstanceState(state);
             }
 
             // Display a warning if offline.

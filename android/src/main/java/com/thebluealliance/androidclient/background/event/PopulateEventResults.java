@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -182,8 +183,12 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
             } else {
-                ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
-                listView.setAdapter(adapter);
+                ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
+                Parcelable state = results.onSaveInstanceState();
+                int firstVisiblePosition = results.getFirstVisiblePosition();
+                results.setAdapter(adapter);
+                results.onRestoreInstanceState(state);
+                results.setSelection(firstVisiblePosition);
             }
 
             // Remove progress spinner and show content since we're done loading data.

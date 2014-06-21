@@ -21,9 +21,14 @@ public class TeamClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String teamKey = v.getTag().toString();
-        if (teamKey != null && !teamKey.isEmpty() && TeamHelper.validateTeamKey(teamKey)) {
+        if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
+            if (TeamHelper.validateMultiTeamKey(teamKey)) {
+                // Take out extra letter at end to make team key valid.
+                teamKey = teamKey.substring(0, teamKey.length() - 1);
+            }
             c.startActivity(ViewTeamActivity.newInstance(c, teamKey));
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("TeamClickListener must be attached to a view with a valid team key set as the tag!");
         }
     }

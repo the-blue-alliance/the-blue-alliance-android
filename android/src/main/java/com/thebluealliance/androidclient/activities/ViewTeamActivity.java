@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -20,7 +21,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -38,7 +41,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
-    private String[] dropdownItems;
+    private String[] yearsParticipated;
 
     // Should come in the format frc####
     private String mTeamKey;
@@ -46,6 +49,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     private int mYear;
 
     private ViewPager pager;
+
+    // List of objects to notify when the year is changed
+    private ArrayList<OnYearChangedListener> yearChangedListeners = new ArrayList<>();
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
@@ -74,58 +80,38 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        dropdownItems = new String[currentYear - Constants.FIRST_COMP_YEAR + 1];
-        for (int i = 0; i < dropdownItems.length; i++) {
-            dropdownItems[i] = Integer.toString(currentYear - i);
-        }
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SELECTED_TAB)) {
                 mSelectedTab = savedInstanceState.getInt(SELECTED_TAB);
             }
             if (savedInstanceState.containsKey(SELECTED_YEAR)) {
-                mCurrentSelectedYearPosition = savedInstanceState.getInt(SELECTED_YEAR);
+                mYear = savedInstanceState.getInt(SELECTED_YEAR);
             }
         } else {
-            int year;
             if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_YEAR)) {
-                year = getIntent().getIntExtra(TEAM_YEAR, Calendar.getInstance().get(Calendar.YEAR));
+                mYear = getIntent().getIntExtra(TEAM_YEAR, Calendar.getInstance().get(Calendar.YEAR));
             } else {
-                year = Calendar.getInstance().get(Calendar.YEAR);
+                mYear = Calendar.getInstance().get(Calendar.YEAR);
             }
             mCurrentSelectedYearPosition = 0;
-            for (int i = 0; i < dropdownItems.length; i++) {
-                if (Integer.valueOf(dropdownItems[i]) == year) {
-                    mCurrentSelectedYearPosition = i;
-                    break;
-                }
-            }
             mSelectedTab = 0;
         }
 
         pager = (ViewPager) findViewById(R.id.view_pager);
-        mYear = Integer.parseInt(dropdownItems[mCurrentSelectedYearPosition]);
-        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mYear));
+        pager.setOffscreenPageLimit(3);
+        // We will notify the fragments of the year later
+        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey));
         pager.setOnPageChangeListener(this);
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
 
-        // Setup the action bar
-        resetActionBar();
-        if (mSelectedTab == 0) {
-            setupActionBar();
-        } else {
-            setupActionBarForYear();
-        }
-
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
+        new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
     }
 
     @Override
@@ -137,7 +123,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_YEAR, mCurrentSelectedYearPosition);
+        outState.putInt(SELECTED_YEAR, Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition]));
         outState.putInt(SELECTED_TAB, mSelectedTab);
     }
 
@@ -145,22 +131,6 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     public void onCreateNavigationDrawer() {
         useActionBarToggle(false);
         encourageLearning(false);
-    }
-
-    private void resetActionBar() {
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActionBar().setDisplayShowCustomEnabled(false);
-        getActionBar().setDisplayShowTitleEnabled(true);
-    }
-
-    private void setupActionBar() {
-        String teamNumber = mTeamKey.replace("frc", "");
-        setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private void setupActionBarForYear(){
-        new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
     }
 
     @Override
@@ -171,12 +141,46 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         return super.onPrepareOptionsMenu(menu);
     }
 
+    private void setupActionBar() {
+        if (yearsParticipated != null) {
+            ActionBar bar = getActionBar();
+            ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, yearsParticipated);
+            actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
+            String teamNumber = mTeamKey.replace("frc", "");
+            setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            bar.setListNavigationCallbacks(actionBarAdapter, this);
+            bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+        }
+    }
+
+    public void onYearsParticipatedLoaded(int[] years) {
+        String[] dropdownItems = new String[years.length];
+        int requestedYearIndex = 0;
+        for (int i = 0; i < years.length; i++) {
+            if (years[i] == mYear) {
+                requestedYearIndex = i;
+            }
+            dropdownItems[i] = String.valueOf(years[i]);
+        }
+        yearsParticipated = dropdownItems;
+        mCurrentSelectedYearPosition = requestedYearIndex;
+
+        setupActionBar();
+
+        notifyOnYearChangedListeners(Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition]));
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            if(isDrawerOpen()) {
+                closeDrawer();
+                return true;
+            }
             Intent upIntent = NavUtils.getParentActivityIntent(this);
-            if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
             } else {
                 Log.d(Constants.LOG_TAG, "Navigating up...");
@@ -203,14 +207,12 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         if (position == mCurrentSelectedYearPosition) {
             return true;
         }
-        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
+        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(yearsParticipated[position]));
 
-        getSupportFragmentManager().getFragments().clear();
-        int year = Integer.parseInt(dropdownItems[position]);
-        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, year));
-        pager.setCurrentItem(mSelectedTab);
         mCurrentSelectedYearPosition = position;
-        mYear = Integer.valueOf(dropdownItems[mCurrentSelectedYearPosition]);
+        mYear = Integer.valueOf(yearsParticipated[mCurrentSelectedYearPosition]);
+
+        notifyOnYearChangedListeners(mYear);
 
         setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
 
@@ -224,20 +226,6 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     @Override
     public void onPageSelected(int position) {
-        if (position == mSelectedTab)
-            return;
-
-        switch (position) {
-            case 0:
-                resetActionBar();
-                setupActionBar();
-                break;
-            case 1:
-            case 2:
-                resetActionBar();
-                setupActionBarForYear();
-                break;
-        }
         mSelectedTab = position;
     }
 
@@ -246,7 +234,22 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     }
 
-    public int getCurrentSelectedYearPosition() {
-        return mCurrentSelectedYearPosition;
+    public void addOnYearChangedListener(OnYearChangedListener listener) {
+        if (!yearChangedListeners.contains(listener)) {
+            yearChangedListeners.add(listener);
+        }
+    }
+
+    public void removeOnYearChangedListener(OnYearChangedListener listener) {
+        if (yearChangedListeners.contains(listener)) {
+            yearChangedListeners.remove(listener);
+        }
+    }
+
+    private void notifyOnYearChangedListeners(int newYear) {
+        Log.d(Constants.LOG_TAG, "notifying year changed");
+        for (OnYearChangedListener listener : yearChangedListeners) {
+            listener.onYearChanged(newYear);
+        }
     }
 }

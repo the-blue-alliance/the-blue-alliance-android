@@ -12,11 +12,11 @@ import com.thebluealliance.androidclient.R;
  */
 public class StatsListElement extends ListElement {
 
-    private int mTeamNumber;
+    private String mTeamNumber;
     private String mTeamName;
     private String mTeamStat;
 
-    public StatsListElement(String key, int number, String name, String stat) {
+    public StatsListElement(String key, String number, String name, String stat) {
         super(key);
         mTeamNumber = number;
         mTeamName = name;

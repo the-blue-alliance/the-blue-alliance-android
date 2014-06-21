@@ -3,8 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:paddingLeft="8dp">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
     <TextView
         android:id="@+id/team_number"
@@ -12,6 +11,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
         android:text="254"
         android:textStyle="bold"/>
 
@@ -48,9 +48,9 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="0dp"
+        android:layout_marginLeft="8dp"
         android:clickable="true"
         android:focusable="false"
-        android:layout_marginLeft="8dp"
         android:src="@drawable/ic_action_about" />
 
 </RelativeLayout>

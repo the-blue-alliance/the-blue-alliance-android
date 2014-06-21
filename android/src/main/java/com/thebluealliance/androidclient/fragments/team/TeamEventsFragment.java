@@ -1,8 +1,5 @@
-package com.thebluealliance.androidclient.fragments;
+package com.thebluealliance.androidclient.fragments.team;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -16,29 +13,26 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
- * File created by phil on 4/20/14.
+ * Created by Nathan on 6/20/2014.
  */
-public class EventListFragment extends Fragment implements RefreshListener {
-
+public class TeamEventsFragment extends Fragment implements RefreshListener, OnYearChangedListener {
     public static final String YEAR = "YEAR";
-    public static final String WEEK = "WEEK";
     public static final String TEAM_KEY = "TEAM_KEY";
-    public static final String WEEK_HEADER = "HEADER";
 
-    private Activity parent;
+    private ViewTeamActivity parent;
 
     private int mYear;
-    private int mWeek;
-    private String mTeamKey, mHeader;
+    private String mTeamKey;
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
@@ -47,13 +41,11 @@ public class EventListFragment extends Fragment implements RefreshListener {
 
     private PopulateEventList mTask;
 
-    public static EventListFragment newInstance(int year, int week, String teamKey, String weekHeader) {
-        EventListFragment f = new EventListFragment();
+    public static TeamEventsFragment newInstance(String teamKey, int year) {
+        TeamEventsFragment f = new TeamEventsFragment();
         Bundle args = new Bundle();
         args.putInt(YEAR, year);
-        args.putInt(WEEK, week);
         args.putString(TEAM_KEY, teamKey);
-        args.putString(WEEK_HEADER, weekHeader);
         f.setArguments(args);
         return f;
     }
@@ -62,13 +54,15 @@ public class EventListFragment extends Fragment implements RefreshListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mYear = getArguments().getInt(YEAR, -1);
-        mWeek = getArguments().getInt(WEEK, -1);
         mTeamKey = getArguments().getString(TEAM_KEY);
-        mHeader = getArguments().getString(WEEK_HEADER);
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+        if (!(getActivity() instanceof ViewTeamActivity)) {
+            throw new IllegalArgumentException("TeamEventsFragment must be hosted by a ViewTeamActivity!");
+        } else {
+            parent = (ViewTeamActivity) getActivity();
         }
+
+        parent.registerRefreshableActivityListener(this);
+        parent.addOnYearChangedListener(this);
     }
 
     @Override
@@ -90,19 +84,9 @@ public class EventListFragment extends Fragment implements RefreshListener {
                     return;
                 }
                 Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
-                if (item != null && item instanceof ListElement) {
-                    // only open up the view event activity if the user actually clicks on a ListElement
-                    // (as opposed to something inheriting from ListHeader, which shouldn't do anything on user click
-                    Intent intent;
+                if (item != null && item instanceof EventListElement) {
                     String eventKey = ((ListElement) item).getKey();
-                    if (mTeamKey == null || mTeamKey.isEmpty()) {
-                        //no team is selected, go to the event details
-                        intent = ViewEventActivity.newInstance(getActivity(), eventKey);
-                    } else {
-                        //team is selected, open up the results for that specific team at the event
-                        intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey);
-                    }
-                    startActivity(intent);
+                    startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey));
                 } else {
                     Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
                 }
@@ -114,7 +98,9 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        mTask.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
+        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
@@ -124,15 +110,15 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
+        if (mYear != -1) {
+            parent.startRefresh(this);
         }
     }
 
     @Override
     public void onRefreshStart() {
-        mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        mTask = new PopulateEventList(this, mYear, "", mTeamKey, true);
+        mTask.execute();
     }
 
     @Override
@@ -145,6 +131,13 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        parent.deregisterRefreshableActivityListener(this);
+        parent.removeOnYearChangedListener(this);
+    }
+
+    @Override
+    public void onYearChanged(int newYear) {
+        mYear = newYear;
+        onRefreshStart();
     }
 }
