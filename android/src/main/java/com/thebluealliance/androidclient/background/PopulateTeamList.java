@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
@@ -76,7 +77,9 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView eventList = (ListView) view.findViewById(R.id.list);
+                Parcelable state = eventList.onSaveInstanceState();
                 eventList.setAdapter(adapter);
+                eventList.onRestoreInstanceState(state);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {

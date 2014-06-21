@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.ListView;
 
@@ -45,7 +46,10 @@ public class PopulateContributors extends AsyncTask<String, Void, Void> {
         activity.findViewById(R.id.progress).setVisibility(View.GONE);
         activity.findViewById(R.id.no_data).setVisibility(View.GONE);
         activity.findViewById(android.R.id.list).setVisibility(View.VISIBLE);
-        ((ListView) activity.findViewById(android.R.id.list)).setAdapter(adapter);
+        ListView contributors = (ListView) activity.findViewById(android.R.id.list);
+        Parcelable state = contributors.onSaveInstanceState();
+        contributors.setAdapter(adapter);
+        contributors.onRestoreInstanceState(state);
         activity.notifyRefreshComplete(activity);
     }
 

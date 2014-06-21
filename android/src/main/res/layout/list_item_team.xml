@@ -10,6 +10,7 @@
         android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
         android:text="254"
         android:textSize="30sp" />
 
@@ -44,9 +45,9 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="0dp"
+        android:layout_marginLeft="8dp"
         android:clickable="true"
         android:focusable="false"
-        android:layout_marginLeft="8dp"
         android:src="@drawable/ic_action_about" />
 
 </RelativeLayout>

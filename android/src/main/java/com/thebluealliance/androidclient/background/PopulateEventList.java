@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
@@ -133,7 +134,9 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView eventList = (ListView) view.findViewById(R.id.list);
+                Parcelable state = eventList.onSaveInstanceState();
                 eventList.setAdapter(adapter);
+                eventList.onRestoreInstanceState(state);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {

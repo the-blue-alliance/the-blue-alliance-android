@@ -175,6 +175,10 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+            if(isDrawerOpen()) {
+                closeDrawer();
+                return true;
+            }
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
