@@ -118,14 +118,14 @@ public class MatchListElement extends ListElement {
             holder.red1.setText(redTeams[0]);
             holder.red1.setTag("frc" + redTeams[0]);
             holder.red1.setOnClickListener(listener);
-            if (!selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[0])) {
+            if (!selectedTeamKey.isEmpty() && selectedTeamKey.equals(redTeams[0])) {
                 holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
             holder.red2.setText(redTeams[1]);
             holder.red2.setTag("frc" + redTeams[1]);
             holder.red2.setOnClickListener(listener);
-            if (!selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[1])) {
+            if (!selectedTeamKey.isEmpty() && selectedTeamKey.equals(redTeams[1])) {
                 holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
@@ -136,7 +136,7 @@ public class MatchListElement extends ListElement {
                 holder.red3.setText(redTeams[2]);
                 holder.red3.setTag("frc" + redTeams[2]);
                 holder.red3.setOnClickListener(listener);
-                if (!selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[2])) {
+                if (!selectedTeamKey.isEmpty() && selectedTeamKey.equals(redTeams[2])) {
                     holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
                 }
             }
@@ -150,14 +150,14 @@ public class MatchListElement extends ListElement {
             holder.blue1.setText(blueTeams[0]);
             holder.blue1.setTag("frc" + blueTeams[0]);
             holder.blue1.setOnClickListener(listener);
-            if (!selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[0])) {
+            if (!selectedTeamKey.isEmpty() && selectedTeamKey.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
             holder.blue2.setText(blueTeams[1]);
             holder.blue2.setTag("frc" + blueTeams[1]);
             holder.blue2.setOnClickListener(listener);
-            if (!selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[1])) {
+            if (!selectedTeamKey.isEmpty() && selectedTeamKey.equals(blueTeams[1])) {
                 holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
@@ -168,7 +168,7 @@ public class MatchListElement extends ListElement {
                 holder.blue3.setText(blueTeams[2]);
                 holder.blue3.setTag("frc" + blueTeams[2]);
                 holder.blue3.setOnClickListener(listener);
-                if (!selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[2])) {
+                if (!selectedTeamKey.isEmpty() && selectedTeamKey.equals(blueTeams[2])) {
                     holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
                 }
             }
