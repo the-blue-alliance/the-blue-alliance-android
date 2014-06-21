@@ -50,14 +50,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (ConnectionDetector.isConnectedToInternet(this)) {
-            new PopulateContributors(this).execute();
-        } else {
-            findViewById(android.R.id.list).setVisibility(View.GONE);
-            findViewById(R.id.no_data).setVisibility(View.VISIBLE);
-            findViewById(R.id.progress).setVisibility(View.GONE);
-        }
+        startRefresh(this);
     }
 
     private void setupActionBar() {
@@ -87,7 +80,13 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
 
     @Override
     public void onRefreshStart() {
-        new PopulateContributors(this).execute();
+        if (ConnectionDetector.isConnectedToInternet(this)) {
+            new PopulateContributors(this).execute();
+        } else {
+            findViewById(android.R.id.list).setVisibility(View.GONE);
+            findViewById(R.id.no_data).setVisibility(View.VISIBLE);
+            findViewById(R.id.progress).setVisibility(View.GONE);
+        }
     }
 
     @Override

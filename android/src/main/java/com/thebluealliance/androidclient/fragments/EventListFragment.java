@@ -133,12 +133,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
     public void onRefreshStart() {
         mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        View view = getView();
-        if (view != null) {
-            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
-            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.list).setVisibility(View.GONE);
-        }
     }
 
     @Override

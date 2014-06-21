@@ -77,12 +77,6 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
 
         task = new PopulateTeamMedia(this, true);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, year);
-        View view = getView();
-        if (view != null) {
-            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
-            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.team_media_list).setVisibility(View.GONE);
-        }
     }
 
     @Override
