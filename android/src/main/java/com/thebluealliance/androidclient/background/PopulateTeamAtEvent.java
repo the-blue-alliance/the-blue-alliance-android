@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background;
 
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -179,8 +180,6 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             }
 
             MatchListAdapter adapter = new MatchListAdapter(activity, matchGroups, teamKey);
-            ExpandableListView listView = (ExpandableListView) activity.findViewById(R.id.results);
-            listView.setAdapter(adapter);
 
             MatchHelper.EventPerformance performance =
                     MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
@@ -208,6 +207,13 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 adapter.addGroup(0, lastMatches);
             }
 
+            ExpandableListView listView = (ExpandableListView) activity.findViewById(R.id.results);
+            Parcelable state = listView.onSaveInstanceState();
+            int firstVisiblePosition = listView.getFirstVisiblePosition();
+            listView.setAdapter(adapter);
+            listView.onRestoreInstanceState(state);
+            listView.setSelection(firstVisiblePosition);
+
             activity.findViewById(R.id.team_at_event_progress).setVisibility(View.GONE);
             activity.findViewById(R.id.content_view).setVisibility(View.VISIBLE);
 
@@ -226,7 +232,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         } else {
             // Show notification if we've refreshed data.
             if (activity instanceof RefreshableHostActivity) {
-                ((RefreshableHostActivity) activity).notifyRefreshComplete((RefreshListener) activity);
+                activity.notifyRefreshComplete((RefreshListener) activity);
             }
         }
 

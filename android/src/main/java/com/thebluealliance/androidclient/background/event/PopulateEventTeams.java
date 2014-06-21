@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -83,7 +84,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
         if (view != null && activity != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
-            adapter.notifyDataSetChanged();
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter or if we can't download info
@@ -93,7 +93,9 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);
+                Parcelable state = teamList.onSaveInstanceState();
                 teamList.setAdapter(adapter);
+                teamList.onRestoreInstanceState(state);
             }
 
             // Display warning if offline.
