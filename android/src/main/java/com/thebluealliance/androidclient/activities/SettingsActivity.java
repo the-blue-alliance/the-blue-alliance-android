@@ -38,6 +38,9 @@ public class SettingsActivity extends PreferenceActivity {
             Preference licenses = findPreference("licenses");
             licenses.setIntent(new Intent(getActivity(), OpenSourceLicensesActivity.class));
 
+            Preference contributors = findPreference("contributors");
+            contributors.setIntent(new Intent(getActivity(), ContributorsActivity.class));
+
             Preference changelog = findPreference("changelog");
             String version = BuildConfig.VERSION_NAME;
             if (version.contains("-")) {

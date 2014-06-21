@@ -58,6 +58,7 @@
     <string name="no_event_data">No events were found.</string>
     <string name="no_media_data">No media was found for this team.</string>
     <string name="no_team_list">Unable to load team list.</string>
+    <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
 
     <!-- View Team -->
     <string name="from">from</string>
@@ -90,6 +91,8 @@
     <string name="tbasite_summary">Visit The Blue Alliance</string>
     <string name="license_label">Open Source Licenses</string>
     <string name="changelog">View Changelog</string>
+    <string name="contributors">Contributors</string>
+    <string name="contributors_summary">View a list of people who contributed to this project</string>
 
     <!-- Warnings -->
     <string name="warning_using_cached_data">You are offline and may be viewing outdated information.</string>

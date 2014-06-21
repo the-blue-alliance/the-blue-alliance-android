@@ -85,7 +85,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             fromSavedInstance = true;
             Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
-                initNavId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
+                mCurrentSelectedNavigationItemId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
             }
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
@@ -93,9 +93,8 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             }
         } else {
             mCurrentSelectedYearPosition = 0;
+            switchToModeForId(initNavId);
         }
-
-        switchToModeForId(initNavId);
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
@@ -144,6 +143,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
         }
+        fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         // This must be done before we lose the drawer
         mCurrentSelectedNavigationItemId = id;
