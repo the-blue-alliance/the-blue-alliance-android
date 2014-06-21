@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventStats;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -89,7 +90,16 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+                if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
+                    if (TeamHelper.validateMultiTeamKey(teamKey)) {
+                        // Take out extra letter at end to make team key valid.
+                        teamKey = teamKey.substring(0, teamKey.length() - 1);
+                    }
+                        startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+                }
+                else{
+                    throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
+                }
             }
         });
 
