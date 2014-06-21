@@ -29,8 +29,10 @@
             <!-- Use multiple "data" elements so we can only filter for URLs we can handle -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="http" />
                 <data android:host="@string/web_url_host" />
                 <data android:host="@string/web_url_host_www" />
@@ -40,7 +42,8 @@
                 <data android:pathPrefix="/match" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.HomeActivity"
+        <activity
+            android:name=".activities.HomeActivity"
             android:launchMode="singleTop" />
         <activity
             android:name=".activities.ViewEventActivity"
@@ -75,6 +78,8 @@
         <activity
             android:name=".activities.OpenSourceLicensesActivity"
             android:label="@string/license_label" />
+
+        <activity android:name=".activities.ContributorsActivity" />
 
         <activity
             android:name=".activities.TeamAtEventActivity"
