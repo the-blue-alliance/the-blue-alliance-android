@@ -24,18 +24,19 @@
 
                 <TextView
                     android:id="@+id/match_name"
+                    style="@android:style/TextAppearance.DeviceDefault.Large"
+                    android:textStyle="bold"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="48sp" />
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:id="@+id/event_name"
+                    style="@android:style/TextAppearance.DeviceDefault.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/match_name"
                     android:paddingBottom="16dp"
-                    android:paddingTop="16dp"
-                    android:textSize="24sp" />
+                    android:paddingTop="16dp"/>
 
                 <TableLayout
                     android:id="@+id/score_table"
