@@ -15,8 +15,6 @@ import com.thebluealliance.androidclient.listitems.EventListElement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class Event implements BasicModel {
@@ -190,7 +188,7 @@ public class Event implements BasicModel {
         this.location = location;
     }
 
-    public String getVenue(){
+    public String getVenue() {
         return venue;
     }
 
@@ -307,26 +305,7 @@ public class Event implements BasicModel {
     }
 
     public String getShortName() {
-        // Preseason and offseason events will probably fail our regex matcher
-        if (this.getEventType() == EventHelper.TYPE.PRESEASON || getEventType() == EventHelper.TYPE.OFFSEASON) {
-            return eventName;
-        }
-        if (shortName.isEmpty()) {
-            Pattern regexPattern = Pattern.compile("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)( FIRST Robotics| FRC)?( District| Regional| Region| State| Tournament| FRC| Field| Division)( Competition| Event| Championship)?( sponsored by.*)?");
-            Matcher m = regexPattern.matcher(eventName);
-            if (m.matches()) {
-                String s = m.group(3);
-                regexPattern = Pattern.compile("(.*)(FIRST Robotics|FRC)");
-                m = regexPattern.matcher(s);
-                if (m.matches()) {
-                    shortName = m.group(1).trim();
-                } else {
-                    shortName = s.trim();
-                }
-            }
-        }
-
-        return shortName;
+        return EventHelper.getShortNameForEvent(eventName, eventType);
     }
 
     public void setShortName(String shortName) {
@@ -359,11 +338,7 @@ public class Event implements BasicModel {
 
     @Override
     public EventListElement render() {
-        if (getShortName() == null || shortName.isEmpty()) {
-            return new EventListElement(eventKey, eventName, getDateString(), location);
-        } else {
-            return new EventListElement(eventKey, getShortName(), getDateString(), location);
-        }
+        return new EventListElement(eventKey, getShortName(), getDateString(), location);
     }
 
     public ArrayList<AllianceListElement> renderAlliances() {
