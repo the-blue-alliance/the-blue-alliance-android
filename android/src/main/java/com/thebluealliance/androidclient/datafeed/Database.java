@@ -75,7 +75,7 @@ public class Database extends SQLiteOpenHelper {
             + Events.STATS + " STRING, "
             + ")";
     String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
-            + Awards.KEY + " TEXT PRIMARY KEY, "
+            + Awards.EVENTKEY + " TEXT, "
             + Awards.NAME + " TEXT, "
             + Awards.YEAR + " INTEGER, "
             + Awards.WINNERS + " TEXT"
@@ -116,6 +116,7 @@ public class Database extends SQLiteOpenHelper {
     private Awards awardsTable;
     private Matches matchesTable;
     private Medias mediasTable;
+    private Response responseTable;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -126,6 +127,7 @@ public class Database extends SQLiteOpenHelper {
         awardsTable = new Awards();
         matchesTable = new Matches();
         mediasTable = new Medias();
+        responseTable = new Response();
         sSemaphore = new Semaphore(1);
     }
 
@@ -151,6 +153,9 @@ public class Database extends SQLiteOpenHelper {
     }
     public Medias getMediasTable() {
         return mediasTable;
+    }
+    public Response getResponseTable(){
+        return responseTable;
     }
 
     @Override
@@ -212,8 +217,59 @@ public class Database extends SQLiteOpenHelper {
         public static final String URL = "url", //text
                 LASTUPDATE = "lastUpdated",     //timestamp for Last-Modified from API
                 LASTHIT = "lastHit";           //last time we hit the API
-    }
 
+        public long storeResponse(String url, String updated) {
+            if(responseExists(url)){
+                return updateResponse(url, updated);
+            }
+            ContentValues cv = new ContentValues();
+            cv.put(Response.URL, url);
+            cv.put(Response.LASTUPDATE, updated);
+            cv.put(Response.LASTHIT, new Date().getTime());
+            return safeInsert(TABLE_API, null, cv);
+        }
+
+        public boolean responseExists(String url) {
+            Cursor cursor = safeQuery(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
+            boolean exists = (cursor.moveToFirst()) || (cursor.getCount() != 0);
+            cursor.close();
+            return exists;
+        }
+
+        public int deleteResponse(String url) {
+            if (responseExists(url)) {
+                return safeDelete(TABLE_API, Response.URL + "=?", new String[]{url});
+            }
+            return 0;
+        }
+
+        public void deleteAllResponses() {
+            safeDelete(TABLE_API, "", new String[]{});
+        }
+
+        public int updateResponse(String url, String updated) {
+            ContentValues cv = new ContentValues();
+            cv.put(Response.LASTUPDATE, updated);
+            cv.put(Response.LASTHIT, new Date().getTime());
+            return safeUpdate(TABLE_API, cv, Response.URL + "=?", new String[]{url});
+        }
+
+        /**
+         * Just updates the last hit time in the database.
+         * Like UNIX `touch`
+         * @param url URL for the record to touch
+         * @return update code
+         */
+        public int touchResponse(String url){
+            if(responseExists(url)) {
+                ContentValues cv = new ContentValues();
+                cv.put(Response.LASTHIT, new Date().getTime());
+                return safeUpdate(TABLE_API, cv, Response.URL + "=?", new String[]{url});
+            }else{
+                return -1;
+            }
+        }
+    }
     public class Teams implements ModelTable<Team>{
         public static final String KEY = "key",
                 NUMBER = "number",
@@ -224,8 +280,18 @@ public class Database extends SQLiteOpenHelper {
                 EVENTS = "events";
 
         public long add(Team team) {
-            insertSearchItemTeam(team);
-            return safeInsert(TABLE_TEAMS, null, team.getParams());
+            if(!exists(team.getTeamKey())) {
+                insertSearchItemTeam(team);
+                return safeInsert(TABLE_TEAMS, null, team.getParams());
+            }else{
+                return update(team);
+            }
+        }
+
+        @Override
+        public int update(Team in) {
+            updateSearchItemTeam(in);
+            return safeUpdate(TABLE_TEAMS, in.getParams(), Teams.KEY + " = ?", new String[]{in.getTeamKey()});
         }
 
         public void storeTeams(ArrayList<Team> teams) {
@@ -260,6 +326,21 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        @Override
+        public boolean exists(String key) {
+            Cursor cursor = safeQuery(TABLE_TEAMS, new String[]{}, Teams.KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result = cursor != null && cursor.moveToFirst();
+            if(cursor != null){
+                cursor.close();
+            }
+            return result;
+        }
+
+        @Override
+        public void delete(Team in) {
+            safeDelete(TABLE_TEAMS, Teams.KEY + " = ? ", new String[]{in.getTeamKey()});
+        }
+
         public ArrayList<Team> getInRange(int lowerBound, int upperBound, String[] fields) {
             ArrayList<Team> teams = new ArrayList<>();
             // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
@@ -291,7 +372,6 @@ public class Database extends SQLiteOpenHelper {
             return cursor;
         }
     }
-
     public class Events implements ModelTable<Event>{
         public static final String KEY = "key",
                 YEAR = "year",
@@ -312,9 +392,9 @@ public class Database extends SQLiteOpenHelper {
         public long add(Event event) {
             if (!exists(event.getEventKey())) {
                 insertSearchItemEvent(event);
-                return db.insert(TABLE_EVENTS, null, event.getParams());
+                return safeInsert(TABLE_EVENTS, null, event.getParams());
             } else {
-                return 0;//updateEvent(event);
+                return update(event);
             }
         }
 
@@ -396,20 +476,71 @@ public class Database extends SQLiteOpenHelper {
             return result;
         }
 
+        @Override
+        public void delete(Event in) {
+            safeDelete(TABLE_EVENTS, Events.KEY + " = ?", new String[]{in.getEventKey()});
+        }
+
         public int update(Event event) {
             updateSearchItemEvent(event);
             return safeUpdate(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
         }
 
     }
-
     public class Awards implements ModelTable<Award>{
-        public static final String KEY = "key",
+        public static final String EVENTKEY = "eventKey",
                 NAME = "name",
                 YEAR = "year",
                 WINNERS = "winners";
-    }
 
+        @Override
+        public long add(Award in) {
+            return safeInsert(TABLE_AWARDS, null, in.getParams());
+        }
+
+        @Override
+        public int update(Award in) {
+            return safeUpdate(TABLE_AWARDS, in.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+        }
+
+        /*
+         * For Awards, key is eventKey:awardName
+         */
+        @Override
+        public Award get(String key, String[] fields) {
+            String eventKey = key.split(":")[0];
+            String awardName = key.split(":")[1];
+            Cursor cursor = safeQuery(TABLE_AWARDS, fields, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                Award award = new Award();
+                //TODO inflate!
+                cursor.close();
+                return award;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean exists(String key) {
+            String eventKey = key.split(":")[0];
+            String awardName = key.split(":")[1];
+            Cursor cursor = safeQuery(TABLE_AWARDS, new String[]{}, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        @Override
+        public void delete(Award in) {
+            safeDelete(TABLE_AWARDS, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+        }
+    }
     public class Matches implements ModelTable<Match>{
         public static final String KEY = "key",
             EVENT = "eventKey",
@@ -417,14 +548,103 @@ public class Database extends SQLiteOpenHelper {
             TIME = "time",
             ALLIANCES = "alliances",
             VIDEOS = "videos";
-    }
 
+        @Override
+        public long add(Match in) {
+            if (!exists(in.getEventKey())) {
+                return safeInsert(TABLE_EVENTS, null, in.getParams());
+            } else {
+                return update(in);
+            }
+        }
+
+        @Override
+        public int update(Match in) {
+            return safeUpdate(TABLE_MATCHES, in.getParams(), Matches.KEY + " = ?", new String[]{in.getKey()});
+        }
+
+        @Override
+        public Match get(String key, String[] fields) {
+            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Matches.KEY + " = ?", new String[]{key}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                Match match = new Match();
+                //TODO inflate!
+                cursor.close();
+                return match;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean exists(String key) {
+            Cursor cursor = safeQuery(TABLE_MATCHES, new String[]{Matches.KEY}, Matches.KEY + "=?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        @Override
+        public void delete(Match in) {
+            safeDelete(TABLE_MATCHES, Matches.KEY + " = ?", new String[]{in.getKey()});
+        }
+    }
     public class Medias implements ModelTable<Media>{
         public static final String TYPE = "type",
             FOREIGNKEY = "foreignKey",
             TEAMKEY = "teamKey",
             DETAILS = "details",
             YEAR = "year";
+
+        @Override
+        public long add(Media in) {
+            if (!exists(in.getForeignKey())) {
+                return safeInsert(TABLE_MEDIAS, null, in.getParams());
+            } else {
+                return update(in);
+            }
+        }
+
+        @Override
+        public int update(Media in) {
+            return safeUpdate(TABLE_MEDIAS, in.getParams(), Medias.FOREIGNKEY + " = ?", new String[]{in.getForeignKey()});
+        }
+
+        @Override
+        public Media get(String foreignKey, String[] fields) {
+            Cursor cursor = safeQuery(TABLE_MEDIAS, fields, Medias.FOREIGNKEY + " = ?", new String[]{foreignKey}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                Media media = new Media();
+                //TODO inflate!
+                cursor.close();
+                return media;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean exists(String key) {
+            Cursor cursor = safeQuery(TABLE_MEDIAS, new String[]{}, Medias.FOREIGNKEY + "=?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        @Override
+        public void delete(Media in) {
+            safeDelete(TABLE_MEDIAS, Medias.FOREIGNKEY + " = ? ", new String[]{in.getForeignKey()});
+        }
     }
 
     public class SearchTeam {
@@ -536,58 +756,6 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public long storeResponse(String url, String updated) {
-        if(responseExists(url)){
-            return updateResponse(url, updated);
-        }
-        ContentValues cv = new ContentValues();
-        cv.put(Response.URL, url);
-        cv.put(Response.LASTUPDATE, updated);
-        cv.put(Response.LASTHIT, new Date().getTime());
-        return safeInsert(TABLE_API, null, cv);
-    }
-
-    public boolean responseExists(String url) {
-        Cursor cursor = safeQuery(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
-        boolean exists = (cursor.moveToFirst()) || (cursor.getCount() != 0);
-        cursor.close();
-        return exists;
-    }
-
-    public int deleteResponse(String url) {
-        if (responseExists(url)) {
-            return safeDelete(TABLE_API, Response.URL + "=?", new String[]{url});
-        }
-        return 0;
-    }
-
-    public void deleteAllResponses() {
-        safeDelete(TABLE_API, "", new String[]{});
-    }
-
-    public int updateResponse(String url, String updated) {
-        ContentValues cv = new ContentValues();
-        cv.put(Response.LASTUPDATE, updated);
-        cv.put(Response.LASTHIT, new Date().getTime());
-        return safeUpdate(TABLE_API, cv, Response.URL + "=?", new String[]{url});
-    }
-
-    /**
-     * Just updates the last hit time in the database.
-     * Like UNIX `touch`
-     * @param url URL for the record to touch
-     * @return update code
-     */
-    public int touchResponse(String url){
-        if(responseExists(url)) {
-            ContentValues cv = new ContentValues();
-            cv.put(Response.LASTHIT, new Date().getTime());
-            return safeUpdate(TABLE_API, cv, Response.URL + "=?", new String[]{url});
-        }else{
-            return -1;
-        }
-    }
-
     public long insertSearchItemTeam(Team team) {
         ContentValues cv = new ContentValues();
         cv.put(SearchTeam.KEY, team.getTeamKey());
@@ -618,6 +786,14 @@ public class Database extends SQLiteOpenHelper {
         cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
         cv.put(SearchEvent.YEAR, event.getEventYear());
         return safeUpdate(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
+    }
+
+    public void deleteSearchItemTeam(Team team){
+        safeDelete(TABLE_SEARCH_TEAMS, SearchTeam.KEY + " = ?", new String[]{team.getTeamKey()});
+    }
+
+    public void deleteSearchItemEvent(Event event){
+        safeDelete(TABLE_SEARCH_EVENTS, SearchEvent.KEY + " = ?", new String[]{event.getEventKey()});
     }
 
     public Cursor getMatchesForTeamQuery(String query) {
