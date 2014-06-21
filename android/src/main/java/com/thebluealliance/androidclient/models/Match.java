@@ -293,6 +293,12 @@ public class Match extends BasicModel<Match> {
     @Override
     public ContentValues getParams() {
         ContentValues values = new ContentValues();
+        values.put(Database.Matches.KEY, key);
+        values.put(Database.Matches.EVENT, eventKey);
+        values.put(Database.Matches.TIMESTRING, timeString);
+        values.put(Database.Matches.TIME, time.getTime());
+        values.put(Database.Matches.ALLIANCES, alliances.toString());
+        values.put(Database.Matches.VIDEOS, videos.toString());
         return values;
     }
 

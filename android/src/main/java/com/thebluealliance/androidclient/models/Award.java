@@ -142,6 +142,11 @@ public class Award extends BasicModel<Award> {
 
     @Override
     public ContentValues getParams() {
-        return null;
+        ContentValues values = new ContentValues();
+        values.put(Database.Awards.EVENTKEY, eventKey);
+        values.put(Database.Awards.NAME, name);
+        values.put(Database.Awards.YEAR, year);
+        values.put(Database.Awards.WINNERS, winners.toString());
+        return values;
     }
 }

@@ -161,7 +161,14 @@ public class Team extends BasicModel<Team> {
 
     @Override
     public ContentValues getParams() {
-        return null;
+        ContentValues values = new ContentValues();
+        values.put(Database.Teams.KEY, teamKey);
+        values.put(Database.Teams.NUMBER, teamNumber);
+        values.put(Database.Teams.SHORTNAME, nickname);
+        values.put(Database.Teams.LOCATION, location);
+        values.put(Database.Teams.WEBSITE, website);
+        values.put(Database.Teams.EVENTS, events.toString());
+        return values;
     }
 
 }

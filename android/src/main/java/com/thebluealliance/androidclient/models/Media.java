@@ -127,7 +127,12 @@ public class Media extends BasicModel<Media> {
 
     @Override
     public ContentValues getParams() {
-        return null;
+        ContentValues values = new ContentValues();
+        values.put(Database.Medias.TYPE, mediaType.toString());
+        values.put(Database.Medias.FOREIGNKEY, foreignKey);
+        values.put(Database.Medias.YEAR, year);
+        values.put(Database.Medias.DETAILS, details.toString());
+        return values;
     }
 
 }
