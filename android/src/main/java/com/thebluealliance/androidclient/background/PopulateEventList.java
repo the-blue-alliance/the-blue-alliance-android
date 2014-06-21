@@ -89,7 +89,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
                 ArrayList<SimpleEvent> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
-                    events = EventHelper.renderEventList(eventData);
+                    events = EventHelper.renderEventListForWeek(eventData);
                 }
                 return response.getCode();
             } catch (Exception e) {
@@ -102,7 +102,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 response = DataManager.Teams.getEventsForTeam(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
                 ArrayList<SimpleEvent> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
-                    events = EventHelper.renderEventList(eventsArray);
+                    events = EventHelper.renderEventListForTeam(eventsArray);
                 }
                 return response.getCode();
             } catch (Exception e) {

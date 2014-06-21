@@ -212,14 +212,14 @@ public class DataManager {
                         events = Database.getInstance(c).getEventsInYear(year);
                     }
                     eventListResponse = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
-                    groupedEvents = SimpleEvent.groupByWeek(events);
+                    groupedEvents = EventHelper.groupByWeek(events);
                 } else {
                     eventListResponse = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_LIST), year), false, false);
                     events = TBAv2.getEventList(eventListResponse.getData());
                     synchronized (Database.getInstance(c)) {
                         Database.getInstance(c).storeEvents(events);
                     }
-                    groupedEvents = SimpleEvent.groupByWeek(events);
+                    groupedEvents = EventHelper.groupByWeek(events);
                     if (eventListResponse.getCode() != APIResponse.CODE.NODATA) {
                         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true).commit();
                     }
