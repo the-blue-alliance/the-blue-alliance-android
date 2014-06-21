@@ -12,6 +12,7 @@ import android.util.Log;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.interfaces.ModelTable;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
@@ -317,8 +318,7 @@ public class Database extends SQLiteOpenHelper {
         public Team get(String teamKey, String[] fields) {
             Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                Team team = new Team();
-                //TODO inflate!
+                Team team = ModelInflater.infalteTeam(cursor);
                 cursor.close();
                 return team;
             } else {
@@ -346,9 +346,9 @@ public class Database extends SQLiteOpenHelper {
             // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
             Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
             if(cursor != null && cursor.moveToFirst()) {
-                while (cursor.moveToNext()) {
-                    //TODO inflate!
-                }
+                do {
+                    teams.add(ModelInflater.infalteTeam(cursor));
+                }while (cursor.moveToNext());
                 cursor.close();
             }
             return teams;
@@ -421,8 +421,7 @@ public class Database extends SQLiteOpenHelper {
         public Event get(String eventKey, String[] fields) {
             Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                Event event = new Event();
-                //TODO inflate!
+                Event event = ModelInflater.inflateEvent(cursor);
                 cursor.close();
                 return event;
             } else {
@@ -435,8 +434,7 @@ public class Database extends SQLiteOpenHelper {
             Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    Event event = new Event();
-                    //TODO inflate!
+                    Event event = ModelInflater.inflateEvent(cursor);
                     events.add(event);
                 } while (cursor.moveToNext());
                 cursor.close();
@@ -452,8 +450,7 @@ public class Database extends SQLiteOpenHelper {
             Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    Event event = new Event();
-                    //TODO inflate!
+                    Event event = ModelInflater.inflateEvent(cursor);
                     events.add(event);
                 } while (cursor.moveToNext());
                 cursor.close();
@@ -512,8 +509,7 @@ public class Database extends SQLiteOpenHelper {
             String awardName = key.split(":")[1];
             Cursor cursor = safeQuery(TABLE_AWARDS, fields, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                Award award = new Award();
-                //TODO inflate!
+                Award award = ModelInflater.inflateAward(cursor);
                 cursor.close();
                 return award;
             } else {
@@ -567,8 +563,7 @@ public class Database extends SQLiteOpenHelper {
         public Match get(String key, String[] fields) {
             Cursor cursor = safeQuery(TABLE_EVENTS, fields, Matches.KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                Match match = new Match();
-                //TODO inflate!
+                Match match = ModelInflater.inflateMatch(cursor);
                 cursor.close();
                 return match;
             } else {
@@ -619,8 +614,7 @@ public class Database extends SQLiteOpenHelper {
         public Media get(String foreignKey, String[] fields) {
             Cursor cursor = safeQuery(TABLE_MEDIAS, fields, Medias.FOREIGNKEY + " = ?", new String[]{foreignKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                Media media = new Media();
-                //TODO inflate!
+                Media media = ModelInflater.inflateMedia(cursor);
                 cursor.close();
                 return media;
             } else {

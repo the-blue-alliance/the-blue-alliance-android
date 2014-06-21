@@ -29,7 +29,7 @@ public class Event extends BasicModel<Event> {
             abbreviation,
             website;
     EventHelper.TYPE eventType;
-    int districtEnum;
+    int districtEnum, competitionWeek = -1;
     String districtTitle;
     Date startDate,
             endDate;
@@ -275,9 +275,16 @@ public class Event extends BasicModel<Event> {
     }
 
     public int getCompetitionWeek() {
-        if (startDate == null) return -1;
-        int week = Integer.parseInt(EventHelper.weekFormat.format(startDate)) - Utilities.getFirstCompWeek(eventYear);
-        return week < 0 ? 0 : week;
+        if(competitionWeek == -1) {
+            if (startDate == null) return -1;
+            int week = Integer.parseInt(EventHelper.weekFormat.format(startDate)) - Utilities.getFirstCompWeek(eventYear);
+            competitionWeek =  week < 0 ? 0 : week;
+        }
+        return competitionWeek;
+    }
+
+    public void setCompetitionWeek(int week){
+        competitionWeek = week;
     }
 
     public boolean isHappeningNow() {
@@ -392,8 +399,10 @@ public class Event extends BasicModel<Event> {
     public ContentValues getParams() {
         ContentValues values = new ContentValues();
         values.put(Database.Events.KEY, eventKey);
+        values.put(Database.Events.YEAR, eventYear);
         values.put(Database.Events.NAME, eventName);
         values.put(Database.Events.LOCATION, location);
+        values.put(Database.Events.VENUE, venue);
         values.put(Database.Events.TYPE, eventType.ordinal());
         values.put(Database.Events.DISTRICT, districtEnum);
         values.put(Database.Events.DISTRICT_STRING, districtTitle);
@@ -401,6 +410,9 @@ public class Event extends BasicModel<Event> {
         values.put(Database.Events.END, EventHelper.eventDateFormat.format(endDate));
         values.put(Database.Events.OFFICIAL, official ? 1 : 0);
         values.put(Database.Events.WEEK, getCompetitionWeek());
+        values.put(Database.Events.RANKINGS, rankings.toString());
+        values.put(Database.Events.ALLIANCES, alliances.toString());
+        values.put(Database.Events.STATS, stats.toString());
 
         return values;
     }

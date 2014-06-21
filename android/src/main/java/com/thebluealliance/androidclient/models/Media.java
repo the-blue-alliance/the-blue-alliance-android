@@ -27,6 +27,18 @@ public class Media extends BasicModel<Media> {
                     return NONE;
             }
         }
+
+        public String toString(){
+            switch(this){
+                case NONE:
+                    return "";
+                case YOUTUBE:
+                    return "youtube";
+                case CD_PHOTO_THREAD:
+                    return "cdphotothread";
+            }
+            return "";
+        }
     }
 
     Media.TYPE mediaType;
