@@ -35,6 +35,9 @@ public class AwardListElement extends ListElement {
 
         View view = inflater.inflate(R.layout.list_item_award, null);
 
+        TextView title = (TextView) view.findViewById(R.id.award_name);
+        title.setText(mAwardName);
+
         Iterator<JsonElement> iterator = mAwardWinners.iterator();
         while (iterator.hasNext()) {
             JsonObject winner = iterator.next().getAsJsonObject();
@@ -54,9 +57,6 @@ public class AwardListElement extends ListElement {
             } else {
                 awardee = winner.get("awardee").getAsString();
             }
-
-            TextView title = (TextView) view.findViewById(R.id.award_name);
-            title.setText(mAwardName);
 
             String awardLine1 = "";
             String awardLine2 = "";
