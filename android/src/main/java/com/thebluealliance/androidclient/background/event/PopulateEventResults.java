@@ -43,6 +43,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     ArrayList<ListGroup> groups;
     Match nextMatch, lastMatch;
     Event event;
+    MatchListAdapter adapter;
 
     public PopulateEventResults(EventResultsFragment f, boolean forceFromCache) {
         mFragment = f;
@@ -169,13 +170,14 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             groups.add(finalMatches);
         }
 
+        adapter = new MatchListAdapter(activity, groups, teamKey);
+
         return APIResponse.mergeCodes(eventResponse.getCode(), response.getCode());
     }
 
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            MatchListAdapter adapter = new MatchListAdapter(activity, groups, teamKey);
             TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
 
             // If there's no results in the adapter or if we can't download info

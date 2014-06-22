@@ -25,15 +25,27 @@ public class ContributorListElement extends ListElement {
 
     @Override
     public View getView(final Context context, LayoutInflater inflater, View convertView) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item_contributor, null);
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.list_item_contributor, null);
 
-            TextView loginView = (TextView) view.findViewById(R.id.login);
-            loginView.setText(login);
-
-            ImageView avatar = (ImageView) view.findViewById(R.id.avatar);
-            Picasso.with(context).load(avatarUrl).into(avatar);
+            holder = new ViewHolder();
+            holder.login = (TextView) convertView.findViewById(R.id.login);
+            holder.avatar = (ImageView) convertView.findViewById(R.id.avatar);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        return view;
+
+        holder.login.setText(login);
+
+        Picasso.with(context).load(avatarUrl).into(holder.avatar);
+
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView login;
+        ImageView avatar;
     }
 }

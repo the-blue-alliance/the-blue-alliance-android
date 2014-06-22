@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.helpers;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndNameComparator;
-import com.thebluealliance.androidclient.listitems.EventWeekHeader;
+import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.SimpleEvent;
@@ -291,9 +291,9 @@ public class EventHelper {
             currentDistrict = event.getDistrictEnum();
             if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
                 if (currentType == EventHelper.TYPE.DISTRICT) {
-                    eventListItems.add(new EventWeekHeader(event.getDistrictTitle() + " District Events"));
+                    eventListItems.add(new EventTypeHeader(event.getDistrictTitle() + " District Events"));
                 } else {
-                    eventListItems.add(new EventWeekHeader(currentType.toString()));
+                    eventListItems.add(new EventTypeHeader(currentType.toString()));
                 }
             }
             eventListItems.add(event.render());

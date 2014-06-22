@@ -9,8 +9,6 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
  */
 public abstract class ListElement implements ListItem {
     protected final String key;
-    protected View view;
-    protected boolean selected = false;
 
     public ListElement() {
         key = "";
@@ -23,10 +21,6 @@ public abstract class ListElement implements ListItem {
     @Override
     public int getViewType() {
         return ListViewAdapter.ItemType.LIST_ITEM.ordinal();
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 
     public String getKey() {

@@ -43,6 +43,8 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private ArrayList<ListItem> teams;
     private boolean forceFromCache;
 
+    private ListViewAdapter adapter;
+
     public PopulateEventRankings(EventRankingsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
@@ -119,6 +121,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                     Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
                     teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), team.getNickname(), row.get(0).getAsInt(), record, rankingString));
                 }
+                adapter = new ListViewAdapter(activity, teams);
                 return response.getCode();
             } else {
                 return APIResponse.CODE.NODATA;
@@ -133,7 +136,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no rankings in the adapter or if we can't download info

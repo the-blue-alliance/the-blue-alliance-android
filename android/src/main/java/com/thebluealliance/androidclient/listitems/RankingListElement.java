@@ -29,41 +29,48 @@ public class RankingListElement extends ListElement {
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item_ranking, null);
-            view.setTag(key);
-            view.setSelected(selected);
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_ranking, null);
 
-            TextView team = (TextView) view.findViewById(R.id.team_number);
-            team.setText("" + mTeamNumber);
-
-            TextView name = (TextView) view.findViewById(R.id.team_name);
-            if (mTeamName.equals("")) {
-                name.setVisibility(View.INVISIBLE);
-            } else {
-                name.setText(mTeamName);
-            }
-
-            TextView rank = (TextView) view.findViewById(R.id.team_rank);
-            rank.setText(String.format(c.getString(R.string.team_rank), mTeamRank));
-
-            TextView record = (TextView) view.findViewById(R.id.team_record); /* formatted as (W, L, T) */
-            if (mTeamRecord.isEmpty()) {
-                record.setVisibility(View.GONE);
-            } else {
-                record.setText(mTeamRecord);
-            }
-
-            TextView breakdown = (TextView) view.findViewById(R.id.ranking_breakdown);
-            breakdown.setText(mTeamBreakdown);
-
-            if (view.isSelected()) {
-                view.setBackgroundColor(c.getResources().getColor(android.R.color.holo_blue_light));
-            } else {
-                view.setBackgroundColor(c.getResources().getColor(android.R.color.transparent));
-            }
+            holder = new ViewHolder();
+            holder.teamNumber = (TextView) convertView.findViewById(R.id.team_number);
+            holder.teamName = (TextView) convertView.findViewById(R.id.team_name);
+            holder.rank = (TextView) convertView.findViewById(R.id.team_rank);
+            holder.record = (TextView) convertView.findViewById(R.id.team_record);
+            holder.breakdown = (TextView) convertView.findViewById(R.id.ranking_breakdown);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        return view;
+
+        holder.teamNumber.setText("" + mTeamNumber);
+
+        if (mTeamName.equals("")) {
+            holder.teamName.setVisibility(View.INVISIBLE);
+        } else {
+            holder.teamName.setText(mTeamName);
+        }
+
+        holder.rank.setText(String.format(c.getString(R.string.team_rank), mTeamRank));
+
+        if (mTeamRecord.isEmpty()) {
+            holder.record.setVisibility(View.GONE);
+        } else {
+            holder.record.setText(mTeamRecord);
+        }
+
+        holder.breakdown.setText(mTeamBreakdown);
+
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView teamNumber;
+        TextView teamName;
+        TextView rank;
+        TextView record;
+        TextView breakdown;
     }
 
 }

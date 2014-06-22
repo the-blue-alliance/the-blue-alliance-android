@@ -12,13 +12,18 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventResults;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Match;
 
 /**
  * File created by phil on 4/22/14.
@@ -80,8 +85,11 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = (String) view.getTag();
-                if (matchKey != null && MatchHelper.validateMatchKey(matchKey)) {
+                Object item = parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
+                Log.d(Constants.LOG_TAG, "Selected item: " + item.getClass().getName());
+                if (item != null && item instanceof Match) {
+                    String matchKey = ((Match) item).getKey();
+                    Log.d(Constants.LOG_TAG, "Match key: " + matchKey);
                     startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
                 }
                 return true;

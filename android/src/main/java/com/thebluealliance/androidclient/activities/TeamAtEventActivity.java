@@ -15,9 +15,14 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Match;
 
 public class TeamAtEventActivity extends RefreshableHostActivity implements RefreshListener {
 
@@ -52,8 +57,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = (String) view.getTag();
-                if (matchKey != null && MatchHelper.validateMatchKey(matchKey)) {
+                Object item = parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
+                if (item != null && item instanceof Match) {
+                    String matchKey = ((Match) item).getKey();
                     startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
                 }
                 return true;
