@@ -66,7 +66,10 @@ public class AwardListElement extends ListElement {
                     awardLine1 = awardee;
                 }
             } else {
-                Team team = DataManager.Teams.getTeamFromDB(context, "frc" + teamNumber);
+                Team team = new Team();
+                team.setTeamNumber(111);
+                team.setNickname("WildStang");
+                //Team team = DataManager.Teams.getTeamFromDB(context, "frc" + teamNumber);
                 if (awardee == "") {
                     awardLine1 = teamNumber;
                     awardLine2 = team.getNickname();

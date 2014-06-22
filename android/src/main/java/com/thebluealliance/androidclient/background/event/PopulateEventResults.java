@@ -79,7 +79,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             response = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -140,7 +140,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -209,8 +209,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventResults secondLoad;
-            secondLoad =  new PopulateEventResults(mFragment, false);
+            PopulateEventResults secondLoad = new PopulateEventResults(mFragment, false);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey, teamKey);
         } else {

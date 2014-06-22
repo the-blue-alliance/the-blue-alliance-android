@@ -11,155 +11,161 @@
         android:orientation="horizontal"
         android:visibility="gone"
         android:weightSum="2">
+
         <ScrollView
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
-        <RelativeLayout
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp">
+            android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/match_name"
-                style="@android:style/TextAppearance.DeviceDefault.Large"
-                android:textStyle="bold"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quals 4" />
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="16dp">
 
-            <TextView
-                android:id="@+id/event_name"
-                style="@android:style/TextAppearance.DeviceDefault.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/match_name"
-                android:paddingBottom="16dp"
-                android:paddingTop="16dp"
-                android:text="2008 Midwest Regional" />
-
-            <TableLayout
-                android:id="@+id/score_table"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/event_name"
-                android:stretchColumns="*">
-
-                <TableRow
-                    android:background="@color/column_header_gray"
-                    android:minHeight="32dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="3"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="@string/teams" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1.5"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="@string/score" />
-                </TableRow>
-
-                <TableRow
+                <TextView
+                    android:id="@+id/match_name"
+                    style="@android:style/TextAppearance.DeviceDefault.Large"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/lighter_red"
-                    android:id="@+id/red_alliance"
-                    android:minHeight="48dp">
+                    android:text="Quals 4"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/red1"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:text="Red 1" />
-
-                    <TextView
-                        android:id="@+id/red2"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="Red 2" />
-
-                    <TextView
-                        android:id="@+id/red3"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="Red 3" />
-
-                    <TextView
-                        android:id="@+id/red_score"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1.5"
-                        android:background="@color/light_red"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:text="Red Score"
-                        android:textStyle="bold" />
-                </TableRow>
-
-                <TableRow
+                <TextView
+                    android:id="@+id/event_name"
+                    style="@android:style/TextAppearance.DeviceDefault.Medium"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/lighter_blue"
-                    android:id="@+id/blue_alliance"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                    android:minHeight="48dp">
+                    android:layout_below="@id/match_name"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:text="2008 Midwest Regional" />
 
-                    <TextView
-                        android:id="@+id/blue1"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue 1" />
+                <TableLayout
+                    android:id="@+id/score_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/event_name"
+                    android:stretchColumns="*">
 
-                    <TextView
-                        android:id="@+id/blue2"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue 2" />
+                    <TableRow
+                        android:background="@color/column_header_gray"
+                        android:minHeight="32dp">
 
-                    <TextView
-                        android:id="@+id/blue3"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue 3" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="3"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/teams"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
-                    <TextView
-                        android:id="@+id/blue_score"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1.5"
-                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                        android:background="@color/light_blue"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue Score"
-                        android:textStyle="bold" />
-                </TableRow>
-            </TableLayout>
-        </RelativeLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1.5"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="@string/score"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/red_alliance"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp">
+
+                        <TextView
+                            android:id="@+id/red1"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:background="@color/lighter_red"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Red 1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                        <TextView
+                            android:id="@+id/red2"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:background="@color/lighter_red"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Red 2"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                        <TextView
+                            android:id="@+id/red3"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:background="@color/lighter_red"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Red 3"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                        <TextView
+                            android:id="@+id/red_score"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1.5"
+                            android:background="@color/light_red"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Red Score"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/blue_alliance"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium">
+
+                        <TextView
+                            android:id="@+id/blue1"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:background="@color/lighter_blue"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Blue 1"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                        <TextView
+                            android:id="@+id/blue2"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:background="@color/lighter_blue"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Blue 2"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                        <TextView
+                            android:id="@+id/blue3"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:background="@color/lighter_blue"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Blue 3"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                        <TextView
+                            android:id="@+id/blue_score"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1.5"
+                            android:background="@color/light_blue"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="Blue Score"
+                            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                            android:textStyle="bold" />
+                    </TableRow>
+                </TableLayout>
+            </RelativeLayout>
         </ScrollView>
 
         <ScrollView

@@ -63,6 +63,8 @@ public class MatchListElement extends ListElement {
             holder.blue3 = (TextView) convertView.findViewById(R.id.blue3);
             holder.redScore = (TextView) convertView.findViewById(R.id.red_score);
             holder.blueScore = (TextView) convertView.findViewById(R.id.blue_score);
+            holder.redAlliance = convertView.findViewById(R.id.red_alliance);
+            holder.blueAlliance = convertView.findViewById(R.id.blue_alliance);
             holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
             convertView.setTag(holder);
         } else {
@@ -75,18 +77,12 @@ public class MatchListElement extends ListElement {
                         rScore = Integer.parseInt(redScore);
                 if (bScore > rScore) {
                     //blue wins
-                    View blue_alliance = convertView.findViewById(R.id.blue_alliance);
-                    if (blue_alliance != null) {
-                        blue_alliance.setBackgroundResource(R.drawable.blue_border);
-                    }
-                    holder.blueScore.setBackgroundResource(R.drawable.blue_score_border);
+                    holder.blueAlliance.setBackgroundResource(R.drawable.blue_border);
+                    holder.redAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_red));
                 } else if (bScore < rScore) {
                     //red wins
-                    View red_alliance = convertView.findViewById(R.id.red_alliance);
-                    if (red_alliance != null) {
-                        red_alliance.setBackgroundResource(R.drawable.red_border);
-                    }
-                    holder.redScore.setBackgroundResource(R.drawable.red_score_border);
+                    holder.redAlliance.setBackgroundResource(R.drawable.red_border);
+                    holder.blueAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_blue));
                 }
             } catch (NumberFormatException e) {
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
@@ -192,6 +188,8 @@ public class MatchListElement extends ListElement {
         TextView blue3;
         TextView redScore;
         TextView blueScore;
+        View redAlliance;
+        View blueAlliance;
         ImageView videoIcon;
     }
 }

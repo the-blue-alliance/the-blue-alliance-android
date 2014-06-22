@@ -58,7 +58,6 @@ public class TeamListElement extends ListElement {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        convertView.setTag(key);
 
         holder.teamNumber.setText("" + mTeamNumber);
 
