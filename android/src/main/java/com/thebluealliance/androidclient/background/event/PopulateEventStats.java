@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
@@ -125,6 +126,12 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         + ", " + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
                         + ", " + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
                 String teamKey = "frc" + opr.get(i).getKey();
+                // We might get a multi-team key from offseason events.
+                // If so, take out the extra letter at the end to prevent NPE.
+                if (TeamHelper.validateMultiTeamKey(teamKey))
+                {
+                    teamKey = teamKey.substring(0, teamKey.length() - 1);
+                }
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
                 teams.add(new StatsListElement(teamKey, opr.get(i).getKey(), team.getNickname(), statsString));
             }
