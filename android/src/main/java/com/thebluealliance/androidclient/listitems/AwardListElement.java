@@ -32,11 +32,20 @@ public class AwardListElement extends ListElement {
 
     @Override
     public View getView(Context context, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_award, null);
 
-        View view = inflater.inflate(R.layout.list_item_award, null);
+            holder = new ViewHolder();
+            holder.awardName = (TextView) convertView.findViewById(R.id.award_name);
+            holder.awardRecipients = (LinearLayout) convertView.findViewById(R.id.award_recipients);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+            holder.awardRecipients.removeAllViews();
+        }
 
-        TextView title = (TextView) view.findViewById(R.id.award_name);
-        title.setText(mAwardName);
+        holder.awardName.setText(mAwardName);
 
         Iterator<JsonElement> iterator = mAwardWinners.iterator();
         while (iterator.hasNext()) {
@@ -89,10 +98,13 @@ public class AwardListElement extends ListElement {
                 winnerLine2.setText(awardLine2);
             }
 
-            ((LinearLayout) view.findViewById(R.id.award_recipients)).addView(winnerView);
+            holder.awardRecipients.addView(winnerView);
         }
 
-        return view;
+        return convertView;
     }
-
+    private static class ViewHolder {
+        TextView awardName;
+        LinearLayout awardRecipients;
+    }
 }
