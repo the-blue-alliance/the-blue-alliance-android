@@ -1,10 +1,12 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -15,134 +17,120 @@ import java.util.Date;
 import java.util.Iterator;
 
 public class Team extends BasicModel<Team> {
-    String teamKey,
-            nickname,
-            location,
-            fullName,
-            website;
-    int teamNumber;
-    JsonArray events;
-    long last_updated;
 
     public Team() {
         super(Database.TABLE_TEAMS);
-        this.teamKey = "";
-        this.nickname = "";
-        this.location = "";
-        this.teamNumber = -1;
-        this.last_updated = -1;
-        this.fullName = "";
-        this.website = "";
-        this.events = new JsonArray();
     }
 
-    public Team(String teamKey, int teamNumber, String nickname, String location, long last_updated) {
-        super(Database.TABLE_TEAMS);
-        this.teamKey = teamKey;
-        this.nickname = nickname;
-        this.location = location;
-        this.teamNumber = teamNumber;
-        this.last_updated = last_updated;
-    }
-
-
-    public Team(String teamKey, int teamNumber, String fullName, String nickname, String location, String website, JsonArray events, long last_updated) {
-        super(Database.TABLE_TEAMS);
-        this.teamKey = teamKey;
-        this.nickname = nickname;
-        this.location = location;
-        this.teamNumber = teamNumber;
-        this.last_updated = last_updated;
-        this.fullName = fullName;
-        this.events = events;
-        this.website = website;
-    }
-
-    public String getFullName() {
-        return fullName;
+    public String getFullName() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.NAME) && fields.get(Database.Teams.NAME) instanceof String) {
+            return (String) fields.get(Database.Teams.NAME);
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.NAME is not defined");
     }
 
     public void setFullName(String fullName) {
-        this.fullName = fullName;
+        fields.put(Database.Teams.NAME, fullName);
     }
 
-    public JsonArray getEvents() {
-        return events;
+    public JsonArray getEvents() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.EVENTS) && fields.get(Database.Teams.EVENTS) instanceof String) {
+            return JSONManager.getasJsonArray((String) fields.get(Database.Teams.EVENTS));
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.EVENTS is not defined");
     }
 
     public void setEvents(JsonArray events) {
-        this.events = events;
+        fields.put(Database.Teams.EVENTS, events.toString());
     }
 
-    public String getWebsite() {
-        return website;
+    public String getWebsite() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.WEBSITE) && fields.get(Database.Teams.WEBSITE) instanceof String) {
+            return (String) fields.get(Database.Teams.WEBSITE);
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.WEBSITE is not defined");
     }
 
     public void setWebsite(String website) {
-        this.website = website;
+        fields.put(Database.Teams.WEBSITE, website);
     }
 
-    public String getTeamKey() {
-        return teamKey;
+    public String getTeamKey() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.KEY) && fields.get(Database.Teams.KEY) instanceof String) {
+            return (String) fields.get(Database.Teams.KEY);
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.KEY is not defined");
     }
 
     public void setTeamKey(String teamKey) {
-        this.teamKey = teamKey;
+        fields.put(Database.Teams.KEY, teamKey);
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getNickname() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.SHORTNAME) && fields.get(Database.Teams.SHORTNAME) instanceof String) {
+            return (String) fields.get(Database.Teams.SHORTNAME);
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.SHORTNAME is not defined");
     }
 
     public void setNickname(String nickname) {
-        this.nickname = nickname;
+        fields.put(Database.Teams.SHORTNAME, nickname);
     }
 
-    public String getLocation() {
-        return location;
+    public String getLocation() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.LOCATION) && fields.get(Database.Teams.LOCATION) instanceof String) {
+            return (String) fields.get(Database.Teams.LOCATION);
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.LOCATION is not defined");
     }
 
     public void setLocation(String location) {
-        this.location = location;
+        fields.put(Database.Teams.LOCATION, location);
     }
 
-    public Integer getTeamNumber() {
-        return teamNumber;
+    public Integer getTeamNumber() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.NUMBER) && fields.get(Database.Teams.NUMBER) instanceof Integer) {
+            return (Integer) fields.get(Database.Teams.NUMBER);
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.NUMBER is not defined");
     }
 
     public void setTeamNumber(int teamNumber) {
-        this.teamNumber = teamNumber;
-    }
-
-    public long getLastUpdated() {
-        return last_updated;
-    }
-
-    public void setLastUpdated(long last_updated) {
-        this.last_updated = last_updated;
+        fields.put(Database.Teams.NUMBER, teamNumber);
     }
 
     public Event getCurrentEvent() {
-        Date now = new Date(), eventStart, eventEnd;
-        Iterator<JsonElement> iterator = events.iterator();
-        JsonObject e;
-        while (iterator.hasNext()) {
-            try {
-                e = iterator.next().getAsJsonObject();
-                eventStart = EventHelper.eventDateFormat.parse(e.get("start_date").getAsString());
-                eventEnd = EventHelper.eventDateFormat.parse(e.get("end_date").getAsString());
-                if (now.after(eventStart) && now.before(eventEnd)) {
-                    return JSONManager.getGson().fromJson(e, Event.class);
+        try {
+            Date now = new Date(), eventStart, eventEnd;
+            Iterator<JsonElement> iterator = getEvents().iterator();
+            JsonObject e;
+            while (iterator.hasNext()) {
+                try {
+                    e = iterator.next().getAsJsonObject();
+                    eventStart = EventHelper.eventDateFormat.parse(e.get("start_date").getAsString());
+                    eventEnd = EventHelper.eventDateFormat.parse(e.get("end_date").getAsString());
+                    if (now.after(eventStart) && now.before(eventEnd)) {
+                        return JSONManager.getGson().fromJson(e, Event.class);
+                    }
+                } catch (ParseException ex) {
+                    //can't parse the date. Give up.
                 }
-            } catch (ParseException ex) {
-                //can't parse the date. Give up.
             }
+        }catch (FieldNotDefinedException e){
+            Log.w(Constants.LOG_TAG, "Missing fields for determining current event\n" +
+                    "Required: Database.Teams.EVENTS");
         }
         return null;
     }
 
     public String getSearchTitles() {
-        return teamKey + "," + nickname + "," + teamNumber;
+        try {
+            return getTeamKey() + "," + getNickname() + "," + getTeamNumber();
+        }catch (FieldNotDefinedException e){
+            Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n" +
+                    "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
+            return null;
+        }
     }
 
     @Override
@@ -152,23 +140,28 @@ public class Team extends BasicModel<Team> {
 
     @Override
     public TeamListElement render() {
-        return new TeamListElement(teamKey, teamNumber, nickname, location);
+        try {
+            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation());
+        }catch (FieldNotDefinedException e){
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
+                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
+            return null;
+        }
     }
 
     public TeamListElement render(boolean showTeamInfoButton) {
-        return new TeamListElement(teamKey, teamNumber, nickname, location, showTeamInfoButton);
+        try {
+            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
+        }catch (FieldNotDefinedException e){
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
+                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
+            return null;
+        }
     }
 
     @Override
     public ContentValues getParams() {
-        ContentValues values = new ContentValues();
-        values.put(Database.Teams.KEY, teamKey);
-        values.put(Database.Teams.NUMBER, teamNumber);
-        values.put(Database.Teams.SHORTNAME, nickname);
-        values.put(Database.Teams.LOCATION, location);
-        values.put(Database.Teams.WEBSITE, website);
-        values.put(Database.Teams.EVENTS, events.toString());
-        return values;
+        return fields;
     }
 
 }

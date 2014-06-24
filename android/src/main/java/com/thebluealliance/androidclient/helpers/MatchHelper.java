@@ -72,6 +72,14 @@ public class MatchHelper {
                     throw new IllegalArgumentException("Invalid short type");
             }
         }
+
+        public static TYPE fromKey(String key){
+            if(key.contains("_qm")) return QUAL;
+            if(key.contains("_ef") || key.contains("_qf")) return QUARTER;
+            if(key.contains("_sf")) return SEMI;
+            if(key.contains("_f")) return FINAL;
+            return NONE;
+        }
     }
 
     public static final HashMap<TYPE, String> SHORT_TYPES;

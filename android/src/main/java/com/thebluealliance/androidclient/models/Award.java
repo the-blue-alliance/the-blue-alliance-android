@@ -1,11 +1,15 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
@@ -13,60 +17,67 @@ import java.util.Iterator;
 
 public class Award extends BasicModel<Award> {
 
-    String eventKey, name;
-    int year;
-    JsonArray winners;
-
     public Award() {
         super(Database.TABLE_AWARDS);
-        this.eventKey = "";
-        this.name = "";
-        this.year = -1;
-        this.winners = new JsonArray();
     }
-
     public Award(String eventKey, String name, int year, JsonArray winners) {
-        super(Database.TABLE_AWARDS);
-        this.eventKey = eventKey;
-        this.name = name;
-        this.year = year;
-        this.winners = winners;
+        this();
+        setEventKey(eventKey);
+        setName(name);
+        setYear(year);
+        setWinners(winners);
     }
 
-    public JsonArray getWinners() {
-        return winners;
+    public JsonArray getWinners() throws FieldNotDefinedException{
+        if(fields.containsKey(Database.Awards.WINNERS) && fields.get(Database.Awards.WINNERS) instanceof String) {
+            return JSONManager.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.WINNERS is not defined");
     }
 
     public void setWinners(JsonArray winners) {
-        this.winners = winners;
+        fields.put(Database.Awards.WINNERS, winners.toString());
     }
 
-    public int getYear() {
-        return year;
+    public int getYear() throws FieldNotDefinedException{
+        if(fields.containsKey(Database.Awards.YEAR) && fields.get(Database.Awards.YEAR) instanceof Integer) {
+            return (Integer) fields.get(Database.Awards.WINNERS);
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.YEAR is not defined");
     }
 
     public void setYear(int year) {
-        this.year = year;
+        fields.put(Database.Awards.YEAR, year);
     }
 
-    public String getName() {
-        return name;
+    public String getName() throws FieldNotDefinedException{
+        if(fields.containsKey(Database.Awards.NAME) && fields.get(Database.Awards.NAME) instanceof String) {
+            return (String) fields.get(Database.Awards.NAME);
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.NAME is not defined");
     }
 
     public void setName(String name) {
-        this.name = name;
+        fields.put(Database.Awards.NAME, name);
     }
 
-    public String getEventKey() {
-        return eventKey;
+    public String getEventKey() throws FieldNotDefinedException{
+        if(fields.containsKey(Database.Awards.EVENTKEY) && fields.get(Database.Awards.EVENTKEY) instanceof String) {
+            return (String) fields.get(Database.Awards.EVENTKEY);
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.EVENTKEY is not defined");
     }
 
     public void setEventKey(String eventKey) {
-        this.eventKey = eventKey;
+        fields.put(Database.Awards.EVENTKEY, eventKey);
     }
 
-    public ArrayList<Award> splitByWinner() {
+    public ArrayList<Award> splitByWinner() throws FieldNotDefinedException{
         ArrayList<Award> out = new ArrayList<>();
+        String eventKey = getEventKey(),
+                name = getName();
+        int year = getYear();
+        JsonArray winners = getWinners();
         for (JsonElement winner : winners) {
             JsonArray winnerArray = new JsonArray();
             winnerArray.add(winner);
@@ -77,34 +88,31 @@ public class Award extends BasicModel<Award> {
 
     public ArrayList<AwardListElement> renderAll() {
         ArrayList<AwardListElement> output = new ArrayList<>();
-        Iterator<JsonElement> iterator = winners.iterator();
-        String teamNumber;
-        String awardee;
-        while (iterator.hasNext()) {
-            JsonObject winner = iterator.next().getAsJsonObject();
-            if (winner.get("team_number").isJsonNull()) {
-                teamNumber = "";
-            } else {
-                teamNumber = winner.get("team_number").getAsString();
-            }
-            if (winner.get("awardee").isJsonNull()) {
-                awardee = "";
-            } else {
-                awardee = winner.get("awardee").getAsString();
-            }
+        try {
+            String name = getName();
+            Iterator<JsonElement> iterator = getWinners().iterator();
+            String teamNumber;
+            String awardee;
+            while (iterator.hasNext()) {
+                JsonObject winner = iterator.next().getAsJsonObject();
+                if (winner.get("team_number").isJsonNull()) {
+                    teamNumber = "";
+                } else {
+                    teamNumber = winner.get("team_number").getAsString();
+                }
+                if (winner.get("awardee").isJsonNull()) {
+                    awardee = "";
+                } else {
+                    awardee = winner.get("awardee").getAsString();
+                }
 
-            output.add(new AwardListElement("frc" + teamNumber, name, buildWinnerString(awardee, teamNumber), teamNumber));
-        }
-        return output;
-    }
-
-    public static String buildWinnerString(String awardee, String team) {
-        if (awardee.isEmpty()) {
-            return "" + team;
-        } else if (team.isEmpty()) {
-            return awardee;
-        } else {
-            return awardee + " (" + team + ")";
+                output.add(new AwardListElement("frc" + teamNumber, name, AwardHelper.buildWinnerString(awardee, teamNumber), teamNumber));
+            }
+            return output;
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
+                    "Fields Required: Database.Awards.NAME, Database.Awards.WINNERS");
+            return null;
         }
     }
 
@@ -115,38 +123,41 @@ public class Award extends BasicModel<Award> {
 
     @Override
     public AwardListElement render() {
-        Iterator<JsonElement> iterator = winners.iterator();
-        String teamNumber = "";
-        String awardee = "";
-        while (iterator.hasNext()) {
-            JsonObject winner = iterator.next().getAsJsonObject();
-            if (winner.get("team_number").isJsonNull()) {
-                teamNumber = "";
-            } else {
-                teamNumber += winner.get("team_number").getAsInt() + ", ";
+        try {
+            String name = getName();
+
+            Iterator<JsonElement> iterator = getWinners().iterator();
+            String teamNumber = "";
+            String awardee = "";
+            while (iterator.hasNext()) {
+                JsonObject winner = iterator.next().getAsJsonObject();
+                if (winner.get("team_number").isJsonNull()) {
+                    teamNumber = "";
+                } else {
+                    teamNumber += winner.get("team_number").getAsInt() + ", ";
+                }
+                if (winner.get("awardee").isJsonNull()) {
+                    awardee = "";
+                } else {
+                    awardee += winner.get("awardee").getAsString() + ", ";
+                }
             }
-            if (winner.get("awardee").isJsonNull()) {
-                awardee = "";
-            } else {
-                awardee += winner.get("awardee").getAsString() + ", ";
+            if (!teamNumber.isEmpty()) {
+                teamNumber = teamNumber.substring(0, teamNumber.length() - 2);
             }
+            if (!awardee.isEmpty()) {
+                awardee = awardee.substring(0, awardee.length() - 2);
+            }
+            return new AwardListElement("frc" + teamNumber, name, AwardHelper.buildWinnerString(awardee, teamNumber), teamNumber);
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
+                    "Fields Required: Database.Awards.NAME, Database.Awards.WINNERS");
+            return null;
         }
-        if (!teamNumber.isEmpty()) {
-            teamNumber = teamNumber.substring(0, teamNumber.length() - 2);
-        }
-        if (!awardee.isEmpty()) {
-            awardee = awardee.substring(0, awardee.length() - 2);
-        }
-        return new AwardListElement("frc" + teamNumber, name, buildWinnerString(awardee, teamNumber), teamNumber);
     }
 
     @Override
     public ContentValues getParams() {
-        ContentValues values = new ContentValues();
-        values.put(Database.Awards.EVENTKEY, eventKey);
-        values.put(Database.Awards.NAME, name);
-        values.put(Database.Awards.YEAR, year);
-        values.put(Database.Awards.WINNERS, winners.toString());
-        return values;
+        return fields;
     }
 }

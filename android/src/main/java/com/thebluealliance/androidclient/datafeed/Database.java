@@ -69,11 +69,14 @@ public class Database extends SQLiteOpenHelper {
             + Events.DISTRICT_STRING + " TEXT DEFAULT '', "
             + Events.START + " TIMESTAMP, "
             + Events.END + " TIMESTAMP, "
-            + Events.OFFICIAL + " INTEGER DEFAULT FALSE, "
+            + Events.OFFICIAL + " INTEGER DEFAULT 0, "
             + Events.WEEK + " INTEGER DEFAULT -1, "
+            + Events.TEAMS + " STRING DEFAULT '', "
             + Events.RANKINGS + " TEXT DEFAULT '', "
             + Events.ALLIANCES + " TEXT DEFAULT '', "
+            + Events.WEBCASTS + " TEXT DEFAULT '', "
             + Events.STATS + " TEXT DEFAULT '', "
+            + Events.WEBSITE + " TEXT DEFAULT ''"
             + ")";
     String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
             + Awards.EVENTKEY + " TEXT DEFAULT '', "
@@ -83,6 +86,8 @@ public class Database extends SQLiteOpenHelper {
             + ")";
     String CREATE_MATCHES = "CREATE TABLE IF NOT EXISTS " + TABLE_MATCHES + "("
             + Matches.KEY + " TEXT PRIMARY KEY, "
+            + Matches.SETNUM + " INTEGER DEFAULT -1,"
+            + Matches.MATCHNUM + " INTEGER DEFAULT -1,"
             + Matches.EVENT + " TEXT DEFAULT '', "
             + Matches.TIMESTRING + " TEXT DEFAULT '', "
             + Matches.TIME + " TIMESTAMP, "
@@ -385,9 +390,12 @@ public class Database extends SQLiteOpenHelper {
                 END = "endDate",
                 OFFICIAL = "official",
                 WEEK = "competitionWeek",
+                TEAMS = "teams",
                 RANKINGS = "rankings",
                 ALLIANCES = "alliances",
-                STATS = "stats";
+                WEBCASTS = "webcasts",
+                STATS = "stats",
+                WEBSITE = "website";
 
         public long add(Event event) {
             if (!exists(event.getEventKey())) {
@@ -539,6 +547,8 @@ public class Database extends SQLiteOpenHelper {
     }
     public class Matches implements ModelTable<Match>{
         public static final String KEY = "key",
+            MATCHNUM = "matchNumber",
+            SETNUM = "setNumber",
             EVENT = "eventKey",
             TIMESTRING = "timeString",
             TIME = "time",

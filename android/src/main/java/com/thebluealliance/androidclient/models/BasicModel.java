@@ -16,14 +16,14 @@ public abstract class BasicModel<T extends BasicModel> {
      * we aren't necessarily going to have every bit of data for the model.
      * Also, we can now only request the parts of the model that we want to use
      */
-    protected HashMap<String, ?> fields;
+    protected ContentValues fields;
 
     //database table that holds this model's information
     private String table;
 
     public BasicModel(String table){
         this.table = table;
-        fields = new HashMap<>();
+        fields = new ContentValues();
     }
 
     public abstract void addFields(String... fields);
@@ -38,4 +38,13 @@ public abstract class BasicModel<T extends BasicModel> {
     public static BasicModel fromJson(Json Object in);
      */
 
+    public static class FieldNotDefinedException extends Exception {
+        public FieldNotDefinedException(String message) {
+            super(message);
+        }
+
+        public FieldNotDefinedException(String message, Throwable t) {
+            super(message, t);
+        }
+    }
 }
