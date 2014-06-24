@@ -32,7 +32,7 @@ import java.util.concurrent.Semaphore;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -57,7 +57,7 @@ public class Database extends SQLiteOpenHelper {
             + Teams.SHORTNAME + " TEXT DEFAULT '', "
             + Teams.LOCATION + " TEXT DEFAULT '',"
             + Teams.WEBSITE + " TEXT DEFAULT '', "
-            + Teams.EVENTS + " TEXT DEFAULT '', "
+            + Teams.EVENTS + " TEXT DEFAULT '' "
             + ")";
     String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + Events.KEY + " TEXT PRIMARY KEY, "
@@ -77,13 +77,13 @@ public class Database extends SQLiteOpenHelper {
             + Events.ALLIANCES + " TEXT DEFAULT '', "
             + Events.WEBCASTS + " TEXT DEFAULT '', "
             + Events.STATS + " TEXT DEFAULT '', "
-            + Events.WEBSITE + " TEXT DEFAULT ''"
+            + Events.WEBSITE + " TEXT DEFAULT '' "
             + ")";
     String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
             + Awards.EVENTKEY + " TEXT DEFAULT '', "
             + Awards.NAME + " TEXT DEFAULT '', "
             + Awards.YEAR + " INTEGER DEFAULT -1, "
-            + Awards.WINNERS + " TEXT DEFAULT ''"
+            + Awards.WINNERS + " TEXT DEFAULT '' "
             + ")";
     String CREATE_MATCHES = "CREATE TABLE IF NOT EXISTS " + TABLE_MATCHES + "("
             + Matches.KEY + " TEXT PRIMARY KEY, "
@@ -93,7 +93,7 @@ public class Database extends SQLiteOpenHelper {
             + Matches.TIMESTRING + " TEXT DEFAULT '', "
             + Matches.TIME + " TIMESTAMP, "
             + Matches.ALLIANCES + " TEXT DEFAULT '', "
-            + Matches.VIDEOS + " TEXT DEFAULT ''"
+            + Matches.VIDEOS + " TEXT DEFAULT '' "
             + ")";
     String CREATE_MEDIAS = "CREATE TABLE IF NOT EXISTS " + TABLE_MEDIAS + "("
             + Medias.TYPE + " TEXT DEFAULT '', "
@@ -143,6 +143,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static synchronized Database getInstance(Context context) {
+        if(sDatabaseInstance == null){
+            sDatabaseInstance = new Database(context);
+        }
         return sDatabaseInstance;
     }
 
@@ -513,7 +516,7 @@ public class Database extends SQLiteOpenHelper {
 
         public ArrayList<Event> getInYear(int year){
             ArrayList<Event> events = new ArrayList<>();
-            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_EVENTS+" WHERE "+Events.YEAR+"=?", new String[]{year+""});
+            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_EVENTS+" WHERE "+Events.YEAR+" = ?", new String[]{year+""});
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     Event event = ModelInflater.inflateEvent(cursor);
@@ -523,8 +526,8 @@ public class Database extends SQLiteOpenHelper {
                 return events;
             } else {
                 Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
-                return null;
             }
+            return events;
         }
 
         public boolean exists(String key) {
