@@ -17,8 +17,8 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.models.SimpleEvent;
-import com.thebluealliance.androidclient.models.SimpleTeam;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,8 +46,8 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
          * database and insert all the new teams and events.        *
          */
         try {
-            ArrayList<SimpleTeam> teams = new ArrayList<>();
-            ArrayList<SimpleEvent> events = new ArrayList<>();
+            ArrayList<Team> teams = new ArrayList<>();
+            ArrayList<Event> events = new ArrayList<>();
             int maxPageNum = 0;
 
             // First we will load all the teams
@@ -66,7 +66,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                     }
                 }
                 maxPageNum = Math.max(maxPageNum, pageNum);
-                ArrayList<SimpleTeam> pageTeams = TBAv2.getTeamList(teamListResponse.getData());
+                ArrayList<Team> pageTeams = TBAv2.getTeamList(teamListResponse.getData());
                 teams.addAll(pageTeams);
             }
 
@@ -82,15 +82,15 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                         continue;
                     }
                 }
-                ArrayList<SimpleEvent> yearEvents = TBAv2.getEventList(eventListResponse.getData());
+                ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
                 events.addAll(yearEvents);
             }
 
             // If no exception has been thrown at this point, we have all the data. We can now
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, activity.getString(R.string.loading_almost_finished)));
-            Database.getInstance(activity).storeTeams(teams);
-            Database.getInstance(activity).storeEvents(events);
+            Database.getInstance(activity).getTeamsTable().storeTeams(teams);
+            Database.getInstance(activity).getEventsTable().storeEvents(events);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
@@ -106,12 +106,12 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             e.printStackTrace();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, activity.getString(R.string.connection_lost)));
             // Wipe any partially cached responses
-            Database.getInstance(activity).deleteAllResponses();
+            Database.getInstance(activity).getResponseTable().deleteAllResponses();
         } catch (Exception e) {
             // This is bad, probably an error in the response from the server
             e.printStackTrace();
             // Wipe any partially cached responses
-            Database.getInstance(activity).deleteAllResponses();
+            Database.getInstance(activity).getResponseTable().deleteAllResponses();
             // Alert the user that there was a problem
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(e)));
         }

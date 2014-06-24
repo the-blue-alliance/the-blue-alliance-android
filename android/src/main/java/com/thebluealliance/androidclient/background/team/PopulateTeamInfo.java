@@ -19,8 +19,8 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.SimpleEvent;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private String mFullName;
     private String mTeamKey;
     private String mTeamWebsite;
-    private SimpleEvent mCurrentEvent;
+    private Event mCurrentEvent;
     private ArrayList<Match> matches;
     private boolean mIsCurrentlyCompeting, forceFromCache;
 

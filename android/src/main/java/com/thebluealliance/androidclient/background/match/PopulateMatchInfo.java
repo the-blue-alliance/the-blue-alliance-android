@@ -25,9 +25,9 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -203,7 +203,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 red_score.setBackgroundResource(R.drawable.red_score_border);
             }
 
-            SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
+            Event event = Database.getInstance(mActivity).getEvent(mEventKey);
             if (event != null) {
                 ((TextView) mActivity.findViewById(R.id.event_name)).setText(event.getEventName());
             }

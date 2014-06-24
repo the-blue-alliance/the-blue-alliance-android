@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.SimpleEvent;
+import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null, mHeader;
     private ArrayList<ListItem> events;
-    private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> allEvents = new HashMap<>();
+    private static HashMap<Integer, HashMap<String, ArrayList<Event>>> allEvents = new HashMap<>();
     private RefreshableHostActivity activity;
     private boolean forceFromCache;
 
@@ -73,7 +73,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
         events = new ArrayList<>();
 
-        APIResponse<ArrayList<SimpleEvent>> response;
+        APIResponse<ArrayList<Event>> response;
 
         if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
             // Return a list of all events for a year
@@ -86,7 +86,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                     return APIResponse.CODE.NODATA;
                 }
 
-                ArrayList<SimpleEvent> eventData = response.getData();
+                ArrayList<Event> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
                     events = EventHelper.renderEventList(eventData);
                 }
