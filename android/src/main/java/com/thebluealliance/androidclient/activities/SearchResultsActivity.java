@@ -23,10 +23,12 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.SearchResultsHeaderListElement;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Nathan on 6/14/2014.
@@ -112,9 +114,15 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     break;
                 }
                 String key = teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.KEY));
-                Team team = Database.getInstance(this).getTeam(key);
-                TeamListElement element = new TeamListElement(team);
-                listItems.add(element);
+                Team team = Database.getInstance(this).getTeamsTable().get(key);
+                try {
+                    TeamListElement element;
+                    element = new TeamListElement(team);
+                    listItems.add(element);
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.e(Constants.LOG_TAG, "Can't add team search result item. Missing fields... "+
+                            Arrays.toString(e.getStackTrace()));
+                }
                 Log.d(Constants.LOG_TAG, "titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
             }
             teamQueryResults.close();
@@ -146,9 +154,15 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     break;
                 }
                 String key = eventQueryResults.getString(eventQueryResults.getColumnIndex(Database.SearchEvent.KEY));
-                Event event = Database.getInstance(this).getEvent(key);
-                EventListElement element = new EventListElement(event);
-                listItems.add(element);
+                Event event = Database.getInstance(this).getEventsTable().get(key);
+                try {
+                    EventListElement element;
+                    element = new EventListElement(event);
+                    listItems.add(element);listItems.add(element);
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n"+
+                        Arrays.toString(e.getStackTrace()));
+                }
             }
             eventQueryResults.close();
         } else {

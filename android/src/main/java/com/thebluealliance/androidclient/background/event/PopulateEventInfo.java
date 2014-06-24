@@ -21,10 +21,12 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -44,7 +46,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     View last, next;
     LinearLayout nextLayout, lastLayout, topTeams, topOpr;
     TextView eventName, eventDate, eventLoc, eventVenue, ranks, stats;
-    String eventKey;
+    String eventKey, nameString, venueString, locationString;
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
@@ -164,8 +166,15 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     matchResult = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
                     ArrayList<Match> matches = matchResult.getData();
                     Collections.sort(matches, new MatchSortByPlayOrderComparator());
-                    Match nextMatch = MatchHelper.getNextMatchPlayed(matches);
-                    Match lastMatch = MatchHelper.getLastMatchPlayed(matches);
+                    Match nextMatch = null;
+                    Match lastMatch = null;
+                    try {
+                        nextMatch = MatchHelper.getNextMatchPlayed(matches);
+                        lastMatch = MatchHelper.getLastMatchPlayed(matches);
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.e(Constants.LOG_TAG, "Can't get next/last matches. Missing fields...\n" +
+                                Arrays.toString(e.getStackTrace()));
+                    }
 
                     if (nextMatch != null) {
                         showNextMatch = true;
@@ -185,12 +194,20 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             // setup social media intents
-            view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + event.getVenue().replace(" ", "+"));
-            view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
-            view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
-            view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
-            view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
-            view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
+            try {
+                nameString = event.getEventName();
+                locationString = event.getLocation();
+                venueString = event.getVenue();
+                view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
+                view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + locationString.replace(" ", "+"));
+                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
+                view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
+                view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
+                view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
+            }catch (BasicModel.FieldNotDefinedException e){
+                Log.e(Constants.LOG_TAG, "Can't create social media intents. Missing event fields.\n" +
+                        Arrays.toString(e.getStackTrace()));
+            }
         }
 
         return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), matchResult.getCode(), statsResponse.getCode());
@@ -201,30 +218,30 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPostExecute(c);
 
         if (event != null && activity != null) {
-            activity.setActionBarTitle(event.getEventName());
+            activity.setActionBarTitle(nameString);
 
             // Set the new info (if necessary)
-            eventName.setText(event.getEventName());
+            eventName.setText(nameString);
             if (event.getDateString().isEmpty()) {
                 activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
             } else {
                 eventDate.setText(event.getDateString());
             }
-            if (event.getVenue().isEmpty() &&
+            if (venueString.isEmpty() &&
                 activity.findViewById(R.id.event_venue_container) != null){
                 activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
             }
             else{
-                eventVenue.setText(event.getVenue());
+                eventVenue.setText(venueString);
                 if (activity.findViewById(R.id.event_location_container) != null) {
                     activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
                 }
             }
-            if (event.getLocation().isEmpty() &&
+            if (locationString.isEmpty() &&
                     activity.findViewById(R.id.event_location_container) != null) {
                 activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
             } else {
-                eventLoc.setText(event.getLocation());
+                eventLoc.setText(locationString);
             }
             if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);

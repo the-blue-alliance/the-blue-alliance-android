@@ -97,7 +97,7 @@ public class Media extends BasicModel<Media> {
         throw new FieldNotDefinedException("Field Database.Medias.TEAMKEY is not defined");
     }
 
-    public void setDetails(JSONObject details){
+    public void setDetails(JsonObject details){
         fields.put(Database.Medias.DETAILS, details.toString());
     }
 

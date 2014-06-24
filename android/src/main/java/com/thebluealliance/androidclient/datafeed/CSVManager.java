@@ -33,7 +33,7 @@ public class CSVManager {
                     if (teamName.isEmpty()) {
                         teamName = "Team " + Integer.parseInt(values.get(0));
                     }
-                    Team team = new Team(teamKey, Integer.parseInt(values.get(0)), teamName, values.get(3), -1);
+                    Team team = new Team(teamKey, Integer.parseInt(values.get(0)), teamName, values.get(3));
                     teams.add(team);
                 } catch (NumberFormatException e) {
                     // Invalid team number. Probably the column header.

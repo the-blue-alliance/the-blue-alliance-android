@@ -22,6 +22,14 @@ public class Team extends BasicModel<Team> {
         super(Database.TABLE_TEAMS);
     }
 
+    public Team(String teamKey, int teamNumber, String nickname, String location) {
+        this();
+        setTeamKey(teamKey);
+        setTeamNumber(teamNumber);
+        setNickname(nickname);
+        setLocation(location);
+    }
+
     public String getFullName() throws FieldNotDefinedException {
         if(fields.containsKey(Database.Teams.NAME) && fields.get(Database.Teams.NAME) instanceof String) {
             return (String) fields.get(Database.Teams.NAME);

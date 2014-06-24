@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
@@ -68,7 +69,12 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                     return APIResponse.CODE.NODATA;
                 }
             }
-            mWeek = EventHelper.weekNumFromLabel(allEvents.get(mYear), mHeader);
+            try {
+                mWeek = EventHelper.weekNumFromLabel(allEvents.get(mYear), mHeader);
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't get week number from event label");
+                return APIResponse.CODE.NODATA;
+            }
         }
 
         events = new ArrayList<>();
@@ -99,7 +105,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             // Return a list of all events for a team for a given year
             try {
                 response = DataManager.Teams.getEventsForTeam(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
-                ArrayList<SimpleEvent> eventsArray = response.getData();
+                ArrayList<Event> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
                     events = EventHelper.renderEventList(eventsArray);
                 }

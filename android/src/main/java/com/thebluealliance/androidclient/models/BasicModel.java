@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
+import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 /**
  * File created by phil on 4/28/14.
  */
-public abstract class BasicModel<T extends BasicModel> {
+public abstract class BasicModel<T extends BasicModel> implements RenderableModel {
 
     /* Map of the requested fields for this object
      * This is done for two reasons - since different parts of the model are loaded from different API queries,
@@ -27,8 +28,6 @@ public abstract class BasicModel<T extends BasicModel> {
     }
 
     public abstract void addFields(String... fields);
-
-    public abstract ListElement render();
 
     public abstract ContentValues getParams();
 

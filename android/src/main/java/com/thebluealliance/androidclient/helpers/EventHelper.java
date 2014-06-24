@@ -267,4 +267,58 @@ public class EventHelper {
         }
         return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
     }
+
+    public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
+        HashMap<String, ArrayList<Event>> groups = new HashMap<>();
+        ArrayList<Event> offseason = new ArrayList<>(),
+                preseason = new ArrayList<>(),
+                weekless = new ArrayList<>();
+
+        for (Event e : events) {
+            ArrayList<Event> list;
+            try {
+                if (e.isOfficial() && (e.getEventType() == TYPE.CMP_DIVISION || e.getEventType() == TYPE.CMP_FINALS)) {
+                    if (!groups.containsKey(CHAMPIONSHIP_LABEL) || groups.get(CHAMPIONSHIP_LABEL) == null) {
+                        list = new ArrayList<>();
+                        groups.put(CHAMPIONSHIP_LABEL, list);
+                    } else {
+                        list = groups.get(CHAMPIONSHIP_LABEL);
+                    }
+                    list.add(e);
+                } else if (e.isOfficial() && (e.getEventType() == TYPE.REGIONAL || e.getEventType() == TYPE.DISTRICT || e.getEventType() == TYPE.DISTRICT_CMP)) {
+                    if (e.getStartDate() == null) {
+                        weekless.add(e);
+                    } else {
+                        String label = String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                        if (groups.containsKey(label) && groups.get(label) != null) {
+                            groups.get(label).add(e);
+                        } else {
+                            list = new ArrayList<>();
+                            list.add(e);
+                            groups.put(label, list);
+                        }
+                    }
+                } else if (e.getEventType() == TYPE.PRESEASON) {
+                    preseason.add(e);
+                } else {
+                    offseason.add(e);
+                }
+            }catch (BasicModel.FieldNotDefinedException ex){
+                Log.w(Constants.LOG_TAG, "Couldn't determine week for event without the following fields:\n" +
+                        "Database.Events.OFFICIAL, Database.Events.TYPE, Database.Events.START");
+            }
+        }
+
+        if (!weekless.isEmpty()) {
+            groups.put(WEEKLESS_LABEL, weekless);
+        }
+        if (!offseason.isEmpty()) {
+            groups.put(OFFSEASON_LABEL, offseason);
+        }
+        if (!preseason.isEmpty()) {
+            groups.put(PRESEASON_LABEL, preseason);
+        }
+
+        return groups;
+    }
 }

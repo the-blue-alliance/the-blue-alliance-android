@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public class ListGroup {
     public String string;
-    public final List<BasicModel> children = new ArrayList<BasicModel>();
+    public final List<RenderableModel> children = new ArrayList<RenderableModel>();
 
     public ListGroup(String string) {
         this.string = string;

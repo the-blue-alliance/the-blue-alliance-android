@@ -15,9 +15,11 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Retrieves media links (video/pictures) for an FRC team's robot.
@@ -72,15 +74,20 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
             ArrayList<Media> medias = response.getData();
             for (Media m : medias) {
-                switch (m.getMediaType()) {
-                    case CD_PHOTO_THREAD:
-                        cdPhotos.children.add(m);
-                        break;
-                    case YOUTUBE:
-                        ytVideos.children.add(m);
-                        break;
-                    default:
-                        break;
+                try {
+                    switch (m.getMediaType()) {
+                        case CD_PHOTO_THREAD:
+                            cdPhotos.children.add(m);
+                            break;
+                        case YOUTUBE:
+                            ytVideos.children.add(m);
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.e(Constants.LOG_TAG, "Can't get media type. Missing fields..."+
+                            Arrays.toString(e.getStackTrace()));
                 }
             }
 

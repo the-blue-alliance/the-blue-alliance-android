@@ -6,8 +6,8 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.models.SimpleEvent;
-import com.thebluealliance.androidclient.models.SimpleTeam;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Team;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -60,20 +60,20 @@ public class TBAv2 {
         API_URL.put(QUERY.EVENT_LIST, "http://www.thebluealliance.com/api/v2/events/%d");
     }
 
-    public static ArrayList<SimpleEvent> getEventList(String json) {
-        ArrayList<SimpleEvent> events = new ArrayList<>();
+    public static ArrayList<Event> getEventList(String json) {
+        ArrayList<Event> events = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
         for (JsonElement aData : data) {
-            events.add(JSONManager.getGson().fromJson(aData, SimpleEvent.class));
+            events.add(JSONManager.getGson().fromJson(aData, Event.class));
         }
         return events;
     }
 
-    public static ArrayList<SimpleTeam> getTeamList(String json) {
-        ArrayList<SimpleTeam> teams = new ArrayList<>();
+    public static ArrayList<Team> getTeamList(String json) {
+        ArrayList<Team> teams = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
         for (JsonElement aData : data) {
-            teams.add(JSONManager.getGson().fromJson(aData, SimpleTeam.class));
+            teams.add(JSONManager.getGson().fromJson(aData, Team.class));
         }
         return teams;
     }
@@ -96,7 +96,7 @@ public class TBAv2 {
         Log.d("datamanager", "Loading URL: " + URL);
         boolean existsInDb;
         synchronized (Database.getInstance(c)) {
-            existsInDb = Database.getInstance(c).responseExists(URL);
+            existsInDb = Database.getInstance(c).getResponseTable().responseExists(URL);
         }
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
         if (existsInDb) {
@@ -139,17 +139,14 @@ public class TBAv2 {
                         lastUpdate = lastModified.getValue();
                     }
                     if (cacheInDatabase) {
-                        synchronized (Database.getInstance(c)) {
-                            Database.getInstance(c).updateResponse(URL, response, lastUpdate);
-                        }
+                        Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
+
                     }
                     Log.d("datamanager", "Online; updated from internet: " + URL);
                     return new APIResponse<>(response, APIResponse.CODE.UPDATED);
                 } else {
                     if(cacheInDatabase) {
-                        synchronized (Database.getInstance(c)) {
-                            Database.getInstance(c).touchResponse(URL);
-                        }
+                        Database.getInstance(c).getResponseTable().touchResponse(URL);
                     }
                     Log.d("datamanager", "Online; no update required, loaded from database: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
@@ -172,9 +169,7 @@ public class TBAv2 {
                 }
 
                 if (cacheInDatabase) {
-                    synchronized (Database.getInstance(c)) {
-                        Database.getInstance(c).storeResponse(URL, response, lastUpdate);
-                    }
+                        Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
                 }
                 Log.d("datamanager", "Online; loaded from internet: " + URL);
                 return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);

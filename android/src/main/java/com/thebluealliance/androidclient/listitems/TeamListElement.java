@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
 /**
@@ -21,7 +22,7 @@ public class TeamListElement extends ListElement {
     private String mTeamLocation;
     private boolean mShowLinkToTeamDetails = false;
 
-    public TeamListElement(Team team) {
+    public TeamListElement(Team team) throws BasicModel.FieldNotDefinedException {
         super(team.getTeamKey());
         mTeamNumber = team.getTeamNumber();
         mTeamName = team.getNickname();

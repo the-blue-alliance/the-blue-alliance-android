@@ -42,7 +42,6 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         if (object.has("website") && !object.get("website").isJsonNull()) {
             team.setWebsite(object.get("website").getAsString());
         }
-        team.setLastUpdated(System.currentTimeMillis());
 
         return team;
     }

@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.interfaces.ModelTable;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -286,18 +287,28 @@ public class Database extends SQLiteOpenHelper {
                 EVENTS = "events";
 
         public long add(Team team) {
-            if(!exists(team.getTeamKey())) {
-                insertSearchItemTeam(team);
-                return safeInsert(TABLE_TEAMS, null, team.getParams());
-            }else{
-                return update(team);
+            try {
+                if(!exists(team.getTeamKey())) {
+                    insertSearchItemTeam(team);
+                    return safeInsert(TABLE_TEAMS, null, team.getParams());
+                }else{
+                    return update(team);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't add team without Database.Teams.KEY");
+                return -1;
             }
         }
 
         @Override
         public int update(Team in) {
             updateSearchItemTeam(in);
-            return safeUpdate(TABLE_TEAMS, in.getParams(), Teams.KEY + " = ?", new String[]{in.getTeamKey()});
+            try {
+                return safeUpdate(TABLE_TEAMS, in.getParams(), Teams.KEY + " = ?", new String[]{in.getTeamKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't update team without Database.Teams.KEY");
+                return -1;
+            }
         }
 
         public void storeTeams(ArrayList<Team> teams) {
@@ -331,6 +342,17 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public Team get(String teamKey){
+            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_TEAMS+" WHERE "+Teams.KEY+ " = ?", new String[]{teamKey});
+            if (cursor != null && cursor.moveToFirst()) {
+                Team team = ModelInflater.infalteTeam(cursor);
+                cursor.close();
+                return team;
+            } else {
+                return null;
+            }
+        }
+
         @Override
         public boolean exists(String key) {
             Cursor cursor = safeQuery(TABLE_TEAMS, new String[]{}, Teams.KEY + " = ?", new String[]{key}, null, null, null, null);
@@ -343,7 +365,11 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public void delete(Team in) {
-            safeDelete(TABLE_TEAMS, Teams.KEY + " = ? ", new String[]{in.getTeamKey()});
+            try {
+                safeDelete(TABLE_TEAMS, Teams.KEY + " = ? ", new String[]{in.getTeamKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't delete team without Database.Teams.KEY");
+            }
         }
 
         public ArrayList<Team> getInRange(int lowerBound, int upperBound, String[] fields) {
@@ -398,11 +424,16 @@ public class Database extends SQLiteOpenHelper {
                 WEBSITE = "website";
 
         public long add(Event event) {
-            if (!exists(event.getEventKey())) {
-                insertSearchItemEvent(event);
-                return safeInsert(TABLE_EVENTS, null, event.getParams());
-            } else {
-                return update(event);
+            try {
+                if (!exists(event.getEventKey())) {
+                    insertSearchItemEvent(event);
+                    return safeInsert(TABLE_EVENTS, null, event.getParams());
+                } else {
+                    return update(event);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't add event without Database.Events.KEY");
+                return -1;
             }
         }
 
@@ -428,6 +459,17 @@ public class Database extends SQLiteOpenHelper {
 
         public Event get(String eventKey, String[] fields) {
             Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                Event event = ModelInflater.inflateEvent(cursor);
+                cursor.close();
+                return event;
+            } else {
+                return null;
+            }
+        }
+
+        public Event get(String eventKey){
+            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_EVENTS+" WHERE "+Events.KEY+ " =?", new String[]{eventKey});
             if (cursor != null && cursor.moveToFirst()) {
                 Event event = ModelInflater.inflateEvent(cursor);
                 cursor.close();
@@ -469,6 +511,22 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public ArrayList<Event> getInYear(int year){
+            ArrayList<Event> events = new ArrayList<>();
+            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_EVENTS+" WHERE "+Events.YEAR+"=?", new String[]{year+""});
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Event event = ModelInflater.inflateEvent(cursor);
+                    events.add(event);
+                } while (cursor.moveToNext());
+                cursor.close();
+                return events;
+            } else {
+                Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
+                return null;
+            }
+        }
+
         public boolean exists(String key) {
             Cursor cursor = safeQuery(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
             boolean result;
@@ -483,12 +541,21 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public void delete(Event in) {
-            safeDelete(TABLE_EVENTS, Events.KEY + " = ?", new String[]{in.getEventKey()});
+            try {
+                safeDelete(TABLE_EVENTS, Events.KEY + " = ?", new String[]{in.getEventKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't delete event without Database.Events.KEY");
+            }
         }
 
         public int update(Event event) {
             updateSearchItemEvent(event);
-            return safeUpdate(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
+            try {
+                return safeUpdate(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't update event without Database.Events.KEY");
+                return -1;
+            }
         }
 
     }
@@ -505,7 +572,12 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public int update(Award in) {
-            return safeUpdate(TABLE_AWARDS, in.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+            try {
+                return safeUpdate(TABLE_AWARDS, in.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't update award without Database.Awards.EVENTKEY and Database.Awards.NAME");
+                return -1;
+            }
         }
 
         /*
@@ -542,7 +614,11 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public void delete(Award in) {
-            safeDelete(TABLE_AWARDS, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+            try {
+                safeDelete(TABLE_AWARDS, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't delete award without Database.Awards.EVENTKEY and Database.Awards.NAME");
+            }
         }
     }
     public class Matches implements ModelTable<Match>{
@@ -557,16 +633,26 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public long add(Match in) {
-            if (!exists(in.getEventKey())) {
-                return safeInsert(TABLE_EVENTS, null, in.getParams());
-            } else {
-                return update(in);
+            try {
+                if (!exists(in.getEventKey())) {
+                    return safeInsert(TABLE_EVENTS, null, in.getParams());
+                } else {
+                    return update(in);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't add match without Database.Matches.KEY");
+                return -1;
             }
         }
 
         @Override
         public int update(Match in) {
-            return safeUpdate(TABLE_MATCHES, in.getParams(), Matches.KEY + " = ?", new String[]{in.getKey()});
+            try {
+                return safeUpdate(TABLE_MATCHES, in.getParams(), Matches.KEY + " = ?", new String[]{in.getKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't update match without Database.Matches.KEY");
+                return -1;
+            }
         }
 
         @Override
@@ -596,7 +682,11 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public void delete(Match in) {
-            safeDelete(TABLE_MATCHES, Matches.KEY + " = ?", new String[]{in.getKey()});
+            try {
+                safeDelete(TABLE_MATCHES, Matches.KEY + " = ?", new String[]{in.getKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't delete match without Database.Matches.KEY");
+            }
         }
     }
     public class Medias implements ModelTable<Media>{
@@ -608,16 +698,26 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public long add(Media in) {
-            if (!exists(in.getForeignKey())) {
-                return safeInsert(TABLE_MEDIAS, null, in.getParams());
-            } else {
-                return update(in);
+            try {
+                if (!exists(in.getForeignKey())) {
+                    return safeInsert(TABLE_MEDIAS, null, in.getParams());
+                } else {
+                    return update(in);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't add media without Database.Medias.FOREIGNKEY");
+                return -1;
             }
         }
 
         @Override
         public int update(Media in) {
-            return safeUpdate(TABLE_MEDIAS, in.getParams(), Medias.FOREIGNKEY + " = ?", new String[]{in.getForeignKey()});
+            try {
+                return safeUpdate(TABLE_MEDIAS, in.getParams(), Medias.FOREIGNKEY + " = ?", new String[]{in.getForeignKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't update media without Database.Medias.FOREIGNKEY");
+                return -1;
+            }
         }
 
         @Override
@@ -647,7 +747,11 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public void delete(Media in) {
-            safeDelete(TABLE_MEDIAS, Medias.FOREIGNKEY + " = ? ", new String[]{in.getForeignKey()});
+            try {
+                safeDelete(TABLE_MEDIAS, Medias.FOREIGNKEY + " = ? ", new String[]{in.getForeignKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't delete media without Database.Medias.FOREIGNKEY");
+            }
         }
     }
 
@@ -762,42 +866,74 @@ public class Database extends SQLiteOpenHelper {
 
     public long insertSearchItemTeam(Team team) {
         ContentValues cv = new ContentValues();
-        cv.put(SearchTeam.KEY, team.getTeamKey());
-        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-        cv.put(SearchTeam.NUMBER, team.getTeamNumber());
-        return safeInsert(TABLE_SEARCH_TEAMS, null, cv);
+        try {
+            cv.put(SearchTeam.KEY, team.getTeamKey());
+            cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+            cv.put(SearchTeam.NUMBER, team.getTeamNumber());
+            return safeInsert(TABLE_SEARCH_TEAMS, null, cv);
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:" +
+                    "Database.Teams.KEY, Database.Teams.NUMBER");
+            return -1;
+        }
     }
 
     public long insertSearchItemEvent(Event event) {
         ContentValues cv = new ContentValues();
-        cv.put(SearchEvent.KEY, event.getEventKey());
-        cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-        cv.put(SearchEvent.YEAR, event.getEventYear());
-        return safeInsert(TABLE_SEARCH_EVENTS, null, cv);
+        try {
+            cv.put(SearchEvent.KEY, event.getEventKey());
+            cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+            cv.put(SearchEvent.YEAR, event.getEventYear());
+            return safeInsert(TABLE_SEARCH_EVENTS, null, cv);
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
+                    "Database.Events.KEY, Database.Events.YEAR");
+            return -1;
+        }
     }
 
     public long updateSearchItemTeam(Team team) {
-        ContentValues cv = new ContentValues();
-        cv.put(SearchTeam.KEY, team.getTeamKey());
-        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-        cv.put(SearchTeam.NUMBER, team.getTeamNumber());
+        try{
+            ContentValues cv = new ContentValues();
+            cv.put(SearchTeam.KEY, team.getTeamKey());
+            cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+            cv.put(SearchTeam.NUMBER, team.getTeamNumber());
         return db.update(TABLE_SEARCH_TEAMS, cv, SearchTeam.KEY + "=?", new String[]{team.getTeamKey()});
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
+                    "Database.Events.KEY, Database.Events.YEAR");
+            return -1;
+        }
     }
 
     public long updateSearchItemEvent(Event event) {
-        ContentValues cv = new ContentValues();
-        cv.put(SearchEvent.KEY, event.getEventKey());
-        cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-        cv.put(SearchEvent.YEAR, event.getEventYear());
-        return safeUpdate(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(SearchEvent.KEY, event.getEventKey());
+            cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+            cv.put(SearchEvent.YEAR, event.getEventYear());
+            return safeUpdate(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
+        } catch (BasicModel.FieldNotDefinedException e) {
+        Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
+                "Database.Events.KEY, Database.Events.YEAR");
+        return -1;
+    }
     }
 
     public void deleteSearchItemTeam(Team team){
-        safeDelete(TABLE_SEARCH_TEAMS, SearchTeam.KEY + " = ?", new String[]{team.getTeamKey()});
+        try {
+            safeDelete(TABLE_SEARCH_TEAMS, SearchTeam.KEY + " = ?", new String[]{team.getTeamKey()});
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't delete search team without Database.Teams.KEY");
+        }
     }
 
     public void deleteSearchItemEvent(Event event){
-        safeDelete(TABLE_SEARCH_EVENTS, SearchEvent.KEY + " = ?", new String[]{event.getEventKey()});
+        try {
+            safeDelete(TABLE_SEARCH_EVENTS, SearchEvent.KEY + " = ?", new String[]{event.getEventKey()});
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't delete search event without Database.Events.KEY");
+        }
     }
 
     public Cursor getMatchesForTeamQuery(String query) {

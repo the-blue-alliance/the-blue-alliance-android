@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserialize
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -83,18 +84,14 @@ public class DataManager {
                     teamListResponseCodes.add(teamListResponse.getCode());
 
                     ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
-                    synchronized (Database.getInstance(c)) {
-                        Database.getInstance(c).getTeamsTable().storeTeams(teams);
-                    }
+                    Database.getInstance(c).getTeamsTable().storeTeams(teams);
                     if (teamListResponse.getCode() != APIResponse.CODE.NODATA) {
                         //only update preference if actual data was loaded
                         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true).commit();
                     }
                 }
             }
-            synchronized (Database.getInstance(c)) {
-                cursor = Database.getInstance(c).getTeamsTable().getCursorForTeamsInRange(lowerBound, upperBound);
-            }
+            cursor = Database.getInstance(c).getTeamsTable().getCursorForTeamsInRange(lowerBound, upperBound);
             APIResponse.CODE[] a = new APIResponse.CODE[teamListResponseCodes.size()];
 
             return new APIResponse<>(cursor, APIResponse.mergeCodes(teamListResponseCodes.toArray(a)));
@@ -208,18 +205,14 @@ public class DataManager {
                 //TODO check for updates and update response accordingly
                 if (allEventsLoaded) {
                     Log.d("get events for week", "loading from db");
-                    synchronized (Database.getInstance(c)) {
-                        events = Database.getInstance(c).getEventsInYear(year);
-                    }
+                    events = Database.getInstance(c).getEventsTable().getInYear(year);
                     eventListResponse = new APIResponse<>("", ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
                     groupedEvents = EventHelper.groupByWeek(events);
                 } else {
                     eventListResponse = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_LIST), year), false, false);
                     events = TBAv2.getEventList(eventListResponse.getData());
-                    synchronized (Database.getInstance(c)) {
-                        Database.getInstance(c).storeEvents(events);
-                    }
-                    groupedEvents = SimpleEvent.groupByWeek(events);
+                    Database.getInstance(c).getEventsTable().storeEvents(events);
+                    groupedEvents = EventHelper.groupByWeek(events);
                     if (eventListResponse.getCode() != APIResponse.CODE.NODATA) {
                         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true).commit();
                     }
@@ -262,7 +255,11 @@ public class DataManager {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey), true, loadFromCache);
             for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
                 Match match = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Match.class);
-                results.get(match.getType()).add(match);
+                try {
+                    results.get(match.getType()).add(match);
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    throw new NoDataException(e.getMessage());
+                }
             }
             return new APIResponse<>(results, response.getCode());
         }
@@ -327,8 +324,12 @@ public class DataManager {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, "http://www.thebluealliance.com/api/v2/event/" + eventKey + "/awards", true, loadFromCache);
             for (JsonElement jsonElement : JSONManager.getasJsonArray(response.getData())) {
                 Award award = JSONManager.getGson().fromJson(jsonElement.getAsJsonObject(), Award.class);
-                if (award.getWinners().toString().contains(teamKey.isEmpty() ? "" : teamKey.substring(3) + ",")) {
-                    awards.add(award);
+                try {
+                    if (award.getWinners().toString().contains(teamKey.isEmpty() ? "" : teamKey.substring(3) + ",")) {
+                        awards.add(award);
+                    }
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    throw new NoDataException(e.getMessage());
                 }
             }
             return new APIResponse<>(awards, response.getCode());

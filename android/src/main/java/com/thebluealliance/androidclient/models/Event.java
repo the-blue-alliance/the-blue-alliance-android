@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 public class Event extends BasicModel<Event> {
 
     private String shortName;
+    private JsonArray matches;
 
     public Event() {
         super(Database.TABLE_EVENTS);
@@ -245,6 +246,14 @@ public class Event extends BasicModel<Event> {
 
     public void setCompetitionWeek(int week){
         fields.put(Database.Events.WEEK, week);
+    }
+
+    public JsonArray getMatches() {
+        return matches;
+    }
+
+    public void setMatches(JsonArray matches) {
+        this.matches = matches;
     }
 
     public boolean isHappeningNow() {

@@ -56,7 +56,6 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         } else {
             event.setShortName(object.get("short_name").getAsString());
         }
-        event.setLastUpdated(System.currentTimeMillis());
 
         if (object.has("website") && !object.get("website").isJsonNull()) {
             event.setWebsite(object.get("website").getAsString());

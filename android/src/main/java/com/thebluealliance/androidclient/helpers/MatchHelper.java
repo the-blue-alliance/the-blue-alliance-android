@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -118,7 +119,7 @@ public class MatchHelper {
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Next match
      */
-    public static Match getNextMatchPlayed(ArrayList<Match> matches) {
+    public static Match getNextMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
         for (Match m : matches) {
             if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
                     m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
@@ -136,7 +137,7 @@ public class MatchHelper {
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Last match played
      */
-    public static Match getLastMatchPlayed(ArrayList<Match> matches) {
+    public static Match getLastMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
         Match last = null;
         for (Match m : matches) {
             if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
@@ -178,7 +179,7 @@ public class MatchHelper {
      * @param matches list of matches
      * @return match list
      */
-    public static ArrayList<ListGroup> constructMatchList(Context c, ArrayList<Match> matches) {
+    public static ArrayList<ListGroup> constructMatchList(Context c, ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
 
         ArrayList<ListGroup> groups = new ArrayList<>();
         ListGroup qualMatches = new ListGroup(c.getString(R.string.quals_header));
@@ -250,7 +251,7 @@ public class MatchHelper {
      * @param teamKey key associated with team
      * @return team's past/current event performance
      */
-    public static EventPerformance evaluatePerformanceForTeam(Event e, ArrayList<Match> matches, String teamKey) {
+    public static EventPerformance evaluatePerformanceForTeam(Event e, ArrayList<Match> matches, String teamKey) throws BasicModel.FieldNotDefinedException {
 
         // There might be match info available,
         // but no alliance selection data (for old events)

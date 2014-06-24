@@ -98,7 +98,7 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
         return new SimpleCursorLoader(getActivity()) {
             @Override
             public Cursor loadInBackground() {
-                return Database.getInstance(getActivity()).getCursorForTeamsInRange(mTeamNumberStart, mTeamNumberEnd);
+                return Database.getInstance(getActivity()).getTeamsTable().getCursorForTeamsInRange(mTeamNumberStart, mTeamNumberEnd);
             }
         };
     }

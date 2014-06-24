@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -42,7 +43,10 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private Activity mActivity;
     private String mEventKey;
     private String mMatchKey;
-    private Match mMatch;
+    private String mMatchTitle;
+    private JsonArray mMatchVideos;
+    private String mEventName;
+    private JsonObject alliances;
     private boolean forceFromCache;
 
     public PopulateMatchInfo(Activity activity, boolean forceFromCache) {
@@ -71,14 +75,29 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             }
 
             // Extract the specified match from the list
-            mMatch = null;
             for (Map.Entry<MatchHelper.TYPE, ArrayList<Match>> matchListEntry : matches.entrySet()) {
                 ArrayList<Match> matchList = matchListEntry.getValue();
-                for (Match match : matchList) {
-                    if (match.getKey().equals(mMatchKey)) {
-                        mMatch = match;
-                        break;
+                for (Match m : matchList) {
+                    try {
+                        if (m.getKey().equals(mMatchKey)) {
+                            alliances = m.getAlliances();
+                            mMatchTitle = m.getTitle();
+                            mMatchVideos = m.getVideos();
+                            break;
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.e(Constants.LOG_TAG, "Can't get data from match");
+                        return APIResponse.CODE.NODATA;
                     }
+                }
+            }
+
+            Event event = Database.getInstance(mActivity).getEventsTable().get(mEventKey);
+            if(event != null){
+                try {
+                    mEventName = event.getEventName();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Can't get name for event");
                 }
             }
             return response.getCode();
@@ -94,7 +113,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         super.onPostExecute(code);
 
         if (code != APIResponse.CODE.NODATA) {
-            JsonObject redAlliance = mMatch.getAlliances().getAsJsonObject("red");
+            JsonObject redAlliance = alliances.getAsJsonObject("red");
             JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
 
             TextView red1 = ((TextView) mActivity.findViewById(R.id.red1));
@@ -143,7 +162,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             }
 
             // Repeat process for blue alliance.
-            JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
+            JsonObject blueAlliance = alliances.getAsJsonObject("blue");
             JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
 
             TextView blue1 = ((TextView) mActivity.findViewById(R.id.blue1));
@@ -203,18 +222,17 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 red_score.setBackgroundResource(R.drawable.red_score_border);
             }
 
-            Event event = Database.getInstance(mActivity).getEvent(mEventKey);
-            if (event != null) {
-                ((TextView) mActivity.findViewById(R.id.event_name)).setText(event.getEventName());
+
+            if(mEventName != null && !mEventName.isEmpty()) {
+                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mEventName);
             }
 
-            ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatch.getTitle());
+            ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatchTitle);
 
-            JsonArray videos = mMatch.getVideos();
             Picasso picasso = Picasso.with(mActivity);
             List<ImageView> images = new ArrayList();
-            for (int i = 0; i < videos.size(); i++) {
-                JsonObject video = videos.get(i).getAsJsonObject();
+            for (int i = 0; i < mMatchVideos.size(); i++) {
+                JsonObject video = mMatchVideos.get(i).getAsJsonObject();
                 if (video.get("type").getAsString().equals("youtube")) {
                     final String videoKey = video.get("key").getAsString();
                     String thumbnailURL = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(Media.TYPE.YOUTUBE), videoKey);
