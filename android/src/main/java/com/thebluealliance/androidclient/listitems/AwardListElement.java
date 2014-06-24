@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -23,11 +24,20 @@ public class AwardListElement extends ListElement {
 
     private String mAwardName;
     private JsonArray mAwardWinners;
+    private HashMap<String, Team> mAwardTeams;
 
     public AwardListElement(String name, JsonArray winners) {
         super();
         mAwardName = name;
         mAwardWinners = winners;
+        mAwardTeams = null;
+    }
+
+    public AwardListElement(String name, JsonArray winners, HashMap teams) {
+        super();
+        mAwardName = name;
+        mAwardWinners = winners;
+        mAwardTeams = teams;
     }
 
     @Override
@@ -75,7 +85,12 @@ public class AwardListElement extends ListElement {
                     awardLine1 = awardee;
                 }
             } else {
-                Team team = DataManager.Teams.getTeamFromDB(context, "frc" + teamNumber);
+                Team team;
+                if (mAwardTeams == null) {
+                    team = DataManager.Teams.getTeamFromDB(context, "frc" + teamNumber);
+                } else {
+                    team = mAwardTeams.get("frc" + teamNumber);
+                }
                 if (awardee == "") {
                     awardLine1 = teamNumber;
                     awardLine2 = team.getNickname();
