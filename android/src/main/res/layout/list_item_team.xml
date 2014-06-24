@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall" >
 
     <TextView
         android:id="@+id/team_number"
@@ -12,33 +12,31 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
-        android:text="254"
+        android:text="2544"
         android:textStyle="bold"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/team_name"
+        style="@android:style/TextAppearance.DeviceDefault.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_toRightOf="@id/team_number"
-        android:orientation="vertical">
+        android:layout_alignParentTop="true"
+        android:text="Teh Chezy Pofs"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingTop="5dp" />
 
-        <TextView
-            android:id="@+id/team_name"
-            style="@android:style/TextAppearance.DeviceDefault.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Teh Chezy Pofs"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/team_location"
-            style="@android:style/TextAppearance.DeviceDefault.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="San Jose, CA" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/team_location"
+        style="@android:style/TextAppearance.DeviceDefault.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/team_number"
+        android:layout_below="@id/team_name"
+        android:layout_alignParentBottom="true"
+        android:text="San Jose, CA"
+        android:paddingBottom="5dp" />
 
     <ImageView
         android:id="@+id/team_info"
