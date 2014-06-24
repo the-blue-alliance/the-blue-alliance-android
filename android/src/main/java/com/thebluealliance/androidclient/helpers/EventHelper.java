@@ -1,11 +1,14 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.util.Log;
+
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.listitems.EventWeekHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,7 +70,7 @@ public class EventHelper {
         }
     }
 
-    public static String generateLabelForEvent(Event e) {
+    public static String generateLabelForEvent(Event e) throws BasicModel.FieldNotDefinedException {
         switch (e.getEventType()) {
             case CMP_DIVISION:
             case CMP_FINALS:
@@ -107,9 +110,9 @@ public class EventHelper {
         return WEEKLESS_LABEL;
     }
 
-    public static int weekNumFromLabel(HashMap<String, ArrayList<SimpleEvent>> groupedEvents, String label) {
+    public static int weekNumFromLabel(HashMap<String, ArrayList<Event>> groupedEvents, String label) throws BasicModel.FieldNotDefinedException {
         if (groupedEvents.containsKey(label)) {
-            SimpleEvent e = groupedEvents.get(label).get(0);
+            Event e = groupedEvents.get(label).get(0);
             return e.getCompetitionWeek();
         } else {
             return -1;
@@ -209,24 +212,28 @@ public class EventHelper {
         }
     }
 
-    public static ArrayList<ListItem> renderEventList(ArrayList<SimpleEvent> events) {
+    public static ArrayList<ListItem> renderEventList(ArrayList<Event> events) {
         ArrayList<ListItem> out = new ArrayList<>();
         Collections.sort(events, new EventSortByTypeAndDateComparator());
         EventHelper.TYPE lastType = null, currentType;
         int lastDistrict = -1, currentDistrict;
-        for (SimpleEvent event : events) {
-            currentType = event.getEventType();
-            currentDistrict = event.getDistrictEnum();
-            if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
-                if (currentType == EventHelper.TYPE.DISTRICT) {
-                    out.add(new EventWeekHeader(event.getDistrictTitle() + " District Events"));
-                } else {
-                    out.add(new EventWeekHeader(currentType.toString()));
+        for (Event event : events) {
+            try {
+                currentType = event.getEventType();
+                currentDistrict = event.getDistrictEnum();
+                if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
+                    if (currentType == EventHelper.TYPE.DISTRICT) {
+                        out.add(new EventWeekHeader(event.getDistrictTitle() + " District Events"));
+                    } else {
+                        out.add(new EventWeekHeader(currentType.toString()));
+                    }
                 }
+                out.add(event.render());
+                lastType = currentType;
+                lastDistrict = currentDistrict;
+            }catch (BasicModel.FieldNotDefinedException e){
+                Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
             }
-            out.add(event.render());
-            lastType = currentType;
-            lastDistrict = currentDistrict;
         }
         return out;
     }

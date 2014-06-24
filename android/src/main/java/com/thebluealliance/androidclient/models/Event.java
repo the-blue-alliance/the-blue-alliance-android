@@ -66,11 +66,6 @@ public class Event extends BasicModel<Event> {
         throw new FieldNotDefinedException("Field Database.Events.RANKINGS is not defined");
     }
 
-    public JsonArray getMatches() {
-        //TODO implement
-        Database.getInstance().getMatchesForEventQuery();
-    }
-
     public void setRankings(JsonArray rankings) {
         fields.put(Database.Events.RANKINGS, rankings.toString());
     }
