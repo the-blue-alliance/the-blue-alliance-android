@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
+import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,9 +116,8 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                             rankingString += ", ";
                         }
                     }
-                    teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), "", row.get(0).getAsInt(), record, rankingString));
-                    //the two columns set to "" above are 'team name' and 'record' as those are not consistently in the data
-                    //TODO get team name for given number
+                    Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
+                    teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), team.getNickname(), row.get(0).getAsInt(), record, rankingString));
                 }
                 return response.getCode();
             } else {

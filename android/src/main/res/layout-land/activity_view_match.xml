@@ -24,20 +24,21 @@
 
             <TextView
                 android:id="@+id/match_name"
+                style="@android:style/TextAppearance.DeviceDefault.Large"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quals 4"
-                android:textSize="48sp" />
+                android:text="Quals 4" />
 
             <TextView
                 android:id="@+id/event_name"
+                style="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/match_name"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
-                android:text="2008 Midwest Regional"
-                android:textSize="24sp" />
+                android:text="2008 Midwest Regional" />
 
             <TableLayout
                 android:id="@+id/score_table"

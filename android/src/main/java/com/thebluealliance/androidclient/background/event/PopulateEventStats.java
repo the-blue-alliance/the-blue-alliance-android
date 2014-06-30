@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.Stat;
+import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,8 +125,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         + ", " + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
                         + ", " + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
                 String teamKey = "frc" + opr.get(i).getKey();
-                teams.add(new StatsListElement(teamKey, opr.get(i).getKey(), "", "", statsString));
-                //TODO the blank fields above are team name and location
+                Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
+                teams.add(new StatsListElement(teamKey, opr.get(i).getKey(), team.getNickname(), statsString));
             }
 
             return response.getCode();

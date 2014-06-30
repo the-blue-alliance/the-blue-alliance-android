@@ -67,15 +67,6 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         }
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                if (!teamKey.equals("frc-1") && !teamKey.equals("frc")) {
-                    startActivity(ViewTeamActivity.newInstance(getActivity(), teamKey));
-                }
-            }
-        });
         return view;
     }
 

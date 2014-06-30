@@ -15,7 +15,6 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 
@@ -62,8 +61,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             response = DataManager.Events.getEventAwards(activity, eventKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
             for (Award a : awardList) {
-                ArrayList<AwardListElement> allWinners = a.renderAll();
-                awards.addAll(allWinners);
+                awards.add(a.render());
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {

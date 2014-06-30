@@ -26,7 +26,7 @@ public class Stat implements BasicModel {
     @Override
     public StatsListElement render() {
         String teamNumber = teamKey.substring(3);
-        return new StatsListElement(teamKey, teamNumber, teamName, location, statString);
+        return new StatsListElement(teamKey, teamNumber, teamName, statString);
     }
 
     @Override
