@@ -147,7 +147,7 @@ public class ModelInflater {
         return media;
     }
 
-    public static Team infalteTeam(Cursor data){
+    public static Team inflateTeam(Cursor data){
         Team team = new Team();
         for(int i=0; i<data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -169,6 +169,10 @@ public class ModelInflater {
                 case Database.Teams.EVENTS:
                     JsonArray events = JSONManager.getasJsonArray(data.getString(i));
                     team.setEvents(events);
+                    break;
+                case Database.Teams.YEARS_PARTICIPATED:
+                    JsonArray years = JSONManager.getasJsonArray(data.getString(i));
+                    team.setYearsParticipated(years);
                     break;
                 default:
             }

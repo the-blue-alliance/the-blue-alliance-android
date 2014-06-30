@@ -22,22 +22,28 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         if (object.has("key") && !object.get("key").isJsonNull()) {
             team.setTeamKey(object.get("key").getAsString());
         }
+
         if (object.has("team_number") && !object.get("team_number").isJsonNull()) {
             team.setTeamNumber(object.get("team_number").getAsInt());
         }
+
         // Some of the old teams don't have names and/or locations.
         if (object.has("name") && !object.get("name").isJsonNull()) {
             team.setFullName(object.get("name").getAsString());
         }
+
         if (object.has("nickname") && !object.get("nickname").isJsonNull()) {
             team.setNickname(object.get("nickname").getAsString());
         }
+
         if (object.has("location") && !object.get("location").isJsonNull()) {
             team.setLocation(object.get("location").getAsString());
         }
+
         if (object.has("events")) {
             team.setEvents(object.get("events").getAsJsonArray());
         }
+
         // Some teams don't have websites
         if (object.has("website") && !object.get("website").isJsonNull()) {
             team.setWebsite(object.get("website").getAsString());

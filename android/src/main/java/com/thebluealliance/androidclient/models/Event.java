@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -358,11 +357,6 @@ public class Event extends BasicModel<Event> {
     }
 
     @Override
-    public void addFields(String... fields) {
-
-    }
-
-    @Override
     public EventListElement render() {
         try {
             String eventKey = getEventKey(),
@@ -403,8 +397,7 @@ public class Event extends BasicModel<Event> {
     }
 
     @Override
-    public ContentValues getParams() {
-        return fields;
+    public void write(Context c) {
+        Database.getInstance(c).getEventsTable().add(this);
     }
-
 }

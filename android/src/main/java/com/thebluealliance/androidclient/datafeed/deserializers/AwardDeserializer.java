@@ -17,10 +17,21 @@ public class AwardDeserializer implements JsonDeserializer<Award> {
         final JsonObject a = json.getAsJsonObject();
         final Award award = new Award();
 
-        award.setName(a.get("name").getAsString());
-        award.setEventKey(a.get("event_key").getAsString());
-        award.setYear(a.get("year").getAsInt());
-        award.setWinners(a.get("recipient_list").getAsJsonArray());
+        if(a.has("name")) {
+            award.setName(a.get("name").getAsString());
+        }
+
+        if(a.has("event_key")) {
+            award.setEventKey(a.get("event_key").getAsString());
+        }
+
+        if(a.has("year")) {
+            award.setYear(a.get("year").getAsInt());
+        }
+
+        if(a.has("recipient_list")) {
+            award.setWinners(a.get("recipient_list").getAsJsonArray());
+        }
 
         return award;
     }

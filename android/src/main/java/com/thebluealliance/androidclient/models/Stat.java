@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
-
+import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 
 import java.text.DecimalFormat;
@@ -9,14 +8,13 @@ import java.text.DecimalFormat;
 /**
  * File created by phil on 6/3/14.
  */
-public class Stat extends BasicModel<Stat> {
+public class Stat implements RenderableModel {
 
     String teamKey, teamName, location, statString;
 
     public static DecimalFormat displayFormat = new DecimalFormat("#.##");
 
     public Stat(String teamKey, String teamName, String location, String statString) {
-        super("");
         this.teamKey = teamKey;
         this.teamName = teamName;
         this.location = location;
@@ -24,18 +22,8 @@ public class Stat extends BasicModel<Stat> {
     }
 
     @Override
-    public void addFields(String... fields) {
-
-    }
-
-    @Override
     public StatsListElement render() {
         int teamNumber = Integer.parseInt(teamKey.substring(3));
         return new StatsListElement(teamKey, teamNumber, teamName, location, statString);
-    }
-
-    @Override
-    public ContentValues getParams() {
-        return null;
     }
 }

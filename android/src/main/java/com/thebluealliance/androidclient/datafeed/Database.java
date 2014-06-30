@@ -57,7 +57,8 @@ public class Database extends SQLiteOpenHelper {
             + Teams.SHORTNAME + " TEXT DEFAULT '', "
             + Teams.LOCATION + " TEXT DEFAULT '',"
             + Teams.WEBSITE + " TEXT DEFAULT '', "
-            + Teams.EVENTS + " TEXT DEFAULT '' "
+            + Teams.EVENTS + " TEXT DEFAULT '' ,"
+            + Teams.YEARS_PARTICIPATED + " TEXT DEFAULT '' "
             + ")";
     String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + Events.KEY + " TEXT PRIMARY KEY, "
@@ -239,6 +240,20 @@ public class Database extends SQLiteOpenHelper {
             return safeInsert(TABLE_API, null, cv);
         }
 
+        public APIResponse<String> getResponse(String url) {
+            Cursor cursor = safeQuery(TABLE_API, new String[]{Response.URL, Response.LASTUPDATE, Response.LASTHIT},
+                    Response.URL + "=?", new String[]{url}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                String lastUpdate = cursor.getString(1);
+                long lastHit = cursor.getLong(2);
+                cursor.close();
+                return new APIResponse<>(null, APIResponse.CODE.LOCAL, lastUpdate, new Date(lastHit));
+            } else {
+                Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
+                return null;
+            }
+        }
+
         public boolean responseExists(String url) {
             Cursor cursor = safeQuery(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
             boolean exists = (cursor.moveToFirst()) || (cursor.getCount() != 0);
@@ -287,7 +302,8 @@ public class Database extends SQLiteOpenHelper {
                 SHORTNAME = "shortname",
                 LOCATION = "location",
                 WEBSITE = "website",
-                EVENTS = "events";
+                EVENTS = "events",
+                YEARS_PARTICIPATED = "yearsParticipated";
 
         public long add(Team team) {
             try {
@@ -337,7 +353,7 @@ public class Database extends SQLiteOpenHelper {
         public Team get(String teamKey, String[] fields) {
             Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                Team team = ModelInflater.infalteTeam(cursor);
+                Team team = ModelInflater.inflateTeam(cursor);
                 cursor.close();
                 return team;
             } else {
@@ -348,7 +364,7 @@ public class Database extends SQLiteOpenHelper {
         public Team get(String teamKey){
             Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_TEAMS+" WHERE "+Teams.KEY+ " = ?", new String[]{teamKey});
             if (cursor != null && cursor.moveToFirst()) {
-                Team team = ModelInflater.infalteTeam(cursor);
+                Team team = ModelInflater.inflateTeam(cursor);
                 cursor.close();
                 return team;
             } else {
@@ -381,7 +397,7 @@ public class Database extends SQLiteOpenHelper {
             Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
             if(cursor != null && cursor.moveToFirst()) {
                 do {
-                    teams.add(ModelInflater.infalteTeam(cursor));
+                    teams.add(ModelInflater.inflateTeam(cursor));
                 }while (cursor.moveToNext());
                 cursor.close();
             }
@@ -851,20 +867,6 @@ public class Database extends SQLiteOpenHelper {
             }
         }
         return response;
-    }
-
-    public APIResponse<String> getResponse(String url) {
-        Cursor cursor = safeQuery(TABLE_API, new String[]{Response.URL, Response.LASTUPDATE, Response.LASTHIT},
-                Response.URL + "=?", new String[]{url}, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            String lastUpdate = cursor.getString(1);
-            long lastHit = cursor.getLong(2);
-            cursor.close();
-            return new APIResponse<>(null, APIResponse.CODE.LOCAL, lastUpdate, new Date(lastHit));
-        } else {
-            Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
-            return null;
-        }
     }
 
     public long insertSearchItemTeam(Team team) {

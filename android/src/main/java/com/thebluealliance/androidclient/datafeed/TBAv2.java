@@ -23,6 +23,7 @@ public class TBAv2 {
         CSV_TEAMS,
         TEAM_LIST,
         TEAM,
+        TEAM_YEAR,
         TEAM_EVENTS,
         TEAM_EVENT_AWARDS,
         TEAM_EVENT_MATCHES,
@@ -45,6 +46,7 @@ public class TBAv2 {
         API_URL.put(QUERY.TEAM_LIST, "http://www.thebluealliance.com/api/v2/teams/%s");
 
         API_URL.put(QUERY.TEAM, "http://www.thebluealliance.com/api/v2/team/%s");
+        API_URL.put(QUERY.TEAM_YEAR, "http://www.thebluealliance.com/api/v2/team/%s/%d");
         API_URL.put(QUERY.TEAM_EVENTS, "http://www.thebluealliance.com/api/v2/team/%s/%d/events");
         API_URL.put(QUERY.TEAM_EVENT_AWARDS, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/awards");
         API_URL.put(QUERY.TEAM_EVENT_MATCHES, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/matches");
@@ -83,21 +85,19 @@ public class TBAv2 {
      *
      * @param c               App context
      * @param URL             URL to fetch
-     * @param cacheInDatabase boolean - do we want to store the response locally if we need to load it from the web?
      * @param forceFromCache  (optional, defaults to FALSE). If set, the data exists locally, we won't query the web ever - just return what we have.
      * @return An APIRespnse containing the data we fetched from the internet
      * @throws DataManager.NoDataException
      */
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheInDatabase, boolean forceFromCache) throws DataManager.NoDataException {
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {
         if (c == null) {
             Log.d("datamanager", "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
         }
         Log.d("datamanager", "Loading URL: " + URL);
         boolean existsInDb;
-        synchronized (Database.getInstance(c)) {
-            existsInDb = Database.getInstance(c).getResponseTable().responseExists(URL);
-        }
+        existsInDb = Database.getInstance(c).getResponseTable().responseExists(URL);
+
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
         if (existsInDb) {
             if (connectedToInternet) {
@@ -106,9 +106,7 @@ public class TBAv2 {
                 //and return our local content
 
                 APIResponse<String> cachedData;
-                synchronized (Database.getInstance(c)) {
-                    cachedData = Database.getInstance(c).getResponse(URL);
-                }
+                cachedData = Database.getInstance(c).getResponseTable().getResponse(URL);
 
                 Date now = new Date();
                 Date futureTime = new Date(cachedData.lastHit.getTime() + Constants.API_HIT_TIMEOUT);
@@ -138,24 +136,20 @@ public class TBAv2 {
                     if (lastModified != null) {
                         lastUpdate = lastModified.getValue();
                     }
-                    if (cacheInDatabase) {
-                        Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
 
-                    }
+                    Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
+
                     Log.d("datamanager", "Online; updated from internet: " + URL);
                     return new APIResponse<>(response, APIResponse.CODE.UPDATED);
                 } else {
-                    if(cacheInDatabase) {
-                        Database.getInstance(c).getResponseTable().touchResponse(URL);
-                    }
+                    Database.getInstance(c).getResponseTable().touchResponse(URL);
+
                     Log.d("datamanager", "Online; no update required, loaded from database: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
             } else {
                 Log.d("datamanager", "Offline; loaded from database: " + URL);
-                synchronized (Database.getInstance(c)) {
-                    return Database.getInstance(c).getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
-                }
+                return Database.getInstance(c).getResponseTable().getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
             }
         } else {
             if (connectedToInternet) {
@@ -168,9 +162,8 @@ public class TBAv2 {
                     lastUpdate = lastModified.getValue();
                 }
 
-                if (cacheInDatabase) {
-                        Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
-                }
+                Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
+
                 Log.d("datamanager", "Online; loaded from internet: " + URL);
                 return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);
             } else {

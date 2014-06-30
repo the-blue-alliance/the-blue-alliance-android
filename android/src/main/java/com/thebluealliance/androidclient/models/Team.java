@@ -1,15 +1,20 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
 
 import java.text.ParseException;
@@ -107,6 +112,17 @@ public class Team extends BasicModel<Team> {
         fields.put(Database.Teams.NUMBER, teamNumber);
     }
 
+    public void setYearsParticipated(JsonArray years){
+        fields.put(Database.Teams.YEARS_PARTICIPATED, years.toString());
+    }
+
+    public JsonArray getYearsParticipated() throws FieldNotDefinedException {
+        if(fields.containsKey(Database.Teams.YEARS_PARTICIPATED) && fields.get(Database.Teams.YEARS_PARTICIPATED) instanceof String) {
+            return JSONManager.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.YEARS_PARTICIPATED is not defined");
+    }
+
     public Event getCurrentEvent() {
         try {
             Date now = new Date(), eventStart, eventEnd;
@@ -142,11 +158,6 @@ public class Team extends BasicModel<Team> {
     }
 
     @Override
-    public void addFields(String... fields) {
-
-    }
-
-    @Override
     public TeamListElement render() {
         try {
             return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation());
@@ -168,8 +179,63 @@ public class Team extends BasicModel<Team> {
     }
 
     @Override
-    public ContentValues getParams() {
-        return fields;
+    public void merge(Team in) {
+        //we need to merge the events the team competed in.
+        //since the incoming data takes precedence over current data,
+        //we're adding events that don't already exist into the new data in there
+        JsonArray newEvents;
+        try {
+            newEvents = in.getEvents();
+        } catch (FieldNotDefinedException e) {
+            newEvents = new JsonArray();
+        }
+
+        JsonArray currentEvents;
+        try {
+            currentEvents = getEvents();
+        } catch (FieldNotDefinedException e) {
+            currentEvents = new JsonArray();
+        }
+
+        String newString = newEvents.toString();
+        for(JsonElement event: currentEvents){
+            if(!newString.contains(event.getAsString())){
+                newEvents.add(event.getAsJsonPrimitive());
+            }
+        }
+
+        super.merge(in);
     }
 
+    public static APIResponse<Team> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
+        Team team;
+        if(cursor != null && cursor.moveToFirst()){
+            team = ModelInflater.inflateTeam(cursor);
+        }else{
+            team = new Team();
+        }
+
+        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                Team updatedTeam = JSONManager.getGson().fromJson(response.getData(), Team.class);
+                team.merge(updatedTeam);
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            team.write(c);
+        }
+        return new APIResponse<>(team, code);
+    }
+
+    @Override
+    public void write(Context c) {
+        Database.getInstance(c).getTeamsTable().add(this);
+    }
 }

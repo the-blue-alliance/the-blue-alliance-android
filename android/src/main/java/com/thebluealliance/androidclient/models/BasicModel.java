@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
-import com.thebluealliance.androidclient.listitems.ListElement;
-
-import java.util.HashMap;
 
 /**
  * File created by phil on 4/28/14.
@@ -27,9 +27,19 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
         fields = new ContentValues();
     }
 
-    public abstract void addFields(String... fields);
+    public static Cursor query(Context c, String table, String[] fields, String where, String[] whereArgs){
+        return Database.getInstance(c).safeQuery(table, fields, where, whereArgs, null, null, null, null);
+    }
 
-    public abstract ContentValues getParams();
+    public void merge(T in){
+        fields.putAll(in.fields);
+    }
+
+    public ContentValues getParams(){
+        return fields;
+    }
+
+    public abstract void write(Context c);
 
     /*
      * When we're ready for it, I can foresee wanting easy inflating/deflating with json. Uncomment whenever that is...

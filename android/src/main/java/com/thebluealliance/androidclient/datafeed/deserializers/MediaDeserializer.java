@@ -18,9 +18,17 @@ public class MediaDeserializer implements JsonDeserializer<Media> {
         JsonObject object = json.getAsJsonObject();
         Media media = new Media();
 
-        media.setMediaType(object.get("type").getAsString());
-        media.setForeignKey(object.get("foreign_key").getAsString());
-        media.setDetails(object.get("details").getAsJsonObject());
+        if(object.has("type")) {
+            media.setMediaType(object.get("type").getAsString());
+        }
+
+        if(object.has("foreign_key")) {
+            media.setForeignKey(object.get("foreign_key").getAsString());
+        }
+
+        if(object.has("details")) {
+            media.setDetails(object.get("details").getAsJsonObject());
+        }
 
         return media;
     }

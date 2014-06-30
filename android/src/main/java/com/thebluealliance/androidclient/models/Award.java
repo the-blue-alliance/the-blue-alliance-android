@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -117,11 +117,6 @@ public class Award extends BasicModel<Award> {
     }
 
     @Override
-    public void addFields(String... fields) {
-
-    }
-
-    @Override
     public AwardListElement render() {
         try {
             String name = getName();
@@ -156,8 +151,9 @@ public class Award extends BasicModel<Award> {
         }
     }
 
+
     @Override
-    public ContentValues getParams() {
-        return fields;
+    public void write(Context c) {
+        Database.getInstance(c).getAwardsTable().add(this);
     }
 }

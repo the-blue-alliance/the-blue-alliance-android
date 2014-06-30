@@ -50,7 +50,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         APIResponse<Cursor> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         if (!isCancelled()) {
             try {
-                response = DataManager.Teams.getCursorForSimpleTeamsInRange(activity, start, end);
+                response = DataManager.Teams.getCursorForTeamsInRange(activity, start, end);
                 teams = response.getData();
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load team list");

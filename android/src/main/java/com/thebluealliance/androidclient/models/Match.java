@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -276,11 +276,6 @@ public class Match extends BasicModel<Match> {
         }
     }
 
-    @Override
-    public void addFields(String... fields) {
-
-    }
-
     /**
      * Renders a MatchListElement for displaying this match.
      * ASSUMES 3v3 match structure with red/blue alliances
@@ -338,8 +333,7 @@ public class Match extends BasicModel<Match> {
     }
 
     @Override
-    public ContentValues getParams() {
-        return fields;
+    public void write(Context c) {
+        Database.getInstance(c).getMatchesTable().add(this);
     }
-
 }

@@ -1,21 +1,14 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
-
-import org.json.JSONObject;
-
-import java.util.Map;
-import java.util.Set;
 
 
 public class Media extends BasicModel<Media> {
@@ -113,11 +106,6 @@ public class Media extends BasicModel<Media> {
     }
 
     @Override
-    public void addFields(String... fields) {
-
-    }
-
-    @Override
     public ListElement render() {
         String imageUrl;
         try {
@@ -139,8 +127,7 @@ public class Media extends BasicModel<Media> {
     }
 
     @Override
-    public ContentValues getParams() {
-        return fields;
+    public void write(Context c) {
+        Database.getInstance(c).getMediasTable().add(this);
     }
-
 }
