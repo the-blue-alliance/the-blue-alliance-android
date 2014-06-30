@@ -61,7 +61,7 @@ public class ModelInflater {
                     event.setVenue(data.getString(i));
                     break;
                 case Database.Events.TYPE:
-                    event.setEventType(data.getString(i));
+                    event.setEventType(data.getInt(i));
                     break;
                 case Database.Events.DISTRICT:
                     event.setDistrictEnum(data.getInt(i));
