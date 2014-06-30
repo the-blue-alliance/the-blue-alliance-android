@@ -319,7 +319,6 @@ public class DataManager {
             Log.d("event awards", "Fetching awards for " + eventKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_AWARDS), eventKey);
             String sqlWhere = Database.Awards.EVENTKEY + " = ?";
-            String[] awardFields = new String[]{Database.Awards.EVENTKEY, Database.Awards.YEAR, Database.Awards.NAME, Database.Awards.WINNERS};
             APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Award award: awardResponse.getData()) {
                 try {
