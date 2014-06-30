@@ -144,7 +144,7 @@ public class Media extends BasicModel<Media> {
             media = new Media();
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
@@ -171,7 +171,7 @@ public class Media extends BasicModel<Media> {
             }while(cursor.moveToNext());
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.listitems.EventWeekHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -326,5 +327,17 @@ public class EventHelper {
         Log.d(Constants.LOG_TAG, "Categories: "+groups.keySet().toString());
 
         return groups;
+    }
+
+    public static void addFieldByAPIUrl(Event event, String url, String data){
+        if(url.contains("teams")){
+            event.setTeams(JSONManager.getasJsonArray(data));
+        }else if(url.contains("rankings")){
+            event.setRankings(JSONManager.getasJsonArray(data));
+        }else if(url.contains("matches")){
+            event.setMatches(JSONManager.getasJsonArray(data));
+        }else if(url.contains("stats")){
+            event.setStats(JSONManager.getasJsonObject(data));
+        }
     }
 }

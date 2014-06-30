@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**

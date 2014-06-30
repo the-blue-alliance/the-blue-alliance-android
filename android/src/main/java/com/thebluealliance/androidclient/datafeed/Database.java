@@ -631,13 +631,13 @@ public class Database extends SQLiteOpenHelper {
                 db.beginTransaction();
                 for (Award award: awards) {
                     try {
-                        if(!exists(award.getKey())) {
+                        if (!unsafeExists(award.getKey())){
                             db.insert(TABLE_AWARDS, null, award.getParams());
                         }else{
                             db.update(TABLE_AWARDS, award.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{award.getEventKey(), award.getName()});
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Can't update award. Missing fields");
+                        Log.w(Constants.LOG_TAG, "Unable to add award - missing event key or award name");
                     }
                 }
                 db.setTransactionSuccessful();
@@ -645,7 +645,7 @@ public class Database extends SQLiteOpenHelper {
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             }finally {
-                if (dbSemaphore != null) {
+                if(dbSemaphore != null) {
                     dbSemaphore.release();
                 }
             }
@@ -683,6 +683,20 @@ public class Database extends SQLiteOpenHelper {
             String eventKey = key.split(":")[0];
             String awardName = key.split(":")[1];
             Cursor cursor = safeQuery(TABLE_AWARDS, new String[]{}, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public boolean unsafeExists(String key){
+            String eventKey = key.split(":")[0];
+            String awardName = key.split(":")[1];
+            Cursor cursor = db.query(TABLE_AWARDS, new String[]{}, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -734,13 +748,13 @@ public class Database extends SQLiteOpenHelper {
                 db.beginTransaction();
                 for (Match match: matches) {
                     try {
-                        if(!exists(match.getKey())) {
+                        if (!unsafeExists(match.getKey())){
                             db.insert(TABLE_MATCHES, null, match.getParams());
                         }else{
                             db.update(TABLE_MATCHES, match.getParams(), KEY + " =?", new String[]{match.getKey()});
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Can't update match. No key.");
+                        Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
                     }
                 }
                 db.setTransactionSuccessful();
@@ -748,7 +762,7 @@ public class Database extends SQLiteOpenHelper {
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             }finally {
-                if (dbSemaphore != null) {
+                if(dbSemaphore != null) {
                     dbSemaphore.release();
                 }
             }
@@ -779,6 +793,18 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public boolean exists(String key) {
             Cursor cursor = safeQuery(TABLE_MATCHES, new String[]{Matches.KEY}, Matches.KEY + "=?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public boolean unsafeExists(String key){
+            Cursor cursor = db.query(TABLE_MATCHES, new String[]{Matches.KEY}, Matches.KEY + "=?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();

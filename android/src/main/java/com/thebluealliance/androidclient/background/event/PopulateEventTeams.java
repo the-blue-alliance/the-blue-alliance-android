@@ -94,6 +94,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);
                 teamList.setAdapter(adapter);
+                noDataText.setVisibility(View.GONE);
             }
 
             // Display warning if offline.

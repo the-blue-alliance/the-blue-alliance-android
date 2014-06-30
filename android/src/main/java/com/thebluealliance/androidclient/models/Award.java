@@ -161,7 +161,7 @@ public class Award extends BasicModel<Award> {
     }
 
     public static APIResponse<Award> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         Award award;
         if(cursor != null && cursor.moveToFirst()){
             award = ModelInflater.inflateAward(cursor);
@@ -169,7 +169,7 @@ public class Award extends BasicModel<Award> {
             award = new Award();
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
@@ -188,7 +188,7 @@ public class Award extends BasicModel<Award> {
     }
 
     public static APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Award> awards = new ArrayList<>();
         if(cursor != null && cursor.moveToFirst()){
             do{
@@ -196,15 +196,15 @@ public class Award extends BasicModel<Award> {
             }while(cursor.moveToNext());
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray awardList = JSONManager.getasJsonArray(response.getData());
                 awards = new ArrayList<>();
-                for(JsonElement m: matchList){
-                    awards.add(JSONManager.getGson().fromJson(m, Award.class));
+                for(JsonElement a: awardList){
+                    awards.add(JSONManager.getGson().fromJson(a, Award.class));
                 }
                 changed = true;
             }

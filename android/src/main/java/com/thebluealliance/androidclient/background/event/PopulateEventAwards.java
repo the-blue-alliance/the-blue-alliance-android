@@ -66,6 +66,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
             Log.w(Constants.LOG_TAG, "unable to load event awards");
             return APIResponse.CODE.NODATA;
         }
@@ -77,6 +78,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         if (view != null) {
             adapter = new ListViewAdapter(activity, awards);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            noDataText.setVisibility(View.GONE);
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.

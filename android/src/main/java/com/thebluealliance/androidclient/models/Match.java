@@ -23,13 +23,12 @@ import java.util.Date;
 
 public class Match extends BasicModel<Match> {
 
-    private String eventKey, selectedTeam;
+    private String selectedTeam;
     private int year;
     private MatchHelper.TYPE type;
 
     public Match() {
         super(Database.TABLE_MATCHES);
-        eventKey = "";
         year = -1;
         type = MatchHelper.TYPE.NONE;
     }
@@ -49,17 +48,17 @@ public class Match extends BasicModel<Match> {
         if (!MatchHelper.validateMatchKey(key))
             throw new IllegalArgumentException("Invalid match key: " + key);
         fields.put(Database.Matches.KEY, key);
+        fields.put(Database.Matches.EVENT, key.split("_")[0]);
 
-        this.eventKey = key.split("_")[0];
         this.year = Integer.parseInt(key.substring(0, 3));
         this.type = MatchHelper.TYPE.fromKey(key);
     }
 
     public String getEventKey() throws FieldNotDefinedException{
-        if(eventKey.isEmpty()){
-            throw new FieldNotDefinedException("Field Database.Matches.KEY is not defined");
+        if(fields.containsKey(Database.Matches.EVENT) && fields.get(Database.Matches.EVENT) instanceof String) {
+            return (String) fields.get(Database.Matches.EVENT);
         }
-        return eventKey;
+        throw new FieldNotDefinedException("Field Database.Matches.EVENT is not defined");
     }
 
     public String getTimeString() throws FieldNotDefinedException{
@@ -133,7 +132,7 @@ public class Match extends BasicModel<Match> {
     }
 
     public int getMatchNumber() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.MATCHNUM) && fields.get(Database.Matches.MATCHNUM) instanceof String) {
+        if(fields.containsKey(Database.Matches.MATCHNUM) && fields.get(Database.Matches.MATCHNUM) instanceof Integer) {
             return (Integer) fields.get(Database.Matches.MATCHNUM);
         }
         throw new FieldNotDefinedException("Field Database.Matches.MATCHNUM is not defined");
@@ -144,7 +143,7 @@ public class Match extends BasicModel<Match> {
     }
 
     public int getSetNumber() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.SETNUM) && fields.get(Database.Matches.SETNUM) instanceof String) {
+        if(fields.containsKey(Database.Matches.SETNUM) && fields.get(Database.Matches.SETNUM) instanceof Integer) {
             return (Integer) fields.get(Database.Matches.SETNUM);
         }
         throw new FieldNotDefinedException("Field Database.Matches.MATCHNUM is not defined");
@@ -176,14 +175,13 @@ public class Match extends BasicModel<Match> {
 
     public Integer getDisplayOrder() {
         try {
-            Log.w(Constants.LOG_TAG, "Fields: "+fields.keySet());
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
             return MatchHelper.PLAY_ORDER.get(type) * 1000000 + setNumber * 1000 + matchNumber;
         }catch (FieldNotDefinedException e){
             Log.w(Constants.LOG_TAG, "Required fields for display order not present\n" +
                     "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
-            return null;
+            return 1000000;
         }
     }
     public Integer getPlayOrder() {
@@ -349,7 +347,7 @@ public class Match extends BasicModel<Match> {
             match = new Match();
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
@@ -376,7 +374,7 @@ public class Match extends BasicModel<Match> {
             }while(cursor.moveToNext());
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);

@@ -93,6 +93,10 @@ public class ModelInflater {
                     JsonObject stats = JSONManager.getasJsonObject(data.getString(i));
                     event.setStats(stats);
                     break;
+                case Database.Events.TEAMS:
+                    JsonArray teams = JSONManager.getasJsonArray(data.getString(i));
+                    event.setTeams(teams);
+                    break;
                 default:
             }
         }
@@ -119,6 +123,12 @@ public class ModelInflater {
                 case Database.Matches.VIDEOS:
                     JsonArray videos = JSONManager.getasJsonArray(data.getString(i));
                     match.setVideos(videos);
+                    break;
+                case Database.Matches.MATCHNUM:
+                    match.setMatchNumber(data.getInt(i));
+                    break;
+                case Database.Matches.SETNUM:
+                    match.setSetNumber(data.getInt(i));
                     break;
                 default:
             }

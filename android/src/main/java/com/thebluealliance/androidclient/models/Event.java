@@ -19,6 +19,8 @@ import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -418,12 +420,20 @@ public class Event extends BasicModel<Event> {
             event = new Event();
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Event updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
+                Event updatedEvent;
+                if(StringUtils.countMatches(url, "/") == 6) {
+                    //event info request - inflate the event
+                    updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
+                }else{
+                    //it's some other data for the event. We can't inflate the model from it
+                    updatedEvent = new Event();
+                    EventHelper.addFieldByAPIUrl(updatedEvent, url, response.getData());
+                }
                 event.merge(updatedEvent);
                 changed = true;
             }
@@ -445,7 +455,7 @@ public class Event extends BasicModel<Event> {
             }while(cursor.moveToNext());
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);

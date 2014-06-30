@@ -217,7 +217,7 @@ public class Team extends BasicModel<Team> {
             team = new Team();
         }
 
-        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);

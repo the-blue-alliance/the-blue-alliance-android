@@ -193,10 +193,11 @@ public class DataManager {
             Log.d("event teams", "Fetching teams for " + eventKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_TEAMS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.TEAMS};
+            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.TEAMS};
             APIResponse<Event> eventResponse = Event.query(c, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray teamList = eventResponse.getData().getTeams();
+                Log.d(Constants.LOG_TAG, "Found "+teamList.size()+" teams");
                 for(JsonElement t: teamList){
                     teams.add(JSONManager.getGson().fromJson(t, Team.class));
                 }
@@ -211,7 +212,7 @@ public class DataManager {
             Log.d("event ranks", "Fetching rankings for " + eventKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_RANKS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.RANKINGS};
+            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.RANKINGS};
             APIResponse<Event> eventResponse = Event.query(c, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray rankArray = eventResponse.getData().getRankings();
@@ -256,6 +257,7 @@ public class DataManager {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.EVENT + " = ?";
             APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            Log.d(Constants.LOG_TAG, "Found "+matchResponse.getData().size()+" matches");
             for (Match match: matchResponse.getData()) {
                 try {
                     if(match.getAlliances().toString().contains(teamKey)) {
@@ -277,7 +279,7 @@ public class DataManager {
         public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_STATS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.STATS};
+            String[] eventFields = new String[]{Database.Events.KEY,Database.Events.NAME, Database.Events.STATS};
             APIResponse<Event> eventResponse = Event.query(c, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonObject allStats = eventResponse.getData().getStats();
@@ -307,6 +309,7 @@ public class DataManager {
                     return new APIResponse<>(teamStats, eventResponse.getCode());
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
+                e.printStackTrace();
                 throw new NoDataException(e.getMessage());
             }
         }
@@ -316,6 +319,7 @@ public class DataManager {
             Log.d("event awards", "Fetching awards for " + eventKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_AWARDS), eventKey);
             String sqlWhere = Database.Awards.EVENTKEY + " = ?";
+            String[] awardFields = new String[]{Database.Awards.EVENTKEY, Database.Awards.YEAR, Database.Awards.NAME, Database.Awards.WINNERS};
             APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Award award: awardResponse.getData()) {
                 try {
