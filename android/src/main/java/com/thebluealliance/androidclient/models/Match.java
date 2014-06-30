@@ -176,6 +176,7 @@ public class Match extends BasicModel<Match> {
 
     public Integer getDisplayOrder() {
         try {
+            Log.w(Constants.LOG_TAG, "Fields: "+fields.keySet());
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
             return MatchHelper.PLAY_ORDER.get(type) * 1000000 + setNumber * 1000 + matchNumber;

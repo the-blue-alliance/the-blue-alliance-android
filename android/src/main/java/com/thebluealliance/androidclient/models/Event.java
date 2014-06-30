@@ -48,11 +48,11 @@ public class Event extends BasicModel<Event> {
         fields.put(Database.Events.ALLIANCES, alliances.toString());
     }
 
-    public String getWebsite() throws FieldNotDefinedException{
+    public String getWebsite(){
         if(fields.containsKey(Database.Events.WEBSITE) && fields.get(Database.Events.WEBSITE) instanceof String) {
             return (String) fields.get(Database.Events.ALLIANCES);
         }
-        throw new FieldNotDefinedException("Field Database.Events.WEBSITE is not defined");
+        return "";
     }
 
     public int getEventYear() throws FieldNotDefinedException{
