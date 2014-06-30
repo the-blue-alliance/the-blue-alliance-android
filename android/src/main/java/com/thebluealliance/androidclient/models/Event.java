@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
@@ -20,6 +21,7 @@ import com.thebluealliance.androidclient.listitems.EventListElement;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -174,7 +176,7 @@ public class Event extends BasicModel<Event> {
     }
 
     public int getDistrictEnum() throws FieldNotDefinedException {
-        if(fields.containsKey(Database.Events.DISTRICT) && fields.get(Database.Events.DISTRICT) instanceof String) {
+        if(fields.containsKey(Database.Events.DISTRICT) && fields.get(Database.Events.DISTRICT) instanceof Integer) {
             return (Integer) fields.get(Database.Events.DISTRICT);
         }
         throw new FieldNotDefinedException("Field Database.Events.DISTRICT is not defined");
@@ -193,6 +195,7 @@ public class Event extends BasicModel<Event> {
 
     public void setDistrictTitle(String districtTitle) {
         fields.put(Database.Events.DISTRICT_STRING, districtTitle);
+
     }
 
     public Date getStartDate() throws FieldNotDefinedException {
@@ -211,7 +214,12 @@ public class Event extends BasicModel<Event> {
             return;
         }
         try {
-            fields.put(Database.Events.START, EventHelper.eventDateFormat.parse(startString).getTime());
+            Date start = EventHelper.eventDateFormat.parse(startString);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(start);
+            fields.put(Database.Events.START, start.getTime());
+            int week = Integer.parseInt(EventHelper.weekFormat.format(start)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+            setCompetitionWeek(week);
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
@@ -455,6 +463,7 @@ public class Event extends BasicModel<Event> {
         if(changed){
             Database.getInstance(c).getEventsTable().storeEvents(events);
         }
+
         return new APIResponse<>(events, code);
     }
 

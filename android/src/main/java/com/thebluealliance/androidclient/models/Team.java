@@ -79,11 +79,12 @@ public class Team extends BasicModel<Team> {
         fields.put(Database.Teams.KEY, teamKey);
     }
 
-    public String getNickname() throws FieldNotDefinedException {
+    public String getNickname() {
         if(fields.containsKey(Database.Teams.SHORTNAME) && fields.get(Database.Teams.SHORTNAME) instanceof String) {
             return (String) fields.get(Database.Teams.SHORTNAME);
+        }else{
+            return "";
         }
-        throw new FieldNotDefinedException("Field Database.Teams.SHORTNAME is not defined");
     }
 
     public void setNickname(String nickname) {

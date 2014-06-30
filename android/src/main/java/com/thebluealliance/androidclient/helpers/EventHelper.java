@@ -269,6 +269,7 @@ public class EventHelper {
     }
 
     public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
+        Log.d(Constants.LOG_TAG, "Sorting "+events.size()+ " events");
         HashMap<String, ArrayList<Event>> groups = new HashMap<>();
         ArrayList<Event> offseason = new ArrayList<>(),
                 preseason = new ArrayList<>(),
@@ -277,7 +278,10 @@ public class EventHelper {
         for (Event e : events) {
             ArrayList<Event> list;
             try {
-                if (e.isOfficial() && (e.getEventType() == TYPE.CMP_DIVISION || e.getEventType() == TYPE.CMP_FINALS)) {
+                boolean official = e.isOfficial();
+                TYPE type = e.getEventType();
+                Date start = e.getStartDate();
+                if (official && (type == TYPE.CMP_DIVISION || type == TYPE.CMP_FINALS)) {
                     if (!groups.containsKey(CHAMPIONSHIP_LABEL) || groups.get(CHAMPIONSHIP_LABEL) == null) {
                         list = new ArrayList<>();
                         groups.put(CHAMPIONSHIP_LABEL, list);
@@ -285,8 +289,8 @@ public class EventHelper {
                         list = groups.get(CHAMPIONSHIP_LABEL);
                     }
                     list.add(e);
-                } else if (e.isOfficial() && (e.getEventType() == TYPE.REGIONAL || e.getEventType() == TYPE.DISTRICT || e.getEventType() == TYPE.DISTRICT_CMP)) {
-                    if (e.getStartDate() == null) {
+                } else if (official && (type == TYPE.REGIONAL || type == TYPE.DISTRICT || type == TYPE.DISTRICT_CMP)) {
+                    if (start == null) {
                         weekless.add(e);
                     } else {
                         String label = String.format(REGIONAL_LABEL, e.getCompetitionWeek());
@@ -298,7 +302,7 @@ public class EventHelper {
                             groups.put(label, list);
                         }
                     }
-                } else if (e.getEventType() == TYPE.PRESEASON) {
+                } else if (type == TYPE.PRESEASON) {
                     preseason.add(e);
                 } else {
                     offseason.add(e);
@@ -318,6 +322,8 @@ public class EventHelper {
         if (!preseason.isEmpty()) {
             groups.put(PRESEASON_LABEL, preseason);
         }
+
+        Log.d(Constants.LOG_TAG, "Categories: "+groups.keySet().toString());
 
         return groups;
     }

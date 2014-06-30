@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -334,7 +335,7 @@ public class Database extends SQLiteOpenHelper {
             Semaphore dbSemaphore = null;
             try{
                 dbSemaphore = getSemaphore();
-                dbSemaphore.acquire();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Team team : teams) {
                     db.insert(TABLE_TEAMS, null, team.getParams());
@@ -472,17 +473,18 @@ public class Database extends SQLiteOpenHelper {
             Semaphore dbSemaphore = null;
             try{
                 dbSemaphore = getSemaphore();
-                dbSemaphore.acquire();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Event event: events) {
                     try {
-                        db.insert(TABLE_EVENTS, null, event.getParams());
-                    } catch (Exception e) {
-                        try {
+                        if (!unsafeExists(event.getEventKey())){
+                            db.insert(TABLE_EVENTS, null, event.getParams());
+                        }else{
                             db.update(TABLE_EVENTS, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
-                        } catch (BasicModel.FieldNotDefinedException e1) {
-                            Log.w(Constants.LOG_TAG, "Unable to update event. Missing key field");
+
                         }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
                     }
                 }
                 db.setTransactionSuccessful();
@@ -578,6 +580,18 @@ public class Database extends SQLiteOpenHelper {
             return result;
         }
 
+        public boolean unsafeExists(String key){
+            Cursor cursor = db.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
         @Override
         public void delete(Event in) {
             try {
@@ -613,7 +627,7 @@ public class Database extends SQLiteOpenHelper {
             Semaphore dbSemaphore = null;
             try{
                 dbSemaphore = getSemaphore();
-                dbSemaphore.acquire();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Award award: awards) {
                     try {
@@ -716,7 +730,7 @@ public class Database extends SQLiteOpenHelper {
             Semaphore dbSemaphore = null;
             try{
                 dbSemaphore = getSemaphore();
-                dbSemaphore.acquire();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Match match: matches) {
                     try {
@@ -809,7 +823,7 @@ public class Database extends SQLiteOpenHelper {
             Semaphore dbSemaphore = null;
             try{
                 dbSemaphore = getSemaphore();
-                dbSemaphore.acquire();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Media media: medias) {
                     try {
@@ -897,7 +911,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try{
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         } catch (InterruptedException e) {
             Log.w("database", "Unable to aquire database semaphore");
@@ -913,7 +927,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try{
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             cursor = db.rawQuery(query, args);
         } catch (InterruptedException e) {
             Log.w("database", "Unable to aquire database semaphore");
@@ -929,7 +943,7 @@ public class Database extends SQLiteOpenHelper {
         int response = -1;
         try{
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             response = db.update(table, values, whereClause, whereArgs);
         } catch (InterruptedException e) {
             Log.w("database", "Unable to aquire database semaphore");
@@ -945,7 +959,7 @@ public class Database extends SQLiteOpenHelper {
         long response = -1;
         try{
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             response = db.insert(table, nullColumnHack, values);
         } catch (InterruptedException e) {
             Log.w("database", "Unable to aquire database semaphore");
@@ -961,7 +975,7 @@ public class Database extends SQLiteOpenHelper {
         int response = -1;
         try{
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             response = db.delete(table, whereClause, whereArgs);
         } catch (InterruptedException e) {
             Log.w("database", "Unable to aquire database semaphore");
@@ -1050,7 +1064,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try{
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             String selection = SearchTeam.TITLES + " MATCH ?";
             String[] selectionArgs = new String[]{query};
 
@@ -1081,7 +1095,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             String selection = SearchEvent.TITLES + " MATCH ?";
             String[] selectionArgs = new String[]{query};
 
@@ -1112,7 +1126,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             SQLiteDatabase db = this.getWritableDatabase();
             db.execSQL("DROP TABLE IF EXISTS tempteams");
             String createTempTeams = "CREATE TEMP TABLE tempteams (tempkey TEXT)";
@@ -1147,7 +1161,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             dbSemaphore = getSemaphore();
-            dbSemaphore.acquire();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
             SQLiteDatabase db = this.getWritableDatabase();
             db.execSQL("DROP TABLE IF EXISTS tempevents");
             String createTempTeams = "CREATE TEMP TABLE tempevents (tempkey TEXT)";
