@@ -462,13 +462,21 @@ public class Database extends SQLiteOpenHelper {
                 dbSemaphore = getSemaphore();
                 dbSemaphore.acquire();
                 db.beginTransaction();
-                for (Event event : events) {
-                    db.insert(TABLE_EVENTS, null, event.getParams());
+                for (Event event: events) {
+                    try {
+                        if(!exists(event.getEventKey())) {
+                            db.insert(TABLE_MATCHES, null, event.getParams());
+                        }else{
+                            db.update(TABLE_MATCHES, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Can't update event. No key.");
+                    }
                 }
                 db.setTransactionSuccessful();
                 db.endTransaction();
             } catch (InterruptedException e) {
-                Log.w("database", "Unable to aquire database semaphore");
+                Log.w("database", "Unable to acquire database semaphore");
             }finally {
                 if(dbSemaphore != null) {
                     dbSemaphore.release();
@@ -589,6 +597,34 @@ public class Database extends SQLiteOpenHelper {
             return safeInsert(TABLE_AWARDS, null, in.getParams());
         }
 
+        public void add(ArrayList<Award> awards){
+            Semaphore dbSemaphore = null;
+            try{
+                dbSemaphore = getSemaphore();
+                dbSemaphore.acquire();
+                db.beginTransaction();
+                for (Award award: awards) {
+                    try {
+                        if(!exists(award.getKey())) {
+                            db.insert(TABLE_AWARDS, null, award.getParams());
+                        }else{
+                            db.update(TABLE_AWARDS, award.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{award.getEventKey(), award.getName()});
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Can't update award. Missing fields");
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            }finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+
         @Override
         public int update(Award in) {
             try {
@@ -664,6 +700,34 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public void add(ArrayList<Match> matches){
+            Semaphore dbSemaphore = null;
+            try{
+                dbSemaphore = getSemaphore();
+                dbSemaphore.acquire();
+                db.beginTransaction();
+                for (Match match: matches) {
+                    try {
+                        if(!exists(match.getKey())) {
+                            db.insert(TABLE_MATCHES, null, match.getParams());
+                        }else{
+                            db.update(TABLE_MATCHES, match.getParams(), KEY + " =?", new String[]{match.getKey()});
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Can't update match. No key.");
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            }finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+
         @Override
         public int update(Match in) {
             try {
@@ -726,6 +790,34 @@ public class Database extends SQLiteOpenHelper {
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't add media without Database.Medias.FOREIGNKEY");
                 return -1;
+            }
+        }
+
+        public void add(ArrayList<Media> medias){
+            Semaphore dbSemaphore = null;
+            try{
+                dbSemaphore = getSemaphore();
+                dbSemaphore.acquire();
+                db.beginTransaction();
+                for (Media media: medias) {
+                    try {
+                        if(!exists(media.getForeignKey())) {
+                            db.insert(TABLE_AWARDS, null, media.getParams());
+                        }else{
+                            db.update(TABLE_AWARDS, media.getParams(), FOREIGNKEY + " = ?", new String[]{media.getForeignKey()});
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Can't update award. Missing fields");
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            }finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
             }
         }
 

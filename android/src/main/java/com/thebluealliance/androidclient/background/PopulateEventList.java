@@ -63,7 +63,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else {
             if (!allEvents.containsKey(mYear)) {
                 try {
-                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear).getData());
+                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear, false).getData());
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
                     return APIResponse.CODE.NODATA;
@@ -86,7 +86,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
-                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
+                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, false);
 
                 if(isCancelled()){
                     return APIResponse.CODE.NODATA;

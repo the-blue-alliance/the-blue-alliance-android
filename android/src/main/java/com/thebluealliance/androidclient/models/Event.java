@@ -1,15 +1,20 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 
@@ -394,6 +399,63 @@ public class Event extends BasicModel<Event> {
 
     public String getSearchTitles() throws FieldNotDefinedException {
         return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
+    }
+
+    public static APIResponse<Event> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        Event event;
+        if(cursor != null && cursor.moveToFirst()){
+            event = ModelInflater.inflateEvent(cursor);
+        }else{
+            event = new Event();
+        }
+
+        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                Event updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
+                event.merge(updatedEvent);
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            event.write(c);
+        }
+        return new APIResponse<>(event, code);
+    }
+
+    public static APIResponse<ArrayList<Event>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        ArrayList<Event> events = new ArrayList<>();
+        if(cursor != null && cursor.moveToFirst()){
+            do{
+                events.add(ModelInflater.inflateEvent(cursor));
+            }while(cursor.moveToNext());
+        }
+
+        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                events = new ArrayList<>();
+                for(JsonElement m: matchList){
+                    events.add(JSONManager.getGson().fromJson(m, Event.class));
+                }
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            Database.getInstance(c).getEventsTable().storeEvents(events);
+        }
+        return new APIResponse<>(events, code);
     }
 
     @Override

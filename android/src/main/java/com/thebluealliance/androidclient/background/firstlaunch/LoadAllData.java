@@ -57,7 +57,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 start = start == 0 ? 1 : start;
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_teams), start, end)));
                 APIResponse<String> teamListResponse;
-                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), true, false);
+                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), false);
                 JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
                 if (responseObject != null) {
                     if (responseObject.size() == 0) {
@@ -74,7 +74,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_events), Integer.toString(year))));
                 APIResponse<String> eventListResponse;
-                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://www.thebluealliance.com/api/v2/events/" + year, true, false);
+                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://www.thebluealliance.com/api/v2/events/" + year, false);
                 JsonElement responseObject = new JsonParser().parse(eventListResponse.getData());
                 if (responseObject instanceof JsonObject) {
                     if (((JsonObject) responseObject).has("404")) {

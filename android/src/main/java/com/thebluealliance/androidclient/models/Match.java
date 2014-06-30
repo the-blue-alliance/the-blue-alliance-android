@@ -1,16 +1,23 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -330,6 +337,63 @@ public class Match extends BasicModel<Match> {
                     "Required: Database.Matches.ALLIANCES, Database.Matches.VIDEOS, Database.Matches.KEY, Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
         }
+    }
+
+    public static APIResponse<Match> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        Match match;
+        if(cursor != null && cursor.moveToFirst()){
+            match = ModelInflater.inflateMatch(cursor);
+        }else{
+            match = new Match();
+        }
+
+        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                Match updatedMatch = JSONManager.getGson().fromJson(response.getData(), Match.class);
+                match.merge(updatedMatch);
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            match.write(c);
+        }
+        return new APIResponse<>(match, code);
+    }
+
+    public static APIResponse<ArrayList<Match>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        ArrayList<Match> matches = new ArrayList<>();
+        if(cursor != null && cursor.moveToFirst()){
+            do{
+                matches.add(ModelInflater.inflateMatch(cursor));
+            }while(cursor.moveToNext());
+        }
+
+        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                matches = new ArrayList<>();
+                for(JsonElement m: matchList){
+                    matches.add(JSONManager.getGson().fromJson(m, Match.class));
+                }
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            Database.getInstance(c).getMatchesTable().add(matches);
+        }
+        return new APIResponse<>(matches, code);
     }
 
     @Override

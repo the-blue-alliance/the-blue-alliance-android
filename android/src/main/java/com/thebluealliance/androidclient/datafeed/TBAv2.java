@@ -33,6 +33,7 @@ public class TBAv2 {
         EVENT_INFO,
         EVENT_TEAMS,
         EVENT_MATCHES,
+        EVENT_MATCHES_FOR_TEAM,
         EVENT_STATS,
         EVENT_RANKS,
         EVENT_AWARDS

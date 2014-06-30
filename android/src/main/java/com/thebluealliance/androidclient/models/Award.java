@@ -1,15 +1,20 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
+import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
@@ -26,6 +31,10 @@ public class Award extends BasicModel<Award> {
         setName(name);
         setYear(year);
         setWinners(winners);
+    }
+
+    public String getKey() throws FieldNotDefinedException {
+        return getEventKey()+":"+getName();
     }
 
     public JsonArray getWinners() throws FieldNotDefinedException{
@@ -151,6 +160,62 @@ public class Award extends BasicModel<Award> {
         }
     }
 
+    public static APIResponse<Award> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        Award award;
+        if(cursor != null && cursor.moveToFirst()){
+            award = ModelInflater.inflateAward(cursor);
+        }else{
+            award = new Award();
+        }
+
+        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                Award updatedAward = JSONManager.getGson().fromJson(response.getData(), Award.class);
+                award.merge(updatedAward);
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            award.write(c);
+        }
+        return new APIResponse<>(award, code);
+    }
+
+    public static APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        ArrayList<Award> awards = new ArrayList<>();
+        if(cursor != null && cursor.moveToFirst()){
+            do{
+                awards.add(ModelInflater.inflateAward(cursor));
+            }while(cursor.moveToNext());
+        }
+
+        APIResponse.CODE code = APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                awards = new ArrayList<>();
+                for(JsonElement m: matchList){
+                    awards.add(JSONManager.getGson().fromJson(m, Award.class));
+                }
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            Database.getInstance(c).getAwardsTable().add(awards);
+        }
+        return new APIResponse<>(awards, code);
+    }
 
     @Override
     public void write(Context c) {
