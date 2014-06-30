@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.background.firstlaunch;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -57,7 +58,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 start = start == 0 ? 1 : start;
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_teams), start, end)));
                 APIResponse<String> teamListResponse;
-                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), false);
+                teamListResponse = TBAv2.getResponseFromURLOrThrow(activity, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), false, false);
                 JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
                 if (responseObject != null) {
                     if (responseObject.size() == 0) {
@@ -74,8 +75,8 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(activity.getString(R.string.loading_events), Integer.toString(year))));
                 APIResponse<String> eventListResponse;
-                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://www.thebluealliance.com/api/v2/events/" + year, false);
-                JsonElement responseObject = new JsonParser().parse(eventListResponse.getData());
+                eventListResponse = TBAv2.getResponseFromURLOrThrow(activity, "http://www.thebluealliance.com/api/v2/events/" + year, false, false);
+                JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
                 if (responseObject instanceof JsonObject) {
                     if (((JsonObject) responseObject).has("404")) {
                         // No events found for that year; skip it
@@ -89,7 +90,9 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             // If no exception has been thrown at this point, we have all the data. We can now
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, activity.getString(R.string.loading_almost_finished)));
+            Log.d(Constants.LOG_TAG, "storing teams");
             Database.getInstance(activity).getTeamsTable().storeTeams(teams);
+            Log.d(Constants.LOG_TAG, "storing events");
             Database.getInstance(activity).getEventsTable().storeEvents(events);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
             // Loop through all pages

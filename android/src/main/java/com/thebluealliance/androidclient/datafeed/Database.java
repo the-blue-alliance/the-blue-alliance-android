@@ -117,7 +117,7 @@ public class Database extends SQLiteOpenHelper {
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
-    private static Semaphore sSemaphore;
+    private Semaphore mSemaphore;
 
     private Teams teamsTable;
     private Events eventsTable;
@@ -136,11 +136,11 @@ public class Database extends SQLiteOpenHelper {
         matchesTable = new Matches();
         mediasTable = new Medias();
         responseTable = new Response();
-        sSemaphore = new Semaphore(1);
+        mSemaphore = new Semaphore(1);
     }
 
     public Semaphore getSemaphore(){
-        return sSemaphore;
+        return mSemaphore;
     }
 
     public static synchronized Database getInstance(Context context) {
@@ -338,11 +338,23 @@ public class Database extends SQLiteOpenHelper {
                 db.beginTransaction();
                 for (Team team : teams) {
                     db.insert(TABLE_TEAMS, null, team.getParams());
+
+                    //add search team item
+                    ContentValues cv = new ContentValues();
+                    try {
+                        cv.put(SearchTeam.KEY, team.getTeamKey());
+                        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+                        cv.put(SearchTeam.NUMBER, team.getTeamNumber());
+
+                        db.insert(TABLE_SEARCH_TEAMS, null, cv);
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 db.setTransactionSuccessful();
                 db.endTransaction();
             } catch (InterruptedException e) {
-                Log.w("database", "Unable to aquire database semaphore");
+                Log.w("database", "Unable to acquire database semaphore");
             }finally {
                 if(dbSemaphore != null) {
                     dbSemaphore.release();
@@ -464,13 +476,13 @@ public class Database extends SQLiteOpenHelper {
                 db.beginTransaction();
                 for (Event event: events) {
                     try {
-                        if(!exists(event.getEventKey())) {
-                            db.insert(TABLE_MATCHES, null, event.getParams());
-                        }else{
-                            db.update(TABLE_MATCHES, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
+                        db.insert(TABLE_EVENTS, null, event.getParams());
+                    } catch (Exception e) {
+                        try {
+                            db.update(TABLE_EVENTS, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
+                        } catch (BasicModel.FieldNotDefinedException e1) {
+                            Log.w(Constants.LOG_TAG, "Unable to update event. Missing key field");
                         }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Can't update event. No key.");
                     }
                 }
                 db.setTransactionSuccessful();

@@ -81,6 +81,10 @@ public class TBAv2 {
         return teams;
     }
 
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {
+        return getResponseFromURLOrThrow(c, URL, true, forceFromCache);
+    }
+
     /**
      * This is the main datafeed method - you speciy a URL and this will either return it from our cache or fetch and store it.
      *
@@ -90,7 +94,7 @@ public class TBAv2 {
      * @return An APIRespnse containing the data we fetched from the internet
      * @throws DataManager.NoDataException
      */
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheLocally, boolean forceFromCache) throws DataManager.NoDataException {
         if (c == null) {
             Log.d("datamanager", "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
@@ -163,7 +167,9 @@ public class TBAv2 {
                     lastUpdate = lastModified.getValue();
                 }
 
-                Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
+                if(cacheLocally) {
+                    Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
+                }
 
                 Log.d("datamanager", "Online; loaded from internet: " + URL);
                 return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);
