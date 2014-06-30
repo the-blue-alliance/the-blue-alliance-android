@@ -29,45 +29,62 @@ public class AllianceListElement extends ListElement implements BasicModel {
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_alliance, null, false);
 
-        convertView = inflater.inflate(R.layout.list_item_alliance, null, false);
+            holder = new ViewHolder();
+            holder.allianceName = (TextView) convertView.findViewById(R.id.alliance_name);
+            holder.memberOne = (TextView) convertView.findViewById(R.id.member_one);
+            holder.memberTwo = (TextView) convertView.findViewById(R.id.member_two);
+            holder.memberThree = (TextView) convertView.findViewById(R.id.member_three);
+            holder.memberFour = (TextView) convertView.findViewById(R.id.member_four);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
 
         if (convertView != null) {
-            ((TextView) convertView.findViewById(R.id.alliance_name)).setText(String.format(c.getString(R.string.alliance_title), number));
+            holder.allianceName.setText(String.format(c.getString(R.string.alliance_title), number));
 
-            TextView team1 = ((TextView) convertView.findViewById(R.id.member_one));
             String team1Key = teams.get(0).getAsString();
             SpannableString underLine = new SpannableString(team1Key.substring(3));
             underLine.setSpan(new UnderlineSpan(), 0, underLine.length(), 0);
-            team1.setText(underLine);
-            team1.setTag(team1Key);
-            team1.setOnClickListener(new TeamClickListener(c));
+            holder.memberOne.setText(underLine);
+            holder.memberOne.setTag(team1Key);
+            holder.memberOne.setOnClickListener(new TeamClickListener(c));
 
-            TextView team2 = ((TextView) convertView.findViewById(R.id.member_two));
             String team2Key = teams.get(1).getAsString();
-            team2.setText(team2Key.substring(3));
-            team2.setTag(team2Key);
-            team2.setOnClickListener(new TeamClickListener(c));
+            holder.memberTwo.setText(team2Key.substring(3));
+            holder.memberTwo.setTag(team2Key);
+            holder.memberTwo.setOnClickListener(new TeamClickListener(c));
 
             if (teams.size() >= 3) {
-                TextView team3 = ((TextView) convertView.findViewById(R.id.member_three));
                 String team3Key = teams.get(2).getAsString();
-                team3.setText(team3Key.substring(3));
-                team3.setTag(team3Key);
-                team3.setVisibility(View.VISIBLE);
-                team3.setOnClickListener(new TeamClickListener(c));
+                holder.memberThree.setText(team3Key.substring(3));
+                holder.memberThree.setTag(team3Key);
+                holder.memberThree.setVisibility(View.VISIBLE);
+                holder.memberThree.setOnClickListener(new TeamClickListener(c));
             }
 
             if (teams.size() >= 4) {
-                TextView team4 = ((TextView) convertView.findViewById(R.id.member_four));
                 String team4Key = teams.get(3).getAsString();
-                team4.setText(team4Key.substring(3));
-                team4.setTag(team4Key);
-                team4.setVisibility(View.VISIBLE);
-                team4.setOnClickListener(new TeamClickListener(c));
+                holder.memberFour.setText(team4Key.substring(3));
+                holder.memberFour.setTag(team4Key);
+                holder.memberFour.setVisibility(View.VISIBLE);
+                holder.memberFour.setOnClickListener(new TeamClickListener(c));
             }
         }
         return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView allianceName;
+        TextView memberOne;
+        TextView memberTwo;
+        TextView memberThree;
+        TextView memberFour;
     }
 
     @Override

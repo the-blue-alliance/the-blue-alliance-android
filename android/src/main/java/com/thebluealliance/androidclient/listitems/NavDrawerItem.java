@@ -44,20 +44,11 @@ public class NavDrawerItem implements ListItem {
         }
         TextView textView = ((TextView) convertView.findViewById(R.id.title));
         textView.setText(title);
-        /*if(convertView.isActivated()){
-            textView.setTypeface(null, Typeface.BOLD);
-        } else {
-            textView.setTypeface(null, Typeface.NORMAL);
-        }*/
+
         return convertView;
     }
 
     public int getId() {
         return id;
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-
     }
 }

@@ -45,38 +45,50 @@ public class TeamListElement extends ListElement {
 
     @Override
     public View getView(final Context context, LayoutInflater inflater, View convertView) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item_team, null);
-            view.setTag(key);
-            view.setSelected(selected);
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_team, null);
 
-            TextView title = (TextView) view.findViewById(R.id.team_number);
-            title.setText("" + mTeamNumber);
-
-            TextView dates = (TextView) view.findViewById(R.id.team_name);
-            if (mTeamName.isEmpty()) {
-                dates.setText("Team " + mTeamNumber);
-            } else {
-                dates.setText(mTeamName);
-            }
-
-            TextView location = (TextView) view.findViewById(R.id.team_location);
-            location.setText(mTeamLocation);
-
-            ImageView info = (ImageView) view.findViewById(R.id.team_info);
-            if (mShowLinkToTeamDetails) {
-                info.setVisibility(View.VISIBLE);
-                info.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = ViewTeamActivity.newInstance(context, "frc" + mTeamNumber);
-                        context.startActivity(intent);
-                    }
-                });
-            } else {
-                info.setVisibility(View.GONE);
-            }
+            holder = new ViewHolder();
+            holder.teamNumber = (TextView) convertView.findViewById(R.id.team_number);
+            holder.teamName = (TextView) convertView.findViewById(R.id.team_name);
+            holder.teamLocation = (TextView) convertView.findViewById(R.id.team_location);
+            holder.teamInfo = (ImageView) convertView.findViewById(R.id.team_info);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        return view;
+
+        holder.teamNumber.setText("" + mTeamNumber);
+
+        if (mTeamName.isEmpty()) {
+            holder.teamName.setText("Team " + mTeamNumber);
+        } else {
+            holder.teamName.setText(mTeamName);
+        }
+
+        holder.teamLocation.setText(mTeamLocation);
+
+        if (mShowLinkToTeamDetails) {
+            holder.teamInfo.setVisibility(View.VISIBLE);
+            holder.teamInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = ViewTeamActivity.newInstance(context, "frc" + mTeamNumber);
+                    context.startActivity(intent);
+                }
+            });
+        } else {
+            holder.teamInfo.setVisibility(View.GONE);
+        }
+
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView teamNumber;
+        TextView teamName;
+        TextView teamLocation;
+        ImageView teamInfo;
     }
 }

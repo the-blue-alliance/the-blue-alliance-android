@@ -11,6 +11,4 @@ public interface ListItem {
     public int getViewType();
 
     public View getView(Context c, LayoutInflater inflater, View convertView);
-
-    public void setSelected(boolean selected);
 }
