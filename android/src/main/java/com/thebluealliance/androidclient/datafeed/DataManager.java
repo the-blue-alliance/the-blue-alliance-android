@@ -171,7 +171,6 @@ public class DataManager {
 
     public static class Events {
         public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
-        private static HashMap<Integer, HashMap<String, ArrayList<Event>>> eventsByYear = new HashMap<>();
 
         public static APIResponse<Event> getEvent(Context c, String key, boolean loadFromCache) throws NoDataException {
             final String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_INFO), key);
@@ -182,23 +181,12 @@ public class DataManager {
         public static APIResponse<ArrayList<Event>> getSimpleEventsInWeek(Context c, int year, int week, boolean loadFromCache) throws NoDataException {
             Log.d("get events for week", "getting for week: " + week);
 
-            APIResponse<HashMap<String, ArrayList<Event>>> events = getEventsByYear(c, year, loadFromCache);
-            String weekLabel = EventHelper.weekLabelFromNum(year, week);
-
-            if (eventsByYear.get(year).containsKey(weekLabel)) {
-                return new APIResponse<>(eventsByYear.get(year).get(weekLabel), events.getCode());
-            } else {
-                //nothing found...
-                Log.w(Constants.LOG_TAG, "Unable to find events for tag " + weekLabel);
-                return new APIResponse<>(null, APIResponse.CODE.NODATA);
-            }
-
+            String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_LIST), year);
+            String sqlWhere = Database.Events.YEAR + " = ? AND "+Database.Events.WEEK + " = ?";
+            return Event.queryList(c, loadFromCache, null, sqlWhere, new String[]{Integer.toString(year), Integer.toString(week)}, new String[]{apiUrl});
         }
 
         public static APIResponse<HashMap<String, ArrayList<Event>>> getEventsByYear(Context c, int year, boolean loadFromCache) throws NoDataException {
-            if (eventsByYear.containsKey(year)) {
-                return new APIResponse<>(eventsByYear.get(year), APIResponse.CODE.CACHED304);
-            } else {
                 HashMap<String, ArrayList<Event>> groupedEvents;
                 APIResponse<ArrayList<Event>> eventListResponse;
                 String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_LIST), year);
@@ -209,9 +197,7 @@ public class DataManager {
                     PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true).commit();
                 }
                 groupedEvents = EventHelper.groupByWeek(eventListResponse.getData());
-                eventsByYear.put(year, groupedEvents);
                 return new APIResponse<>(groupedEvents, eventListResponse.getCode());
-            }
         }
 
         public static APIResponse<ArrayList<Team>> getEventTeams(Context c, String eventKey, boolean loadFromCache) throws NoDataException {

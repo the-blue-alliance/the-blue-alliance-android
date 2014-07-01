@@ -32,7 +32,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null, mHeader;
     private ArrayList<ListItem> events;
-    private static HashMap<Integer, HashMap<String, ArrayList<Event>>> allEvents = new HashMap<>();
     private RefreshableHostActivity activity;
     private boolean forceFromCache;
 
@@ -62,20 +61,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         if (mHeader.equals("")) {
             mWeek = -1;
         } else {
-            if (!allEvents.containsKey(mYear)) {
-                try {
-                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear, forceFromCache).getData());
-                } catch (DataManager.NoDataException e) {
-                    Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
-                    return APIResponse.CODE.NODATA;
-                }
-            }
-            try {
-                mWeek = EventHelper.weekNumFromLabel(allEvents.get(mYear), mHeader);
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't get week number from event label");
-                return APIResponse.CODE.NODATA;
-            }
+            mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
         }
 
         events = new ArrayList<>();

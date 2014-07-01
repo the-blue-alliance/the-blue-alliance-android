@@ -113,13 +113,13 @@ public class EventHelper {
         return WEEKLESS_LABEL;
     }
 
-    public static int weekNumFromLabel(HashMap<String, ArrayList<Event>> groupedEvents, String label) throws BasicModel.FieldNotDefinedException {
-        if (groupedEvents.containsKey(label)) {
-            Event e = groupedEvents.get(label).get(0);
-            return e.getCompetitionWeek();
-        } else {
-            return -1;
+    public static int weekNumFromLabel(int year, String label){
+        for(int i=0; i<20; i++){
+            if(weekLabelFromNum(year, i).equals(label)){
+                return i;
+            }
         }
+        return -1;
     }
 
     public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
@@ -313,13 +313,10 @@ public class EventHelper {
                     }
                 }
                 eventListItems.add(event.render());
-                lastType = currentType;
-                lastDistrict = currentDistrict;
 
             }catch (BasicModel.FieldNotDefinedException e){
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
             }
-            eventListItems.add(event.render());
             lastType = currentType;
             lastDistrict = currentDistrict;
         }
