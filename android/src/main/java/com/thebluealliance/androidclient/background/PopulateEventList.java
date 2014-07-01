@@ -63,7 +63,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else {
             if (!allEvents.containsKey(mYear)) {
                 try {
-                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear, false).getData());
+                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear, forceFromCache).getData());
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
                     return APIResponse.CODE.NODATA;
@@ -86,7 +86,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
-                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, false);
+                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
 
                 if(isCancelled()){
                     return APIResponse.CODE.NODATA;
@@ -150,7 +150,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
-            Log.i(Constants.LOG_TAG, "datamanger: eventlist code "+code);
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
                  * The data has the possibility of being updated, but we at first loaded

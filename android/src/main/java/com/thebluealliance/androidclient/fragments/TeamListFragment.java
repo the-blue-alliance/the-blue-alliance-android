@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
+import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -128,7 +129,7 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
 
     @Override
     public void onRefreshStart() {
-        mTask = new PopulateTeamList(this);
+        mTask = new PopulateTeamList(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamNumberStart, mTeamNumberEnd);
         View view = getView();
         if (view != null) {
@@ -136,6 +137,10 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
             view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
             view.findViewById(R.id.list).setVisibility(View.GONE);
         }
+    }
+
+    public void updateTask(PopulateTeamList newTask){
+        mTask = newTask;
     }
 
     @Override
