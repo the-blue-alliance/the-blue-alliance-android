@@ -42,6 +42,9 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        if(yearsByTeam == null){
+            yearsByTeam = new HashMap<>();
+        }
     }
 
     @Override
