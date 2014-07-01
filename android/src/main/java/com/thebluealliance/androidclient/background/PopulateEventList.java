@@ -140,6 +140,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             } else {
                 ListView eventList = (ListView) view.findViewById(R.id.list);
                 eventList.setAdapter(adapter);
+                noDataText.setVisibility(View.GONE);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
@@ -149,6 +150,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
+            Log.i(Constants.LOG_TAG, "datamanger: eventlist code "+code);
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
                  * The data has the possibility of being updated, but we at first loaded

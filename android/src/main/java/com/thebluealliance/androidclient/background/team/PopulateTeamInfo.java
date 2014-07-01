@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -64,6 +65,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         try {
             Long start = System.nanoTime();
             APIResponse<Team> teamResponse = DataManager.Teams.getTeam(activity, mTeamKey, forceFromCache);
+            APIResponse<Event> currentEventResponse = DataManager.Teams.getCurrentEventForTeam(activity, mTeamKey, forceFromCache);
 
             if(isCancelled()){
                 return APIResponse.CODE.NODATA;
@@ -78,10 +80,14 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 mFullName = team.getFullName();
                 mTeamWebsite = team.getWebsite();
                 mTeamNumber = team.getTeamNumber();
-                mCurrentEvent = team.getCurrentEvent();
-                mCurrentEvent.getEventName();
+
+                mCurrentEvent = currentEventResponse.getData();
+                if(mCurrentEvent != null) {
+                    mCurrentEvent.getEventName();
+                }
                 mIsCurrentlyCompeting = mCurrentEvent != null;
             } catch (BasicModel.FieldNotDefinedException e) {
+                e.printStackTrace();
                 Log.e(Constants.LOG_TAG, "Can't load team parameters");
                 return APIResponse.CODE.NODATA;
             }

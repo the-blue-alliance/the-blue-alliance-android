@@ -117,6 +117,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
             } else {
+                noDataText.setVisibility(View.GONE);
                 listView.setAdapter(adapter);
                 //expand all the groups
                 for (int i = 0; i < groups.size(); i++) {

@@ -40,10 +40,6 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
             team.setLocation(object.get("location").getAsString());
         }
 
-        if (object.has("events")) {
-            team.setEvents(object.get("events").getAsJsonArray());
-        }
-
         // Some teams don't have websites
         if (object.has("website") && !object.get("website").isJsonNull()) {
             team.setWebsite(object.get("website").getAsString());

@@ -39,22 +39,11 @@ public class Team extends BasicModel<Team> {
         if(fields.containsKey(Database.Teams.NAME) && fields.get(Database.Teams.NAME) instanceof String) {
             return (String) fields.get(Database.Teams.NAME);
         }
-        throw new FieldNotDefinedException("Field Database.Teams.NAME is not defined");
+        return getNickname();
     }
 
     public void setFullName(String fullName) {
         fields.put(Database.Teams.NAME, fullName);
-    }
-
-    public JsonArray getEvents() throws FieldNotDefinedException {
-        if(fields.containsKey(Database.Teams.EVENTS) && fields.get(Database.Teams.EVENTS) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Teams.EVENTS));
-        }
-        throw new FieldNotDefinedException("Field Database.Teams.EVENTS is not defined");
-    }
-
-    public void setEvents(JsonArray events) {
-        fields.put(Database.Teams.EVENTS, events.toString());
     }
 
     public String getWebsite() throws FieldNotDefinedException {
@@ -124,30 +113,6 @@ public class Team extends BasicModel<Team> {
         throw new FieldNotDefinedException("Field Database.Teams.YEARS_PARTICIPATED is not defined");
     }
 
-    public Event getCurrentEvent() {
-        try {
-            Date now = new Date(), eventStart, eventEnd;
-            Iterator<JsonElement> iterator = getEvents().iterator();
-            JsonObject e;
-            while (iterator.hasNext()) {
-                try {
-                    e = iterator.next().getAsJsonObject();
-                    eventStart = EventHelper.eventDateFormat.parse(e.get("start_date").getAsString());
-                    eventEnd = EventHelper.eventDateFormat.parse(e.get("end_date").getAsString());
-                    if (now.after(eventStart) && now.before(eventEnd)) {
-                        return JSONManager.getGson().fromJson(e, Event.class);
-                    }
-                } catch (ParseException ex) {
-                    //can't parse the date. Give up.
-                }
-            }
-        }catch (FieldNotDefinedException e){
-            Log.w(Constants.LOG_TAG, "Missing fields for determining current event\n" +
-                    "Required: Database.Teams.EVENTS");
-        }
-        return null;
-    }
-
     public String getSearchTitles() {
         try {
             return getTeamKey() + "," + getNickname() + "," + getTeamNumber();
@@ -179,35 +144,6 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    @Override
-    public void merge(Team in) {
-        //we need to merge the events the team competed in.
-        //since the incoming data takes precedence over current data,
-        //we're adding events that don't already exist into the new data in there
-        JsonArray newEvents;
-        try {
-            newEvents = in.getEvents();
-        } catch (FieldNotDefinedException e) {
-            newEvents = new JsonArray();
-        }
-
-        JsonArray currentEvents;
-        try {
-            currentEvents = getEvents();
-        } catch (FieldNotDefinedException e) {
-            currentEvents = new JsonArray();
-        }
-
-        String newString = newEvents.toString();
-        for(JsonElement event: currentEvents){
-            if(!newString.contains(event.getAsString())){
-                newEvents.add(event.getAsJsonPrimitive());
-            }
-        }
-
-        super.merge(in);
-    }
-
     public static APIResponse<Team> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
         Team team;
@@ -222,7 +158,13 @@ public class Team extends BasicModel<Team> {
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Team updatedTeam = JSONManager.getGson().fromJson(response.getData(), Team.class);
+                Team updatedTeam;
+                if(url.contains("years_participated")){
+                    updatedTeam = new Team();
+                    team.setYearsParticipated(JSONManager.getasJsonArray(response.getData()));
+                }else {
+                    updatedTeam = JSONManager.getGson().fromJson(response.getData(), Team.class);
+                }
                 team.merge(updatedTeam);
                 changed = true;
             }

@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -16,6 +17,7 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
@@ -91,42 +93,60 @@ public class DataManager {
             return Team.query(c, loadFromCache, teamFields, sqlWhere, new String[]{teamKey}, new String[]{apiUrl});
         }
 
+        public static APIResponse<Event> getCurrentEventForTeam(Context c, String teamKey, boolean loadFromCache) throws NoDataException{
+            int currentYear = Utilities.getCurrentYear();
+            APIResponse<ArrayList<Event>> events = getEventsForTeam(c, teamKey, currentYear, loadFromCache);
+            for(Event e: events.getData()){
+                try {
+                    if(e.isHappeningNow()){
+                        Log.d(Constants.LOG_TAG, "Found current event "+e.getEventKey()+" for "+teamKey);
+                        return new APIResponse<>(e, events.getCode());
+                    }
+                } catch (BasicModel.FieldNotDefinedException e1) {
+                    Log.w(Constants.LOG_TAG, "Unable to see if event is currently happening");
+                }
+            }
+            Log.d(Constants.LOG_TAG, "No current event found for "+teamKey);
+            return new APIResponse<>(null, events.getCode());
+        }
+
         public static APIResponse<ArrayList<Event>> getEventsForTeam(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENTS), teamKey, year);
-            String sqlWhere = Database.Teams.KEY + " = ?";
-            String[] teamFields = new String[]{Database.Teams.KEY, Database.Teams.EVENTS};
-            APIResponse<Team> teamResponse = Team.query(c, loadFromCache, teamFields, sqlWhere, new String[]{teamKey}, new String[]{apiUrl});
-            ArrayList<Event> result = new ArrayList<>();
-            try {
-                JsonArray events = teamResponse.getData().getEvents();
-                for(JsonElement e: events){
-                    result.add(JSONManager.getGson().fromJson(e, Event.class));
+            String sqlWhere = Database.EventTeams.TEAMKEY + " = ? AND "+Database.EventTeams.YEAR + " = ?";
+            APIResponse<ArrayList<EventTeam>> eventTeams = EventTeam.queryList(c, loadFromCache, teamKey, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
+            ArrayList<Event> events = new ArrayList<>();
+            APIResponse.CODE code = eventTeams.getCode();
+            for(EventTeam e: eventTeams.getData()){
+                try {
+                    APIResponse<Event> event = Events.getEvent(c, e.getEventKey(), loadFromCache);
+                    events.add(event.getData());
+                    code = APIResponse.mergeCodes(code, event.getCode());
+                } catch (BasicModel.FieldNotDefinedException e1) {
+                    Log.e(Constants.LOG_TAG, "Unable to query event for team");
                 }
-                return new APIResponse<>(result, teamResponse.getCode());
-            } catch (BasicModel.FieldNotDefinedException e) {
-                throw new NoDataException(e.getMessage());
             }
+            return new APIResponse<>(events, code);
         }
 
         public static APIResponse<ArrayList<Match>> getMatchesForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             APIResponse<ArrayList<Match>> output;
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_MATCHES), teamKey, eventKey);
-            String sqlWhere = Database.Matches.EVENT + " = ? AND "+Database.Matches.ALLIANCES + " = %?%";
-            output = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, teamKey}, new String[]{apiUrl});
+            String sqlWhere = Database.Matches.EVENT + " = ? AND "+Database.Matches.ALLIANCES + " = ?";
+            output = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, "%"+teamKey+"%"}, new String[]{apiUrl});
             Collections.sort(output.getData(), new MatchSortByDisplayOrderComparator());
             return output;
         }
 
         public static APIResponse<ArrayList<Award>> getAwardsForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_AWARDS), teamKey, eventKey);
-            String sqlWhere = Database.Awards.EVENTKEY + " =? AND "+Database.Awards.WINNERS + " = %?%";
-            return Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, teamKey}, new String[]{apiUrl});
+            String sqlWhere = Database.Awards.EVENTKEY + " =? AND "+Database.Awards.WINNERS + " = ?";
+            return Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, "%"+teamKey+"%"}, new String[]{apiUrl});
         }
 
         public static APIResponse<ArrayList<Media>> getTeamMedia(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_MEDIA), teamKey, year);
             String sqlWhere = Database.Medias.TEAMKEY + " = ? AND "+Database.Medias.YEAR + " = ?";
-            return Media.queryList(c, loadFromCache, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
+            return Media.queryList(c, teamKey, year, loadFromCache, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
         }
 
         public static APIResponse<Integer> getRankForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {

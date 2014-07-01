@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
@@ -178,10 +179,6 @@ public class ModelInflater {
                 case Database.Teams.WEBSITE:
                     team.setWebsite(data.getString(i));
                     break;
-                case Database.Teams.EVENTS:
-                    JsonArray events = JSONManager.getasJsonArray(data.getString(i));
-                    team.setEvents(events);
-                    break;
                 case Database.Teams.YEARS_PARTICIPATED:
                     JsonArray years = JSONManager.getasJsonArray(data.getString(i));
                     team.setYearsParticipated(years);
@@ -190,6 +187,28 @@ public class ModelInflater {
             }
         }
         return team;
+    }
+
+    public static EventTeam inflateEventTeam(Cursor data){
+        EventTeam eventTeam = new EventTeam();
+        for(int i=0; i<data.getColumnCount(); i++){
+            switch (data.getColumnName(i)){
+                case Database.EventTeams.TEAMKEY:
+                    eventTeam.setTeamKey(data.getString(i));
+                    break;
+                case Database.EventTeams.EVENTKEY:
+                    eventTeam.setEventKey(data.getString(i));
+                    break;
+                case Database.EventTeams.YEAR:
+                    eventTeam.setYear(data.getInt(i));
+                    break;
+                case Database.EventTeams.COMPWEEK:
+                    eventTeam.setCompWeek(data.getInt(i));
+                    break;
+                default:
+            }
+        }
+        return eventTeam;
     }
 
 }

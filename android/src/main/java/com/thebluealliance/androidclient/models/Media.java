@@ -162,7 +162,7 @@ public class Media extends BasicModel<Media> {
         return new APIResponse<>(media, code);
     }
 
-    public static APIResponse<ArrayList<Media>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Media> medias = new ArrayList<>();
         if(cursor != null && cursor.moveToFirst()){
@@ -179,7 +179,10 @@ public class Media extends BasicModel<Media> {
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
                 medias = new ArrayList<>();
                 for(JsonElement m: matchList){
-                    medias.add(JSONManager.getGson().fromJson(m, Media.class));
+                    Media media = JSONManager.getGson().fromJson(m, Media.class);
+                    media.setTeamKey(teamKey);
+                    media.setYear(year);
+                    medias.add(media);
                 }
                 changed = true;
             }
