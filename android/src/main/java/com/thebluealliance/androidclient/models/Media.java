@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Media extends BasicModel<Media> {
@@ -136,6 +137,7 @@ public class Media extends BasicModel<Media> {
     }
 
     public static APIResponse<Media> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
         Media media;
         if(cursor != null && cursor.moveToFirst()){
@@ -159,10 +161,12 @@ public class Media extends BasicModel<Media> {
         if(changed){
             media.write(c);
         }
+        Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);
         return new APIResponse<>(media, code);
     }
 
     public static APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Media> medias = new ArrayList<>();
         if(cursor != null && cursor.moveToFirst()){
@@ -192,6 +196,7 @@ public class Media extends BasicModel<Media> {
         if(changed){
             Database.getInstance(c).getMediasTable().add(medias);
         }
+        Log.d(Constants.DATAMANAGER_LOG, "Found "+medias.size()+" medias, updated in db? "+changed);
         return new APIResponse<>(medias, code);
     }
 

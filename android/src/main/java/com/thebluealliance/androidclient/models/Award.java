@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Award extends BasicModel<Award> {
@@ -96,6 +97,7 @@ public class Award extends BasicModel<Award> {
     }
 
     public static APIResponse<Award> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         Award award;
         if(cursor != null && cursor.moveToFirst()){
@@ -119,10 +121,12 @@ public class Award extends BasicModel<Award> {
         if(changed){
             award.write(c);
         }
+        Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);
         return new APIResponse<>(award, code);
     }
 
     public static APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Award> awards = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
@@ -149,6 +153,7 @@ public class Award extends BasicModel<Award> {
         if (changed) {
             Database.getInstance(c).getAwardsTable().add(awards);
         }
+        Log.d(Constants.DATAMANAGER_LOG, "Found "+awards.size()+" awards, updated in db? "+changed);
         return new APIResponse<>(awards, code);
     }
     @Override

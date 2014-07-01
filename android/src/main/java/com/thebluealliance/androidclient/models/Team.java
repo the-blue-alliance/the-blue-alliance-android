@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -145,6 +146,7 @@ public class Team extends BasicModel<Team> {
     }
 
     public static APIResponse<Team> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying teams table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
         Team team;
         if(cursor != null && cursor.moveToFirst()){
@@ -174,6 +176,7 @@ public class Team extends BasicModel<Team> {
         if(changed){
             team.write(c);
         }
+        Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);
         return new APIResponse<>(team, code);
     }
 

@@ -96,10 +96,10 @@ public class TBAv2 {
      */
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheLocally, boolean forceFromCache) throws DataManager.NoDataException {
         if (c == null) {
-            Log.d("datamanager", "Error: null context");
+            Log.d(Constants.DATAMANAGER_LOG, "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
         }
-        Log.d("datamanager", "Loading URL: " + URL);
+        Log.d(Constants.DATAMANAGER_LOG, "Checking update status for URL: " + URL);
         boolean existsInDb;
         existsInDb = Database.getInstance(c).getResponseTable().responseExists(URL);
 
@@ -118,13 +118,13 @@ public class TBAv2 {
                 if (now.before(futureTime)) {
                     //if isn't hasn't been longer than the timeout (1 minute now)
                     //just return what we have in cache
-                    Log.d("datamanger", "Online; API call too fast, returning from cache: " + URL);
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; API timeout tripped, returning cached data: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
 
                 //we want whatever's in the cache. Forget everything else...
                 if (forceFromCache) {
-                    Log.d("datamanager", "Online; force reading from cache: "+ URL);
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; force reading from cache: "+ URL);
                     return cachedData;
                 }
 
@@ -144,16 +144,16 @@ public class TBAv2 {
 
                     Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
 
-                    Log.d("datamanager", "Online; updated from internet: " + URL);
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet: " + URL);
                     return new APIResponse<>(response, APIResponse.CODE.UPDATED);
                 } else {
                     Database.getInstance(c).getResponseTable().touchResponse(URL);
 
-                    Log.d("datamanager", "Online; no update required, loaded from database: " + URL);
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; API returned 304-Not-Modified: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
             } else {
-                Log.d("datamanager", "Offline; loaded from database: " + URL);
+                Log.d(Constants.DATAMANAGER_LOG, "Offline; can't check API. Reading data locally: " + URL);
                 return Database.getInstance(c).getResponseTable().getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
             }
         } else {
@@ -171,11 +171,11 @@ public class TBAv2 {
                     Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
                 }
 
-                Log.d("datamanager", "Online; loaded from internet: " + URL);
+                Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet: " + URL);
                 return new APIResponse<>(response, APIResponse.CODE.WEBLOAD);
             } else {
                 // There is no locally stored data and we are not connected to the internet.
-                Log.d("datamanager", "Offline; no data: " + URL);
+                Log.d(Constants.DATAMANAGER_LOG, "Offline; can't load from internet and nothing exists locally: " + URL);
                 throw new DataManager.NoDataException("There is no internet connection and the response is not cached!");
             }
         }

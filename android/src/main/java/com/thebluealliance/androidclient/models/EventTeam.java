@@ -91,6 +91,7 @@ public class EventTeam extends BasicModel<EventTeam> {
     }
 
     public static APIResponse<ArrayList<EventTeam>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying eventTeams table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<EventTeam> eventTeams = new ArrayList<>();
         ArrayList<Event> events = new ArrayList<>();
@@ -127,7 +128,7 @@ public class EventTeam extends BasicModel<EventTeam> {
             Database.getInstance(c).getEventTeamsTable().add(eventTeams);
             Database.getInstance(c).getEventsTable().storeEvents(events);
         }
-
+        Log.d(Constants.DATAMANAGER_LOG, "Found "+events.size()+" events and, updated in db? "+changed);
         return new APIResponse<>(eventTeams, code);
     }
 }

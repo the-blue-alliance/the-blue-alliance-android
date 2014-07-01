@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -387,6 +388,7 @@ public class Event extends BasicModel<Event> {
     }
 
     public static APIResponse<Event> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying events table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
         Event event;
         if(cursor != null && cursor.moveToFirst()){
@@ -418,10 +420,12 @@ public class Event extends BasicModel<Event> {
         if(changed){
             event.write(c);
         }
+        Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);
         return new APIResponse<>(event, code);
     }
 
     public static APIResponse<ArrayList<Event>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying events table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Event> events = new ArrayList<>();
         if(cursor != null && cursor.moveToFirst()){
@@ -448,7 +452,7 @@ public class Event extends BasicModel<Event> {
         if(changed){
             Database.getInstance(c).getEventsTable().storeEvents(events);
         }
-
+        Log.d(Constants.DATAMANAGER_LOG, "Found "+events.size()+" events, updated in db? "+changed);
         return new APIResponse<>(events, code);
     }
 
