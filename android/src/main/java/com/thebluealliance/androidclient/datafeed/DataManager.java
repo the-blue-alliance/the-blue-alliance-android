@@ -253,7 +253,7 @@ public class DataManager {
             results.put(MatchHelper.TYPE.FINAL, new ArrayList<Match>());
             Log.d("event results", "Fetching results for " + eventKey);
 
-            String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES));
+            String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.EVENT + " = ?";
             APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Match match: matchResponse.getData()) {
