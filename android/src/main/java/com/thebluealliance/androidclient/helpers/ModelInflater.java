@@ -173,6 +173,9 @@ public class ModelInflater {
                 case Database.Teams.SHORTNAME:
                     team.setNickname(data.getString(i));
                     break;
+                case Database.Teams.NAME:
+                    team.setFullName(data.getString(i));
+                    break;
                 case Database.Teams.LOCATION:
                     team.setLocation(data.getString(i));
                     break;
