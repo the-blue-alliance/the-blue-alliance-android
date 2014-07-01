@@ -131,7 +131,7 @@ public class DataManager {
         public static APIResponse<ArrayList<Match>> getMatchesForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             APIResponse<ArrayList<Match>> output;
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_MATCHES), teamKey, eventKey);
-            String sqlWhere = Database.Matches.EVENT + " = ? AND "+Database.Matches.ALLIANCES + " = ?";
+            String sqlWhere = Database.Matches.EVENT + " = ? AND "+Database.Matches.ALLIANCES + " LIKE ? ";
             output = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, "%"+teamKey+"%"}, new String[]{apiUrl});
             Collections.sort(output.getData(), new MatchSortByDisplayOrderComparator());
             return output;
@@ -139,8 +139,8 @@ public class DataManager {
 
         public static APIResponse<ArrayList<Award>> getAwardsForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_AWARDS), teamKey, eventKey);
-            String sqlWhere = Database.Awards.EVENTKEY + " =? AND "+Database.Awards.WINNERS + " = ?";
-            return Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, "%"+teamKey+"%"}, new String[]{apiUrl});
+            String sqlWhere = Database.Awards.EVENTKEY + " = ? AND "+Database.Awards.WINNERS + " LIKE ? ";
+            return Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, "%"+teamKey.substring(3)+"%"}, new String[]{apiUrl});
         }
 
         public static APIResponse<ArrayList<Media>> getTeamMedia(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {

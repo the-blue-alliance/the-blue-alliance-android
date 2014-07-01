@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 
