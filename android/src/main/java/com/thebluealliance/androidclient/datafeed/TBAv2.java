@@ -99,7 +99,6 @@ public class TBAv2 {
             Log.d(Constants.DATAMANAGER_LOG, "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
         }
-        Log.d(Constants.DATAMANAGER_LOG, "Checking update status for URL: " + URL);
         boolean existsInDb;
         existsInDb = Database.getInstance(c).getResponseTable().responseExists(URL);
 
@@ -118,13 +117,11 @@ public class TBAv2 {
                 if (now.before(futureTime)) {
                     //if isn't hasn't been longer than the timeout (1 minute now)
                     //just return what we have in cache
-                    Log.d(Constants.DATAMANAGER_LOG, "Online; API timeout tripped, returning cached data: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
 
                 //we want whatever's in the cache. Forget everything else...
                 if (forceFromCache) {
-                    Log.d(Constants.DATAMANAGER_LOG, "Online; force reading from cache: "+ URL);
                     return cachedData;
                 }
 
@@ -149,7 +146,6 @@ public class TBAv2 {
                 } else {
                     Database.getInstance(c).getResponseTable().touchResponse(URL);
 
-                    Log.d(Constants.DATAMANAGER_LOG, "Online; API returned 304-Not-Modified: " + URL);
                     return cachedData.updateCode(APIResponse.CODE.CACHED304);
                 }
             } else {

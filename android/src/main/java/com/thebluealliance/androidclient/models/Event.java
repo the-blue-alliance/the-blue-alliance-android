@@ -309,7 +309,10 @@ public class Event extends BasicModel<Event> {
 
     public String getShortName() {
         try {
-            return EventHelper.getShortNameForEvent(getEventName(), getEventType());
+            if(shortName == null || shortName.isEmpty()) {
+                setShortName(EventHelper.getShortNameForEvent(getEventName(), getEventType()));
+            }
+            return shortName;
         } catch (FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Missing fields for short name.");
             return "";
@@ -351,7 +354,7 @@ public class Event extends BasicModel<Event> {
     public EventListElement render() {
         try {
             String eventKey = getEventKey(),
-                    eventName = getEventName(),
+                    eventName = getShortName(),
                     location = getLocation();
             if (getShortName() == null || shortName.isEmpty()) {
                 return new EventListElement(eventKey, eventName, getDateString(), location);

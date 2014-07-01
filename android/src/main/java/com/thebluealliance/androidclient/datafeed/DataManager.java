@@ -182,8 +182,17 @@ public class DataManager {
             Log.d("get events for week", "getting for week: " + week);
 
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_LIST), year);
-            String sqlWhere = Database.Events.YEAR + " = ? AND "+Database.Events.WEEK + " = ?";
-            return Event.queryList(c, loadFromCache, null, sqlWhere, new String[]{Integer.toString(year), Integer.toString(week)}, new String[]{apiUrl});
+            String sqlWhere;
+            String[] whereArgs;
+            if(week > Utilities.getCmpWeek(year)){
+                sqlWhere = Database.Events.YEAR + " = ? AND "+Database.Events.WEEK + " > ?";
+                whereArgs = new String[]{Integer.toString(year), Integer.toString(Utilities.getCmpWeek(year))};
+            }else{
+                sqlWhere = Database.Events.YEAR + " = ? AND "+Database.Events.WEEK + " = ?";
+                whereArgs = new String[]{Integer.toString(year), Integer.toString(week)};
+            }
+
+            return Event.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
         public static APIResponse<HashMap<String, ArrayList<Event>>> getEventsByYear(Context c, int year, boolean loadFromCache) throws NoDataException {

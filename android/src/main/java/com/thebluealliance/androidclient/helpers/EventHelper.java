@@ -293,7 +293,7 @@ public class EventHelper {
      * @return a list of ListItems representing the sorted events
      */
     public static ArrayList<ListItem> renderEventListForWeek(ArrayList<Event> events) {
-        return renderEventListWithComparator(events, new EventSortByTypeAndNameComparator());
+        return renderEventListWithComparator(events, new EventSortByTypeAndDateComparator());
     }
 
     private static ArrayList<ListItem> renderEventListWithComparator(ArrayList<Event> events, Comparator<Event> comparator) {
