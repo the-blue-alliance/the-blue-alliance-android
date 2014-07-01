@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -44,6 +45,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     ArrayList<ListGroup> groups;
     Match nextMatch, lastMatch;
     Event event;
+    MatchListAdapter adapter;
 
     public PopulateEventResults(EventResultsFragment f, boolean forceFromCache) {
         mFragment = f;
@@ -79,7 +81,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             response = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Match> results = response.getData(); //sorted by play order
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -146,7 +148,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -176,13 +178,14 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             groups.add(finalMatches);
         }
 
+        adapter = new MatchListAdapter(activity, groups, teamKey);
+
         return APIResponse.mergeCodes(eventResponse.getCode(), response.getCode());
     }
 
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            MatchListAdapter adapter = new MatchListAdapter(activity, groups, teamKey);
             TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
 
             // If there's no results in the adapter or if we can't download info
@@ -190,8 +193,12 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
             } else {
-                ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.match_results);
-                listView.setAdapter(adapter);
+                ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
+                Parcelable state = results.onSaveInstanceState();
+                int firstVisiblePosition = results.getFirstVisiblePosition();
+                results.setAdapter(adapter);
+                results.onRestoreInstanceState(state);
+                results.setSelection(firstVisiblePosition);
             }
 
             // Remove progress spinner and show content since we're done loading data.
@@ -210,8 +217,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventResults secondLoad;
-            secondLoad =  new PopulateEventResults(mFragment, false);
+            PopulateEventResults secondLoad = new PopulateEventResults(mFragment, false);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey, teamKey);
         } else {

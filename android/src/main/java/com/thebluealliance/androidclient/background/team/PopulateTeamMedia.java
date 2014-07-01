@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background.team;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -57,6 +58,8 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             throw new IllegalArgumentException("PopulateTeamMedia must be called with the team key and year (String, int)");
         }
 
+        Log.d(Constants.LOG_TAG, "Loading team media");
+
         team = (String) params[0];
         year = (Integer) params[1];
 
@@ -98,6 +101,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 groups.add(ytVideos);
             }
 
+            Log.d(Constants.LOG_TAG, "Loading media finished");
             return response.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch media for " + team + " in " + year);
@@ -110,7 +114,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         View view = fragment.getView();
         if (view != null && activity != null) {
             ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
-            ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.team_media_list);
+            ExpandableListView media = (ExpandableListView) view.findViewById(R.id.team_media_list);
             TextView noDataText = (TextView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.
@@ -118,11 +122,16 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 noDataText.setVisibility(View.GONE);
-                listView.setAdapter(adapter);
+                media.setAdapter(adapter);
                 //expand all the groups
                 for (int i = 0; i < groups.size(); i++) {
-                    listView.expandGroup(i);
+                    media.expandGroup(i);
                 }
+                Parcelable state = media.onSaveInstanceState();
+                int firstVisiblePosition = media.getFirstVisiblePosition();
+                media.setAdapter(adapter);
+                media.onRestoreInstanceState(state);
+                media.setSelection(firstVisiblePosition);
             }
 
             // Display warning message if offline.

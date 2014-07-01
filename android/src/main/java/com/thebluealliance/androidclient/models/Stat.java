@@ -23,7 +23,7 @@ public class Stat implements RenderableModel {
 
     @Override
     public StatsListElement render() {
-        int teamNumber = Integer.parseInt(teamKey.substring(3));
-        return new StatsListElement(teamKey, teamNumber, teamName, location, statString);
+        String teamNumber = teamKey.substring(3);
+        return new StatsListElement(teamKey, teamNumber, teamName, statString);
     }
 }

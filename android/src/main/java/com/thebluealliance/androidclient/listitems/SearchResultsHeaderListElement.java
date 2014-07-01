@@ -34,21 +34,34 @@ public class SearchResultsHeaderListElement extends ListElement {
 
     @Override
     public View getView(final Context context, LayoutInflater inflater, View convertView) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item_see_more, null);
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_see_more, null);
 
-            ((TextView) view.findViewById(R.id.label)).setText(label);
-
-            TextView moreButton = ((TextView) view.findViewById(R.id.more_button));
-            if (showMoreButton) {
-                moreButton.setVisibility(View.VISIBLE);
-                moreButton.setText(String.format(context.getString(R.string.more_results), moreCount));
-                view.setBackgroundResource(R.drawable.search_results_header_background);
-            } else {
-                moreButton.setVisibility(View.GONE);
-                view.setBackgroundColor(context.getResources().getColor(R.color.more_results_default));
-            }
+            holder = new ViewHolder();
+            holder.label = (TextView) convertView.findViewById(R.id.label);
+            holder.moreButton = (TextView) convertView.findViewById(R.id.more_button);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        return view;
+
+        holder.label.setText(label);
+
+        if (showMoreButton) {
+            holder.moreButton.setVisibility(View.VISIBLE);
+            holder.moreButton.setText(String.format(context.getString(R.string.more_results), moreCount));
+            convertView.setBackgroundResource(R.drawable.search_results_header_background);
+        } else {
+            holder.moreButton.setVisibility(View.GONE);
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.more_results_default));
+        }
+
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView label;
+        TextView moreButton;
     }
 }

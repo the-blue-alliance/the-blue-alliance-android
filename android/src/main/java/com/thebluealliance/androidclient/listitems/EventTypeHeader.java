@@ -8,30 +8,27 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 
 /**
- * Created by Nathan on 6/14/2014.
+ * File created by phil on 4/20/14.
  */
-public class EmptyListElement extends ListElement {
+public class EventTypeHeader extends ListHeader {
 
-    private String text;
-
-    public EmptyListElement(String text) {
-        this.text = text;
+    public EventTypeHeader(String title) {
+        super(title);
     }
 
     @Override
-    public View getView(final Context context, LayoutInflater inflater, View convertView) {
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
         ViewHolder holder;
-        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
-            convertView = inflater.inflate(R.layout.list_item_empty, null);
-
+        if(convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.event_type_header, null);
             holder = new ViewHolder();
-            holder.text = (TextView) convertView.findViewById(R.id.text);
+            holder.text = (TextView) convertView.findViewById(R.id.event_type);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.text.setText(text);
+        holder.text.setText(getText());
 
         return convertView;
     }

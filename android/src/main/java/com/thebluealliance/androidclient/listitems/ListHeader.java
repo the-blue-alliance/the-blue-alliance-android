@@ -31,9 +31,4 @@ public abstract class ListHeader implements ListItem {
 
     @Override
     public abstract View getView(Context c, LayoutInflater inflater, View convertView);
-
-    @Override
-    public void setSelected(boolean selected) {
-
-    }
 }

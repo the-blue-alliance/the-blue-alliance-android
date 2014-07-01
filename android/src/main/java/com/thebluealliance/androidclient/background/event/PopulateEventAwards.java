@@ -1,11 +1,14 @@
 package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -17,8 +20,12 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Team;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Retrieves awards data for an FRC event.
@@ -60,9 +67,20 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         try {
             response = DataManager.Events.getEventAwards(activity, eventKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
+            HashMap<String, Team> teams = new HashMap();
             for (Award a : awardList) {
-                ArrayList<AwardListElement> allWinners = a.renderAll();
-                awards.addAll(allWinners);
+                try {
+                    for (JsonElement winner : a.getWinners()) {
+                        if (!((JsonObject) winner).get("team_number").isJsonNull()) {
+                            String teamKey = "frc" + ((JsonObject) winner).get("team_number");
+                            Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
+                            teams.put(teamKey, team);
+                        }
+                    }
+                    awards.add(new AwardListElement(a.getName(), a.getWinners(), teams));
+                }catch(BasicModel.FieldNotDefinedException e){
+                    Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
+                }
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
@@ -87,7 +105,9 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
+                Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
+                rankings.onRestoreInstanceState(state);
             }
             // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {

@@ -360,7 +360,10 @@ public class MatchHelper {
                 // Won quarterfinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
                 return EventPerformance.ELIMINATED_IN_QUARTERS;
-            } else {
+            } else if (!e.isHappeningNow() && semiMatches.isEmpty()){
+                return EventPerformance.ELIMINATED_IN_QUARTERS;
+            }
+            else {
                 return EventPerformance.PLAYING_IN_QUARTERS;
             }
         }
@@ -384,6 +387,8 @@ public class MatchHelper {
             if (countPlayed > 1 && countWon > 1) {
                 // Won semifinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
+                return EventPerformance.ELIMINATED_IN_SEMIS;
+            } else if (!e.isHappeningNow() && finalMatches.isEmpty()){
                 return EventPerformance.ELIMINATED_IN_SEMIS;
             } else {
                 return EventPerformance.PLAYING_IN_SEMIS;
@@ -411,7 +416,10 @@ public class MatchHelper {
                 return EventPerformance.WON_EVENT;
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
                 return EventPerformance.ELIMINATED_IN_FINALS;
-            } else {
+            } else if (!e.isHappeningNow()){
+                return EventPerformance.ELIMINATED_IN_FINALS;
+            }
+            else {
                 return EventPerformance.PLAYING_IN_FINALS;
             }
         } else {

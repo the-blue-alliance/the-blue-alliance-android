@@ -15,9 +15,14 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Match;
 
 public class TeamAtEventActivity extends RefreshableHostActivity implements RefreshListener {
 
@@ -52,10 +57,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = (String) view.getTag();
-                if (matchKey != null && MatchHelper.validateMatchKey(matchKey)) {
-                    startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
-                }
+                String matchKey = view.getTag().toString();
+                startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
+
                 return true;
             }
         });
@@ -78,9 +82,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
     public void onRefreshStart() {
         task = new PopulateTeamAtEvent(this, true);
         task.execute(teamKey, eventKey);
-        // Indicate loading; the task will hide the progressbar and show the content when loading is complete
-        findViewById(R.id.team_at_event_progress).setVisibility(View.VISIBLE);
-        findViewById(R.id.content_view).setVisibility(View.GONE);
     }
 
     @Override
@@ -103,6 +104,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 break;
             case android.R.id.home:
+                if(isDrawerOpen()) {
+                    closeDrawer();
+                    return true;
+                }
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
                 if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))

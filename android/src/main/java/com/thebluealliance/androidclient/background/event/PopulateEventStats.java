@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -16,10 +17,12 @@ import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.Stat;
+import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -123,8 +126,14 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         + ", " + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
                         + ", " + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
                 String teamKey = "frc" + opr.get(i).getKey();
-                teams.add(new StatsListElement(teamKey, Integer.parseInt(opr.get(i).getKey()), "", "", statsString));
-                //TODO the blank fields above are team name and location
+                // We might get a multi-team key from offseason events.
+                // If so, take out the extra letter at the end to prevent NPE.
+                if (TeamHelper.validateMultiTeamKey(teamKey))
+                {
+                    teamKey = teamKey.substring(0, teamKey.length() - 1);
+                }
+                Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
+                teams.add(new StatsListElement(teamKey, opr.get(i).getKey(), team.getNickname(), statsString));
             }
 
             return response.getCode();
@@ -150,7 +159,9 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView stats = (ListView) view.findViewById(R.id.list);
+                Parcelable state = stats.onSaveInstanceState();
                 stats.setAdapter(adapter);
+                stats.onRestoreInstanceState(state);
             }
 
             // Display warning if offline.

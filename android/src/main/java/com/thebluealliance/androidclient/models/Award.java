@@ -95,71 +95,6 @@ public class Award extends BasicModel<Award> {
         return out;
     }
 
-    public ArrayList<AwardListElement> renderAll() {
-        ArrayList<AwardListElement> output = new ArrayList<>();
-        try {
-            String name = getName();
-            Iterator<JsonElement> iterator = getWinners().iterator();
-            String teamNumber;
-            String awardee;
-            while (iterator.hasNext()) {
-                JsonObject winner = iterator.next().getAsJsonObject();
-                if (winner.get("team_number").isJsonNull()) {
-                    teamNumber = "";
-                } else {
-                    teamNumber = winner.get("team_number").getAsString();
-                }
-                if (winner.get("awardee").isJsonNull()) {
-                    awardee = "";
-                } else {
-                    awardee = winner.get("awardee").getAsString();
-                }
-
-                output.add(new AwardListElement("frc" + teamNumber, name, AwardHelper.buildWinnerString(awardee, teamNumber), teamNumber));
-            }
-            return output;
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
-                    "Fields Required: Database.Awards.NAME, Database.Awards.WINNERS");
-            return null;
-        }
-    }
-
-    @Override
-    public AwardListElement render() {
-        try {
-            String name = getName();
-
-            Iterator<JsonElement> iterator = getWinners().iterator();
-            String teamNumber = "";
-            String awardee = "";
-            while (iterator.hasNext()) {
-                JsonObject winner = iterator.next().getAsJsonObject();
-                if (winner.get("team_number").isJsonNull()) {
-                    teamNumber = "";
-                } else {
-                    teamNumber += winner.get("team_number").getAsInt() + ", ";
-                }
-                if (winner.get("awardee").isJsonNull()) {
-                    awardee = "";
-                } else {
-                    awardee += winner.get("awardee").getAsString() + ", ";
-                }
-            }
-            if (!teamNumber.isEmpty()) {
-                teamNumber = teamNumber.substring(0, teamNumber.length() - 2);
-            }
-            if (!awardee.isEmpty()) {
-                awardee = awardee.substring(0, awardee.length() - 2);
-            }
-            return new AwardListElement("frc" + teamNumber, name, AwardHelper.buildWinnerString(awardee, teamNumber), teamNumber);
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
-                    "Fields Required: Database.Awards.NAME, Database.Awards.WINNERS");
-            return null;
-        }
-    }
-
     public static APIResponse<Award> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         Award award;
@@ -190,20 +125,20 @@ public class Award extends BasicModel<Award> {
     public static APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Award> awards = new ArrayList<>();
-        if(cursor != null && cursor.moveToFirst()){
-            do{
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
                 awards.add(ModelInflater.inflateAward(cursor));
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
-        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
-        for(String url: apiUrls) {
+        for (String url : apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray awardList = JSONManager.getasJsonArray(response.getData());
                 awards = new ArrayList<>();
-                for(JsonElement a: awardList){
+                for (JsonElement a : awardList) {
                     awards.add(JSONManager.getGson().fromJson(a, Award.class));
                 }
                 changed = true;
@@ -211,10 +146,19 @@ public class Award extends BasicModel<Award> {
             code = APIResponse.mergeCodes(code, response.getCode());
         }
 
-        if(changed){
+        if (changed) {
             Database.getInstance(c).getAwardsTable().add(awards);
         }
         return new APIResponse<>(awards, code);
+    }
+    @Override
+    public AwardListElement render() {
+        try {
+            return new AwardListElement(getName(), getWinners());
+        } catch (FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Missing fields for rendering award");
+            return null;
+        }
     }
 
     @Override

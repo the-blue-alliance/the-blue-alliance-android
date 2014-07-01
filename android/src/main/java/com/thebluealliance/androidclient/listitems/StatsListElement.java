@@ -12,47 +12,49 @@ import com.thebluealliance.androidclient.R;
  */
 public class StatsListElement extends ListElement {
 
-    private int mTeamNumber;
+    private String mTeamNumber;
     private String mTeamName;
     private String mTeamStat;
-    private String mTeamLocation;
 
-    public StatsListElement(String key, int number, String name, String location, String stat) {
+    public StatsListElement(String key, String number, String name, String stat) {
         super(key);
         mTeamNumber = number;
         mTeamName = name;
         mTeamStat = stat;
-        mTeamLocation = location;
     }
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item_stats, null);
-            view.setTag(key);
-            view.setSelected(selected);
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_stats, null);
 
-            TextView team = (TextView) view.findViewById(R.id.team_number);
-            team.setText("" + mTeamNumber);
-
-            TextView name = (TextView) view.findViewById(R.id.team_name);
-            if (!mTeamName.isEmpty()) {
-                name.setText(mTeamName);
-            } else {
-                name.setVisibility(View.GONE);
-            }
-
-            TextView location = (TextView) view.findViewById(R.id.team_location);
-            if (!mTeamLocation.isEmpty()) {
-                location.setText(mTeamLocation);
-            } else {
-                location.setVisibility(View.GONE);
-            }
-
-            TextView stat = (TextView) view.findViewById(R.id.team_stat);
-            stat.setText(mTeamStat);
+            holder = new ViewHolder();
+            holder.teamNumber = (TextView) convertView.findViewById(R.id.team_number);
+            holder.teamName = (TextView) convertView.findViewById(R.id.team_name);
+            holder.teamStat = (TextView) convertView.findViewById(R.id.team_stat);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        return view;
+
+        holder.teamNumber.setText("" + mTeamNumber);
+
+        if (!mTeamName.isEmpty()) {
+            holder.teamName.setText(mTeamName);
+        } else {
+            holder.teamName.setVisibility(View.GONE);
+        }
+
+        holder.teamStat.setText(mTeamStat);
+
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView teamNumber;
+        TextView teamName;
+        TextView teamStat;
     }
 
 }

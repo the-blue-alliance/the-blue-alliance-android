@@ -34,20 +34,29 @@ public class EventListElement extends ListElement {
 
     @Override
     public View getView(Context context, LayoutInflater inflater, View convertView) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item_event, null);
-            view.setTag(key);
-            view.setSelected(selected);
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_event, null);
 
-            TextView title = (TextView) view.findViewById(R.id.event_name);
-            title.setText(mEventName);
-
-            TextView dates = (TextView) view.findViewById(R.id.event_dates);
-            dates.setText(mEventDates);
-
-            TextView location = (TextView) view.findViewById(R.id.event_location);
-            location.setText(mEventLocation);
+            holder = new ViewHolder();
+            holder.name = (TextView) convertView.findViewById(R.id.event_name);
+            holder.dates = (TextView) convertView.findViewById(R.id.event_dates);
+            holder.location = (TextView) convertView.findViewById(R.id.event_location);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-        return view;
+
+        holder.name.setText(mEventName);
+        holder.dates.setText(mEventDates);
+        holder.location.setText(mEventLocation);
+
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView name;
+        TextView dates;
+        TextView location;
     }
 }

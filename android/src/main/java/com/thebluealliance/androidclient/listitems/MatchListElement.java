@@ -20,11 +20,11 @@ import com.thebluealliance.androidclient.listeners.TeamClickListener;
 public class MatchListElement extends ListElement {
 
     private String videoKey;
-    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
-    private ViewHolder holder;
+    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore;
+    private String selectedTeamNumber;
 
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey) {
-        super();
+        super(matchKey);
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
         this.redTeams = redTeams;
@@ -32,11 +32,11 @@ public class MatchListElement extends ListElement {
         this.redScore = redScore;
         this.blueScore = blueScore;
         this.matchKey = matchKey;
-        this.selectedTeamKey = "";
+        this.selectedTeamNumber = "";
     }
 
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, String selectedTeamKey) {
-        super();
+        super(matchKey);
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
         this.redTeams = redTeams;
@@ -44,12 +44,13 @@ public class MatchListElement extends ListElement {
         this.redScore = redScore;
         this.blueScore = blueScore;
         this.matchKey = matchKey;
-        this.selectedTeamKey = selectedTeamKey;
+        this.selectedTeamNumber = selectedTeamKey.replace("frc", "");
     }
 
     @Override
     public View getView(final Context context, LayoutInflater inflater, View convertView) {
-        if (convertView == null || holder == null) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 
             holder = new ViewHolder();
@@ -62,8 +63,12 @@ public class MatchListElement extends ListElement {
             holder.blue3 = (TextView) convertView.findViewById(R.id.blue3);
             holder.redScore = (TextView) convertView.findViewById(R.id.red_score);
             holder.blueScore = (TextView) convertView.findViewById(R.id.blue_score);
+            holder.redAlliance = convertView.findViewById(R.id.red_alliance);
+            holder.blueAlliance = convertView.findViewById(R.id.blue_alliance);
             holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
-
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         if (!redScore.contains("?") && !blueScore.contains("?")) {
@@ -72,18 +77,12 @@ public class MatchListElement extends ListElement {
                         rScore = Integer.parseInt(redScore);
                 if (bScore > rScore) {
                     //blue wins
-                    View blue_alliance = convertView.findViewById(R.id.blue_alliance);
-                    if (blue_alliance != null) {
-                        blue_alliance.setBackgroundResource(R.drawable.blue_border);
-                    }
-                    convertView.findViewById(R.id.blue_score).setBackgroundResource(R.drawable.blue_score_border);
+                    holder.blueAlliance.setBackgroundResource(R.drawable.blue_border);
+                    holder.redAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_red));
                 } else if (bScore < rScore) {
                     //red wins
-                    View red_alliance = convertView.findViewById(R.id.red_alliance);
-                    if (red_alliance != null) {
-                        red_alliance.setBackgroundResource(R.drawable.red_border);
-                    }
-                    convertView.findViewById(R.id.red_score).setBackgroundResource(R.drawable.red_score_border);
+                    holder.redAlliance.setBackgroundResource(R.drawable.red_border);
+                    holder.blueAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_blue));
                 }
             } catch (NumberFormatException e) {
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
@@ -118,14 +117,14 @@ public class MatchListElement extends ListElement {
             holder.red1.setText(redTeams[0]);
             holder.red1.setTag("frc" + redTeams[0]);
             holder.red1.setOnClickListener(listener);
-            if (selectedTeamKey != null && !selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[0])) {
+            if (selectedTeamNumber.equals(redTeams[0])) {
                 holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
             holder.red2.setText(redTeams[1]);
             holder.red2.setTag("frc" + redTeams[1]);
             holder.red2.setOnClickListener(listener);
-            if (selectedTeamKey != null &&!selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[1])) {
+            if (selectedTeamNumber.equals(redTeams[1])) {
                 holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
@@ -136,7 +135,7 @@ public class MatchListElement extends ListElement {
                 holder.red3.setText(redTeams[2]);
                 holder.red3.setTag("frc" + redTeams[2]);
                 holder.red3.setOnClickListener(listener);
-                if (selectedTeamKey != null && !selectedTeamKey.isEmpty() && selectedTeamKey.contains(redTeams[2])) {
+                if (selectedTeamNumber.equals(redTeams[2])) {
                     holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
                 }
             }
@@ -150,14 +149,14 @@ public class MatchListElement extends ListElement {
             holder.blue1.setText(blueTeams[0]);
             holder.blue1.setTag("frc" + blueTeams[0]);
             holder.blue1.setOnClickListener(listener);
-            if (selectedTeamKey != null && !selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[0])) {
+            if (selectedTeamNumber.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
             holder.blue2.setText(blueTeams[1]);
             holder.blue2.setTag("frc" + blueTeams[1]);
             holder.blue2.setOnClickListener(listener);
-            if (selectedTeamKey != null && !selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[1])) {
+            if (selectedTeamNumber.equals(blueTeams[1])) {
                 holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
             }
 
@@ -168,7 +167,7 @@ public class MatchListElement extends ListElement {
                 holder.blue3.setText(blueTeams[2]);
                 holder.blue3.setTag("frc" + blueTeams[2]);
                 holder.blue3.setOnClickListener(listener);
-                if (selectedTeamKey != null && !selectedTeamKey.isEmpty() && selectedTeamKey.contains(blueTeams[2])) {
+                if (selectedTeamNumber.equals(blueTeams[2])) {
                     holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
                 }
             }
@@ -176,7 +175,6 @@ public class MatchListElement extends ListElement {
         holder.redScore.setText(redScore);
         holder.blueScore.setText(blueScore);
 
-        convertView.setTag(matchKey);
         return convertView;
     }
 
@@ -190,6 +188,8 @@ public class MatchListElement extends ListElement {
         TextView blue3;
         TextView redScore;
         TextView blueScore;
+        View redAlliance;
+        View blueAlliance;
         ImageView videoIcon;
     }
 }

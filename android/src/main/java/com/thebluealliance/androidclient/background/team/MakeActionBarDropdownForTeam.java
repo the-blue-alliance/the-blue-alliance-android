@@ -28,12 +28,13 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
 
     private ViewTeamActivity activity;
     private String teamKey;
+
     private static HashMap<String, String[]> yearsByTeam;
 
-    public MakeActionBarDropdownForTeam(Activity activity){
-        if(activity instanceof ViewTeamActivity) {
-            this.activity = ((ViewTeamActivity)activity);
-        }else{
+    public MakeActionBarDropdownForTeam(Activity activity) {
+        if (activity instanceof ViewTeamActivity) {
+            this.activity = ((ViewTeamActivity) activity);
+        } else {
             throw new IllegalArgumentException("You must pass an instance of ViewTeamActivity here");
         }
     }
@@ -41,24 +42,21 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(yearsByTeam == null){
-            yearsByTeam = new HashMap<>();
-        }
     }
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
-        if(params.length < 1 || !TeamHelper.validateTeamKey(params[0])){
+        if (params.length < 1 || !TeamHelper.validateTeamKey(params[0])) {
             throw new IllegalArgumentException("You must pass a valid team key to create the action bar");
         }
         teamKey = params[0];
 
-        if(!yearsByTeam.containsKey(teamKey)){
+        if(!yearsByTeam.containsKey(teamKey)) {
             try {
                 APIResponse<Team> yearsResponse = DataManager.Teams.getYearsParticipated(activity, teamKey, false);
                 JsonArray yearList = yearsResponse.getData().getYearsParticipated();
                 ArrayList<String> years = new ArrayList<>();
-                for(JsonElement e: yearList){
+                for (JsonElement e : yearList) {
                     years.add(e.getAsString());
                 }
                 Collections.reverse(years);
@@ -66,14 +64,14 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
                 yearsByTeam.put(teamKey, yearsArray);
                 return yearsResponse.getCode();
             } catch (DataManager.NoDataException e) {
-                Log.w(Constants.LOG_TAG, "Unable to fetch years participated for "+teamKey);
+                Log.w(Constants.LOG_TAG, "Unable to fetch years participated for " + teamKey);
                 return APIResponse.CODE.NODATA;
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Team doesn't contain years participated.");
                 return APIResponse.CODE.NODATA;
             }
         }
-        return APIResponse.CODE.LOCAL;
+        return APIResponse.CODE.NODATA;
     }
 
     @Override

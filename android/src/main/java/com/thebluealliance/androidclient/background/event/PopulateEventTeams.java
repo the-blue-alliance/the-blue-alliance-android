@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -37,6 +38,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     private ArrayList<ListItem> teams;
     private String eventKey;
     private boolean forceFromCache;
+    private ListViewAdapter adapter;
 
     public PopulateEventTeams(EventTeamsFragment f, boolean forceFromCache) {
         mFragment = f;
@@ -69,6 +71,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             for (Team t : teamList) {
                 teams.add(t.render(true));
             }
+            adapter = new ListViewAdapter(activity, teams);
             return response.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event teams");
@@ -82,8 +85,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
         View view = mFragment.getView();
         if (view != null && activity != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-            ListViewAdapter adapter = new ListViewAdapter(activity, teams);
-            adapter.notifyDataSetChanged();
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter or if we can't download info
@@ -93,8 +94,10 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);
+                Parcelable state = teamList.onSaveInstanceState();
                 teamList.setAdapter(adapter);
                 noDataText.setVisibility(View.GONE);
+                teamList.onRestoreInstanceState(state);
             }
 
             // Display warning if offline.

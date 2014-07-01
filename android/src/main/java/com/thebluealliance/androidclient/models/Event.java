@@ -25,8 +25,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class Event extends BasicModel<Event> {
@@ -310,34 +308,11 @@ public class Event extends BasicModel<Event> {
 
     public String getShortName() {
         try {
-            EventHelper.TYPE eventType = getEventType();
-            String eventName = getEventName();
-
-            // Preseason and offseason events will probably fail our regex matcher
-            if (eventType == EventHelper.TYPE.PRESEASON || eventType == EventHelper.TYPE.OFFSEASON) {
-                return eventName;
-            }
-            if (shortName.isEmpty()) {
-                Pattern regexPattern = Pattern.compile("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)( FIRST Robotics| FRC)?( District| Regional| Region| State| Tournament| FRC| Field| Division)( Competition| Event| Championship)?( sponsored by.*)?");
-                Matcher m = regexPattern.matcher(eventName);
-                if (m.matches()) {
-                    String s = m.group(3);
-                    regexPattern = Pattern.compile("(.*)(FIRST Robotics|FRC)");
-                    m = regexPattern.matcher(s);
-                    if (m.matches()) {
-                        shortName = m.group(1).trim();
-                    } else {
-                        shortName = s.trim();
-                    }
-                }
-            }
-        }catch (FieldNotDefinedException e){
-            Log.w(Constants.LOG_TAG, "Missing fields for determining short name:\n" +
-                    "Database.Events.NAME, Database.Events.NAME");
-            return null;
+            return EventHelper.getShortNameForEvent(getEventName(), getEventType());
+        } catch (FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Missing fields for short name.");
+            return "";
         }
-        return shortName;
-
     }
 
     public void setShortName(String shortName) {

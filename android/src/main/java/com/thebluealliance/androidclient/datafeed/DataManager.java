@@ -44,6 +44,12 @@ public class DataManager {
     public static class Teams {
         public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_";
 
+        public static Team getTeamFromDB(Context c, String teamKey) {
+            synchronized (Database.getInstance(c)) {
+                return Database.getInstance(c).getTeamsTable().get(teamKey);
+            }
+        }
+
         public static APIResponse<Team> getTeam(Context c, String teamKey, boolean loadFromCache) throws NoDataException {
             final String URL = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM), teamKey);
             final String sqlWhere = Database.Teams.KEY + " = ?";

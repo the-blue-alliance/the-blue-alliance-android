@@ -70,7 +70,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.Events.getEventResults(mActivity, mEventKey, forceFromCache);
             HashMap<MatchHelper.TYPE, ArrayList<Match>> matches = response.getData();
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -209,17 +209,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             if (blueScore.getAsInt() > redScore.getAsInt()) {
                 //blue wins
                 View blue_alliance = mActivity.findViewById(R.id.blue_alliance);
-                if (blue_alliance != null) {
-                    blue_alliance.setBackgroundResource(R.drawable.blue_border);
-                }
-                blue_score.setBackgroundResource(R.drawable.blue_score_border);
+                blue_alliance.setBackgroundResource(R.drawable.blue_border);
             } else if (blueScore.getAsInt() < redScore.getAsInt()) {
                 //red wins
                 View red_alliance = mActivity.findViewById(R.id.red_alliance);
-                if (red_alliance != null) {
-                    red_alliance.setBackgroundResource(R.drawable.red_border);
-                }
-                red_score.setBackgroundResource(R.drawable.red_score_border);
+                red_alliance.setBackgroundResource(R.drawable.red_border);
             }
 
 

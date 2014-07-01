@@ -24,18 +24,20 @@ public class ImageListElement extends ListElement {
 
     @Override
     public View getView(final Context c, LayoutInflater inflater, View convertView) {
-        if (convertView == null) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
             convertView = inflater.inflate(R.layout.list_item_image, null);
+            holder = new ViewHolder();
+            holder.image = (ImageView) convertView.findViewById(R.id.image);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        ImageView image = (ImageView) convertView.findViewById(R.id.image);
-
-        //TODO these images should eventually be cached locally somewhere
-        //so they don't have to be loaded every time
         Picasso picasso = Picasso.with(c);
-        picasso.load(imageUrl).into(image);
+        picasso.load(imageUrl).into(holder.image);
 
-        image.setOnClickListener(new View.OnClickListener() {
+        holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 c.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(linkUrl)));
@@ -43,6 +45,10 @@ public class ImageListElement extends ListElement {
         });
 
         return convertView;
+    }
+
+    private static class ViewHolder {
+        ImageView image;
     }
 
 }

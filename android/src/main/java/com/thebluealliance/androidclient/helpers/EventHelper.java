@@ -6,7 +6,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.listitems.EventWeekHeader;
+import com.thebluealliance.androidclient.comparators.EventSortByTypeAndNameComparator;
+import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -16,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -120,6 +122,66 @@ public class EventHelper {
         }
     }
 
+    public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
+        Log.d(Constants.LOG_TAG, "Sorting "+events.size()+ " events");
+        HashMap<String, ArrayList<Event>> groups = new HashMap<>();
+        ArrayList<Event> offseason = new ArrayList<>(),
+                preseason = new ArrayList<>(),
+                weekless = new ArrayList<>();
+
+        for (Event e : events) {
+            ArrayList<Event> list;
+            try {
+                boolean official = e.isOfficial();
+                TYPE type = e.getEventType();
+                Date start = e.getStartDate();
+                if (official && (type == TYPE.CMP_DIVISION || type == TYPE.CMP_FINALS)) {
+                    if (!groups.containsKey(CHAMPIONSHIP_LABEL) || groups.get(CHAMPIONSHIP_LABEL) == null) {
+                        list = new ArrayList<>();
+                        groups.put(CHAMPIONSHIP_LABEL, list);
+                    } else {
+                        list = groups.get(CHAMPIONSHIP_LABEL);
+                    }
+                    list.add(e);
+                } else if (official && (type == TYPE.REGIONAL || type == TYPE.DISTRICT || type == TYPE.DISTRICT_CMP)) {
+                    if (start == null) {
+                        weekless.add(e);
+                    } else {
+                        String label = String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                        if (groups.containsKey(label) && groups.get(label) != null) {
+                            groups.get(label).add(e);
+                        } else {
+                            list = new ArrayList<>();
+                            list.add(e);
+                            groups.put(label, list);
+                        }
+                    }
+                } else if (type == TYPE.PRESEASON) {
+                    preseason.add(e);
+                } else {
+                    offseason.add(e);
+                }
+            }catch (BasicModel.FieldNotDefinedException ex){
+                Log.w(Constants.LOG_TAG, "Couldn't determine week for event without the following fields:\n" +
+                        "Database.Events.OFFICIAL, Database.Events.TYPE, Database.Events.START");
+            }
+        }
+
+        if (!weekless.isEmpty()) {
+            groups.put(WEEKLESS_LABEL, weekless);
+        }
+        if (!offseason.isEmpty()) {
+            groups.put(OFFSEASON_LABEL, offseason);
+        }
+        if (!preseason.isEmpty()) {
+            groups.put(PRESEASON_LABEL, preseason);
+        }
+
+        Log.d(Constants.LOG_TAG, "Categories: "+groups.keySet().toString());
+
+        return groups;
+    }
+
     /* Do not insert any new entries above the existing enums!!!
          * Things depend on their ordinal values, so you can only to the bottom of the list
          */
@@ -143,7 +205,7 @@ public class EventHelper {
                 case 2:
                     return "District Events";
                 case 3:
-                    return "District Championship";
+                    return "District Championships";
                 case 4:
                     return "Championship Divisions";
                 case 5:
@@ -213,35 +275,60 @@ public class EventHelper {
         }
     }
 
-    public static ArrayList<ListItem> renderEventList(ArrayList<Event> events) {
-        ArrayList<ListItem> out = new ArrayList<>();
-        Collections.sort(events, new EventSortByTypeAndDateComparator());
-        EventHelper.TYPE lastType = null, currentType;
-        int lastDistrict = -1, currentDistrict;
+    /**
+     * Returns a list of events sorted by start date and type. This is optimal for viewing a team's season schedule.
+     *
+     * @param events a list of events to render
+     * @return a list of ListItems representing the sorted events
+     */
+    public static ArrayList<ListItem> renderEventListForTeam(ArrayList<Event> events) {
+        return renderEventListWithComparator(events, new EventSortByTypeAndDateComparator());
+    }
+
+    /**
+     * Returns a list of events sorted by name and type. This is optimal for quickly finding a particular
+     * event within a given week.
+     *
+     * @param events a list of events to render
+     * @return a list of ListItems representing the sorted events
+     */
+    public static ArrayList<ListItem> renderEventListForWeek(ArrayList<Event> events) {
+        return renderEventListWithComparator(events, new EventSortByTypeAndNameComparator());
+    }
+
+    private static ArrayList<ListItem> renderEventListWithComparator(ArrayList<Event> events, Comparator<Event> comparator) {
+        ArrayList<ListItem> eventListItems = new ArrayList<>();
+        Collections.sort(events, comparator);
+        EventHelper.TYPE lastType = null, currentType = null;
+        int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {
-            try {
+            try{
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
                 if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
                     if (currentType == EventHelper.TYPE.DISTRICT) {
-                        out.add(new EventWeekHeader(event.getDistrictTitle() + " District Events"));
+                        eventListItems.add(new EventTypeHeader(event.getDistrictTitle() + " District Events"));
                     } else {
-                        out.add(new EventWeekHeader(currentType.toString()));
+                        eventListItems.add(new EventTypeHeader(currentType.toString()));
                     }
                 }
-                out.add(event.render());
+                eventListItems.add(event.render());
                 lastType = currentType;
                 lastDistrict = currentDistrict;
+
             }catch (BasicModel.FieldNotDefinedException e){
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
             }
+            eventListItems.add(event.render());
+            lastType = currentType;
+            lastDistrict = currentDistrict;
         }
-        return out;
+        return eventListItems;
     }
 
-    public static String getShortNameForEvent(String eventName, int eventType) {
+    public static String getShortNameForEvent(String eventName, TYPE eventType) {
         // Preseason and offseason events will probably fail our regex matcher
-        if (EventHelper.TYPE.values()[eventType] == EventHelper.TYPE.PRESEASON || EventHelper.TYPE.values()[eventType] == EventHelper.TYPE.OFFSEASON) {
+        if (eventType == EventHelper.TYPE.PRESEASON || eventType == EventHelper.TYPE.OFFSEASON) {
             return eventName;
         }
         String shortName = "";
@@ -258,6 +345,11 @@ public class EventHelper {
             }
         }
 
+        // In case an event has a weird name, return the event name
+        if(shortName.isEmpty()) {
+            return eventName;
+        }
+
         return shortName;
     }
 
@@ -267,66 +359,6 @@ public class EventHelper {
             return EventHelper.renderDateFormat.format(startDate);
         }
         return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
-    }
-
-    public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
-        Log.d(Constants.LOG_TAG, "Sorting "+events.size()+ " events");
-        HashMap<String, ArrayList<Event>> groups = new HashMap<>();
-        ArrayList<Event> offseason = new ArrayList<>(),
-                preseason = new ArrayList<>(),
-                weekless = new ArrayList<>();
-
-        for (Event e : events) {
-            ArrayList<Event> list;
-            try {
-                boolean official = e.isOfficial();
-                TYPE type = e.getEventType();
-                Date start = e.getStartDate();
-                if (official && (type == TYPE.CMP_DIVISION || type == TYPE.CMP_FINALS)) {
-                    if (!groups.containsKey(CHAMPIONSHIP_LABEL) || groups.get(CHAMPIONSHIP_LABEL) == null) {
-                        list = new ArrayList<>();
-                        groups.put(CHAMPIONSHIP_LABEL, list);
-                    } else {
-                        list = groups.get(CHAMPIONSHIP_LABEL);
-                    }
-                    list.add(e);
-                } else if (official && (type == TYPE.REGIONAL || type == TYPE.DISTRICT || type == TYPE.DISTRICT_CMP)) {
-                    if (start == null) {
-                        weekless.add(e);
-                    } else {
-                        String label = String.format(REGIONAL_LABEL, e.getCompetitionWeek());
-                        if (groups.containsKey(label) && groups.get(label) != null) {
-                            groups.get(label).add(e);
-                        } else {
-                            list = new ArrayList<>();
-                            list.add(e);
-                            groups.put(label, list);
-                        }
-                    }
-                } else if (type == TYPE.PRESEASON) {
-                    preseason.add(e);
-                } else {
-                    offseason.add(e);
-                }
-            }catch (BasicModel.FieldNotDefinedException ex){
-                Log.w(Constants.LOG_TAG, "Couldn't determine week for event without the following fields:\n" +
-                        "Database.Events.OFFICIAL, Database.Events.TYPE, Database.Events.START");
-            }
-        }
-
-        if (!weekless.isEmpty()) {
-            groups.put(WEEKLESS_LABEL, weekless);
-        }
-        if (!offseason.isEmpty()) {
-            groups.put(OFFSEASON_LABEL, offseason);
-        }
-        if (!preseason.isEmpty()) {
-            groups.put(PRESEASON_LABEL, preseason);
-        }
-
-        Log.d(Constants.LOG_TAG, "Categories: "+groups.keySet().toString());
-
-        return groups;
     }
 
     public static void addFieldByAPIUrl(Event event, String url, String data){

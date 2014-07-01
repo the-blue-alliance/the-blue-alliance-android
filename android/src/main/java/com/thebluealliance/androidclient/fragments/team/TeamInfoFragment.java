@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -14,36 +13,46 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
+import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.List;
 
-public class TeamInfoFragment extends Fragment implements View.OnClickListener, RefreshListener {
+public class TeamInfoFragment extends Fragment implements View.OnClickListener, RefreshListener, OnYearChangedListener {
 
-    private Activity parent;
+    private static final String TEAM_KEY = "team_key";
+
+    private ViewTeamActivity parent;
 
     private String mTeamKey;
 
     private PopulateTeamInfo task;
 
-    public TeamInfoFragment() {
-        // Empty constructor
+    public static TeamInfoFragment newInstance(String teamKey) {
+        TeamInfoFragment fragment = new TeamInfoFragment();
+        Bundle args = new Bundle();
+        args.putString(TEAM_KEY, teamKey);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeamKey = getArguments().getString(ViewTeamActivity.TEAM_KEY);
+        mTeamKey = getArguments().getString(TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+        if (!(getActivity() instanceof ViewTeamActivity)) {
+            throw new IllegalArgumentException("TeamMediaFragment must be hosted by a ViewTeamActivity!");
+        } else {
+            parent = (ViewTeamActivity) getActivity();
         }
+
+        parent.registerRefreshableActivityListener(this);
+        parent.addOnYearChangedListener(this);
     }
 
     @Override
@@ -61,9 +70,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
+        parent.startRefresh(this);
     }
 
     @Override
@@ -88,12 +95,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     public void onRefreshStart() {
         task = new PopulateTeamInfo(this, true);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamKey);
-        View view = getView();
-        if (view != null) {
-            // Indicate loading; the task will hide the progressbar and show the content when loading is complete
-            view.findViewById(R.id.progress).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.team_info_container).setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -103,13 +104,18 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    public void updateTask(PopulateTeamInfo newTask){
+    public void updateTask(PopulateTeamInfo newTask) {
         task = newTask;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        parent.deregisterRefreshableActivityListener(this);
+    }
+
+    @Override
+    public void onYearChanged(int newYear) {
+        parent.notifyRefreshComplete(this);
     }
 }
