@@ -92,7 +92,7 @@ public class TBAv2 {
      * is defined in Constants.API_HIT_TIMEOUT
      *
      * About the return values. The 'data' field of the resulting APIResponse is only going to have actual data if we needed to load something from the internet (thus,
-     * the accompanying CODE will either be Code.WEBLOAD or Code.UPDATED). If the CODE is anything else, then the 'data' field will be an empty string - so check that
+     * the accompanying CODE will either be Code.WEBLOAD or Code.UPDATED). If the CODE is anything else, then the 'data' field will be null - so check the code
      * before assuming it's set.
      *
      * @param c Calling context - used to query the database for the Last-Update time for a URL
@@ -139,13 +139,13 @@ public class TBAv2 {
                     //just return what we have in cache
                     return cachedData.updateCode(APIResponse.CODE.CACHED304); /* Send Code.CACHED304 to tell the caller
                                                                                * that remote content is unchanged.
-                                                                               * The 'data' field is an empty string
+                                                                               * The 'data' field is null
                                                                                */
                 }
 
                 /* If we don't want to query the API at all, then tell the caller to return from cache */
                 if (forceFromCache) {
-                    return cachedData; /* This will have Code.LOCAL and an empty string */
+                    return cachedData; /* This will have Code.LOCAL and null data */
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
