@@ -2,12 +2,14 @@ package com.thebluealliance.androidclient.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -39,9 +41,10 @@ public class EventCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView dates = (TextView) view.findViewById(R.id.event_dates);
         Date startDate = null, endDate = null;
+        Log.d(Constants.LOG_TAG, "Start: "+cursor.getString(cursor.getColumnIndex(Database.Events.START)));
         try {
-            startDate = EventHelper.eventDateFormat.parse(cursor.getString(cursor.getColumnIndex(Database.Events.START)));
-            endDate = EventHelper.eventDateFormat.parse(cursor.getString(cursor.getColumnIndex(Database.Events.END)));
+            startDate = new Date(cursor.getLong(cursor.getColumnIndex(Database.Events.START)));
+            endDate = new Date(cursor.getLong(cursor.getColumnIndex(Database.Events.END)));
         } catch (Exception e) {
             // Oops.
         }

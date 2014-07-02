@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.preference.PreferenceManager;
@@ -35,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -114,15 +115,15 @@ public class Database extends SQLiteOpenHelper {
             + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
-            SearchTeam.KEY + "," +
-            SearchTeam.TITLES + "," +
-            SearchTeam.NUMBER + ")";
+            SearchTeam.KEY + " TEXT PRIMARY KEY," +
+            SearchTeam.TITLES + " TEXT," +
+            SearchTeam.NUMBER + " TEXT )";
 
     String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
             " USING fts3 (" +
-            SearchEvent.KEY + "," +
-            SearchEvent.TITLES + "," +
-            SearchEvent.YEAR + ")";
+            SearchEvent.KEY + " TEXT PRIMARY KEY," +
+            SearchEvent.TITLES + " TEXT," +
+            SearchEvent.YEAR + " TEXT )";
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
@@ -355,16 +356,7 @@ public class Database extends SQLiteOpenHelper {
                     db.insert(TABLE_TEAMS, null, team.getParams());
 
                     //add search team item
-                    ContentValues cv = new ContentValues();
-                    try {
-                        cv.put(SearchTeam.KEY, team.getTeamKey());
-                        cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-                        cv.put(SearchTeam.NUMBER, team.getTeamNumber());
-
-                        db.insert(TABLE_SEARCH_TEAMS, null, cv);
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        e.printStackTrace();
-                    }
+                    insertSearchItemTeam(team, false);
                 }
                 db.setTransactionSuccessful();
                 db.endTransaction();
@@ -493,9 +485,10 @@ public class Database extends SQLiteOpenHelper {
                     try {
                         if (!unsafeExists(event.getEventKey())){
                             db.insert(TABLE_EVENTS, null, event.getParams());
+                            insertSearchItemEvent(event, false);
                         }else{
                             db.update(TABLE_EVENTS, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
-
+                            updateSearchItemEvent(event, false);
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
                         Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
@@ -532,54 +525,6 @@ public class Database extends SQLiteOpenHelper {
             } else {
                 return null;
             }
-        }
-
-        public ArrayList<Event> getInWeek(int year, int week, String[] fields) {
-            ArrayList<Event> events = new ArrayList<>();
-            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ? AND " + Events.WEEK + " = ?", new String[]{Integer.toString(year) + "%", Integer.toString(week)}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    Event event = ModelInflater.inflateEvent(cursor);
-                    events.add(event);
-                } while (cursor.moveToNext());
-                cursor.close();
-                return events;
-            } else {
-                Log.w(Constants.LOG_TAG, "Failed to find events in " + year + " week " + week);
-                return null;
-            }
-        }
-
-        public ArrayList<Event> getInYear(int year, String[] fields) {
-            ArrayList<Event> events = new ArrayList<>();
-            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " LIKE ?", new String[]{Integer.toString(year) + "%"}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    Event event = ModelInflater.inflateEvent(cursor);
-                    events.add(event);
-                } while (cursor.moveToNext());
-                cursor.close();
-                return events;
-            } else {
-                Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
-                return null;
-            }
-        }
-
-        public ArrayList<Event> getInYear(int year){
-            ArrayList<Event> events = new ArrayList<>();
-            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_EVENTS+" WHERE "+Events.YEAR+" = ?", new String[]{year+""});
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    Event event = ModelInflater.inflateEvent(cursor);
-                    events.add(event);
-                } while (cursor.moveToNext());
-                cursor.close();
-                return events;
-            } else {
-                Log.w(Constants.LOG_TAG, "Failed to find events in " + year);
-            }
-            return events;
         }
 
         public boolean exists(String key) {
@@ -1161,13 +1106,17 @@ public class Database extends SQLiteOpenHelper {
         return response;
     }
 
-    public long insertSearchItemTeam(Team team) {
+    public long insertSearchItemTeam(Team team){
+        return insertSearchItemTeam(team, true);
+    }
+
+    public long insertSearchItemTeam(Team team, boolean safe) {
         ContentValues cv = new ContentValues();
         try {
             cv.put(SearchTeam.KEY, team.getTeamKey());
             cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
             cv.put(SearchTeam.NUMBER, team.getTeamNumber());
-            return safeInsert(TABLE_SEARCH_TEAMS, null, cv);
+            return safe? safeInsert(TABLE_SEARCH_TEAMS, null, cv) : db.insert(TABLE_SEARCH_TEAMS, null, cv);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:" +
                     "Database.Teams.KEY, Database.Teams.NUMBER");
@@ -1176,16 +1125,23 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public long insertSearchItemEvent(Event event) {
+        return insertSearchItemEvent(event, true);
+    }
+
+    public long insertSearchItemEvent(Event event, boolean safe) {
         ContentValues cv = new ContentValues();
         try {
             cv.put(SearchEvent.KEY, event.getEventKey());
             cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
             cv.put(SearchEvent.YEAR, event.getEventYear());
-            return safeInsert(TABLE_SEARCH_EVENTS, null, cv);
+            return safe? safeInsert(TABLE_SEARCH_EVENTS, null, cv) : db.insert(TABLE_SEARCH_EVENTS, null, cv);
+
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
                     "Database.Events.KEY, Database.Events.YEAR");
             return -1;
+        } catch (SQLiteException e){
+            return updateSearchItemEvent(event, safe);
         }
     }
 
@@ -1203,13 +1159,19 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public long updateSearchItemEvent(Event event) {
+    public long updateSearchItemEvent(Event event){
+        return updateSearchItemEvent(event, true);
+    }
+
+    public long updateSearchItemEvent(Event event, boolean safe) {
         try {
             ContentValues cv = new ContentValues();
             cv.put(SearchEvent.KEY, event.getEventKey());
             cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
             cv.put(SearchEvent.YEAR, event.getEventYear());
-            return safeUpdate(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
+
+            return safe? safeUpdate(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()}) :
+                         db.update(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
         Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
                 "Database.Events.KEY, Database.Events.YEAR");

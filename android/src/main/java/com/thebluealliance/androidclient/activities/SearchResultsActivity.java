@@ -164,7 +164,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 try {
                     EventListElement element;
                     element = new EventListElement(event);
-                    listItems.add(element);listItems.add(element);
+                    listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
                     Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n"+
                         Arrays.toString(e.getStackTrace()));

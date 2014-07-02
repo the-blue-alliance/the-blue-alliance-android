@@ -214,7 +214,7 @@ public class DataManager {
             Log.d("event teams", "Fetching teams for " + eventKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_TEAMS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.TEAMS};
+            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE,  Database.Events.TEAMS};
             APIResponse<Event> eventResponse = Event.query(c, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray teamList = eventResponse.getData().getTeams();
@@ -233,7 +233,7 @@ public class DataManager {
             Log.d("event ranks", "Fetching rankings for " + eventKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_RANKS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.RANKINGS};
+            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.RANKINGS};
             APIResponse<Event> eventResponse = Event.query(c, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray rankArray = eventResponse.getData().getRankings();
@@ -300,7 +300,7 @@ public class DataManager {
         public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_STATS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY,Database.Events.NAME, Database.Events.STATS};
+            String[] eventFields = new String[]{Database.Events.KEY,Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.STATS};
             APIResponse<Event> eventResponse = Event.query(c, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonObject allStats = eventResponse.getData().getStats();
