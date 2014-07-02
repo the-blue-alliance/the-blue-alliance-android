@@ -298,7 +298,6 @@ public class EventHelper {
     private static ArrayList<ListItem> renderEventListWithComparator(ArrayList<Event> events, Comparator<Event> comparator) {
         ArrayList<ListItem> eventListItems = new ArrayList<>();
         Collections.sort(events, comparator);
-        Log.e(Constants.LOG_TAG, "sorted: "+events.size());
         EventHelper.TYPE lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {

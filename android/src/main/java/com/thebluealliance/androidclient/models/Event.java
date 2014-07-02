@@ -263,7 +263,8 @@ public class Event extends BasicModel<Event> {
     }
 
     public void setCompetitionWeek(int week){
-        fields.put(Database.Events.WEEK, week);
+        //all preseason events are week 0
+        fields.put(Database.Events.WEEK, Math.max(0, week));
     }
 
     public JsonArray getMatches() {

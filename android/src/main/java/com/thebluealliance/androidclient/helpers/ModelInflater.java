@@ -1,11 +1,9 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.database.Cursor;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.models.Award;
@@ -163,7 +161,6 @@ public class ModelInflater {
     public static Team inflateTeam(Cursor data){
         Team team = new Team();
         for(int i=0; i<data.getColumnCount(); i++) {
-            Log.e(Constants.DATAMANAGER_LOG, "Infalting "+data.getColumnName(i)+"/"+data.getString(i));
             switch (data.getColumnName(i)) {
                 case Database.Teams.KEY:
                     team.setTeamKey(data.getString(i));
