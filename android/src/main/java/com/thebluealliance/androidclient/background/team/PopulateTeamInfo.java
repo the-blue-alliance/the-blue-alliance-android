@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import javax.net.ssl.CertPathTrustManagerParameters;
+
 /**
  * File created by phil on 4/20/14.
  */
@@ -193,6 +195,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             secondLoad.execute(mTeamKey);
         } else {
             // Show notification if we've refreshed data.
+            Log.i(Constants.REFRESH_LOG, "Team "+mTeamKey+" info refresh complete");
             if (mFragment instanceof RefreshListener) {
                 activity.notifyRefreshComplete(mFragment);
             }

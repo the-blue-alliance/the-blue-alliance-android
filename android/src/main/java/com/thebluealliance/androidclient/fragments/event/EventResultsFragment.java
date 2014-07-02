@@ -118,6 +118,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " results");
         mTask = new PopulateEventResults(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey, teamKey);
     }

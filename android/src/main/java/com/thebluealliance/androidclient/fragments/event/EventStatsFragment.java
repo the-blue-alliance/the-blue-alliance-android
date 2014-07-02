@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -20,6 +22,7 @@ import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.Media;
 
 /**
  * Fragment that displays the team statistics for an FRC event.
@@ -129,6 +132,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
         mTask = new PopulateEventStats(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }

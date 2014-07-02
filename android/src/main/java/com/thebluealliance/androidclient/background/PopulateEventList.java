@@ -64,13 +64,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         }
 
         if(mHeader.equals("Preseason Events")){
-            Log.e(Constants.LOG_TAG, "Week "+mWeek);
             Event ss = Database.getInstance(activity).getEventsTable().get("2014ctss");
-            try {
-                Log.e(Constants.LOG_TAG, "SS Week: "+ss.getCompetitionWeek());
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
-            }
         }
 
         events = new ArrayList<>();
@@ -157,6 +151,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, "Event list refresh complete");
                 if (mFragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete((RefreshListener) mFragment);
                 }

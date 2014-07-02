@@ -111,16 +111,8 @@ public class DataManager {
             int currentYear = Utilities.getCurrentYear();
             APIResponse<ArrayList<Event>> events = getEventsForTeam(c, teamKey, currentYear, loadFromCache);
             for(Event e: events.getData()){
-                try {
-                    if(e.isHappeningNow()){
-                        Log.d(Constants.LOG_TAG, "Found current event "+e.getEventKey()+" for "+teamKey);
-                        return new APIResponse<>(e, events.getCode());
-                    }
-                } catch (BasicModel.FieldNotDefinedException e1) {
-                    Log.w(Constants.LOG_TAG, "Unable to see if event is currently happening");
-                }
+                return new APIResponse<>(e, events.getCode());
             }
-            Log.d(Constants.LOG_TAG, "No current event found for "+teamKey);
             return new APIResponse<>(null, events.getCode());
         }
 

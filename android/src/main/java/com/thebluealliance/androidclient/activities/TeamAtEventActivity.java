@@ -80,6 +80,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh started");
         task = new PopulateTeamAtEvent(this, true);
         task.execute(teamKey, eventKey);
     }

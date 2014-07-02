@@ -273,7 +273,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             new PopulateMatchInfo(mActivity, false).execute(mMatchKey);
         } else {
             // Show notification if we've refreshed data.
-            // Show notification if we've refreshed data.
+            Log.i(Constants.REFRESH_LOG, "Match "+mMatchKey+" refresh complete");
             if (mActivity instanceof RefreshableHostActivity) {
                 ((RefreshableHostActivity) mActivity).notifyRefreshComplete((RefreshListener) mActivity);
             }

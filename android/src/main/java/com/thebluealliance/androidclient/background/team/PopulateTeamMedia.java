@@ -154,6 +154,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 secondLoad.execute(team, year);
             } else {
                 // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, "Team "+ team + " "+ year+" media refresh complete");
                 if (fragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete(fragment);
                 }

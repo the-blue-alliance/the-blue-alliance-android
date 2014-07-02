@@ -129,6 +129,7 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, "Loading teams between "+mTeamNumberStart+" and "+mTeamNumberEnd);
         mTask = new PopulateTeamList(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamNumberStart, mTeamNumberEnd);
     }

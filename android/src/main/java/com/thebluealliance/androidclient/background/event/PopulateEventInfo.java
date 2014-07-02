@@ -297,7 +297,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             } else {
                 // Show notification if we've refreshed data.
                 if (mFragment instanceof RefreshListener) {
-                    Log.d(Constants.LOG_TAG, "Event Info refresh complete");
+                    Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Info refresh complete");
                     activity.notifyRefreshComplete(mFragment);
                 }
             }

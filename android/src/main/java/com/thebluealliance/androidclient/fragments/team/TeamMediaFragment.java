@@ -4,10 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
@@ -75,6 +77,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
         ((ViewGroup) getView()).removeAllViews();
         ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_team_media, (ViewGroup) getView(), true);
 
+        Log.i(Constants.REFRESH_LOG, "Loading " + teamKey + " media in " + year);
         task = new PopulateTeamMedia(this, true);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, year);
     }
