@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -28,8 +27,6 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
-import javax.net.ssl.CertPathTrustManagerParameters;
 
 /**
  * File created by phil on 4/20/14.
@@ -69,7 +66,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             APIResponse<Team> teamResponse = DataManager.Teams.getTeam(activity, mTeamKey, forceFromCache);
             APIResponse<Event> currentEventResponse = DataManager.Teams.getCurrentEventForTeam(activity, mTeamKey, forceFromCache);
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -84,8 +81,8 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 mTeamNumber = team.getTeamNumber();
 
                 mCurrentEvent = currentEventResponse.getData();
-                if(mCurrentEvent != null) {
-                    mCurrentEvent.getEventName();
+                if (mCurrentEvent != null) {
+                    mEventName = mCurrentEvent.getEventName();
                 }
                 mIsCurrentlyCompeting = mCurrentEvent != null;
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -101,7 +98,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                     matches = eventResponse.getData();
                 } catch (DataManager.NoDataException e) {
                     Log.w(Constants.LOG_TAG, "unable to fetch event data");
-                } catch (BasicModel.FieldNotDefinedException e){
+                } catch (BasicModel.FieldNotDefinedException e) {
                     Log.e(Constants.LOG_TAG, "Unable to get event key");
                 }
             }
@@ -154,13 +151,27 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 Match nextMatch = null;
                 try {
                     lastMatch = MatchHelper.getLastMatchPlayed(matches);
+                    if (lastMatch != null) {
+                        lastMatch.setSelectedTeam(mTeamKey);
+                    }
                     nextMatch = MatchHelper.getNextMatchPlayed(matches);
+                    if (nextMatch != null) {
+                        nextMatch.setSelectedTeam(mTeamKey);
+                    }
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't get next/last match. Missing fields"+
+                    Log.e(Constants.LOG_TAG, "Can't get next/last match. Missing fields" +
                             Arrays.toString(e.getStackTrace()));
                 }
+                if(lastMatch == null && nextMatch == null) {
+                    // No matches found, aka not competing. Hide the matches container.
+                    view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
+                }
                 if (lastMatch != null) {
-                    ((LinearLayout) view.findViewById(R.id.team_most_recent_match_details)).addView(lastMatch.render().getView(activity, inflater, null));
+                    // If this is a second refresh, the container could possibly have a match view in it already.
+                    // We''l clear the container and add the match again.
+                    LinearLayout mostRecentMatch = (LinearLayout) view.findViewById(R.id.team_most_recent_match_details);
+                    mostRecentMatch.removeAllViews();
+                    mostRecentMatch.addView(lastMatch.render().getView(activity, inflater, null));
                 } else {
                     // Hide most recent match views, this team has not yet had a match at this competition
                     view.findViewById(R.id.team_most_recent_match_label).setVisibility(View.GONE);
@@ -168,7 +179,11 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 }
 
                 if (nextMatch != null) {
-                    ((LinearLayout) view.findViewById(R.id.team_next_match_details)).addView(nextMatch.render().getView(activity, inflater, null));
+                    // If this is a second refresh, the container could possibly have a match view in it already.
+                    // We''l clear the container and add the match again.
+                    LinearLayout nextMatchContainer = (LinearLayout) view.findViewById(R.id.team_next_match_details);
+                    nextMatchContainer.removeAllViews();
+                    nextMatchContainer.addView(nextMatch.render().getView(activity, inflater, null));
                 } else {
                     // Hide next match views, this team has no more matches at this competition
                     view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
@@ -195,7 +210,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
             secondLoad.execute(mTeamKey);
         } else {
             // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, "Team "+mTeamKey+" info refresh complete");
+            Log.i(Constants.REFRESH_LOG, "Team " + mTeamKey + " info refresh complete");
             if (mFragment instanceof RefreshListener) {
                 activity.notifyRefreshComplete(mFragment);
             }

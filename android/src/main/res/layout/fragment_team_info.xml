@@ -116,8 +116,7 @@
                 style="@style/InfoItemStyle"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:visibility="gone">
+                android:background="?android:attr/selectableItemBackground">
 
                 <ImageView
                     android:id="@+id/team_current_event_icon"
@@ -147,8 +146,7 @@
 
             <RelativeLayout
                 android:id="@+id/team_current_matches_container"
-                style="@style/InfoItemStyle"
-                android:visibility="gone">
+                style="@style/InfoItemStyle">
 
                 <ImageView
                     android:id="@+id/team_current_match_icon"
@@ -184,6 +182,11 @@
                     android:layout_below="@id/team_next_match_label"/>
 
             </RelativeLayout>
+
+            <!-- Hacky way to make a list divider appear after the last item. -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
         </LinearLayout>
     </ScrollView>
     <ProgressBar style="?android:attr/progressBarStyleLarge"

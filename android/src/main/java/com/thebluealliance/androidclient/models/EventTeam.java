@@ -24,53 +24,53 @@ import java.util.Arrays;
  */
 public class EventTeam extends BasicModel<EventTeam> {
 
-    public EventTeam(){
+    public EventTeam() {
         super(Database.TABLE_EVENTTEAMS);
     }
 
-    public String getKey() throws FieldNotDefinedException{
+    public String getKey() throws FieldNotDefinedException {
         return getEventKey() + "_" + getTeamKey();
     }
 
-    public void setTeamKey(String teamKey){
+    public void setTeamKey(String teamKey) {
         fields.put(Database.EventTeams.TEAMKEY, teamKey);
     }
 
     public String getTeamKey() throws FieldNotDefinedException {
-        if(fields.containsKey(Database.EventTeams.TEAMKEY) && fields.get(Database.EventTeams.TEAMKEY) instanceof String) {
+        if (fields.containsKey(Database.EventTeams.TEAMKEY) && fields.get(Database.EventTeams.TEAMKEY) instanceof String) {
             return (String) fields.get(Database.EventTeams.TEAMKEY);
         }
         throw new FieldNotDefinedException("Field Database.EventTeams.TEAMKEY is not defined");
     }
 
-    public void setEventKey(String eventKey){
+    public void setEventKey(String eventKey) {
         fields.put(Database.EventTeams.EVENTKEY, eventKey);
     }
 
-    public String getEventKey() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.EventTeams.EVENTKEY) && fields.get(Database.EventTeams.EVENTKEY) instanceof String) {
+    public String getEventKey() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.EventTeams.EVENTKEY) && fields.get(Database.EventTeams.EVENTKEY) instanceof String) {
             return (String) fields.get(Database.EventTeams.EVENTKEY);
         }
         throw new FieldNotDefinedException("Field Database.EventTeams.EVENTKEY is not defined");
     }
 
-    public void setYear(int year){
+    public void setYear(int year) {
         fields.put(Database.EventTeams.YEAR, year);
     }
 
     public int getYear() throws FieldNotDefinedException {
-        if(fields.containsKey(Database.EventTeams.YEAR) && fields.get(Database.EventTeams.YEAR) instanceof Integer) {
+        if (fields.containsKey(Database.EventTeams.YEAR) && fields.get(Database.EventTeams.YEAR) instanceof Integer) {
             return (Integer) fields.get(Database.EventTeams.YEAR);
         }
         throw new FieldNotDefinedException("Field Database.EventTeams.YEAR is not defined");
     }
 
-    public void setCompWeek(int week){
+    public void setCompWeek(int week) {
         fields.put(Database.EventTeams.COMPWEEK, week);
     }
 
     public int getCompWeek() throws FieldNotDefinedException {
-        if(fields.containsKey(Database.EventTeams.COMPWEEK) && fields.get(Database.EventTeams.COMPWEEK) instanceof Integer) {
+        if (fields.containsKey(Database.EventTeams.COMPWEEK) && fields.get(Database.EventTeams.COMPWEEK) instanceof Integer) {
             return (Integer) fields.get(Database.EventTeams.COMPWEEK);
         }
         throw new FieldNotDefinedException("Field Database.EventTeams.COMPWEEK is not defined");
@@ -87,25 +87,25 @@ public class EventTeam extends BasicModel<EventTeam> {
     }
 
     public static synchronized APIResponse<ArrayList<EventTeam>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying eventTeams table: "+whereClause+ Arrays.toString(whereArgs));
+        Log.d(Constants.DATAMANAGER_LOG, "Querying eventTeams table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<EventTeam> eventTeams = new ArrayList<>();
         ArrayList<Event> events = new ArrayList<>();
-        if(cursor != null && cursor.moveToFirst()){
-            do{
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
                 eventTeams.add(ModelInflater.inflateEventTeam(cursor));
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
 
-        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
-        for(String url: apiUrls) {
+        for (String url : apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
                 eventTeams = new ArrayList<>();
-                for(JsonElement m: matchList){
+                for (JsonElement m : matchList) {
                     Event e = JSONManager.getGson().fromJson(m, Event.class);
                     events.add(e);
                     try {
@@ -120,11 +120,11 @@ public class EventTeam extends BasicModel<EventTeam> {
             code = APIResponse.mergeCodes(code, response.getCode());
         }
 
-        if(changed){
+        if (changed) {
             Database.getInstance(c).getEventTeamsTable().add(eventTeams);
             Database.getInstance(c).getEventsTable().storeEvents(events);
         }
-        Log.d(Constants.DATAMANAGER_LOG, "Found "+events.size()+" events and, updated in db? "+changed);
+        Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events and, updated in db? " + changed);
         return new APIResponse<>(eventTeams, code);
     }
 }
