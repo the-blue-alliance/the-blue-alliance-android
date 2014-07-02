@@ -85,7 +85,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = view.getTag().toString();
+                String matchKey = view.findViewById(R.id.match_title).getTag().toString();
                 Log.d(Constants.LOG_TAG, "Match key: " + matchKey);
                 startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
                 return true;

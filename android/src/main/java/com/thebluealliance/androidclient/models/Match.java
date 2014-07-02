@@ -361,7 +361,7 @@ public class Match extends BasicModel<Match> {
         }
     }
 
-    public static synchronized APIResponse<Match> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Match> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
         Match match;
@@ -372,19 +372,38 @@ public class Match extends BasicModel<Match> {
         }
 
         APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
+        ArrayList<Match> allMatches = null;
         boolean changed = false;
+        allMatches = new ArrayList<>();
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Match updatedMatch = JSONManager.getGson().fromJson(response.getData(), Match.class);
+                Match updatedMatch = new Match();
+                if(url.contains("event") && url.contains("matches")){
+                    /* We're requesting the matches for the whole event (there isn't a single match endpoint */
+                    JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                    for(JsonElement m: matchList){
+                        Match inflated = JSONManager.getGson().fromJson(m, Match.class);
+                        if(m.getAsJsonObject().get("key").getAsString().equals(key)){
+                            updatedMatch = inflated;
+                            //this match will be added to the list below
+                        }else{
+                            allMatches.add(inflated);
+                        }
+                    }
+                }else {
+                    updatedMatch = JSONManager.getGson().fromJson(response.getData(), Match.class);
+                }
                 match.merge(updatedMatch);
                 changed = true;
             }
             code = APIResponse.mergeCodes(code, response.getCode());
         }
 
+        allMatches.add(match);
+
         if(changed){
-            match.write(c);
+            Database.getInstance(c).getMatchesTable().add(allMatches);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);
         return new APIResponse<>(match, code);

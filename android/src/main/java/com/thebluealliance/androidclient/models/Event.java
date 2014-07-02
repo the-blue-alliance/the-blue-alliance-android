@@ -312,6 +312,12 @@ public class Event extends BasicModel<Event> {
         return matches;
     }
 
+    /**
+     * Sets matches associated with this event model.
+     * Be careful! Matches aren't an official property, this method just exists as a continence.
+     * This model <b>WILL NOT</b> store the matches you set here.
+     * @param matches Match models to be temporarily associated with this event model.
+     */
     public void setMatches(JsonArray matches) {
         this.matches = matches;
     }

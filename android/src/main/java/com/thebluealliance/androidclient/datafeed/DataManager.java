@@ -357,4 +357,18 @@ public class DataManager {
             return getEventAwards(c, eventKey, "", loadFromCache);
         }
     }
+
+    public static class Matches{
+
+        public static APIResponse<Match> getMatch(Context c, String matchKey, boolean loadFromCache) throws NoDataException{
+            if(!MatchHelper.validateMatchKey(matchKey)){
+                throw new NoDataException("Invalid match key");
+            }
+            String eventKey = matchKey.substring(0, matchKey.indexOf("_"));
+            String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey);
+            String sqlWhere = Database.Matches.KEY + " = ?";
+            return Match.query(c, matchKey, loadFromCache, null, sqlWhere, new String[]{matchKey}, new String[]{apiUrl});
+        }
+
+    }
 }
