@@ -101,6 +101,10 @@ public class Team extends BasicModel<Team> {
         fields.put(Database.Teams.YEARS_PARTICIPATED, years.toString());
     }
 
+    public void setYearsParticipated(String yearsJson){
+        fields.put(Database.Teams.YEARS_PARTICIPATED, yearsJson);
+    }
+
     public JsonArray getYearsParticipated() throws FieldNotDefinedException {
         if(fields.containsKey(Database.Teams.YEARS_PARTICIPATED) && fields.get(Database.Teams.YEARS_PARTICIPATED) instanceof String) {
             return JSONManager.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
@@ -139,7 +143,7 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    public static APIResponse<Team> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Team> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying teams table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
         Team team;
@@ -149,6 +153,8 @@ public class Team extends BasicModel<Team> {
             team = new Team();
         }
 
+        Log.e(Constants.DATAMANAGER_LOG, "Starting team: "+team.getParams());
+
         APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
         boolean changed = false;
         for(String url: apiUrls) {
@@ -156,8 +162,9 @@ public class Team extends BasicModel<Team> {
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Team updatedTeam;
                 if(url.contains("years_participated")){
+                    Log.w(Constants.DATAMANAGER_LOG, "Fetching years participated");
                     updatedTeam = new Team();
-                    team.setYearsParticipated(JSONManager.getasJsonArray(response.getData()));
+                    team.setYearsParticipated(response.getData());
                 }else {
                     updatedTeam = JSONManager.getGson().fromJson(response.getData(), Team.class);
                 }
@@ -168,6 +175,7 @@ public class Team extends BasicModel<Team> {
         }
 
         if(changed){
+            Log.e(Constants.DATAMANAGER_LOG, "New team: "+team.getParams());
             team.write(c);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);

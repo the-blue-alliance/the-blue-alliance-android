@@ -59,8 +59,13 @@ public class Event extends BasicModel<Event> {
     public int getEventYear() throws FieldNotDefinedException{
         if(fields.containsKey(Database.Events.YEAR) && fields.get(Database.Events.YEAR) instanceof Integer) {
             return (Integer) fields.get(Database.Events.YEAR);
+        }else{
+            try{
+                return Integer.parseInt(getEventKey().substring(0,4));
+            }catch(FieldNotDefinedException e){
+                throw new FieldNotDefinedException("Field Database.Events.YEAR is not defined");
+            }
         }
-        throw new FieldNotDefinedException("Field Database.Events.YEAR is not defined");
     }
 
     public void setWebsite(String website) {
@@ -390,7 +395,7 @@ public class Event extends BasicModel<Event> {
         return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    public static APIResponse<Event> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Event> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
         Event event;
@@ -427,7 +432,7 @@ public class Event extends BasicModel<Event> {
         return new APIResponse<>(event, code);
     }
 
-    public static APIResponse<ArrayList<Event>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Event>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Event> events = new ArrayList<>();

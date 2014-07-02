@@ -165,7 +165,7 @@ public class Media extends BasicModel<Media> {
         return new APIResponse<>(media, code);
     }
 
-    public static APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Media> medias = new ArrayList<>();

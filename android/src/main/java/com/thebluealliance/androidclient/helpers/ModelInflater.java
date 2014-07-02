@@ -163,6 +163,7 @@ public class ModelInflater {
     public static Team inflateTeam(Cursor data){
         Team team = new Team();
         for(int i=0; i<data.getColumnCount(); i++) {
+            Log.e(Constants.DATAMANAGER_LOG, "Infalting "+data.getColumnName(i)+"/"+data.getString(i));
             switch (data.getColumnName(i)) {
                 case Database.Teams.KEY:
                     team.setTeamKey(data.getString(i));
