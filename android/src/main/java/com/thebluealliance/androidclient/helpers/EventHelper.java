@@ -359,13 +359,13 @@ public class EventHelper {
 
     public static void addFieldByAPIUrl(Event event, String url, String data){
         if(url.contains("teams")){
-            event.setTeams(JSONManager.getasJsonArray(data));
+            event.setTeams(data);
         }else if(url.contains("rankings")){
-            event.setRankings(JSONManager.getasJsonArray(data));
+            event.setRankings(data);
         }else if(url.contains("matches")){
             event.setMatches(JSONManager.getasJsonArray(data));
         }else if(url.contains("stats")){
-            event.setStats(JSONManager.getasJsonObject(data));
+            event.setStats(data);
         }
     }
 }

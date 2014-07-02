@@ -17,6 +17,11 @@ import java.util.Date;
  */
 public class ModelInflater {
 
+    /**
+     * Inflate an award model from a single row of a cursor returned by a database query.
+     * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
+     * @return Award model containing the fields as defined in the cursor
+     */
     public static Award inflateAward(Cursor data){
         Award award = new Award();
         for(int i=0; i<data.getColumnCount(); i++){
@@ -39,6 +44,11 @@ public class ModelInflater {
         return award;
     }
 
+    /**
+     * Inflate an event model from a single row of a cursor returned by a database query.
+     * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
+     * @return Event model containing the fields as defined in the cursor
+     */
     public static Event inflateEvent(Cursor data){
         Event event = new Event();
         for(int i=0; i<data.getColumnCount(); i++){
@@ -94,6 +104,11 @@ public class ModelInflater {
         return event;
     }
 
+    /**
+     * Inflate a match model from a single row of a cursor returned by a database query.
+     * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
+     * @return Match model containing the fields as defined in the cursor
+     */
     public static Match inflateMatch(Cursor data){
         Match match = new Match();
         for(int i=0; i<data.getColumnCount(); i++){
@@ -125,6 +140,11 @@ public class ModelInflater {
         return match;
     }
 
+    /**
+     * Inflate a media model from a single row of a cursor returned by a database query.
+     * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
+     * @return Media model containing the fields as defined in the cursor
+     */
     public static Media inflateMedia(Cursor data){
         Media media = new Media();
         for(int i=0; i<data.getColumnCount(); i++){
@@ -147,6 +167,11 @@ public class ModelInflater {
         return media;
     }
 
+    /**
+     * Inflate a team model from a single row of a cursor returned by a database query.
+     * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
+     * @return Team model containing the fields as defined in the cursor
+     */
     public static Team inflateTeam(Cursor data){
         Team team = new Team();
         for(int i=0; i<data.getColumnCount(); i++) {
@@ -178,6 +203,11 @@ public class ModelInflater {
         return team;
     }
 
+    /**
+     * Inflate an eventTeam model from a single row of a cursor returned by a database query.
+     * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
+     * @return EventTeam model containing the fields as defined in the cursor
+     */
     public static EventTeam inflateEventTeam(Cursor data){
         EventTeam eventTeam = new EventTeam();
         for(int i=0; i<data.getColumnCount(); i++){

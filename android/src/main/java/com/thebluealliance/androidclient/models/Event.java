@@ -463,10 +463,15 @@ public class Event extends BasicModel<Event> {
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Event updatedEvent;
                 if(StringUtils.countMatches(url, "/") == 6) {
-                    //event info request - inflate the event
+                    /* event info request - inflate the event
+                     * any other request will have an additional '/' in the URL
+                     * anybody got a better way to determine this?
+                     */
                     updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
                 }else{
-                    //it's some other data for the event. We can't inflate the model from it
+                    /* We're getting one of the other endpoints which don't contain event data.
+                     * Add them to the model based on which URL we hit
+                     */
                     updatedEvent = new Event();
                     EventHelper.addFieldByAPIUrl(updatedEvent, url, response.getData());
                 }
