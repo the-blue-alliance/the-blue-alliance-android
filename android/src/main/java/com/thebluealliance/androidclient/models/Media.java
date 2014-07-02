@@ -180,9 +180,9 @@ public class Media extends BasicModel<Media> {
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray mediaList = JSONManager.getasJsonArray(response.getData());
                 medias = new ArrayList<>();
-                for(JsonElement m: matchList){
+                for(JsonElement m: mediaList){
                     Media media = JSONManager.getGson().fromJson(m, Media.class);
                     media.setTeamKey(teamKey);
                     media.setYear(year);

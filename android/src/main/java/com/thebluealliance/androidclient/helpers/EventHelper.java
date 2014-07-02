@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.comparators.EventSortByTypeAndNameComparator;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -299,6 +298,7 @@ public class EventHelper {
     private static ArrayList<ListItem> renderEventListWithComparator(ArrayList<Event> events, Comparator<Event> comparator) {
         ArrayList<ListItem> eventListItems = new ArrayList<>();
         Collections.sort(events, comparator);
+        Log.e(Constants.LOG_TAG, "sorted: "+events.size());
         EventHelper.TYPE lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {

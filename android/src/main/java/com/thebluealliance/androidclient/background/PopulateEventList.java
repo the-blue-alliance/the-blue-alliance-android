@@ -17,11 +17,9 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * File created by phil on 4/20/14.
@@ -56,6 +54,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             throw new IllegalArgumentException("Fragment must not be null!");
         }
 
+        Log.e(Constants.LOG_TAG, "Starting populate");
 
         //first, let's generate the event week based on its header (event weeks aren't constant over the years)
         if (mHeader.equals("")) {
@@ -64,9 +63,13 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
         }
 
+        Log.e(Constants.LOG_TAG, "Week: "+mWeek);
+
         events = new ArrayList<>();
 
         APIResponse<ArrayList<Event>> response;
+
+        Log.w(Constants.LOG_TAG, "event list: "+mYear+" "+mWeek+" "+mTeamKey);
 
         if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
             // Return a list of all events for a year

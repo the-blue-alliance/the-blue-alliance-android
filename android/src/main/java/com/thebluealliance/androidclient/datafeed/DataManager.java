@@ -11,7 +11,6 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
-import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -92,11 +91,20 @@ public class DataManager {
             return new APIResponse<>(cursor, APIResponse.mergeCodes(teamListResponseCodes.toArray(a)));
         }
 
-        public static APIResponse<Team> getYearsParticipated(Context c, String teamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Integer>> getYearsParticipated(Context c, String teamKey, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_YEARS_PARTICIPATED), teamKey);
             String sqlWhere = Database.Teams.KEY + " = ?";
             String[] teamFields = new String[]{Database.Teams.KEY, Database.Teams.YEARS_PARTICIPATED};
-            return Team.query(c, loadFromCache, teamFields, sqlWhere, new String[]{teamKey}, new String[]{apiUrl});
+            APIResponse<Team> teamResponse = Team.query(c, loadFromCache, teamFields, sqlWhere, new String[]{teamKey}, new String[]{apiUrl});
+            ArrayList<Integer> years = new ArrayList<>();
+            try {
+                for(JsonElement year: teamResponse.getData().getYearsParticipated()){
+                    years.add(year.getAsInt());
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.w(Constants.DATAMANAGER_LOG, "Unable to fetch years participated");
+            }
+            return new APIResponse<>(years, teamResponse.getCode());
         }
 
         public static APIResponse<Event> getCurrentEventForTeam(Context c, String teamKey, boolean loadFromCache) throws NoDataException{
