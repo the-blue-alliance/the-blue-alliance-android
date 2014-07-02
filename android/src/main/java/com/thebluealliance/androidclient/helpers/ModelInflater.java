@@ -2,10 +2,7 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.database.Cursor;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
@@ -34,8 +31,7 @@ public class ModelInflater {
                     award.setYear(data.getInt(i));
                     break;
                 case Database.Awards.WINNERS:
-                    JsonArray winners = JSONManager.getasJsonArray(data.getString(i));
-                    award.setWinners(winners);
+                    award.setWinners(data.getString(i));
                     break;
                 default:
             }
@@ -81,20 +77,16 @@ public class ModelInflater {
                     event.setCompetitionWeek(data.getInt(i));
                     break;
                 case Database.Events.RANKINGS:
-                    JsonArray rankings = JSONManager.getasJsonArray(data.getString(i));
-                    event.setRankings(rankings);
+                    event.setRankings(data.getString(i));
                     break;
                 case Database.Events.ALLIANCES:
-                    JsonArray alliances = JSONManager.getasJsonArray(data.getString(i));
-                    event.setAlliances(alliances);
+                    event.setAlliances(data.getString(i));
                     break;
                 case Database.Events.STATS:
-                    JsonObject stats = JSONManager.getasJsonObject(data.getString(i));
-                    event.setStats(stats);
+                    event.setStats(data.getString(i));
                     break;
                 case Database.Events.TEAMS:
-                    JsonArray teams = JSONManager.getasJsonArray(data.getString(i));
-                    event.setTeams(teams);
+                    event.setTeams(data.getString(i));
                     break;
                 default:
             }
@@ -116,12 +108,10 @@ public class ModelInflater {
                     match.setTime(data.getLong(i));
                     break;
                 case Database.Matches.ALLIANCES:
-                    JsonObject alliances = JSONManager.getasJsonObject(data.getString(i));
-                    match.setAlliances(alliances);
+                    match.setAlliances(data.getString(i));
                     break;
                 case Database.Matches.VIDEOS:
-                    JsonArray videos = JSONManager.getasJsonArray(data.getString(i));
-                    match.setVideos(videos);
+                    match.setVideos(data.getString(i));
                     break;
                 case Database.Matches.MATCHNUM:
                     match.setMatchNumber(data.getInt(i));
@@ -149,8 +139,7 @@ public class ModelInflater {
                     media.setYear(data.getInt(i));
                     break;
                 case Database.Medias.DETAILS:
-                    JsonObject details = JSONManager.getasJsonObject(data.getString(i));
-                    media.setDetails(details);
+                    media.setDetails(data.getString(i));
                     break;
                 default:
             }
@@ -181,8 +170,7 @@ public class ModelInflater {
                     team.setWebsite(data.getString(i));
                     break;
                 case Database.Teams.YEARS_PARTICIPATED:
-                    JsonArray years = JSONManager.getasJsonArray(data.getString(i));
-                    team.setYearsParticipated(years);
+                    team.setYearsParticipated(data.getString(i));
                     break;
                 default:
             }

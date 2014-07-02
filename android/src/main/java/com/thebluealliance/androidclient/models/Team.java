@@ -18,8 +18,11 @@ import java.util.Arrays;
 
 public class Team extends BasicModel<Team> {
 
+    private JsonArray yearsParticipated;
+
     public Team() {
         super(Database.TABLE_TEAMS);
+        yearsParticipated = null;
     }
 
     public Team(String teamKey, int teamNumber, String nickname, String location) {
@@ -99,6 +102,7 @@ public class Team extends BasicModel<Team> {
 
     public void setYearsParticipated(JsonArray years){
         fields.put(Database.Teams.YEARS_PARTICIPATED, years.toString());
+        this.yearsParticipated = years;
     }
 
     public void setYearsParticipated(String yearsJson){
@@ -106,8 +110,12 @@ public class Team extends BasicModel<Team> {
     }
 
     public JsonArray getYearsParticipated() throws FieldNotDefinedException {
+        if(yearsParticipated != null){
+            return yearsParticipated;
+        }
         if(fields.containsKey(Database.Teams.YEARS_PARTICIPATED) && fields.get(Database.Teams.YEARS_PARTICIPATED) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
+            yearsParticipated = JSONManager.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
+            return yearsParticipated;
         }
         throw new FieldNotDefinedException("Field Database.Teams.YEARS_PARTICIPATED is not defined");
     }

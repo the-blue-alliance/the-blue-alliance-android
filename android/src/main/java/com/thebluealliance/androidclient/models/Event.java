@@ -31,22 +31,36 @@ import java.util.Date;
 public class Event extends BasicModel<Event> {
 
     private String shortName;
-    private JsonArray matches;
+    private JsonArray matches, alliances, rankings, webcasts, teams;
+    private JsonObject stats;
 
     public Event() {
         super(Database.TABLE_EVENTS);
         shortName = "";
+        alliances = null;
+        rankings = null;
+        webcasts = null;
+        stats = null;
     }
 
     public JsonArray getAlliances() throws FieldNotDefinedException{
+        if(alliances != null){
+            return alliances;
+        }
         if(fields.containsKey(Database.Events.ALLIANCES) && fields.get(Database.Events.ALLIANCES) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Events.ALLIANCES));
+            alliances = JSONManager.getasJsonArray((String) fields.get(Database.Events.ALLIANCES));
+            return alliances;
         }
         throw new FieldNotDefinedException("Field Database.Events.ALLIANCES is not defined");
     }
 
     public void setAlliances(JsonArray alliances) {
         fields.put(Database.Events.ALLIANCES, alliances.toString());
+        this.alliances = alliances;
+    }
+
+    public void setAlliances(String allianceJson){
+        fields.put(Database.Events.ALLIANCES, allianceJson);
     }
 
     public String getWebsite(){
@@ -73,36 +87,63 @@ public class Event extends BasicModel<Event> {
     }
 
     public JsonArray getRankings() throws FieldNotDefinedException{
+        if(rankings != null){
+            return rankings;
+        }
         if(fields.containsKey(Database.Events.RANKINGS) && fields.get(Database.Events.RANKINGS) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Events.RANKINGS));
+            rankings = JSONManager.getasJsonArray((String) fields.get(Database.Events.RANKINGS));
+            return rankings;
         }
         throw new FieldNotDefinedException("Field Database.Events.RANKINGS is not defined");
     }
 
     public void setRankings(JsonArray rankings) {
         fields.put(Database.Events.RANKINGS, rankings.toString());
+        this.rankings = rankings;
+    }
+
+    public void setRankings(String rankingsJson){
+        fields.put(Database.Events.RANKINGS, rankingsJson);
     }
 
     public JsonArray getWebcasts() throws FieldNotDefinedException{
+        if(webcasts != null){
+            return webcasts;
+        }
         if(fields.containsKey(Database.Events.WEBCASTS) && fields.get(Database.Events.WEBCASTS) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Events.WEBCASTS));
+            webcasts = JSONManager.getasJsonArray((String) fields.get(Database.Events.WEBCASTS));
+            return webcasts;
         }
         throw new FieldNotDefinedException("Field Database.Events.WEBCASTS is not defined");
     }
 
     public void setWebcasts(JsonArray webcasts) {
         fields.put(Database.Events.WEBCASTS, webcasts.toString());
+        this.webcasts = webcasts;
+    }
+
+    public void setWebcasts(String webcastJson){
+        fields.put(Database.Events.WEBCASTS, webcastJson);
     }
 
     public JsonObject getStats() throws FieldNotDefinedException{
+        if(stats != null){
+            return stats;
+        }
         if(fields.containsKey(Database.Events.STATS) && fields.get(Database.Events.STATS) instanceof String) {
-            return JSONManager.getasJsonObject((String) fields.get(Database.Events.STATS));
+            stats = JSONManager.getasJsonObject((String) fields.get(Database.Events.STATS));
+            return stats;
         }
         throw new FieldNotDefinedException("Field Database.Events.STATS is not defined");
     }
 
     public void setStats(JsonObject stats) {
         fields.put(Database.Events.STATS, stats.toString());
+        this.stats = stats;
+    }
+
+    public void setStats(String statsJson){
+        fields.put(Database.Events.STATS, statsJson);
     }
 
 
@@ -331,11 +372,20 @@ public class Event extends BasicModel<Event> {
 
     public void setTeams(JsonArray teams) {
         fields.put(Database.Events.TEAMS, teams.toString());
+        this.teams = teams;
+    }
+
+    public void setTeams(String teamsJson){
+        fields.put(Database.Events.TEAMS, teamsJson);
     }
 
     public JsonArray getTeams() throws FieldNotDefinedException {
+        if(teams != null){
+            return teams;
+        }
         if(fields.containsKey(Database.Events.TEAMS) && fields.get(Database.Events.TEAMS) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Events.TEAMS));
+            teams = JSONManager.getasJsonArray((String) fields.get(Database.Events.TEAMS));
+            return teams;
         }
         throw new FieldNotDefinedException("Field Database.Events.TEAMS is not defined");
     }

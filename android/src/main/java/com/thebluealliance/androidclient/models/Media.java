@@ -52,8 +52,11 @@ public class Media extends BasicModel<Media> {
         }
     }
 
+    private JsonObject details;
+
     public Media() {
         super(Database.TABLE_MEDIAS);
+        details = null;
     }
 
     public Media.TYPE getMediaType() throws FieldNotDefinedException {
@@ -94,14 +97,23 @@ public class Media extends BasicModel<Media> {
     }
 
     public JsonObject getDetails() throws FieldNotDefinedException{
+        if(details != null){
+            return details;
+        }
         if(fields.containsKey(Database.Medias.DETAILS) && fields.get(Database.Medias.DETAILS) instanceof String) {
-            return JSONManager.getasJsonObject((String) fields.get(Database.Medias.DETAILS));
+            details = JSONManager.getasJsonObject((String) fields.get(Database.Medias.DETAILS));
+            return details;
         }
         throw new FieldNotDefinedException("Field Database.Medias.TEAMKEY is not defined");
     }
 
     public void setDetails(JsonObject details){
         fields.put(Database.Medias.DETAILS, details.toString());
+        this.details = details;
+    }
+
+    public void setDetails(String detailsJson){
+        fields.put(Database.Medias.DETAILS, detailsJson);
     }
 
     public int getYear() throws FieldNotDefinedException{

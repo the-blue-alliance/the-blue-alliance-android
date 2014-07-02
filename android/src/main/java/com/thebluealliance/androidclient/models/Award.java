@@ -20,8 +20,11 @@ import java.util.Arrays;
 
 public class Award extends BasicModel<Award> {
 
+    private JsonArray winners;
+
     public Award() {
         super(Database.TABLE_AWARDS);
+        winners = null;
     }
     public Award(String eventKey, String name, int year, JsonArray winners) {
         this();
@@ -36,14 +39,23 @@ public class Award extends BasicModel<Award> {
     }
 
     public JsonArray getWinners() throws FieldNotDefinedException{
+        if(winners != null){
+            return winners;
+        }
         if(fields.containsKey(Database.Awards.WINNERS) && fields.get(Database.Awards.WINNERS) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
+            winners = JSONManager.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
+            return winners;
         }
         throw new FieldNotDefinedException("Field Database.Awards.WINNERS is not defined");
     }
 
     public void setWinners(JsonArray winners) {
         fields.put(Database.Awards.WINNERS, winners.toString());
+        this.winners = winners;
+    }
+
+    public void setWinners(String winnersJson){
+        fields.put(Database.Awards.WINNERS, winnersJson);
     }
 
     public int getYear() throws FieldNotDefinedException{

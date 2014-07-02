@@ -27,11 +27,15 @@ public class Match extends BasicModel<Match> {
     private String selectedTeam;
     private int year;
     private MatchHelper.TYPE type;
+    private JsonObject alliances;
+    private JsonArray videos;
 
     public Match() {
         super(Database.TABLE_MATCHES);
         year = -1;
         type = MatchHelper.TYPE.NONE;
+        alliances = null;
+        videos = null;
     }
 
     public Match(String key, MatchHelper.TYPE type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonArray videos, long last_updated) {
@@ -104,25 +108,43 @@ public class Match extends BasicModel<Match> {
     }
 
     public JsonObject getAlliances() throws FieldNotDefinedException{
+        if(alliances != null){
+            return alliances;
+        }
         if(fields.containsKey(Database.Matches.ALLIANCES) && fields.get(Database.Matches.ALLIANCES) instanceof String) {
-            return JSONManager.getasJsonObject((String) fields.get(Database.Matches.ALLIANCES));
+            alliances = JSONManager.getasJsonObject((String) fields.get(Database.Matches.ALLIANCES));
+            return alliances;
         }
         throw new FieldNotDefinedException("Field Database.Matches.ALLIANCES is not defined");
     }
 
     public void setAlliances(JsonObject alliances) {
         fields.put(Database.Matches.ALLIANCES, alliances.toString());
+        this.alliances = alliances;
+    }
+
+    public void setAlliances(String allianceJson){
+        fields.put(Database.Matches.ALLIANCES, allianceJson);
     }
 
     public JsonArray getVideos() throws FieldNotDefinedException{
+        if(videos != null){
+            return videos;
+        }
         if(fields.containsKey(Database.Matches.VIDEOS) && fields.get(Database.Matches.VIDEOS) instanceof String) {
-            return JSONManager.getasJsonArray((String) fields.get(Database.Matches.VIDEOS));
+            videos = JSONManager.getasJsonArray((String) fields.get(Database.Matches.VIDEOS));
+            return videos;
         }
         throw new FieldNotDefinedException("Field Database.Matches.VIDEOS is not defined");
     }
 
     public void setVideos(JsonArray videos) {
         fields.put(Database.Matches.VIDEOS, videos.toString());
+        this.videos = videos;
+    }
+
+    public void setVideos(String videosJson){
+        fields.put(Database.Matches.VIDEOS, videosJson);
     }
 
     public int getYear() throws FieldNotDefinedException{
