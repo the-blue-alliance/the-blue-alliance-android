@@ -20,7 +20,7 @@ public class EventTypeHeader extends ListHeader {
     public View getView(Context c, LayoutInflater inflater, View convertView) {
         ViewHolder holder;
         if(convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
-            convertView = inflater.inflate(R.layout.event_type_header, null);
+            convertView = inflater.inflate(R.layout.list_item_event_type_header, null);
             holder = new ViewHolder();
             holder.text = (TextView) convertView.findViewById(R.id.event_type);
             convertView.setTag(holder);
