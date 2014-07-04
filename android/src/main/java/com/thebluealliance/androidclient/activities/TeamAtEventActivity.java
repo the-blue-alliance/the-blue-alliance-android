@@ -57,10 +57,13 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = view.findViewById(R.id.match_title).getTag().toString();
-                startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
+                if (view.findViewById(R.id.match_title) != null) {
+                    String matchKey = view.findViewById(R.id.match_title).getTag().toString();
+                    startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
+                    return true;
+                }
 
-                return true;
+                return false;
             }
         });
         warningMessage = (TextView) findViewById(R.id.warning_container);
