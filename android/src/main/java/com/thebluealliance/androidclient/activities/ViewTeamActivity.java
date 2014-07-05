@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -18,6 +17,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -99,6 +99,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
         pager = (ViewPager) findViewById(R.id.view_pager);
         pager.setOffscreenPageLimit(3);
+        pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
         // We will notify the fragments of the year later
         pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey));
         pager.setOnPageChangeListener(this);
@@ -175,17 +176,13 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            if(isDrawerOpen()) {
+            if (isDrawerOpen()) {
                 closeDrawer();
                 return true;
             }
-            Intent upIntent = NavUtils.getParentActivityIntent(this);
-            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
-            } else {
-                Log.d(Constants.LOG_TAG, "Navigating up...");
-                NavUtils.navigateUpTo(this, upIntent);
-            }
+
+            // We recreate the back stack every time so we can assure that "up" goes to the teams view
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
             return true;
         }
         return super.onOptionsItemSelected(item);

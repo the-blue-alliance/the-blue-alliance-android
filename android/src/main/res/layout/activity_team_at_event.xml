@@ -41,7 +41,7 @@
                     android:background="#c0c0c0"
                     android:layout_below="@id/matches_header" />
             </RelativeLayout>
-            <ExpandableListView
+            <com.thebluealliance.androidclient.views.ExpandableListView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:id="@+id/results" />

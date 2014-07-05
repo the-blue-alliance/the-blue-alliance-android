@@ -54,6 +54,7 @@ public class EventsByWeekFragment extends Fragment {
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         final Context c = getActivity();
         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
+        mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
         tabs.setViewPager(mViewPager);
         int currentWeek = EventHelper.competitionWeek(new Date());
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);

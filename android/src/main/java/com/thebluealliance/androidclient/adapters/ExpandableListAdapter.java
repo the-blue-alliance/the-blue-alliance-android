@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -88,8 +88,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.expandable_list_group, null);
         }
         ListGroup group = (ListGroup) getGroup(groupPosition);
-        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setText(group.string);
-        ((CheckedTextView) convertView.findViewById(R.id.matchlist_group)).setChecked(isExpanded);
+        ((TextView) convertView.findViewById(R.id.group_name)).setText(group.string);
 
         return convertView;
     }

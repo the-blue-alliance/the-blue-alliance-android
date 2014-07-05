@@ -56,7 +56,6 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View info = inflater.inflate(R.layout.fragment_event_info, null);
         info.findViewById(R.id.event_venue_container).setOnClickListener(this);
-        info.findViewById(R.id.event_location_container).setOnClickListener(this);
         info.findViewById(R.id.event_website_button).setOnClickListener(this);
         info.findViewById(R.id.event_twitter_button).setOnClickListener(this);
         info.findViewById(R.id.event_youtube_button).setOnClickListener(this);
@@ -101,7 +100,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             ((ViewEventActivity) getActivity()).getPager().setCurrentItem(4);
             return;
         }
-        if (v.getTag() != null) {
+        if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
             PackageManager manager = getActivity().getPackageManager();
             String uri = v.getTag().toString();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));

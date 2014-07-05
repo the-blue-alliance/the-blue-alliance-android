@@ -3,18 +3,16 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
@@ -54,6 +52,7 @@ public class ViewEventActivity extends RefreshableHostActivity {
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
         pager.setOffscreenPageLimit(5);
+        pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
@@ -87,17 +86,12 @@ public class ViewEventActivity extends RefreshableHostActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            if(isDrawerOpen()) {
+            if (isDrawerOpen()) {
                 closeDrawer();
                 return true;
             }
-            Intent upIntent = NavUtils.getParentActivityIntent(this);
-            if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();
-            } else {
-                Log.d(Constants.LOG_TAG, "Navigating up...");
-                NavUtils.navigateUpTo(this, upIntent);
-            }
+            // We recreate the back stack every time so we can assure that "up" goes to the events view
+            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();
             return true;
         }
         return super.onOptionsItemSelected(item);

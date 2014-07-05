@@ -8,8 +8,7 @@
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:scrollbarStyle="outsideInset"/>
+        android:layout_height="wrap_content" />
 
     <ProgressBar android:id="@+id/progress"
         style="?android:attr/progressBarStyleLarge"

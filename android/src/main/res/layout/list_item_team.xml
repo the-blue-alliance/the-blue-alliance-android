@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/team_number"
+        android:layout_toLeftOf="@+id/team_info"
         android:orientation="vertical">
 
         <TextView
@@ -30,7 +31,8 @@
             android:layout_height="wrap_content"
             android:text="Teh Chezy Pofs"
             android:textSize="16sp"
-            android:textStyle="normal" />
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/team_location"
@@ -42,10 +44,9 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/team_info"
-        style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
+        android:id="@id/team_info"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"

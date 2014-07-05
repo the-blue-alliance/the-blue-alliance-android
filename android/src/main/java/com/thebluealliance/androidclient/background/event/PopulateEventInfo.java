@@ -59,36 +59,35 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPreExecute(); // reset event settings
         showLastMatch = showNextMatch = showRanks = showStats = false;
         activity.showMenuProgressBar();
+
+        View view = mFragment.getView();
+        eventName = (TextView) view.findViewById(R.id.event_name);
+        eventDate = (TextView) view.findViewById(R.id.event_date);
+        eventLoc = (TextView) view.findViewById(R.id.event_location);
+        eventVenue = (TextView) view.findViewById(R.id.event_venue);
+        nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
+        lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
+        topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
+        topOpr = (LinearLayout) view.findViewById(R.id.event_top_opr_container);
     }
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
-        View view = mFragment.getView();
-        // Initialize the views.
-
         APIResponse<Event> eventResponse = new APIResponse<>(null, APIResponse.CODE.NODATA);
         APIResponse<ArrayList<JsonArray>> rankResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
         APIResponse<JsonObject> statsResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
         APIResponse<ArrayList<Match>> matchResult = new APIResponse<>(null, APIResponse.CODE.CACHED304);
 
-        if (view != null && activity != null && eventKey != null) {
-            eventName = (TextView) view.findViewById(R.id.event_name);
-            eventDate = (TextView) view.findViewById(R.id.event_date);
-            eventLoc = (TextView) view.findViewById(R.id.event_location);
-            eventVenue = (TextView) view.findViewById(R.id.event_venue);
-            nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
-            lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
-            topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
-            topOpr = (LinearLayout) view.findViewById(R.id.event_top_opr_container);
+        if (activity != null && eventKey != null) {
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
                 eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
                 event = eventResponse.getData();
                 //return response.getCode();
-                if(isCancelled()){
+                if (isCancelled()) {
                     return APIResponse.CODE.NODATA;
                 }
             } catch (DataManager.NoDataException e) {
@@ -110,12 +109,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
                         rankString += ((i) + ". " + rankList.get(i).get(1).getAsString());
-                        if(i < Math.min(6, rankList.size()) - 1) {
+                        if (i < Math.min(6, rankList.size()) - 1) {
                             rankString += "\n";
                         }
                     }
                     ranks.setText(rankString);
-                    if(isCancelled()){
+                    if (isCancelled()) {
                         return APIResponse.CODE.NODATA;
                     }
                 } catch (DataManager.NoDataException e) {
@@ -140,7 +139,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         String statsString = "";
                         for (int i = 0; i < Math.min(5, opr.size()); i++) {
                             statsString += (i + 1) + ". " + opr.get(i).getKey();
-                            if(i < Math.min(5, opr.size()) - 1) {
+                            if (i < Math.min(5, opr.size()) - 1) {
                                 statsString += "\n";
                             }
                         }
@@ -148,7 +147,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     } else {
                         showStats = false;
                     }
-                    if(isCancelled()){
+                    if (isCancelled()) {
                         return APIResponse.CODE.NODATA;
                     }
                 } catch (DataManager.NoDataException e) {
@@ -175,7 +174,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showLastMatch = true;
                         last = lastMatch.render().getView(activity, inflater, null);
                     }
-                    if(isCancelled()){
+                    if (isCancelled()) {
                         return APIResponse.CODE.NODATA;
                     }
                 } catch (DataManager.NoDataException e) {
@@ -183,14 +182,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     return APIResponse.CODE.NODATA;
                 }
             }
-
-            // setup social media intents
-            view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + event.getVenue().replace(" ", "+"));
-            view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
-            view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
-            view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
-            view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
-            view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
         }
 
         return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), matchResult.getCode(), statsResponse.getCode());
@@ -210,22 +201,17 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             } else {
                 eventDate.setText(event.getDateString());
             }
-            if (event.getVenue().isEmpty() &&
-                activity.findViewById(R.id.event_venue_container) != null){
+
+            // Show a venue if it is available, otherwise show just the location. If neither is available, hide
+            if (!event.getVenue().isEmpty()) {
+                eventVenue.setText(event.getVenue());
+            } else if (!event.getLocation().isEmpty()) {
+                eventVenue.setText(event.getLocation());
+            } else {
+                eventVenue.setText(R.string.no_location_available);
                 activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
             }
-            else{
-                eventVenue.setText(event.getVenue());
-                if (activity.findViewById(R.id.event_location_container) != null) {
-                    activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
-                }
-            }
-            if (event.getLocation().isEmpty() &&
-                    activity.findViewById(R.id.event_location_container) != null) {
-                activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
-            } else {
-                eventLoc.setText(event.getLocation());
-            }
+
             if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);
                 if (nextLayout.getChildCount() > 1) {
@@ -233,6 +219,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
                 nextLayout.addView(next);
             }
+
             if (showLastMatch) {
                 lastLayout.setVisibility(View.VISIBLE);
                 if (lastLayout.getChildCount() > 1) {
@@ -256,13 +243,45 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 topOpr.addView(stats);
             }
 
+            // setup social media intents
+            View view = mFragment.getView();
+            if (view != null) {
+                // Default to showing the nav arrow in the venue view and the venue view being clickable
+                // We need to set these again even though they're defined in XML in case we gain a location
+                // or venue on a refresh and we're reusing the same view.
+                view.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.VISIBLE);
+                view.setFocusable(true);
+                view.setClickable(true);
+
+                if (!event.getVenue().isEmpty()) {
+                    // Set the tag to the event venue if it is available
+                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + event.getVenue().replace(" ", "+"));
+                } else if (!event.getLocation().isEmpty()) {
+                    // Otherwise, use the location
+                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
+                } else {
+                    // If neither location nor venue are available, hide the nav arrow, remove the tag,
+                    // and set the view to not clickable so the user cannot interact with it.
+                    // It will contain the text "No location available".
+                    view.findViewById(R.id.event_venue_container).setTag(null);
+                    view.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.GONE);
+                    view.setFocusable(false);
+                    view.setClickable(false);
+                }
+
+                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
+                view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
+                view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
+                view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
+            }
+
             // Display warning if offline.
             if (c == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
 
             // Remove progress spinner and show info, since we're done loading the data.
-            View view = mFragment.getView();
+            view = mFragment.getView();
             if (view != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
