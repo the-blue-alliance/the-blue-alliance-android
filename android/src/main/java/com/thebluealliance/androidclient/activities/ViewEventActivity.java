@@ -3,13 +3,16 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -90,8 +93,13 @@ public class ViewEventActivity extends RefreshableHostActivity {
                 closeDrawer();
                 return true;
             }
-            // We recreate the back stack every time so we can assure that "up" goes to the events view
-            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();
+            } else {
+                Log.d(Constants.LOG_TAG, "Navigating up...");
+                NavUtils.navigateUpTo(this, upIntent);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);

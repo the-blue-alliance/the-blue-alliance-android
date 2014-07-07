@@ -2,57 +2,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activities.TeamAtEventActivity">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/content_view"
-            android:visibility="gone"
-            android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/content_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-            <RelativeLayout
+        <RelativeLayout
+            android:id="@+id/status_message"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_marginTop="16dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/team_at_event_info">
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:text="No data available."/>
+        </RelativeLayout>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:id="@+id/team_record" />
+        <com.thebluealliance.androidclient.views.ExpandableListView
+            android:id="@+id/results"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </LinearLayout>
 
-                <TextView
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@id/team_record"
-                    android:text="@string/match_results_header"
-                    android:id="@+id/matches_header" />
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:background="#c0c0c0"
-                    android:layout_below="@id/matches_header" />
-            </RelativeLayout>
-            <com.thebluealliance.androidclient.views.ExpandableListView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/results" />
-        </LinearLayout>
-    <ProgressBar style="?android:attr/progressBarStyleLarge"
+    <ProgressBar
+        android:id="@+id/team_at_event_progress"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:id="@+id/team_at_event_progress"
-        android:visibility="visible"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:visibility="visible" />
+
     <TextView
         android:id="@+id/warning_container"
         style="@style/ActivityWarningStyle"
