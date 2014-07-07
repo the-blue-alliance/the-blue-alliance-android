@@ -458,6 +458,7 @@ public class Event extends BasicModel<Event> {
         Event event;
         if(cursor != null && cursor.moveToFirst()){
             event = ModelInflater.inflateEvent(cursor);
+            cursor.close();
         }else{
             event = new Event();
         }
@@ -502,6 +503,7 @@ public class Event extends BasicModel<Event> {
             do{
                 events.add(ModelInflater.inflateEvent(cursor));
             }while(cursor.moveToNext());
+            cursor.close();
         }
 
         APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;

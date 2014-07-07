@@ -95,6 +95,7 @@ public class EventTeam extends BasicModel<EventTeam> {
             do {
                 eventTeams.add(ModelInflater.inflateEventTeam(cursor));
             } while (cursor.moveToNext());
+            cursor.close();
         }
 
 

@@ -367,6 +367,7 @@ public class Match extends BasicModel<Match> {
         Match match;
         if(cursor != null && cursor.moveToFirst()){
             match = ModelInflater.inflateMatch(cursor);
+            cursor.close();
         }else{
             match = new Match();
         }
@@ -409,25 +410,37 @@ public class Match extends BasicModel<Match> {
         return new APIResponse<>(match, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<Match> matches = new ArrayList<>();
+        ArrayList<Match> matches = new ArrayList<>(), allMatches = new ArrayList<>();
         if(cursor != null && cursor.moveToFirst()){
             do{
                 matches.add(ModelInflater.inflateMatch(cursor));
             }while(cursor.moveToNext());
+            cursor.close();
         }
 
         APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
-        boolean changed = false;
+        boolean changed = false, teamSet = teamKey != null && !teamKey.isEmpty();
         for(String url: apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
                 matches = new ArrayList<>();
+                allMatches = new ArrayList<>();
                 for(JsonElement m: matchList){
-                    matches.add(JSONManager.getGson().fromJson(m, Match.class));
+                    Match match = JSONManager.getGson().fromJson(m, Match.class);
+                    try {
+                        if(teamSet && match.getAlliances().toString().contains(teamKey)){
+                            matches.add(match);
+                        }else{
+                            allMatches.add(match);
+                        }
+                    } catch (FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Unable to determine if team: "+teamKey+" is involved in match");
+                        allMatches.add(match);
+                    }
                 }
                 changed = true;
             }
@@ -435,7 +448,8 @@ public class Match extends BasicModel<Match> {
         }
 
         if(changed){
-            Database.getInstance(c).getMatchesTable().add(matches);
+            allMatches.addAll(matches);
+            Database.getInstance(c).getMatchesTable().add(allMatches);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found "+matches.size()+" matches, updated in db? "+changed);
         return new APIResponse<>(matches, code);

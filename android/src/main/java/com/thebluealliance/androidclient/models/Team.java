@@ -157,6 +157,7 @@ public class Team extends BasicModel<Team> {
         Team team;
         if(cursor != null && cursor.moveToFirst()){
             team = ModelInflater.inflateTeam(cursor);
+            cursor.close();
         }else{
             team = new Team();
         }

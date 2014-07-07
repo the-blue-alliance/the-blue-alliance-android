@@ -111,6 +111,7 @@ public class Award extends BasicModel<Award> {
         Award award;
         if(cursor != null && cursor.moveToFirst()){
             award = ModelInflater.inflateAward(cursor);
+            cursor.close();
         }else{
             award = new Award();
         }
@@ -134,25 +135,40 @@ public class Award extends BasicModel<Award> {
         return new APIResponse<>(award, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: "+whereClause+ Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<Award> awards = new ArrayList<>();
+        ArrayList<Award> awards = new ArrayList<>(), allAwards = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 awards.add(ModelInflater.inflateAward(cursor));
             } while (cursor.moveToNext());
+            cursor.close();
         }
 
         APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
+        boolean changed = false, teamSet = teamKey != null && !teamKey.isEmpty();
+        String teamNumber = "";
+        if(teamSet){
+            teamNumber = teamKey.substring(3);
+        }
         for (String url : apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray awardList = JSONManager.getasJsonArray(response.getData());
                 awards = new ArrayList<>();
                 for (JsonElement a : awardList) {
-                    awards.add(JSONManager.getGson().fromJson(a, Award.class));
+                    Award award = JSONManager.getGson().fromJson(a, Award.class);
+                    try {
+                        if(teamSet && award.getWinners().toString().contains(teamNumber)){
+                            awards.add(award);
+                        }else{
+                            allAwards.add(award);
+                        }
+                    } catch (FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Unable to determine if team: "+teamKey+" is involved in award");
+                        allAwards.add(award);
+                    }
                 }
                 changed = true;
             }
@@ -160,7 +176,8 @@ public class Award extends BasicModel<Award> {
         }
 
         if (changed) {
-            Database.getInstance(c).getAwardsTable().add(awards);
+            allAwards.addAll(awards);
+            Database.getInstance(c).getAwardsTable().add(allAwards);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found "+awards.size()+" awards, updated in db? "+changed);
         return new APIResponse<>(awards, code);

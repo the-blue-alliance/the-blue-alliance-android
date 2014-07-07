@@ -145,9 +145,9 @@ public class DataManager {
 
         public static APIResponse<ArrayList<Match>> getMatchesForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             APIResponse<ArrayList<Match>> output;
-            String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_MATCHES), teamKey, eventKey);
+            String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.EVENT + " = ? AND " + Database.Matches.ALLIANCES + " LIKE ? ";
-            output = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, "%" + teamKey + "%"}, new String[]{apiUrl});
+            output = Match.queryList(c, loadFromCache, teamKey, null, sqlWhere, new String[]{eventKey, "%" + teamKey + "%"}, new String[]{apiUrl});
             Collections.sort(output.getData(), new MatchSortByDisplayOrderComparator());
             return output;
         }
@@ -155,7 +155,7 @@ public class DataManager {
         public static APIResponse<ArrayList<Award>> getAwardsForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_EVENT_AWARDS), teamKey, eventKey);
             String sqlWhere = Database.Awards.EVENTKEY + " = ? AND " + Database.Awards.WINNERS + " LIKE ? ";
-            return Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey, "%" + teamKey.substring(3) + "%"}, new String[]{apiUrl});
+            return Award.queryList(c, loadFromCache, teamKey, null, sqlWhere, new String[]{eventKey, "%" + teamKey.substring(3) + "%"}, new String[]{apiUrl});
         }
 
         public static APIResponse<ArrayList<Media>> getTeamMedia(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
@@ -265,7 +265,7 @@ public class DataManager {
 
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.EVENT + " = ?";
-            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Match match : matchResponse.getData()) {
                 try {
                     results.get(match.getType()).add(match);
@@ -286,7 +286,7 @@ public class DataManager {
 
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.EVENT + " = ?";
-            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             Log.d(Constants.LOG_TAG, "Found " + matchResponse.getData().size() + " matches");
             for (Match match : matchResponse.getData()) {
                 try {
@@ -349,7 +349,7 @@ public class DataManager {
             Log.d("event awards", "Fetching awards for " + eventKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_AWARDS), eventKey);
             String sqlWhere = Database.Awards.EVENTKEY + " = ?";
-            APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, loadFromCache, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, loadFromCache, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Award award : awardResponse.getData()) {
                 try {
                     if (award.getWinners().toString().contains(teamKey.isEmpty() ? "" : teamKey.substring(3) + ",")) {

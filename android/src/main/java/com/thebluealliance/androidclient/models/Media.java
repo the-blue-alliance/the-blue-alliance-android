@@ -154,6 +154,7 @@ public class Media extends BasicModel<Media> {
         Media media;
         if(cursor != null && cursor.moveToFirst()){
             media = ModelInflater.inflateMedia(cursor);
+            cursor.close();
         }else{
             media = new Media();
         }
@@ -185,6 +186,7 @@ public class Media extends BasicModel<Media> {
             do{
                 medias.add(ModelInflater.inflateMedia(cursor));
             }while(cursor.moveToNext());
+            cursor.close();
         }
 
         APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
