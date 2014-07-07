@@ -410,6 +410,11 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public void delete(String where, String[] whereArgs){
+            safeDelete(TABLE_TEAMS, where, whereArgs);
+            safeDelete(TABLE_SEARCH_TEAMS, where.replace(KEY, SearchTeam.KEY), whereArgs);
+        }
+
         public ArrayList<Team> getInRange(int lowerBound, int upperBound, String[] fields) {
             ArrayList<Team> teams = new ArrayList<>();
             // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
@@ -558,6 +563,11 @@ public class Database extends SQLiteOpenHelper {
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete event without Database.Events.KEY");
             }
+        }
+
+        public void delete(String where, String[] whereArgs){
+            safeDelete(TABLE_EVENTS, where, whereArgs);
+            safeDelete(TABLE_SEARCH_EVENTS, where.replace(KEY, SearchEvent.KEY), whereArgs);
         }
 
         public int update(Event event) {

@@ -103,9 +103,9 @@ public class EventTeam extends BasicModel<EventTeam> {
         for (String url : apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray eventList = JSONManager.getasJsonArray(response.getData());
                 eventTeams = new ArrayList<>();
-                for (JsonElement m : matchList) {
+                for (JsonElement m : eventList) {
                     Event e = JSONManager.getGson().fromJson(m, Event.class);
                     events.add(e);
                     try {
@@ -126,5 +126,24 @@ public class EventTeam extends BasicModel<EventTeam> {
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events and, updated in db? " + changed);
         return new APIResponse<>(eventTeams, code);
+    }
+
+    public static synchronized void store(Context c, String data, String teamKey){
+        JsonArray eventList = JSONManager.getasJsonArray(data);
+        ArrayList<EventTeam> eventTeams = new ArrayList<>();
+        ArrayList<Event> events = new ArrayList<>();
+        for (JsonElement m : eventList) {
+            Event e = JSONManager.getGson().fromJson(m, Event.class);
+            events.add(e);
+            try {
+                EventTeam et = EventTeamHelper.fromEvent(teamKey, e);
+                eventTeams.add(et);
+            } catch (FieldNotDefinedException e1) {
+                Log.e(Constants.LOG_TAG, "Couldn't make eventTeam from event");
+            }
+        }
+
+        Database.getInstance(c).getEventTeamsTable().add(eventTeams);
+        Database.getInstance(c).getEventsTable().storeEvents(events);
     }
 }

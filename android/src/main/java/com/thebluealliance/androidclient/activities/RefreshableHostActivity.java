@@ -6,6 +6,9 @@ import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.APIRequest;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
+    private ArrayList<APIRequest> mApiRequests = new ArrayList<>();
 
     private Menu mOptionsMenu;
 
@@ -77,6 +81,20 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         }
     }
 
+    public synchronized void registerApiQuery(APIRequest... requests){
+        for(APIRequest request: requests) {
+            if (request != null && mApiRequests.contains(request)) {
+                mApiRequests.add(request);
+            }
+        }
+    }
+
+    public synchronized void deregisterApiQuery(APIRequest request){
+        if(request != null && mApiRequests.contains(request)){
+            mApiRequests.remove(request);
+        }
+    }
+
     /*
     This can be overridden by child classes to check whether or not a refresh should take place.
     For example, this might return false if there is no network connection and a network connection
@@ -123,19 +141,24 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     Notifies all registered listeners that they should start their refresh.
      */
     public void startRefresh() {
-        if (mRefreshInProgress) {
+        if (mRefreshInProgress || mApiRequests.isEmpty()) {
             //if a refresh is already happening, don't start another
+            //or, if there aren't any registered URLs to update
             return;
         }
+        showMenuProgressBar();
+    }
+
+    public void notifyRefreshListeners(){
         Log.d(Constants.LOG_TAG, "Refresh listeners: " + mRefreshListeners.size());
         mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
+            hideMenuProgressBar();
             return;
         }
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }
-        showMenuProgressBar();
     }
 
     /*

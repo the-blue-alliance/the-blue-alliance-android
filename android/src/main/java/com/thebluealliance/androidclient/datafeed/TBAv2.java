@@ -6,7 +6,10 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.apache.http.Header;
@@ -20,10 +23,8 @@ import java.util.HashMap;
 public class TBAv2 {
 
     public static enum QUERY {
-        CSV_TEAMS,
         TEAM_LIST,
         TEAM,
-        TEAM_YEAR,
         TEAM_EVENTS,
         TEAM_EVENT_AWARDS,
         TEAM_EVENT_MATCHES,
@@ -33,27 +34,25 @@ public class TBAv2 {
         EVENT_INFO,
         EVENT_TEAMS,
         EVENT_MATCHES,
-        EVENT_MATCHES_FOR_TEAM,
         EVENT_STATS,
         EVENT_RANKS,
         EVENT_AWARDS
     }
 
-    public static final HashMap<QUERY, String> API_URL;
+    public static final HashMap<QUERY, String> API_URL, API_WHERE;
 
     static {
         API_URL = new HashMap<>();
-        API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
-        API_URL.put(QUERY.TEAM_LIST, "http://www.thebluealliance.com/api/v2/teams/%s");
+        API_WHERE = new HashMap<>();
 
+        /* TBA API URLs per endpoint */
+        API_URL.put(QUERY.TEAM_LIST, "http://www.thebluealliance.com/api/v2/teams/%s");
         API_URL.put(QUERY.TEAM, "http://www.thebluealliance.com/api/v2/team/%s");
-        API_URL.put(QUERY.TEAM_YEAR, "http://www.thebluealliance.com/api/v2/team/%s/%d");
         API_URL.put(QUERY.TEAM_EVENTS, "http://www.thebluealliance.com/api/v2/team/%s/%d/events");
         API_URL.put(QUERY.TEAM_EVENT_AWARDS, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/awards");
         API_URL.put(QUERY.TEAM_EVENT_MATCHES, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/matches");
         API_URL.put(QUERY.TEAM_YEARS_PARTICIPATED, "http://www.thebluealliance.com/api/v2/team/%s/years_participated");
         API_URL.put(QUERY.TEAM_MEDIA, "http://www.thebluealliance.com/api/v2/team/%s/%d/media");
-
         API_URL.put(QUERY.EVENT_INFO, "http://www.thebluealliance.com/api/v2/event/%s");
         API_URL.put(QUERY.EVENT_TEAMS, "http://www.thebluealliance.com/api/v2/event/%s/teams");
         API_URL.put(QUERY.EVENT_RANKS, "http://www.thebluealliance.com/api/v2/event/%s/rankings");
@@ -61,6 +60,22 @@ public class TBAv2 {
         API_URL.put(QUERY.EVENT_STATS, "http://www.thebluealliance.com/api/v2/event/%s/stats");
         API_URL.put(QUERY.EVENT_AWARDS, "http://www.thebluealliance.com/api/v2/event/%s/awards");
         API_URL.put(QUERY.EVENT_LIST, "http://www.thebluealliance.com/api/v2/events/%d");
+
+        /* SQL Where Clauses that will get all records affected by each query */
+        API_WHERE.put(QUERY.TEAM_LIST, Database.Teams.NUMBER + " BETWEEN ? AND ?");
+        API_WHERE.put(QUERY.TEAM, Database.Teams.KEY + " = ?");
+        API_WHERE.put(QUERY.TEAM_EVENTS, Database.EventTeams.TEAMKEY + " = ? AND " + Database.EventTeams.YEAR + " = ?");
+        API_WHERE.put(QUERY.TEAM_EVENT_AWARDS, Database.Awards.EVENTKEY + " = ? AND " + Database.Awards.WINNERS + " LIKE ? ");
+        API_WHERE.put(QUERY.TEAM_EVENT_MATCHES, Database.Matches.EVENT + " = ? AND " + Database.Matches.ALLIANCES + " LIKE ? ");
+        API_WHERE.put(QUERY.TEAM_YEARS_PARTICIPATED, Database.Teams.KEY + " = ?");
+        API_WHERE.put(QUERY.TEAM_MEDIA, Database.Medias.TEAMKEY + " = ? AND " + Database.Medias.YEAR + " = ?");
+        API_WHERE.put(QUERY.EVENT_INFO, Database.Events.KEY + " = ?");
+        API_WHERE.put(QUERY.EVENT_TEAMS, Database.Events.KEY + " = ?");
+        API_WHERE.put(QUERY.EVENT_RANKS, Database.Events.KEY + " = ?");
+        API_WHERE.put(QUERY.EVENT_MATCHES, Database.Matches.EVENT + " = ?");
+        API_WHERE.put(QUERY.EVENT_STATS, Database.Events.KEY + " = ?");
+        API_WHERE.put(QUERY.EVENT_AWARDS, Database.Awards.EVENTKEY + " = ?");
+        API_WHERE.put(QUERY.EVENT_LIST, Database.Events.YEAR + " = ?");
     }
 
     public static ArrayList<Event> getEventList(String json) {
@@ -81,8 +96,31 @@ public class TBAv2 {
         return teams;
     }
 
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {
-        return getResponseFromURLOrThrow(c, URL, true, forceFromCache);
+    public static ArrayList<Award> getAwardList(String json){
+        ArrayList<Award> awards = new ArrayList<>();
+        JsonArray data = JSONManager.getasJsonArray(json);
+        for (JsonElement a: data){
+            awards.add(JSONManager.getGson().fromJson(a, Award.class));
+        }
+        return awards;
+    }
+
+    public static ArrayList<Match> getMatchList(String json){
+        ArrayList<Match> matches = new ArrayList<>();
+        JsonArray data = JSONManager.getasJsonArray(json);
+        for (JsonElement m: data){
+            matches.add(JSONManager.getGson().fromJson(m, Match.class));
+        }
+        return matches;
+    }
+
+    public static ArrayList<Media> getMediaList(String json){
+        ArrayList<Media> medias = new ArrayList<>();
+        JsonArray data = JSONManager.getasJsonArray(json);
+        for (JsonElement m: data){
+            medias.add(JSONManager.getGson().fromJson(m, Media.class));
+        }
+        return medias;
     }
 
     /**
@@ -98,11 +136,10 @@ public class TBAv2 {
      * @param c Calling context - used to query the database for the Last-Update time for a URL
      * @param URL API URL to check and see if an update is required
      * @param cacheLocally Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
-     * @param forceFromCache When this parameter is true, we won't make any web requests and just return Code.LOCAL, telling the caller to use whatever it has cached locally
      * @return APIResponse containing the data we fetched (if necessary) and the response code for how we obtained that data.
      * @throws DataManager.NoDataException
      */
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheLocally, boolean forceFromCache) throws DataManager.NoDataException {
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheLocally) throws DataManager.NoDataException {
         if (c == null) {
             Log.d(Constants.DATAMANAGER_LOG, "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
@@ -141,11 +178,6 @@ public class TBAv2 {
                                                                                * that remote content is unchanged.
                                                                                * The 'data' field is null
                                                                                */
-                }
-
-                /* If we don't want to query the API at all, then tell the caller to return from cache */
-                if (forceFromCache) {
-                    return cachedData; /* This will have Code.LOCAL and null data */
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
