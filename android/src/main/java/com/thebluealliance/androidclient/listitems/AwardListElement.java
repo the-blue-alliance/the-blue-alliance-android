@@ -80,8 +80,8 @@ public class AwardListElement extends ListElement {
             String awardLine1 = "";
             String awardLine2 = "";
 
-            if (teamNumber == "") {
-                if (awardee != "") {
+            if (teamNumber.isEmpty()) {
+                if (!awardee.isEmpty()) {
                     awardLine1 = awardee;
                 }
             } else {
@@ -91,7 +91,13 @@ public class AwardListElement extends ListElement {
                 } else {
                     team = mAwardTeams.get("frc" + teamNumber);
                 }
-                if (awardee == "") {
+
+                if (awardee.isEmpty() && team.getNickname().isEmpty())
+                {
+                    awardLine1 = teamNumber;
+                    awardLine2 = "Team " + teamNumber;
+                }
+                else if (awardee.isEmpty()) {
                     awardLine1 = teamNumber;
                     awardLine2 = team.getNickname();
                 } else {

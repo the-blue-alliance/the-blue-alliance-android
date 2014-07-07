@@ -78,11 +78,11 @@ public class Team extends BasicModel<Team> {
         fields.put(Database.Teams.SHORTNAME, nickname);
     }
 
-    public String getLocation() throws FieldNotDefinedException {
+    public String getLocation() {
         if(fields.containsKey(Database.Teams.LOCATION) && fields.get(Database.Teams.LOCATION) instanceof String) {
             return (String) fields.get(Database.Teams.LOCATION);
         }
-        throw new FieldNotDefinedException("Field Database.Teams.LOCATION is not defined");
+        return "";
     }
 
     public void setLocation(String location) {
