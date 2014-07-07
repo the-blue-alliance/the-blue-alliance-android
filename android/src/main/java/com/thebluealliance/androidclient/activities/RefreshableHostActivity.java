@@ -18,7 +18,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
 
-    private Menu mOptionsMenu;
+    Menu mOptionsMenu;
 
     private boolean mRefreshInProgress = false;
 

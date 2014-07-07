@@ -6,6 +6,7 @@
     <string name="web_url_host">thebluealliance.com</string>
     <string name="web_url_host_www">www.thebluealliance.com</string>
     <string name="action_settings">Settings</string>
+    <string name="action_help">Help</string>
     <string name="menuitem_refresh">Refresh</string>
     <string name="cancel">Cancel</string>
     <string name="refresh_complete">Refresh complete</string>
@@ -48,6 +49,11 @@
     <string name="alliances_header">Alliances</string>
     <string name="alliance_title">Alliance #%d:</string>
     <string name="team_rank">Rank %d</string>
+
+    <!-- Stats Help Dialog -->
+    <string name="stats_help_title">Stats Help</string>
+    <string name="close_stats_help">Close</string>
+    <string name="stats_help_error">Error reading from help file.</string>
 
     <!-- No Data -->
     <string name="no_data">No data was found for this event.</string>
