@@ -27,7 +27,7 @@ android {
         buildTypes {
             debug {
                 versionNameSuffix "-#" + gitSha
-                packageNameSuffix ".development"
+                applicationIdSuffix ".development"
             }
 
             release {
