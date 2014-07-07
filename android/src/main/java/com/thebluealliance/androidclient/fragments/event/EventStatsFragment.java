@@ -74,7 +74,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
-        View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
 

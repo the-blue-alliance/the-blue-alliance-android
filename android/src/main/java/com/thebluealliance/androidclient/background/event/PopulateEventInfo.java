@@ -2,10 +2,12 @@ package com.thebluealliance.androidclient.background.event;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -42,9 +44,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     private EventInfoFragment mFragment;
     private RefreshableHostActivity activity;
     View last, next;
-    LinearLayout nextLayout, lastLayout, topTeams, topOpr;
-    TextView eventName, eventDate, eventLoc, eventVenue, ranks, stats;
-    String eventKey;
+    LinearLayout nextLayout, lastLayout;
+    View topTeamsContainer, topOprsContainer;
+    TextView eventName, eventDate, eventLoc, eventVenue, topTeams, topOprs;
+    String eventKey, topTeamsString, topOprsString;
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
@@ -67,8 +70,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventVenue = (TextView) view.findViewById(R.id.event_venue);
         nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
         lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
-        topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
-        topOpr = (LinearLayout) view.findViewById(R.id.event_top_opr_container);
+        topTeamsContainer = view.findViewById(R.id.event_top_teams_container);
+        topOprsContainer = view.findViewById(R.id.event_top_oprs_container);
+        topTeams = (TextView) view.findViewById(R.id.event_top_teams);
+        topOprs = (TextView) view.findViewById(R.id.event_top_oprs);
     }
 
     @Override
@@ -99,7 +104,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 //event has started (may or may not have finished).
                 //show the ranks and stats
                 showRanks = showStats = true;
-                ranks = new TextView(activity);
                 try {
                     rankResponse = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
@@ -108,12 +112,13 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showRanks = false;
                     }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
-                        rankString += ((i) + ". " + rankList.get(i).get(1).getAsString());
+                        rankString += ((i) + ". <b>" + rankList.get(i).get(1).getAsString()) + "</b>";
                         if (i < Math.min(6, rankList.size()) - 1) {
-                            rankString += "\n";
+                            rankString += "<br>";
                         }
                     }
-                    ranks.setText(rankString);
+                    rankString.trim();
+                    topTeamsString = rankString;
                     if (isCancelled()) {
                         return APIResponse.CODE.NODATA;
                     }
@@ -123,7 +128,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     return APIResponse.CODE.NODATA;
                 }
 
-                stats = new TextView(activity);
                 try {
                     statsResponse = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
@@ -138,12 +142,13 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                         String statsString = "";
                         for (int i = 0; i < Math.min(5, opr.size()); i++) {
-                            statsString += (i + 1) + ". " + opr.get(i).getKey();
+                            statsString += (i + 1) + ". <b>" + opr.get(i).getKey() + "</b>";
                             if (i < Math.min(5, opr.size()) - 1) {
-                                statsString += "\n";
+                                statsString += "<br>";
                             }
                         }
-                        stats.setText(statsString);
+                        statsString.trim();
+                        topOprsString = statsString;
                     } else {
                         showStats = false;
                     }
@@ -228,19 +233,13 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 lastLayout.addView(last);
             }
             if (showRanks) {
-                topTeams.setVisibility(View.VISIBLE);
-                if (topTeams.getChildCount() > 1) {
-                    topTeams.removeViewAt(1);
-                }
-                topTeams.addView(ranks);
+                topTeamsContainer.setVisibility(View.VISIBLE);
+                topTeams.setText(Html.fromHtml(topTeamsString));
             }
 
             if (showStats) {
-                topOpr.setVisibility(View.VISIBLE);
-                if (topOpr.getChildCount() > 1) {
-                    topOpr.removeViewAt(1);
-                }
-                topOpr.addView(stats);
+                topOprsContainer.setVisibility(View.VISIBLE);
+                topOprs.setText(Html.fromHtml(topOprsString));
             }
 
             // setup social media intents

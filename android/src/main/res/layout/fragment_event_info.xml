@@ -55,15 +55,15 @@
             <FrameLayout
                 android:id="@+id/event_venue_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true">
 
                 <View style="@style/InfoItemDividerStyle" />
 
                 <RelativeLayout
                     style="@style/InfoItemStyle"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true">
+                    android:background="?android:attr/selectableItemBackground">
 
                     <ImageView
                         android:id="@+id/venue_location_icon"
@@ -93,7 +93,7 @@
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/internet_blue_selector"
                     android:padding="4dp"
-                    android:src="@drawable/ic_action_web_site"/>
+                    android:src="@drawable/ic_action_web_site" />
 
                 <ImageView
                     android:id="@+id/event_twitter_button"
@@ -116,7 +116,7 @@
                     android:gravity="center"
                     android:text="Chief\nDelphi"
                     android:textColor="@color/white"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -153,46 +153,62 @@
                     android:text="@string/next_match" />
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/event_top_teams_container"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                style="@style/InfoItemStyle"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
                 android:visibility="gone">
 
                 <TextView
-                    style="@android:style/TextAppearance.DeviceDefault.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:text="@string/top_teams" />
-            </LinearLayout>
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/top_teams"
+                    android:textSize="16sp" />
 
-            <LinearLayout
-                android:id="@+id/event_top_opr_container"
-                android:layout_width="fill_parent"
+                <TextView
+                    android:id="@+id/event_top_teams"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <!-- This is wrapped in a FrameLayout so that the divider will
+           hide when the container is hidden -->
+            <FrameLayout
+                android:id="@+id/event_top_oprs_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
+                android:visibility="gone"
                 android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:focusable="true">
 
-                <TextView
-                    style="@android:style/TextAppearance.DeviceDefault.Medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:text="@string/top_opr" />
-            </LinearLayout>
+                <View style="@style/InfoItemDividerStyle" />
+
+                <RelativeLayout
+                    style="@style/InfoItemStyle"
+                    android:background="?android:attr/selectableItemBackground">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:paddingRight="@dimen/activity_half_vertical_margin"
+                        android:text="@string/top_opr" />
+
+                    <TextView
+                        android:id="@+id/event_top_oprs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </FrameLayout>
+
+
         </LinearLayout>
     </ScrollView>
 

@@ -61,7 +61,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         info.findViewById(R.id.event_youtube_button).setOnClickListener(this);
         info.findViewById(R.id.event_cd_button).setOnClickListener(this);
         info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
-        info.findViewById(R.id.event_top_opr_container).setOnClickListener(this);
+        info.findViewById(R.id.event_top_oprs_container).setOnClickListener(this);
         return info;
     }
 
@@ -96,7 +96,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         if (id == R.id.event_top_teams_container) {
             ((ViewEventActivity) getActivity()).getPager().setCurrentItem(2);
             return;
-        } else if (id == R.id.event_top_opr_container) {
+        } else if (id == R.id.event_top_oprs_container) {
             ((ViewEventActivity) getActivity()).getPager().setCurrentItem(4);
             return;
         }

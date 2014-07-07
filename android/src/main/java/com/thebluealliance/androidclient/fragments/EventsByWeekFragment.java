@@ -67,7 +67,7 @@ public class EventsByWeekFragment extends Fragment {
                     ? Math.min(mViewPager.getAdapter().getCount(), week1Index)
                     : currentWeek);
             /** Explanation for above lines:
-             * If the current week is past CMP,, then
+             * If the current week is past CMP, then
              * show week 1 (which is either index 1 or 2, which we'll get from the adapter by finding its label
              * Else, we display the current week
              */
