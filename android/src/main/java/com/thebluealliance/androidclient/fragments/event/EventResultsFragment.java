@@ -85,13 +85,9 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                Object item = parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
-                Log.d(Constants.LOG_TAG, "Selected item: " + item.getClass().getName());
-                if (item != null && item instanceof Match) {
-                    String matchKey = ((Match) item).getKey();
-                    Log.d(Constants.LOG_TAG, "Match key: " + matchKey);
-                    startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
-                }
+                String matchKey = view.findViewById(R.id.match_title).getTag().toString();
+                Log.d(Constants.LOG_TAG, "Match key: " + matchKey);
+                startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
                 return true;
             }
         });
@@ -122,6 +118,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " results");
         mTask = new PopulateEventResults(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey, teamKey);
     }

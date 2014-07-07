@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 /**
@@ -17,7 +18,7 @@ public class EventListElement extends ListElement {
     private String mEventDates;
     private String mEventLocation;
 
-    public EventListElement(Event event) {
+    public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
         super(event.getEventKey());
         mEventName = event.getEventName();
         mEventDates = event.getDateString();

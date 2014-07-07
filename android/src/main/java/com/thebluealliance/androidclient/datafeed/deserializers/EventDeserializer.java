@@ -17,9 +17,14 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         final JsonObject object = json.getAsJsonObject();
         final Event event = new Event();
 
-        event.setEventKey(object.get("key").getAsString());
-        event.setEventName(object.get("name").getAsString());
-        // Location is null sometimes.
+        if(object.has("key")) {
+            event.setEventKey(object.get("key").getAsString());
+        }
+
+        if(object.has("name")) {
+            event.setEventName(object.get("name").getAsString());
+        }
+
         if (object.get("location").isJsonNull()) {
             event.setLocation("");
         } else {
@@ -32,23 +37,29 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         else{
             event.setVenue(object.get("venue_address").getAsString());
         }
-        event.setEventType(object.get("event_type").getAsInt());
+
+        if(object.has("event_type")) {
+            event.setEventType(object.get("event_type").getAsInt());
+        }
+
         if (object.get("start_date").isJsonNull()) {
             event.setStartDate("");
         } else {
             event.setStartDate(object.get("start_date").getAsString());
         }
+
         if (object.get("end_date").isJsonNull()) {
             event.setEndDate("");
         } else {
             event.setEndDate(object.get("end_date").getAsString());
         }
-        // For some reason "official" is sometimes null. Default to "false" in those cases
+
         if (object.get("official").isJsonNull()) {
             event.setOfficial(false);
         } else {
             event.setOfficial(object.get("official").getAsBoolean());
         }
+
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
         if (object.get("short_name").isJsonNull()) {
@@ -56,26 +67,31 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         } else {
             event.setShortName(object.get("short_name").getAsString());
         }
-        event.setLastUpdated(System.currentTimeMillis());
 
         if (object.has("website") && !object.get("website").isJsonNull()) {
             event.setWebsite(object.get("website").getAsString());
         }
+
         if (object.has("matches")) {
             event.setMatches(object.get("matches").getAsJsonArray());
         }
+
         if (object.has("webcast")) {
             event.setWebcasts(object.get("webcast").getAsJsonArray());
         }
+
         if (object.has("rankings")) {
             event.setRankings(object.get("rankings").getAsJsonArray());
         }
+
         if (object.has("stats")) {
             event.setStats(object.get("stats").getAsJsonObject());
         }
+
         if (object.has("alliances")) {
             event.setAlliances(object.get("alliances").getAsJsonArray());
         }
+
         if (object.has("event_district")) {
             JsonElement districtEnum = object.get("event_district");
             if (districtEnum.isJsonNull()) {
@@ -86,6 +102,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         } else {
             event.setDistrictEnum(0);
         }
+
         if (object.has("event_district_string")) {
             JsonElement districtString = object.get("event_district_string");
             if (districtString.isJsonNull()) {

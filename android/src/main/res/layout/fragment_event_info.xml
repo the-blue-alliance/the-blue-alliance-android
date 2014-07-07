@@ -216,6 +216,11 @@
                     android:paddingRight="@dimen/activity_half_vertical_margin"
                     android:text="@string/top_opr" />
             </LinearLayout>
+
+            <!-- Hacky way to make a list divider appear after the last item. -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
         </LinearLayout>
     </ScrollView>
 

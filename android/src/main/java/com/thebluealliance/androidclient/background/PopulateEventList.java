@@ -14,13 +14,14 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.SimpleEvent;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * File created by phil on 4/20/14.
@@ -31,7 +32,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null, mHeader;
     private ArrayList<ListItem> events;
-    private static HashMap<Integer, HashMap<String, ArrayList<SimpleEvent>>> allEvents = new HashMap<>();
     private RefreshableHostActivity activity;
     private boolean forceFromCache;
 
@@ -56,38 +56,33 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             throw new IllegalArgumentException("Fragment must not be null!");
         }
 
-
         //first, let's generate the event week based on its header (event weeks aren't constant over the years)
         if (mHeader.equals("")) {
             mWeek = -1;
         } else {
-            if (!allEvents.containsKey(mYear)) {
-                try {
-                    allEvents.put(mYear, DataManager.Events.getEventsByYear(mFragment.getActivity(), mYear).getData());
-                } catch (DataManager.NoDataException e) {
-                    Log.w(Constants.LOG_TAG, "unable to get any events in " + mYear);
-                    return APIResponse.CODE.NODATA;
-                }
-            }
-            mWeek = EventHelper.weekNumFromLabel(allEvents.get(mYear), mHeader);
+            mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
+        }
+
+        if(mHeader.equals("Preseason Events")){
+            Event ss = Database.getInstance(activity).getEventsTable().get("2014ctss");
         }
 
         events = new ArrayList<>();
 
-        APIResponse<ArrayList<SimpleEvent>> response;
+        APIResponse<ArrayList<Event>> response;
 
         if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
             // Return a list of all events for a year
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
-                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek);
+                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
 
                 if(isCancelled()){
                     return APIResponse.CODE.NODATA;
                 }
 
-                ArrayList<SimpleEvent> eventData = response.getData();
+                ArrayList<Event> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
                     events = EventHelper.renderEventListForWeek(eventData);
                 }
@@ -100,7 +95,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             // Return a list of all events for a team for a given year
             try {
                 response = DataManager.Teams.getEventsForTeam(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
-                ArrayList<SimpleEvent> eventsArray = response.getData();
+                ArrayList<Event> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
                     events = EventHelper.renderEventListForTeam(eventsArray);
                 }
@@ -136,6 +131,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 ListView eventList = (ListView) view.findViewById(R.id.list);
                 Parcelable state = eventList.onSaveInstanceState();
                 eventList.setAdapter(adapter);
+                noDataText.setVisibility(View.GONE);
                 eventList.onRestoreInstanceState(state);
             }
 
@@ -155,6 +151,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, "Event list refresh complete");
                 if (mFragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete((RefreshListener) mFragment);
                 }

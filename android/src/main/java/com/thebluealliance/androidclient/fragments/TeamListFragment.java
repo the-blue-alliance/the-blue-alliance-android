@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
+import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -98,7 +99,7 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
         return new SimpleCursorLoader(getActivity()) {
             @Override
             public Cursor loadInBackground() {
-                return Database.getInstance(getActivity()).getCursorForTeamsInRange(mTeamNumberStart, mTeamNumberEnd);
+                return Database.getInstance(getActivity()).getTeamsTable().getCursorForTeamsInRange(mTeamNumberStart, mTeamNumberEnd);
             }
         };
     }
@@ -128,8 +129,13 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
 
     @Override
     public void onRefreshStart() {
-        mTask = new PopulateTeamList(this);
+        Log.i(Constants.REFRESH_LOG, "Loading teams between "+mTeamNumberStart+" and "+mTeamNumberEnd);
+        mTask = new PopulateTeamList(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamNumberStart, mTeamNumberEnd);
+    }
+
+    public void updateTask(PopulateTeamList newTask){
+        mTask = newTask;
     }
 
     @Override

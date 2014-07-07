@@ -21,11 +21,13 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -75,7 +77,12 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
             ArrayList<Match> matches = matchResponse.getData(); //sorted by play order
             eventMatches = matchResponse.getData(); //sorted by play order
-            matchGroups = MatchHelper.constructMatchList(activity, matches);
+            try {
+                matchGroups = MatchHelper.constructMatchList(activity, matches);
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't construct match list. Missing fields: "+e.getMessage());
+                return APIResponse.CODE.NODATA;
+            }
             int[] record = MatchHelper.getRecordForTeam(matches, teamKey);
             recordString = record[0] + "-" + record[1] + "-" + record[2];
         } catch (DataManager.NoDataException e) {
@@ -99,7 +106,13 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             eventShort = event.getShortName();
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
-            JsonArray alliances = event.getAlliances();
+            JsonArray alliances = null;
+            try {
+                alliances = event.getAlliances();
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't get event alliances");
+                return APIResponse.CODE.NODATA;
+            }
             for (int i = 0; i < alliances.size(); i++) {
                 JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
                 for (int j = 0; j < teams.size(); j++) {
@@ -181,8 +194,13 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
             MatchListAdapter adapter = new MatchListAdapter(activity, matchGroups, teamKey);
 
-            MatchHelper.EventPerformance performance =
-                    MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
+            MatchHelper.EventPerformance performance = null;
+            try {
+                performance = MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.w(Constants.LOG_TAG, "Can't create match performance. Missing fields: "+ Arrays.toString(e.getStackTrace()));
+                performance = MatchHelper.EventPerformance.NOT_AVAILABLE;
+            }
             String summary = generateTeamSummary(teamKey, rank,
                     recordString, allianceNumber, alliancePick, performance);
             ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
@@ -231,6 +249,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             new PopulateTeamAtEvent(activity, false).execute(teamKey, eventKey);
         } else {
             // Show notification if we've refreshed data.
+            Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh complete");
             if (activity instanceof RefreshableHostActivity) {
                 activity.notifyRefreshComplete((RefreshListener) activity);
             }

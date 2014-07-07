@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.TeamListFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
@@ -25,33 +26,36 @@ import java.util.ArrayList;
  */
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
-    private Fragment fragment;
+    private TeamListFragment fragment;
+    private boolean forceFromCache;
+    private int start, end;
 
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
     private Cursor teams;
 
-    public PopulateTeamList(Fragment fragment) {
+    public PopulateTeamList(TeamListFragment fragment, boolean forceFromCache) {
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
+        this.forceFromCache = forceFromCache;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
+        activity.showMenuProgressBar();
         teamItems = new ArrayList<>();
     }
 
     @Override
     protected APIResponse.CODE doInBackground(Integer... params) {
-        int start = params[0];
-        int end = params[1];
+        start = params[0];
+        end = params[1];
         Log.d("doInBackground", "is cancelled? " + isCancelled());
         APIResponse<Cursor> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         if (!isCancelled()) {
             try {
-                response = DataManager.Teams.getCursorForSimpleTeamsInRange(activity, start, end);
+                response = DataManager.Teams.getCursorForTeamsInRange(activity, start, end);
                 teams = response.getData();
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load team list");
@@ -88,9 +92,21 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
-            // Show notification if we've refreshed data.
-            if (fragment instanceof RefreshListener) {
-                activity.notifyRefreshComplete((RefreshListener) fragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                PopulateTeamList secondLoad = new PopulateTeamList(fragment, false);
+                fragment.updateTask(secondLoad);
+                secondLoad.execute(start, end);
+            } else {
+                // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, "Team list "+start+" - " + end+" refresh complete");
+                if (fragment instanceof RefreshListener) {
+                    activity.notifyRefreshComplete(fragment);
+                }
             }
         }
     }
