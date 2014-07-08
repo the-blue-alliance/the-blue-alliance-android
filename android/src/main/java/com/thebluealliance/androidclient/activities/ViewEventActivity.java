@@ -64,7 +64,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         pager.setAdapter(adapter);
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
-        pager.setOffscreenPageLimit(5);
+        pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -184,11 +184,13 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
 
     @Override
     public void onPageSelected(int position) {
-        if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
-            //stats position
-            mOptionsMenu.findItem(R.id.help).setVisible(true);
-        } else {
-            mOptionsMenu.findItem(R.id.help).setVisible(false);
+        if(mOptionsMenu != null) {
+            if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
+                //stats position
+                mOptionsMenu.findItem(R.id.help).setVisible(true);
+            } else {
+                mOptionsMenu.findItem(R.id.help).setVisible(false);
+            }
         }
     }
 

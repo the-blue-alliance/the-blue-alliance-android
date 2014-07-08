@@ -5,11 +5,11 @@ import android.content.Intent;
 /**
  * Created by phil on 7/8/14.
  */
-public class RefreshBroadcast extends Intent {
+public class ConnectionChangeBroadcast extends Intent {
 
     public static final String ACTION = "com.thebluealliance.androidclient.REFRESH";
 
-    public RefreshBroadcast(){
+    public ConnectionChangeBroadcast(){
         super();
         setAction(ACTION);
     }
