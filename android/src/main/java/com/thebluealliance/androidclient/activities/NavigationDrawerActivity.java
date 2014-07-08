@@ -67,7 +67,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
                 mEncourageLearning, mUseActionBarToggle);
-        mContentView = (FrameLayout) findViewById(R.id.container);
+        mContentView = (FrameLayout) findViewById(R.id.content);
 
         // Restore the state of the navigation drawer on rotation changes
         if (savedInstanceState != null) {
