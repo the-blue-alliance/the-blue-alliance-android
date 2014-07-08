@@ -23,7 +23,6 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,7 +41,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> awards;
-    private ListViewAdapter adapter;
     private boolean forceFromCache;
 
     public PopulateEventAwards(EventAwardsFragment f, boolean forceFromCache) {
@@ -67,7 +65,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         try {
             response = DataManager.Events.getEventAwards(activity, eventKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
-            HashMap<String, Team> teams = new HashMap();
+            HashMap<String, Team> teams = new HashMap<>();
             for (Award a : awardList) {
                 try {
                     for (JsonElement winner : a.getWinners()) {
@@ -77,7 +75,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                             teams.put(teamKey, team);
                         }
                     }
-                    awards.add(new AwardListElement(a.getName(), a.getWinners(), teams));
+                    awards.add(new AwardListElement(a.getName(), eventKey, a.getWinners(), teams));
                 }catch(BasicModel.FieldNotDefinedException e){
                     Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
                 }
@@ -94,7 +92,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null) {
-            adapter = new ListViewAdapter(activity, awards);
+            ListViewAdapter adapter = new ListViewAdapter(activity, awards);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             noDataText.setVisibility(View.GONE);
 
