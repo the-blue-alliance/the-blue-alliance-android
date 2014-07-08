@@ -41,11 +41,10 @@ public class HTTP {
     public static String dataFromResponse(HttpResponse response) {
         InputStream is;
         String result = "";
-
-        HttpEntity entity = response.getEntity();
-
         // Read response to string
         try {
+            HttpEntity entity = response.getEntity();
+
             is = entity.getContent();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
             StringBuilder sb = new StringBuilder();

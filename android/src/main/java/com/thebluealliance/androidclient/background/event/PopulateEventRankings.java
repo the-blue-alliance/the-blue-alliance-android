@@ -148,6 +148,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
                 rankings.onRestoreInstanceState(state);
+                noDataText.setVisibility(View.GONE);
             }
 
             // Display a warning if offline.

@@ -55,6 +55,9 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
 
             // First we will load all the teams
             for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
+                if(isCancelled()) {
+                    return null;
+                }
                 int start = pageNum * Constants.API_TEAM_LIST_PAGE_SIZE;
                 int end = start + Constants.API_TEAM_LIST_PAGE_SIZE - 1;
                 start = start == 0 ? 1 : start;
@@ -75,6 +78,9 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
 
             // Now we load all events
             for (int year = Constants.FIRST_COMP_YEAR; year < Calendar.getInstance().get(Calendar.YEAR) + 1; year++) {
+                if(isCancelled()) {
+                    return null;
+                }
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
                 APIResponse<String> eventListResponse;
                 eventListResponse = TBAv2.getResponseFromURLOrThrow(context, "http://www.thebluealliance.com/api/v2/events/" + year, false, false);
@@ -89,6 +95,9 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 events.addAll(yearEvents);
             }
 
+            if(isCancelled()) {
+                return null;
+            }
             // If no exception has been thrown at this point, we have all the data. We can now
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));

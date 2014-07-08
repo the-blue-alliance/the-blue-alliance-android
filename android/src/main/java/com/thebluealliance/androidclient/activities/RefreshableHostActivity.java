@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
-import com.thebluealliance.androidclient.intents.RefreshBroadcast;
+import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         refreshListener = new RefreshBroadcastReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(RefreshBroadcast.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(ConnectionChangeBroadcast.ACTION));
     }
 
     @Override
@@ -206,15 +206,15 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         }
     }
 
-    class RefreshBroadcastReceiver extends BroadcastReceiver{
+    class RefreshBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
-            if(ConnectionDetector.isConnectedToInternet(context)) {
+            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_FOUND) {
                 hideWarningMessage();
                 startRefresh();
-            }else{
+            } else {
                 showWarningMessage(getString(R.string.warning_no_internet_connection));
             }
         }

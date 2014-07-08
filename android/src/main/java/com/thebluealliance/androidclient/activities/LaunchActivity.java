@@ -2,6 +2,9 @@ package com.thebluealliance.androidclient.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,7 +13,6 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.app.Fragment;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.util.regex.Matcher;
@@ -93,7 +96,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
         loadFragment = (LoadAllDataTaskFragment) getFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
-        if(loadFragment != null) {
+        if (loadFragment != null) {
             viewPager.setCurrentItem(1, false);
         }
     }
@@ -127,12 +130,13 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             alertDialogBuilder.setTitle("Check connection");
 
             // Set dialog message
-            alertDialogBuilder.setMessage(getString(R.string.warning_no_internet_connection)).setCancelable(false).setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    beginLoadingIfConnected();
-                    dialog.dismiss();
-                }
-            }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setMessage(getString(R.string.warning_no_internet_connection)).setCancelable(false)
+                    .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            beginLoadingIfConnected();
+                            dialog.dismiss();
+                        }
+                    }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     finish();
                 }
@@ -194,7 +198,31 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     }
 
     public void connectionLost() {
+        // Scroll to first page
+        viewPager.setCurrentItem(0);
+        //Cancel task
+        if (loadFragment != null) {
+            loadFragment.cancelTask();
+        }
+        // Show a warning
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
+        // Set title
+        alertDialogBuilder.setTitle("Connection lost");
+
+        // Set dialog message
+        alertDialogBuilder.setMessage(getString(R.string.connection_lost)).setCancelable(false)
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        // Create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // Show it
+        alertDialog.show();
     }
 
     public void loadingFinished() {
@@ -290,16 +318,31 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 throw new IllegalStateException("TaskFragment must be hosted by an activity that implements LoadAllDataCallbacks");
             }
 
-            if(task == null) {
+            if (task == null) {
                 task = new LoadAllData(this, getActivity());
                 task.execute();
             }
         }
 
+        public void cancelTask() {
+            task.cancel(false);
+        }
+
         @Override
         public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
-            if(callback != null) {
+            if (callback != null) {
                 callback.onProgressUpdate(info);
+            }
+        }
+    }
+
+    class RefreshBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
+            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_LOST) {
+                connectionLost();
             }
         }
     }

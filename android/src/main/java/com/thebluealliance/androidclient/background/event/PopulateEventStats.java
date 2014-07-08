@@ -161,6 +161,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 Parcelable state = stats.onSaveInstanceState();
                 stats.setAdapter(adapter);
                 stats.onRestoreInstanceState(state);
+                noDataText.setVisibility(View.GONE);
             }
 
             // Display warning if offline.
