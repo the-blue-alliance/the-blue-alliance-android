@@ -79,7 +79,7 @@ public class Match extends BasicModel<Match> {
 
     public Date getTime() throws FieldNotDefinedException{
         if(fields.containsKey(Database.Matches.TIME) && fields.get(Database.Matches.TIME) instanceof Long) {
-            return new Date((Long) fields.get(Database.Matches.KEY));
+            return new Date((Long) fields.get(Database.Matches.TIME));
         }
         throw new FieldNotDefinedException("Field Database.Matches.TIME is not defined");
     }

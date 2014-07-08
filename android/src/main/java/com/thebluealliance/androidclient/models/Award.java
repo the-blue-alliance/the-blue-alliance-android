@@ -60,7 +60,7 @@ public class Award extends BasicModel<Award> {
 
     public int getYear() throws FieldNotDefinedException{
         if(fields.containsKey(Database.Awards.YEAR) && fields.get(Database.Awards.YEAR) instanceof Integer) {
-            return (Integer) fields.get(Database.Awards.WINNERS);
+            return (Integer) fields.get(Database.Awards.YEAR);
         }
         throw new FieldNotDefinedException("Field Database.Awards.YEAR is not defined");
     }
