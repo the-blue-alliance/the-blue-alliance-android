@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -96,27 +97,39 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.view_match_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            if (isDrawerOpen()) {
-                closeDrawer();
+        switch (id){
+            case android.R.id.home:
+                if(isDrawerOpen()) {
+                    closeDrawer();
+                    return true;
+                }
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                    Log.d(Constants.LOG_TAG, "Navgating to new back stack with key " + eventKey);
+                    TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
+                            .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
+                } else {
+                    Log.d(Constants.LOG_TAG, "Navigating up...");
+                    NavUtils.navigateUpTo(this, upIntent);
+                }
                 return true;
-            }
-            Intent upIntent = NavUtils.getParentActivityIntent(this);
-            String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
-            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                Log.d(Constants.LOG_TAG, "Navgating to new back stack with key " + eventKey);
-                TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
-                        .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
-            } else {
-                Log.d(Constants.LOG_TAG, "Navigating up...");
-                NavUtils.navigateUpTo(this, upIntent);
-            }
-            return true;
+            case R.id.action_view_event:
+                startActivity(ViewEventActivity.newInstance(this, mMatchKey.split("_")[0]));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -41,7 +41,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> awards;
-    private ListViewAdapter adapter;
     private boolean forceFromCache;
 
     public PopulateEventAwards(EventAwardsFragment f, boolean forceFromCache) {
@@ -66,7 +65,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         try {
             response = DataManager.Events.getEventAwards(activity, eventKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
-            HashMap<String, Team> teams = new HashMap();
+            HashMap<String, Team> teams = new HashMap<>();
             for (Award a : awardList) {
                 try {
                     for (JsonElement winner : a.getWinners()) {
@@ -93,7 +92,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null) {
-            adapter = new ListViewAdapter(activity, awards);
+            ListViewAdapter adapter = new ListViewAdapter(activity, awards);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             noDataText.setVisibility(View.GONE);
 

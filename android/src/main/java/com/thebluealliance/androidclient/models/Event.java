@@ -438,7 +438,7 @@ public class Event extends BasicModel<Event> {
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                output.add(new AllianceListElement(counter, teams));
+                output.add(new AllianceListElement(getEventKey(), counter, teams));
                 counter++;
             }
             return output;

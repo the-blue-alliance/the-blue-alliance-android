@@ -95,6 +95,12 @@
         <activity android:name=".activities.SearchResultsActivity" />
 
         <activity android:name=".activities.MoreSearchResultsActivity" />
+
+        <receiver android:name=".receivers.ConnectivityChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

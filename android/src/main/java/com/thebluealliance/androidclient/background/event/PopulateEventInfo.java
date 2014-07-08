@@ -48,7 +48,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     LinearLayout nextLayout, lastLayout;
     View topTeamsContainer, topOprsContainer;
     TextView eventName, eventDate, eventLoc, eventVenue, topTeams, topOprs;
-    String eventKey, topTeamsString, topOprsString, nameString, venueString, locationString;
+    String eventKey, topTeamsString, topOprsString, nameString, titleString, venueString, locationString;
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
@@ -148,7 +148,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                                 statsString += "<br>";
                             }
                         }
-                        statsString.trim();
+                        statsString = statsString.trim();
                         topOprsString = statsString;
                     } else {
                         showStats = false;
@@ -198,6 +198,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
             try {
                 nameString = event.getEventName();
+                titleString = event.getEventYear() + " " + event.getShortName();
                 venueString = event.getVenue();
                 locationString = event.getLocation();
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -217,7 +218,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPostExecute(c);
 
         if (event != null && activity != null) {
-            activity.setActionBarTitle(nameString);
+            activity.setActionBarTitle(titleString);
 
             // Set the new info (if necessary)
             eventName.setText(nameString);

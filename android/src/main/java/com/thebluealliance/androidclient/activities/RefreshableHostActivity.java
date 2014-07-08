@@ -1,11 +1,18 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.intents.RefreshBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.ArrayList;
@@ -17,6 +24,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
+    private RefreshBroadcastReceiver refreshListener;
 
     Menu mOptionsMenu;
 
@@ -57,9 +65,18 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        refreshListener = new RefreshBroadcastReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(RefreshBroadcast.ACTION));
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         cancelRefresh();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshListener);
+        refreshListener = null;
     }
 
     public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
@@ -186,6 +203,20 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             // Hide refresh indicator
             MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
             refresh.setActionView(null);
+        }
+    }
+
+    class RefreshBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
+            if(ConnectionDetector.isConnectedToInternet(context)) {
+                hideWarningMessage();
+                startRefresh();
+            }else{
+                showWarningMessage(getString(R.string.warning_no_internet_connection));
+            }
         }
     }
 }

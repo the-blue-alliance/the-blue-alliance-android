@@ -11,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -22,7 +23,7 @@ import java.util.Iterator;
  */
 public class AwardListElement extends ListElement {
 
-    private String mAwardName;
+    private String mAwardName, mEventKey;
     private JsonArray mAwardWinners;
     private HashMap<String, Team> mAwardTeams;
 
@@ -33,9 +34,10 @@ public class AwardListElement extends ListElement {
         mAwardTeams = null;
     }
 
-    public AwardListElement(String name, JsonArray winners, HashMap teams) {
+    public AwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams) {
         super();
         mAwardName = name;
+        mEventKey = eventKey;
         mAwardWinners = winners;
         mAwardTeams = teams;
     }
@@ -57,9 +59,8 @@ public class AwardListElement extends ListElement {
 
         holder.awardName.setText(mAwardName);
 
-        Iterator<JsonElement> iterator = mAwardWinners.iterator();
-        while (iterator.hasNext()) {
-            JsonObject winner = iterator.next().getAsJsonObject();
+        for (JsonElement mAwardWinner : mAwardWinners) {
+            JsonObject winner = mAwardWinner.getAsJsonObject();
             View winnerView = inflater.inflate(R.layout.list_item_award_recipient, null);
 
             String teamNumber = "";
@@ -68,8 +69,8 @@ public class AwardListElement extends ListElement {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
-                winnerView.setOnClickListener(new TeamClickListener(context));
-                winnerView.setTag("frc" + teamNumber);
+                winnerView.setOnClickListener(new TeamAtEventClickListener(context));
+                winnerView.setTag("frc" + teamNumber+"@"+mEventKey);
             }
             if (winner.get("awardee").isJsonNull()) {
                 awardee = "";

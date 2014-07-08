@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 
 /**
@@ -92,23 +93,16 @@ public class MatchListElement extends ListElement {
         }
 
         //if we have video for this match, show an icon
-        //currently the launcher icon. It'll be changed...
         if (videoKey != null) {
             holder.videoIcon.setVisibility(View.VISIBLE);
-            holder.videoIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + videoKey));
-                    view.getContext().startActivity(intent);
-                }
-            });
         } else {
             holder.videoIcon.setVisibility(View.INVISIBLE);
         }
 
         holder.matchTitle.setText(matchTitle);
 
-        TeamClickListener listener = new TeamClickListener(context);
+        TeamAtEventClickListener listener = new TeamAtEventClickListener(context);
+        String eventKey = matchKey.split("_")[0];
 
         // Set team text depending on alliance size.
         if (redTeams.length == 0) {
@@ -117,7 +111,7 @@ public class MatchListElement extends ListElement {
             holder.red3.setText("");
         } else {
             holder.red1.setText(redTeams[0]);
-            holder.red1.setTag("frc" + redTeams[0]);
+            holder.red1.setTag("frc" + redTeams[0]+"@"+eventKey);
             holder.red1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[0])) {
                 holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
@@ -126,7 +120,7 @@ public class MatchListElement extends ListElement {
             }
 
             holder.red2.setText(redTeams[1]);
-            holder.red2.setTag("frc" + redTeams[1]);
+            holder.red2.setTag("frc" + redTeams[1]+"@"+eventKey);
             holder.red2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[1])) {
                 holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
@@ -139,7 +133,7 @@ public class MatchListElement extends ListElement {
             } else {
                 holder.red3.setVisibility(View.VISIBLE);
                 holder.red3.setText(redTeams[2]);
-                holder.red3.setTag("frc" + redTeams[2]);
+                holder.red3.setTag("frc" + redTeams[2]+"@"+eventKey);
                 holder.red3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(redTeams[2])) {
                     holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
@@ -155,7 +149,7 @@ public class MatchListElement extends ListElement {
             holder.blue3.setText("");
         } else {
             holder.blue1.setText(blueTeams[0]);
-            holder.blue1.setTag("frc" + blueTeams[0]);
+            holder.blue1.setTag("frc" + blueTeams[0]+"@"+eventKey);
             holder.blue1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
@@ -164,7 +158,7 @@ public class MatchListElement extends ListElement {
             }
 
             holder.blue2.setText(blueTeams[1]);
-            holder.blue2.setTag("frc" + blueTeams[1]);
+            holder.blue2.setTag("frc" + blueTeams[1]+"@"+eventKey);
             holder.blue2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[1])) {
                 holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
@@ -177,7 +171,7 @@ public class MatchListElement extends ListElement {
             } else {
                 holder.blue3.setVisibility(View.VISIBLE);
                 holder.blue3.setText(blueTeams[2]);
-                holder.blue3.setTag("frc" + blueTeams[2]);
+                holder.blue3.setTag("frc" + blueTeams[2]+"@"+eventKey);
                 holder.blue3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(blueTeams[2])) {
                     holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);

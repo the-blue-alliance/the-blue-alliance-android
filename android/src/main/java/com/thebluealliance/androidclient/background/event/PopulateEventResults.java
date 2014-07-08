@@ -161,13 +161,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             groups.add(qualMatches);
         }
 
-        ArrayList<AllianceListElement> alliances = event.renderAlliances();
-        if (!alliances.isEmpty()) {
-            ListGroup allianceGroup = new ListGroup(activity.getString(R.string.alliances_header));
-            allianceGroup.children.addAll(alliances);
-            groups.add(allianceGroup);
-        }
-
         if (!quarterMatches.children.isEmpty()) {
             groups.add(quarterMatches);
         }
@@ -193,6 +186,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
             } else {
+                noDataText.setVisibility(View.GONE);
                 ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
                 Parcelable state = results.onSaveInstanceState();
                 int firstVisiblePosition = results.getFirstVisiblePosition();

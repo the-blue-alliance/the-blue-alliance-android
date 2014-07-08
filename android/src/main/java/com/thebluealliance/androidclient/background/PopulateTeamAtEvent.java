@@ -37,7 +37,7 @@ import java.util.Arrays;
  */
 public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    String teamKey, eventKey, recordString, eventShort;
+    String teamKey, eventKey, eventYear, recordString, eventShort;
     RefreshableHostActivity activity;
     ArrayList<Match> eventMatches;
     ArrayList<ListGroup> matchGroups;
@@ -109,9 +109,10 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         if (event != null) {
             eventShort = event.getShortName();
+            eventYear = eventKey.substring(0,4);
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
-            JsonArray alliances = null;
+            JsonArray alliances;
             try {
                 alliances = event.getAlliances();
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -220,10 +221,21 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         super.onPostExecute(code);
         if (activity != null && code != APIResponse.CODE.NODATA) {
             if (activity.getActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
-                activity.getActionBar().setTitle(teamKey.substring(3) + " @ " + eventShort);
+                activity.getActionBar().setTitle(teamKey.substring(3) + " @ " + eventYear + " " + eventShort);
             }
 
             MatchListAdapter adapter = new MatchListAdapter(activity, matchGroups, teamKey);
+
+            MatchHelper.EventPerformance performance = null;
+            try {
+                performance = MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.w(Constants.LOG_TAG, "Can't create match performance. Missing fields: "+ Arrays.toString(e.getStackTrace()));
+                performance = MatchHelper.EventPerformance.NOT_AVAILABLE;
+            }
+            String summary = generateTeamSummary(teamKey, rank,
+                    recordString, allianceNumber, alliancePick, performance);
+            ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
 
             if (!stats.children.isEmpty()) {
                 adapter.addGroup(0, stats);
