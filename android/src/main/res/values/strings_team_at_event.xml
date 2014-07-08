@@ -3,6 +3,7 @@
 
     <!-- Team at Event -->
     <string name="action_view_event">View Full Event</string>
+    <string name="action_view_team">View Team</string>
     <string name="team_at_event_captain">Captain</string>
     <string name="team_at_event_pick">pick</string>
     <string name="summary">Summary</string>

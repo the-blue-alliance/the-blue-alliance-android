@@ -226,17 +226,6 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
             MatchListAdapter adapter = new MatchListAdapter(activity, matchGroups, teamKey);
 
-            MatchHelper.EventPerformance performance = null;
-            try {
-                performance = MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.w(Constants.LOG_TAG, "Can't create match performance. Missing fields: "+ Arrays.toString(e.getStackTrace()));
-                performance = MatchHelper.EventPerformance.NOT_AVAILABLE;
-            }
-            String summary = generateTeamSummary(teamKey, rank,
-                    recordString, allianceNumber, alliancePick, performance);
-            ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
-
             if (!stats.children.isEmpty()) {
                 adapter.addGroup(0, stats);
             }
