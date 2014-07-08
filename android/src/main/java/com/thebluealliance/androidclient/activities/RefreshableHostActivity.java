@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,14 +68,14 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         refreshListener = new RefreshBroadcastReceiver();
-        registerReceiver(refreshListener, new IntentFilter(RefreshBroadcast.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(RefreshBroadcast.ACTION));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         cancelRefresh();
-        unregisterReceiver(refreshListener);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshListener);
         refreshListener = null;
     }
 
