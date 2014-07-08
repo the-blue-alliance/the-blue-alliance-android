@@ -46,7 +46,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     View last, next;
     LinearLayout nextLayout, lastLayout, topTeams, topOpr;
     TextView eventName, eventDate, eventLoc, eventVenue, ranks, stats;
-    String eventKey, nameString, venueString, locationString;
+    String eventKey, nameString, titleString, venueString, locationString;
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
@@ -196,6 +196,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             // setup social media intents
             try {
                 nameString = event.getEventName();
+                titleString = event.getEventYear() + " " + event.getShortName();
                 locationString = event.getLocation();
                 venueString = event.getVenue();
                 view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
@@ -205,8 +206,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
                 view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
             }catch (BasicModel.FieldNotDefinedException e){
-                Log.e(Constants.LOG_TAG, "Can't create social media intents. Missing event fields.\n" +
-                        Arrays.toString(e.getStackTrace()));
+                Log.e(Constants.LOG_TAG, "Can't create event info strings or social media intents. Missing event fields.\n");
+                e.printStackTrace();
             }
         }
 
@@ -218,7 +219,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPostExecute(c);
 
         if (event != null && activity != null) {
-            activity.setActionBarTitle(nameString);
+            activity.setActionBarTitle(titleString);
 
             // Set the new info (if necessary)
             eventName.setText(nameString);

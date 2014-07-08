@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Activity mActivity;
+    private RefreshableHostActivity mActivity;
     private String mMatchKey;
     private String mMatchTitle;
     private JsonArray mMatchVideos;
@@ -46,7 +46,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private JsonObject alliances;
     private boolean forceFromCache;
 
-    public PopulateMatchInfo(Activity activity, boolean forceFromCache) {
+    public PopulateMatchInfo(RefreshableHostActivity activity, boolean forceFromCache) {
         mActivity = activity;
         this.forceFromCache = forceFromCache;
     }
@@ -54,8 +54,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (mActivity instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mActivity).showMenuProgressBar();
+        if (mActivity != null) {
+            mActivity.showMenuProgressBar();
         }
     }
 
@@ -105,6 +105,9 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         super.onPostExecute(code);
 
         if (code != APIResponse.CODE.NODATA) {
+
+            mActivity.setActionBarTitle(mMatchTitle);
+
             JsonObject redAlliance = alliances.getAsJsonObject("red");
             JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
 
@@ -211,10 +214,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
 
             if(mEventName != null && !mEventName.isEmpty()) {
-                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mEventName);
+                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mMatchKey.substring(0,4) + " " + mEventName);
             }
-
-            ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatchTitle);
 
             Picasso picasso = Picasso.with(mActivity);
             List<ImageView> images = new ArrayList<>();
