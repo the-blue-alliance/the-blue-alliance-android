@@ -107,6 +107,8 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
             case R.id.action_view_event:
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 break;
+            case R.id.action_view_team:
+                startActivity(ViewTeamActivity.newInstance(this, teamKey));
             case android.R.id.home:
                 if(isDrawerOpen()) {
                     closeDrawer();
@@ -122,7 +124,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
                 }
                 return true;
             default:
-                break;
+                return super.onOptionsItemSelected(item);
         }
         return super.onOptionsItemSelected(item);
     }
