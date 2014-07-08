@@ -359,10 +359,16 @@ public class Database extends SQLiteOpenHelper {
                 dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Team team : teams) {
-                    db.insert(TABLE_TEAMS, null, team.getParams());
+                    try {
+                        if (!unsafeExists(team.getTeamKey())) {
+                            db.insert(TABLE_TEAMS, null, team.getParams());
 
-                    //add search team item
-                    insertSearchItemTeam(team, false);
+                            //add search team item
+                            insertSearchItemTeam(team, false);
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Unable to add team - missing key.");
+                    }
                 }
                 db.setTransactionSuccessful();
                 db.endTransaction();
@@ -445,6 +451,18 @@ public class Database extends SQLiteOpenHelper {
                 return null;
             }
             return cursor;
+        }
+
+        public boolean unsafeExists(String key) {
+            Cursor cursor = db.query(TABLE_TEAMS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
         }
     }
 

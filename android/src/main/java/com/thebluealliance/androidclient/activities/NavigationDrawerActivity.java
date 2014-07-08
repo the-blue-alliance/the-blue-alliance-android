@@ -98,6 +98,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      */
     @Override
     public void setContentView(int layoutResID) {
+        mContentView.removeAllViews();
         getLayoutInflater().inflate(layoutResID, mContentView);
     }
 

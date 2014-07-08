@@ -10,6 +10,7 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.app.Fragment;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
@@ -32,13 +33,16 @@ import java.util.regex.Pattern;
 /**
  * Created by Nathan on 5/25/2014.
  */
-public class LaunchActivity extends Activity implements View.OnClickListener {
+public class LaunchActivity extends Activity implements View.OnClickListener, LoadAllData.LoadAllDataCallbacks {
 
     public static final String ALL_DATA_LOADED = "all_data_loaded";
 
     private DisableSwipeViewPager viewPager;
 
     private TextView loadingMessage;
+
+    private LoadAllDataTaskFragment loadFragment;
+    private static final String LOAD_FRAGMENT_TAG = "loadFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,10 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         loadingMessage = (TextView) findViewById(R.id.message);
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
+        loadFragment = (LoadAllDataTaskFragment) getFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
+        if(loadFragment != null) {
+            viewPager.setCurrentItem(1, false);
+        }
     }
 
     private void goToHome() {
@@ -151,7 +159,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     }
 
     private void beginLoading() {
-        new LoadAllData(this).execute();
+        Fragment f = new LoadAllDataTaskFragment();
+        f.setRetainInstance(true);
+        getFragmentManager().beginTransaction().add(f, LOAD_FRAGMENT_TAG).commit();
     }
 
     public void errorLoadingData(final String stacktrace) {
@@ -191,7 +201,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, true).commit();
     }
 
-    public void onLoadingProgressUpdate(LoadAllData.LoadProgressInfo info) {
+    public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
         if (info.state == LoadAllData.LoadProgressInfo.STATE_NO_CONNECTION) {
             connectionLost();
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_LOADING) {
@@ -264,5 +274,33 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
 
         // Default to kicking the user to the events list if none of the URIs match
         goToHome();
+    }
+
+    public static class LoadAllDataTaskFragment extends Fragment implements LoadAllData.LoadAllDataCallbacks {
+        LoadAllData.LoadAllDataCallbacks callback;
+        private LoadAllData task;
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+
+            if (activity instanceof LoadAllData.LoadAllDataCallbacks) {
+                callback = (LoadAllData.LoadAllDataCallbacks) activity;
+            } else {
+                throw new IllegalStateException("TaskFragment must be hosted by an activity that implements LoadAllDataCallbacks");
+            }
+
+            if(task == null) {
+                task = new LoadAllData(this, getActivity());
+                task.execute();
+            }
+        }
+
+        @Override
+        public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
+            if(callback != null) {
+                callback.onProgressUpdate(info);
+            }
+        }
     }
 }
