@@ -106,10 +106,11 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         switch (item.getItemId()) {
             case R.id.action_view_event:
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
-                break;
+                return true;
             case R.id.action_view_team:
                 int year = Integer.parseInt(eventKey.substring(0,4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
+                return true;
             case android.R.id.home:
                 if(isDrawerOpen()) {
                     closeDrawer();
@@ -127,7 +128,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
             default:
                 return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
