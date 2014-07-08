@@ -139,7 +139,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             helpText = sb.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            helpText = "Error reading licenses file.";
+            helpText = "Error reading help file.";
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
