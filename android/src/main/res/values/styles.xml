@@ -78,16 +78,19 @@
         <item name="android:layout_height">30dp</item>
         <item name="android:layout_width">30dp</item>
         <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_centerVertical">true</item>
         <item name="android:scaleType">centerCrop</item>
     </style>
 
     <style name="NavDrawerLabelStyle">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/nav_text_color_selected</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginLeft">72dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
     </style>
 
     <style name="NavDrawerSmallLabelStyle" parent="NavDrawerLabelStyle">

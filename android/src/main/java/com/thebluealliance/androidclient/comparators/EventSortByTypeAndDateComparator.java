@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**

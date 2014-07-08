@@ -23,7 +23,7 @@
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                android:text="No data available."/>
+                android:text="No data available." />
         </RelativeLayout>
 
         <com.thebluealliance.androidclient.views.ExpandableListView

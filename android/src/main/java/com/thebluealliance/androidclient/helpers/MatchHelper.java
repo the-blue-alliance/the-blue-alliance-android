@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -75,11 +74,11 @@ public class MatchHelper {
             }
         }
 
-        public static TYPE fromKey(String key){
-            if(key.contains("_qm")) return QUAL;
-            if(key.contains("_ef") || key.contains("_qf")) return QUARTER;
-            if(key.contains("_sf")) return SEMI;
-            if(key.contains("_f")) return FINAL;
+        public static TYPE fromKey(String key) {
+            if (key.contains("_qm")) return QUAL;
+            if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
+            if (key.contains("_sf")) return SEMI;
+            if (key.contains("_f")) return FINAL;
             return NONE;
         }
     }
@@ -233,6 +232,21 @@ public class MatchHelper {
         return groups;
     }
 
+    public static ArrayList<Match> getMatchesForTeam(ArrayList<Match> matches, String teamKey) {
+        ArrayList<Match> teamMatches = new ArrayList<>();
+        for (Match match : matches) {
+            try {
+                if (match.getAlliances().toString().contains(teamKey + "\"")) {
+                    teamMatches.add(match);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+        return teamMatches;
+    }
+
     /**
      * Gets the record for a team competing at an event
      *
@@ -329,16 +343,17 @@ public class MatchHelper {
         boolean allQualMatchesPlayed = true;
         for (Match match : qualMatches) {
             if (!match.hasBeenPlayed()) {
+                Log.d(Constants.LOG_TAG, "Match " + match.getKey() + " not played!");
                 allQualMatchesPlayed = false;
                 break;
             }
         }
 
+        Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
+        Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty() ||
                 (allQualMatchesPlayed && !teamIsHere)) {
             return EventStatus.NOT_AVAILABLE;
-        } else if (allQualMatchesPlayed && !allianceData) {
-            //return EventStatus.NO_ALLIANCE_DATA;
         } else if (allQualMatchesPlayed && !inAlliance) {
             return EventStatus.NOT_PICKED;
         }
@@ -350,7 +365,7 @@ public class MatchHelper {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                             blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains("\"" + teamKey + "\"") && !blueTeams.toString().contains("\"" + teamKey + "\"")) {
+                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
                         continue;
                     }
                     countPlayed++;
@@ -363,10 +378,9 @@ public class MatchHelper {
                 // Won quarterfinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
                 return EventStatus.ELIMINATED_IN_QUARTERS;
-            } else if (!e.isHappeningNow() && semiMatches.isEmpty()){
+            } else if (!e.isHappeningNow() && semiMatches.isEmpty()) {
                 return EventStatus.ELIMINATED_IN_QUARTERS;
-            }
-            else {
+            } else {
                 return EventStatus.PLAYING_IN_QUARTERS;
             }
         }
@@ -378,7 +392,7 @@ public class MatchHelper {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                             blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains("\"" + teamKey + "\"") && !blueTeams.toString().contains("\"" + teamKey + "\"")) {
+                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
                         continue;
                     }
                     countPlayed++;
@@ -391,7 +405,7 @@ public class MatchHelper {
                 // Won semifinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
                 return EventStatus.ELIMINATED_IN_SEMIS;
-            } else if (!e.isHappeningNow() && finalMatches.isEmpty()){
+            } else if (!e.isHappeningNow() && finalMatches.isEmpty()) {
                 return EventStatus.ELIMINATED_IN_SEMIS;
             } else {
                 return EventStatus.PLAYING_IN_SEMIS;
@@ -405,7 +419,7 @@ public class MatchHelper {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
                             blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains("\"" + teamKey + "\"") && !blueTeams.toString().contains("\"" + teamKey + "\"")) {
+                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
                         continue;
                     }
                     countPlayed++;
@@ -419,10 +433,9 @@ public class MatchHelper {
                 return EventStatus.WON_EVENT;
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
                 return EventStatus.ELIMINATED_IN_FINALS;
-            } else if (!e.isHappeningNow()){
+            } else if (!e.isHappeningNow()) {
                 return EventStatus.ELIMINATED_IN_FINALS;
-            }
-            else {
+            } else {
                 return EventStatus.PLAYING_IN_FINALS;
             }
         } else {

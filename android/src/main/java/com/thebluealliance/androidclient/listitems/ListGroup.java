@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 import java.util.ArrayList;
 import java.util.List;

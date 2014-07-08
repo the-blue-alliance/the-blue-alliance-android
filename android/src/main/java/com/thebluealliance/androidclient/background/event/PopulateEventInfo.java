@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -49,7 +48,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     LinearLayout nextLayout, lastLayout;
     View topTeamsContainer, topOprsContainer;
     TextView eventName, eventDate, eventLoc, eventVenue, topTeams, topOprs;
-    String eventKey, topTeamsString, topOprsString;
+    String eventKey, topTeamsString, topOprsString, nameString, venueString, locationString;
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
@@ -196,6 +195,18 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     return APIResponse.CODE.NODATA;
                 }
             }
+
+            try {
+                nameString = event.getEventName();
+                venueString = event.getVenue();
+                locationString = event.getLocation();
+            } catch(BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't create social media intents. Missing event fields.\n" +
+                        Arrays.toString(e.getStackTrace()));
+                nameString = "Name not found";
+                venueString = "";
+                locationString = "";
+            }
         }
 
         return APIResponse.mergeCodes(eventResponse.getCode(), rankResponse.getCode(), matchResult.getCode(), statsResponse.getCode());
@@ -217,10 +228,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             // Show a venue if it is available, otherwise show just the location. If neither is available, hide
-            if (!event.getVenue().isEmpty()) {
-                eventVenue.setText(event.getVenue());
-            } else if (!event.getLocation().isEmpty()) {
-                eventVenue.setText(event.getLocation());
+            if (!venueString.isEmpty()) {
+                eventVenue.setText(venueString);
+            } else if (!locationString.isEmpty()) {
+                eventVenue.setText(locationString);
             } else {
                 eventVenue.setText(R.string.no_location_available);
                 activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
@@ -261,12 +272,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 view.setFocusable(true);
                 view.setClickable(true);
 
-                if (!event.getVenue().isEmpty()) {
+                if (!venueString.isEmpty()) {
                     // Set the tag to the event venue if it is available
-                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + event.getVenue().replace(" ", "+"));
-                } else if (!event.getLocation().isEmpty()) {
+                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
+                } else if (!locationString.isEmpty()) {
                     // Otherwise, use the location
-                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + event.getLocation().replace(" ", "+"));
+                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + locationString.replace(" ", "+"));
                 } else {
                     // If neither location nor venue are available, hide the nav arrow, remove the tag,
                     // and set the view to not clickable so the user cannot interact with it.
@@ -277,10 +288,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     view.setClickable(false);
                 }
 
-                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
-                view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
-                view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
-                view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
+                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + eventName);
+                view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + eventKey);
+                view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + eventKey);
+                view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + eventKey);
             }
 
             // Display warning if offline.

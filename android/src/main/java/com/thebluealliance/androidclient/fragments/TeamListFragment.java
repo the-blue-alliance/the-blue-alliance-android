@@ -25,7 +25,6 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
-import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 

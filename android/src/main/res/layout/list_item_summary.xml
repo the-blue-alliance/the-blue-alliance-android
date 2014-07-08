@@ -8,19 +8,20 @@
     android:paddingTop="16dp">
 
     <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:textSize="14sp"
+        android:textColor="@color/secondary_text_color" />
+
+    <TextView
         android:id="@+id/value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_below="@id/label"
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/value"
-        android:layout_marginLeft="16dp"
-        android:textSize="14sp"
-        android:textColor="@color/secondary_text_color" />
 </RelativeLayout>

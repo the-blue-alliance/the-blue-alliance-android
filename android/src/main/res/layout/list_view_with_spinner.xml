@@ -10,13 +10,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <ProgressBar android:id="@+id/progress"
+    <ProgressBar
+        android:id="@+id/progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <TextView
         style="@style/NoDataFoundStyle"

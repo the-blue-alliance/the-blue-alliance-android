@@ -80,11 +80,11 @@ public class MatchListElement extends ListElement {
                 if (bScore > rScore) {
                     //blue wins
                     holder.blueAlliance.setBackgroundResource(R.drawable.blue_border);
-                    holder.redAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_red));
+                    holder.redAlliance.setBackgroundResource(R.drawable.no_border);
                 } else if (bScore < rScore) {
                     //red wins
                     holder.redAlliance.setBackgroundResource(R.drawable.red_border);
-                    holder.blueAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_blue));
+                    holder.blueAlliance.setBackgroundResource(R.drawable.no_border);
                 }
             } catch (NumberFormatException e) {
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");

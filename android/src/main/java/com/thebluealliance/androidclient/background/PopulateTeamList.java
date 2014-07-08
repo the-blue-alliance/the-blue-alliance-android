@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.background;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;

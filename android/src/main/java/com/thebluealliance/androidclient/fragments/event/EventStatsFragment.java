@@ -22,7 +22,6 @@ import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.Media;
 
 /**
  * Fragment that displays the team statistics for an FRC event.
