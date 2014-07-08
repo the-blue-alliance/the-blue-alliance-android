@@ -20,19 +20,37 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         final JsonObject object = json.getAsJsonObject();
         final Match match = new Match();
 
-        match.setKey(object.get("key").getAsString());
-        match.setTypeFromShort(object.get("comp_level").getAsString());
-        match.setMatchNumber(object.get("match_number").getAsInt());
-        match.setSetNumber(object.get("set_number").getAsInt());
-        match.setAlliances(object.get(ALLIANCE_TAG).getAsJsonObject());
+        if(object.has("key")) {
+            match.setKey(object.get("key").getAsString());
+        }
+
+        if(object.has("comp_level")) {
+            match.setTypeFromShort(object.get("comp_level").getAsString());
+        }
+
+        if(object.has("match_number")) {
+            match.setMatchNumber(object.get("match_number").getAsInt());
+        }
+
+        if(object.has("set_number")) {
+            match.setSetNumber(object.get("set_number").getAsInt());
+        }
+
+        if(object.has(ALLIANCE_TAG)) {
+            match.setAlliances(object.get(ALLIANCE_TAG).getAsJsonObject());
+        }
+
         if (object.has("time_string") && !object.get("time_string").isJsonNull()) {
             match.setTimeString(object.get("time_string").getAsString());
         }
+
         if (object.has("time") && !object.get("time").isJsonNull()) {
             match.setTime(object.get("time").getAsLong());
         }
-        match.setVideos(object.get("videos").getAsJsonArray());
-        match.setLastUpdated(System.currentTimeMillis());
+
+        if(object.has("videos")) {
+            match.setVideos(object.get("videos").getAsJsonArray());
+        }
 
         return match;
     }

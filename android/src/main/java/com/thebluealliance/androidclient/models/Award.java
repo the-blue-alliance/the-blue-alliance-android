@@ -1,67 +1,102 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Award implements BasicModel {
+public class Award extends BasicModel<Award> {
 
-    String eventKey, name;
-    int year;
-    JsonArray winners;
+    private JsonArray winners;
 
     public Award() {
-        this.eventKey = "";
-        this.name = "";
-        this.year = -1;
-        this.winners = new JsonArray();
+        super(Database.TABLE_AWARDS);
+        winners = null;
     }
-
     public Award(String eventKey, String name, int year, JsonArray winners) {
-        this.eventKey = eventKey;
-        this.name = name;
-        this.year = year;
-        this.winners = winners;
+        this();
+        setEventKey(eventKey);
+        setName(name);
+        setYear(year);
+        setWinners(winners);
     }
 
-    public JsonArray getWinners() {
-        return winners;
+    public String getKey() throws FieldNotDefinedException {
+        return getEventKey()+":"+getName();
+    }
+
+    public JsonArray getWinners() throws FieldNotDefinedException{
+        if(winners != null){
+            return winners;
+        }
+        if(fields.containsKey(Database.Awards.WINNERS) && fields.get(Database.Awards.WINNERS) instanceof String) {
+            winners = JSONManager.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
+            return winners;
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.WINNERS is not defined");
     }
 
     public void setWinners(JsonArray winners) {
+        fields.put(Database.Awards.WINNERS, winners.toString());
         this.winners = winners;
     }
 
-    public int getYear() {
-        return year;
+    public void setWinners(String winnersJson){
+        fields.put(Database.Awards.WINNERS, winnersJson);
+    }
+
+    public int getYear() throws FieldNotDefinedException{
+        if(fields.containsKey(Database.Awards.YEAR) && fields.get(Database.Awards.YEAR) instanceof Integer) {
+            return (Integer) fields.get(Database.Awards.WINNERS);
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.YEAR is not defined");
     }
 
     public void setYear(int year) {
-        this.year = year;
+        fields.put(Database.Awards.YEAR, year);
     }
 
-    public String getName() {
-        return name;
+    public String getName() throws FieldNotDefinedException{
+        if(fields.containsKey(Database.Awards.NAME) && fields.get(Database.Awards.NAME) instanceof String) {
+            return (String) fields.get(Database.Awards.NAME);
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.NAME is not defined");
     }
 
     public void setName(String name) {
-        this.name = name;
+        fields.put(Database.Awards.NAME, name);
     }
 
-    public String getEventKey() {
-        return eventKey;
+    public String getEventKey() throws FieldNotDefinedException{
+        if(fields.containsKey(Database.Awards.EVENTKEY) && fields.get(Database.Awards.EVENTKEY) instanceof String) {
+            return (String) fields.get(Database.Awards.EVENTKEY);
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.EVENTKEY is not defined");
     }
 
     public void setEventKey(String eventKey) {
-        this.eventKey = eventKey;
+        fields.put(Database.Awards.EVENTKEY, eventKey);
     }
 
-    public ArrayList<Award> splitByWinner() {
+    public ArrayList<Award> splitByWinner() throws FieldNotDefinedException{
         ArrayList<Award> out = new ArrayList<>();
+        String eventKey = getEventKey(),
+                name = getName();
+        int year = getYear();
+        JsonArray winners = getWinners();
         for (JsonElement winner : winners) {
             JsonArray winnerArray = new JsonArray();
             winnerArray.add(winner);
@@ -70,13 +105,95 @@ public class Award implements BasicModel {
         return out;
     }
 
+    public static synchronized APIResponse<Award> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: "+whereClause+ Arrays.toString(whereArgs));
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
+        Award award;
+        if(cursor != null && cursor.moveToFirst()){
+            award = ModelInflater.inflateAward(cursor);
+            cursor.close();
+        }else{
+            award = new Award();
+        }
+
+        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for(String url: apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                Award updatedAward = JSONManager.getGson().fromJson(response.getData(), Award.class);
+                award.merge(updatedAward);
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if(changed){
+            award.write(c);
+        }
+        Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);
+        return new APIResponse<>(award, code);
+    }
+
+    public static synchronized APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: "+whereClause+ Arrays.toString(whereArgs));
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
+        ArrayList<Award> awards = new ArrayList<>(), allAwards = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                awards.add(ModelInflater.inflateAward(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        boolean changed = false, teamSet = teamKey != null && !teamKey.isEmpty();
+        String teamNumber = "";
+        if(teamSet){
+            teamNumber = teamKey.substring(3);
+        }
+        for (String url : apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                JsonArray awardList = JSONManager.getasJsonArray(response.getData());
+                awards = new ArrayList<>();
+                for (JsonElement a : awardList) {
+                    Award award = JSONManager.getGson().fromJson(a, Award.class);
+                    try {
+                        if(teamSet && award.getWinners().toString().contains(teamNumber)){
+                            awards.add(award);
+                        }else{
+                            allAwards.add(award);
+                        }
+                    } catch (FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Unable to determine if team: "+teamKey+" is involved in award");
+                        allAwards.add(award);
+                    }
+                }
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if (changed) {
+            allAwards.addAll(awards);
+            Database.getInstance(c).getAwardsTable().add(allAwards);
+        }
+        Log.d(Constants.DATAMANAGER_LOG, "Found "+awards.size()+" awards, updated in db? "+changed);
+        return new APIResponse<>(awards, code);
+    }
     @Override
     public AwardListElement render() {
-        return new AwardListElement(name, winners);
+        try {
+            return new AwardListElement(getName(), getWinners());
+        } catch (FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Missing fields for rendering award");
+            return null;
+        }
     }
 
     @Override
-    public ContentValues getParams() {
-        return null;
+    public void write(Context c) {
+        Database.getInstance(c).getAwardsTable().add(this);
     }
 }

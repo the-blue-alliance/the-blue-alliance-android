@@ -57,12 +57,13 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                Object item = parent.getExpandableListAdapter().getChild(groupPosition, childPosition);
-                if (item != null && item instanceof Match) {
-                    String matchKey = ((Match) item).getKey();
+                if (view.findViewById(R.id.match_title) != null) {
+                    String matchKey = view.findViewById(R.id.match_title).getTag().toString();
                     startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
+                    return true;
                 }
-                return true;
+
+                return false;
             }
         });
         warningMessage = (TextView) findViewById(R.id.warning_container);
@@ -82,6 +83,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh started");
         task = new PopulateTeamAtEvent(this, true);
         task.execute(teamKey, eventKey);
     }

@@ -28,8 +28,5 @@ public class TeamClickListener implements View.OnClickListener {
             }
             c.startActivity(ViewTeamActivity.newInstance(c, teamKey));
         }
-        else {
-            throw new IllegalArgumentException("TeamClickListener must be attached to a view with a valid team key set as the tag!");
-        }
     }
 }

@@ -21,18 +21,16 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.SimpleEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * File created by phil on 4/20/14.
@@ -40,9 +38,11 @@ import java.util.Map;
 public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private Activity mActivity;
-    private String mEventKey;
     private String mMatchKey;
-    private Match mMatch;
+    private String mMatchTitle;
+    private JsonArray mMatchVideos;
+    private String mEventName;
+    private JsonObject alliances;
     private boolean forceFromCache;
 
     public PopulateMatchInfo(Activity activity, boolean forceFromCache) {
@@ -61,29 +61,39 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         mMatchKey = params[0];
-        mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
+        if(!MatchHelper.validateMatchKey(mMatchKey)){
+            throw new IllegalArgumentException("Invalid match key. Can't populate match.");
+        }
+        String mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
         try {
-            APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> response = DataManager.Events.getEventResults(mActivity, mEventKey, forceFromCache);
-            HashMap<MatchHelper.TYPE, ArrayList<Match>> matches = response.getData();
+            APIResponse<Match> response = DataManager.Matches.getMatch(mActivity, mMatchKey, forceFromCache);
+            Match match = response.getData();
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
-            // Extract the specified match from the list
-            mMatch = null;
-            for (Map.Entry<MatchHelper.TYPE, ArrayList<Match>> matchListEntry : matches.entrySet()) {
-                ArrayList<Match> matchList = matchListEntry.getValue();
-                for (Match match : matchList) {
-                    if (match.getKey().equals(mMatchKey)) {
-                        mMatch = match;
-                        break;
-                    }
+            try {
+                alliances = match.getAlliances();
+                mMatchTitle = match.getTitle();
+                mMatchVideos = match.getVideos();
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Couldn't get match data");
+                return APIResponse.CODE.NODATA;
+            }
+
+            APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, forceFromCache);
+            Event event = eventResponse.getData();
+            if(event != null){
+                try {
+                    mEventName = event.getEventName();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Can't get name for event");
                 }
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            Log.w(Constants.LOG_TAG, "unable to load team info");
+            Log.w(Constants.LOG_TAG, "unable to load match info");
             //some temp data
             return APIResponse.CODE.NODATA;
         }
@@ -94,7 +104,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         super.onPostExecute(code);
 
         if (code != APIResponse.CODE.NODATA) {
-            JsonObject redAlliance = mMatch.getAlliances().getAsJsonObject("red");
+            JsonObject redAlliance = alliances.getAsJsonObject("red");
             JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
 
             TextView red1 = ((TextView) mActivity.findViewById(R.id.red1));
@@ -143,7 +153,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             }
 
             // Repeat process for blue alliance.
-            JsonObject blueAlliance = mMatch.getAlliances().getAsJsonObject("blue");
+            JsonObject blueAlliance = alliances.getAsJsonObject("blue");
             JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
 
             TextView blue1 = ((TextView) mActivity.findViewById(R.id.blue1));
@@ -197,18 +207,17 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 red_alliance.setBackgroundResource(R.drawable.red_border);
             }
 
-            SimpleEvent event = Database.getInstance(mActivity).getEvent(mEventKey);
-            if (event != null) {
-                ((TextView) mActivity.findViewById(R.id.event_name)).setText(event.getEventName());
+
+            if(mEventName != null && !mEventName.isEmpty()) {
+                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mEventName);
             }
 
-            ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatch.getTitle());
+            ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatchTitle);
 
-            JsonArray videos = mMatch.getVideos();
             Picasso picasso = Picasso.with(mActivity);
-            List<ImageView> images = new ArrayList();
-            for (int i = 0; i < videos.size(); i++) {
-                JsonObject video = videos.get(i).getAsJsonObject();
+            List<ImageView> images = new ArrayList<>();
+            for (int i = 0; i < mMatchVideos.size(); i++) {
+                JsonObject video = mMatchVideos.get(i).getAsJsonObject();
                 if (video.get("type").getAsString().equals("youtube")) {
                     final String videoKey = video.get("key").getAsString();
                     String thumbnailURL = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(Media.TYPE.YOUTUBE), videoKey);
@@ -255,7 +264,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             new PopulateMatchInfo(mActivity, false).execute(mMatchKey);
         } else {
             // Show notification if we've refreshed data.
-            // Show notification if we've refreshed data.
+            Log.i(Constants.REFRESH_LOG, "Match "+mMatchKey+" refresh complete");
             if (mActivity instanceof RefreshableHostActivity) {
                 ((RefreshableHostActivity) mActivity).notifyRefreshComplete((RefreshListener) mActivity);
             }

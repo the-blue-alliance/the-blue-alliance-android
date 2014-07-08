@@ -124,7 +124,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_YEAR, Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition]));
+        outState.putInt(SELECTED_YEAR, getActionBar().getSelectedNavigationIndex());
         outState.putInt(SELECTED_TAB, mSelectedTab);
     }
 
@@ -248,5 +248,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         for (OnYearChangedListener listener : yearChangedListeners) {
             listener.onYearChanged(newYear);
         }
+    }
+
+    public int getCurrentSelectedYearPosition() {
+        return mCurrentSelectedYearPosition;
     }
 }

@@ -71,6 +71,8 @@ public class MatchListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        holder.matchTitle.setTag(matchKey);
+
         if (!redScore.contains("?") && !blueScore.contains("?")) {
             try {
                 int bScore = Integer.parseInt(blueScore),

@@ -10,13 +10,14 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 /**
  * File created by phil on 6/4/14.
  */
-public class AllianceListElement extends ListElement implements BasicModel {
+public class AllianceListElement extends ListElement implements RenderableModel {
 
     private int number;
     private JsonArray teams;
@@ -90,10 +91,5 @@ public class AllianceListElement extends ListElement implements BasicModel {
     @Override
     public ListElement render() {
         return this;
-    }
-
-    @Override
-    public ContentValues getParams() {
-        return null;
     }
 }

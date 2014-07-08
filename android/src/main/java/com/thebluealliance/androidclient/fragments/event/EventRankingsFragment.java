@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -118,6 +120,7 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " rankings");
         mTask = new PopulateEventRankings(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
     }

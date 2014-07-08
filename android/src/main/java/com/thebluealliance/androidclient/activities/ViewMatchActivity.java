@@ -71,6 +71,7 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
     @Override
     public void onRefreshStart() {
+        Log.i(Constants.REFRESH_LOG, "Match "+mMatchKey+" refresh started");
         task = new PopulateMatchInfo(this, true);
         task.execute(mMatchKey);
         // Indicate loading; the task will hide the progressbar and show the content when loading is complete

@@ -20,8 +20,10 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -67,17 +69,22 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             ArrayList<Award> awardList = response.getData();
             HashMap<String, Team> teams = new HashMap();
             for (Award a : awardList) {
-                for (JsonElement winner : a.getWinners()) {
-                    if (!((JsonObject)winner).get("team_number").isJsonNull()) {
-                        String teamKey = "frc" + ((JsonObject)winner).get("team_number");
-                        Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
-                        teams.put(teamKey, team);
+                try {
+                    for (JsonElement winner : a.getWinners()) {
+                        if (!((JsonObject) winner).get("team_number").isJsonNull()) {
+                            String teamKey = "frc" + ((JsonObject) winner).get("team_number");
+                            Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
+                            teams.put(teamKey, team);
+                        }
                     }
+                    awards.add(new AwardListElement(a.getName(), a.getWinners(), teams));
+                }catch(BasicModel.FieldNotDefinedException e){
+                    Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
                 }
-                awards.add(new AwardListElement(a.getName(), a.getWinners(), teams));
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
+            e.printStackTrace();
             Log.w(Constants.LOG_TAG, "unable to load event awards");
             return APIResponse.CODE.NODATA;
         }
@@ -89,6 +96,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         if (view != null) {
             adapter = new ListViewAdapter(activity, awards);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            noDataText.setVisibility(View.GONE);
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
@@ -123,7 +131,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
-                Log.d(Constants.LOG_TAG, "Event Awards refresh complete");
+                Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Awards refresh complete");
                 activity.notifyRefreshComplete(mFragment);
             }
         }

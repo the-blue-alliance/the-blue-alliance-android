@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
@@ -24,7 +25,7 @@ public class MatchListAdapter extends ExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        BasicModel child = groups.get(groupPosition).children.get(childPosition);
+        RenderableModel child = groups.get(groupPosition).children.get(childPosition);
         if (child instanceof Match) {
             ((Match) child).setSelectedTeam(teamKey);
         }

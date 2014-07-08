@@ -19,10 +19,12 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Retrieves event results for an FRC event.
@@ -88,40 +90,46 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             Match previousIteration = null;
             boolean lastMatchPlayed = false;
             for (Match match : results) {
-
-                if (lastType != match.getType()) {
-                    switch (match.getType()) {
-                        case QUAL:
-                            currentGroup = qualMatches;
-                            break;
-                        case QUARTER:
-                            currentGroup = quarterMatches;
-                            break;
-                        case SEMI:
-                            currentGroup = semiMatches;
-                            break;
-                        case FINAL:
-                            currentGroup = finalMatches;
-                            break;
+                try {
+                    MatchHelper.TYPE currentType = match.getType();
+                    if (lastType != currentType) {
+                        switch (match.getType()) {
+                            case QUAL:
+                                currentGroup = qualMatches;
+                                break;
+                            case QUARTER:
+                                currentGroup = quarterMatches;
+                                break;
+                            case SEMI:
+                                currentGroup = semiMatches;
+                                break;
+                            case FINAL:
+                                currentGroup = finalMatches;
+                                break;
+                        }
                     }
+
+
+                    currentGroup.children.add(match);
+
+                    if (lastMatchPlayed && !match.hasBeenPlayed()) {
+                        lastMatch = previousIteration;
+                        nextMatch = match;
+                    }
+
+                    /**
+                     * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
+                     * we'd have to iterate through every match again to calculate the
+                     * record, and that's just wasteful
+                     */
+                    match.addToRecord(teamKey, record);
+                    lastType = currentType;
+                    previousIteration = match;
+                    lastMatchPlayed = match.hasBeenPlayed();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.e(Constants.LOG_TAG, "Can't get match type. Missing fields..."+
+                            Arrays.toString(e.getStackTrace()));
                 }
-
-                currentGroup.children.add(match);
-
-                if (lastMatchPlayed && !match.hasBeenPlayed()) {
-                    lastMatch = previousIteration;
-                    nextMatch = match;
-                }
-
-                /**
-                 * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
-                 * we'd have to iterate through every match again to calculate the
-                 * record, and that's just wasteful
-                 */
-                match.addToRecord(teamKey, record);
-                lastType = match.getType();
-                previousIteration = match;
-                lastMatchPlayed = match.hasBeenPlayed();
             }
             if (lastMatch == null && !results.isEmpty()) {
                 lastMatch = results.get(results.size() - 1);
@@ -215,7 +223,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {
-                Log.d(Constants.LOG_TAG, "Event Results refresh complete");
+                Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Results refresh complete");
                 activity.notifyRefreshComplete(mFragment);
             }
         }

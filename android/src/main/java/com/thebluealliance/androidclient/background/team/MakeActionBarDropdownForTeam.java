@@ -17,7 +17,6 @@ import java.util.Collections;
  * File created by phil on 6/18/14.
  */
 public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIResponse.CODE> {
-
     private ViewTeamActivity activity;
     private String teamKey;
 
@@ -37,14 +36,13 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
             throw new IllegalArgumentException("You must pass a valid team key to create the action bar");
         }
         teamKey = params[0];
-
         try {
             APIResponse<ArrayList<Integer>> yearsResponse = DataManager.Teams.getYearsParticipated(activity, teamKey, false);
             Collections.reverse(yearsResponse.getData());
             Integer[] integerYears = yearsResponse.getData().toArray(new Integer[yearsResponse.getData().size()]);
             years = new int[integerYears.length];
             for(int i = 0; i < years.length; i++) {
-                years[i] = integerYears[i].intValue();
+                years[i] = integerYears[i];
             }
             return yearsResponse.getCode();
         } catch (DataManager.NoDataException e) {

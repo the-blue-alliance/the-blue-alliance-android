@@ -23,10 +23,12 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -168,8 +170,15 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     matchResult = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
                     ArrayList<Match> matches = matchResult.getData();
                     Collections.sort(matches, new MatchSortByPlayOrderComparator());
-                    Match nextMatch = MatchHelper.getNextMatchPlayed(matches);
-                    Match lastMatch = MatchHelper.getLastMatchPlayed(matches);
+                    Match nextMatch = null;
+                    Match lastMatch = null;
+                    try {
+                        nextMatch = MatchHelper.getNextMatchPlayed(matches);
+                        lastMatch = MatchHelper.getLastMatchPlayed(matches);
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.e(Constants.LOG_TAG, "Can't get next/last matches. Missing fields...\n" +
+                                Arrays.toString(e.getStackTrace()));
+                    }
 
                     if (nextMatch != null) {
                         showNextMatch = true;
@@ -197,10 +206,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPostExecute(c);
 
         if (event != null && activity != null) {
-            activity.setActionBarTitle(event.getEventName());
+            activity.setActionBarTitle(nameString);
 
             // Set the new info (if necessary)
-            eventName.setText(event.getEventName());
+            eventName.setText(nameString);
             if (event.getDateString().isEmpty()) {
                 activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
             } else {
@@ -298,7 +307,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             } else {
                 // Show notification if we've refreshed data.
                 if (mFragment instanceof RefreshListener) {
-                    Log.d(Constants.LOG_TAG, "Event Info refresh complete");
+                    Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Info refresh complete");
                     activity.notifyRefreshComplete(mFragment);
                 }
             }

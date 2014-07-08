@@ -25,7 +25,7 @@ public class DownloadEventList extends AsyncTask<Integer, Void, Set<String>> {
     protected Set<String> doInBackground(Integer... params) {
         try {
             Log.d(Constants.LOG_TAG, "Loading event list...");
-            return DataManager.Events.getEventsByYear(c, params[0]).getData().keySet();
+            return DataManager.Events.getEventsByYear(c, params[0], false).getData().keySet();
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
             Log.d(Constants.LOG_TAG, "Loading failed!");
