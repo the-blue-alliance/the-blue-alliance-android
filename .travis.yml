@@ -17,7 +17,7 @@ before_install:
   - "android-update-sdk --components='extra-android-m2repository,extra-google-m2repository' --accept-licenses='.+'"
 
 #android:
-#  components:
+#  components: 
 #    - build-tools-19.1.0
 
 before_script:
