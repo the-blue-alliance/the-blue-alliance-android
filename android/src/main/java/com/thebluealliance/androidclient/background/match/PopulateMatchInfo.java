@@ -236,6 +236,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     picasso.load(thumbnailURL).into(thumbnail);
                 }
             }
+            LinearLayout mediaList = (LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container);
+            mediaList.removeAllViews();
             for (int i = 0; i < images.size(); i++) {
                 ImageView thumbnail = images.get(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -243,7 +245,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 if (!images.isEmpty() && i > 0) {
                     layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
                 }
-                ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, layoutParams);
+                mediaList.addView(thumbnail, layoutParams);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
