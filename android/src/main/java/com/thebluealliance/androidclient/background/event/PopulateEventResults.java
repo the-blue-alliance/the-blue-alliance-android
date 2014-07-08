@@ -161,13 +161,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             groups.add(qualMatches);
         }
 
-        ArrayList<AllianceListElement> alliances = event.renderAlliances();
-        if (!alliances.isEmpty()) {
-            ListGroup allianceGroup = new ListGroup(activity.getString(R.string.alliances_header));
-            allianceGroup.children.addAll(alliances);
-            groups.add(allianceGroup);
-        }
-
         if (!quarterMatches.children.isEmpty()) {
             groups.add(quarterMatches);
         }

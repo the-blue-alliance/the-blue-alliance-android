@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
+import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 
@@ -21,11 +22,13 @@ public class AllianceListElement extends ListElement implements RenderableModel 
 
     private int number;
     private JsonArray teams;
+    private String eventKey;
 
-    public AllianceListElement(int number, JsonArray teams) {
+    public AllianceListElement(String eventKey, int number, JsonArray teams) {
         if (teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");
         this.number = number;
         this.teams = teams;
+        this.eventKey = eventKey;
     }
 
     @Override
@@ -49,32 +52,34 @@ public class AllianceListElement extends ListElement implements RenderableModel 
         if (convertView != null) {
             holder.allianceName.setText(String.format(c.getString(R.string.alliance_title), number));
 
+            TeamAtEventClickListener listener = new TeamAtEventClickListener(c);
+
             String team1Key = teams.get(0).getAsString();
             SpannableString underLine = new SpannableString(team1Key.substring(3));
             underLine.setSpan(new UnderlineSpan(), 0, underLine.length(), 0);
             holder.memberOne.setText(underLine);
-            holder.memberOne.setTag(team1Key);
-            holder.memberOne.setOnClickListener(new TeamClickListener(c));
+            holder.memberOne.setTag(team1Key+"@"+eventKey);
+            holder.memberOne.setOnClickListener(listener);
 
             String team2Key = teams.get(1).getAsString();
             holder.memberTwo.setText(team2Key.substring(3));
-            holder.memberTwo.setTag(team2Key);
-            holder.memberTwo.setOnClickListener(new TeamClickListener(c));
+            holder.memberTwo.setTag(team2Key+"@"+eventKey);
+            holder.memberTwo.setOnClickListener(listener);
 
             if (teams.size() >= 3) {
                 String team3Key = teams.get(2).getAsString();
                 holder.memberThree.setText(team3Key.substring(3));
-                holder.memberThree.setTag(team3Key);
+                holder.memberThree.setTag(team3Key+"@"+eventKey);
                 holder.memberThree.setVisibility(View.VISIBLE);
-                holder.memberThree.setOnClickListener(new TeamClickListener(c));
+                holder.memberThree.setOnClickListener(listener);
             }
 
             if (teams.size() >= 4) {
                 String team4Key = teams.get(3).getAsString();
                 holder.memberFour.setText(team4Key.substring(3));
-                holder.memberFour.setTag(team4Key);
+                holder.memberFour.setTag(team4Key+"@"+eventKey);
                 holder.memberFour.setVisibility(View.VISIBLE);
-                holder.memberFour.setOnClickListener(new TeamClickListener(c));
+                holder.memberFour.setOnClickListener(listener);
             }
         }
         return convertView;
