@@ -7,7 +7,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.intents.RefreshBroadcast;
 
 /**
@@ -27,8 +26,6 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
         Log.i(Constants.LOG_TAG, "Received connectivity change intent: "+intent.getAction());
 
         // if we now have interwebz, send out a local broadcast telling things to refresh
-        if(ConnectionDetector.isConnectedToInternet(context)) {
-            LocalBroadcastManager.getInstance(context).sendBroadcast(new RefreshBroadcast());
-        }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new RefreshBroadcast());
     }
 }

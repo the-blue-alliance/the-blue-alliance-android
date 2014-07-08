@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
@@ -12,6 +11,7 @@ import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.intents.RefreshBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -211,7 +211,12 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
-            startRefresh();
+            if(ConnectionDetector.isConnectedToInternet(context)) {
+                hideWarningMessage();
+                startRefresh();
+            }else{
+                showWarningMessage(getString(R.string.warning_no_internet_connection));
+            }
         }
     }
 }
