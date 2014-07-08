@@ -108,7 +108,8 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 break;
             case R.id.action_view_team:
-                startActivity(ViewTeamActivity.newInstance(this, teamKey));
+                int year = Integer.parseInt(eventKey.substring(0,4));
+                startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
             case android.R.id.home:
                 if(isDrawerOpen()) {
                     closeDrawer();
