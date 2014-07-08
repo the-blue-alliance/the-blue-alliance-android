@@ -116,12 +116,20 @@ public class MatchListElement extends ListElement {
             if (selectedTeamNumber.equals(redTeams[0])) {
                 holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
             }
+            else
+            {
+                holder.red1.setTypeface(Typeface.DEFAULT);
+            }
 
             holder.red2.setText(redTeams[1]);
             holder.red2.setTag("frc" + redTeams[1]+"@"+eventKey);
             holder.red2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[1])) {
                 holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
+            }
+            else
+            {
+                holder.red2.setTypeface(Typeface.DEFAULT);
             }
 
             if (redTeams.length == 2) {
@@ -133,6 +141,10 @@ public class MatchListElement extends ListElement {
                 holder.red3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(redTeams[2])) {
                     holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
+                }
+                else
+                {
+                    holder.red3.setTypeface(Typeface.DEFAULT);
                 }
             }
         }
@@ -148,12 +160,20 @@ public class MatchListElement extends ListElement {
             if (selectedTeamNumber.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
             }
+            else
+            {
+                holder.blue1.setTypeface(Typeface.DEFAULT);
+            }
 
             holder.blue2.setText(blueTeams[1]);
             holder.blue2.setTag("frc" + blueTeams[1]+"@"+eventKey);
             holder.blue2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[1])) {
                 holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
+            }
+            else
+            {
+                holder.blue2.setTypeface(Typeface.DEFAULT);
             }
 
             if (blueTeams.length == 2) {
@@ -165,6 +185,10 @@ public class MatchListElement extends ListElement {
                 holder.blue3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(blueTeams[2])) {
                     holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
+                }
+                else
+                {
+                    holder.blue3.setTypeface(Typeface.DEFAULT);
                 }
             }
         }
