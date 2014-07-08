@@ -92,16 +92,8 @@ public class MatchListElement extends ListElement {
         }
 
         //if we have video for this match, show an icon
-        //currently the launcher icon. It'll be changed...
         if (videoKey != null) {
             holder.videoIcon.setVisibility(View.VISIBLE);
-            holder.videoIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + videoKey));
-                    view.getContext().startActivity(intent);
-                }
-            });
         } else {
             holder.videoIcon.setVisibility(View.INVISIBLE);
         }
