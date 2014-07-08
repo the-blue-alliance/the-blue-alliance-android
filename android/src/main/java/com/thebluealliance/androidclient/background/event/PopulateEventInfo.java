@@ -200,7 +200,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 nameString = event.getEventName();
                 venueString = event.getVenue();
                 locationString = event.getLocation();
-            } catch(BasicModel.FieldNotDefinedException e) {
+            } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't create social media intents. Missing event fields.\n" +
                         Arrays.toString(e.getStackTrace()));
                 nameString = "Name not found";

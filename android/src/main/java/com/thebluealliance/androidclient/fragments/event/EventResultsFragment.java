@@ -125,7 +125,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventResults newTask){
+    public void updateTask(PopulateEventResults newTask) {
         mTask = newTask;
     }
 

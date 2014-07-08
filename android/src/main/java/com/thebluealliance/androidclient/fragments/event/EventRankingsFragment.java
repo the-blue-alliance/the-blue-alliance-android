@@ -132,7 +132,7 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventRankings newTask){
+    public void updateTask(PopulateEventRankings newTask) {
         mTask = newTask;
     }
 

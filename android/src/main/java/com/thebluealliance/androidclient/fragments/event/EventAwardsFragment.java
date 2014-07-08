@@ -103,7 +103,7 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventAwards newTask){
+    public void updateTask(PopulateEventAwards newTask) {
         mTask = newTask;
     }
 

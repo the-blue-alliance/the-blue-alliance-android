@@ -22,20 +22,20 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
     //database table that holds this model's information
     private String table;
 
-    public BasicModel(String table){
+    public BasicModel(String table) {
         this.table = table;
         fields = new ContentValues();
     }
 
-    public static Cursor query(Context c, String table, String[] fields, String where, String[] whereArgs){
+    public static Cursor query(Context c, String table, String[] fields, String where, String[] whereArgs) {
         return Database.getInstance(c).safeQuery(table, fields, where, whereArgs, null, null, null, null);
     }
 
-    public void merge(T in){
+    public void merge(T in) {
         fields.putAll(in.fields);
     }
 
-    public ContentValues getParams(){
+    public ContentValues getParams() {
         return fields;
     }
 

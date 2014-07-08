@@ -28,15 +28,15 @@ import java.util.Date;
 public class TestTBAApi extends TestCase {
 
     @MediumTest
-    public void testParseEvent(){
+    public void testParseEvent() {
         String eventJson = "{\"key\": \"2014ctgro\", \"end_date\": \"2014-03-09\", \"name\": \"Groton District Event\", \"short_name\": \"Groton\", \"facebook_eid\": null, \"official\": true, \"location\": \"Groton, CT, USA\", \"event_code\": \"ctgro\", \"year\": 2014, \"event_type_string\": \"District\", \"start_date\": \"2014-03-08\", \"event_type\": 1}";
         Event event = JSONManager.getGson().fromJson(eventJson, Event.class);
 
         //now, assert that all the properties are there
         try {
-            assertEquals(event.getEventKey(),"2014ctgro");
-            assertEquals(event.getStartDate(), new Date(114,2,8));
-            assertEquals(event.getEndDate(), new Date(114,2,9));
+            assertEquals(event.getEventKey(), "2014ctgro");
+            assertEquals(event.getStartDate(), new Date(114, 2, 8));
+            assertEquals(event.getEndDate(), new Date(114, 2, 9));
             assertEquals(event.getEventName(), "Groton District Event");
             assertEquals(event.getShortName(), "Groton");
             assertEquals(event.isOfficial(), true);
@@ -49,7 +49,7 @@ public class TestTBAApi extends TestCase {
     }
 
     @MediumTest
-    public void testParseTeam(){
+    public void testParseTeam() {
         String teamJson = "{\n" +
                 "  \"website\": \"http://www.uberbots.org\",\n" +
                 "  \"name\": \"UTC Fire and Security & Avon High School\",\n" +
@@ -68,7 +68,7 @@ public class TestTBAApi extends TestCase {
             assertEquals(team.getWebsite(), "http://www.uberbots.org");
             assertEquals(team.getFullName(), "UTC Fire and Security & Avon High School");
             assertEquals(team.getLocation(), "Avon, CT, USA");
-            assertEquals((int)team.getTeamNumber(), 1124);
+            assertEquals((int) team.getTeamNumber(), 1124);
             assertEquals(team.getTeamKey(), "frc1124");
             assertEquals(team.getNickname(), "ÜberBots");
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -78,7 +78,7 @@ public class TestTBAApi extends TestCase {
     }
 
     @MediumTest
-    public void testParseMedia(){
+    public void testParseMedia() {
         String mediaJson = "[" +
                 "  {" +
                 "    \"type\": \"cdphotothread\"," +
@@ -120,7 +120,7 @@ public class TestTBAApi extends TestCase {
     }
 
     @MediumTest
-    public void testParseMatch(){
+    public void testParseMatch() {
         String matchJson = "{\"comp_level\": \"f\", \"match_number\": 1, \"videos\": [{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}], \"time_string\": \"3:36 PM\", \"set_number\": 1, \"key\": \"2014ctgro_f1m1\", \"time\": \"1394393760\", \"alliances\": {\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}, \"event_key\": \"2014ctgro\"}";
         Match match = JSONManager.getGson().fromJson(matchJson, Match.class);
 
@@ -141,7 +141,7 @@ public class TestTBAApi extends TestCase {
     }
 
     @MediumTest
-    public void testParseAwardNoAwardee(){
+    public void testParseAwardNoAwardee() {
         String json = "{\n" +
                 "    \"event_key\": \"2010sc\",\n" +
                 "    \"name\": \"Winner\",\n" +
@@ -171,7 +171,7 @@ public class TestTBAApi extends TestCase {
             JsonArray recips = award.getWinners();
             String[] winners = {"343", "1261", "1398"};
             assertEquals(recips.size(), 3);
-            for(int i=0;i<3;i++){
+            for (int i = 0; i < 3; i++) {
                 assertEquals(winners[i], recips.get(i).getAsJsonObject().get("team_number").getAsString());
             }
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -181,7 +181,7 @@ public class TestTBAApi extends TestCase {
     }
 
     @MediumTest
-    public void testParseAwardNoTeam(){
+    public void testParseAwardNoTeam() {
         String json = "{\n" +
                 "    \"event_key\": \"2010sc\",\n" +
                 "    \"name\": \"FIRST Dean's List Finalist Award\",\n" +
@@ -207,7 +207,7 @@ public class TestTBAApi extends TestCase {
             JsonArray recips = award.getWinners();
             String[] winners = {"Brandon Dean", "Megan Shew"};
             assertEquals(recips.size(), 2);
-            for(int i=0;i<2;i++){
+            for (int i = 0; i < 2; i++) {
                 assertEquals(winners[i], recips.get(i).getAsJsonObject().get("awardee").getAsString());
             }
         } catch (BasicModel.FieldNotDefinedException e) {

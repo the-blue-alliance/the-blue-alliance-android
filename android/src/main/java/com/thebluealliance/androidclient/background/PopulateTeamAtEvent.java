@@ -85,7 +85,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 ArrayList<Match> teamMatches = MatchHelper.getMatchesForTeam(eventMatches, teamKey);
                 matchGroups = MatchHelper.constructMatchList(activity, teamMatches);
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't construct match list. Missing fields: "+e.getMessage());
+                Log.e(Constants.LOG_TAG, "Can't construct match list. Missing fields: " + e.getMessage());
                 return APIResponse.CODE.NODATA;
             }
             int[] record = MatchHelper.getRecordForTeam(eventMatches, teamKey);
@@ -251,7 +251,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
             // If the adapter has no children, display a generic "no data" message.
             // Otherwise, show the list as normal.
-            if(adapter.isEmpty()) {
+            if (adapter.isEmpty()) {
                 activity.findViewById(R.id.status_message).setVisibility(View.VISIBLE);
                 activity.findViewById(R.id.results).setVisibility(View.GONE);
             } else {
@@ -261,14 +261,14 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 ExpandableListView listView = (ExpandableListView) activity.findViewById(R.id.results);
                 // If the list hasn't previously been initialized, expand the "summary" view
                 boolean shouldExpandSummary = false;
-                if(listView.getExpandableListAdapter() == null) {
+                if (listView.getExpandableListAdapter() == null) {
                     shouldExpandSummary = true;
                 }
                 Parcelable state = listView.onSaveInstanceState();
                 int firstVisiblePosition = listView.getFirstVisiblePosition();
                 listView.setAdapter(adapter);
                 listView.onRestoreInstanceState(state);
-                if(shouldExpandSummary) {
+                if (shouldExpandSummary) {
                     listView.expandGroup(0);
                 }
                 listView.setSelection(firstVisiblePosition);
@@ -291,7 +291,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             new PopulateTeamAtEvent(activity, false).execute(teamKey, eventKey);
         } else {
             // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh complete");
+            Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
             if (activity instanceof RefreshableHostActivity) {
                 activity.notifyRefreshComplete((RefreshListener) activity);
             }

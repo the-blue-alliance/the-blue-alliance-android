@@ -97,9 +97,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
                         // Take out extra letter at end to make team key valid.
                         teamKey = teamKey.substring(0, teamKey.length() - 1);
                     }
-                        startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
-                }
-                else{
+                    startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+                } else {
                     throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
                 }
             }
@@ -143,7 +142,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventStats newTask){
+    public void updateTask(PopulateEventStats newTask) {
         mTask = newTask;
     }
 

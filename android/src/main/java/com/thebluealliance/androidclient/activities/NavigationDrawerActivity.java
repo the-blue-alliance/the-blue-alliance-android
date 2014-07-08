@@ -172,7 +172,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      * Closes the navigation drawer
      */
     public void closeDrawer() {
-        if(isDrawerOpen()) {
+        if (isDrawerOpen()) {
             getDrawerLayout().closeDrawer(Gravity.LEFT);
         }
     }
@@ -181,7 +181,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      * Opens the navigation drawer
      */
     public void openDrawer() {
-        if(!isDrawerOpen()) {
+        if (!isDrawerOpen()) {
             getDrawerLayout().openDrawer(Gravity.LEFT);
         }
     }

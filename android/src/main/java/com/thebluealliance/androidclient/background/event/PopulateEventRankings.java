@@ -66,7 +66,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         try {
             APIResponse<ArrayList<JsonArray>> response = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
             ArrayList<JsonArray> rankList = response.getData();
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
             if (!rankList.isEmpty()) {

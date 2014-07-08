@@ -102,7 +102,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                 secondLoad.execute(start, end);
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Team list "+start+" - " + end+" refresh complete");
+                Log.i(Constants.REFRESH_LOG, "Team list " + start + " - " + end + " refresh complete");
                 if (fragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete(fragment);
                 }

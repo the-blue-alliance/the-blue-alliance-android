@@ -14,7 +14,7 @@ public class AwardHelper {
         }
     }
 
-    public static boolean validateAwardKey(String key){
+    public static boolean validateAwardKey(String key) {
         //TODO put real key validation here
         return true;
     }

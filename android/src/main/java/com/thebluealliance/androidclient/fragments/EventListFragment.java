@@ -131,7 +131,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading events for week "+mHeader+" in "+mYear+" for "+mTeamKey);
+        Log.i(Constants.REFRESH_LOG, "Loading events for week " + mHeader + " in " + mYear + " for " + mTeamKey);
         mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

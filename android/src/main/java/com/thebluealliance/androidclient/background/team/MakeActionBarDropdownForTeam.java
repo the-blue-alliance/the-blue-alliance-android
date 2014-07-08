@@ -41,7 +41,7 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
             Collections.reverse(yearsResponse.getData());
             Integer[] integerYears = yearsResponse.getData().toArray(new Integer[yearsResponse.getData().size()]);
             years = new int[integerYears.length];
-            for(int i = 0; i < years.length; i++) {
+            for (int i = 0; i < years.length; i++) {
                 years[i] = integerYears[i];
             }
             return yearsResponse.getCode();

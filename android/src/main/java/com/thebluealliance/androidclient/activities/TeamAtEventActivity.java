@@ -77,7 +77,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh started");
+        Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh started");
         task = new PopulateTeamAtEvent(this, true);
         task.execute(teamKey, eventKey);
     }
@@ -102,12 +102,12 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 break;
             case android.R.id.home:
-                if(isDrawerOpen()) {
+                if (isDrawerOpen()) {
                     closeDrawer();
                     return true;
                 }
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {

@@ -77,7 +77,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                         }
                     }
                     awards.add(new AwardListElement(a.getName(), a.getWinners(), teams));
-                }catch(BasicModel.FieldNotDefinedException e){
+                } catch (BasicModel.FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
                 }
             }

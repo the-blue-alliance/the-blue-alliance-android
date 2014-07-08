@@ -8,9 +8,13 @@ import com.thebluealliance.androidclient.models.BasicModel;
 public interface ModelTable<T extends BasicModel> {
 
     public long add(T in);
+
     public int update(T in);
+
     public T get(String key, String[] fields);
+
     public boolean exists(String key);
+
     public void delete(T in);
 
 }

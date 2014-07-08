@@ -112,7 +112,7 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventTeams newTask){
+    public void updateTask(PopulateEventTeams newTask) {
         mTask = newTask;
     }
 

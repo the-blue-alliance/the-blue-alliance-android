@@ -61,7 +61,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         mMatchKey = params[0];
-        if(!MatchHelper.validateMatchKey(mMatchKey)){
+        if (!MatchHelper.validateMatchKey(mMatchKey)) {
             throw new IllegalArgumentException("Invalid match key. Can't populate match.");
         }
         String mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
@@ -84,7 +84,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
             APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, forceFromCache);
             Event event = eventResponse.getData();
-            if(event != null){
+            if (event != null) {
                 try {
                     mEventName = event.getEventName();
                 } catch (BasicModel.FieldNotDefinedException e) {
@@ -208,7 +208,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             }
 
 
-            if(mEventName != null && !mEventName.isEmpty()) {
+            if (mEventName != null && !mEventName.isEmpty()) {
                 ((TextView) mActivity.findViewById(R.id.event_name)).setText(mEventName);
             }
 
@@ -264,7 +264,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             new PopulateMatchInfo(mActivity, false).execute(mMatchKey);
         } else {
             // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, "Match "+mMatchKey+" refresh complete");
+            Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
             if (mActivity instanceof RefreshableHostActivity) {
                 ((RefreshableHostActivity) mActivity).notifyRefreshComplete((RefreshListener) mActivity);
             }

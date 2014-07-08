@@ -62,7 +62,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
         }
 
-        if(mHeader.equals("Preseason Events")){
+        if (mHeader.equals("Preseason Events")) {
             Event ss = Database.getInstance(activity).getEventsTable().get("2014ctss");
         }
 
@@ -77,7 +77,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
 
-                if(isCancelled()){
+                if (isCancelled()) {
                     return APIResponse.CODE.NODATA;
                 }
 

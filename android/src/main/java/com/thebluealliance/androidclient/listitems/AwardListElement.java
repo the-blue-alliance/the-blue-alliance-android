@@ -92,12 +92,10 @@ public class AwardListElement extends ListElement {
                     team = mAwardTeams.get("frc" + teamNumber);
                 }
 
-                if (awardee.isEmpty() && team.getNickname().isEmpty())
-                {
+                if (awardee.isEmpty() && team.getNickname().isEmpty()) {
                     awardLine1 = teamNumber;
                     awardLine2 = "Team " + teamNumber;
-                }
-                else if (awardee.isEmpty()) {
+                } else if (awardee.isEmpty()) {
                     awardLine1 = teamNumber;
                     awardLine2 = team.getNickname();
                 } else {
@@ -121,6 +119,7 @@ public class AwardListElement extends ListElement {
 
         return convertView;
     }
+
     private static class ViewHolder {
         TextView awardName;
         LinearLayout awardRecipients;

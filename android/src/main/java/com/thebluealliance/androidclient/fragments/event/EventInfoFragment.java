@@ -77,7 +77,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading "+eventKey+" info");
+        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " info");
         task = new PopulateEventInfo(this, true);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
     }
@@ -89,7 +89,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         }
     }
 
-    public void updateTask(PopulateEventInfo newTask){
+    public void updateTask(PopulateEventInfo newTask) {
         task = newTask;
     }
 

@@ -20,23 +20,23 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         final JsonObject object = json.getAsJsonObject();
         final Match match = new Match();
 
-        if(object.has("key")) {
+        if (object.has("key")) {
             match.setKey(object.get("key").getAsString());
         }
 
-        if(object.has("comp_level")) {
+        if (object.has("comp_level")) {
             match.setTypeFromShort(object.get("comp_level").getAsString());
         }
 
-        if(object.has("match_number")) {
+        if (object.has("match_number")) {
             match.setMatchNumber(object.get("match_number").getAsInt());
         }
 
-        if(object.has("set_number")) {
+        if (object.has("set_number")) {
             match.setSetNumber(object.get("set_number").getAsInt());
         }
 
-        if(object.has(ALLIANCE_TAG)) {
+        if (object.has(ALLIANCE_TAG)) {
             match.setAlliances(object.get(ALLIANCE_TAG).getAsJsonObject());
         }
 
@@ -48,7 +48,7 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
             match.setTime(object.get("time").getAsLong());
         }
 
-        if(object.has("videos")) {
+        if (object.has("videos")) {
             match.setVideos(object.get("videos").getAsJsonArray());
         }
 

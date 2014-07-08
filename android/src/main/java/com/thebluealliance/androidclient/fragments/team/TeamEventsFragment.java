@@ -117,7 +117,7 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading "+mTeamKey+" events in "+mYear);
+        Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " events in " + mYear);
         mTask = new PopulateEventList(this, mYear, "", mTeamKey, true);
         mTask.execute();
     }

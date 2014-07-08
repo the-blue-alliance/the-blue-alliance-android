@@ -17,11 +17,11 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         final JsonObject object = json.getAsJsonObject();
         final Event event = new Event();
 
-        if(object.has("key")) {
+        if (object.has("key")) {
             event.setEventKey(object.get("key").getAsString());
         }
 
-        if(object.has("name")) {
+        if (object.has("name")) {
             event.setEventName(object.get("name").getAsString());
         }
 
@@ -31,14 +31,13 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setLocation(object.get("location").getAsString());
         }
 
-        if (!object.has("venue_address") || object.get("venue_address").isJsonNull()){
+        if (!object.has("venue_address") || object.get("venue_address").isJsonNull()) {
             event.setVenue("");
-        }
-        else{
+        } else {
             event.setVenue(object.get("venue_address").getAsString());
         }
 
-        if(object.has("event_type")) {
+        if (object.has("event_type")) {
             event.setEventType(object.get("event_type").getAsInt());
         }
 

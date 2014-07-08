@@ -126,7 +126,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new TeamListElement(team);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't add team search result item. Missing fields... "+
+                    Log.e(Constants.LOG_TAG, "Can't add team search result item. Missing fields... " +
                             Arrays.toString(e.getStackTrace()));
                 }
                 Log.d(Constants.LOG_TAG, "titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
@@ -166,8 +166,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new EventListElement(event);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n"+
-                        Arrays.toString(e.getStackTrace()));
+                    Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n" +
+                            Arrays.toString(e.getStackTrace()));
                 }
             }
             eventQueryResults.close();

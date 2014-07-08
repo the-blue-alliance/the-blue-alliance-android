@@ -105,7 +105,7 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if(cursorLoader.getId() != mTeamNumberStart + mTeamNumberEnd) {
+        if (cursorLoader.getId() != mTeamNumberStart + mTeamNumberEnd) {
             return;
         }
         Log.d(Constants.LOG_TAG, "Load finished!");
@@ -128,12 +128,12 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading teams between "+mTeamNumberStart+" and "+mTeamNumberEnd);
+        Log.i(Constants.REFRESH_LOG, "Loading teams between " + mTeamNumberStart + " and " + mTeamNumberEnd);
         mTask = new PopulateTeamList(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamNumberStart, mTeamNumberEnd);
     }
 
-    public void updateTask(PopulateTeamList newTask){
+    public void updateTask(PopulateTeamList newTask) {
         mTask = newTask;
     }
 

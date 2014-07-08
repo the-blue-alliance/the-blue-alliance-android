@@ -143,7 +143,7 @@ public class MatchListElement extends ListElement {
                 holder.red3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(redTeams[2])) {
                     holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
-                }  else {
+                } else {
                     holder.red3.setTypeface(Typeface.DEFAULT);
                 }
             }
@@ -159,7 +159,7 @@ public class MatchListElement extends ListElement {
             holder.blue1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
-            }  else {
+            } else {
                 holder.blue1.setTypeface(Typeface.DEFAULT);
             }
 
@@ -168,7 +168,7 @@ public class MatchListElement extends ListElement {
             holder.blue2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[1])) {
                 holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
-            }  else {
+            } else {
                 holder.blue2.setTypeface(Typeface.DEFAULT);
             }
 
@@ -181,7 +181,7 @@ public class MatchListElement extends ListElement {
                 holder.blue3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(blueTeams[2])) {
                     holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
-                }  else {
+                } else {
                     holder.blue3.setTypeface(Typeface.DEFAULT);
                 }
             }

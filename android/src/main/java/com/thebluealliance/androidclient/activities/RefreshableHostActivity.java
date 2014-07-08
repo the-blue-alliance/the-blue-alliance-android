@@ -33,7 +33,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
-        if(mRefreshInProgress) {
+        if (mRefreshInProgress) {
             showMenuProgressBar();
         }
         return true;
@@ -103,7 +103,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             mCompletedRefreshListeners.add(completedListener);
         }
 
-        if(mCompletedRefreshListeners.size() >= mRefreshListeners.size()) {
+        if (mCompletedRefreshListeners.size() >= mRefreshListeners.size()) {
             onRefreshComplete();
             mCompletedRefreshListeners.clear();
         }
