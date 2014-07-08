@@ -184,7 +184,6 @@ public class Team extends BasicModel<Team> {
         }
 
         if(changed){
-            Log.e(Constants.DATAMANAGER_LOG, "New team: "+team.getParams());
             team.write(c);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);

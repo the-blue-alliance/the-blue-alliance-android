@@ -27,11 +27,13 @@
                     style="@android:style/TextAppearance.DeviceDefault.Large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/event_name"
                     style="@android:style/TextAppearance.DeviceDefault.Medium"
+                    android:textStyle="italic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/match_name"

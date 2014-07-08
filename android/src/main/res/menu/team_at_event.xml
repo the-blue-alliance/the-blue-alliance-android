@@ -5,6 +5,10 @@
         android:id="@+id/action_view_event"
         android:title="@string/action_view_event"
         android:orderInCategory="100"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_about_light"/>
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/action_view_team"
+        android:title="@string/action_view_team"
+        android:orderInCategory="105"
+        android:showAsAction="never"/>
 </menu>

@@ -2,7 +2,8 @@
 <resources>
 
     <!-- Team at Event -->
-    <string name="action_view_event">View Full Event</string>
+    <string name="action_view_event">View Event</string>
+    <string name="action_view_team">View Team</string>
     <string name="match_results_header">Results:</string>
     <string name="team_at_event_no_data"><![CDATA[<br />No record or alliance data available.]]></string>
     <string name="team_at_event_no_ranking_data"><![CDATA[Team %1$s had a record of <b>%2$s</b>.]]></string>

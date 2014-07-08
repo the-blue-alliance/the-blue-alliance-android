@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -37,7 +38,7 @@ import java.util.List;
  */
 public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private Activity mActivity;
+    private RefreshableHostActivity mActivity;
     private String mMatchKey;
     private String mMatchTitle;
     private JsonArray mMatchVideos;
@@ -45,7 +46,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private JsonObject alliances;
     private boolean forceFromCache;
 
-    public PopulateMatchInfo(Activity activity, boolean forceFromCache) {
+    public PopulateMatchInfo(RefreshableHostActivity activity, boolean forceFromCache) {
         mActivity = activity;
         this.forceFromCache = forceFromCache;
     }
@@ -53,8 +54,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (mActivity instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mActivity).showMenuProgressBar();
+        if (mActivity != null) {
+            mActivity.showMenuProgressBar();
         }
     }
 
@@ -104,6 +105,9 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         super.onPostExecute(code);
 
         if (code != APIResponse.CODE.NODATA) {
+
+            mActivity.setActionBarTitle(mMatchTitle);
+
             JsonObject redAlliance = alliances.getAsJsonObject("red");
             JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
 
@@ -111,7 +115,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             TextView red2 = ((TextView) mActivity.findViewById(R.id.red2));
             TextView red3 = ((TextView) mActivity.findViewById(R.id.red3));
 
-            TeamClickListener listener = new TeamClickListener(mActivity);
+            TeamAtEventClickListener listener = new TeamAtEventClickListener(mActivity);
+            String eventKey = mMatchKey.split("_")[0];
 
             // Don't set any text or listeners if there's no teams in the red alliance for some reason.
             if (redAllianceTeamKeys.size() == 0) {
@@ -122,13 +127,13 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 // Red 1
                 String red1Key = redAllianceTeamKeys.get(0).getAsString();
                 red1.setText(red1Key.substring(3));
-                red1.setTag(red1Key);
+                red1.setTag(red1Key+"@"+eventKey);
                 red1.setOnClickListener(listener);
 
                 // Red 2
                 String red2Key = redAllianceTeamKeys.get(1).getAsString();
                 red2.setText(red2Key.substring(3));
-                red2.setTag(red2Key);
+                red2.setTag(red2Key+"@"+eventKey);
                 red2.setOnClickListener(listener);
 
                 // Only add the third team if the alliance has three teams.
@@ -136,7 +141,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     // Red 3
                     String red3Key = redAllianceTeamKeys.get(2).getAsString();
                     red3.setText(red3Key.substring(3));
-                    red3.setTag(red3Key);
+                    red3.setTag(red3Key+"@"+eventKey);
                     red3.setOnClickListener(listener);
 
                 } else {
@@ -168,20 +173,20 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 // Blue 1
                 String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
                 blue1.setText(blue1Key.substring(3));
-                blue1.setTag(blue1Key);
+                blue1.setTag(blue1Key+"@"+eventKey);
                 blue1.setOnClickListener(listener);
 
                 // Blue 2
                 String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
                 blue2.setText(blue2Key.substring(3));
-                blue2.setTag(blue2Key);
+                blue2.setTag(blue2Key+"@"+eventKey);
                 blue2.setOnClickListener(listener);
 
                 if (blueAllianceTeamKeys.size() > 2) {
                     // Blue 3
                     String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
                     blue3.setText(blue3Key.substring(3));
-                    blue3.setTag(blue3Key);
+                    blue3.setTag(blue3Key+"@"+eventKey);
                     blue3.setOnClickListener(listener);
 
                 } else {
@@ -209,10 +214,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
 
             if(mEventName != null && !mEventName.isEmpty()) {
-                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mEventName);
+                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mMatchKey.substring(0,4) + " " + mEventName);
             }
-
-            ((TextView) mActivity.findViewById(R.id.match_name)).setText(mMatchTitle);
 
             Picasso picasso = Picasso.with(mActivity);
             List<ImageView> images = new ArrayList<>();
@@ -236,6 +239,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     picasso.load(thumbnailURL).into(thumbnail);
                 }
             }
+            LinearLayout mediaList = (LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container);
+            mediaList.removeAllViews();
             for (int i = 0; i < images.size(); i++) {
                 ImageView thumbnail = images.get(i);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -243,7 +248,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 if (!images.isEmpty() && i > 0) {
                     layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
                 }
-                ((LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container)).addView(thumbnail, layoutParams);
+                mediaList.addView(thumbnail, layoutParams);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {

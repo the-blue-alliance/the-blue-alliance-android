@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 /**
  * File created by phil on 4/20/14.
@@ -35,6 +36,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     private String mEventKey;
     private TextView warningMessage;
     private ViewPager pager;
+    private ViewEventFragmentPagerAdapter adapter;
 
     public static Intent newInstance(Context c, String eventKey) {
         Intent intent = new Intent(c, ViewEventActivity.class);
@@ -57,7 +59,8 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         hideWarningMessage();
 
         pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setAdapter(new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey));
+        adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
+        pager.setAdapter(adapter);
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
         pager.setOffscreenPageLimit(5);
@@ -179,7 +182,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
 
     @Override
     public void onPageSelected(int position) {
-        if (position == 4) {
+        if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
             //stats position
             mOptionsMenu.findItem(R.id.help).setVisible(true);
         } else {
