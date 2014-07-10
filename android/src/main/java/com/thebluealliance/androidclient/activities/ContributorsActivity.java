@@ -62,7 +62,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            if(isDrawerOpen()) {
+            if (isDrawerOpen()) {
                 closeDrawer();
                 return true;
             }

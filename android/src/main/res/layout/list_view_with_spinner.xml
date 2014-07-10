@@ -8,25 +8,21 @@
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:scrollbarStyle="outsideInset"/>
+        android:layout_height="wrap_content" />
 
-    <ProgressBar android:id="@+id/progress"
+    <ProgressBar
+        android:id="@+id/progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        style="@style/NoDataFoundStyle"
         android:id="@+id/no_data"
         android:visibility="gone"
-        android:singleLine="false"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp" />
+        android:singleLine="false" />
 
 </RelativeLayout>

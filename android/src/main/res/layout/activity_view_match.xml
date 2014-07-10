@@ -23,22 +23,12 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/match_name"
-                    style="@android:style/TextAppearance.DeviceDefault.Large"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:visibility="gone"/>
-
-                <TextView
                     android:id="@+id/event_name"
                     style="@android:style/TextAppearance.DeviceDefault.Medium"
                     android:textStyle="italic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/match_name"
-                    android:paddingBottom="16dp"
-                    android:paddingTop="16dp" />
+                    android:paddingBottom="16dp" />
 
                 <TableLayout
                     android:id="@+id/score_table"

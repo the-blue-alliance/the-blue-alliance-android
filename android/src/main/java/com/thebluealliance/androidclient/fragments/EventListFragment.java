@@ -73,7 +73,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) v.findViewById(R.id.list);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mAdapter != null) {
@@ -131,7 +131,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading events for week "+mHeader+" in "+mYear+" for "+mTeamKey);
+        Log.i(Constants.REFRESH_LOG, "Loading events for week " + mHeader + " in " + mYear + " for " + mTeamKey);
         mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

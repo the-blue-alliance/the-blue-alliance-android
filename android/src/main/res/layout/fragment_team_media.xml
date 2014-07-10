@@ -5,26 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ExpandableListView
+    <com.thebluealliance.androidclient.views.ExpandableListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/team_media_list" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        style="@style/NoDataFoundStyle"
         android:text="@string/no_media_data"
         android:id="@+id/no_media"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
         android:visibility="gone" />
 
-    <ProgressBar style="?android:attr/progressBarStyleLarge"
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:id="@+id/progress"
         android:visibility="visible"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true" />
 </RelativeLayout>

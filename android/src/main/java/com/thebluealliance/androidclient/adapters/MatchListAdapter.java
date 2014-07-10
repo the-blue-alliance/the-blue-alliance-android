@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;

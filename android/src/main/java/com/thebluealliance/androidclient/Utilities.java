@@ -153,12 +153,12 @@ public class Utilities {
                 !data.get(index).isEmpty();
     }
 
-    public static int getCurrentYear(){
+    public static int getCurrentYear() {
         Calendar cal = Calendar.getInstance();
         return cal.get(Calendar.YEAR);
     }
 
-    public static int getCurrentCompWeek(){
+    public static int getCurrentCompWeek() {
         return getCmpWeek(getCurrentYear());
     }
 }

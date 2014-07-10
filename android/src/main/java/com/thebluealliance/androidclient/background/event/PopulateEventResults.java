@@ -127,7 +127,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                     previousIteration = match;
                     lastMatchPlayed = match.hasBeenPlayed();
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't get match type. Missing fields..."+
+                    Log.e(Constants.LOG_TAG, "Can't get match type. Missing fields..." +
                             Arrays.toString(e.getStackTrace()));
                 }
             }

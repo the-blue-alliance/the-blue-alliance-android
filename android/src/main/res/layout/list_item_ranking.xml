@@ -3,75 +3,67 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:orientation="horizontal"
-    android:paddingBottom="4dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp">
+    android:minHeight="88dp"
+    android:paddingBottom="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp">
 
     <LinearLayout
         android:id="@+id/team_number_container"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:paddingRight="8dp"
-        android:minWidth="80dp" >
+        android:layout_marginLeft="16dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/team_number"
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="254"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/team_rank"
-            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Rank 1" />
+            android:text="Rank 1"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/team_record"
-            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="(12-0-0)"
-            android:textColor="@color/blue" />
+            android:textColor="@color/blue"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/team_name_and_breakdown_container"
-        android:layout_toRightOf="@id/team_number_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:paddingRight="8dp"
-        android:minWidth="80dp" >
+        android:layout_alignTop="@id/team_number_container"
+        android:layout_toRightOf="@id/team_number_container"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/team_name"
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Teh Chezy Pofs"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/ranking_breakdown"
-            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/team_name"
             android:layout_below="@id/team_name"
-            android:text="22 QS, 930 Assist, 725 Auto, 310 Truss &amp; Catch, 518 Teleop" />
+            android:text="22 QS, 930 Assist, 725 Auto, 310 Truss &amp; Catch, 518 Teleop"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>

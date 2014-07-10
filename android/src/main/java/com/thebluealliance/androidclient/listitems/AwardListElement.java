@@ -120,6 +120,7 @@ public class AwardListElement extends ListElement {
 
         return convertView;
     }
+
     private static class ViewHolder {
         TextView awardName;
         LinearLayout awardRecipients;

@@ -3,50 +3,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall" >
+    android:minHeight="72dp"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp">
 
     <TextView
         android:id="@+id/team_number"
-        style="@android:style/TextAppearance.DeviceDefault.Large"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="16dp"
         android:text="2544"
-        android:textStyle="bold"/>
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/team_name"
-        style="@android:style/TextAppearance.DeviceDefault.Small"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/team_info"
         android:layout_toRightOf="@id/team_number"
-        android:layout_alignParentTop="true"
-        android:text="Teh Chezy Pofs"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:paddingTop="5dp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/team_location"
-        style="@android:style/TextAppearance.DeviceDefault.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/team_number"
-        android:layout_below="@id/team_name"
-        android:layout_alignParentBottom="true"
-        android:text="San Jose, CA"
-        android:paddingBottom="5dp" />
+        <TextView
+            android:id="@+id/team_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Teh Chezy Pofs"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/team_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="San Jose, CA"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp" />
+    </LinearLayout>
 
     <ImageView
-        android:id="@+id/team_info"
-        style="@android:style/Widget.Holo.Light.Button.Borderless.Small"
+        android:id="@id/team_info"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_margin="0dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:clickable="true"
         android:focusable="false"
         android:src="@drawable/ic_action_about" />
