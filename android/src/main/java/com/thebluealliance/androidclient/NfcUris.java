@@ -9,6 +9,8 @@ public class NfcUris {
     public static final String URI_EVENT = "event/%1$s";
     public static final String URI_EVENT_MATCHER = "event/([a-zA-Z0-9]+)";
 
+    public static final String URI_DISTRICT = "events/%1$s";
+
     // Formatted as team/TEAM_KEY
     public static final String URI_TEAM = "team/%1$s";
     public static final String URI_TEAM_MATCHER = "team/([a-zA-Z0-9]+)";
