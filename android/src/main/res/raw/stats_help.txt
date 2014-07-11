@@ -1,7 +1,10 @@
-<b>OPR</b> stands for Offensive Power Rating, which is a system to attempt to deduce the average point contribute of a team to an alliance.
+<b>OPR</b> (Offensive Power Rating) is a team's estimated average contribution to their alliance
+match scores, assuming match scores are the sum of just the alliance teams' contributions.
 <br/><br/>
-<b>DPR</b> stands for Defensive Power Rating, which is a system to attempt to deduce the average defensive contribution of a team to an alliance.
+<b>DPR</b> (Defensive Power Rating) is a team's estimated average contribution to opposing alliance
+match scores, assuming match scores are the sum of just the opposing teams' contributions. Lower is
+better.
 <br/><br/>
-<b>CCWM</b> stands for Calculated Contribution to Win Margin and is the difference between OPR and DPR.
+<b>CCWM</b> (Calculated Contribution to Win Margin) = OPR - DPR.
 <br/><br/>
-These stats are an interesting way to slice the data for teams at particular events, but aren't a perfect system for assessing a team's performance or contribution.
+These stats are an interesting way to slice the data for teams at a particular event, but aren't a perfect system for assessing a team's performance or contribution.
