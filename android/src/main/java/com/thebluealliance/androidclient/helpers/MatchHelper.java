@@ -306,11 +306,11 @@ public class MatchHelper {
      * Determines the past/current status of a team at an event.
      *
      * @param e       the event the team is competing at
-     * @param matches team's match list
+     * @param teamMatches team's match list
      * @param teamKey key associated with team
      * @return team's past/current event status
      */
-    public static EventStatus evaluateStatusOfTeam(Event e, ArrayList<Match> matches, String teamKey) throws BasicModel.FieldNotDefinedException {
+    public static EventStatus evaluateStatusOfTeam(Event e, ArrayList<Match> teamMatches, String teamKey) throws BasicModel.FieldNotDefinedException {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
@@ -320,11 +320,16 @@ public class MatchHelper {
         if (alliances.size() == 0) allianceData = false;
 
         boolean inAlliance = false;
-        for (int i = 0; i < alliances.size(); i++) {
-            JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
-            for (int j = 0; j < teams.size(); j++) {
-                if (teams.get(j).getAsString().equals(teamKey)) {
-                    inAlliance = true;
+        if (alliances.size() == 0) {
+            // We don't have alliance data. Try to determine from matches.
+            inAlliance = MatchHelper.getAllianceForTeam(teamMatches, teamKey) != -1;
+        } else {
+            for (int i = 0; i < alliances.size(); i++) {
+                JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
+                for (int j = 0; j < teams.size(); j++) {
+                    if (teams.get(j).getAsString().equals(teamKey)) {
+                        inAlliance = true;
+                    }
                 }
             }
         }
@@ -339,7 +344,7 @@ public class MatchHelper {
         // Team might be a no-show/drop out last minute at an event,
         // and might not play any matches as a result.
         boolean teamIsHere = false;
-        for (Match match : matches) {
+        for (Match match : teamMatches) {
             match.setSelectedTeam(teamKey);
 
             JsonObject matchAlliances = match.getAlliances();

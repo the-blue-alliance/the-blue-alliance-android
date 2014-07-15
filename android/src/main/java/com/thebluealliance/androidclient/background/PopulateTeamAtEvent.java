@@ -192,7 +192,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         // Generate summary items
 
         try {
-            status = MatchHelper.evaluateStatusOfTeam(event, eventMatches, teamKey);
+            status = MatchHelper.evaluateStatusOfTeam(event, teamMatches, teamKey);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: " + Arrays.toString(e.getStackTrace()));
             status = MatchHelper.EventStatus.NOT_AVAILABLE;
