@@ -111,14 +111,12 @@
                     android:padding="10dp"
                     android:src="@drawable/ic_youtube_light" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/team_cd_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/chief_delphi_orange_selector"
                     android:gravity="center"
-                    android:text="Chief\nDelphi"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
+                    android:src="@drawable/ic_cd"/>
             </LinearLayout>
 
             <RelativeLayout
