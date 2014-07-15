@@ -4,7 +4,10 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.DownloadEventList;
 import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
@@ -43,9 +46,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         Date now = new Date();
-        Calendar nowCalendar = Calendar.getInstance();
-        nowCalendar.setTime(now);
-        if (EventHelper.competitionWeek(now) == position && nowCalendar.get(Calendar.YEAR) == mYear) {
+        if (EventHelper.competitionWeek(now) == position && Utilities.getCurrentYear() == mYear) {
             return "Current Week";
         } else {
             return thisYearsWeekLabels.get(position);
