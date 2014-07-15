@@ -40,6 +40,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     String teamKey, eventKey, eventYear, recordString, eventShort;
     RefreshableHostActivity activity;
     ArrayList<Match> eventMatches;
+    ArrayList<Match> teamMatches;
     ArrayList<ListGroup> matchGroups;
     int rank;
     int allianceNumber = -1, alliancePick = -1;
@@ -82,7 +83,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             Log.d(Constants.LOG_TAG, "Matches length: " + eventMatches.size());
             try {
                 Log.d(Constants.LOG_TAG, "Team Key: " + teamKey);
-                ArrayList<Match> teamMatches = MatchHelper.getMatchesForTeam(eventMatches, teamKey);
+                teamMatches = MatchHelper.getMatchesForTeam(eventMatches, teamKey);
                 matchGroups = MatchHelper.constructMatchList(activity, teamMatches);
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't construct match list. Missing fields: " + e.getMessage());
@@ -119,12 +120,17 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 Log.e(Constants.LOG_TAG, "Can't get event alliances");
                 return APIResponse.CODE.NODATA;
             }
-            for (int i = 0; i < alliances.size(); i++) {
-                JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
-                for (int j = 0; j < teams.size(); j++) {
-                    if (teams.get(j).getAsString().equals(teamKey)) {
-                        allianceNumber = i + 1;
-                        alliancePick = j;
+            if (alliances.size() == 0) {
+                // We don't have alliance data. Try to determine from matches.
+                allianceNumber = MatchHelper.getAllianceForTeam(teamMatches, teamKey);
+            } else {
+                for (int i = 0; i < alliances.size(); i++) {
+                    JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
+                    for (int j = 0; j < teams.size(); j++) {
+                        if (teams.get(j).getAsString().equals(teamKey)) {
+                            allianceNumber = i + 1;
+                            alliancePick = j;
+                        }
                     }
                 }
             }
@@ -309,12 +315,19 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                     args.add(r.getString(R.string.team_at_event_captain));
                     args.add(allianceNumber + getOrdinalFor(allianceNumber));
                     break;
+                case -1:
+                    args.add(allianceNumber + getOrdinalFor(allianceNumber));
+                    break;
                 default:
                     args.add(alliancePick + getOrdinalFor(alliancePick) + " " + r.getString(R.string.team_at_event_pick));
                     args.add(allianceNumber + getOrdinalFor(allianceNumber));
                     break;
             }
-            summary = String.format(r.getString(R.string.alliance_summary), args.toArray());
+            if (alliancePick == -1) {
+                summary = String.format(r.getString(R.string.alliance_summary_no_pick_num), args.toArray());
+            } else {
+                summary = String.format(r.getString(R.string.alliance_summary), args.toArray());
+            }
         } else {
             summary = r.getString(R.string.not_picked);
         }

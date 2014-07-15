@@ -248,6 +248,46 @@ public class MatchHelper {
     }
 
     /**
+     * Gets the alliance for a team competing at an event by looking at QF matches
+     * Used if no alliance data available
+     *
+     * @param teamMatches team's match list for an event
+     * @param teamKey key associated with team
+     * @return alliance number for team, or -1 if not on an alliance
+     */
+    public static int getAllianceForTeam(ArrayList<Match> teamMatches, String teamKey) {
+        int alliance = -1;
+        for (Match match : teamMatches) {
+            try {
+                if (match.getType() == TYPE.QUARTER) {
+                    JsonObject matchAlliances = match.getAlliances();
+                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray();
+                    Boolean isRed = redTeams.toString().contains(teamKey);
+
+                    switch (match.getSetNumber()) {
+                        case 1:
+                            alliance = isRed ? 1 : 8;
+                            break;
+                        case 2:
+                            alliance = isRed ? 4 : 5;
+                            break;
+                        case 3:
+                            alliance = isRed ? 2 : 7;
+                            break;
+                        case 4:
+                            alliance = isRed ? 3 : 6;
+                            break;
+                    }
+
+                    break;
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+            }
+        }
+        return alliance;
+    }
+
+    /**
      * Gets the record for a team competing at an event
      *
      * @param matches match list for an event
