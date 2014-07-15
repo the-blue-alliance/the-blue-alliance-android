@@ -303,7 +303,6 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 activity.notifyRefreshComplete((RefreshListener) activity);
             }
         }
-
     }
 
     private String generateAllianceSummary(Resources r, int allianceNumber, int alliancePick) {
