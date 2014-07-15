@@ -282,6 +282,7 @@ public class MatchHelper {
                     break;
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
+                Log.w(Constants.LOG_TAG, "Match doesn't have alliances defined. Can't determine alliance");
             }
         }
         return alliance;
