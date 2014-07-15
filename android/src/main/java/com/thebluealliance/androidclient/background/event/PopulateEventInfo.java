@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background.event;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,9 +45,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     private EventInfoFragment mFragment;
     private RefreshableHostActivity activity;
     View last, next;
-    LinearLayout nextLayout, lastLayout, topTeams, topOpr;
-    TextView eventName, eventDate, eventLoc, eventVenue, ranks, stats;
-    String eventKey, nameString, titleString, venueString, locationString;
+    LinearLayout nextLayout, lastLayout;
+    View topTeamsContainer, topOprsContainer;
+    TextView eventName, eventDate, eventLoc, eventVenue, topTeams, topOprs;
+    String eventKey, topTeamsString, topOprsString, nameString, titleString, venueString, locationString;
     Event event;
     private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
 
@@ -61,36 +63,37 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         super.onPreExecute(); // reset event settings
         showLastMatch = showNextMatch = showRanks = showStats = false;
         activity.showMenuProgressBar();
+
+        View view = mFragment.getView();
+        eventName = (TextView) view.findViewById(R.id.event_name);
+        eventDate = (TextView) view.findViewById(R.id.event_date);
+        eventLoc = (TextView) view.findViewById(R.id.event_location);
+        eventVenue = (TextView) view.findViewById(R.id.event_venue);
+        nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
+        lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
+        topTeamsContainer = view.findViewById(R.id.event_top_teams_container);
+        topOprsContainer = view.findViewById(R.id.event_top_oprs_container);
+        topTeams = (TextView) view.findViewById(R.id.event_top_teams);
+        topOprs = (TextView) view.findViewById(R.id.event_top_oprs);
     }
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
-        View view = mFragment.getView();
-        // Initialize the views.
-
         APIResponse<Event> eventResponse = new APIResponse<>(null, APIResponse.CODE.NODATA);
         APIResponse<ArrayList<JsonArray>> rankResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
         APIResponse<JsonObject> statsResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
         APIResponse<ArrayList<Match>> matchResult = new APIResponse<>(null, APIResponse.CODE.CACHED304);
 
-        if (view != null && activity != null && eventKey != null) {
-            eventName = (TextView) view.findViewById(R.id.event_name);
-            eventDate = (TextView) view.findViewById(R.id.event_date);
-            eventLoc = (TextView) view.findViewById(R.id.event_location);
-            eventVenue = (TextView) view.findViewById(R.id.event_venue);
-            nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
-            lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
-            topTeams = (LinearLayout) view.findViewById(R.id.event_top_teams_container);
-            topOpr = (LinearLayout) view.findViewById(R.id.event_top_opr_container);
+        if (activity != null && eventKey != null) {
 
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
                 eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
                 event = eventResponse.getData();
                 //return response.getCode();
-                if(isCancelled()){
+                if (isCancelled()) {
                     return APIResponse.CODE.NODATA;
                 }
             } catch (DataManager.NoDataException e) {
@@ -102,7 +105,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 //event has started (may or may not have finished).
                 //show the ranks and stats
                 showRanks = showStats = true;
-                ranks = new TextView(activity);
                 try {
                     rankResponse = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
@@ -111,13 +113,14 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showRanks = false;
                     }
                     for (int i = 1; i < Math.min(6, rankList.size()); i++) {
-                        rankString += ((i) + ". " + rankList.get(i).get(1).getAsString());
-                        if(i < Math.min(6, rankList.size()) - 1) {
-                            rankString += "\n";
+                        rankString += ((i) + ". <b>" + rankList.get(i).get(1).getAsString()) + "</b>";
+                        if (i < Math.min(6, rankList.size()) - 1) {
+                            rankString += "<br>";
                         }
                     }
-                    ranks.setText(rankString);
-                    if(isCancelled()){
+                    rankString.trim();
+                    topTeamsString = rankString;
+                    if (isCancelled()) {
                         return APIResponse.CODE.NODATA;
                     }
                 } catch (DataManager.NoDataException e) {
@@ -126,7 +129,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     return APIResponse.CODE.NODATA;
                 }
 
-                stats = new TextView(activity);
                 try {
                     statsResponse = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
@@ -141,16 +143,17 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                         String statsString = "";
                         for (int i = 0; i < Math.min(5, opr.size()); i++) {
-                            statsString += (i + 1) + ". " + opr.get(i).getKey();
-                            if(i < Math.min(5, opr.size()) - 1) {
-                                statsString += "\n";
+                            statsString += (i + 1) + ". <b>" + opr.get(i).getKey() + "</b>";
+                            if (i < Math.min(5, opr.size()) - 1) {
+                                statsString += "<br>";
                             }
                         }
-                        stats.setText(statsString);
+                        statsString = statsString.trim();
+                        topOprsString = statsString;
                     } else {
                         showStats = false;
                     }
-                    if(isCancelled()){
+                    if (isCancelled()) {
                         return APIResponse.CODE.NODATA;
                     }
                 } catch (DataManager.NoDataException e) {
@@ -184,7 +187,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         showLastMatch = true;
                         last = lastMatch.render().getView(activity, inflater, null);
                     }
-                    if(isCancelled()){
+                    if (isCancelled()) {
                         return APIResponse.CODE.NODATA;
                     }
                 } catch (DataManager.NoDataException e) {
@@ -193,21 +196,17 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
             }
 
-            // setup social media intents
             try {
                 nameString = event.getEventName();
                 titleString = event.getEventYear() + " " + event.getShortName();
-                locationString = event.getLocation();
                 venueString = event.getVenue();
-                view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
-                view.findViewById(R.id.event_location_container).setTag("geo:0,0?q=" + locationString.replace(" ", "+"));
-                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + event.getEventName());
-                view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + event.getEventKey());
-                view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + event.getEventKey());
-                view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + event.getEventKey());
-            }catch (BasicModel.FieldNotDefinedException e){
-                Log.e(Constants.LOG_TAG, "Can't create event info strings or social media intents. Missing event fields.\n");
-                e.printStackTrace();
+                locationString = event.getLocation();
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't create social media intents. Missing event fields.\n" +
+                        Arrays.toString(e.getStackTrace()));
+                nameString = "Name not found";
+                venueString = "";
+                locationString = "";
             }
         }
 
@@ -228,22 +227,17 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             } else {
                 eventDate.setText(event.getDateString());
             }
-            if (venueString.isEmpty() &&
-                activity.findViewById(R.id.event_venue_container) != null){
+
+            // Show a venue if it is available, otherwise show just the location. If neither is available, hide
+            if (!venueString.isEmpty()) {
+                eventVenue.setText(venueString);
+            } else if (!locationString.isEmpty()) {
+                eventVenue.setText(locationString);
+            } else {
+                eventVenue.setText(R.string.no_location_available);
                 activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
             }
-            else{
-                eventVenue.setText(venueString);
-                if (activity.findViewById(R.id.event_location_container) != null) {
-                    activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
-                }
-            }
-            if (locationString.isEmpty() &&
-                    activity.findViewById(R.id.event_location_container) != null) {
-                activity.findViewById(R.id.event_location_container).setVisibility(View.GONE);
-            } else {
-                eventLoc.setText(locationString);
-            }
+
             if (showNextMatch) {
                 nextLayout.setVisibility(View.VISIBLE);
                 if (nextLayout.getChildCount() > 1) {
@@ -251,6 +245,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
                 nextLayout.addView(next);
             }
+
             if (showLastMatch) {
                 lastLayout.setVisibility(View.VISIBLE);
                 if (lastLayout.getChildCount() > 1) {
@@ -259,19 +254,45 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 lastLayout.addView(last);
             }
             if (showRanks) {
-                topTeams.setVisibility(View.VISIBLE);
-                if (topTeams.getChildCount() > 1) {
-                    topTeams.removeViewAt(1);
-                }
-                topTeams.addView(ranks);
+                topTeamsContainer.setVisibility(View.VISIBLE);
+                topTeams.setText(Html.fromHtml(topTeamsString));
             }
 
             if (showStats) {
-                topOpr.setVisibility(View.VISIBLE);
-                if (topOpr.getChildCount() > 1) {
-                    topOpr.removeViewAt(1);
+                topOprsContainer.setVisibility(View.VISIBLE);
+                topOprs.setText(Html.fromHtml(topOprsString));
+            }
+
+            // setup social media intents
+            View view = mFragment.getView();
+            if (view != null) {
+                // Default to showing the nav arrow in the venue view and the venue view being clickable
+                // We need to set these again even though they're defined in XML in case we gain a location
+                // or venue on a refresh and we're reusing the same view.
+                view.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.VISIBLE);
+                view.setFocusable(true);
+                view.setClickable(true);
+
+                if (!venueString.isEmpty()) {
+                    // Set the tag to the event venue if it is available
+                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
+                } else if (!locationString.isEmpty()) {
+                    // Otherwise, use the location
+                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + locationString.replace(" ", "+"));
+                } else {
+                    // If neither location nor venue are available, hide the nav arrow, remove the tag,
+                    // and set the view to not clickable so the user cannot interact with it.
+                    // It will contain the text "No location available".
+                    view.findViewById(R.id.event_venue_container).setTag(null);
+                    view.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.GONE);
+                    view.setFocusable(false);
+                    view.setClickable(false);
                 }
-                topOpr.addView(stats);
+
+                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + eventName);
+                view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + eventKey);
+                view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + eventKey);
+                view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + eventKey);
             }
 
             // Display warning if offline.
@@ -280,7 +301,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             // Remove progress spinner and show info, since we're done loading the data.
-            View view = mFragment.getView();
+            view = mFragment.getView();
             if (view != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);

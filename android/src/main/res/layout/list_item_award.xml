@@ -3,15 +3,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp" >
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/award_name"
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textSize="16sp"
         android:textStyle="italic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +19,5 @@
         android:layout_below="@id/award_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 </RelativeLayout>

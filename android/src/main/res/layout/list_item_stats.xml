@@ -3,55 +3,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:orientation="vertical"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:minHeight="72dp"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/team_number"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="254"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <LinearLayout
-        android:id="@+id/team_number_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:paddingRight="8dp"
-        android:minWidth="80dp" >
-
-        <TextView
-            android:id="@+id/team_number"
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="254"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_toRightOf="@id/team_number_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:paddingRight="8dp"
-        android:minWidth="80dp" >
+        android:layout_toRightOf="@id/team_number"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/team_name"
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Teh Chezy Pofs"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/team_stat"
-            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/team_name"
-            android:layout_below="@id/team_name"
-            android:text="OPR: 100.27, DPR: 47.21, CCWM: 78.90" />
+            android:text="OPR: 100.27, DPR: 47.21, CCWM: 78.90"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>

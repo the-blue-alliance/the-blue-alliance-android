@@ -69,7 +69,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             APIResponse<JsonObject> response = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
             JsonObject stats = response.getData();
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -128,8 +128,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 String teamKey = "frc" + opr.get(i).getKey();
                 // We might get a multi-team key from offseason events.
                 // If so, take out the extra letter at the end to prevent NPE.
-                if (TeamHelper.validateMultiTeamKey(teamKey))
-                {
+                if (TeamHelper.validateMultiTeamKey(teamKey)) {
                     teamKey = teamKey.substring(0, teamKey.length() - 1);
                 }
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
@@ -162,6 +161,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 Parcelable state = stats.onSaveInstanceState();
                 stats.setAdapter(adapter);
                 stats.onRestoreInstanceState(state);
+                noDataText.setVisibility(View.GONE);
             }
 
             // Display warning if offline.

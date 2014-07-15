@@ -81,11 +81,11 @@ public class MatchListElement extends ListElement {
                 if (bScore > rScore) {
                     //blue wins
                     holder.blueAlliance.setBackgroundResource(R.drawable.blue_border);
-                    holder.redAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_red));
+                    holder.redAlliance.setBackgroundResource(R.drawable.no_border);
                 } else if (bScore < rScore) {
                     //red wins
                     holder.redAlliance.setBackgroundResource(R.drawable.red_border);
-                    holder.blueAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_blue));
+                    holder.blueAlliance.setBackgroundResource(R.drawable.no_border);
                 }
             } catch (NumberFormatException e) {
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
@@ -112,45 +112,41 @@ public class MatchListElement extends ListElement {
         } else {
             holder.red1.setVisibility(View.VISIBLE);
             holder.red1.setText(redTeams[0]);
-            holder.red1.setTag("frc" + redTeams[0]+"@"+eventKey);
+            holder.red1.setTag("frc" + redTeams[0] + "@" + eventKey);
             holder.red1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[0])) {
                 holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
-            }
-            else
-            {
+            } else {
                 holder.red1.setTypeface(Typeface.DEFAULT);
             }
 
-            if (redTeams.length == 1){
-                holder.red2.setVisibility(View.GONE);
-                holder.red3.setVisibility(View.GONE);
-            }
-            else {
-                holder.red2.setVisibility(View.VISIBLE);
-                holder.red2.setText(redTeams[1]);
-                holder.red2.setTag("frc" + redTeams[1] + "@" + eventKey);
-                holder.red2.setOnClickListener(listener);
-                if (selectedTeamNumber.equals(redTeams[1])) {
-                    holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
-                } else {
-                    holder.red2.setTypeface(Typeface.DEFAULT);
-                }
-            }
-            if (redTeams.length == 2) {
-                holder.red3.setVisibility(View.GONE);
+        }
+
+        if (redTeams.length == 1) {
+            holder.red2.setVisibility(View.GONE);
+            holder.red3.setVisibility(View.GONE);
+        } else {
+            holder.red2.setVisibility(View.VISIBLE);
+            holder.red2.setText(redTeams[1]);
+            holder.red2.setTag("frc" + redTeams[1] + "@" + eventKey);
+            holder.red2.setOnClickListener(listener);
+            if (selectedTeamNumber.equals(redTeams[1])) {
+                holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
-                holder.red3.setVisibility(View.VISIBLE);
-                holder.red3.setText(redTeams[2]);
-                holder.red3.setTag("frc" + redTeams[2]+"@"+eventKey);
-                holder.red3.setOnClickListener(listener);
-                if (selectedTeamNumber.equals(redTeams[2])) {
-                    holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
-                }
-                else
-                {
-                    holder.red3.setTypeface(Typeface.DEFAULT);
-                }
+                holder.red2.setTypeface(Typeface.DEFAULT);
+            }
+        }
+        if (redTeams.length == 2) {
+            holder.red3.setVisibility(View.GONE);
+        } else {
+            holder.red3.setVisibility(View.VISIBLE);
+            holder.red3.setText(redTeams[2]);
+            holder.red3.setTag("frc" + redTeams[2] + "@" + eventKey);
+            holder.red3.setOnClickListener(listener);
+            if (selectedTeamNumber.equals(redTeams[2])) {
+                holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                holder.red3.setTypeface(Typeface.DEFAULT);
             }
         }
 
@@ -161,22 +157,18 @@ public class MatchListElement extends ListElement {
         } else {
             holder.blue1.setVisibility(View.VISIBLE);
             holder.blue1.setText(blueTeams[0]);
-            holder.blue1.setTag("frc" + blueTeams[0]+"@"+eventKey);
+            holder.blue1.setTag("frc" + blueTeams[0] + "@" + eventKey);
             holder.blue1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
-            }
-            else
-            {
+            } else {
                 holder.blue1.setTypeface(Typeface.DEFAULT);
             }
 
-            if (blueTeams.length == 1)
-            {
+            if (blueTeams.length == 1) {
                 holder.blue2.setVisibility(View.GONE);
                 holder.blue3.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 holder.blue2.setVisibility(View.VISIBLE);
                 holder.blue2.setText(blueTeams[1]);
                 holder.blue2.setTag("frc" + blueTeams[1] + "@" + eventKey);
@@ -186,42 +178,39 @@ public class MatchListElement extends ListElement {
                 } else {
                     holder.blue2.setTypeface(Typeface.DEFAULT);
                 }
-            }
 
-            if (blueTeams.length == 2) {
-                holder.blue3.setVisibility(View.GONE);
-            } else {
-                holder.blue3.setVisibility(View.VISIBLE);
-                holder.blue3.setText(blueTeams[2]);
-                holder.blue3.setTag("frc" + blueTeams[2]+"@"+eventKey);
-                holder.blue3.setOnClickListener(listener);
-                if (selectedTeamNumber.equals(blueTeams[2])) {
-                    holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
-                }
-                else
-                {
-                    holder.blue3.setTypeface(Typeface.DEFAULT);
+                if (blueTeams.length == 2) {
+                    holder.blue3.setVisibility(View.GONE);
+                } else {
+                    holder.blue3.setVisibility(View.VISIBLE);
+                    holder.blue3.setText(blueTeams[2]);
+                    holder.blue3.setTag("frc" + blueTeams[2] + "@" + eventKey);
+                    holder.blue3.setOnClickListener(listener);
+                    if (selectedTeamNumber.equals(blueTeams[2])) {
+                        holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
+                    } else {
+                        holder.blue3.setTypeface(Typeface.DEFAULT);
+                    }
                 }
             }
+            holder.redScore.setText(redScore);
+            holder.blueScore.setText(blueScore);
         }
-        holder.redScore.setText(redScore);
-        holder.blueScore.setText(blueScore);
-
         return convertView;
     }
 
-    private static class ViewHolder {
-        TextView matchTitle;
-        TextView red1;
-        TextView red2;
-        TextView red3;
-        TextView blue1;
-        TextView blue2;
-        TextView blue3;
-        TextView redScore;
-        TextView blueScore;
-        View redAlliance;
-        View blueAlliance;
-        ImageView videoIcon;
+        private static class ViewHolder {
+            TextView matchTitle;
+            TextView red1;
+            TextView red2;
+            TextView red3;
+            TextView blue1;
+            TextView blue2;
+            TextView blue3;
+            TextView redScore;
+            TextView blueScore;
+            View redAlliance;
+            View blueAlliance;
+            ImageView videoIcon;
+        }
     }
-}

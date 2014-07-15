@@ -26,6 +26,6 @@
         android:textStyle="bold"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 
 </RelativeLayout>

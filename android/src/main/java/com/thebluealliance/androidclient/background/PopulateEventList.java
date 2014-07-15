@@ -18,7 +18,6 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
         }
 
-        if(mHeader.equals("Preseason Events")){
+        if (mHeader.equals("Preseason Events")) {
             Event ss = Database.getInstance(activity).getEventsTable().get("2014ctss");
         }
 
@@ -78,7 +77,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
 
-                if(isCancelled()){
+                if (isCancelled()) {
                     return APIResponse.CODE.NODATA;
                 }
 

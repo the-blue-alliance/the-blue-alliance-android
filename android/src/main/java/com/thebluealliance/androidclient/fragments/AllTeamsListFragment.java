@@ -10,11 +10,10 @@ import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
 
 public class AllTeamsListFragment extends Fragment {
-
-    private int mYear;
 
     private ViewPager mViewPager;
 
@@ -25,6 +24,7 @@ public class AllTeamsListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragmet_team_list_fragment_pager, container, false);
         mViewPager = (ViewPager) v.findViewById(R.id.team_pager);
         mViewPager.setAdapter(new TeamListFragmentPagerAdapter(getChildFragmentManager()));
+        mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) v.findViewById(R.id.team_pager_tabs);
         tabs.setViewPager(mViewPager);

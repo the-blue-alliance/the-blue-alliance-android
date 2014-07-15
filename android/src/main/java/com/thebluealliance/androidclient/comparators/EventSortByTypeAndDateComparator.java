@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -22,9 +21,9 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
                 int districtSort = ((Integer) event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
                 if (districtSort == 0) {
                     int eventSort = event.getStartDate().compareTo(event2.getStartDate());
-                    if(eventSort == 0){
+                    if (eventSort == 0) {
                         return event.getShortName().compareTo(event2.getShortName());
-                    }else{
+                    } else {
                         return eventSort;
                     }
                 } else {
@@ -38,8 +37,8 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
                     return typeCompare;
                 }
             }
-        }catch (BasicModel.FieldNotDefinedException e){
-            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields."+ e.getMessage());
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields." + e.getMessage());
             return 0;
         }
     }

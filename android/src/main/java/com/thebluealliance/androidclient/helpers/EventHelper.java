@@ -112,9 +112,9 @@ public class EventHelper {
         return WEEKLESS_LABEL;
     }
 
-    public static int weekNumFromLabel(int year, String label){
-        for(int i=0; i<20; i++){
-            if(weekLabelFromNum(year, i).equals(label)){
+    public static int weekNumFromLabel(int year, String label) {
+        for (int i = 0; i < 20; i++) {
+            if (weekLabelFromNum(year, i).equals(label)) {
                 return i;
             }
         }
@@ -122,7 +122,7 @@ public class EventHelper {
     }
 
     public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
-        Log.d(Constants.LOG_TAG, "Sorting "+events.size()+ " events");
+        Log.d(Constants.LOG_TAG, "Sorting " + events.size() + " events");
         HashMap<String, ArrayList<Event>> groups = new HashMap<>();
         ArrayList<Event> offseason = new ArrayList<>(),
                 preseason = new ArrayList<>(),
@@ -160,7 +160,7 @@ public class EventHelper {
                 } else {
                     offseason.add(e);
                 }
-            }catch (BasicModel.FieldNotDefinedException ex){
+            } catch (BasicModel.FieldNotDefinedException ex) {
                 Log.w(Constants.LOG_TAG, "Couldn't determine week for event without the following fields:\n" +
                         "Database.Events.OFFICIAL, Database.Events.TYPE, Database.Events.START");
             }
@@ -176,7 +176,7 @@ public class EventHelper {
             groups.put(PRESEASON_LABEL, preseason);
         }
 
-        Log.d(Constants.LOG_TAG, "Categories: "+groups.keySet().toString());
+        Log.d(Constants.LOG_TAG, "Categories: " + groups.keySet().toString());
 
         return groups;
     }
@@ -301,7 +301,7 @@ public class EventHelper {
         EventHelper.TYPE lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {
-            try{
+            try {
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
                 if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
@@ -313,7 +313,7 @@ public class EventHelper {
                 }
                 eventListItems.add(event.render());
 
-            }catch (BasicModel.FieldNotDefinedException e){
+            } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
             }
             lastType = currentType;
@@ -342,7 +342,7 @@ public class EventHelper {
         }
 
         // In case an event has a weird name, return the event name
-        if(shortName.isEmpty()) {
+        if (shortName.isEmpty()) {
             return eventName;
         }
 
@@ -357,14 +357,14 @@ public class EventHelper {
         return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
     }
 
-    public static void addFieldByAPIUrl(Event event, String url, String data){
-        if(url.contains("teams")){
+    public static void addFieldByAPIUrl(Event event, String url, String data) {
+        if (url.contains("teams")) {
             event.setTeams(data);
-        }else if(url.contains("rankings")){
+        } else if (url.contains("rankings")) {
             event.setRankings(data);
-        }else if(url.contains("matches")){
+        } else if (url.contains("matches")) {
             event.setMatches(JSONManager.getasJsonArray(data));
-        }else if(url.contains("stats")){
+        } else if (url.contains("stats")) {
             event.setStats(data);
         }
     }

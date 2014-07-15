@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.background;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Parcelable;
-import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -19,6 +20,8 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.interfaces.RenderableModel;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -28,8 +31,6 @@ import com.thebluealliance.androidclient.models.Stat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * File created by phil on 6/3/14.
@@ -39,13 +40,15 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
     String teamKey, eventKey, eventYear, recordString, eventShort;
     RefreshableHostActivity activity;
     ArrayList<Match> eventMatches;
+    ArrayList<Match> teamMatches;
     ArrayList<ListGroup> matchGroups;
     int rank;
     int allianceNumber = -1, alliancePick = -1;
-    ListGroup awards, stats;
+    ListGroup summary, awards, stats;
     Event event;
     Match lastMatch, nextMatch;
     boolean activeEvent, forceFromCache;
+    MatchHelper.EventStatus status;
 
     public PopulateTeamAtEvent(RefreshableHostActivity activity, boolean forceFromCache) {
         super();
@@ -69,21 +72,24 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Match>> matchResponse;
         try {
-            matchResponse = DataManager.Teams.getMatchesForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
+            matchResponse = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
-            ArrayList<Match> matches = matchResponse.getData(); //sorted by play order
             eventMatches = matchResponse.getData(); //sorted by play order
+
+            Log.d(Constants.LOG_TAG, "Matches length: " + eventMatches.size());
             try {
-                matchGroups = MatchHelper.constructMatchList(activity, matches);
+                Log.d(Constants.LOG_TAG, "Team Key: " + teamKey);
+                teamMatches = MatchHelper.getMatchesForTeam(eventMatches, teamKey);
+                matchGroups = MatchHelper.constructMatchList(activity, teamMatches);
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't construct match list. Missing fields: "+e.getMessage());
+                Log.e(Constants.LOG_TAG, "Can't construct match list. Missing fields: " + e.getMessage());
                 return APIResponse.CODE.NODATA;
             }
-            int[] record = MatchHelper.getRecordForTeam(matches, teamKey);
+            int[] record = MatchHelper.getRecordForTeam(eventMatches, teamKey);
             recordString = record[0] + "-" + record[1] + "-" + record[2];
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
@@ -94,7 +100,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         try {
             eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
             event = eventResponse.getData();
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
         } catch (DataManager.NoDataException e) {
@@ -114,12 +120,17 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 Log.e(Constants.LOG_TAG, "Can't get event alliances");
                 return APIResponse.CODE.NODATA;
             }
-            for (int i = 0; i < alliances.size(); i++) {
-                JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
-                for (int j = 0; j < teams.size(); j++) {
-                    if (teams.get(j).getAsString().equals(teamKey)) {
-                        allianceNumber = i + 1;
-                        alliancePick = j;
+            if (alliances.size() == 0) {
+                // We don't have alliance data. Try to determine from matches.
+                allianceNumber = MatchHelper.getAllianceForTeam(teamMatches, teamKey);
+            } else {
+                for (int i = 0; i < alliances.size(); i++) {
+                    JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
+                    for (int j = 0; j < teams.size(); j++) {
+                        if (teams.get(j).getAsString().equals(teamKey)) {
+                            allianceNumber = i + 1;
+                            alliancePick = j;
+                        }
                     }
                 }
             }
@@ -131,7 +142,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         try {
             rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
             rank = rankResponse.getData();
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
         } catch (DataManager.NoDataException e) {
@@ -145,7 +156,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             ArrayList<Award> awardList = awardResponse.getData();
             awards = new ListGroup(activity.getString(R.string.tab_event_awards));
             awards.children.addAll(awardList);
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
         } catch (DataManager.NoDataException e) {
@@ -158,27 +169,53 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             statsResponse = DataManager.Events.getEventStats(activity, eventKey, teamKey, forceFromCache);
             JsonObject statData = statsResponse.getData();
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
-            String statString = "";
+            stats = new ListGroup(activity.getString(R.string.tab_event_stats));
             if (statData.has("opr")) {
-                statString += activity.getString(R.string.opr) + " " + Stat.displayFormat.format(statData.get("opr").getAsDouble());
+                stats.children.add(new LabelValueModel(activity.getString(R.string.opr_no_colon), Stat.displayFormat.format(statData.get("opr").getAsDouble())));
             }
             if (statData.has("dpr")) {
-                statString += "\n" + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(statData.get("dpr").getAsDouble());
+                stats.children.add(new LabelValueModel(activity.getString(R.string.dpr_no_colon), Stat.displayFormat.format(statData.get("dpr").getAsDouble())));
             }
             if (statData.has("ccwm")) {
-                statString += "\n" + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(statData.get("ccwm").getAsDouble());
+                stats.children.add(new LabelValueModel(activity.getString(R.string.ccwm_no_colon), Stat.displayFormat.format(statData.get("ccwm").getAsDouble())));
             }
-            stats = new ListGroup(activity.getString(R.string.tab_event_stats));
-            if (!statString.isEmpty()) {
-                stats.children.add(new Stat(teamKey, "", "", statString));
-            }
+
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch stats data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
+        }
+
+        // Generate summary items
+
+        try {
+            status = MatchHelper.evaluateStatusOfTeam(event, teamMatches, teamKey);
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: " + Arrays.toString(e.getStackTrace()));
+            status = MatchHelper.EventStatus.NOT_AVAILABLE;
+        }
+
+        summary = new ListGroup(activity.getString(R.string.summary));
+        if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
+            // Rank
+            if (rank != -1) {
+                summary.children.add(new LabelValueModel("Rank", rank + getOrdinalFor(rank)));
+            }
+            // Record
+            if (!recordString.equals("0-0-0")) {
+                summary.children.add(new LabelValueModel("Record", recordString));
+            }
+
+            // Alliance
+            if (status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+                summary.children.add(new LabelValueModel("Alliance", generateAllianceSummary(activity.getResources(), allianceNumber, alliancePick)));
+            }
+
+            // Status
+            summary.children.add(new LabelValueModel("Status", status.getDescriptionString(activity)));
         }
 
         return APIResponse.mergeCodes(matchResponse.getCode(), eventResponse.getCode(),
@@ -194,17 +231,6 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             }
 
             MatchListAdapter adapter = new MatchListAdapter(activity, matchGroups, teamKey);
-
-            MatchHelper.EventPerformance performance;
-            try {
-                performance = MatchHelper.evaluatePerformanceForTeam(event, eventMatches, teamKey);
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.w(Constants.LOG_TAG, "Can't create match performance. Missing fields: "+ Arrays.toString(e.getStackTrace()));
-                performance = MatchHelper.EventPerformance.NOT_AVAILABLE;
-            }
-            String summary = generateTeamSummary(teamKey, rank,
-                    recordString, allianceNumber, alliancePick, performance);
-            ((TextView) activity.findViewById(R.id.team_record)).setText(Html.fromHtml(summary));
 
             if (!stats.children.isEmpty()) {
                 adapter.addGroup(0, stats);
@@ -226,12 +252,34 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 adapter.addGroup(0, lastMatches);
             }
 
-            ExpandableListView listView = (ExpandableListView) activity.findViewById(R.id.results);
-            Parcelable state = listView.onSaveInstanceState();
-            int firstVisiblePosition = listView.getFirstVisiblePosition();
-            listView.setAdapter(adapter);
-            listView.onRestoreInstanceState(state);
-            listView.setSelection(firstVisiblePosition);
+            if (!summary.children.isEmpty()) {
+                adapter.addGroup(0, summary);
+            }
+
+            // If the adapter has no children, display a generic "no data" message.
+            // Otherwise, show the list as normal.
+            if (adapter.isEmpty()) {
+                activity.findViewById(R.id.status_message).setVisibility(View.VISIBLE);
+                activity.findViewById(R.id.results).setVisibility(View.GONE);
+            } else {
+                activity.findViewById(R.id.status_message).setVisibility(View.GONE);
+                activity.findViewById(R.id.results).setVisibility(View.VISIBLE);
+
+                ExpandableListView listView = (ExpandableListView) activity.findViewById(R.id.results);
+                // If the list hasn't previously been initialized, expand the "summary" view
+                boolean shouldExpandSummary = false;
+                if (listView.getExpandableListAdapter() == null) {
+                    shouldExpandSummary = true;
+                }
+                Parcelable state = listView.onSaveInstanceState();
+                int firstVisiblePosition = listView.getFirstVisiblePosition();
+                listView.setAdapter(adapter);
+                listView.onRestoreInstanceState(state);
+                if (shouldExpandSummary) {
+                    listView.expandGroup(0);
+                }
+                listView.setSelection(firstVisiblePosition);
+            }
 
             activity.findViewById(R.id.team_at_event_progress).setVisibility(View.GONE);
             activity.findViewById(R.id.content_view).setVisibility(View.VISIBLE);
@@ -250,7 +298,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
             new PopulateTeamAtEvent(activity, false).execute(teamKey, eventKey);
         } else {
             // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh complete");
+            Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
             if (activity instanceof RefreshableHostActivity) {
                 activity.notifyRefreshComplete((RefreshListener) activity);
             }
@@ -258,65 +306,16 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
 
     }
 
-    private String generateTeamSummary(String teamKey, int rank,
-                                       String record, int allianceNumber, int alliancePick,
-                                       MatchHelper.EventPerformance performance) {
-        String summary = "";
-        List<Object> summaryArgs = new ArrayList<>();
-        Resources r = activity.getResources();
-        if (performance == MatchHelper.EventPerformance.NOT_AVAILABLE ||
-           (rank == -1 && record.equals("0-0-0"))) {
-            return r.getString(R.string.team_at_event_no_data);
-        } else if (rank == -1 && !record.equals("0-0-0")) {
-            summary = r.getString(R.string.team_at_event_no_ranking_data);
-            summaryArgs.add(teamKey.substring(3));
-            summaryArgs.add(record);
-        } else if (performance == MatchHelper.EventPerformance.NOT_PICKED) {
-            summary = r.getString(R.string.team_at_event_past_tense_not_picked);
-            summaryArgs.add(teamKey.substring(3));
-            summaryArgs.add(rank + getOrdinalFor(rank));
-            summaryArgs.add(record);
-        } else if (performance == MatchHelper.EventPerformance.PLAYING_IN_QUALS
-                || performance == MatchHelper.EventPerformance.PLAYING_IN_QUARTERS
-                || performance == MatchHelper.EventPerformance.PLAYING_IN_SEMIS
-                || performance == MatchHelper.EventPerformance.PLAYING_IN_FINALS) {
-            summary = r.getString(R.string.team_at_event_present_tense);
-            summaryArgs.add(teamKey.substring(3));
-            summaryArgs.add(rank + getOrdinalFor(rank));
-            summaryArgs.add(record);
-            summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
-            summaryArgs.add(performance.description);
-        } else if (performance == MatchHelper.EventPerformance.ELIMINATED_IN_QUARTERS
-                || performance == MatchHelper.EventPerformance.ELIMINATED_IN_SEMIS
-                || performance == MatchHelper.EventPerformance.ELIMINATED_IN_FINALS) {
-            summary = r.getString(R.string.team_at_event_past_tense);
-            summaryArgs.add(teamKey.substring(3));
-            summaryArgs.add(rank + getOrdinalFor(rank));
-            summaryArgs.add(record);
-            summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
-            summaryArgs.add(performance.description);
-        } else if (performance == MatchHelper.EventPerformance.WON_EVENT) {
-            summary = r.getString(R.string.team_at_event_past_tense_won_event);
-            summaryArgs.add(teamKey.substring(3));
-            summaryArgs.add(rank + getOrdinalFor(rank));
-            summaryArgs.add(record);
-            summaryArgs.addAll(getAllianceArgs(allianceNumber, alliancePick, r));
-        } else if (performance == MatchHelper.EventPerformance.NO_ALLIANCE_DATA) {
-            summary = r.getString(R.string.team_at_event_no_alliance_data);
-            summaryArgs.add(teamKey.substring(3));
-            summaryArgs.add(rank + getOrdinalFor(rank));
-            summaryArgs.add(record);
-        }
-        return String.format(summary, summaryArgs.toArray());
-    }
-
-
-    private static Collection<Object> getAllianceArgs(int allianceNumber, int alliancePick, Resources r) {
+    private String generateAllianceSummary(Resources r, int allianceNumber, int alliancePick) {
         ArrayList<Object> args = new ArrayList<>();
+        String summary = "";
         if (allianceNumber > 0) {
             switch (alliancePick) {
                 case 0:
                     args.add(r.getString(R.string.team_at_event_captain));
+                    args.add(allianceNumber + getOrdinalFor(allianceNumber));
+                    break;
+                case -1:
                     args.add(allianceNumber + getOrdinalFor(allianceNumber));
                     break;
                 default:
@@ -324,8 +323,15 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                     args.add(allianceNumber + getOrdinalFor(allianceNumber));
                     break;
             }
+            if (alliancePick == -1) {
+                summary = String.format(r.getString(R.string.alliance_summary_no_pick_num), args.toArray());
+            } else {
+                summary = String.format(r.getString(R.string.alliance_summary), args.toArray());
+            }
+        } else {
+            summary = r.getString(R.string.not_picked);
         }
-        return args;
+        return summary;
     }
 
     private static String getOrdinalFor(int value) {
@@ -344,6 +350,57 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                 return "rd";
             default:
                 return "th";
+        }
+    }
+
+    private class LabelValueListItem extends ListElement {
+
+        String label, value;
+
+        public LabelValueListItem(String label, String value) {
+            this.label = label;
+            this.value = value;
+        }
+
+        @Override
+        public View getView(Context c, LayoutInflater inflater, View convertView) {
+            ViewHolder holder;
+
+            if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+                convertView = inflater.inflate(R.layout.list_item_summary, null);
+
+                holder = new ViewHolder();
+                holder.label = (TextView) convertView.findViewById(R.id.label);
+                holder.value = (TextView) convertView.findViewById(R.id.value);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.label.setText(label);
+            holder.value.setText(value);
+
+            return convertView;
+        }
+
+        private class ViewHolder {
+            TextView label;
+            TextView value;
+        }
+    }
+
+    private class LabelValueModel implements RenderableModel {
+
+        private String label, value;
+
+        public LabelValueModel(String label, String value) {
+            this.label = label;
+            this.value = value;
+        }
+
+        @Override
+        public ListElement render() {
+            return new LabelValueListItem(label, value);
         }
     }
 }

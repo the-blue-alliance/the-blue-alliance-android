@@ -16,14 +16,9 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventResults;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.Match;
 
 /**
  * File created by phil on 4/22/14.
@@ -130,7 +125,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventResults newTask){
+    public void updateTask(PopulateEventResults newTask) {
         mTask = newTask;
     }
 

@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.background;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -103,7 +102,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                 secondLoad.execute(start, end);
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Team list "+start+" - " + end+" refresh complete");
+                Log.i(Constants.REFRESH_LOG, "Team list " + start + " - " + end + " refresh complete");
                 if (fragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete(fragment);
                 }

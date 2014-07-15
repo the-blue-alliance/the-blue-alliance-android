@@ -2,15 +2,17 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/event_type"
-        style="?android:attr/listSeparatorTextViewStyle"
+        android:textSize="14sp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/action_bar_background"
+        android:background="#000099"
+        android:paddingLeft="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:text="Header"
         android:textColor="#FFFFFF" />
 </LinearLayout>

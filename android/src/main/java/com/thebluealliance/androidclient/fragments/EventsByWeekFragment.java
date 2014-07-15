@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import java.util.Calendar;
 import java.util.Date;
 
-public class EventsByWeekFragment extends Fragment {
+public class EventsByWeekFragment extends Fragment{
 
     private int mYear;
     private static final String YEAR = "YEAR";
@@ -54,9 +54,10 @@ public class EventsByWeekFragment extends Fragment {
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         final Context c = getActivity();
         mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
+        mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
         tabs.setViewPager(mViewPager);
-        int currentWeek = EventHelper.competitionWeek(new Date());
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int currentWeek = Utilities.getCurrentCompWeek();
+        int currentYear = Utilities.getCurrentYear();
         //set the currently selected tab to the current week or week 1
         int week1Index = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter()).getLabels().indexOf(String.format(EventHelper.REGIONAL_LABEL, 1));
         if (currentYear != mYear) {
@@ -66,11 +67,12 @@ public class EventsByWeekFragment extends Fragment {
                     ? Math.min(mViewPager.getAdapter().getCount(), week1Index)
                     : currentWeek);
             /** Explanation for above lines:
-             * If the current week is past CMP,, then
+             * If the current week is past CMP, then
              * show week 1 (which is either index 1 or 2, which we'll get from the adapter by finding its label
              * Else, we display the current week
              */
         }
         return view;
     }
+
 }

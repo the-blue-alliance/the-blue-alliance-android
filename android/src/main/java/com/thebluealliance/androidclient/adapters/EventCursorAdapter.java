@@ -41,7 +41,7 @@ public class EventCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView dates = (TextView) view.findViewById(R.id.event_dates);
         Date startDate = null, endDate = null;
-        Log.d(Constants.LOG_TAG, "Start: "+cursor.getString(cursor.getColumnIndex(Database.Events.START)));
+        Log.d(Constants.LOG_TAG, "Start: " + cursor.getString(cursor.getColumnIndex(Database.Events.START)));
         try {
             startDate = new Date(cursor.getLong(cursor.getColumnIndex(Database.Events.START)));
             endDate = new Date(cursor.getLong(cursor.getColumnIndex(Database.Events.END)));

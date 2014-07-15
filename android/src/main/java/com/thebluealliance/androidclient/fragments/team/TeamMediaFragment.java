@@ -89,7 +89,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
         }
     }
 
-    public void updateTask(PopulateTeamMedia newTask){
+    public void updateTask(PopulateTeamMedia newTask) {
         task = newTask;
     }
 

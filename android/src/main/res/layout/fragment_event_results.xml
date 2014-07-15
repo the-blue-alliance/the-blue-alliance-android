@@ -5,11 +5,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ExpandableListView
+    <com.thebluealliance.androidclient.views.ExpandableListView
         android:id="@+id/match_results"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:scrollbarStyle="outsideInset" />
+        android:layout_height="wrap_content" />
 
     <ProgressBar
         android:id="@+id/progress"

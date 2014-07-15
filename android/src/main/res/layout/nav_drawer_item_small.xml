@@ -5,15 +5,15 @@
     android:background="@drawable/nav_drawer_item_dark_background"
     android:orientation="vertical">
 
-<View
+    <View
         android:layout_width="match_parent"
         android:layout_height="1.5dp"
         android:background="@color/nav_drawer_item_divider" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:orientation="horizontal">
+        android:minHeight="48dp">
 
         <ImageView
             android:id="@+id/icon"
@@ -22,6 +22,6 @@
         <TextView
             android:id="@+id/title"
             style="@style/NavDrawerSmallLabelStyle" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
