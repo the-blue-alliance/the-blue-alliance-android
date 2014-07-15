@@ -90,14 +90,14 @@ public class TBAv2 {
      * what action to take. If the url has not yet been queried or is in need of update, then download (or update) the data from the internet and
      * record the Last-Modified header for future use. This method also implements a rate limit on how often you can hit a single API endpoint, which
      * is defined in Constants.API_HIT_TIMEOUT
-     *
+     * <p/>
      * About the return values. The 'data' field of the resulting APIResponse is only going to have actual data if we needed to load something from the internet (thus,
      * the accompanying CODE will either be Code.WEBLOAD or Code.UPDATED). If the CODE is anything else, then the 'data' field will be null - so check the code
      * before assuming it's set.
      *
-     * @param c Calling context - used to query the database for the Last-Update time for a URL
-     * @param URL API URL to check and see if an update is required
-     * @param cacheLocally Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
+     * @param c              Calling context - used to query the database for the Last-Update time for a URL
+     * @param URL            API URL to check and see if an update is required
+     * @param cacheLocally   Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
      * @param forceFromCache When this parameter is true, we won't make any web requests and just return Code.LOCAL, telling the caller to use whatever it has cached locally
      * @return APIResponse containing the data we fetched (if necessary) and the response code for how we obtained that data.
      * @throws DataManager.NoDataException
@@ -161,7 +161,7 @@ public class TBAv2 {
                      * Also, if the server gives a Last-Modified time back, record it and add it to the database for future use
                      */
                     String response = HTTP.dataFromResponse(cachedResponse),
-                           lastUpdate = "";
+                            lastUpdate = "";
                     Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
                     if (lastModified != null) {
                         lastUpdate = lastModified.getValue();
@@ -190,13 +190,13 @@ public class TBAv2 {
                  */
                 HttpResponse webResponse = HTTP.getResponse(URL);
                 String response = HTTP.dataFromResponse(webResponse),
-                       lastUpdate = "";
+                        lastUpdate = "";
                 Header lastModified = webResponse.getFirstHeader("Last-Modified");
                 if (lastModified != null) {
                     lastUpdate = lastModified.getValue();
                 }
 
-                if(cacheLocally) {
+                if (cacheLocally) {
                     Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
                 }
 

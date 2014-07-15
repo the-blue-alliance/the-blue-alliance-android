@@ -15,14 +15,8 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.Match;
 
 public class TeamAtEventActivity extends RefreshableHostActivity implements RefreshListener {
 
@@ -83,7 +77,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh started");
+        Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh started");
         task = new PopulateTeamAtEvent(this, true);
         task.execute(teamKey, eventKey);
     }
@@ -112,12 +106,12 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
                 return true;
             case android.R.id.home:
-                if(isDrawerOpen()) {
+                if (isDrawerOpen()) {
                     closeDrawer();
                     return true;
                 }
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {

@@ -81,11 +81,11 @@ public class MatchListElement extends ListElement {
                 if (bScore > rScore) {
                     //blue wins
                     holder.blueAlliance.setBackgroundResource(R.drawable.blue_border);
-                    holder.redAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_red));
+                    holder.redAlliance.setBackgroundResource(R.drawable.no_border);
                 } else if (bScore < rScore) {
                     //red wins
                     holder.redAlliance.setBackgroundResource(R.drawable.red_border);
-                    holder.blueAlliance.setBackgroundColor(context.getResources().getColor(R.color.lighter_blue));
+                    holder.blueAlliance.setBackgroundResource(R.drawable.no_border);
                 }
             } catch (NumberFormatException e) {
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
@@ -115,6 +115,8 @@ public class MatchListElement extends ListElement {
             holder.red1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[0])) {
                 holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                holder.red1.setTypeface(Typeface.DEFAULT);
             }
 
             holder.red2.setText(redTeams[1]);
@@ -122,6 +124,8 @@ public class MatchListElement extends ListElement {
             holder.red2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[1])) {
                 holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                holder.red2.setTypeface(Typeface.DEFAULT);
             }
 
             if (redTeams.length == 2) {
@@ -133,6 +137,8 @@ public class MatchListElement extends ListElement {
                 holder.red3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(redTeams[2])) {
                     holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
+                } else {
+                    holder.red3.setTypeface(Typeface.DEFAULT);
                 }
             }
         }
@@ -147,6 +153,8 @@ public class MatchListElement extends ListElement {
             holder.blue1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                holder.blue1.setTypeface(Typeface.DEFAULT);
             }
 
             holder.blue2.setText(blueTeams[1]);
@@ -154,6 +162,8 @@ public class MatchListElement extends ListElement {
             holder.blue2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[1])) {
                 holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                holder.blue2.setTypeface(Typeface.DEFAULT);
             }
 
             if (blueTeams.length == 2) {
@@ -165,6 +175,8 @@ public class MatchListElement extends ListElement {
                 holder.blue3.setOnClickListener(listener);
                 if (selectedTeamNumber.equals(blueTeams[2])) {
                     holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
+                } else {
+                    holder.blue3.setTypeface(Typeface.DEFAULT);
                 }
             }
         }

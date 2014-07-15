@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.listitems;
 
-import android.view.View;
-
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 
 /**

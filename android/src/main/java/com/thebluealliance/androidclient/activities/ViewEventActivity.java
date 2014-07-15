@@ -19,6 +19,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
@@ -64,6 +65,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
         pager.setOffscreenPageLimit(10);
+        pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);

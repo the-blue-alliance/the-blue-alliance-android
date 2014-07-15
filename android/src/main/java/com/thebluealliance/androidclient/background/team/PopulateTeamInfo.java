@@ -162,7 +162,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                     Log.e(Constants.LOG_TAG, "Can't get next/last match. Missing fields" +
                             Arrays.toString(e.getStackTrace()));
                 }
-                if(lastMatch == null && nextMatch == null) {
+                if (lastMatch == null && nextMatch == null) {
                     // No matches found, aka not competing. Hide the matches container.
                     view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
                 }

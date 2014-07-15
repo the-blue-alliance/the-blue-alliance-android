@@ -17,8 +17,8 @@ public class TeamSortByNumberComparator implements Comparator<Team> {
     public int compare(Team team, Team team2) {
         try {
             return team.getTeamNumber().compareTo(team2.getTeamNumber());
-        }catch (BasicModel.FieldNotDefinedException e){
-            Log.e(Constants.LOG_TAG, "Can't compare teams with missing fields"+
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't compare teams with missing fields" +
                     Arrays.toString(e.getStackTrace()));
             return 0;
         }

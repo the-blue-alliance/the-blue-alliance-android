@@ -22,7 +22,6 @@ import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.Media;
 
 /**
  * Fragment that displays the team statistics for an FRC event.
@@ -77,7 +76,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
-        View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
 
@@ -98,9 +97,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
                         // Take out extra letter at end to make team key valid.
                         teamKey = teamKey.substring(0, teamKey.length() - 1);
                     }
-                        startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
-                }
-                else{
+                    startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+                } else {
                     throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
                 }
             }
@@ -144,7 +142,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventStats newTask){
+    public void updateTask(PopulateEventStats newTask) {
         mTask = newTask;
     }
 

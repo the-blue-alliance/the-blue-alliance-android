@@ -5,8 +5,8 @@ package com.thebluealliance.androidclient.helpers;
  *
  * @author Phil Lopreiato
  * @author Bryce Matsuda
- *
- * File created by phil on 6/15/14.
+ *         <p/>
+ *         File created by phil on 6/15/14.
  */
 public class TeamHelper {
     /**
@@ -21,7 +21,7 @@ public class TeamHelper {
 
     /**
      * Checks if a multi-team key is valid.
-     *
+     * <p/>
      * In this context, a multi-team key is for a team that has two or more robots competing,
      * usually in an offseason event, and thus needs one (and ONLY one) extra letter attached to the end
      * to differentiate one from the others (e.g. 904 & 904B, 1973 & 1973D)

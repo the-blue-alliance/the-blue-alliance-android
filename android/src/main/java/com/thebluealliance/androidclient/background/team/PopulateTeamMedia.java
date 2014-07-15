@@ -67,7 +67,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         try {
             response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -89,7 +89,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                             break;
                     }
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't get media type. Missing fields..."+
+                    Log.e(Constants.LOG_TAG, "Can't get media type. Missing fields..." +
                             Arrays.toString(e.getStackTrace()));
                 }
             }
@@ -154,7 +154,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 secondLoad.execute(team, year);
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Team "+ team + " "+ year+" media refresh complete");
+                Log.i(Constants.REFRESH_LOG, "Team " + team + " " + year + " media refresh complete");
                 if (fragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete(fragment);
                 }

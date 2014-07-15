@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -75,11 +74,11 @@ public class MatchHelper {
             }
         }
 
-        public static TYPE fromKey(String key){
-            if(key.contains("_qm")) return QUAL;
-            if(key.contains("_ef") || key.contains("_qf")) return QUARTER;
-            if(key.contains("_sf")) return SEMI;
-            if(key.contains("_f")) return FINAL;
+        public static TYPE fromKey(String key) {
+            if (key.contains("_qm")) return QUAL;
+            if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
+            if (key.contains("_sf")) return SEMI;
+            if (key.contains("_f")) return FINAL;
             return NONE;
         }
     }
@@ -152,24 +151,28 @@ public class MatchHelper {
     }
 
     /**
-     * Possible outcomes of a team's performance,
+     * Possible statuses a team could be in.
      */
-    public enum EventPerformance {
-        PLAYING_IN_QUALS("playing in the qualification matches"),
-        NOT_PICKED("not picked"),
-        PLAYING_IN_QUARTERS("playing in the quarterfinals"),
-        ELIMINATED_IN_QUARTERS("eliminated in the quarterfinals"),
-        PLAYING_IN_SEMIS("playing in the semifinals"),
-        ELIMINATED_IN_SEMIS("eliminated in the semifinals"),
-        PLAYING_IN_FINALS("playing in the finals"),
-        ELIMINATED_IN_FINALS("eliminated in the finals"),
-        WON_EVENT("won the event"),
-        NOT_AVAILABLE("not available"),
-        NO_ALLIANCE_DATA("no alliance data");
-        public String description;
+    public enum EventStatus {
+        PLAYING_IN_QUALS(R.string.playing_in_quals),
+        NOT_PICKED(R.string.not_picked),
+        PLAYING_IN_QUARTERS(R.string.playing_in_quarterfinals),
+        ELIMINATED_IN_QUARTERS(R.string.eliminated_in_quarterfinals),
+        PLAYING_IN_SEMIS(R.string.playing_in_semifinals),
+        ELIMINATED_IN_SEMIS(R.string.eliminated_in_semifinals),
+        PLAYING_IN_FINALS(R.string.playing_in_finals),
+        ELIMINATED_IN_FINALS(R.string.eliminated_in_finals),
+        WON_EVENT(R.string.won_event),
+        NOT_AVAILABLE(R.string.not_available),
+        NO_ALLIANCE_DATA(R.string.no_alliance_data);
+        public int descriptionId;
 
-        EventPerformance(String description) {
-            this.description = description;
+        EventStatus(int descriptionId) {
+            this.descriptionId = descriptionId;
+        }
+
+        public String getDescriptionString(Context c) {
+            return c.getResources().getString(descriptionId);
         }
     }
 
@@ -229,6 +232,21 @@ public class MatchHelper {
         return groups;
     }
 
+    public static ArrayList<Match> getMatchesForTeam(ArrayList<Match> matches, String teamKey) {
+        ArrayList<Match> teamMatches = new ArrayList<>();
+        for (Match match : matches) {
+            try {
+                if (match.getAlliances().toString().contains(teamKey + "\"")) {
+                    teamMatches.add(match);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+        return teamMatches;
+    }
+
     /**
      * Gets the record for a team competing at an event
      *
@@ -245,14 +263,14 @@ public class MatchHelper {
     }
 
     /**
-     * Determines the past/current performance of a team at an event.
+     * Determines the past/current status of a team at an event.
      *
      * @param e       the event the team is competing at
      * @param matches team's match list
      * @param teamKey key associated with team
-     * @return team's past/current event performance
+     * @return team's past/current event status
      */
-    public static EventPerformance evaluatePerformanceForTeam(Event e, ArrayList<Match> matches, String teamKey) throws BasicModel.FieldNotDefinedException {
+    public static EventStatus evaluateStatusOfTeam(Event e, ArrayList<Match> matches, String teamKey) throws BasicModel.FieldNotDefinedException {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
@@ -318,27 +336,27 @@ public class MatchHelper {
         Log.d(Constants.LOG_TAG, "final size: " + finalMatches.size());
 
         if (e.isHappeningNow() && quarterMatches.size() == 0) {
-            return EventPerformance.PLAYING_IN_QUALS;
+            return EventStatus.PLAYING_IN_QUALS;
         }
 
 
         boolean allQualMatchesPlayed = true;
         for (Match match : qualMatches) {
             if (!match.hasBeenPlayed()) {
+                Log.d(Constants.LOG_TAG, "Match " + match.getKey() + " not played!");
                 allQualMatchesPlayed = false;
                 break;
             }
         }
 
+        Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
+        Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty() ||
                 (allQualMatchesPlayed && !teamIsHere)) {
-            return EventPerformance.NOT_AVAILABLE;
-        } else if (allQualMatchesPlayed && !allianceData) {
-            return EventPerformance.NO_ALLIANCE_DATA;
+            return EventStatus.NOT_AVAILABLE;
         } else if (allQualMatchesPlayed && !inAlliance) {
-            return EventPerformance.NOT_PICKED;
+            return EventStatus.NOT_PICKED;
         }
-
 
         if (!quarterMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
@@ -359,12 +377,11 @@ public class MatchHelper {
             if (countPlayed > 1 && countWon > 1) {
                 // Won quarterfinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
-                return EventPerformance.ELIMINATED_IN_QUARTERS;
-            } else if (!e.isHappeningNow() && semiMatches.isEmpty()){
-                return EventPerformance.ELIMINATED_IN_QUARTERS;
-            }
-            else {
-                return EventPerformance.PLAYING_IN_QUARTERS;
+                return EventStatus.ELIMINATED_IN_QUARTERS;
+            } else if (!e.isHappeningNow() && semiMatches.isEmpty()) {
+                return EventStatus.ELIMINATED_IN_QUARTERS;
+            } else {
+                return EventStatus.PLAYING_IN_QUARTERS;
             }
         }
 
@@ -387,11 +404,11 @@ public class MatchHelper {
             if (countPlayed > 1 && countWon > 1) {
                 // Won semifinals
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
-                return EventPerformance.ELIMINATED_IN_SEMIS;
-            } else if (!e.isHappeningNow() && finalMatches.isEmpty()){
-                return EventPerformance.ELIMINATED_IN_SEMIS;
+                return EventStatus.ELIMINATED_IN_SEMIS;
+            } else if (!e.isHappeningNow() && finalMatches.isEmpty()) {
+                return EventStatus.ELIMINATED_IN_SEMIS;
             } else {
-                return EventPerformance.PLAYING_IN_SEMIS;
+                return EventStatus.PLAYING_IN_SEMIS;
             }
         }
 
@@ -413,17 +430,16 @@ public class MatchHelper {
             }
             if (countPlayed > 1 && countWon > 1) {
                 // Won event
-                return EventPerformance.WON_EVENT;
+                return EventStatus.WON_EVENT;
             } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
-                return EventPerformance.ELIMINATED_IN_FINALS;
-            } else if (!e.isHappeningNow()){
-                return EventPerformance.ELIMINATED_IN_FINALS;
-            }
-            else {
-                return EventPerformance.PLAYING_IN_FINALS;
+                return EventStatus.ELIMINATED_IN_FINALS;
+            } else if (!e.isHappeningNow()) {
+                return EventStatus.ELIMINATED_IN_FINALS;
+            } else {
+                return EventStatus.PLAYING_IN_FINALS;
             }
         } else {
-            return EventPerformance.PLAYING_IN_FINALS;
+            return EventStatus.PLAYING_IN_FINALS;
         }
     }
 }

@@ -2,6 +2,9 @@ package com.thebluealliance.androidclient.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -24,6 +27,7 @@ import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.util.regex.Matcher;
@@ -32,13 +36,16 @@ import java.util.regex.Pattern;
 /**
  * Created by Nathan on 5/25/2014.
  */
-public class LaunchActivity extends Activity implements View.OnClickListener {
+public class LaunchActivity extends Activity implements View.OnClickListener, LoadAllData.LoadAllDataCallbacks {
 
     public static final String ALL_DATA_LOADED = "all_data_loaded";
 
     private DisableSwipeViewPager viewPager;
 
     private TextView loadingMessage;
+
+    private LoadAllDataTaskFragment loadFragment;
+    private static final String LOAD_FRAGMENT_TAG = "loadFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,10 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
         loadingMessage = (TextView) findViewById(R.id.message);
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
+        loadFragment = (LoadAllDataTaskFragment) getFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
+        if (loadFragment != null) {
+            viewPager.setCurrentItem(1, false);
+        }
     }
 
     private void goToHome() {
@@ -119,12 +130,13 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
             alertDialogBuilder.setTitle("Check connection");
 
             // Set dialog message
-            alertDialogBuilder.setMessage(getString(R.string.warning_no_internet_connection)).setCancelable(false).setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    beginLoadingIfConnected();
-                    dialog.dismiss();
-                }
-            }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setMessage(getString(R.string.warning_no_internet_connection)).setCancelable(false)
+                    .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            beginLoadingIfConnected();
+                            dialog.dismiss();
+                        }
+                    }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     finish();
                 }
@@ -151,7 +163,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     }
 
     private void beginLoading() {
-        new LoadAllData(this).execute();
+        Fragment f = new LoadAllDataTaskFragment();
+        f.setRetainInstance(true);
+        getFragmentManager().beginTransaction().add(f, LOAD_FRAGMENT_TAG).commit();
     }
 
     public void errorLoadingData(final String stacktrace) {
@@ -184,14 +198,38 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
     }
 
     public void connectionLost() {
+        // Scroll to first page
+        viewPager.setCurrentItem(0);
+        //Cancel task
+        if (loadFragment != null) {
+            loadFragment.cancelTask();
+        }
+        // Show a warning
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
+        // Set title
+        alertDialogBuilder.setTitle("Connection lost");
+
+        // Set dialog message
+        alertDialogBuilder.setMessage(getString(R.string.connection_lost)).setCancelable(false)
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        // Create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // Show it
+        alertDialog.show();
     }
 
     public void loadingFinished() {
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, true).commit();
     }
 
-    public void onLoadingProgressUpdate(LoadAllData.LoadProgressInfo info) {
+    public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
         if (info.state == LoadAllData.LoadProgressInfo.STATE_NO_CONNECTION) {
             connectionLost();
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_LOADING) {
@@ -264,5 +302,48 @@ public class LaunchActivity extends Activity implements View.OnClickListener {
 
         // Default to kicking the user to the events list if none of the URIs match
         goToHome();
+    }
+
+    public static class LoadAllDataTaskFragment extends Fragment implements LoadAllData.LoadAllDataCallbacks {
+        LoadAllData.LoadAllDataCallbacks callback;
+        private LoadAllData task;
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+
+            if (activity instanceof LoadAllData.LoadAllDataCallbacks) {
+                callback = (LoadAllData.LoadAllDataCallbacks) activity;
+            } else {
+                throw new IllegalStateException("TaskFragment must be hosted by an activity that implements LoadAllDataCallbacks");
+            }
+
+            if (task == null) {
+                task = new LoadAllData(this, getActivity());
+                task.execute();
+            }
+        }
+
+        public void cancelTask() {
+            task.cancel(false);
+        }
+
+        @Override
+        public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
+            if (callback != null) {
+                callback.onProgressUpdate(info);
+            }
+        }
+    }
+
+    class RefreshBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
+            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_LOST) {
+                connectionLost();
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.helpers.TeamHelper;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import me.xuender.unidecode.Unidecode;
@@ -153,12 +154,12 @@ public class Utilities {
                 !data.get(index).isEmpty();
     }
 
-    public static int getCurrentYear(){
+    public static int getCurrentYear() {
         Calendar cal = Calendar.getInstance();
         return cal.get(Calendar.YEAR);
     }
 
-    public static int getCurrentCompWeek(){
-        return getCmpWeek(getCurrentYear());
+    public static int getCurrentCompWeek() {
+        return EventHelper.competitionWeek(new Date());
     }
 }

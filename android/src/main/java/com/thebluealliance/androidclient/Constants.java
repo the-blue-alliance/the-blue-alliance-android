@@ -9,8 +9,8 @@ import java.util.HashMap;
  */
 public class Constants {
     public static final String LOG_TAG = "tba-android";
-    public static final String DATAMANAGER_LOG = LOG_TAG+":dataManager";
-    public static final String REFRESH_LOG = LOG_TAG+":refresh";
+    public static final String DATAMANAGER_LOG = LOG_TAG + ":dataManager";
+    public static final String REFRESH_LOG = LOG_TAG + ":refresh";
 
     public static final HashMap<String, String> MATCH_LEVELS;
     public static final HashMap<Media.TYPE, String> MEDIA_IMG_URL_PATTERN,

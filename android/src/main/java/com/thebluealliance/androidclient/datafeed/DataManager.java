@@ -290,7 +290,7 @@ public class DataManager {
             Log.d(Constants.LOG_TAG, "Found " + matchResponse.getData().size() + " matches");
             for (Match match : matchResponse.getData()) {
                 try {
-                    if (match.getAlliances().toString().contains(teamKey)) {
+                    if (match.getAlliances().toString().contains(teamKey + "\"")) {
                         results.add(match);
                     }
                 } catch (BasicModel.FieldNotDefinedException e) {

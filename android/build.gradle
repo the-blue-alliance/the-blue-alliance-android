@@ -63,9 +63,15 @@ tasks.whenTaskAdded { theTask ->
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     compile 'com.android.support:support-v13:19.+'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
     compile 'com.android.support:support-v4:19.+'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'org.apache.commons:commons-lang3:3.0'
@@ -73,5 +79,4 @@ dependencies {
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.77'
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/YouTubeAndroidPlayerApi.jar')
 }

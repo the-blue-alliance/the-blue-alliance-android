@@ -2,16 +2,27 @@
 <resources>
 
     <!-- Team at Event -->
-    <string name="action_view_event">View Event</string>
+    <string name="action_view_event">View Full Event</string>
     <string name="action_view_team">View Team</string>
-    <string name="match_results_header">Results:</string>
-    <string name="team_at_event_no_data"><![CDATA[<br />No record or alliance data available.]]></string>
-    <string name="team_at_event_no_ranking_data"><![CDATA[Team %1$s had a record of <b>%2$s</b>.]]></string>
-    <string name="team_at_event_no_alliance_data"><![CDATA[Team %1$s was ranked <b>%2$s</b><br/>and had a record of <b>%3$s</b>.]]></string>
-    <string name="team_at_event_present_tense"><![CDATA[Team %1$s is ranked <b>%2$s</b><br/>and has a record of </>%3$s</b>. <br />They are the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They are currently <b>%6$s</b>.]]></string>
-    <string name="team_at_event_past_tense"><![CDATA[Team %1$s was ranked <b>%2$s</b><br/>and had a record of <b>%3$s</b>. <br />They were the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They were <b>%6$s</b>.]]></string>
-    <string name="team_at_event_past_tense_won_event"><![CDATA[Team %1$s was ranked <b>%2$s</b><br/>and had a record of <b>%3$s</b>. <br />They were the <b>%4$s</b> of the <b>%5$s</b> alliance. <br />They <b>won the event</b>.]]></string>
-    <string name="team_at_event_past_tense_not_picked"><![CDATA[Team %1$s was ranked <b>%2$s</b><br/>and had a record of <b>%3$s</b>. <br />They were <b>not picked</b> for an alliance.]]></string>
-    <string name="team_at_event_captain">captain</string>
+    <string name="team_at_event_captain">Captain</string>
     <string name="team_at_event_pick">pick</string>
+    <string name="summary">Summary</string>
+    <string name="alliance_summary">%1$s of the %2$s alliance</string>
+    <string name="opr_no_colon">OPR</string>
+    <string name="dpr_no_colon">DPR</string>
+    <string name="ccwm_no_colon">CCWM</string>
+
+    <!-- possible statuses -->
+    <string name="playing_in_quals">Playing in the qualification matches</string>
+    <string name="not_picked">Not picked for an alliance</string>
+    <string name="playing_in_quarterfinals">Playing in the quarterfinals</string>
+    <string name="eliminated_in_quarterfinals">Eliminated in the quarterfinals</string>
+    <string name="playing_in_semifinals">Playing in the semifinals</string>
+    <string name="eliminated_in_semifinals">Eliminated in the semifinals</string>
+    <string name="playing_in_finals">Playing in the finals</string>
+    <string name="eliminated_in_finals">Eliminated in the finals</string>
+    <string name="won_event">Won the event</string>
+    <string name="not_available">Not available</string>
+    <string name="no_alliance_data">No alliance data</string>
+
 </resources>
