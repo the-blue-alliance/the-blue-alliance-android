@@ -130,12 +130,16 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 red1.setTag(red1Key+"@"+eventKey);
                 red1.setOnClickListener(listener);
 
-                // Red 2
-                String red2Key = redAllianceTeamKeys.get(1).getAsString();
-                red2.setText(red2Key.substring(3));
-                red2.setTag(red2Key+"@"+eventKey);
-                red2.setOnClickListener(listener);
-
+                if (redAllianceTeamKeys.size() > 1) {
+                    // Red 2
+                    String red2Key = redAllianceTeamKeys.get(1).getAsString();
+                    red2.setText(red2Key.substring(3));
+                    red2.setTag(red2Key + "@" + eventKey);
+                    red2.setOnClickListener(listener);
+                }
+                else{
+                    red2.setVisibility(View.GONE);
+                }
                 // Only add the third team if the alliance has three teams.
                 if (redAllianceTeamKeys.size() > 2) {
                     // Red 3
@@ -176,11 +180,16 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 blue1.setTag(blue1Key+"@"+eventKey);
                 blue1.setOnClickListener(listener);
 
-                // Blue 2
-                String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
-                blue2.setText(blue2Key.substring(3));
-                blue2.setTag(blue2Key+"@"+eventKey);
-                blue2.setOnClickListener(listener);
+                if (blueAllianceTeamKeys.size() > 1) {
+                    // Blue 2
+                    String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
+                    blue2.setText(blue2Key.substring(3));
+                    blue2.setTag(blue2Key + "@" + eventKey);
+                    blue2.setOnClickListener(listener);
+                }
+                else{
+                    blue2.setVisibility(View.GONE);
+                }
 
                 if (blueAllianceTeamKeys.size() > 2) {
                     // Blue 3

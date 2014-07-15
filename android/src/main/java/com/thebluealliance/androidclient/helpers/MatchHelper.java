@@ -331,11 +331,15 @@ public class MatchHelper {
         }
 
         if (qualMatches.isEmpty() ||
-                (allQualMatchesPlayed && !teamIsHere)) {
+           (allQualMatchesPlayed && !teamIsHere)) {
             return EventPerformance.NOT_AVAILABLE;
         } else if (allQualMatchesPlayed && !allianceData) {
             return EventPerformance.NO_ALLIANCE_DATA;
-        } else if (allQualMatchesPlayed && !inAlliance) {
+        } else if ((allQualMatchesPlayed && !inAlliance) ||
+                  (!e.isHappeningNow() &&
+                  (quarterMatches.isEmpty() &&
+                   semiMatches.isEmpty() &&
+                   finalMatches.isEmpty()))) {
             return EventPerformance.NOT_PICKED;
         }
 

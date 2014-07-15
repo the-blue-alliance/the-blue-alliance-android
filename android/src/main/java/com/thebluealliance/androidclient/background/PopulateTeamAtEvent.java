@@ -264,7 +264,8 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
         String summary = "";
         List<Object> summaryArgs = new ArrayList<>();
         Resources r = activity.getResources();
-        if (performance == MatchHelper.EventPerformance.NOT_AVAILABLE) {
+        if (performance == MatchHelper.EventPerformance.NOT_AVAILABLE ||
+           (rank == -1 && record.equals("0-0-0"))) {
             return r.getString(R.string.team_at_event_no_data);
         } else if (rank == -1 && !record.equals("0-0-0")) {
             summary = r.getString(R.string.team_at_event_no_ranking_data);
