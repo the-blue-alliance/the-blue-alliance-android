@@ -199,7 +199,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             return true;
         }
         Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.content, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedYearPosition = position;
         getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
         return true;
