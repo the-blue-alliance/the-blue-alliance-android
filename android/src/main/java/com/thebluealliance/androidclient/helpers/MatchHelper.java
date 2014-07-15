@@ -164,7 +164,7 @@ public class MatchHelper {
         ELIMINATED_IN_FINALS(R.string.eliminated_in_finals),
         WON_EVENT(R.string.won_event),
         NOT_AVAILABLE(R.string.not_available),
-        NO_ALLIANCE_DATA(R.string.no_alliance_data);
+        NO_ALLIANCE_DATA(R.string.no_alli_data);
         public int descriptionId;
 
         EventStatus(int descriptionId) {
@@ -315,10 +315,7 @@ public class MatchHelper {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
-        boolean allianceData = true;
         JsonArray alliances = e.getAlliances();
-
-        if (alliances.size() == 0) allianceData = false;
 
         boolean inAlliance = false;
         if (alliances.size() == 0) {
@@ -398,9 +395,13 @@ public class MatchHelper {
         Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
         Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty() ||
-                (allQualMatchesPlayed && !teamIsHere)) {
+           (allQualMatchesPlayed && !teamIsHere)) {
             return EventStatus.NOT_AVAILABLE;
-        } else if (allQualMatchesPlayed && !inAlliance) {
+        } else if ((allQualMatchesPlayed && !inAlliance) ||
+                (!e.isHappeningNow() &&
+                (quarterMatches.isEmpty() &&
+                semiMatches.isEmpty() &&
+                finalMatches.isEmpty()))) {
             return EventStatus.NOT_PICKED;
         }
 

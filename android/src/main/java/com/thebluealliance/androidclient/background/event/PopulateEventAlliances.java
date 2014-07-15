@@ -82,7 +82,7 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_team_data);
+                noDataText.setText(R.string.no_alliance_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);

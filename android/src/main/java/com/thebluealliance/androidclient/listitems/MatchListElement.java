@@ -110,8 +110,9 @@ public class MatchListElement extends ListElement {
             holder.red2.setText("");
             holder.red3.setText("");
         } else {
+            holder.red1.setVisibility(View.VISIBLE);
             holder.red1.setText(redTeams[0]);
-            holder.red1.setTag("frc" + redTeams[0]+"@"+eventKey);
+            holder.red1.setTag("frc" + redTeams[0] + "@" + eventKey);
             holder.red1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[0])) {
                 holder.red1.setTypeface(Typeface.DEFAULT_BOLD);
@@ -119,27 +120,33 @@ public class MatchListElement extends ListElement {
                 holder.red1.setTypeface(Typeface.DEFAULT);
             }
 
+        }
+
+        if (redTeams.length == 1) {
+            holder.red2.setVisibility(View.GONE);
+            holder.red3.setVisibility(View.GONE);
+        } else {
+            holder.red2.setVisibility(View.VISIBLE);
             holder.red2.setText(redTeams[1]);
-            holder.red2.setTag("frc" + redTeams[1]+"@"+eventKey);
+            holder.red2.setTag("frc" + redTeams[1] + "@" + eventKey);
             holder.red2.setOnClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[1])) {
                 holder.red2.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
                 holder.red2.setTypeface(Typeface.DEFAULT);
             }
-
-            if (redTeams.length == 2) {
-                holder.red3.setVisibility(View.GONE);
+        }
+        if (redTeams.length == 2) {
+            holder.red3.setVisibility(View.GONE);
+        } else {
+            holder.red3.setVisibility(View.VISIBLE);
+            holder.red3.setText(redTeams[2]);
+            holder.red3.setTag("frc" + redTeams[2] + "@" + eventKey);
+            holder.red3.setOnClickListener(listener);
+            if (selectedTeamNumber.equals(redTeams[2])) {
+                holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
-                holder.red3.setVisibility(View.VISIBLE);
-                holder.red3.setText(redTeams[2]);
-                holder.red3.setTag("frc" + redTeams[2]+"@"+eventKey);
-                holder.red3.setOnClickListener(listener);
-                if (selectedTeamNumber.equals(redTeams[2])) {
-                    holder.red3.setTypeface(Typeface.DEFAULT_BOLD);
-                } else {
-                    holder.red3.setTypeface(Typeface.DEFAULT);
-                }
+                holder.red3.setTypeface(Typeface.DEFAULT);
             }
         }
 
@@ -148,8 +155,9 @@ public class MatchListElement extends ListElement {
             holder.blue2.setText("");
             holder.blue3.setText("");
         } else {
+            holder.blue1.setVisibility(View.VISIBLE);
             holder.blue1.setText(blueTeams[0]);
-            holder.blue1.setTag("frc" + blueTeams[0]+"@"+eventKey);
+            holder.blue1.setTag("frc" + blueTeams[0] + "@" + eventKey);
             holder.blue1.setOnClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[0])) {
                 holder.blue1.setTypeface(Typeface.DEFAULT_BOLD);
@@ -157,47 +165,52 @@ public class MatchListElement extends ListElement {
                 holder.blue1.setTypeface(Typeface.DEFAULT);
             }
 
-            holder.blue2.setText(blueTeams[1]);
-            holder.blue2.setTag("frc" + blueTeams[1]+"@"+eventKey);
-            holder.blue2.setOnClickListener(listener);
-            if (selectedTeamNumber.equals(blueTeams[1])) {
-                holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
-            } else {
-                holder.blue2.setTypeface(Typeface.DEFAULT);
-            }
-
-            if (blueTeams.length == 2) {
+            if (blueTeams.length == 1) {
+                holder.blue2.setVisibility(View.GONE);
                 holder.blue3.setVisibility(View.GONE);
             } else {
-                holder.blue3.setVisibility(View.VISIBLE);
-                holder.blue3.setText(blueTeams[2]);
-                holder.blue3.setTag("frc" + blueTeams[2]+"@"+eventKey);
-                holder.blue3.setOnClickListener(listener);
-                if (selectedTeamNumber.equals(blueTeams[2])) {
-                    holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
+                holder.blue2.setVisibility(View.VISIBLE);
+                holder.blue2.setText(blueTeams[1]);
+                holder.blue2.setTag("frc" + blueTeams[1] + "@" + eventKey);
+                holder.blue2.setOnClickListener(listener);
+                if (selectedTeamNumber.equals(blueTeams[1])) {
+                    holder.blue2.setTypeface(Typeface.DEFAULT_BOLD);
                 } else {
-                    holder.blue3.setTypeface(Typeface.DEFAULT);
+                    holder.blue2.setTypeface(Typeface.DEFAULT);
+                }
+
+                if (blueTeams.length == 2) {
+                    holder.blue3.setVisibility(View.GONE);
+                } else {
+                    holder.blue3.setVisibility(View.VISIBLE);
+                    holder.blue3.setText(blueTeams[2]);
+                    holder.blue3.setTag("frc" + blueTeams[2] + "@" + eventKey);
+                    holder.blue3.setOnClickListener(listener);
+                    if (selectedTeamNumber.equals(blueTeams[2])) {
+                        holder.blue3.setTypeface(Typeface.DEFAULT_BOLD);
+                    } else {
+                        holder.blue3.setTypeface(Typeface.DEFAULT);
+                    }
                 }
             }
+            holder.redScore.setText(redScore);
+            holder.blueScore.setText(blueScore);
         }
-        holder.redScore.setText(redScore);
-        holder.blueScore.setText(blueScore);
-
         return convertView;
     }
 
-    private static class ViewHolder {
-        TextView matchTitle;
-        TextView red1;
-        TextView red2;
-        TextView red3;
-        TextView blue1;
-        TextView blue2;
-        TextView blue3;
-        TextView redScore;
-        TextView blueScore;
-        View redAlliance;
-        View blueAlliance;
-        ImageView videoIcon;
+        private static class ViewHolder {
+            TextView matchTitle;
+            TextView red1;
+            TextView red2;
+            TextView red3;
+            TextView blue1;
+            TextView blue2;
+            TextView blue3;
+            TextView redScore;
+            TextView blueScore;
+            View redAlliance;
+            View blueAlliance;
+            ImageView videoIcon;
+        }
     }
-}
