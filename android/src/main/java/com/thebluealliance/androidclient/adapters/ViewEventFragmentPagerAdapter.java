@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
  */
 public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Info", "Teams", "Rankings", "Results", "Alliances", "Stats", "Awards"};
+    public final String[] TITLES = {"Info", "Teams", "Rankings", "Matches", "Alliances", "Stats", "Awards"};
 
     private String mEventKey;
 
