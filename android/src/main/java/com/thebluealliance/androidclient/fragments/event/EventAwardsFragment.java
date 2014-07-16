@@ -26,8 +26,8 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
-    private String mEventKey;
-    private static final String EVENT_KEY = "eventKey";
+    private String mEventKey, mTeamKey;
+    private static final String EVENT_KEY = "eventKey", TEAM_KEY = "teamKey";
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
@@ -44,11 +44,21 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
         return f;
     }
 
+    public static EventAwardsFragment newInstance(String eventKey, String teamKey) {
+        EventAwardsFragment f = new EventAwardsFragment();
+        Bundle data = new Bundle();
+        data.putString(EVENT_KEY, eventKey);
+        data.putString(TEAM_KEY, teamKey);
+        f.setArguments(data);
+        return f;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(EVENT_KEY, "");
+            mTeamKey = getArguments().getString(TEAM_KEY, "");
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
@@ -91,9 +101,9 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " awards");
+        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " awards with team: "+mTeamKey);
         mTask = new PopulateEventAwards(this, true);
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey, mTeamKey);
     }
 
     @Override

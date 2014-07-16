@@ -123,43 +123,10 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                 }
                 return true;
             case R.id.help:
-                showStatsHelpDialog();
+                Utilities.showStatsHelpDialog(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showStatsHelpDialog() {
-        String helpText;
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.stats_help)));
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.getProperty("line.separator"));
-                line = br.readLine();
-            }
-            helpText = sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            helpText = "Error reading help file.";
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.stats_help_title));
-        builder.setMessage(Html.fromHtml(helpText));
-        builder.setCancelable(true);
-        builder.setNeutralButton(getString(R.string.close_stats_help),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }
-        );
-        builder.create().show();
     }
 
     public ViewPager getPager() {

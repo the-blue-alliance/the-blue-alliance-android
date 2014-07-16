@@ -39,7 +39,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
     private EventAwardsFragment mFragment;
     private RefreshableHostActivity activity;
-    private String eventKey;
+    private String eventKey, teamKey;
     private ArrayList<ListItem> awards;
     private boolean forceFromCache;
 
@@ -58,12 +58,17 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
+        if(params.length >= 2){
+            teamKey = params[1];
+        }else{
+            teamKey = "";
+        }
 
         awards = new ArrayList<>();
 
         APIResponse<ArrayList<Award>> response;
         try {
-            response = DataManager.Events.getEventAwards(activity, eventKey, forceFromCache);
+            response = DataManager.Events.getEventAwards(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
             HashMap<String, Team> teams = new HashMap<>();
             for (Award a : awardList) {
@@ -75,7 +80,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                             teams.put(teamKey, team);
                         }
                     }
-                    awards.add(new AwardListElement(a.getName(), eventKey, a.getWinners(), teams));
+                    awards.add(new AwardListElement(a.getName(), eventKey, a.getWinners(), teams, teamKey));
                 }catch(BasicModel.FieldNotDefinedException e){
                     Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
                 }
@@ -99,7 +104,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_awards_data);
+                noDataText.setText(teamKey.isEmpty()?R.string.no_awards_data:R.string.no_team_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
@@ -125,7 +130,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
              */
             PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, false);
             mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey);
+            secondLoad.execute(eventKey, teamKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {

@@ -23,7 +23,7 @@ import java.util.Iterator;
  */
 public class AwardListElement extends ListElement {
 
-    private String mAwardName, mEventKey;
+    private String mAwardName, mEventKey, mSelectedTeamNum;
     private JsonArray mAwardWinners;
     private HashMap<String, Team> mAwardTeams;
 
@@ -34,12 +34,13 @@ public class AwardListElement extends ListElement {
         mAwardTeams = null;
     }
 
-    public AwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams) {
+    public AwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams, String selectedTeamKey) {
         super();
         mAwardName = name;
         mEventKey = eventKey;
         mAwardWinners = winners;
         mAwardTeams = teams;
+        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4)?"":selectedTeamKey.substring(3);
     }
 
     @Override
@@ -69,7 +70,9 @@ public class AwardListElement extends ListElement {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
-                winnerView.setOnClickListener(new TeamAtEventClickListener(context));
+                if(!mSelectedTeamNum.equals(teamNumber)) {
+                    winnerView.setOnClickListener(new TeamAtEventClickListener(context));
+                }
                 winnerView.setTag("frc" + teamNumber+"@"+mEventKey);
             }
             if (winner.get("awardee").isJsonNull()) {

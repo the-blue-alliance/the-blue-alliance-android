@@ -61,9 +61,12 @@
     <string name="no_alliance_data">No alliance data was found for this event.</string>
     <string name="no_team_data">No team list was found for this event.</string>
     <string name="no_match_data">No match results were found for this event.</string>
+    <string name="no_team_match_data">No matches found.</string>
     <string name="no_ranking_data">No rankings were found for this event.</string>
     <string name="no_stats_data">No stats data was found for this event.</string>
     <string name="no_awards_data">No awards list was found for this event.</string>
+    <string name="no_team_stats_data">No stats data found.</string>
+    <string name="no_team_awards_data">No awards found.</string>
     <string name="no_event_data">No events were found.</string>
     <string name="no_media_data">No media was found for this team.</string>
     <string name="no_team_list">Unable to load team list.</string>

@@ -54,7 +54,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        if(activity != null) {
+            activity.showMenuProgressBar();
+        }
     }
 
     @Override
@@ -178,6 +180,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
                 noDataText.setVisibility(View.VISIBLE);
+                noDataText.setText(teamKey.isEmpty()?R.string.no_match_data:R.string.no_team_match_data);
             } else {
                 noDataText.setVisibility(View.GONE);
                 ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
