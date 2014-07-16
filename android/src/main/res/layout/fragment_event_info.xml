@@ -113,8 +113,8 @@
                     android:id="@+id/event_cd_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/chief_delphi_orange_selector"
-                    android:gravity="center"
-                    android:src="@drawable/ic_cd"/>
+                    android:padding="10dp"
+                    android:src="@drawable/ic_cd_light"/>
             </LinearLayout>
 
             <LinearLayout
