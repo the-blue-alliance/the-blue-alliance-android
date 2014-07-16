@@ -39,7 +39,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
     private EventAwardsFragment mFragment;
     private RefreshableHostActivity activity;
-    private String eventKey;
+    private String eventKey, teamKey;
     private ArrayList<ListItem> awards;
     private boolean forceFromCache;
 
@@ -58,12 +58,17 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
+        if(params.length >= 2){
+            teamKey = params[1];
+        }else{
+            teamKey = "";
+        }
 
         awards = new ArrayList<>();
 
         APIResponse<ArrayList<Award>> response;
         try {
-            response = DataManager.Events.getEventAwards(activity, eventKey, forceFromCache);
+            response = DataManager.Events.getEventAwards(activity, eventKey, teamKey, forceFromCache);
             ArrayList<Award> awardList = response.getData();
             HashMap<String, Team> teams = new HashMap<>();
             for (Award a : awardList) {
@@ -125,7 +130,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
              */
             PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, false);
             mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey);
+            secondLoad.execute(eventKey, teamKey);
         } else {
             // Show notification if we've refreshed data.
             if (mFragment instanceof RefreshListener) {

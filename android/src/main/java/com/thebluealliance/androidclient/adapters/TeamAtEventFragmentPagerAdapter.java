@@ -4,6 +4,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 
 /**
@@ -35,13 +38,13 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
                 fragment = TeamAtEventSummaryFragment.newInstance(teamKey, eventKey);
                 break;
             case 1: //awards
-                fragment = new Fragment();
+                fragment = EventAwardsFragment.newInstance(eventKey, teamKey);
                 break;
             case 2: //stats
                 fragment = new Fragment();
                 break;
             case 3: //matches
-                fragment = new Fragment();
+                fragment = EventResultsFragment.newInstance(eventKey, teamKey);
                 break;
         }
         return fragment;
