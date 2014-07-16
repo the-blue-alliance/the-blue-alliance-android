@@ -1,11 +1,9 @@
 package com.thebluealliance.androidclient.background.teamAtEvent;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,8 +18,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -187,7 +184,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             // If the adapter has no children, display a generic "no data" message.
             // Otherwise, show the list as normal.
             if (adapter.isEmpty()) {
-                noDataText.setText(R.string.no_stats_data);
+                noDataText.setText(R.string.not_available);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 noDataText.setVisibility(View.GONE);
@@ -217,7 +214,9 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateTeamAtEventSummary(fragment, false).execute(teamKey, eventKey);
+            PopulateTeamAtEventSummary secondTask = new PopulateTeamAtEventSummary(fragment, false);
+            fragment.updateTask(secondTask);
+            secondTask.execute(teamKey, eventKey);
         } else {
             // Show notification if we've refreshed data.
             Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
@@ -255,39 +254,4 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         return summary;
     }
 
-    private class LabelValueListItem extends ListElement {
-
-        String label, value;
-
-        public LabelValueListItem(String label, String value) {
-            this.label = label;
-            this.value = value;
-        }
-
-        @Override
-        public View getView(Context c, LayoutInflater inflater, View convertView) {
-            ViewHolder holder;
-
-            if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
-                convertView = inflater.inflate(R.layout.list_item_summary, null);
-
-                holder = new ViewHolder();
-                holder.label = (TextView) convertView.findViewById(R.id.label);
-                holder.value = (TextView) convertView.findViewById(R.id.value);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            holder.label.setText(label);
-            holder.value.setText(value);
-
-            return convertView;
-        }
-
-        private class ViewHolder {
-            TextView label;
-            TextView value;
-        }
-    }
 }

@@ -104,7 +104,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_awards_data);
+                noDataText.setText(teamKey.isEmpty()?R.string.no_awards_data:R.string.no_team_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
