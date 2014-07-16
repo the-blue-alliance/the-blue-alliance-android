@@ -1,9 +1,12 @@
 package com.thebluealliance.androidclient;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -15,6 +18,8 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
@@ -181,4 +186,38 @@ public class Utilities {
                 return "th";
         }
     }
+
+    public static void showStatsHelpDialog(Context c) {
+        String helpText;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(R.raw.stats_help)));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.getProperty("line.separator"));
+                line = br.readLine();
+            }
+            helpText = sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            helpText = "Error reading help file.";
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle(c.getString(R.string.stats_help_title));
+        builder.setMessage(Html.fromHtml(helpText));
+        builder.setCancelable(true);
+        builder.setNeutralButton(c.getString(R.string.close_stats_help),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }
+        );
+        builder.create().show();
+    }
+
 }

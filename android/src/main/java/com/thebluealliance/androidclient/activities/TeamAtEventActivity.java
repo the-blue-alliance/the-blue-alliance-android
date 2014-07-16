@@ -23,7 +23,9 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventSummary;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
-public class TeamAtEventActivity extends RefreshableHostActivity {
+import java.util.Arrays;
+
+public class TeamAtEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
@@ -61,7 +63,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        //tabs.setOnPageChangeListener(this);
+        tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -84,6 +86,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
         super.onCreateOptionsMenu(menu);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.team_at_event, menu);
+        getMenuInflater().inflate(R.menu.stats_help_menu, menu);
+        mOptionsMenu = menu;
+        mOptionsMenu.findItem(R.id.help).setVisible(false);
         return true;
     }
 
@@ -96,6 +101,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
             case R.id.action_view_team:
                 int year = Integer.parseInt(eventKey.substring(0,4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
+                return true;
+            case R.id.help:
+                Utilities.showStatsHelpDialog(this);
                 return true;
             case android.R.id.home:
                 if (isDrawerOpen()) {
@@ -125,5 +133,27 @@ public class TeamAtEventActivity extends RefreshableHostActivity {
     @Override
     public void hideWarningMessage() {
         warningMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if(mOptionsMenu != null) {
+            if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
+                //stats position
+                mOptionsMenu.findItem(R.id.help).setVisible(true);
+            } else {
+                mOptionsMenu.findItem(R.id.help).setVisible(false);
+            }
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }
