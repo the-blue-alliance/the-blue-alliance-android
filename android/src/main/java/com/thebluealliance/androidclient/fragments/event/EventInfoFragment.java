@@ -97,10 +97,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.event_top_teams_container) {
-            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(1);
+            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(2);  // Rankings
             return;
         } else if (id == R.id.event_top_oprs_container) {
-            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(5);
+            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(5);  // Stats
             return;
         }
         if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
