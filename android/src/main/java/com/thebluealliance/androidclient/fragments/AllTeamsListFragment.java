@@ -21,7 +21,7 @@ public class AllTeamsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragmet_team_list_fragment_pager, container, false);
+        View v = inflater.inflate(R.layout.fragment_team_list_fragment_pager, container, false);
         mViewPager = (ViewPager) v.findViewById(R.id.team_pager);
         mViewPager.setAdapter(new TeamListFragmentPagerAdapter(getChildFragmentManager()));
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
