@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,19 +13,24 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventSummary;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
-public class TeamAtEventActivity extends RefreshableHostActivity implements RefreshListener {
+public class TeamAtEventActivity extends RefreshableHostActivity {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
     private TextView warningMessage;
     private String eventKey, teamKey;
-    private PopulateTeamAtEvent task;
+    private ViewPager pager;
+    private TeamAtEventFragmentPagerAdapter adapter;
 
     public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
@@ -46,24 +52,22 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
 
+        pager = (ViewPager) findViewById(R.id.view_pager);
+        adapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), teamKey, eventKey);
+        pager.setAdapter(adapter);
+        // To support refreshing, all pages must be held in memory at once
+        // This should be increased if we ever add more pages
+        pager.setOffscreenPageLimit(6);
+        pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
+
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        //tabs.setOnPageChangeListener(this);
+        tabs.setViewPager(pager);
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                if (view.findViewById(R.id.match_title) != null) {
-                    String matchKey = view.findViewById(R.id.match_title).getTag().toString();
-                    startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
-                    return true;
-                }
-
-                return false;
-            }
-        });
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
-
-        registerRefreshableActivityListener(this);
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
@@ -73,18 +77,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
     public void onResume() {
         super.onResume();
         startRefresh();
-    }
-
-    @Override
-    public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh started");
-        task = new PopulateTeamAtEvent(this, true);
-        task.execute(teamKey, eventKey);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        task.cancel(false);
     }
 
     @Override
