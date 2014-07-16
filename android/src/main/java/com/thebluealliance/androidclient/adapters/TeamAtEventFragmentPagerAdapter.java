@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummar
  */
 public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Summary", "Awards", "Stats", "Matches"};
+    public final String[] TITLES = {"Summary", "Matches", "Stats", "Awards"};
 
     private String teamKey, eventKey;
 
@@ -38,14 +38,15 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0: //summary
                 fragment = TeamAtEventSummaryFragment.newInstance(teamKey, eventKey);
                 break;
-            case 1: //awards
-                fragment = EventAwardsFragment.newInstance(eventKey, teamKey);
+            case 1:
+                //matches
+                fragment = EventResultsFragment.newInstance(eventKey, teamKey);
                 break;
             case 2: //stats
                 fragment = TeamAtEventStatsFragment.newInstance(teamKey, eventKey);
                 break;
-            case 3: //matches
-                fragment = EventResultsFragment.newInstance(eventKey, teamKey);
+            case 3: //awards
+                fragment = EventAwardsFragment.newInstance(eventKey, teamKey);
                 break;
         }
         return fragment;
