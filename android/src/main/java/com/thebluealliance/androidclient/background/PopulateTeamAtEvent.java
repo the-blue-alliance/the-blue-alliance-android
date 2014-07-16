@@ -279,6 +279,7 @@ public class PopulateTeamAtEvent extends AsyncTask<String, Void, APIResponse.COD
                     listView.expandGroup(0);
                 }
                 listView.setSelection(firstVisiblePosition);
+                adapter.notifyDataSetChanged();
             }
 
             activity.findViewById(R.id.team_at_event_progress).setVisibility(View.GONE);
