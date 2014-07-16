@@ -9,9 +9,14 @@
         <item name="android:background">@color/action_bar_background</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
+        <item name="android:subtitleTextStyle">@style/ActionBarSubtitleStyle</item>
     </style>
 
     <style name="ActionBarTitleStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="ActionBarSubtitleStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Subtitle">
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
