@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -71,6 +74,13 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.stats_sort_menu, menu);
     }
 
     @Override
@@ -106,6 +116,28 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
 
         return view;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_sort_opr:
+                mTask = new PopulateEventStats(this, true, "opr");
+                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
+                return true;
+            case R.id.action_sort_dpr:
+                mTask = new PopulateEventStats(this, true, "dpr");
+                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
+                return true;
+            case R.id.action_sort_ccwm:
+                mTask = new PopulateEventStats(this, true, "ccwm");
+                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     public void onPause() {

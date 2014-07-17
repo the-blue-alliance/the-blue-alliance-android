@@ -129,8 +129,9 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             case R.id.help:
                 Utilities.showStatsHelpDialog(this);
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     public ViewPager getPager() {
