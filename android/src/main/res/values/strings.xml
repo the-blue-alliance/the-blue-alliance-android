@@ -51,6 +51,11 @@
     <string name="team_rank">Rank %d</string>
     <string name="no_location_available">No location available</string>
 
+    <!-- Stats Sort options -->
+    <string name="action_sort_opr">Sort by OPR</string>
+    <string name="action_sort_dpr">Sort by DPR</string>
+    <string name="action_sort_ccwm">Sort by CCWM</string>
+
     <!-- Stats Help Dialog -->
     <string name="stats_help_title">Stats Help</string>
     <string name="close_stats_help">Close</string>
