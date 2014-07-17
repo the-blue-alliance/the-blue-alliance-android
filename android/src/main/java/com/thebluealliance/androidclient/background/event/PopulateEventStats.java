@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
@@ -46,12 +47,12 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private ArrayList<ListItem> teams;
     private boolean forceFromCache;
     private String statToSortBy;
+    private EventStatsFragmentAdapter adapter;
 
-    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache, String statToSortBy) {
+    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
-        this.statToSortBy = statToSortBy;
     }
 
     @Override
@@ -168,7 +169,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     teamKey = teamKey.substring(0, teamKey.length() - 1);
                 }
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
-                teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), team.getNickname(), statsString));
+                teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), team.getNickname(), statsString,
+                        Double.valueOf(oprSorted.values().toArray()[i].toString()),
+                        Double.valueOf(dprSorted.values().toArray()[i].toString()),
+                        Double.valueOf(ccwmSorted.values().toArray()[i].toString())));
+
             }
 
             return response.getCode();
@@ -184,7 +189,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         View view = mFragment.getView();
         if (view != null && activity != null) {
             // Set the new info.
-            ListViewAdapter adapter = new ListViewAdapter(activity, teams);
+            adapter = new EventStatsFragmentAdapter(activity, teams);
+            //ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no stats in the adapter or if we can't download info
@@ -217,7 +223,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false, statToSortBy);
+            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {

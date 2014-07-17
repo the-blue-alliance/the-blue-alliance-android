@@ -20,11 +20,15 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
+import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.StatsListElement;
+
+import java.util.ArrayList;
 
 /**
  * Fragment that displays the team statistics for an FRC event.
@@ -43,7 +47,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     private static final String KEY = "eventKey";
 
     private Parcelable mListState;
-    private ListViewAdapter mAdapter;
+    private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
     private ProgressBar mProgressBar;
     private static String statSortCategory;
@@ -128,8 +132,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         else if (id == R.id.action_sort_ccwm) statSortCategory = "ccwm";
         else return super.onOptionsItemSelected(item);
 
-        mTask = new PopulateEventStats(this, true, statSortCategory);
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
+        mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
+        mAdapter.sortStats(mAdapter, statSortCategory);
         return true;
     }
 
@@ -142,7 +146,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             mTask.cancel(false);
         }
         if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
+            mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
     }
@@ -158,7 +162,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
-        mTask = new PopulateEventStats(this, true, statSortCategory);
+        mTask = new PopulateEventStats(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 
