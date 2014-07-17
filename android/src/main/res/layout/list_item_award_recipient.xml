@@ -5,7 +5,10 @@
     android:layout_height="wrap_content"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:clickable="true">
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/winner_line_1"
@@ -15,7 +18,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="false"
-        android:clickable="true"
         android:text="Person Name" />
 
     <TextView
@@ -27,6 +29,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="false"
-        android:clickable="true"
         android:text="254 The Cheesy Poofs" />
 </RelativeLayout>
