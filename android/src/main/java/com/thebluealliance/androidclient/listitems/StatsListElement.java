@@ -15,12 +15,16 @@ public class StatsListElement extends ListElement {
     private String mTeamNumber;
     private String mTeamName;
     private String mTeamStat;
+    private Double opr, dpr, ccwm;
 
-    public StatsListElement(String key, String number, String name, String stat) {
+    public StatsListElement(String key, String number, String name, String stat, Double opr, Double dpr, Double ccwm) {
         super(key);
         mTeamNumber = number;
         mTeamName = name;
         mTeamStat = stat;
+        this.opr = opr;
+        this.dpr = dpr;
+        this.ccwm = ccwm;
     }
 
     @Override
@@ -57,4 +61,13 @@ public class StatsListElement extends ListElement {
         TextView teamStat;
     }
 
+    public Double getOpr(){
+        return opr;
+    }
+    public Double getDpr(){
+        return dpr;
+    }
+    public Double getCcwm(){
+        return ccwm;
+    }
 }
