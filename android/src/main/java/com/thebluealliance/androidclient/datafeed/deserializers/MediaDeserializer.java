@@ -1,10 +1,13 @@
 package com.thebluealliance.androidclient.datafeed.deserializers;
 
+import android.util.Log;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.Media;
 
 import java.lang.reflect.Type;
@@ -15,6 +18,7 @@ import java.lang.reflect.Type;
 public class MediaDeserializer implements JsonDeserializer<Media> {
     @Override
     public Media deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        Log.e(Constants.LOG_TAG, "Inflating media: "+json);
         JsonObject object = json.getAsJsonObject();
         Media media = new Media();
 
@@ -24,6 +28,9 @@ public class MediaDeserializer implements JsonDeserializer<Media> {
 
         if (object.has("foreign_key")) {
             media.setForeignKey(object.get("foreign_key").getAsString());
+        } else if (object.has("key")){
+            //allow us to also deserialize medias coming from the match endpoint
+            media.setForeignKey(object.get("key").getAsString());
         }
 
         if (object.has("details")) {

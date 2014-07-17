@@ -1,30 +1,27 @@
 package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
 
 /**
  * File created by phil on 4/20/14.
  */
 public class MatchListElement extends ListElement {
 
-    private String videoKey;
-    String matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore;
-    private String selectedTeamNumber;
+    private String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamNumber;
+    private boolean showVideoIcon, showMatchHeader;
 
-    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey) {
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, String selectedTeamKey, boolean showVideoIcon, boolean showHeader) {
         super(matchKey);
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
@@ -33,19 +30,13 @@ public class MatchListElement extends ListElement {
         this.redScore = redScore;
         this.blueScore = blueScore;
         this.matchKey = matchKey;
-        this.selectedTeamNumber = "";
-    }
-
-    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, String selectedTeamKey) {
-        super(matchKey);
-        this.videoKey = youTubeVideoKey;
-        this.matchTitle = matchTitle;
-        this.redTeams = redTeams;
-        this.blueTeams = blueTeams;
-        this.redScore = redScore;
-        this.blueScore = blueScore;
-        this.matchKey = matchKey;
-        this.selectedTeamNumber = selectedTeamKey.replace("frc", "");
+        if(selectedTeamKey != null && !selectedTeamKey.isEmpty()) {
+            this.selectedTeamNumber = selectedTeamKey.replace("frc", "");
+        }else{
+            this.selectedTeamNumber = "";
+        }
+        this.showVideoIcon = showVideoIcon;
+        this.showMatchHeader = showHeader;
     }
 
     @Override
@@ -67,6 +58,7 @@ public class MatchListElement extends ListElement {
             holder.redAlliance = convertView.findViewById(R.id.red_alliance);
             holder.blueAlliance = convertView.findViewById(R.id.blue_alliance);
             holder.videoIcon = (ImageView) convertView.findViewById(R.id.match_video);
+            holder.header = (TableRow) convertView.findViewById(R.id.match_header);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -93,10 +85,20 @@ public class MatchListElement extends ListElement {
         }
 
         //if we have video for this match, show an icon
-        if (videoKey != null) {
+        if (videoKey != null && showVideoIcon) {
             holder.videoIcon.setVisibility(View.VISIBLE);
-        } else {
+        } else if(!showVideoIcon) {
+            holder.videoIcon.setVisibility(View.GONE);
+        }else{
             holder.videoIcon.setVisibility(View.INVISIBLE);
+        }
+
+        if(showMatchHeader){
+            holder.header.setVisibility(View.VISIBLE);
+            holder.matchTitle.setVisibility(View.GONE);
+        }else{
+            holder.header.setVisibility(View.GONE);
+            holder.matchTitle.setVisibility(View.VISIBLE);
         }
 
         holder.matchTitle.setText(matchTitle);
@@ -212,5 +214,6 @@ public class MatchListElement extends ListElement {
             View redAlliance;
             View blueAlliance;
             ImageView videoIcon;
+            TableRow header;
         }
     }

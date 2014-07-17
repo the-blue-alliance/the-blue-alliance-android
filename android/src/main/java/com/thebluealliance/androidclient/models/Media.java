@@ -132,9 +132,9 @@ public class Media extends BasicModel<Media> {
         String imageUrl;
         try {
             TYPE mediaType = getMediaType();
-            JsonObject details = getDetails();
             String foreignKey = getForeignKey();
             if (mediaType == TYPE.CD_PHOTO_THREAD) {
+                JsonObject details = getDetails();
                 imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
             } else {
                 imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
