@@ -85,7 +85,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             // Put each stat into its own array list,
             // but make sure it actually has stats (and not just an empty set).
             if (stats.has("oprs") &&
-                    !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
+               !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
                 opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
 
                 // Sort OPRs in decreasing order (highest to lowest)
@@ -95,28 +95,18 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
             // Put the DPRs & CCWMs into a linked hashmap in the same order as the sorted OPRs.
             if (stats.has("dprs") &&
-                    !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
+               !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
 
                 dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
-
-                for (int i = 0; i < opr.size(); i++) {
-                    String dprKey = opr.get(i).getKey();
-                    Double dprValue = stats.get("dprs").getAsJsonObject().get(dprKey).getAsDouble();
-                    dprSorted.put(dprKey, dprValue);
-                }
+                dprSorted = sortedListByStat(opr, stats.get("dprs").getAsJsonObject());
 
             }
 
             if (stats.has("ccwms") &&
-                    !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
+               !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
 
                 ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
-
-                for (int i = 0; i < opr.size(); i++) {
-                    String ccwmKey = opr.get(i).getKey();
-                    Double ccwmValue = stats.get("ccwms").getAsJsonObject().get(ccwmKey).getAsDouble();
-                    ccwmSorted.put(ccwmKey, ccwmValue);
-                }
+                ccwmSorted = sortedListByStat(opr, stats.get("ccwms").getAsJsonObject());
 
             }
 
@@ -191,5 +181,25 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 activity.notifyRefreshComplete(mFragment);
             }
         }
+    }
+
+    /**
+     * Creates a new linked hash map for a stat based on the order of another sorted stat.
+     *
+     * @param stat the stat to sort by
+     * @param data the data to sort with
+     * @return newly sorted linked hash map
+     */
+    private LinkedHashMap<String, Double> sortedListByStat(ArrayList<Map.Entry<String, JsonElement>> stat, JsonObject data){
+
+        LinkedHashMap<String, Double> statSorted = new LinkedHashMap<>();
+
+        for (int i = 0; i < stat.size(); i++){
+            String newKey = stat.get(i).getKey();
+            Double newValue = data.get(newKey).getAsDouble();
+            statSorted.put(newKey, newValue);
+        }
+
+        return statSorted;
     }
 }
