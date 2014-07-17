@@ -70,7 +70,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:background="@color/lighter_red"
+                            android:background="@drawable/match_team_selector_red"
                             android:gravity="center_vertical|center_horizontal"
                             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
@@ -79,7 +79,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:background="@color/lighter_red"
+                            android:background="@drawable/match_team_selector_red"
                             android:gravity="center_vertical|center_horizontal"
                             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
@@ -88,7 +88,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:background="@color/lighter_red"
+                            android:background="@drawable/match_team_selector_red"
                             android:gravity="center_vertical|center_horizontal"
                             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
@@ -113,7 +113,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:background="@color/lighter_blue"
+                            android:background="@drawable/match_team_selector_blue"
                             android:gravity="center_vertical|center_horizontal"
                             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
@@ -122,7 +122,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:background="@color/lighter_blue"
+                            android:background="@drawable/match_team_selector_blue"
                             android:gravity="center_vertical|center_horizontal"
                             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
@@ -131,7 +131,7 @@
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:background="@color/lighter_blue"
+                            android:background="@drawable/match_team_selector_blue"
                             android:gravity="center_vertical|center_horizontal"
                             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
