@@ -70,6 +70,8 @@ public class AwardListElement extends ListElement {
                 teamNumber = winner.get("team_number").getAsString();
                 if(!mSelectedTeamNum.equals(teamNumber)) {
                     winnerView.setOnClickListener(new TeamAtEventClickListener(context));
+                } else {
+                    winnerView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));  // disable touch feedback
                 }
                 winnerView.setTag("frc" + teamNumber+"@"+mEventKey);
             }
