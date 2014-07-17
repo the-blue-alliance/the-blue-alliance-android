@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:minHeight="48dp"
     android:orientation="horizontal"
-    android:padding="8dp" >
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
 
     <TextView
         android:id="@+id/alliance_name"
@@ -25,6 +26,7 @@
         android:clickable="true"
         android:gravity="center"
         android:textSize="16sp"
+        android:background="?android:attr/selectableItemBackground"
         android:text="254" />
 
     <TextView
@@ -35,6 +37,7 @@
         android:clickable="true"
         android:gravity="center"
         android:textSize="16sp"
+        android:background="?android:attr/selectableItemBackground"
         android:text="469" />
 
     <TextView
@@ -45,6 +48,7 @@
         android:clickable="true"
         android:gravity="center"
         android:textSize="16sp"
+        android:background="?android:attr/selectableItemBackground"
         android:text="2848" />
 
     <TextView
@@ -55,6 +59,7 @@
         android:clickable="true"
         android:gravity="center"
         android:textSize="16sp"
+        android:background="?android:attr/selectableItemBackground"
         android:visibility="gone"
         android:text="74" />
 
