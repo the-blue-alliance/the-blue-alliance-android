@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
+import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
@@ -46,12 +46,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private ArrayList<ListItem> teams;
     private boolean forceFromCache;
     private String statToSortBy;
-
-    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache) {
-        mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
-    }
 
     public PopulateEventStats(EventStatsFragment f, boolean forceFromCache, String statToSortBy) {
         mFragment = f;
@@ -100,7 +94,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     statToUse = opr;
 
                     // Sort OPRs in decreasing order (highest to lowest)
-                    Collections.sort(opr, new TeamSortByOPRComparator());
+                    Collections.sort(opr, new TeamSortByStatComparator());
                     Collections.reverse(opr);
 
                     oprSorted = sortedListByStat(opr, stats.get("oprs").getAsJsonObject());
@@ -122,7 +116,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     statToUse = dpr;
 
                     // Sort DPRs in increasing order (lowest to highest)
-                    Collections.sort(dpr, new TeamSortByOPRComparator());
+                    Collections.sort(dpr, new TeamSortByStatComparator());
 
                     dprSorted = sortedListByStat(dpr, stats.get("dprs").getAsJsonObject());
 
@@ -143,7 +137,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     statToUse = ccwm;
 
                     // Sort CCWMs in decreasing order (highest to lowest)
-                    Collections.sort(ccwm, new TeamSortByOPRComparator());
+                    Collections.sort(ccwm, new TeamSortByStatComparator());
                     Collections.reverse(ccwm);
 
                     ccwmSorted = sortedListByStat(ccwm, stats.get("ccwms").getAsJsonObject());

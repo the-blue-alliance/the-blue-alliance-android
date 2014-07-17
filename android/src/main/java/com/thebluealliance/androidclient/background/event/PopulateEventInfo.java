@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
-import com.thebluealliance.androidclient.comparators.TeamSortByOPRComparator;
+import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
@@ -138,7 +138,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                         opr.addAll(statsResponse.getData().get("oprs").getAsJsonObject().entrySet());
 
                         // Sort OPRs in decreasing order (highest to lowest)
-                        Collections.sort(opr, new TeamSortByOPRComparator());
+                        Collections.sort(opr, new TeamSortByStatComparator());
                         Collections.reverse(opr);
 
                         String statsString = "";
