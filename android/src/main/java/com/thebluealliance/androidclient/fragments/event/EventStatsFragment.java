@@ -46,6 +46,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     private ListViewAdapter mAdapter;
     private ListView mListView;
     private ProgressBar mProgressBar;
+    private static String statSortCategory;
 
     private PopulateEventStats mTask;
 
@@ -121,22 +122,15 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
-            case R.id.action_sort_opr:
-                mTask = new PopulateEventStats(this, true, "opr");
-                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
-                return true;
-            case R.id.action_sort_dpr:
-                mTask = new PopulateEventStats(this, true, "dpr");
-                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
-                return true;
-            case R.id.action_sort_ccwm:
-                mTask = new PopulateEventStats(this, true, "ccwm");
-                mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+
+        if (id == R.id.action_sort_opr) statSortCategory = "opr";
+        else if (id == R.id.action_sort_dpr) statSortCategory = "dpr";
+        else if (id == R.id.action_sort_ccwm) statSortCategory = "ccwm";
+        else return super.onOptionsItemSelected(item);
+
+        mTask = new PopulateEventStats(this, true, statSortCategory);
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
+        return true;
     }
 
 
@@ -164,7 +158,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
-        mTask = new PopulateEventStats(this, true);
+        mTask = new PopulateEventStats(this, true, statSortCategory);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 
