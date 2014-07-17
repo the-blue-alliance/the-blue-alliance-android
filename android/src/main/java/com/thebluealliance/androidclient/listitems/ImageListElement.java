@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -29,6 +30,7 @@ public class ImageListElement extends ListElement {
             convertView = inflater.inflate(R.layout.list_item_image, null);
             holder = new ViewHolder();
             holder.image = (ImageView) convertView.findViewById(R.id.image);
+            holder.image_container = (FrameLayout) convertView.findViewById(R.id.image_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -37,7 +39,7 @@ public class ImageListElement extends ListElement {
         Picasso picasso = Picasso.with(c);
         picasso.load(imageUrl).into(holder.image);
 
-        holder.image.setOnClickListener(new View.OnClickListener() {
+        holder.image_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 c.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(linkUrl)));
@@ -49,6 +51,7 @@ public class ImageListElement extends ListElement {
 
     private static class ViewHolder {
         ImageView image;
+        FrameLayout image_container;
     }
 
 }
