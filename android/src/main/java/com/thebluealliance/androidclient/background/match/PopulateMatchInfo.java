@@ -42,7 +42,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private String mMatchKey;
     private String mMatchTitle;
     private JsonArray mMatchVideos;
-    private String mEventName;
+    private String mEventShortName;
     private JsonObject alliances;
     private boolean forceFromCache;
 
@@ -86,11 +86,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, forceFromCache);
             Event event = eventResponse.getData();
             if (event != null) {
-                try {
-                    mEventName = event.getEventName();
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Can't get name for event");
-                }
+                mEventShortName = event.getShortName();
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
@@ -107,6 +103,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         if (code != APIResponse.CODE.NODATA) {
 
             mActivity.setActionBarTitle(mMatchTitle);
+            mActivity.getActionBar().setSubtitle("@ " + mMatchKey.substring(0,4) + " " + mEventShortName);
 
             JsonObject redAlliance = alliances.getAsJsonObject("red");
             JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
@@ -219,11 +216,6 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 //red wins
                 View red_alliance = mActivity.findViewById(R.id.red_alliance);
                 red_alliance.setBackgroundResource(R.drawable.red_border);
-            }
-
-
-            if(mEventName != null && !mEventName.isEmpty()) {
-                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mMatchKey.substring(0,4) + " " + mEventName);
             }
 
             Picasso picasso = Picasso.with(mActivity);

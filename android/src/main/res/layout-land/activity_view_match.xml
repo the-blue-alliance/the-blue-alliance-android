@@ -24,19 +24,10 @@
                 android:paddingRight="16dp"
                 android:paddingTop="16dp">
 
-                <TextView
-                    android:id="@+id/event_name"
-                    style="@android:style/TextAppearance.DeviceDefault.Medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
-                    android:textStyle="italic" />
-
                 <TableLayout
                     android:id="@+id/score_table"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/event_name"
                     android:stretchColumns="*">
 
                     <TableRow
