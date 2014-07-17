@@ -71,6 +71,11 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+
+        //disable touch feedback (you can't click the elements here...)
+        mListView.setCacheColorHint(android.R.color.transparent);
+        mListView.setSelector(R.drawable.transparent);
+
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
