@@ -16,4 +16,15 @@ public class EventTeamHelper {
         eventTeam.setTeamKey(teamKey);
         return eventTeam;
     }
+
+    public static String generateKey(String eventKey, String teamKey){
+        return eventKey + "_" + teamKey;
+    }
+
+    public static boolean validateEventTeamKey(String key){
+        String[] split = key.split("_");
+        return  split.length == 2 &&
+                EventHelper.validateEventKey(split[0]) &&
+                TeamHelper.validateTeamKey(split[1]);
+    }
 }
