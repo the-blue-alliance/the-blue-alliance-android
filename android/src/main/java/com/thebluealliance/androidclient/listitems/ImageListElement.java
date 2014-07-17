@@ -43,6 +43,8 @@ public class ImageListElement extends ListElement {
         picasso.load(imageUrl).into(holder.image);
         if (isVideo) {
             holder.youtube_play_icon.setVisibility(View.VISIBLE);
+        } else {
+            holder.youtube_play_icon.setVisibility(View.GONE);
         }
 
         holder.image_container.setOnClickListener(new View.OnClickListener() {

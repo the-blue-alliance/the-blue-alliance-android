@@ -72,6 +72,8 @@ public class TeamListElement extends ListElement {
         holder.teamLocation.setText(mTeamLocation);
 
         if (mShowLinkToTeamDetails) {
+            holder.teamInfoDivider.setVisibility(View.VISIBLE);
+            holder.teamInfo.setVisibility(View.VISIBLE);
             holder.teamInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
