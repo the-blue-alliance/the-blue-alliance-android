@@ -17,10 +17,12 @@ import com.thebluealliance.androidclient.R;
 public class ImageListElement extends ListElement {
 
     private String imageUrl, linkUrl;
+    private Boolean isVideo;
 
-    public ImageListElement(String imageUrl, String linkUrl) {
+    public ImageListElement(String imageUrl, String linkUrl, Boolean isVideo) {
         this.imageUrl = imageUrl;
         this.linkUrl = linkUrl;
+        this.isVideo = isVideo;
     }
 
     @Override
@@ -29,8 +31,9 @@ public class ImageListElement extends ListElement {
         if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
             convertView = inflater.inflate(R.layout.list_item_image, null);
             holder = new ViewHolder();
-            holder.image = (ImageView) convertView.findViewById(R.id.image);
             holder.image_container = (FrameLayout) convertView.findViewById(R.id.image_container);
+            holder.image = (ImageView) convertView.findViewById(R.id.image);
+            holder.youtube_play_icon = (ImageView) convertView.findViewById(R.id.youtube_play_icon);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -38,6 +41,9 @@ public class ImageListElement extends ListElement {
 
         Picasso picasso = Picasso.with(c);
         picasso.load(imageUrl).into(holder.image);
+        if (isVideo) {
+            holder.youtube_play_icon.setVisibility(View.VISIBLE);
+        }
 
         holder.image_container.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +56,9 @@ public class ImageListElement extends ListElement {
     }
 
     private static class ViewHolder {
-        ImageView image;
         FrameLayout image_container;
+        ImageView image;
+        ImageView youtube_play_icon;
     }
 
 }

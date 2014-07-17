@@ -7,17 +7,25 @@
 
     <FrameLayout
         android:id="@+id/image_container"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground" >
 
         <ImageView
-            android:layout_width="250dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/image"
             android:adjustViewBounds="true" />
+
+        <ImageView
+            android:id="@+id/youtube_play_icon"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_youtube"
+            android:visibility="gone"/>
 
     </FrameLayout>
 

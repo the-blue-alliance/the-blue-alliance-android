@@ -139,8 +139,9 @@ public class Media extends BasicModel<Media> {
             } else {
                 imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
             }
+            Boolean isVideo = mediaType == TYPE.YOUTUBE;
             return new ImageListElement(imageUrl,
-                    String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey));
+                    String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey), isVideo);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
                     "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");
