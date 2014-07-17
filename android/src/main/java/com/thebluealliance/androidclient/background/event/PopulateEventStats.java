@@ -45,11 +45,19 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private String eventKey;
     private ArrayList<ListItem> teams;
     private boolean forceFromCache;
+    private String statToSortBy;
 
     public PopulateEventStats(EventStatsFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
+    }
+
+    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache, String statToSortBy) {
+        mFragment = f;
+        activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.forceFromCache = forceFromCache;
+        this.statToSortBy = statToSortBy;
     }
 
     @Override
@@ -76,53 +84,97 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             ArrayList<Map.Entry<String, JsonElement>>
                     opr = new ArrayList<>(),
                     dpr = new ArrayList<>(),
-                    ccwm = new ArrayList<>();
+                    ccwm = new ArrayList<>(),
+                    statToUse = new ArrayList<>();
+                    // to get the total size of the stats list elements, take the size of the stat array list being sorted.
 
             LinkedHashMap<String, Double>
+                    oprSorted = new LinkedHashMap<>(),
                     dprSorted = new LinkedHashMap<>(),
                     ccwmSorted = new LinkedHashMap<>();
 
-            // Put each stat into its own array list,
-            // but make sure it actually has stats (and not just an empty set).
-            if (stats.has("oprs") &&
-               !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
-                opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
+            if (statToSortBy == null || statToSortBy.equals("opr")){
+                if (stats.has("oprs") && !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()){
 
-                // Sort OPRs in decreasing order (highest to lowest)
-                Collections.sort(opr, new TeamSortByOPRComparator());
-                Collections.reverse(opr);
+                    opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
+                    statToUse = opr;
+
+                    // Sort OPRs in decreasing order (highest to lowest)
+                    Collections.sort(opr, new TeamSortByOPRComparator());
+                    Collections.reverse(opr);
+
+                    oprSorted = sortedListByStat(opr, stats.get("oprs").getAsJsonObject());
+
+                    // Put the DPRs & CCWMs into a linked hashmap in the same order as the sorted OPRs.
+                    if (stats.has("dprs") && !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
+                        dprSorted = sortedListByStat(opr, stats.get("dprs").getAsJsonObject());
+                    }
+
+                    if (stats.has("ccwms") && !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
+                        ccwmSorted = sortedListByStat(opr, stats.get("ccwms").getAsJsonObject());
+                    }
+                }
             }
+            else if (statToSortBy.equals("dpr")){
+                if (stats.has("dprs") && !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()){
 
-            // Put the DPRs & CCWMs into a linked hashmap in the same order as the sorted OPRs.
-            if (stats.has("dprs") &&
-               !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
+                    dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
+                    statToUse = dpr;
 
-                dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
-                dprSorted = sortedListByStat(opr, stats.get("dprs").getAsJsonObject());
+                    // Sort DPRs in increasing order (lowest to highest)
+                    Collections.sort(dpr, new TeamSortByOPRComparator());
 
+                    dprSorted = sortedListByStat(dpr, stats.get("dprs").getAsJsonObject());
+
+                    // Put the OPRs & CCWMs into a linked hashmap in the same order as the sorted DPRs.
+                    if (stats.has("oprs") && !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
+                        oprSorted = sortedListByStat(dpr, stats.get("oprs").getAsJsonObject());
+                    }
+
+                    if (stats.has("ccwms") && !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
+                        ccwmSorted = sortedListByStat(dpr, stats.get("ccwms").getAsJsonObject());
+                    }
+                }
             }
+            else if (statToSortBy.equals("ccwm")){
+                if (stats.has("ccwms") && !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()){
 
-            if (stats.has("ccwms") &&
-               !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
+                    ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
+                    statToUse = ccwm;
 
-                ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
-                ccwmSorted = sortedListByStat(opr, stats.get("ccwms").getAsJsonObject());
+                    // Sort CCWMs in decreasing order (highest to lowest)
+                    Collections.sort(ccwm, new TeamSortByOPRComparator());
+                    Collections.reverse(ccwm);
 
+                    ccwmSorted = sortedListByStat(ccwm, stats.get("ccwms").getAsJsonObject());
+
+                    // Put the OPRs & DPRs into a linked hashmap in the same order as the sorted CCWMs.
+                    if (stats.has("oprs") && !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
+                        oprSorted = sortedListByStat(ccwm, stats.get("oprs").getAsJsonObject());
+                    }
+
+                    if (stats.has("dprs") && !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
+                        dprSorted = sortedListByStat(ccwm, stats.get("dprs").getAsJsonObject());
+                    }
+                }
             }
 
             // Combine the stats into one string to be displayed onscreen.
-            for (int i = 0; i < opr.size(); i++) {
-                String statsString = activity.getString(R.string.opr) + " " + Stat.displayFormat.format(opr.get(i).getValue().getAsDouble())
+            for (int i = 0; i < statToUse.size(); i++) {
+                String statsString = activity.getString(R.string.opr) + " " + Stat.displayFormat.format(oprSorted.values().toArray()[i])
                         + ", " + activity.getString(R.string.dpr) + " " + Stat.displayFormat.format(dprSorted.values().toArray()[i])
                         + ", " + activity.getString(R.string.ccwm) + " " + Stat.displayFormat.format(ccwmSorted.values().toArray()[i]);
-                String teamKey = "frc" + opr.get(i).getKey();
+
+
+                String teamKey = "frc" + statToUse.get(i).getKey();
+
                 // We might get a multi-team key from offseason events.
                 // If so, take out the extra letter at the end to prevent NPE.
                 if (TeamHelper.validateMultiTeamKey(teamKey)) {
                     teamKey = teamKey.substring(0, teamKey.length() - 1);
                 }
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
-                teams.add(new StatsListElement(teamKey, opr.get(i).getKey(), team.getNickname(), statsString));
+                teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), team.getNickname(), statsString));
             }
 
             return response.getCode();
@@ -171,7 +223,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false);
+            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false, statToSortBy);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {
