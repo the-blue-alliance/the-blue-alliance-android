@@ -66,6 +66,10 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
         listView = (ListView) v.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
 
+        //disable touch feedback (you can't click the elements here...)
+        listView.setCacheColorHint(android.R.color.transparent);
+        listView.setSelector(R.drawable.transparent);
+
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.
         if (adapter != null) {

@@ -15,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="false"
+        android:clickable="true"
         android:text="Person Name" />
 
     <TextView
@@ -26,5 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="false"
+        android:clickable="true"
         android:text="254 The Cheesy Poofs" />
 </RelativeLayout>
