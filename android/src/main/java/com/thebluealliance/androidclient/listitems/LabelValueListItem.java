@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventSummary;
 
 /**
 * Created by phil on 7/16/14.

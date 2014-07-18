@@ -1,12 +1,17 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +22,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
+import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
@@ -34,15 +40,19 @@ import com.thebluealliance.androidclient.listitems.ListElement;
  */
 public class EventStatsFragment extends Fragment implements RefreshListener {
 
+    private AlertDialog statsDialog;
+    private String[] items;
+
     private Activity parent;
 
     private String mEventKey;
     private static final String KEY = "eventKey";
 
     private Parcelable mListState;
-    private ListViewAdapter mAdapter;
+    private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
     private ProgressBar mProgressBar;
+    private static String statSortCategory;
 
     private PopulateEventStats mTask;
 
@@ -71,6 +81,52 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
+
+        // Setup stats sort dialog box
+        items = getResources().getStringArray(R.array.statsDialogArray);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.dialog_stats_title)
+               .setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (items[i]) {
+                    case "OPR":
+                        statSortCategory = "opr";
+                        break;
+                    case "DPR":
+                        statSortCategory = "dpr";
+                        break;
+                    case "CCWM":
+                        statSortCategory = "ccwm";
+                        break;
+                    case "Team #":
+                        statSortCategory = "team";
+                        break;
+                    default:
+                        break;
+                }
+
+                mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
+                if (mAdapter != null && statSortCategory != null) {
+                    mAdapter.sortStats(mAdapter, statSortCategory);
+                }
+            }
+        }).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int id) {
+                dialog.cancel();
+            }
+        });
+
+        statsDialog = builder.create();
+
+        // Required for settings menu to be displayed.
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.stats_help_menu, menu);
+        inflater.inflate(R.menu.stats_sort_menu, menu);
     }
 
     @Override
@@ -108,6 +164,19 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_sort_by){
+            statsDialog.show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
     public void onPause() {
         // Save the data if moving away from fragment.
         super.onPause();
@@ -115,7 +184,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             mTask.cancel(false);
         }
         if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
+            mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
     }
@@ -131,7 +200,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
-        mTask = new PopulateEventStats(this, true);
+        mTask = new PopulateEventStats(this, true, statSortCategory);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 

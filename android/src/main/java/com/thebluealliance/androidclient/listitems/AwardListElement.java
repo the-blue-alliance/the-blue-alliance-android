@@ -12,11 +12,9 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * File created by phil on 4/23/14.

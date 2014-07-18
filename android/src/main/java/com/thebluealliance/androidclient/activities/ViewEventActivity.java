@@ -1,14 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,8 +20,6 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
 /**
@@ -84,8 +79,10 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.stats_help_menu, menu);
+        getMenuInflater().inflate(R.menu.stats_sort_menu, menu);
         mOptionsMenu = menu;
         mOptionsMenu.findItem(R.id.help).setVisible(false);
+        mOptionsMenu.findItem(R.id.action_sort_by).setVisible(false);
         return true;
     }
 
@@ -125,8 +122,9 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             case R.id.help:
                 Utilities.showStatsHelpDialog(this);
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     public ViewPager getPager() {
@@ -155,8 +153,10 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
                 mOptionsMenu.findItem(R.id.help).setVisible(true);
+                mOptionsMenu.findItem(R.id.action_sort_by).setVisible(true);
             } else {
                 mOptionsMenu.findItem(R.id.help).setVisible(false);
+                mOptionsMenu.findItem(R.id.action_sort_by).setVisible(false);
             }
         }
     }
