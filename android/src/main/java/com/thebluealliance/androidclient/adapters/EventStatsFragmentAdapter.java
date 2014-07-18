@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.adapters;
 
 import android.content.Context;
 
-import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 
@@ -20,6 +19,11 @@ public class EventStatsFragmentAdapter extends ListViewAdapter {
         super(context, values);
     }
 
+    /**
+     * Sorts event stats based on given stat.
+     * @param adapter the fragment adapter whose values will be sorted.
+     * @param stat stat to sort by
+     */
     public void sortStats(EventStatsFragmentAdapter adapter, String stat) {
         ArrayList<StatsListElement> list = new ArrayList<>();
         list.addAll((ArrayList) adapter.values);
@@ -49,6 +53,11 @@ public class EventStatsFragmentAdapter extends ListViewAdapter {
             Collections.reverse(list);
         }
 
+        // Wipe old data and re-add new sorted data
+        adapter.clear();
+        adapter.addAll(list);
+
+        // Notify data change
         this.notifyDataSetChanged();
     }
 }

@@ -49,10 +49,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private String statToSortBy;
     private EventStatsFragmentAdapter adapter;
 
-    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache) {
+    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache, String statToSortBy) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
+        this.statToSortBy = statToSortBy;
     }
 
     @Override
@@ -223,7 +224,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false);
+            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false, statToSortBy);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {

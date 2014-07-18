@@ -133,8 +133,13 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         else return super.onOptionsItemSelected(item);
 
         mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
-        mAdapter.sortStats(mAdapter, statSortCategory);
-        return true;
+        
+        if (mAdapter != null){
+            mAdapter.sortStats(mAdapter, statSortCategory);
+            return true;
+        }
+        else return super.onOptionsItemSelected(item);
+
     }
 
 
@@ -162,7 +167,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
-        mTask = new PopulateEventStats(this, true);
+        mTask = new PopulateEventStats(this, true, statSortCategory);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 
