@@ -67,6 +67,7 @@ public class MatchListElement extends ListElement {
         }
 
         holder.matchTitle.setTag(matchKey);
+        holder.red1.setLines(1);  // To prevent layout issues when ListView recycles items
 
         if (!redScore.contains("?") && !blueScore.contains("?")) {
             try {

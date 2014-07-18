@@ -8,10 +8,10 @@
 
     <RelativeLayout
         android:id="@+id/match_title_container"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginRight="8dp"
-        android:layout_weight="0.5" >
+        android:layout_weight="1.5" >
         <TextView
             android:id="@+id/match_title"
             android:layout_width="wrap_content"
@@ -29,8 +29,7 @@
             android:layout_alignParentBottom="true"
             android:clickable="false"
             android:focusable="false"
-            android:src="@drawable/ic_action_play_over_video"
-            android:visibility="gone"/>
+            android:src="@drawable/ic_action_play_over_video" />
     </RelativeLayout>
 
     <TableLayout
