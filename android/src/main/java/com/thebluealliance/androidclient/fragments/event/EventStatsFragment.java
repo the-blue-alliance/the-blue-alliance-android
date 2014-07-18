@@ -82,10 +82,11 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
 
+        // Setup stats sort dialog box
         items = getResources().getStringArray(R.array.statsDialogArray);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.dialog_stats_title);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.dialog_stats_title)
+               .setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 switch (items[i]) {
@@ -107,11 +108,15 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
                     mAdapter.sortStats(mAdapter, statSortCategory);
                 }
             }
+        }).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int id) {
+                dialog.cancel();
+            }
         });
 
-        builder.setCancelable(false);
         statsDialog = builder.create();
 
+        // Required for settings menu to be displayed.
         setHasOptionsMenu(true);
     }
 

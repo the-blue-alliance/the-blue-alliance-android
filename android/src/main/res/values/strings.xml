@@ -54,6 +54,7 @@
     <!-- Stats Sort options/dialog -->
     <string name="action_sort_option">Sort stats&#8230;</string>
     <string name="dialog_stats_title">Sort stats by</string>
+    <string name="dialog_cancel">Cancel</string>
 
     <!-- Stats Help Dialog -->
     <string name="stats_help_title">Stats Help</string>
