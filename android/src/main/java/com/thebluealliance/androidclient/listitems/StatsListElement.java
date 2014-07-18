@@ -47,7 +47,7 @@ public class StatsListElement extends ListElement {
         if (!mTeamName.isEmpty()) {
             holder.teamName.setText(mTeamName);
         } else {
-            holder.teamName.setVisibility(View.GONE);
+            holder.teamName.setText("Team " + mTeamNumber);
         }
 
         holder.teamStat.setText(mTeamStat);
