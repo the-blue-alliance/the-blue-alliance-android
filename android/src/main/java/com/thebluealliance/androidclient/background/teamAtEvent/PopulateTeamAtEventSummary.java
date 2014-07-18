@@ -66,6 +66,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         eventKey = params[1];
 
         APIResponse<ArrayList<Match>> matchResponse;
+        Match nextMatch = null, lastMatch = null;
         try {
             matchResponse = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
 
@@ -78,8 +79,13 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
             int[] record = MatchHelper.getRecordForTeam(eventMatches, teamKey);
             recordString = record[0] + "-" + record[1] + "-" + record[2];
+            nextMatch = MatchHelper.getNextMatchPlayed(teamMatches);
+            lastMatch = MatchHelper.getLastMatchPlayed(teamMatches);
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
+            matchResponse = new APIResponse<>(null, APIResponse.CODE.NODATA);
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Unable to determine next/last match being played");
             matchResponse = new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
 
@@ -164,6 +170,13 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
             // Status
             summary.add(new LabelValueListItem("Status", status.getDescriptionString(activity)));
+
+            if(lastMatch != null) {
+                summary.add(new LabelValueListItem("Last Match: ", lastMatch.render()));
+            }
+            if(nextMatch != null){
+                summary.add(new LabelValueListItem("Next Match: ", nextMatch.render()));
+            }
         }
 
         return APIResponse.mergeCodes(matchResponse.getCode(), eventResponse.getCode(),
