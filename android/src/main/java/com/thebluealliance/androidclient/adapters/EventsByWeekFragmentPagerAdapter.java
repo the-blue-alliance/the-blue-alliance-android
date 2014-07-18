@@ -4,9 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.DownloadEventList;
 import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
@@ -14,7 +12,6 @@ import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 

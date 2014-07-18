@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -19,9 +18,6 @@ import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventSummary;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import java.util.Arrays;
 
