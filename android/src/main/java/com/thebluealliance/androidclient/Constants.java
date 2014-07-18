@@ -35,7 +35,7 @@ public class Constants {
         MEDIA_LINK_URL_PATTERN = new HashMap<>();
         MEDIA_IMG_URL_PATTERN.put(Media.TYPE.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/img/%s");
         MEDIA_LINK_URL_PATTERN.put(Media.TYPE.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/photos/%s");
-        MEDIA_IMG_URL_PATTERN.put(Media.TYPE.YOUTUBE, "http://img.youtube.com/vi/%s/maxresdefault.jpg");
+        MEDIA_IMG_URL_PATTERN.put(Media.TYPE.YOUTUBE, "http://img.youtube.com/vi/%s/hqdefault.jpg");
         MEDIA_LINK_URL_PATTERN.put(Media.TYPE.YOUTUBE, "https://www.youtube.com/watch?v=%s");
     }
 
