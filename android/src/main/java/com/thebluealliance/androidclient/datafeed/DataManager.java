@@ -23,7 +23,6 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -106,23 +105,6 @@ public class DataManager {
                 Log.w(Constants.DATAMANAGER_LOG, "Unable to fetch years participated");
             }
             return new APIResponse<>(years, teamResponse.getCode());
-        }
-
-        public static APIResponse<Event> getCurrentEventForTeam(Context c, String teamKey, boolean loadFromCache) throws NoDataException {
-            int currentYear = Utilities.getCurrentYear();
-            APIResponse<ArrayList<Event>> events = getEventsForTeam(c, teamKey, currentYear, loadFromCache);
-
-            Date today = new Date();
-            for (Event event : events.getData()) {
-                try {
-                    if (today.equals(event.getStartDate()) || today.equals(event.getEndDate()) || (today.after(event.getStartDate()) && today.before(event.getEndDate()))) {
-                        return new APIResponse<>(event, events.getCode());
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.d(Constants.LOG_TAG, "One or more Date fields were missing on an event. DataManager.getCurrentEventForTeam");
-                }
-            }
-            return new APIResponse<>(null, events.getCode());
         }
 
         public static APIResponse<ArrayList<Event>> getEventsForTeam(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
