@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
@@ -35,8 +36,41 @@ public class Award extends BasicModel<Award> {
         setWinners(winners);
     }
 
+    public void setKey(String key){
+        if(AwardHelper.validateAwardKey(key)) {
+            fields.put(Database.Awards.KEY, key);
+        }else{
+            throw new IllegalArgumentException("Invalid award key: "+key);
+        }
+    }
+
     public String getKey() throws FieldNotDefinedException {
-        return getEventKey() + ":" + getName();
+        if (fields.containsKey(Database.Awards.KEY) && fields.get(Database.Awards.KEY) instanceof String) {
+            return (String) fields.get(Database.Awards.KEY);
+        }else {
+            try {
+                String newKey = AwardHelper.createAwardKey(getEventKey(), getEnum());
+                setKey(newKey);
+                return newKey;
+            } catch (FieldNotDefinedException e) {
+                throw new FieldNotDefinedException("Field Database.Awards.KEY is not defined");
+            }
+        }
+    }
+
+    public void generateKey(){
+
+    }
+
+    public int getEnum() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Awards.ENUM) && fields.get(Database.Awards.ENUM) instanceof String) {
+            return (Integer) fields.get(Database.Awards.ENUM);
+        }
+        throw new FieldNotDefinedException("Field Database.Awards.ENUM is not defined");
+    }
+
+    public void setEnum(int awardEnum){
+        fields.put(Database.Awards.ENUM, awardEnum);
     }
 
     public JsonArray getWinners() throws FieldNotDefinedException {

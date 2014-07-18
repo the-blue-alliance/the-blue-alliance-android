@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -50,12 +50,12 @@ public class Database extends SQLiteOpenHelper {
             TABLE_SEARCH_EVENTS = "search_events";
 
     String CREATE_API = "CREATE TABLE IF NOT EXISTS " + TABLE_API + "("
-            + Response.URL + " TEXT PRIMARY KEY, "
+            + Response.URL + " TEXT PRIMARY KEY NOT NULL, "
             + Response.LASTUPDATE + " TIMESTAMP, "
             + Response.LASTHIT + " TIMESTAMP "
             + ")";
     String CREATE_TEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS + "("
-            + Teams.KEY + " TEXT PRIMARY KEY, "
+            + Teams.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Teams.NUMBER + " INTEGER NOT NULL, "
             + Teams.NAME + " TEXT DEFAULT '', "
             + Teams.SHORTNAME + " TEXT DEFAULT '', "
@@ -64,7 +64,7 @@ public class Database extends SQLiteOpenHelper {
             + Teams.YEARS_PARTICIPATED + " TEXT DEFAULT '' "
             + ")";
     String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
-            + Events.KEY + " TEXT PRIMARY KEY, "
+            + Events.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Events.YEAR + " INTEGER NOT NULL, "
             + Events.NAME + " TEXT DEFAULT '', "
             + Events.LOCATION + " TEXT DEFAULT '', "
@@ -84,13 +84,15 @@ public class Database extends SQLiteOpenHelper {
             + Events.WEBSITE + " TEXT DEFAULT '' "
             + ")";
     String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
+            + Awards.KEY + " TEXT PRIMARY KEY NOT NULL, "
+            + Awards.ENUM + " INTEGER DEFAULT -1, "
             + Awards.EVENTKEY + " TEXT DEFAULT '', "
             + Awards.NAME + " TEXT DEFAULT '', "
             + Awards.YEAR + " INTEGER DEFAULT -1, "
             + Awards.WINNERS + " TEXT DEFAULT '' "
             + ")";
     String CREATE_MATCHES = "CREATE TABLE IF NOT EXISTS " + TABLE_MATCHES + "("
-            + Matches.KEY + " TEXT PRIMARY KEY, "
+            + Matches.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Matches.SETNUM + " INTEGER DEFAULT -1,"
             + Matches.MATCHNUM + " INTEGER DEFAULT -1,"
             + Matches.EVENT + " TEXT DEFAULT '', "
@@ -107,6 +109,7 @@ public class Database extends SQLiteOpenHelper {
             + Medias.YEAR + " INTEGER  DEFAULT -1"
             + ")";
     String CREATE_EVENTTEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTTEAMS + "("
+            + EventTeams.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + EventTeams.TEAMKEY + " TEXT DEFAULT '', "
             + EventTeams.EVENTKEY + " TEXT DEFAULT '', "
             + EventTeams.YEAR + " INTEGER DEFAULT -1, "
@@ -598,7 +601,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public class Awards implements ModelTable<Award> {
-        public static final String EVENTKEY = "eventKey",
+        public static final String KEY = "key",
+                ENUM = "enum",
+                EVENTKEY = "eventKey",
                 NAME = "name",
                 YEAR = "year",
                 WINNERS = "winners";
@@ -665,9 +670,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            String eventKey = key.split(":")[0];
-            String awardName = key.split(":")[1];
-            Cursor cursor = safeQuery(TABLE_AWARDS, new String[]{}, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
+            Cursor cursor = safeQuery(TABLE_AWARDS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -919,7 +922,8 @@ public class Database extends SQLiteOpenHelper {
 
     public class EventTeams implements ModelTable<EventTeam> {
 
-        public static final String TEAMKEY = "teamKey",
+        public static final String KEY = "key",
+                TEAMKEY = "teamKey",
                 EVENTKEY = "eventKey",
                 YEAR = "year",
                 COMPWEEK = "week";
@@ -1003,9 +1007,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            String eventKey = key.split("_")[0];
-            String teamKey = key.split("_")[1];
-            Cursor cursor = safeQuery(TABLE_EVENTTEAMS, null, TEAMKEY + " = ? AND " + EVENTKEY + " = ?", new String[]{teamKey, eventKey}, null, null, null, null);
+            Cursor cursor = safeQuery(TABLE_EVENTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1017,9 +1019,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public boolean unsafeExists(String key) {
-            String eventKey = key.split("_")[0];
-            String teamKey = key.split("_")[1];
-            Cursor cursor = db.query(TABLE_EVENTTEAMS, new String[]{EventTeams.EVENTKEY, EventTeams.TEAMKEY}, EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " = ?", new String[]{teamKey, eventKey}, null, null, null, null);
+            Cursor cursor = db.query(TABLE_EVENTTEAMS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
