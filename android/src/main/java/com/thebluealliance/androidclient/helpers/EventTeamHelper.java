@@ -14,6 +14,7 @@ public class EventTeamHelper {
         eventTeam.setYear(in.getEventYear());
         eventTeam.setCompWeek(in.getCompetitionWeek());
         eventTeam.setTeamKey(teamKey);
+        eventTeam.setKey(EventTeamHelper.generateKey(in.getEventKey(), teamKey));
         return eventTeam;
     }
 
