@@ -71,6 +71,11 @@ public class EventListFragment extends Fragment implements RefreshListener {
         }
     }
 
+    public void updateHeader(String newWeekHeader){
+        mHeader = newWeekHeader;
+        onRefreshStart();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);

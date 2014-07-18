@@ -98,6 +98,11 @@ public class MatchListElement extends ListElement implements Serializable{
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
             }
         }
+        // Match hasn't been played yet. Don't border anything.
+        else {
+            holder.redAlliance.setBackgroundResource(R.drawable.no_border);
+            holder.blueAlliance.setBackgroundResource(R.drawable.no_border);
+        }
 
         //if we have video for this match, show an icon
         if (videoKey != null && showVideoIcon) {

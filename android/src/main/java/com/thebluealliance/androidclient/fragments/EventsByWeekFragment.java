@@ -21,6 +21,7 @@ import java.util.Calendar;
 public class EventsByWeekFragment extends Fragment{
 
     private int mYear;
+    private EventsByWeekFragmentPagerAdapter pagerAdapter;
     private static final String YEAR = "YEAR";
 
     public static EventsByWeekFragment newInstance(int year) {
@@ -52,7 +53,8 @@ public class EventsByWeekFragment extends Fragment{
         mViewPager.setOffscreenPageLimit(50);
         final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         final Context c = getActivity();
-        mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
+        pagerAdapter = new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear, tabs, mViewPager);
+        mViewPager.setAdapter(pagerAdapter);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
         tabs.setViewPager(mViewPager);
         int currentWeek = Utilities.getCurrentCompWeek();

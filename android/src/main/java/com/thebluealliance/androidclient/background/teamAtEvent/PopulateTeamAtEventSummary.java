@@ -164,7 +164,8 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             }
 
             // Alliance
-            if (status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+            if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
+                status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 summary.add(new LabelValueListItem("Alliance", generateAllianceSummary(activity.getResources(), allianceNumber, alliancePick)));
             }
 
