@@ -45,6 +45,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
+    private int mCurrentSelectedYear = Calendar.getInstance().get(Calendar.YEAR);
 
     private String[] dropdownItems;
 
@@ -91,8 +92,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             }
         } else {
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-            if (currentYear == Constants.MAX_COMP_YEAR) {
+            if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
                 mCurrentSelectedYearPosition = 0;
             } else {
                 mCurrentSelectedYearPosition = 1;
@@ -135,8 +135,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         switch (id) {
             default:
             case R.id.nav_item_events:
-                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-                fragment = EventsByWeekFragment.newInstance(currentYear);
+                fragment = EventsByWeekFragment.newInstance(mCurrentSelectedYear);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
@@ -203,7 +202,8 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         if (position == mCurrentSelectedYearPosition) {
             return true;
         }
-        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
+        mCurrentSelectedYear = Integer.parseInt(dropdownItems[position]);
+        Log.d(Constants.LOG_TAG, "year selected: " + mCurrentSelectedYear);
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedYearPosition = position;
         getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
