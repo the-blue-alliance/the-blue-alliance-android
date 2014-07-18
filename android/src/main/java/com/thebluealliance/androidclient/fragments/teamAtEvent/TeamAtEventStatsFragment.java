@@ -17,7 +17,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventStats;
-import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventSummary;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**

@@ -17,7 +17,6 @@ import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapt
 import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class EventsByWeekFragment extends Fragment{
 

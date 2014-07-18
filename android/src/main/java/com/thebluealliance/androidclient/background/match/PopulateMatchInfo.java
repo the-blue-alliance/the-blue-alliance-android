@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;

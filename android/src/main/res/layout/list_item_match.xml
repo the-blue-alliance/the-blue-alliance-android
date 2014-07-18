@@ -6,14 +6,31 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/match_title"
+    <RelativeLayout
+        android:id="@+id/match_title_container"
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="2.0"
-        android:gravity="center_vertical|center_horizontal"
+        android:layout_height="match_parent"
         android:layout_marginRight="8dp"
-        android:text="Quarters\n1 - 1" />
+        android:layout_weight="1.5" >
+        <TextView
+            android:id="@+id/match_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/match_video"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="Quarters\n1 - 1" />
+
+        <ImageView
+            android:id="@id/match_video"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:src="@drawable/ic_action_play_over_video" />
+    </RelativeLayout>
 
     <TableLayout
         android:layout_width="0dp"
@@ -130,15 +147,5 @@
                 android:textStyle="bold" />
         </TableRow>
     </TableLayout>
-
-    <ImageView
-        android:id="@+id/match_video"
-        android:layout_width="32dp"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:gravity="center_vertical"
-        android:clickable="false"
-        android:focusable="false"
-        android:src="@drawable/ic_action_play_over_video" />
 
 </LinearLayout>

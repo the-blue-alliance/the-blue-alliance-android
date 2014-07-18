@@ -4,9 +4,11 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
 import android.support.v4.view.ViewPager;
 
 import com.astuetz.PagerSlidingTabStrip;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.DownloadEventList;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
