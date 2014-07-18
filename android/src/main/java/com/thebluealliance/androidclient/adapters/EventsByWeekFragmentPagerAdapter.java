@@ -27,7 +27,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     private String selectedTab;
     private PagerSlidingTabStrip tabs;
     private ViewPager pager;
-    private boolean firstTabChanged;
+    private boolean tabsChanged;
 
 
     public EventsByWeekFragmentPagerAdapter(Context c, FragmentManager fm, int year, PagerSlidingTabStrip tabs, ViewPager pager) {
@@ -42,7 +42,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         mCount = 1;
         DownloadEventList task = new DownloadEventList(c, this);
         task.execute(year);
-        firstTabChanged = false;
+        tabsChanged = false;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void setLabels(ArrayList<String> labels){
-        firstTabChanged = !getPageTitle(0).equals(labels.get(0));
+        tabsChanged = !thisYearsWeekLabels.equals(labels);
         selectedTab = getPageTitle(pager.getCurrentItem()).toString();
         thisYearsWeekLabels = labels;
         mCount = thisYearsWeekLabels.size();
@@ -84,8 +84,10 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
         tabs.notifyDataSetChanged();
-        if(firstTabChanged){
-            fragments.get(0).updateHeader(getPageTitle(0).toString());
+        if(tabsChanged){
+            for(int i=0; i<fragments.size(); i++){
+                fragments.get(i).updateHeader(getPageTitle(i).toString());
+            }
         }
     }
 }
