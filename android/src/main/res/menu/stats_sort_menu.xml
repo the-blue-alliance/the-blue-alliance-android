@@ -2,18 +2,8 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/action_sort_opr"
-        android:title="@string/action_sort_opr"
-        android:orderInCategory="100"
-        android:showAsAction="never"/>
-    <item
-        android:id="@+id/action_sort_dpr"
-        android:title="@string/action_sort_dpr"
-        android:orderInCategory="105"
-        android:showAsAction="never"/>
-    <item
-        android:id="@+id/action_sort_ccwm"
-        android:title="@string/action_sort_ccwm"
-        android:orderInCategory="110"
+        android:id="@+id/action_sort_by"
+        android:title="@string/action_sort_option"
+        android:orderInCategory="115"
         android:showAsAction="never"/>
 </menu>

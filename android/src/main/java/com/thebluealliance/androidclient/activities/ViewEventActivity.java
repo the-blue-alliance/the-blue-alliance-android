@@ -82,9 +82,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         getMenuInflater().inflate(R.menu.stats_sort_menu, menu);
         mOptionsMenu = menu;
         mOptionsMenu.findItem(R.id.help).setVisible(false);
-        mOptionsMenu.findItem(R.id.action_sort_opr).setVisible(false);
-        mOptionsMenu.findItem(R.id.action_sort_dpr).setVisible(false);
-        mOptionsMenu.findItem(R.id.action_sort_ccwm).setVisible(false);
+        mOptionsMenu.findItem(R.id.action_sort_by).setVisible(false);
         return true;
     }
 
@@ -155,14 +153,10 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
                 mOptionsMenu.findItem(R.id.help).setVisible(true);
-                mOptionsMenu.findItem(R.id.action_sort_opr).setVisible(true);
-                mOptionsMenu.findItem(R.id.action_sort_dpr).setVisible(true);
-                mOptionsMenu.findItem(R.id.action_sort_ccwm).setVisible(true);
+                mOptionsMenu.findItem(R.id.action_sort_by).setVisible(true);
             } else {
                 mOptionsMenu.findItem(R.id.help).setVisible(false);
-                mOptionsMenu.findItem(R.id.action_sort_opr).setVisible(false);
-                mOptionsMenu.findItem(R.id.action_sort_dpr).setVisible(false);
-                mOptionsMenu.findItem(R.id.action_sort_ccwm).setVisible(false);
+                mOptionsMenu.findItem(R.id.action_sort_by).setVisible(false);
             }
         }
     }

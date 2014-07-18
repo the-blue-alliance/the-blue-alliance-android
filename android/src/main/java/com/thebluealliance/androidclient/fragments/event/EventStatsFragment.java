@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -26,9 +28,6 @@ import com.thebluealliance.androidclient.background.event.PopulateEventStats;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.StatsListElement;
-
-import java.util.ArrayList;
 
 /**
  * Fragment that displays the team statistics for an FRC event.
@@ -40,6 +39,9 @@ import java.util.ArrayList;
  *         File created by phil on 4/22/14.
  */
 public class EventStatsFragment extends Fragment implements RefreshListener {
+
+    private AlertDialog statsDialog;
+    private String[] items;
 
     private Activity parent;
 
@@ -79,6 +81,36 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
+
+        items = getResources().getStringArray(R.array.statsDialogArray);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.dialog_stats_title);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (items[i]) {
+                    case "OPR":
+                        statSortCategory = "opr";
+                        break;
+                    case "DPR":
+                        statSortCategory = "dpr";
+                        break;
+                    case "CCWM":
+                        statSortCategory = "ccwm";
+                        break;
+                    default:
+                        break;
+                }
+
+                mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
+                if (mAdapter != null && statSortCategory != null) {
+                    mAdapter.sortStats(mAdapter, statSortCategory);
+                }
+            }
+        });
+
+        builder.setCancelable(false);
+        statsDialog = builder.create();
 
         setHasOptionsMenu(true);
     }
@@ -127,19 +159,12 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_sort_opr) statSortCategory = "opr";
-        else if (id == R.id.action_sort_dpr) statSortCategory = "dpr";
-        else if (id == R.id.action_sort_ccwm) statSortCategory = "ccwm";
-        else return super.onOptionsItemSelected(item);
-
-        mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
-        
-        if (mAdapter != null){
-            mAdapter.sortStats(mAdapter, statSortCategory);
+        if (id == R.id.action_sort_by){
+            statsDialog.show();
             return true;
         }
-        else return super.onOptionsItemSelected(item);
 
+        return super.onOptionsItemSelected(item);
     }
 
 
