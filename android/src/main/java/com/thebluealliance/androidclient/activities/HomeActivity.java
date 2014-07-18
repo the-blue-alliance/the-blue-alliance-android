@@ -65,10 +65,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        dropdownItems = new String[currentYear - Constants.FIRST_COMP_YEAR + 1];
+        dropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
         for (int i = 0; i < dropdownItems.length; i++) {
-            dropdownItems[i] = Integer.toString(currentYear - i);
+            dropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
         }
 
         int initNavId = R.id.nav_item_events;
@@ -92,7 +91,12 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             }
         } else {
-            mCurrentSelectedYearPosition = 0;
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            if (currentYear == Constants.MAX_COMP_YEAR) {
+                mCurrentSelectedYearPosition = 0;
+            } else {
+                mCurrentSelectedYearPosition = 1;
+            }
             switchToModeForId(initNavId);
         }
 
@@ -131,7 +135,8 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = EventsByWeekFragment.newInstance(2014);
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                fragment = EventsByWeekFragment.newInstance(currentYear);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
