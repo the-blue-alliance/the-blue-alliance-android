@@ -45,7 +45,6 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
-    private int mCurrentSelectedYear = Calendar.getInstance().get(Calendar.YEAR);
 
     private String[] dropdownItems;
 
@@ -125,8 +124,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Serialize the current dropdown position.
-        outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
-                getActionBar().getSelectedNavigationIndex());
+        outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION, mCurrentSelectedYearPosition);
         outState.putInt(STATE_SELECTED_NAV_ID, mCurrentSelectedNavigationItemId);
     }
 
@@ -135,7 +133,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = EventsByWeekFragment.newInstance(mCurrentSelectedYear);
+                fragment = EventsByWeekFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
@@ -202,9 +200,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         if (position == mCurrentSelectedYearPosition) {
             return true;
         }
-        mCurrentSelectedYear = Constants.MAX_COMP_YEAR - position;
-        Log.d(Constants.LOG_TAG, "year selected: " + mCurrentSelectedYear);
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(mCurrentSelectedYear), MAIN_FRAGMENT_TAG).commit();
+        int selectedYear = Constants.MAX_COMP_YEAR - position;
+        Log.d(Constants.LOG_TAG, "year selected: " + selectedYear);
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedYearPosition = position;
         getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
         return true;
