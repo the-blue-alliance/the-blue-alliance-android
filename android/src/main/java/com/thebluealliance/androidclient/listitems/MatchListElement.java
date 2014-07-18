@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -46,6 +47,7 @@ public class MatchListElement extends ListElement {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 
             holder = new ViewHolder();
+            holder.matchTitleContainer = (RelativeLayout) convertView.findViewById(R.id.match_title_container);
             holder.matchTitle = (TextView) convertView.findViewById(R.id.match_title);
             holder.red1 = (TextView) convertView.findViewById(R.id.red1);
             holder.red2 = (TextView) convertView.findViewById(R.id.red2);
@@ -87,18 +89,16 @@ public class MatchListElement extends ListElement {
         //if we have video for this match, show an icon
         if (videoKey != null && showVideoIcon) {
             holder.videoIcon.setVisibility(View.VISIBLE);
-        } else if(!showVideoIcon) {
+        } else {
             holder.videoIcon.setVisibility(View.GONE);
-        }else{
-            holder.videoIcon.setVisibility(View.INVISIBLE);
         }
 
-        if(showMatchHeader){
+        if (showMatchHeader){
             holder.header.setVisibility(View.VISIBLE);
-            holder.matchTitle.setVisibility(View.GONE);
-        }else{
+            holder.matchTitleContainer.setVisibility(View.GONE);
+        } else {
             holder.header.setVisibility(View.GONE);
-            holder.matchTitle.setVisibility(View.VISIBLE);
+            holder.matchTitleContainer.setVisibility(View.VISIBLE);
         }
 
         holder.matchTitle.setText(matchTitle);
@@ -202,6 +202,7 @@ public class MatchListElement extends ListElement {
     }
 
         private static class ViewHolder {
+            RelativeLayout matchTitleContainer;
             TextView matchTitle;
             TextView red1;
             TextView red2;
