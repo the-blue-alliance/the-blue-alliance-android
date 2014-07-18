@@ -24,6 +24,9 @@ public class MediaDeserializer implements JsonDeserializer<Media> {
 
         if (object.has("foreign_key")) {
             media.setForeignKey(object.get("foreign_key").getAsString());
+        } else if (object.has("key")){
+            //allow us to also deserialize medias coming from the match endpoint
+            media.setForeignKey(object.get("key").getAsString());
         }
 
         if (object.has("details")) {

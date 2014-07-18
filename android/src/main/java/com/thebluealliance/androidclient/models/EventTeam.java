@@ -28,8 +28,26 @@ public class EventTeam extends BasicModel<EventTeam> {
         super(Database.TABLE_EVENTTEAMS);
     }
 
+    public void setKey(String newKey){
+        if(EventTeamHelper.validateEventTeamKey(newKey)){
+            fields.put(Database.EventTeams.KEY, newKey);
+        }else{
+            throw new IllegalArgumentException("Invalid EventTeam key: "+newKey);
+        }
+    }
+
     public String getKey() throws FieldNotDefinedException {
-        return getEventKey() + "_" + getTeamKey();
+        if (fields.containsKey(Database.EventTeams.KEY) && fields.get(Database.EventTeams.KEY) instanceof String) {
+            return (String) fields.get(Database.EventTeams.KEY);
+        }else{
+            try {
+                String newKey = EventTeamHelper.generateKey(getEventKey(), getTeamKey());
+                setKey(newKey);
+                return newKey;
+            } catch (FieldNotDefinedException e) {
+                throw new FieldNotDefinedException("Field Database.Awards.KEY is not defined");
+            }
+        }
     }
 
     public void setTeamKey(String teamKey) {

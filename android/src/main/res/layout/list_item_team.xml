@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="72dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:paddingLeft="16dp">
 
     <TextView
         android:id="@+id/team_number"
@@ -42,15 +41,24 @@
             android:textSize="14sp" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/team_info_divider"
+        android:layout_toLeftOf="@id/team_info"
+        android:layout_width="1dp"
+        android:layout_height="56dp"
+        android:layout_centerVertical="true"
+        android:background="?android:attr/dividerVertical" />
+
     <ImageView
         android:id="@id/team_info"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="8dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:padding="20dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:clickable="true"
         android:focusable="false"
+        android:background="?android:attr/selectableItemBackground"
         android:src="@drawable/ic_action_about" />
 
 </RelativeLayout>

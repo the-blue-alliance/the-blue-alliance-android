@@ -39,6 +39,12 @@ public class ModelInflater {
                 case Database.Awards.WINNERS:
                     award.setWinners(data.getString(i));
                     break;
+                case Database.Awards.KEY:
+                    award.setKey(data.getString(i));
+                    break;
+                case Database.Awards.ENUM:
+                    award.setEnum(data.getInt(i));
+                    break;
                 default:
             }
         }
@@ -229,6 +235,9 @@ public class ModelInflater {
                     break;
                 case Database.EventTeams.COMPWEEK:
                     eventTeam.setCompWeek(data.getInt(i));
+                    break;
+                case Database.EventTeams.KEY:
+                    eventTeam.setKey(data.getString(i));
                     break;
                 default:
             }

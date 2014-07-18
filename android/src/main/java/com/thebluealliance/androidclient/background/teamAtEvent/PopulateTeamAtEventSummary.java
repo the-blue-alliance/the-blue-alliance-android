@@ -176,8 +176,8 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         View view = fragment.getView();
         if (activity != null && view != null && code != APIResponse.CODE.NODATA) {
             if (activity.getActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
-                activity.getActionBar().setTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
-                activity.getActionBar().setSubtitle("@ " + eventYear + " " + eventShort);
+                activity.setActionBarTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
+                activity.setActionBarSubtitle("@ " + eventYear + " " + eventShort);
             }
 
             ListViewAdapter adapter = new ListViewAdapter(activity, summary);

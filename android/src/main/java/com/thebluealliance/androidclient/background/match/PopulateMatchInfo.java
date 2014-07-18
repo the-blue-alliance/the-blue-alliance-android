@@ -1,35 +1,29 @@
 package com.thebluealliance.androidclient.background.match;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListView;
 
-import com.google.gson.JsonArray;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.squareup.picasso.Picasso;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * File created by phil on 4/20/14.
@@ -37,11 +31,8 @@ import java.util.List;
 public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private RefreshableHostActivity mActivity;
-    private String mMatchKey;
-    private String mMatchTitle;
-    private JsonArray mMatchVideos;
-    private String mEventName;
-    private JsonObject alliances;
+    private String mMatchKey, mEventShortName, mMatchTitle;
+    private ArrayList<ListItem> mMatchDetails;
     private boolean forceFromCache;
 
     public PopulateMatchInfo(RefreshableHostActivity activity, boolean forceFromCache) {
@@ -73,9 +64,14 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             }
 
             try {
-                alliances = match.getAlliances();
+                mMatchDetails = new ArrayList<>();
+
+                mMatchDetails.add(match.render(false, true));
                 mMatchTitle = match.getTitle();
-                mMatchVideos = match.getVideos();
+                Gson gson = JSONManager.getGson();
+                for(JsonElement v: match.getVideos()){
+                    mMatchDetails.add(gson.fromJson(v, Media.class).render());
+                }
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Couldn't get match data");
                 return APIResponse.CODE.NODATA;
@@ -84,11 +80,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, forceFromCache);
             Event event = eventResponse.getData();
             if (event != null) {
-                try {
-                    mEventName = event.getEventName();
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Can't get name for event");
-                }
+                mEventShortName = event.getShortName();
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
@@ -105,165 +97,22 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         if (code != APIResponse.CODE.NODATA) {
 
             mActivity.setActionBarTitle(mMatchTitle);
+            mActivity.setActionBarSubtitle("@ " + mMatchKey.substring(0,4) + " " + mEventShortName);
 
-            JsonObject redAlliance = alliances.getAsJsonObject("red");
-            JsonArray redAllianceTeamKeys = redAlliance.getAsJsonArray("teams");
+            ListViewAdapter adapter = new ListViewAdapter(mActivity, mMatchDetails);
+            ListView list = (ListView)mActivity.findViewById(R.id.match_details);
 
-            TextView red1 = ((TextView) mActivity.findViewById(R.id.red1));
-            TextView red2 = ((TextView) mActivity.findViewById(R.id.red2));
-            TextView red3 = ((TextView) mActivity.findViewById(R.id.red3));
+            //disable touch feedback (you can't click the elements here...)
+            list.setCacheColorHint(android.R.color.transparent);
+            list.setSelector(R.drawable.transparent);
 
-            TeamAtEventClickListener listener = new TeamAtEventClickListener(mActivity);
-            String eventKey = mMatchKey.split("_")[0];
-
-            // Don't set any text or listeners if there's no teams in the red alliance for some reason.
-            if (redAllianceTeamKeys.size() == 0) {
-                red1.setText("");
-                red2.setText("");
-                red3.setText("");
-            } else {
-                // Red 1
-                String red1Key = redAllianceTeamKeys.get(0).getAsString();
-                red1.setText(red1Key.substring(3));
-                red1.setTag(red1Key+"@"+eventKey);
-                red1.setOnClickListener(listener);
-
-                if (redAllianceTeamKeys.size() > 1) {
-                    // Red 2
-                    String red2Key = redAllianceTeamKeys.get(1).getAsString();
-                    red2.setText(red2Key.substring(3));
-                    red2.setTag(red2Key + "@" + eventKey);
-                    red2.setOnClickListener(listener);
-                }
-                else{
-                    red2.setVisibility(View.GONE);
-                }
-                // Only add the third team if the alliance has three teams.
-                if (redAllianceTeamKeys.size() > 2) {
-                    // Red 3
-                    String red3Key = redAllianceTeamKeys.get(2).getAsString();
-                    red3.setText(red3Key.substring(3));
-                    red3.setTag(red3Key+"@"+eventKey);
-                    red3.setOnClickListener(listener);
-
-                } else {
-                    red3.setVisibility(View.GONE);
-                }
-            }
-            // Red Score
-            JsonElement redScore = redAlliance.get("score");
-            TextView red_score = ((TextView) mActivity.findViewById(R.id.red_score));
-            if (redScore.getAsInt() < 0) { // if there is no score, add "?"
-                red_score.setText("?");
-            } else {
-                red_score.setText(redAlliance.get("score").getAsString());
-            }
-
-            // Repeat process for blue alliance.
-            JsonObject blueAlliance = alliances.getAsJsonObject("blue");
-            JsonArray blueAllianceTeamKeys = blueAlliance.getAsJsonArray("teams");
-
-            TextView blue1 = ((TextView) mActivity.findViewById(R.id.blue1));
-            TextView blue2 = ((TextView) mActivity.findViewById(R.id.blue2));
-            TextView blue3 = ((TextView) mActivity.findViewById(R.id.blue3));
-
-            if (blueAllianceTeamKeys.size() == 0) {
-                blue1.setText("");
-                blue2.setText("");
-                blue3.setText("");
-            } else {
-                // Blue 1
-                String blue1Key = blueAllianceTeamKeys.get(0).getAsString();
-                blue1.setText(blue1Key.substring(3));
-                blue1.setTag(blue1Key+"@"+eventKey);
-                blue1.setOnClickListener(listener);
-
-                if (blueAllianceTeamKeys.size() > 1) {
-                    // Blue 2
-                    String blue2Key = blueAllianceTeamKeys.get(1).getAsString();
-                    blue2.setText(blue2Key.substring(3));
-                    blue2.setTag(blue2Key + "@" + eventKey);
-                    blue2.setOnClickListener(listener);
-                }
-                else{
-                    blue2.setVisibility(View.GONE);
-                }
-
-                if (blueAllianceTeamKeys.size() > 2) {
-                    // Blue 3
-                    String blue3Key = blueAllianceTeamKeys.get(2).getAsString();
-                    blue3.setText(blue3Key.substring(3));
-                    blue3.setTag(blue3Key+"@"+eventKey);
-                    blue3.setOnClickListener(listener);
-
-                } else {
-                    blue3.setVisibility(View.GONE);
-                }
-            }
-            // Blue score
-            TextView blue_score = ((TextView) mActivity.findViewById(R.id.blue_score));
-            JsonElement blueScore = blueAlliance.get("score");
-            if (blueScore.getAsInt() < 0) {
-                blue_score.setText("?");
-            } else {
-                blue_score.setText(blueScore.getAsString());
-            }
-
-            if (blueScore.getAsInt() > redScore.getAsInt()) {
-                //blue wins
-                View blue_alliance = mActivity.findViewById(R.id.blue_alliance);
-                blue_alliance.setBackgroundResource(R.drawable.blue_border);
-            } else if (blueScore.getAsInt() < redScore.getAsInt()) {
-                //red wins
-                View red_alliance = mActivity.findViewById(R.id.red_alliance);
-                red_alliance.setBackgroundResource(R.drawable.red_border);
-            }
-
-
-            if(mEventName != null && !mEventName.isEmpty()) {
-                ((TextView) mActivity.findViewById(R.id.event_name)).setText(mMatchKey.substring(0,4) + " " + mEventName);
-            }
-
-            Picasso picasso = Picasso.with(mActivity);
-            List<ImageView> images = new ArrayList<>();
-            for (int i = 0; i < mMatchVideos.size(); i++) {
-                JsonObject video = mMatchVideos.get(i).getAsJsonObject();
-                if (video.get("type").getAsString().equals("youtube")) {
-                    final String videoKey = video.get("key").getAsString();
-                    String thumbnailURL = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(Media.TYPE.YOUTUBE), videoKey);
-                    ImageView thumbnail = new ImageView(mActivity);
-                    thumbnail.setAdjustViewBounds(true);
-                    thumbnail.setClickable(true);
-                    thumbnail.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(String.format(Constants.MEDIA_LINK_URL_PATTERN.get(Media.TYPE.YOUTUBE), videoKey)));
-                            mActivity.startActivity(intent);
-                        }
-                    });
-                    images.add(thumbnail);
-                    picasso.load(thumbnailURL).into(thumbnail);
-                }
-            }
-            LinearLayout mediaList = (LinearLayout) mActivity.findViewById(R.id.video_thumbnail_container);
-            mediaList.removeAllViews();
-            for (int i = 0; i < images.size(); i++) {
-                ImageView thumbnail = images.get(i);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                // Add padding between thumbnails if the list of thumbnail has multiple items
-                if (!images.isEmpty() && i > 0) {
-                    layoutParams.topMargin = Utilities.getPixelsFromDp(mActivity, 16);
-                }
-                mediaList.addView(thumbnail, layoutParams);
-            }
+            list.setAdapter(adapter);
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
-                ((RefreshableHostActivity) mActivity).showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
+                mActivity.showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
             }
 
             mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
-            mActivity.findViewById(R.id.match_container).setVisibility(View.VISIBLE);
 
         }
 
@@ -278,7 +127,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             // Show notification if we've refreshed data.
             Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
             if (mActivity instanceof RefreshableHostActivity) {
-                ((RefreshableHostActivity) mActivity).notifyRefreshComplete((RefreshListener) mActivity);
+                mActivity.notifyRefreshComplete((RefreshListener) mActivity);
             }
         }
 

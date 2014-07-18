@@ -306,6 +306,10 @@ public class Match extends BasicModel<Match> {
         }
     }
 
+    public MatchListElement render() {
+        return render(true, false);
+    }
+
     /**
      * Renders a MatchListElement for displaying this match.
      * ASSUMES 3v3 match structure with red/blue alliances
@@ -313,7 +317,7 @@ public class Match extends BasicModel<Match> {
      *
      * @return A MatchListElement to be used to display this match
      */
-    public MatchListElement render() {
+    public MatchListElement render(boolean showVideo, boolean showHeader) {
         try {
             JsonObject alliances = getAlliances();
             JsonArray videos = getVideos();
@@ -354,7 +358,7 @@ public class Match extends BasicModel<Match> {
 
             return new MatchListElement(youTubeVideoKey, getTitle(true),
                     redAlliance, blueAlliance,
-                    redScore, blueScore, key, selectedTeam);
+                    redScore, blueScore, key, selectedTeam, showVideo, showHeader);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for rendering not present\n" +
                     "Required: Database.Matches.ALLIANCES, Database.Matches.VIDEOS, Database.Matches.KEY, Database.Matches.MATCHNUM, Database.Matches.SETNUM");

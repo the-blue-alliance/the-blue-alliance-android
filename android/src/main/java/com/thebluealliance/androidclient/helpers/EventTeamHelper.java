@@ -14,6 +14,18 @@ public class EventTeamHelper {
         eventTeam.setYear(in.getEventYear());
         eventTeam.setCompWeek(in.getCompetitionWeek());
         eventTeam.setTeamKey(teamKey);
+        eventTeam.setKey(EventTeamHelper.generateKey(in.getEventKey(), teamKey));
         return eventTeam;
+    }
+
+    public static String generateKey(String eventKey, String teamKey){
+        return eventKey + "_" + teamKey;
+    }
+
+    public static boolean validateEventTeamKey(String key){
+        String[] split = key.split("_");
+        return  split.length == 2 &&
+                EventHelper.validateEventKey(split[0]) &&
+                TeamHelper.validateTeamKey(split[1]);
     }
 }

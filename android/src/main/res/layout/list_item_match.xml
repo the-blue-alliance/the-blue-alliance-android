@@ -21,16 +21,40 @@
         android:layout_weight="6">
 
         <TableRow
+            android:background="@color/column_header_gray"
+            android:minHeight="32dp"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:id="@+id/match_header"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/teams"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/score"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+        </TableRow>
+
+        <TableRow
             android:id="@+id/red_alliance"
             android:layout_height="fill_parent"
-            android:minHeight="32dp">
+            android:minHeight="40dp">
 
             <TextView
                 android:id="@+id/red1"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/lighter_red"
+                android:background="@drawable/match_team_selector_red"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="Red 1" />
 
@@ -39,7 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/lighter_red"
+                android:background="@drawable/match_team_selector_red"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="Red 2" />
 
@@ -48,7 +72,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/lighter_red"
+                android:background="@drawable/match_team_selector_red"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="Red 3" />
 
@@ -66,14 +90,14 @@
         <TableRow
             android:id="@+id/blue_alliance"
             android:layout_height="fill_parent"
-            android:minHeight="32dp">
+            android:minHeight="40dp">
 
             <TextView
                 android:id="@+id/blue1"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/lighter_blue"
+                android:background="@drawable/match_team_selector_blue"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="Blue 1" />
 
@@ -82,7 +106,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/lighter_blue"
+                android:background="@drawable/match_team_selector_blue"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="Blue 2" />
 
@@ -91,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/lighter_blue"
+                android:background="@drawable/match_team_selector_blue"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="Blue 3" />
 

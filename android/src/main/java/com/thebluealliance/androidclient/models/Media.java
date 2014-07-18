@@ -132,15 +132,16 @@ public class Media extends BasicModel<Media> {
         String imageUrl;
         try {
             TYPE mediaType = getMediaType();
-            JsonObject details = getDetails();
             String foreignKey = getForeignKey();
             if (mediaType == TYPE.CD_PHOTO_THREAD) {
+                JsonObject details = getDetails();
                 imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
             } else {
                 imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
             }
+            Boolean isVideo = mediaType == TYPE.YOUTUBE;
             return new ImageListElement(imageUrl,
-                    String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey));
+                    String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey), isVideo);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
                     "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");

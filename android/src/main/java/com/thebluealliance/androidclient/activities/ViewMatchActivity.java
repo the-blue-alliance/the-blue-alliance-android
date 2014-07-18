@@ -77,7 +77,6 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         task.execute(mMatchKey);
         // Indicate loading; the task will hide the progressbar and show the content when loading is complete
         findViewById(R.id.progress).setVisibility(View.VISIBLE);
-        findViewById(R.id.match_container).setVisibility(View.GONE);
     }
 
     @Override
