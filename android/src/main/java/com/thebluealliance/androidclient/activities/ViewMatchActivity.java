@@ -86,13 +86,17 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
     @Override
     public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+        if(warningMessage != null) {
+            warningMessage.setText(message);
+            warningMessage.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        if(warningMessage != null) {
+            warningMessage.setVisibility(View.GONE);
+        }
     }
 
     @Override
