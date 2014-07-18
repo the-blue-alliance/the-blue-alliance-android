@@ -6,7 +6,6 @@ import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -15,12 +14,10 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -44,13 +41,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
     private EventInfoFragment mFragment;
     private RefreshableHostActivity activity;
-    View last, next;
-    LinearLayout nextLayout, lastLayout;
     View topTeamsContainer, topOprsContainer;
     TextView eventName, eventDate, eventLoc, eventVenue, topTeams, topOprs;
     String eventKey, topTeamsString, topOprsString, nameString, titleString, venueString, locationString;
     Event event;
-    private boolean showLastMatch, showNextMatch, showRanks, showStats, forceFromCache;
+    private boolean showRanks, showStats, forceFromCache;
 
     public PopulateEventInfo(EventInfoFragment f, boolean forceFromCache) {
         mFragment = f;
@@ -61,7 +56,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     @Override
     protected void onPreExecute() {
         super.onPreExecute(); // reset event settings
-        showLastMatch = showNextMatch = showRanks = showStats = false;
+        showRanks = showStats = false;
         activity.showMenuProgressBar();
 
         View view = mFragment.getView();
@@ -69,8 +64,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventDate = (TextView) view.findViewById(R.id.event_date);
         eventLoc = (TextView) view.findViewById(R.id.event_location);
         eventVenue = (TextView) view.findViewById(R.id.event_venue);
-        nextLayout = (LinearLayout) view.findViewById(R.id.event_next_match_container);
-        lastLayout = (LinearLayout) view.findViewById(R.id.event_last_match_container);
         topTeamsContainer = view.findViewById(R.id.event_top_teams_container);
         topOprsContainer = view.findViewById(R.id.event_top_oprs_container);
         topTeams = (TextView) view.findViewById(R.id.event_top_teams);
@@ -163,39 +156,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
             }
 
-            if (event.isHappeningNow()) {
-                //show the next/last matches, if applicable
-                try {
-                    matchResult = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
-                    ArrayList<Match> matches = matchResult.getData();
-                    Collections.sort(matches, new MatchSortByPlayOrderComparator());
-                    Match nextMatch = null;
-                    Match lastMatch = null;
-                    try {
-                        nextMatch = MatchHelper.getNextMatchPlayed(matches);
-                        lastMatch = MatchHelper.getLastMatchPlayed(matches);
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.e(Constants.LOG_TAG, "Can't get next/last matches. Missing fields...\n" +
-                                Arrays.toString(e.getStackTrace()));
-                    }
-
-                    if (nextMatch != null) {
-                        showNextMatch = true;
-                        next = nextMatch.render().getView(activity, inflater, null);
-                    }
-                    if (lastMatch != null) {
-                        showLastMatch = true;
-                        last = lastMatch.render().getView(activity, inflater, null);
-                    }
-                    if (isCancelled()) {
-                        return APIResponse.CODE.NODATA;
-                    }
-                } catch (DataManager.NoDataException e) {
-                    Log.w(Constants.LOG_TAG, "unable to load match list");
-                    return APIResponse.CODE.NODATA;
-                }
-            }
-
             try {
                 nameString = event.getEventName();
                 titleString = event.getEventYear() + " " + event.getShortName();
@@ -238,21 +198,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
             }
 
-            if (showNextMatch) {
-                nextLayout.setVisibility(View.VISIBLE);
-                if (nextLayout.getChildCount() > 1) {
-                    nextLayout.removeViewAt(1);
-                }
-                nextLayout.addView(next);
-            }
-
-            if (showLastMatch) {
-                lastLayout.setVisibility(View.VISIBLE);
-                if (lastLayout.getChildCount() > 1) {
-                    lastLayout.removeViewAt(1);
-                }
-                lastLayout.addView(last);
-            }
             if (showRanks) {
                 topTeamsContainer.setVisibility(View.VISIBLE);
                 topTeams.setText(Html.fromHtml(topTeamsString));

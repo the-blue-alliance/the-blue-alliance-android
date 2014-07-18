@@ -14,10 +14,12 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
+import java.io.Serializable;
+
 /**
  * File created by phil on 4/20/14.
  */
-public class MatchListElement extends ListElement {
+public class MatchListElement extends ListElement implements Serializable{
 
     private String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamNumber;
     private boolean showVideoIcon, showMatchHeader;
