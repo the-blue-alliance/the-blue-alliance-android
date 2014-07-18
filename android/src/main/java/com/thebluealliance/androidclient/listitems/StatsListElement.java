@@ -61,6 +61,9 @@ public class StatsListElement extends ListElement {
         TextView teamStat;
     }
 
+    public String getTeamNumber() {
+        return mTeamNumber;
+    }
     public Double getOpr(){
         return opr;
     }

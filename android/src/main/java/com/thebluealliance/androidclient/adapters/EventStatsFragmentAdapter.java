@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.adapters;
 
 import android.content.Context;
 
+import com.thebluealliance.androidclient.comparators.StatListElementSortByAlphanumComparator;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 
@@ -51,6 +52,8 @@ public class EventStatsFragmentAdapter extends ListViewAdapter {
                 }
             });
             Collections.reverse(list);
+        } else if (stat.equals("team")) {
+            Collections.sort(list, new StatListElementSortByAlphanumComparator());
         }
 
         // Wipe old data and re-add new sorted data

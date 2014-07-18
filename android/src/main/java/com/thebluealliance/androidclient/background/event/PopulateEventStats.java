@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.TeamSortByAlphanumComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -89,15 +89,23 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     dprSorted = new LinkedHashMap<>(),
                     ccwmSorted = new LinkedHashMap<>();
 
-            if (statToSortBy == null || statToSortBy.equals("opr")){
+            // Default to OPR on first startup.
+            // Also putting team sort in here since sorting using another comparator makes life easier
+            // rather than creating a different list for teams which doesn't have the same properties as the stats.
+            if (statToSortBy == null || statToSortBy.equals("opr") || statToSortBy.equals("team")){
                 if (stats.has("oprs") && !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()){
 
                     opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
                     statToUse = opr;
 
-                    // Sort OPRs in decreasing order (highest to lowest)
-                    Collections.sort(opr, new TeamSortByStatComparator());
-                    Collections.reverse(opr);
+                    if (statToSortBy == null || statToSortBy.equals("opr")) {
+                        // Sort OPRs in decreasing order (highest to lowest)
+                        Collections.sort(opr, new TeamSortByStatComparator());
+                        Collections.reverse(opr);
+                    }
+                    else if (statToSortBy.equals("team")){
+                        Collections.sort(opr, new TeamSortByAlphanumComparator());
+                    }
 
                     oprSorted = sortedListByStat(opr, stats.get("oprs").getAsJsonObject());
 
@@ -191,7 +199,6 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         if (view != null && activity != null) {
             // Set the new info.
             adapter = new EventStatsFragmentAdapter(activity, teams);
-            //ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no stats in the adapter or if we can't download info

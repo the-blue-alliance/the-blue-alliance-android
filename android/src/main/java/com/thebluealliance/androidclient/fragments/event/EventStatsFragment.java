@@ -99,6 +99,9 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
                     case "CCWM":
                         statSortCategory = "ccwm";
                         break;
+                    case "Team #":
+                        statSortCategory = "team";
+                        break;
                     default:
                         break;
                 }
