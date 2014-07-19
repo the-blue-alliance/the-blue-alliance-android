@@ -4,11 +4,9 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
 import android.support.v4.view.ViewPager;
 
 import com.astuetz.PagerSlidingTabStrip;
-
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.DownloadEventList;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
@@ -20,7 +18,7 @@ import java.util.Date;
 /**
  * Created by Nathan on 4/22/2014.
  */
-public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
+public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter{
 
     private int mCount;
     private int mYear;
@@ -63,7 +61,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void setLabels(ArrayList<String> labels){
-        tabsChanged = !thisYearsWeekLabels.equals(labels);
+        tabsChanged = labels.size() != thisYearsWeekLabels.size() || !thisYearsWeekLabels.equals(labels);
         selectedTab = getPageTitle(pager.getCurrentItem()).toString();
         thisYearsWeekLabels = labels;
         mCount = thisYearsWeekLabels.size();
@@ -86,10 +84,8 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
         tabs.notifyDataSetChanged();
-        if(tabsChanged){
-            for(int i=0; i<fragments.size(); i++){
-                fragments.get(i).updateHeader(getPageTitle(i).toString());
-            }
+        for (int i = 0; i < fragments.size(); i++) {
+            fragments.get(i).updateHeader(getPageTitle(i).toString());
         }
     }
 }

@@ -69,11 +69,14 @@ public class EventListFragment extends Fragment implements RefreshListener {
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
+        setRetainInstance(false);
     }
 
     public void updateHeader(String newWeekHeader){
-        mHeader = newWeekHeader;
-        onRefreshStart();
+        if(!newWeekHeader.equals(mHeader)) {
+            mHeader = newWeekHeader;
+            onRefreshStart();
+        }
     }
 
     @Override
@@ -147,6 +150,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
             mTask.cancel(false);
         }
     }
+
 
     @Override
     public void onDestroy() {

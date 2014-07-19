@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -60,10 +59,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             mWeek = -1;
         } else {
             mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
-        }
-
-        if (mHeader.equals("Preseason Events")) {
-            Event ss = Database.getInstance(activity).getEventsTable().get("2014ctss");
         }
 
         events = new ArrayList<>();
@@ -117,7 +112,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         View view = mFragment.getView();
-        if (view != null && activity != null) {
+        if (true || view != null && activity != null) {
             ListViewAdapter adapter = new ListViewAdapter(activity, events);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
