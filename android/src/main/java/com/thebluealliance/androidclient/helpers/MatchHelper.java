@@ -431,6 +431,11 @@ public class MatchHelper {
                 return EventStatus.PLAYING_IN_QUARTERS;
             }
         }
+        else {
+            // We've already checked for not picked/no alliance data/etc above, so if the current group is empty,
+            // then the team is likely playing the first match of quarters/semis/finals.
+            return EventStatus.PLAYING_IN_QUARTERS;
+        }
 
         if (!semiMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
@@ -457,6 +462,8 @@ public class MatchHelper {
             } else {
                 return EventStatus.PLAYING_IN_SEMIS;
             }
+        } else {
+            return EventStatus.PLAYING_IN_SEMIS;
         }
 
         if (!finalMatches.isEmpty()) {
