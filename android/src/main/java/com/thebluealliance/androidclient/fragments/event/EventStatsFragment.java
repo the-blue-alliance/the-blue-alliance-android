@@ -122,9 +122,6 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         });
 
         statsDialog = builder.create();
-
-        // Required for settings menu to be displayed.
-        setHasOptionsMenu(true);
     }
 
     @Override
