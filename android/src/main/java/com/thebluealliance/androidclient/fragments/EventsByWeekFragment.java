@@ -23,7 +23,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
 
     private int mYear;
     private EventsByWeekFragmentPagerAdapter pagerAdapter;
-    private static final String YEAR = "YEAR", PAGER = "pager";
+    private static final String YEAR = "YEAR";
     private BuildEventWeekTabs task;
     private Parcelable adapterState;
 
@@ -71,7 +71,9 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(Constants.LOG_TAG, "ON PAUSE");
         if(mViewPager != null){
+            Log.d(Constants.LOG_TAG, "SAVING instance state");
             adapterState = mViewPager.onSaveInstanceState();
         }
     }
@@ -83,7 +85,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     public void updateLabels(ArrayList<String> labels){
-        getView().findViewById(R.id.progress).setVisibility(View.GONE);
+        getView().findViewById(R.id.tabs_progress).setVisibility(View.GONE);
         pagerAdapter = new EventsByWeekFragmentPagerAdapter(this, getChildFragmentManager(), mYear, mTabs, mViewPager, labels);
         mViewPager.setAdapter(pagerAdapter);
         mTabs.setViewPager(mViewPager);

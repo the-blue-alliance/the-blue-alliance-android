@@ -17,7 +17,7 @@
         android:layout_below="@id/event_pager_tabs" />
 
     <ProgressBar
-        android:id="@+id/progress"
+        android:id="@+id/tabs_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
