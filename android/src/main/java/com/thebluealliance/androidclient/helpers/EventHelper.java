@@ -1,11 +1,14 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -280,8 +283,8 @@ public class EventHelper {
      * @param events a list of events to render
      * @return a list of ListItems representing the sorted events
      */
-    public static ArrayList<ListItem> renderEventListForTeam(ArrayList<Event> events) {
-        return renderEventListWithComparator(events, new EventSortByTypeAndDateComparator());
+    public static ArrayList<ListItem> renderEventListForTeam(Context c, ArrayList<Event> events, boolean broadcastIfLive) {
+        return renderEventListWithComparator(c, events, new EventSortByTypeAndDateComparator(), broadcastIfLive);
     }
 
     /**
@@ -292,10 +295,10 @@ public class EventHelper {
      * @return a list of ListItems representing the sorted events
      */
     public static ArrayList<ListItem> renderEventListForWeek(ArrayList<Event> events) {
-        return renderEventListWithComparator(events, new EventSortByTypeAndDateComparator());
+        return renderEventListWithComparator(null, events, new EventSortByTypeAndDateComparator(), false);
     }
 
-    private static ArrayList<ListItem> renderEventListWithComparator(ArrayList<Event> events, Comparator<Event> comparator) {
+    private static ArrayList<ListItem> renderEventListWithComparator(Context c, ArrayList<Event> events, Comparator<Event> comparator, boolean broadcastIfLive) {
         ArrayList<ListItem> eventListItems = new ArrayList<>();
         Collections.sort(events, comparator);
         EventHelper.TYPE lastType = null, currentType = null;
@@ -312,6 +315,12 @@ public class EventHelper {
                     }
                 }
                 eventListItems.add(event.render());
+
+                if (broadcastIfLive && event.isHappeningNow()) {
+                    //send out that there are live matches happening for other things to pick up
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
+                    LocalBroadcastManager.getInstance(c).sendBroadcast(new LiveEventBroadcast(event.render()));
+                }
 
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");

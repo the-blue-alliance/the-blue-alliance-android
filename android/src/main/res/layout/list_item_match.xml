@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/match_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:baselineAligned="false"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground">
 
     <RelativeLayout
         android:id="@+id/match_title_container"

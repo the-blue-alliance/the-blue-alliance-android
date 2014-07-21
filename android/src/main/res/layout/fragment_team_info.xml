@@ -140,8 +140,9 @@
                     android:paddingRight="5dp"
                     android:text="@string/currently_competing" />
 
-                <TextView
-                    android:id="@+id/team_current_event_name"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/team_current_event"
                     style="@style/InfoItemTextStyle"
                     android:layout_below="@id/team_current_event_label"
                     android:layout_centerVertical="false"

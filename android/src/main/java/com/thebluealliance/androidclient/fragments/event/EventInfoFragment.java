@@ -1,17 +1,22 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
@@ -19,7 +24,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
+import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.List;
 
@@ -32,6 +39,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     private static final String KEY = "eventKey";
     private PopulateEventInfo task;
     private Activity parent;
+    private BroadcastReceiver receiver;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -73,6 +81,15 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
+
+        receiver = new LiveEventBroadcastReceiver();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
     @Override
@@ -122,5 +139,43 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public void onDestroy() {
         super.onDestroy();
         ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
+
+    protected void showLastMatch(MatchListElement match){
+        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_last_match_container);
+        lastLayout.setVisibility(View.VISIBLE);
+        if (lastLayout.getChildCount() > 1) {
+            lastLayout.removeViewAt(1);
+        }
+        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    }
+
+    protected void showNextMatch(MatchListElement match){
+        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
+        lastLayout.setVisibility(View.VISIBLE);
+        if (lastLayout.getChildCount() > 1) {
+            lastLayout.removeViewAt(1);
+        }
+        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    }
+
+    class LiveEventBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(Constants.LOG_TAG, "Received live event broadcast");
+            if(intent.getAction().equals(LiveEventBroadcast.ACTION)){
+                if(intent.hasExtra(LiveEventBroadcast.LAST_MATCH)){
+                    Log.d(Constants.LOG_TAG, "showing last match");
+                    MatchListElement last = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.LAST_MATCH);
+                    showLastMatch(last);
+                }
+                if(intent.hasExtra(LiveEventBroadcast.NEXT_MATCH)){
+                    Log.d(Constants.LOG_TAG, "showing next match");
+                    MatchListElement next = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.NEXT_MATCH);
+                    showNextMatch(next);
+                }
+            }
+        }
     }
 }

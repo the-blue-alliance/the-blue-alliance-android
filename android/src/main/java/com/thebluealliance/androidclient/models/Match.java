@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 
-public class Match extends BasicModel<Match> {
+public class Match extends BasicModel<Match>{
 
     private String selectedTeam;
     private int year;

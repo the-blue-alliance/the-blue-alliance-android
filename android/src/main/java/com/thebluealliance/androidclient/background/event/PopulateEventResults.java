@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -15,6 +16,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -133,6 +135,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if (lastMatch == null && !results.isEmpty()) {
                 lastMatch = results.get(results.size() - 1);
             }
+
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
             response = new APIResponse<>(null, APIResponse.CODE.NODATA);
@@ -145,6 +148,12 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
+            }
+
+            if(event.isHappeningNow()){
+                //send out that there are live matches happening for other things to pick up
+                Log.d(Constants.LOG_TAG, "Sending live event broadcast: "+eventKey);
+                LocalBroadcastManager.getInstance(activity).sendBroadcast(new LiveEventBroadcast(nextMatch.render(), lastMatch.render()));
             }
 
         } catch (DataManager.NoDataException e) {

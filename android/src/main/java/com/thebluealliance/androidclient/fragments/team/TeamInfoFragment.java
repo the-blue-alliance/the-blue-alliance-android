@@ -1,24 +1,33 @@
 package com.thebluealliance.androidclient.fragments.team;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
+import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
+import com.thebluealliance.androidclient.listitems.EventListElement;
 
 import java.util.List;
 
@@ -31,6 +40,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     private String mTeamKey;
 
     private PopulateTeamInfo task;
+    private BroadcastReceiver receiver;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -73,6 +83,14 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     public void onResume() {
         super.onResume();
         parent.startRefresh(this);
+        receiver = new LiveEventBroadcastReceiver();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
     @Override
@@ -117,8 +135,33 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         parent.deregisterRefreshableActivityListener(this);
     }
 
+    public void showCurrentEvent(EventListElement event){
+        LinearLayout eventLayout = (LinearLayout)getView().findViewById(R.id.team_current_event);
+        eventLayout.removeAllViews();
+        eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
+
+        RelativeLayout container = (RelativeLayout) getView().findViewById(R.id.team_current_event_container);
+        container.setVisibility(View.VISIBLE); 
+        container.setTag(mTeamKey+"@"+event.getEventKey());
+        container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
+    }
+
     @Override
     public void onYearChanged(int newYear) {
         parent.notifyRefreshComplete(this);
+    }
+
+    class LiveEventBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(Constants.LOG_TAG, "Received live event broadcast");
+            if(intent.getAction().equals(LiveEventBroadcast.ACTION)){
+                if(intent.hasExtra(LiveEventBroadcast.EVENT)){
+                    EventListElement event = (EventListElement)intent.getSerializableExtra(LiveEventBroadcast.EVENT);
+                    showCurrentEvent(event);
+                }
+            }
+        }
     }
 }

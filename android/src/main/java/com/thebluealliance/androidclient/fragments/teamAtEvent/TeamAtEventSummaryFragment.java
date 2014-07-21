@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.teamAtEvent;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -32,6 +33,7 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
     private ListViewAdapter adapter;
     private ListView listView;
     private PopulateTeamAtEventSummary task;
+    private BroadcastReceiver receiver;
 
     public static TeamAtEventSummaryFragment newInstance(String teamKey, String eventKey){
         TeamAtEventSummaryFragment f = new TeamAtEventSummaryFragment();
@@ -124,4 +126,5 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
         super.onDestroy();
         ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
     }
+
 }

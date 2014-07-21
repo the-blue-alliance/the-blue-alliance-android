@@ -6,18 +6,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.MatchClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
+
+import java.io.Serializable;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class MatchListElement extends ListElement {
+public class MatchListElement extends ListElement implements Serializable{
 
     private String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamNumber;
     private boolean showVideoIcon, showMatchHeader;
@@ -47,6 +51,7 @@ public class MatchListElement extends ListElement {
             convertView = inflater.inflate(R.layout.list_item_match, null);
 
             holder = new ViewHolder();
+            holder.matchContainer = (LinearLayout) convertView.findViewById(R.id.match_container);
             holder.matchTitleContainer = (RelativeLayout) convertView.findViewById(R.id.match_title_container);
             holder.matchTitle = (TextView) convertView.findViewById(R.id.match_title);
             holder.red1 = (TextView) convertView.findViewById(R.id.red1);
@@ -64,6 +69,13 @@ public class MatchListElement extends ListElement {
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
+        }
+
+        if(showMatchHeader) {
+           holder.matchContainer.setClickable(false);
+           holder.matchContainer.setBackgroundResource(R.drawable.transparent);
+        }else{
+            holder.matchContainer.setOnClickListener(new MatchClickListener(context));
         }
 
         holder.matchTitle.setTag(matchKey);
@@ -208,6 +220,7 @@ public class MatchListElement extends ListElement {
     }
 
         private static class ViewHolder {
+            LinearLayout matchContainer;
             RelativeLayout matchTitleContainer;
             TextView matchTitle;
             TextView red1;
