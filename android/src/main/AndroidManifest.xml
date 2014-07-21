@@ -54,7 +54,7 @@
             android:parentActivityName=".activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity" />
+                android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
         </activity>
 
         <activity
@@ -63,7 +63,7 @@
             android:parentActivityName=".activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity" />
+                android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
         </activity>
 
         <activity
@@ -71,7 +71,7 @@
             android:parentActivityName=".activities.ViewEventActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ViewEventActivity" />
+                android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
         </activity>
 
         <activity
@@ -89,7 +89,7 @@
             android:parentActivityName=".activities.ViewEventActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ViewEventActivity" />
+                android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
         </activity>
 
         <activity android:name=".activities.SearchResultsActivity" />
