@@ -23,9 +23,10 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
 
     private int mYear;
     private EventsByWeekFragmentPagerAdapter pagerAdapter;
-    private static final String YEAR = "YEAR";
+    private static final String YEAR = "YEAR", TAB = "tab";
     private BuildEventWeekTabs task;
-    private Parcelable adapterState;
+    private Parcelable pagerState, adapterState;
+    private int selectedTab;
 
     public static EventsByWeekFragment newInstance(int year) {
         EventsByWeekFragment f = new EventsByWeekFragment();
@@ -43,6 +44,11 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         if (getArguments() != null) {
             // Default to the current year if no year is provided in the arguments
             mYear = getArguments().getInt(YEAR, currentYear);
+        }
+        if(savedInstanceState != null){
+            selectedTab = savedInstanceState.getInt(TAB, -1);
+        }else {
+            selectedTab = -1;
         }
     }
 
@@ -71,10 +77,20 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(Constants.LOG_TAG, "ON PAUSE");
         if(mViewPager != null){
-            Log.d(Constants.LOG_TAG, "SAVING instance state");
-            adapterState = mViewPager.onSaveInstanceState();
+            pagerState = mViewPager.onSaveInstanceState();
+            selectedTab = mViewPager.getCurrentItem();
+        }
+        if(pagerAdapter != null){
+            adapterState = pagerAdapter.saveState();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mViewPager != null) {
+            outState.putInt(TAB, mViewPager.getCurrentItem());
         }
     }
 
@@ -89,10 +105,14 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         pagerAdapter = new EventsByWeekFragmentPagerAdapter(this, getChildFragmentManager(), mYear, mTabs, mViewPager, labels);
         mViewPager.setAdapter(pagerAdapter);
         mTabs.setViewPager(mViewPager);
-        if(adapterState != null){
+        if(pagerState != null){
+            mViewPager.onRestoreInstanceState(pagerState);
             pagerAdapter.restoreState(adapterState, ClassLoader.getSystemClassLoader());
         }else{
             setPagerWeek();
+        }
+        if(selectedTab != -1){
+            mViewPager.setCurrentItem(selectedTab);
         }
     }
 

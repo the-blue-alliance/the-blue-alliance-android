@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.background;
 
+import android.annotation.TargetApi;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
@@ -52,7 +54,7 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
-        if(fragment != null && fragment.getActivity() != null && !fragment.getActivity().isDestroyed()) {
+        if(fragment != null && fragment.getActivity() != null) {
             if (code != APIResponse.CODE.NODATA && allLabels != null && allLabels.size() > 0) {
                 Log.d(Constants.REFRESH_LOG, "Event week tabs data downloaded");
                 fragment.updateLabels(allLabels);

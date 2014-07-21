@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.interfaces;
 
+import java.io.Serializable;
+
 /**
  * File created by phil on 7/20/14.
  */

@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
+import com.thebluealliance.androidclient.listeners.EventClickListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
@@ -74,6 +75,11 @@ public class EventListFragment extends Fragment implements RefreshListener {
         mHost.registerRefreshableActivityListener(this);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     public void updateHeader(String newWeekHeader){
         if(!newWeekHeader.equals(mHeader)) {
             mHeader = newWeekHeader;
@@ -91,33 +97,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         }
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!(parent.getAdapter() instanceof ListViewAdapter)) {
-                    //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
-                    Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
-                    return;
-                }
-                Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
-                if (item != null && item instanceof ListElement) {
-                    // only open up the view event activity if the user actually clicks on a ListElement
-                    // (as opposed to something inheriting from ListHeader, which shouldn't do anything on user click
-                    Intent intent;
-                    String eventKey = ((ListElement) item).getKey();
-                    if (mTeamKey == null || mTeamKey.isEmpty()) {
-                        //no team is selected, go to the event details
-                        intent = ViewEventActivity.newInstance(getActivity(), eventKey);
-                    } else {
-                        //team is selected, open up the results for that specific team at the event
-                        intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey);
-                    }
-                    startActivity(intent);
-                } else {
-                    Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
-                }
-            }
-        });
+        mListView.setOnItemClickListener(new EventClickListener(getActivity(), mTeamKey));
         return v;
     }
 

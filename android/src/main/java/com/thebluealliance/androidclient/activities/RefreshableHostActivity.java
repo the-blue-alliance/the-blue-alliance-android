@@ -145,10 +145,10 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             return;
         }
         Log.d(Constants.LOG_TAG, "Refresh listeners: " + mRefreshListeners.size());
-        mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
             return;
         }
+        mRefreshInProgress = true;
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }

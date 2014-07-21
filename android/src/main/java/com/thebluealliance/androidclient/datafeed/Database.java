@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,9 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
@@ -117,14 +120,14 @@ public class Database extends SQLiteOpenHelper {
             + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
-            SearchTeam.KEY + " TEXT PRIMARY KEY," +
-            SearchTeam.TITLES + " TEXT," +
+            SearchTeam.KEY + " TEXT PRIMARY KEY, " +
+            SearchTeam.TITLES + " TEXT, " +
             SearchTeam.NUMBER + " TEXT )";
 
     String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
             " USING fts3 (" +
-            SearchEvent.KEY + " TEXT PRIMARY KEY," +
-            SearchEvent.TITLES + " TEXT," +
+            SearchEvent.KEY + " TEXT PRIMARY KEY, " +
+            SearchEvent.TITLES + " TEXT, " +
             SearchEvent.YEAR + " TEXT )";
 
     protected SQLiteDatabase db;
@@ -201,6 +204,13 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_MATCHES);
         db.execSQL(CREATE_MEDIAS);
         db.execSQL(CREATE_EVENTTEAMS);
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1){
+            // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
+            // http://stackoverflow.com/questions/19849068/near-not-syntax-error-while-compiling-create-virtual-table-if-not-exists
+            CREATE_SEARCH_EVENTS = CREATE_SEARCH_EVENTS.replace("IF NOT EXISTS", "");
+            CREATE_SEARCH_TEAMS = CREATE_SEARCH_TEAMS.replace("IF NOT EXISTS", "");
+        }
         db.execSQL(CREATE_SEARCH_TEAMS);
         db.execSQL(CREATE_SEARCH_EVENTS);
     }
