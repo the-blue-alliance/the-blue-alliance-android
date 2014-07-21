@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
 import java.util.Arrays;
 
@@ -66,6 +67,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
+
+        if (!ConnectionDetector.isConnectedToInternet(this)) {
+            showWarningMessage(getString(R.string.warning_unable_to_load));
+        }
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
