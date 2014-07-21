@@ -159,27 +159,27 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
             // Rank
             if (rank != -1) {
-                summary.add(new LabelValueListItem("Rank", rank + Utilities.getOrdinalFor(rank)));
+                summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_rank), rank + Utilities.getOrdinalFor(rank)));
             }
             // Record
             if (!recordString.equals("0-0-0")) {
-                summary.add(new LabelValueListItem("Record", recordString));
+                summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_record), recordString));
             }
 
             // Alliance
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
                 status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
-                summary.add(new LabelValueListItem("Alliance", generateAllianceSummary(activity.getResources(), allianceNumber, alliancePick)));
+                summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_alliance), generateAllianceSummary(activity.getResources(), allianceNumber, alliancePick)));
             }
 
             // Status
-            summary.add(new LabelValueListItem("Status", status.getDescriptionString(activity)));
+            summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
 
             if(lastMatch != null) {
-                summary.add(new LabelValueListItem("Last Match: ", lastMatch.render()));
+                summary.add(new LabelValueListItem(activity.getString(R.string.title_last_match), lastMatch.render()));
             }
             if(nextMatch != null){
-                summary.add(new LabelValueListItem("Next Match: ", nextMatch.render()));
+                summary.add(new LabelValueListItem(activity.getString(R.string.title_next_match), nextMatch.render()));
             }
         }
 
