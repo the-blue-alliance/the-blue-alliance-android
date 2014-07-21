@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="statsDialogArray">
+        <item>Team #</item>
         <item>OPR</item>
         <item>DPR</item>
         <item>CCWM</item>
-        <item>Team #</item>
     </string-array>
 </resources>
