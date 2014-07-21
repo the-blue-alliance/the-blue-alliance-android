@@ -54,6 +54,10 @@
     <!-- Stats Sort options/dialog -->
     <string name="action_sort_option">Sort stats&#8230;</string>
     <string name="dialog_stats_title">Sort stats by</string>
+    <string name="dialog_stats_sort_team">Team #</string>
+    <string name="dialog_stats_sort_opr">OPR</string>
+    <string name="dialog_stats_sort_dpr">DPR</string>
+    <string name="dialog_stats_sort_ccwm">CCWM</string>
     <string name="dialog_cancel">Cancel</string>
 
     <!-- Stats Help Dialog -->

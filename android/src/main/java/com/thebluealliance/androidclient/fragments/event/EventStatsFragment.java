@@ -29,6 +29,8 @@ import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
+import java.util.Arrays;
+
 /**
  * Fragment that displays the team statistics for an FRC event.
  *
@@ -53,7 +55,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     private ListView mListView;
     private ProgressBar mProgressBar;
     private String statSortCategory;
-    private int selectedStatSort = 0;
+    private int selectedStatSort = -1;
 
     private PopulateEventStats mTask;
 
@@ -83,40 +85,41 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
 
+        if(selectedStatSort == -1){
+            /* Sort has not yet been set. Default to OPR */
+            selectedStatSort = Arrays.binarySearch(getResources().getStringArray(R.array.statsDialogArray),
+                    getString(R.string.dialog_stats_sort_opr));
+        }
+
         // Setup stats sort dialog box
         items = getResources().getStringArray(R.array.statsDialogArray);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_stats_title)
-               .setSingleChoiceItems(items, selectedStatSort, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                selectedStatSort = i;
-                switch (items[i]) {
-                    case "OPR":
-                        statSortCategory = "opr";
-                        break;
-                    case "DPR":
-                        statSortCategory = "dpr";
-                        break;
-                    case "CCWM":
-                        statSortCategory = "ccwm";
-                        break;
-                    case "Team #":
-                        statSortCategory = "team";
-                        break;
-                    default:
-                        break;
-                }
+                .setSingleChoiceItems(items, selectedStatSort, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        selectedStatSort = i;
+                        if (items[i].equals(getString(R.string.dialog_stats_sort_opr))) {
+                            statSortCategory = "opr";
+                        } else if (items[i].equals(getString(R.string.dialog_stats_sort_dpr))) {
+                            statSortCategory = "dpr";
+                        } else if (items[i].equals(getString(R.string.dialog_stats_sort_ccwm))) {
+                            statSortCategory = "ccwm";
+                        } else if (items[i].equals(getString(R.string.dialog_stats_sort_team))) {
+                            statSortCategory = "team";
+                        }
 
-                dialogInterface.dismiss();
+                        dialogInterface.dismiss();
 
-                mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
-                if (mAdapter != null && statSortCategory != null) {
-                    mAdapter.sortStats(mAdapter, statSortCategory);
-                }
-            }
-        }).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int id) {
+                        mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
+                        if (mAdapter != null && statSortCategory != null)
+
+                        {
+                            mAdapter.sortStats(mAdapter, statSortCategory);
+                        }
+                    }
+                }).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }
         });
@@ -168,7 +171,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_sort_by){
+        if (id == R.id.action_sort_by) {
             statsDialog.show();
             return true;
         }

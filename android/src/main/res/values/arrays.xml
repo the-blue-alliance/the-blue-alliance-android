@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="statsDialogArray">
-        <item>Team #</item>
-        <item>OPR</item>
-        <item>DPR</item>
-        <item>CCWM</item>
+        <item>@string/dialog_stats_sort_team</item>
+        <item>@string/dialog_stats_sort_opr</item>
+        <item>@string/dialog_stats_sort_dpr</item>
+        <item>@string/dialog_stats_sort_ccwm</item>
     </string-array>
 </resources>
