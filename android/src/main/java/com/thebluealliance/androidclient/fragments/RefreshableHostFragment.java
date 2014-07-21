@@ -32,8 +32,6 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
     public void onResume() {
         super.onResume();
         if (parent instanceof RefreshableHostActivity) {
-            Log.d(Constants.LOG_TAG, "registering refreshable host fragment with parent");
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
@@ -66,13 +64,15 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
     }
 
     public synchronized void notifyRefreshComplete(RefreshListener completedListener) {
-        if (completedListener == null || !mRefreshListeners.contains(completedListener)) {
+        if (completedListener == null) {
             return;
+        }
+        if(!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity){
+            ((RefreshableHostActivity) parent).notifyRefreshComplete(completedListener);
         }
         if (!mCompletedRefreshListeners.contains(completedListener)) {
             mCompletedRefreshListeners.add(completedListener);
         }
-
         if (mCompletedRefreshListeners.size() >= mRefreshListeners.size()) {
             onRefreshComplete();
             mCompletedRefreshListeners.clear();
