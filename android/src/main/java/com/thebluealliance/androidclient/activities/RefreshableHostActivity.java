@@ -13,13 +13,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
 import java.util.ArrayList;
 
 /**
  * Created by Nathan on 4/29/2014.
  */
-public abstract class RefreshableHostActivity extends BaseActivity {
+public abstract class RefreshableHostActivity extends BaseActivity implements RefreshableHost {
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
@@ -143,11 +144,10 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             //if a refresh is already happening, don't start another
             return;
         }
-        Log.d(Constants.LOG_TAG, "Refresh listeners: " + mRefreshListeners.size());
-        mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
             return;
         }
+        mRefreshInProgress = true;
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }

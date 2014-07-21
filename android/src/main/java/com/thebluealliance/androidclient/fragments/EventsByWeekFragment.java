@@ -1,8 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,14 +13,20 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
+import com.thebluealliance.androidclient.background.BuildEventWeekTabs;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
-public class EventsByWeekFragment extends Fragment{
+public class EventsByWeekFragment extends RefreshableHostFragment {
 
     private int mYear;
-    private static final String YEAR = "YEAR";
+    private EventsByWeekFragmentPagerAdapter pagerAdapter;
+    private static final String YEAR = "YEAR", TAB = "tab";
+    private BuildEventWeekTabs task;
+    private Parcelable pagerState, adapterState;
+    private int selectedTab;
 
     public static EventsByWeekFragment newInstance(int year) {
         EventsByWeekFragment f = new EventsByWeekFragment();
@@ -40,9 +45,23 @@ public class EventsByWeekFragment extends Fragment{
             // Default to the current year if no year is provided in the arguments
             mYear = getArguments().getInt(YEAR, currentYear);
         }
+        if(savedInstanceState != null){
+            selectedTab = savedInstanceState.getInt(TAB, -1);
+        }else {
+            selectedTab = -1;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(pagerAdapter != null){
+            pagerAdapter.notifyDataSetChanged();
+        }
     }
 
     private ViewPager mViewPager;
+    private PagerSlidingTabStrip mTabs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,15 +69,61 @@ public class EventsByWeekFragment extends Fragment{
         mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
-        final PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
-        final Context c = getActivity();
-        mViewPager.setAdapter(new EventsByWeekFragmentPagerAdapter(c, getChildFragmentManager(), mYear));
+        mTabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
-        tabs.setViewPager(mViewPager);
+        return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mViewPager != null){
+            pagerState = mViewPager.onSaveInstanceState();
+            selectedTab = mViewPager.getCurrentItem();
+        }
+        if(pagerAdapter != null){
+            adapterState = pagerAdapter.saveState();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mViewPager != null) {
+            outState.putInt(TAB, mViewPager.getCurrentItem());
+        }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        if(mViewPager != null && mViewPager.getCurrentItem() != 0){
+            selectedTab = mViewPager.getCurrentItem();
+        }
+        task = new BuildEventWeekTabs(this);
+        task.execute(mYear);
+    }
+
+    public void updateLabels(ArrayList<String> labels){
+        getView().findViewById(R.id.tabs_progress).setVisibility(View.GONE);
+        pagerAdapter = new EventsByWeekFragmentPagerAdapter(this, getChildFragmentManager(), mYear, mTabs, mViewPager, labels);
+        mViewPager.setAdapter(pagerAdapter);
+        mTabs.setViewPager(mViewPager);
+        if(pagerState != null){
+            mViewPager.onRestoreInstanceState(pagerState);
+            pagerAdapter.restoreState(adapterState, ClassLoader.getSystemClassLoader());
+        }else{
+            setPagerWeek();
+        }
+        if(selectedTab != -1){
+            mViewPager.setCurrentItem(selectedTab);
+        }
+    }
+
+    private void setPagerWeek(){
         int currentWeek = Utilities.getCurrentCompWeek();
         int currentYear = Utilities.getCurrentYear();
         //set the currently selected tab to the current week or week 1
-        int week1Index = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter()).getLabels().indexOf(String.format(EventHelper.REGIONAL_LABEL, 1));
+        int week1Index = pagerAdapter.getLabels().indexOf(String.format(EventHelper.REGIONAL_LABEL, 1));
         if (currentYear != mYear) {
             mViewPager.setCurrentItem(week1Index);
         } else {
@@ -71,7 +136,12 @@ public class EventsByWeekFragment extends Fragment{
              * Else, we display the current week
              */
         }
-        return view;
     }
 
+    @Override
+    public void onRefreshStop() {
+        if(task != null){
+            task.cancel(false);
+        }
+    }
 }
