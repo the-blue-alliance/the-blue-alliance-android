@@ -78,9 +78,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.stats_help_menu, menu);
         mOptionsMenu = menu;
-        mOptionsMenu.findItem(R.id.help).setVisible(false);
         return true;
     }
 
@@ -148,17 +146,22 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     @Override
     public void onPageSelected(int position) {
         if(mOptionsMenu != null) {
-            MenuItem statsHelp = mOptionsMenu.findItem(R.id.action_sort_by);
+            MenuItem statsSort = mOptionsMenu.findItem(R.id.action_sort_by);
+            MenuItem statsHelp = mOptionsMenu.findItem(R.id.help);
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
-                mOptionsMenu.findItem(R.id.help).setVisible(true);
                 if(statsHelp != null){
                     statsHelp.setVisible(true);
                 }
+                if(statsSort != null){
+                    statsSort.setVisible(true);
+                }
             } else {
-                mOptionsMenu.findItem(R.id.help).setVisible(false);
                 if(statsHelp != null){
                     statsHelp.setVisible(false);
+                }
+                if(statsSort != null){
+                    statsSort.setVisible(false);
                 }
             }
         }

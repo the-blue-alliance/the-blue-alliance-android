@@ -131,6 +131,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.stats_sort_menu, menu);
+        inflater.inflate(R.menu.stats_help_menu, menu);
     }
 
     @Override
