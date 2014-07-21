@@ -48,12 +48,11 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     private Activity parent;
 
     private String mEventKey;
-    private static final String KEY = "eventKey";
+    private static final String KEY = "eventKey", SORT = "sort";
 
     private Parcelable mListState;
     private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
-    private ProgressBar mProgressBar;
     private String statSortCategory;
     private int selectedStatSort = -1;
 
@@ -85,6 +84,9 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
 
+        if(savedInstanceState != null){
+            selectedStatSort = savedInstanceState.getInt(SORT, -1);
+        }
         if(selectedStatSort == -1){
             /* Sort has not yet been set. Default to OPR */
             selectedStatSort = Arrays.binarySearch(getResources().getStringArray(R.array.statsDialogArray),
@@ -93,21 +95,14 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
 
         // Setup stats sort dialog box
         items = getResources().getStringArray(R.array.statsDialogArray);
+        statSortCategory = getSortTypeFromPosition(selectedStatSort);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_stats_title)
                 .setSingleChoiceItems(items, selectedStatSort, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         selectedStatSort = i;
-                        if (items[i].equals(getString(R.string.dialog_stats_sort_opr))) {
-                            statSortCategory = "opr";
-                        } else if (items[i].equals(getString(R.string.dialog_stats_sort_dpr))) {
-                            statSortCategory = "dpr";
-                        } else if (items[i].equals(getString(R.string.dialog_stats_sort_ccwm))) {
-                            statSortCategory = "ccwm";
-                        } else if (items[i].equals(getString(R.string.dialog_stats_sort_team))) {
-                            statSortCategory = "team";
-                        }
+                        statSortCategory = getSortTypeFromPosition(selectedStatSort);
 
                         dialogInterface.dismiss();
 
@@ -115,7 +110,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
                         if (mAdapter != null && statSortCategory != null)
 
                         {
-                            mAdapter.sortStats(mAdapter, statSortCategory);
+                            mAdapter.sortStats(statSortCategory);
                         }
                     }
                 }).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
@@ -139,7 +134,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         // Setup views & listeners
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+
+        ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
 
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.
@@ -180,6 +176,11 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SORT, selectedStatSort);
+    }
 
     @Override
     public void onPause() {
@@ -225,4 +226,18 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         super.onDestroy();
         ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
     }
+
+    private String getSortTypeFromPosition(int position){
+        if (items[position].equals(getString(R.string.dialog_stats_sort_opr))) {
+            return "opr";
+        } else if (items[position].equals(getString(R.string.dialog_stats_sort_dpr))) {
+            return "dpr";
+        } else if (items[position].equals(getString(R.string.dialog_stats_sort_ccwm))) {
+            return "ccwm";
+        } else if (items[position].equals(getString(R.string.dialog_stats_sort_team))) {
+            return "team";
+        }
+        return "";
+    }
+
 }

@@ -22,45 +22,49 @@ public class EventStatsFragmentAdapter extends ListViewAdapter {
 
     /**
      * Sorts event stats based on given stat.
-     * @param adapter the fragment adapter whose values will be sorted.
      * @param stat stat to sort by
      */
-    public void sortStats(EventStatsFragmentAdapter adapter, String stat) {
+    public void sortStats(String stat) {
         ArrayList<StatsListElement> list = new ArrayList<>();
-        list.addAll((ArrayList) adapter.values);
+        list.addAll((ArrayList) values);
 
-        if (stat.equals("opr")) {
-            Collections.sort(list, new Comparator<StatsListElement>() {
-                @Override
-                public int compare(StatsListElement element1, StatsListElement element2) {
-                    return Double.compare(element1.getOpr(), element2.getOpr());
-                }
-            });
-            Collections.reverse(list);
-        } else if (stat.equals("dpr")) {
-            Collections.sort(list, new Comparator<StatsListElement>() {
-                @Override
-                public int compare(StatsListElement element1, StatsListElement element2) {
-                    return Double.compare(element1.getDpr(), element2.getDpr());
-                }
-            });
-        } else if (stat.equals("ccwm")) {
-            Collections.sort(list, new Comparator<StatsListElement>() {
-                @Override
-                public int compare(StatsListElement element1, StatsListElement element2) {
-                    return Double.compare(element1.getCcwm(), element2.getCcwm());
-                }
-            });
-            Collections.reverse(list);
-        } else if (stat.equals("team")) {
-            Collections.sort(list, new StatListElementSortByAlphanumComparator());
+        switch (stat) {
+            case "opr":
+                Collections.sort(list, new Comparator<StatsListElement>() {
+                    @Override
+                    public int compare(StatsListElement element1, StatsListElement element2) {
+                        return Double.compare(element1.getOpr(), element2.getOpr());
+                    }
+                });
+                Collections.reverse(list);
+                break;
+            case "dpr":
+                Collections.sort(list, new Comparator<StatsListElement>() {
+                    @Override
+                    public int compare(StatsListElement element1, StatsListElement element2) {
+                        return Double.compare(element1.getDpr(), element2.getDpr());
+                    }
+                });
+                break;
+            case "ccwm":
+                Collections.sort(list, new Comparator<StatsListElement>() {
+                    @Override
+                    public int compare(StatsListElement element1, StatsListElement element2) {
+                        return Double.compare(element1.getCcwm(), element2.getCcwm());
+                    }
+                });
+                Collections.reverse(list);
+                break;
+            case "team":
+                Collections.sort(list, new StatListElementSortByAlphanumComparator());
+                break;
         }
 
         // Wipe old data and re-add new sorted data
-        adapter.clear();
-        adapter.addAll(list);
+        clear();
+        addAll(list);
 
         // Notify data change
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 }
