@@ -52,7 +52,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
     private ProgressBar mProgressBar;
-    private static String statSortCategory;
+    private String statSortCategory;
+    private int selectedStatSort = 0;
 
     private PopulateEventStats mTask;
 
@@ -86,9 +87,10 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         items = getResources().getStringArray(R.array.statsDialogArray);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_stats_title)
-               .setItems(items, new DialogInterface.OnClickListener() {
+               .setSingleChoiceItems(items, selectedStatSort, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                selectedStatSort = i;
                 switch (items[i]) {
                     case "OPR":
                         statSortCategory = "opr";
@@ -106,6 +108,8 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
                         break;
                 }
 
+                dialogInterface.dismiss();
+
                 mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
                 if (mAdapter != null && statSortCategory != null) {
                     mAdapter.sortStats(mAdapter, statSortCategory);
@@ -118,9 +122,6 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         });
 
         statsDialog = builder.create();
-
-        // Required for settings menu to be displayed.
-        setHasOptionsMenu(true);
     }
 
     @Override

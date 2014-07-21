@@ -148,6 +148,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
             actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
             String teamNumber = mTeamKey.replace("frc", "");
             setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
+            bar.setDisplayHomeAsUpEnabled(true);
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             bar.setListNavigationCallbacks(actionBarAdapter, this);
             bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);

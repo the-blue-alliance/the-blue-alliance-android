@@ -79,13 +79,8 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
             int[] record = MatchHelper.getRecordForTeam(eventMatches, teamKey);
             recordString = record[0] + "-" + record[1] + "-" + record[2];
-            nextMatch = MatchHelper.getNextMatchPlayed(teamMatches);
-            lastMatch = MatchHelper.getLastMatchPlayed(teamMatches);
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
-            matchResponse = new APIResponse<>(null, APIResponse.CODE.NODATA);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Unable to determine next/last match being played");
             matchResponse = new APIResponse<>(null, APIResponse.CODE.NODATA);
         }
 
@@ -96,8 +91,16 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
+
+            if(event.isHappeningNow() && teamMatches != null) {
+                nextMatch = MatchHelper.getNextMatchPlayed(teamMatches);
+                lastMatch = MatchHelper.getLastMatchPlayed(teamMatches);
+            }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
+            return APIResponse.CODE.NODATA;
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Unable to determine next/last match being played");
             return APIResponse.CODE.NODATA;
         }
 
