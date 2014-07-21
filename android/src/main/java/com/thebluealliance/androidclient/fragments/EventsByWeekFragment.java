@@ -96,6 +96,9 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
 
     @Override
     public void onRefreshStart() {
+        if(mViewPager != null && mViewPager.getCurrentItem() != 0){
+            selectedTab = mViewPager.getCurrentItem();
+        }
         task = new BuildEventWeekTabs(this);
         task.execute(mYear);
     }
