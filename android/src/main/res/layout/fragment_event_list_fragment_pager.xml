@@ -16,4 +16,13 @@
         android:layout_height="fill_parent"
         android:layout_below="@id/event_pager_tabs" />
 
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="visible" />
+
 </RelativeLayout>

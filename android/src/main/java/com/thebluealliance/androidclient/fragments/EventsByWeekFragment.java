@@ -83,6 +83,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     public void updateLabels(ArrayList<String> labels){
+        getView().findViewById(R.id.progress).setVisibility(View.GONE);
         pagerAdapter = new EventsByWeekFragmentPagerAdapter(this, getChildFragmentManager(), mYear, mTabs, mViewPager, labels);
         mViewPager.setAdapter(pagerAdapter);
         mTabs.setViewPager(mViewPager);
