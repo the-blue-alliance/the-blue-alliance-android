@@ -54,7 +54,7 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
-        if (activity != null && years.length > 0) {
+        if (activity != null && years != null && years.length > 0) {
             activity.onYearsParticipatedLoaded(years);
         }
     }

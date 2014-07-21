@@ -257,6 +257,9 @@ public class MatchHelper {
      */
     public static int getAllianceForTeam(ArrayList<Match> teamMatches, String teamKey) {
         int alliance = -1;
+        if (teamMatches == null) {
+            return alliance;
+        }
         for (Match match : teamMatches) {
             try {
                 if (match.getType() == TYPE.QUARTER) {
