@@ -13,13 +13,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
 import java.util.ArrayList;
 
 /**
  * Created by Nathan on 4/29/2014.
  */
-public abstract class RefreshableHostActivity extends BaseActivity {
+public abstract class RefreshableHostActivity extends BaseActivity implements RefreshableHost {
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();

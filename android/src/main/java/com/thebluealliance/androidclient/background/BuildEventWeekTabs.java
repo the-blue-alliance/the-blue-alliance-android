@@ -1,36 +1,31 @@
 package com.thebluealliance.androidclient.background;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * File created by phil on 5/21/14.
  */
-public class DownloadEventList extends AsyncTask<Integer, Void, APIResponse.CODE> {
+public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.CODE> {
 
-    private Context c;
-    private EventsByWeekFragmentPagerAdapter adapter;
+    private EventsByWeekFragment fragment;
     private int year;
     private ArrayList<String> allLabels;
     private static EventWeekLabelSortComparator comparator;
 
-    public DownloadEventList(Context c, EventsByWeekFragmentPagerAdapter adapter) {
-        this.c = c;
-        this.adapter = adapter;
+    public BuildEventWeekTabs(EventsByWeekFragment fragment) {
+        this.fragment = fragment;
 
         if(comparator == null){
             comparator = new EventWeekLabelSortComparator();
@@ -42,7 +37,7 @@ public class DownloadEventList extends AsyncTask<Integer, Void, APIResponse.CODE
         year = params[0];
         try {
             Log.d(Constants.LOG_TAG, "Loading event list...");
-            APIResponse<HashMap<String, ArrayList<Event>>> allEvents = DataManager.Events.getEventsByYear(c, year, false);
+            APIResponse<HashMap<String, ArrayList<Event>>> allEvents = DataManager.Events.getEventsByYear(fragment.getActivity(), year, false);
             allLabels = new ArrayList<>();
             allLabels.addAll(allEvents.getData().keySet());
             Collections.sort(allLabels, comparator);
@@ -58,8 +53,14 @@ public class DownloadEventList extends AsyncTask<Integer, Void, APIResponse.CODE
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if(code != APIResponse.CODE.NODATA && allLabels != null && allLabels.size() > 0) {
-            adapter.setLabels(allLabels);
+        if(fragment != null && fragment.getActivity() != null && !fragment.getActivity().isDestroyed()) {
+            if (code != APIResponse.CODE.NODATA && allLabels != null && allLabels.size() > 0) {
+                Log.d(Constants.REFRESH_LOG, "Event week tabs data downloaded");
+                fragment.updateLabels(allLabels);
+                fragment.notifyRefreshComplete(fragment);
+            }
         }
     }
+
+
 }

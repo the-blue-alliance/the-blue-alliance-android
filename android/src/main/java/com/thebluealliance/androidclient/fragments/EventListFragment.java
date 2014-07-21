@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,12 +15,12 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
@@ -33,8 +32,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
     public static final String WEEK = "WEEK";
     public static final String TEAM_KEY = "TEAM_KEY";
     public static final String WEEK_HEADER = "HEADER";
-
-    private Activity parent;
+    public static final String HOST = "HOST";
 
     private int mYear;
     private int mWeek;
@@ -44,6 +42,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
     private ListViewAdapter mAdapter;
     private ListView mListView;
     private ProgressBar mProgressBar;
+    private RefreshableHost mHost;
 
     private PopulateEventList mTask;
 
@@ -65,11 +64,14 @@ public class EventListFragment extends Fragment implements RefreshListener {
         mWeek = getArguments().getInt(WEEK, -1);
         mTeamKey = getArguments().getString(TEAM_KEY);
         mHeader = getArguments().getString(WEEK_HEADER);
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+        if(mHost == null && getActivity() instanceof RefreshableHost){
+            mHost = (RefreshableHost)getActivity();
         }
-        setRetainInstance(false);
+    }
+
+    public void setHost(RefreshableHost host){
+        mHost = host;
+        mHost.registerRefreshableActivityListener(this);
     }
 
     public void updateHeader(String newWeekHeader){
@@ -122,7 +124,9 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        mTask.cancel(false);
+        if(mTask != null) {
+            mTask.cancel(false);
+        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
@@ -132,15 +136,15 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
+        if(mHost != null) {
+            mHost.startRefresh(this);
         }
     }
 
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading events for week " + mHeader + " in " + mYear + " for " + mTeamKey);
-        mTask = new PopulateEventList(this, mYear, mHeader, mTeamKey, true);
+        mTask = new PopulateEventList(this, mHost, mYear, mHeader, mTeamKey, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -155,6 +159,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        mHost.deregisterRefreshableActivityListener(this);
     }
 }
