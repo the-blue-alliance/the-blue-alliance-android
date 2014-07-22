@@ -144,6 +144,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             //if a refresh is already happening, don't start another
             return;
         }
+        Log.d(Constants.REFRESH_LOG, "Refresh Listeners: "+mRefreshListeners.size());
         if (mRefreshListeners.isEmpty()) {
             return;
         }

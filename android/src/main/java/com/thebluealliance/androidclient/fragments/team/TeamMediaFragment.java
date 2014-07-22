@@ -64,8 +64,8 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if (year != -1) {
             parent.startRefresh(this);
         }
