@@ -22,7 +22,7 @@
 
         <ImageView
             android:id="@+id/youtube_play_icon"
-            android:layout_width="48dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_youtube"

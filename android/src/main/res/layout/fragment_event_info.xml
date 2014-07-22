@@ -163,8 +163,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="@string/top_teams"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:text="@string/top_teams" />
 
                 <TextView
                     android:id="@+id/event_top_teams"
@@ -194,7 +194,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:paddingRight="@dimen/activity_half_vertical_margin"
+                        android:textSize="16sp"
                         android:text="@string/top_opr" />
 
                     <TextView
