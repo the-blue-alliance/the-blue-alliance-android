@@ -108,8 +108,8 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if (mYear != -1) {
             parent.startRefresh(this);
         }

@@ -75,8 +75,8 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStart() {
+        super.onStart();
         if(mViewPager != null){
             pagerState = mViewPager.onSaveInstanceState();
             selectedTab = mViewPager.getCurrentItem();

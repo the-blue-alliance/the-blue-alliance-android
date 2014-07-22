@@ -80,8 +80,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         parent.startRefresh(this);
         receiver = new LiveEventBroadcastReceiver();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
@@ -90,6 +90,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onPause() {
         super.onPause();
+        if(task != null){
+            task.cancel(false);
+        }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 

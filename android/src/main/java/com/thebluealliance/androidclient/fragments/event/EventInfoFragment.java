@@ -76,8 +76,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
