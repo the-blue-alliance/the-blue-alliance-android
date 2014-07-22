@@ -74,11 +74,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         startRefresh();
     }
 
@@ -111,7 +106,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();

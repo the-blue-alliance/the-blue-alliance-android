@@ -80,13 +80,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
         super.onSaveInstanceState(outState);
     }
 
-    public void updateHeader(String newWeekHeader){
-        if(!newWeekHeader.equals(mHeader)) {
-            mHeader = newWeekHeader;
-            onRefreshStart();
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);
@@ -114,8 +107,8 @@ public class EventListFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if(mHost != null) {
             mHost.startRefresh(this);
         }

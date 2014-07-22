@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.R;
@@ -31,6 +32,7 @@ public class ImageListElement extends ListElement {
         if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
             convertView = inflater.inflate(R.layout.list_item_image, null);
             holder = new ViewHolder();
+            holder.image_item = (RelativeLayout) convertView.findViewById(R.id.image_item);
             holder.image_container = (FrameLayout) convertView.findViewById(R.id.image_container);
             holder.image = (ImageView) convertView.findViewById(R.id.image);
             holder.youtube_play_icon = (ImageView) convertView.findViewById(R.id.youtube_play_icon);
@@ -47,7 +49,7 @@ public class ImageListElement extends ListElement {
             holder.youtube_play_icon.setVisibility(View.GONE);
         }
 
-        holder.image_container.setOnClickListener(new View.OnClickListener() {
+        holder.image_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 c.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(linkUrl)));
@@ -58,6 +60,7 @@ public class ImageListElement extends ListElement {
     }
 
     private static class ViewHolder {
+        RelativeLayout image_item;
         FrameLayout image_container;
         ImageView image;
         ImageView youtube_play_icon;

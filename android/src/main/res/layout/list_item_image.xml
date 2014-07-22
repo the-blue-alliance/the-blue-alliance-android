@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/image_item"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground">
 
     <FrameLayout
         android:id="@+id/image_container"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:clickable="true"
+        android:duplicateParentState="true"
         android:foreground="?android:attr/selectableItemBackground" >
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:id="@+id/image"
             android:adjustViewBounds="true" />
 
         <ImageView
             android:id="@+id/youtube_play_icon"
-            android:layout_width="48dp"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_youtube"

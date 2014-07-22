@@ -43,11 +43,16 @@ public class SettingsActivity extends PreferenceActivity {
 
             Preference changelog = findPreference("changelog");
             String version = BuildConfig.VERSION_NAME;
-            if (version.contains("-")) {
-                //if debug build, the version string will be like v0.1-<sha hash>
-                version = version.split("-")[0];
+            if (version.contains("/")) {
+                // if debug build, the version string will be like v0.1/#<sha hash>
+                // so load the page for the most recent commit
+                String sha = version.split("/")[1];
+                sha = sha.replace("#", "");
+                changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/commit/" + sha)));
+            }else{
+                // this is not a debug build, so link to the GitHub release page tagged with the version name
+                changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v" + version)));
             }
-            changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v" + version)));
 
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));

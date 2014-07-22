@@ -1,11 +1,14 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
@@ -51,12 +54,22 @@ public class JSONManager {
         if (e == null || e.isJsonNull()) {
             return new JsonObject();
         }
-        return e.getAsJsonObject();
+        try {
+            return e.getAsJsonObject();
+        } catch (IllegalStateException err) {
+            Log.w(Constants.LOG_TAG, "getAsJsonObject failed: " + err);
+            return new JsonObject();
+        }
     }
 
     public static JsonArray getasJsonArray(String input) {
         if (input == null || input.equals(""))
             return new JsonArray();
-        return getParser().parse(input).getAsJsonArray();
+        try {
+            return getParser().parse(input).getAsJsonArray();
+        } catch (IllegalStateException err) {
+            Log.w(Constants.LOG_TAG, "getAsJsonArray failed: " + err);
+            return new JsonArray();
+        }
     }
 }

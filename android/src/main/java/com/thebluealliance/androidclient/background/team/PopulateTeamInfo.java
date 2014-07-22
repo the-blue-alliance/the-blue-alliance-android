@@ -7,20 +7,26 @@ import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * File created by phil on 4/20/14.
@@ -35,7 +41,6 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private String mFullName;
     private String mTeamKey;
     private String mTeamWebsite;
-    private ArrayList<Match> matches;
     private boolean forceFromCache;
 
     public PopulateTeamInfo(TeamInfoFragment fragment, boolean forceFromCache) {
@@ -70,15 +75,14 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 mFullName = team.getFullName();
                 mTeamWebsite = team.getWebsite();
                 mTeamNumber = team.getTeamNumber();
+
             } catch (BasicModel.FieldNotDefinedException e) {
                 e.printStackTrace();
                 Log.e(Constants.LOG_TAG, "Can't load team parameters");
                 return APIResponse.CODE.NODATA;
             }
 
-            APIResponse<ArrayList<Match>> eventResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
-
-            return APIResponse.mergeCodes(teamResponse.getCode(), eventResponse.getCode());
+            return teamResponse.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load team info");
             //some temp data
@@ -92,39 +96,48 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
         View view = mFragment.getView();
         LayoutInflater inflater = activity.getLayoutInflater();
-        if (view != null && code != APIResponse.CODE.NODATA) {
-            TextView teamName = ((TextView) view.findViewById(R.id.team_name));
-            if (mTeamName.isEmpty()) {
-                teamName.setText("Team " + mTeamNumber);
-            } else {
-                teamName.setText(mTeamName);
-            }
-            ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
-            // Tag is used to create an ACTION_VIEW intent for a maps application
-            view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
-            view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
-            view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query=" + mTeamKey);
-            view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + mTeamKey);
-            view.findViewById(R.id.team_website_button).setTag(!mTeamWebsite.isEmpty() ? mTeamWebsite : "https://www.google.com/search?q=" + mTeamKey);
-            if (mFullName.isEmpty()) {
-                // No full name specified, hide the view
-                view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
-            } else {
-                // This string needs to be specially formatted
-                SpannableString string = new SpannableString("aka " + mFullName);
-                string.setSpan(new TextAppearanceSpan(mFragment.getActivity(), R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
-            }
+        if(view != null) {
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            View infoContainer = view.findViewById(R.id.team_info_container);
+            if (code == APIResponse.CODE.NODATA) {
+                noDataText.setText(R.string.no_team_info);
+                noDataText.setVisibility(View.VISIBLE);
+                infoContainer.setVisibility(View.GONE);
+            }else{
+                noDataText.setVisibility(View.GONE);
+                TextView teamName = ((TextView) view.findViewById(R.id.team_name));
+                if (mTeamName.isEmpty()) {
+                    teamName.setText("Team " + mTeamNumber);
+                } else {
+                    teamName.setText(mTeamName);
+                }
+                ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
+                // Tag is used to create an ACTION_VIEW intent for a maps application
+                view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
+                view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
+                view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query=" + mTeamKey);
+                view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + mTeamKey);
+                view.findViewById(R.id.team_website_button).setTag(!mTeamWebsite.isEmpty() ? mTeamWebsite : "https://www.google.com/search?q=" + mTeamKey);
+                if (mFullName.isEmpty()) {
+                    // No full name specified, hide the view
+                    view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
+                } else {
+                    // This string needs to be specially formatted
+                    SpannableString string = new SpannableString("aka " + mFullName);
+                    string.setSpan(new TextAppearanceSpan(mFragment.getActivity(), R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+                }
 
-            view.findViewById(R.id.team_current_event_container).setVisibility(View.GONE);
-            view.findViewById(R.id.team_current_matches_container).setVisibility(View.GONE);
+                view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
+                view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
 
-            if (code == APIResponse.CODE.OFFLINECACHE) {
-                ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+                if (code == APIResponse.CODE.OFFLINECACHE) {
+                    ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+                }
+
+                view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
             }
-
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
         }
 
         if (code == APIResponse.CODE.LOCAL && !isCancelled()) {

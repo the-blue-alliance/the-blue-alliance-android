@@ -108,7 +108,6 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
         if (cursorLoader.getId() != mTeamNumberStart + mTeamNumberEnd) {
             return;
         }
-        Log.d(Constants.LOG_TAG, "Load finished!");
         mProgressBar.setVisibility(View.GONE);
         mListView.setAdapter(new TeamCursorAdapter(getActivity(), cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
     }
@@ -119,8 +118,8 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }

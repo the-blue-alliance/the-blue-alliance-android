@@ -79,6 +79,14 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (mTask != null) {
@@ -87,14 +95,6 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 

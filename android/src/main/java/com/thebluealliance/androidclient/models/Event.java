@@ -65,7 +65,7 @@ public class Event extends BasicModel<Event> {
 
     public String getWebsite() {
         if (fields.containsKey(Database.Events.WEBSITE) && fields.get(Database.Events.WEBSITE) instanceof String) {
-            return (String) fields.get(Database.Events.ALLIANCES);
+            return (String) fields.get(Database.Events.WEBSITE);
         }
         return "";
     }

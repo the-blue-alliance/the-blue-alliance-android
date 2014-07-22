@@ -99,21 +99,21 @@
                     android:id="@+id/event_twitter_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/twitter_blue_selector"
-                    android:padding="10dp"
+                    android:padding="4dp"
                     android:src="@drawable/ic_twitter_light" />
 
                 <ImageView
                     android:id="@+id/event_youtube_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/youtube_red_selector"
-                    android:padding="10dp"
+                    android:padding="4dp"
                     android:src="@drawable/ic_youtube_light" />
 
                 <ImageView
                     android:id="@+id/event_cd_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/chief_delphi_orange_selector"
-                    android:padding="10dp"
+                    android:padding="4dp"
                     android:src="@drawable/ic_cd_light"/>
             </LinearLayout>
 
@@ -163,8 +163,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:text="@string/top_teams"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:text="@string/top_teams" />
 
                 <TextView
                     android:id="@+id/event_top_teams"
@@ -194,7 +194,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:paddingRight="@dimen/activity_half_vertical_margin"
+                        android:textSize="16sp"
                         android:text="@string/top_opr" />
 
                     <TextView
@@ -217,4 +217,10 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="visible" />
+
+    <TextView
+        style="@style/NoDataFoundStyle"
+        android:id="@+id/no_data"
+        android:visibility="gone"
+        android:singleLine="false" />
 </RelativeLayout>

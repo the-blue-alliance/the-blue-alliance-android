@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 8
-        versionName "1.0"
+        versionCode 9
+        versionName "1.1"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -26,7 +26,7 @@ android {
 
         buildTypes {
             debug {
-                versionNameSuffix "-#" + gitSha
+                versionNameSuffix "/#" + gitSha
                 applicationIdSuffix ".development"
             }
 

@@ -52,6 +52,8 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         registerRefreshableActivityListener(this);
 
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
+
+        startRefresh();
     }
 
     @Override
@@ -62,12 +64,6 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     private void setupActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle("Match");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        startRefresh();
     }
 
     @Override
@@ -119,8 +115,8 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
                 String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
+                Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     Log.d(Constants.LOG_TAG, "Navgating to new back stack with key " + eventKey);
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))

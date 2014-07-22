@@ -80,8 +80,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         APIResponse<ArrayList<Match>> matchResult = new APIResponse<>(null, APIResponse.CODE.CACHED304);
 
         if (activity != null && eventKey != null) {
-
-            LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {
                 eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
                 event = eventResponse.getData();
@@ -177,40 +175,49 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE c) {
         super.onPostExecute(c);
 
-        if (event != null && activity != null) {
-            activity.setActionBarTitle(titleString);
-
-            // Set the new info (if necessary)
-            eventName.setText(nameString);
-            if (event.getDateString().isEmpty()) {
-                activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
-            } else {
-                eventDate.setText(event.getDateString());
-            }
-
-            // Show a venue if it is available, otherwise show just the location. If neither is available, hide
-            if (!venueString.isEmpty()) {
-                eventVenue.setText(venueString);
-            } else if (!locationString.isEmpty()) {
-                eventVenue.setText(locationString);
-            } else {
-                eventVenue.setText(R.string.no_location_available);
-                activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
-            }
-
-            if (showRanks) {
-                topTeamsContainer.setVisibility(View.VISIBLE);
-                topTeams.setText(Html.fromHtml(topTeamsString));
-            }
-
-            if (showStats) {
-                topOprsContainer.setVisibility(View.VISIBLE);
-                topOprs.setText(Html.fromHtml(topOprsString));
-            }
-
-            // setup social media intents
+        if (activity != null && mFragment != null) {
             View view = mFragment.getView();
-            if (view != null) {
+
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            View infoContainer = view.findViewById(R.id.event_info_container);
+            if (c == APIResponse.CODE.NODATA ) {
+                noDataText.setText(R.string.no_data);
+                noDataText.setVisibility(View.VISIBLE);
+                infoContainer.setVisibility(View.GONE);
+            }else if(event != null){
+                activity.setActionBarTitle(titleString);
+
+                noDataText.setVisibility(View.GONE);
+
+                // Set the new info (if necessary)
+                eventName.setText(nameString);
+                if (event.getDateString().isEmpty()) {
+                    activity.findViewById(R.id.event_date_container).setVisibility(View.GONE);
+                } else {
+                    eventDate.setText(event.getDateString());
+                }
+
+                // Show a venue if it is available, otherwise show just the location. If neither is available, hide
+                if (!venueString.isEmpty()) {
+                    eventVenue.setText(venueString);
+                } else if (!locationString.isEmpty()) {
+                    eventVenue.setText(locationString);
+                } else {
+                    eventVenue.setText(R.string.no_location_available);
+                    activity.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
+                }
+
+                if (showRanks) {
+                    topTeamsContainer.setVisibility(View.VISIBLE);
+                    topTeams.setText(Html.fromHtml(topTeamsString));
+                }
+
+                if (showStats) {
+                    topOprsContainer.setVisibility(View.VISIBLE);
+                    topOprs.setText(Html.fromHtml(topOprsString));
+                }
+
+                // setup social media intents
                 // Default to showing the nav arrow in the venue view and the venue view being clickable
                 // We need to set these again even though they're defined in XML in case we gain a location
                 // or venue on a refresh and we're reusing the same view.
@@ -234,10 +241,12 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     view.setClickable(false);
                 }
 
-                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + eventName);
+                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + nameString);
                 view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + eventKey);
                 view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + eventKey);
                 view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + eventKey);
+
+                infoContainer.setVisibility(View.VISIBLE);
             }
 
             // Display warning if offline.
@@ -246,11 +255,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             }
 
             // Remove progress spinner and show info, since we're done loading the data.
-            view = mFragment.getView();
-            if (view != null) {
-                view.findViewById(R.id.progress).setVisibility(View.GONE);
-                view.findViewById(R.id.event_info_container).setVisibility(View.VISIBLE);
-            }
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
 
             if (c == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**

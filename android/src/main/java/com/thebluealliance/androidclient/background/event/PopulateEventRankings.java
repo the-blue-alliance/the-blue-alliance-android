@@ -20,6 +20,8 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.Team;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,7 +79,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                  */
                     String teamKey = "frc" + row.get(1).getAsString();
                     String rankingString = "";
-                    CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();
+                    CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();  // use a CaseInsensitiveMap in order to find wins, losses, and ties below
                     for (int i = 2; i < row.size(); i++) {
                         rankingElements.put(headerRow.get(i).getAsString(), row.get(i).getAsString());
                     }
@@ -113,7 +115,14 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                         if (value.contains(".00")) {
                             value = value.replace(".00", "");
                         }
-                        rankingString += entry.getKey() + ": " + value;
+                        // Capitalization hack
+                        String rankingKey = entry.getKey().toString();
+                        if (rankingKey.length() <= 3) {
+                            rankingKey = rankingKey.toUpperCase();
+                        } else {
+                            rankingKey = WordUtils.capitalize(rankingKey);
+                        }
+                        rankingString += rankingKey + ": " + value;
                         if (it.hasNext()) {
                             rankingString += ", ";
                         }

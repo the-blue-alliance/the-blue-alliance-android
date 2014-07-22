@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -100,6 +101,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             }
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             // Return a list of all events for a team for a given year
+            Log.d(Constants.LOG_TAG, "Loading events for team " + mTeamKey + " in " + mYear);
             try {
                 response = DataManager.Teams.getEventsForTeam(activity, mTeamKey, mYear, forceFromCache);
                 ArrayList<Event> eventsArray = response.getData();
@@ -129,9 +131,9 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             ListViewAdapter adapter = new ListViewAdapter(activity, events);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
-            // If there's no event data in the adapter or if we can't download info
+            // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
-            if ((code == APIResponse.CODE.NODATA || adapter.values.isEmpty())) {
+            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(R.string.no_event_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {

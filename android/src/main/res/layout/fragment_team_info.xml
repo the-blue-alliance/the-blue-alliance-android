@@ -101,21 +101,21 @@
                     android:id="@+id/team_twitter_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/twitter_blue_selector"
-                    android:padding="10dp"
+                    android:padding="4dp"
                     android:src="@drawable/ic_twitter_light" />
 
                 <ImageView
                     android:id="@+id/team_youtube_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/youtube_red_selector"
-                    android:padding="10dp"
+                    android:padding="4dp"
                     android:src="@drawable/ic_youtube_light" />
 
                 <ImageView
                     android:id="@+id/team_cd_button"
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/chief_delphi_orange_selector"
-                    android:padding="10dp"
+                    android:padding="4dp"
                     android:src="@drawable/ic_cd_light"/>
             </LinearLayout>
 
@@ -209,4 +209,10 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="visible" />
+
+    <TextView
+        style="@style/NoDataFoundStyle"
+        android:id="@+id/no_data"
+        android:visibility="gone"
+        android:singleLine="false" />
 </RelativeLayout>

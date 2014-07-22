@@ -2,9 +2,9 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_header_account" />
+    <!--<PreferenceCategory android:title="@string/pref_header_account" />-->
 
-    <PreferenceCategory android:title="@string/pref_header_general" />
+    <!--<PreferenceCategory android:title="@string/pref_header_general" />-->
 
     <PreferenceCategory android:title="@string/pref_header_appinfo">
         <Preference
