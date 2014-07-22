@@ -94,8 +94,8 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }

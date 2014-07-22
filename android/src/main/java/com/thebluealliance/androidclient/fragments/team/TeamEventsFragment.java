@@ -108,8 +108,8 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (mYear != -1) {
             parent.startRefresh(this);
         }

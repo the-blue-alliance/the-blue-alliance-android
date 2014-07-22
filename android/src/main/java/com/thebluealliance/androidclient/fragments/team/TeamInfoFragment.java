@@ -80,9 +80,14 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        parent.startRefresh(this);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        parent.startRefresh(this);
         receiver = new LiveEventBroadcastReceiver();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
     }

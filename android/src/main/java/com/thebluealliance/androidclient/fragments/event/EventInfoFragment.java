@@ -76,11 +76,16 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         receiver = new LiveEventBroadcastReceiver();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
