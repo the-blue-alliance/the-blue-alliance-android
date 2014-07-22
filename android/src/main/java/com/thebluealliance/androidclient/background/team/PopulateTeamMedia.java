@@ -116,10 +116,6 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
             ExpandableListView media = (ExpandableListView) view.findViewById(R.id.team_media_list);
 
-            //disable touch feedback (you can't click the elements here...)
-            media.setCacheColorHint(android.R.color.transparent);
-            media.setSelector(R.drawable.transparent);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.
