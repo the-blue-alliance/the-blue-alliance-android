@@ -96,8 +96,8 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }

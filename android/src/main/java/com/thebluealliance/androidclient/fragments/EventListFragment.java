@@ -114,8 +114,8 @@ public class EventListFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         if(mHost != null) {
             mHost.startRefresh(this);
         }

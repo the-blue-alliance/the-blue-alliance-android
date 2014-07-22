@@ -90,8 +90,8 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }

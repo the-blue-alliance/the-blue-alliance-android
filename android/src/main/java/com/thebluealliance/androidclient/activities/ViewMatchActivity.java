@@ -65,8 +65,8 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         startRefresh();
     }
 

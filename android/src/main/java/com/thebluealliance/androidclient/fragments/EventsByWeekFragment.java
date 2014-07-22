@@ -53,8 +53,8 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         if(pagerAdapter != null){
             pagerAdapter.notifyDataSetChanged();
         }

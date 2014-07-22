@@ -76,8 +76,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
@@ -89,9 +89,6 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onPause() {
         super.onPause();
-        if (task != null) {
-            task.cancel(false);
-        }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 
