@@ -22,7 +22,10 @@ public class TBAAndroid extends Application {
         if (!mTrackers.containsKey(trackerId)) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             Tracker t;
-            t = analytics.newTracker(R.xml.tba_android_tracker);
+            String id = Utilities.readLocalProperty(this, "analyticsId");
+            t = analytics.newTracker(id);
+            t.enableAutoActivityTracking(true);
+            t.enableExceptionReporting(true);
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);

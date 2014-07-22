@@ -10,9 +10,6 @@
     <!-- Treat events as test events and don't send to google -->
     <bool name="ga_dryRun">false</bool>
 
-    <!-- The apps Analytics Tracking Id -->
-    <string name="ga_trackingId">XX-12345678-X</string>
-
     <!-- Percentage of events to include in reports -->
     <string name="ga_sampleFrequency">100.0</string>
 

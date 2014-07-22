@@ -226,27 +226,26 @@ public class Utilities {
     public static boolean isInteger(String s) {
         try {
             Integer.parseInt(s);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
         // only got here if we didn't return false
         return true;
     }
 
-    private static Properties properties;
-    public static String readLocalProperty(Context c, String property){
-        if(properties == null) {
-            properties = new Properties();
-            try {
-                InputStream fileStream = c.getAssets().open("local.properties");
-                properties.load(fileStream);
-                fileStream.close();
-            } catch (IOException e) {
-                Log.e(Constants.LOG_TAG, "Unable to read from local.properties");
-                e.printStackTrace();
-            }
+    public static String readLocalProperty(Context c, String property) {
+        Properties properties;
+        properties = new Properties();
+        try {
+            InputStream fileStream = c.getAssets().open("tba.properties");
+            properties.load(fileStream);
+            fileStream.close();
+            return properties.getProperty(property, "");
+        } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "Unable to read from tba.properties");
+            e.printStackTrace();
         }
-        return properties.getProperty(property);
+        return "";
     }
 
 }

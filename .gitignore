@@ -1,6 +1,9 @@
 /local.properties
 .DS_Store
 
+# Local Properties
+android/src/main/assets/tba.properties
+
 # Built application files
 *.apk
 *.ap_

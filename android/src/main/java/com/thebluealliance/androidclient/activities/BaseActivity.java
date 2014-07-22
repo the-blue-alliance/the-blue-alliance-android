@@ -29,7 +29,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         super.onCreate(savedInstanceState);
 
         /* Report the activity start to GAnalytics */
-        System.out.println(getLocalClassName());
         Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
