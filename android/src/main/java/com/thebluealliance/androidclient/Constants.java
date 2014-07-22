@@ -40,7 +40,7 @@ public class Constants {
     }
 
     public static String getApiHeader() {
-        return "the-blue-alliance:android:v" + BuildConfig.VERSION_NAME;
+        return "the-blue-alliance:android:v" + BuildConfig.VERSION_NAME.replace(":", "");  // X-TBA-App-Id must have exactly 3 semicolons
     }
 
     //the week of the year that each event starts competition on, starting with 1992
