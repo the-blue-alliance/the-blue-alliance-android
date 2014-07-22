@@ -24,6 +24,8 @@ public class AllTeamsListFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_team_list_fragment_pager, container, false);
         mViewPager = (ViewPager) v.findViewById(R.id.team_pager);
+        // Make this ridiculously big
+        mViewPager.setOffscreenPageLimit(50);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
         mTabs = (PagerSlidingTabStrip) v.findViewById(R.id.team_pager_tabs);
 
