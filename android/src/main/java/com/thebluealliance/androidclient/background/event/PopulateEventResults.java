@@ -198,6 +198,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 results.setAdapter(adapter);
                 results.onRestoreInstanceState(state);
                 results.setSelection(firstVisiblePosition);
+                if(groups.size() == 1){
+                    results.expandGroup(0);
+                }
                 adapter.notifyDataSetChanged();
             }
 
