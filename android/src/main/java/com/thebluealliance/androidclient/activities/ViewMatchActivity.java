@@ -52,6 +52,8 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         registerRefreshableActivityListener(this);
 
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
+
+        startRefresh();
     }
 
     @Override
@@ -62,12 +64,6 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     private void setupActionBar() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle("Match");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        startRefresh();
     }
 
     @Override

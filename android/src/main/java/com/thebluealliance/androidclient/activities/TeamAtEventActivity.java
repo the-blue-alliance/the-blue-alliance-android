@@ -74,11 +74,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         startRefresh();
     }
 
