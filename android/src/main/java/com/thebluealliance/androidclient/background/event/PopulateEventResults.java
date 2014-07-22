@@ -187,7 +187,8 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
+            // only show the message when try try and actually load data from the web
+            if ( !forceFromCache && (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty())) {
                 noDataText.setVisibility(View.VISIBLE);
                 noDataText.setText(teamKey.isEmpty()?R.string.no_match_data:R.string.no_team_match_data);
             } else {
