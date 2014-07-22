@@ -73,6 +73,9 @@ public class ModelInflater {
                 case Database.Events.VENUE:
                     event.setVenue(data.getString(i));
                     break;
+                case Database.Events.WEBSITE:
+                    event.setWebsite(data.getString(i));
+                    break;
                 case Database.Events.TYPE:
                     event.setEventType(data.getInt(i));
                     break;
