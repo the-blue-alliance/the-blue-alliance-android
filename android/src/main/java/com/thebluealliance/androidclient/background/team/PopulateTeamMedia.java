@@ -63,6 +63,11 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         team = (String) params[0];
         year = (Integer) params[1];
 
+        if(year == -1){
+            //year has not been set.
+            return APIResponse.CODE.NODATA;
+        }
+
         APIResponse<ArrayList<Media>> response = null;
         try {
             response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
@@ -115,11 +120,6 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         if (view != null && activity != null) {
             ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
             ExpandableListView media = (ExpandableListView) view.findViewById(R.id.team_media_list);
-
-            //disable touch feedback (you can't click the elements here...)
-            media.setCacheColorHint(android.R.color.transparent);
-            media.setSelector(R.drawable.transparent);
-
             TextView noDataText = (TextView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.

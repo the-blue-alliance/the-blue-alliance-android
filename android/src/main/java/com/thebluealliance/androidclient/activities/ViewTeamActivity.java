@@ -142,16 +142,18 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     }
 
     private void setupActionBar() {
-        if (yearsParticipated != null) {
-            ActionBar bar = getActionBar();
-            ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, yearsParticipated);
-            actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-            String teamNumber = mTeamKey.replace("frc", "");
-            setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
+        ActionBar bar = getActionBar();
+        if(bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
-            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-            bar.setListNavigationCallbacks(actionBarAdapter, this);
-            bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+            if (yearsParticipated != null) {
+                ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, yearsParticipated);
+                actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
+                String teamNumber = mTeamKey.replace("frc", "");
+                setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
+                bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+                bar.setListNavigationCallbacks(actionBarAdapter, this);
+                bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+            }
         }
     }
 

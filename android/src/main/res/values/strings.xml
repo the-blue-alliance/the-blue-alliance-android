@@ -67,6 +67,7 @@
 
     <!-- No Data -->
     <string name="no_data">No data was found for this event.</string>
+    <string name="no_team_info">No data was found for this team.</string>
     <string name="no_alliance_data">No alliance data was found for this event.</string>
     <string name="no_team_data">No team list was found for this event.</string>
     <string name="no_match_data">No match results were found for this event.</string>

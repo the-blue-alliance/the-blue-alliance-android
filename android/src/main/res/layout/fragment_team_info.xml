@@ -209,4 +209,10 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="visible" />
+
+    <TextView
+        style="@style/NoDataFoundStyle"
+        android:id="@+id/no_data"
+        android:visibility="gone"
+        android:singleLine="false" />
 </RelativeLayout>

@@ -131,7 +131,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
             // If there's no event data in the adapter or if we can't download info
             // off the web, display a message.
-            if ((code == APIResponse.CODE.NODATA || adapter.values.isEmpty())) {
+            if (code == APIResponse.CODE.NODATA || (!forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(R.string.no_event_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
