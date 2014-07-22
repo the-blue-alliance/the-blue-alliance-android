@@ -30,7 +30,7 @@ public class AllTeamsListFragment extends Fragment {
         /**
          * Fix for really strange bug. Menu bar items wouldn't appear only when navigated to from 'Events' in the nav drawer
          * Bug is some derivation of this: https://code.google.com/p/android/issues/detail?id=29472
-         * So set the view pager's adapter in another thread to avoid a race condition, or something. 
+         * So set the view pager's adapter in another thread to avoid a race condition, or something.
          */
         mViewPager.post(new Runnable() {
             public void run() {
