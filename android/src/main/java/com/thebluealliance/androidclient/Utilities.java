@@ -19,12 +19,15 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import me.xuender.unidecode.Unidecode;
 
@@ -228,6 +231,22 @@ public class Utilities {
         }
         // only got here if we didn't return false
         return true;
+    }
+
+    private static Properties properties;
+    public static String readLocalProperty(Context c, String property){
+        if(properties == null) {
+            properties = new Properties();
+            try {
+                InputStream fileStream = c.getAssets().open("local.properties");
+                properties.load(fileStream);
+                fileStream.close();
+            } catch (IOException e) {
+                Log.e(Constants.LOG_TAG, "Unable to read from local.properties");
+                e.printStackTrace();
+            }
+        }
+        return properties.getProperty(property);
     }
 
 }
