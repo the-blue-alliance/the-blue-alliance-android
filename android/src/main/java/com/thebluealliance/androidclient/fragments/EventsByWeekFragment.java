@@ -53,8 +53,8 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if(pagerAdapter != null){
             pagerAdapter.notifyDataSetChanged();
         }
@@ -75,8 +75,8 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onPause() {
+        super.onPause();
         if(mViewPager != null){
             pagerState = mViewPager.onSaveInstanceState();
             selectedTab = mViewPager.getCurrentItem();
