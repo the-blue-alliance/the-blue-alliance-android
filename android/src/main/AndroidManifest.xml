@@ -39,10 +39,12 @@
                 <data android:scheme="http" />
                 <data android:host="@string/web_url_host" />
                 <data android:host="@string/web_url_host_www" />
-                <data android:path="/" />
-                <data android:pathPrefix="/team" />
-                <data android:pathPrefix="/event" />
-                <data android:pathPrefix="/match" />
+                <data android:pathPattern="/"/>
+                <data android:pathPattern="/teams"/>
+                <data android:pathPattern="/team/.*"/>
+                <data android:pathPattern="/events"/>
+                <data android:pathPattern="/event/.*"/>
+                <data android:pathPattern="/match/.*"/>
             </intent-filter>
         </activity>
         <activity
