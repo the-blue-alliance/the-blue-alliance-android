@@ -49,6 +49,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     int closeButtonId;
 
     private SearchResultsHeaderListElement teamsHeader, eventsHeader;
+    private String currentQuery;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         /* Report the activity start to GAnalytics */
         Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
+
+        currentQuery = "";
 
         resultsList = (ListView) findViewById(R.id.results);
 
@@ -93,6 +96,21 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        //track the search query the user submitted
+        //Track the query
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("search")
+                .setAction(currentQuery)
+                .setLabel("search")
+                .build());
+        currentQuery = "";
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         /* Report the activity stop to GAnalytics */
@@ -111,13 +129,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     }
 
     private void updateQuery(final String query) {
-
-        //Track the query
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("search")
-                .setAction(query)
-                .build());
+        currentQuery = query;
 
         String preparedQuery = Utilities.getPreparedQueryForSearch(query);
 
