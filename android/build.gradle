@@ -28,6 +28,10 @@ android {
             debug {
                 versionNameSuffix "/#" + gitSha
                 applicationIdSuffix ".development"
+                applicationVariants.all { variant ->
+                    def file = variant.outputFile
+                    variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + "#"+gitSha+"-debug.apk")
+                }
             }
 
             release {

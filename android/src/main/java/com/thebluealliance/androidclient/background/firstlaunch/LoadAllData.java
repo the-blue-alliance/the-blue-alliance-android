@@ -62,7 +62,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 start = start == 0 ? 1 : start;
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
                 APIResponse<String> teamListResponse;
-                teamListResponse = TBAv2.getResponseFromURLOrThrow(context, String.format(TBAv2.API_URL.get(TBAv2.QUERY.TEAM_LIST), pageNum), true, false);
+                teamListResponse = TBAv2.getResponseFromURLOrThrow(context, String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.TEAM_LIST), pageNum), true, false);
                 JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
                 if (responseObject != null) {
                     if (responseObject.size() == 0) {
@@ -82,7 +82,8 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 }
                 publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
                 APIResponse<String> eventListResponse;
-                eventListResponse = TBAv2.getResponseFromURLOrThrow(context, "http://www.thebluealliance.com/api/v2/events/" + year, true, false);
+                String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
+                eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, true, false);
                 JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
                 if (responseObject instanceof JsonObject) {
                     if (((JsonObject) responseObject).has("404")) {
