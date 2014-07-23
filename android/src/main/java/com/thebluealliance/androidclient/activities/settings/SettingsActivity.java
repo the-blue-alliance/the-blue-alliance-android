@@ -60,11 +60,10 @@ public class SettingsActivity extends PreferenceActivity {
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            Preference devSettings = findPreference("dev_settings");
-            if(Utilities.isDebuggable(getActivity())){
+            if(Utilities.isDebuggable()){
+                addPreferencesFromResource(R.xml.dev_preference_link);
+                Preference devSettings = findPreference("dev_settings");
                 devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
-            }else{
-                getPreferenceScreen().removePreference(devSettings);
             }
         }
     }

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.text.Html;
@@ -249,8 +248,9 @@ public class Utilities {
         return "";
     }
 
-    public static boolean isDebuggable(Context c){
-        return (0 != (c.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+    public static boolean isDebuggable(){
+        Log.i(Constants.LOG_TAG, "Debug: "+BuildConfig.DEBUG);
+        return BuildConfig.DEBUG;
     }
 
 }

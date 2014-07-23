@@ -36,7 +36,7 @@ public class TBAAndroid extends Application {
                 analytics = GoogleAnalytics.getInstance(c);
                 boolean dryRun;
 
-                if (Utilities.isDebuggable(c)) {
+                if (Utilities.isDebuggable()) {
                     dryRun = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("analytics_dry_run", true);
                 } else {
                     dryRun = false;
@@ -46,7 +46,7 @@ public class TBAAndroid extends Application {
             }
 
             String id;
-            if(Utilities.isDebuggable(c)){
+            if(Utilities.isDebuggable()){
                 boolean useDebugKey = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("analytics_debug_key", true);
                 id = Utilities.readLocalProperty(c, useDebugKey ? DEBUG_ANALYTICS_KEY : PROD_ANALYTICS_KEY);
             }else{

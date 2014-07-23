@@ -125,7 +125,6 @@ public class EventHelper {
     }
 
     public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
-        Log.d(Constants.LOG_TAG, "Sorting " + events.size() + " events");
         HashMap<String, ArrayList<Event>> groups = new HashMap<>();
         ArrayList<Event> offseason = new ArrayList<>(),
                 preseason = new ArrayList<>(),
