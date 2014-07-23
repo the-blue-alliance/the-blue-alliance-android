@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 

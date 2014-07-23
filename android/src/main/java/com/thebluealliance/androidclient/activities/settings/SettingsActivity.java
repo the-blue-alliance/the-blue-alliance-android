@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.activities;
+package com.thebluealliance.androidclient.activities.settings;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +10,9 @@ import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.ContributorsActivity;
+import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -56,6 +59,13 @@ public class SettingsActivity extends PreferenceActivity {
 
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
+
+            Preference devSettings = findPreference("dev_settings");
+            if(Utilities.isDebuggable(getActivity())){
+                devSettings.setIntent(new Intent(getActivity(), DevSettingsActivity.class));
+            }else{
+                getPreferenceScreen().removePreference(devSettings);
+            }
         }
     }
 

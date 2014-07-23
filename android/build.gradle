@@ -70,6 +70,7 @@ repositories {
 }
 
 dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v13:19.+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
     compile 'com.android.support:support-v4:19.+'
@@ -78,5 +79,4 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.77'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
 }

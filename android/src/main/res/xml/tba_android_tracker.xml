@@ -32,7 +32,7 @@
     <screenName name="com.thebluealliance.androidclient.activities.ViewTeamActivity">Team View Activity</screenName>
     <screenName name="com.thebluealliance.androidclient.activities.ViewMatchActivity">Match View Activity</screenName>
     <screenName name="com.thebluealliance.androidclient.activities.TeamAtEventActivity">Team@Event Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.SettingsActivity">Settings Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.activities.settings.SettingsActivity">Settings Activity</screenName>
     <screenName name="com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity">Open Source Licenses Activity</screenName>
     <screenName name="com.thebluealliance.androidclient.activities.SearchResultsActivity">Search Results Activity</screenName>
     <screenName name="com.thebluealliance.androidclient.activities.MoreSearchResultsActivity">More Search Results Activity</screenName>
