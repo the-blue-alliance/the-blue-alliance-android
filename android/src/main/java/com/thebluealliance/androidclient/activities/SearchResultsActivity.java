@@ -13,8 +13,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
@@ -50,6 +53,11 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
+        /* Report the activity start to GAnalytics */
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+
         resultsList = (ListView) findViewById(R.id.results);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -81,6 +89,13 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         // Change search hint text color
         int searchTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         ((TextView) searchView.findViewById(searchTextId)).setHintTextColor(getResources().getColor(R.color.search_hint));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        /* Report the activity stop to GAnalytics */
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override
