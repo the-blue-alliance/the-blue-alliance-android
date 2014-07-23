@@ -50,6 +50,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     static {
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.event_icon_selector, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.ic_action_add_to_queue, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.team_icon_selector, R.layout.nav_drawer_item));
         //NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_insights, "Insights", R.drawable.insights_icon_selector, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, "SETTINGS", R.drawable.settings_icon_selector, R.layout.nav_drawer_item_small));

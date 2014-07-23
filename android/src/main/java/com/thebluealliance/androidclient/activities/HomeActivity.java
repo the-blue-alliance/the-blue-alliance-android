@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
+import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.Calendar;
@@ -47,7 +48,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
 
-    private String[] dropdownItems;
+    private String[] eventsDropdownItems, districtsDropdownItems;
 
     private TextView warningMessage;
 
@@ -66,9 +67,14 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        dropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
-        for (int i = 0; i < dropdownItems.length; i++) {
-            dropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+        eventsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
+        for (int i = 0; i < eventsDropdownItems.length; i++) {
+            eventsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+        }
+
+        districtsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_DISTRICT_YEAR + 1];
+        for (int i=0; i < districtsDropdownItems.length; i++){
+            districtsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
         }
 
         int initNavId = R.id.nav_item_events;
@@ -136,6 +142,8 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             case R.id.nav_item_events:
                 fragment = EventsByWeekFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
                 break;
+            case R.id.nav_item_districts:
+                fragment = DistrictListFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
                 break;
@@ -153,9 +161,12 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     }
 
     private void resetActionBar() {
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        getActionBar().setDisplayShowCustomEnabled(false);
-        getActionBar().setDisplayShowTitleEnabled(true);
+        ActionBar bar = getActionBar();
+        if(bar != null) {
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            bar.setDisplayShowCustomEnabled(false);
+            bar.setDisplayShowTitleEnabled(true);
+        }
     }
 
     @Override
@@ -167,6 +178,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             switch (mCurrentSelectedNavigationItemId) {
                 case R.id.nav_item_events:
                     setupActionBarForEvents();
+                    break;
+                case R.id.nav_item_districts:
+                    setupActionBarForDistricts();
                     break;
                 case R.id.nav_item_teams:
                     getActionBar().setTitle("Teams");
@@ -181,13 +195,33 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     }
 
     private void setupActionBarForEvents() {
-        getActionBar().setDisplayShowTitleEnabled(false);
+        ActionBar bar = getActionBar();
+        if(bar != null) {
+            bar.setDisplayShowTitleEnabled(false);
 
-        ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.actionbar_spinner_events, R.id.year, dropdownItems);
-        actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActionBar().setListNavigationCallbacks(actionBarAdapter, this);
-        getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
+            ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_events, R.id.year, eventsDropdownItems);
+            actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            bar.setListNavigationCallbacks(actionBarAdapter, this);
+            bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+        }
+    }
+
+    private void setupActionBarForDistricts(){
+        ActionBar bar = getActionBar();
+        if(bar != null) {
+            bar.setDisplayShowTitleEnabled(false);
+
+            ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_districts, R.id.year, districtsDropdownItems);
+            actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
+            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            bar.setListNavigationCallbacks(actionBarAdapter, this);
+            if(mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < districtsDropdownItems.length) {
+                bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+            }else{
+                bar.setSelectedNavigationItem(0);
+            }
+        }
     }
 
     @Override

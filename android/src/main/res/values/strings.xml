@@ -30,6 +30,7 @@
     <string name="tab_insights">Insights</string>
     <string name="title_activity_view_event">View Event</string>
     <string name="events_label">Events</string>
+    <string name="districts_label">Districts</string>
 
     <!-- View Event -->
     <string name="tab_event_info">Info</string>
