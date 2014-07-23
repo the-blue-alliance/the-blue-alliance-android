@@ -45,6 +45,7 @@ android {
 }
 
 task loadProperties << {
+    // add in signing keys from local.properties
     def config = new Properties()
     def propFile = file("../local.properties")
     System.out.println("Loading property file: " + propFile.absolutePath)
@@ -55,6 +56,15 @@ task loadProperties << {
         android.signingConfigs.release.keyAlias = config["release.key.alias"]
         android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
     }
+
+    // check to make sure that an analytics key is defined
+    def tba_config = new Properties();
+    def tba_propFile = file("src/main/assets/tba.properties")
+    tba_config.load(new FileInputStream(tba_propFile));
+    if(!tba_config.containsKey("analytics.id")){
+        throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
+    }
+    System.out.println("Building with analytics key: "+tba_config["analytics.id"]);
 }
 
 tasks.whenTaskAdded { theTask ->
@@ -70,6 +80,7 @@ repositories {
 }
 
 dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v13:19.+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
     compile 'com.android.support:support-v4:19.+'
@@ -78,5 +89,4 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.77'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
 }

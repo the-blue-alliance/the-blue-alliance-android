@@ -9,8 +9,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 
 /**
  * File created by phil on 5/31/14.
@@ -52,6 +55,15 @@ public class ImageListElement extends ListElement {
         holder.image_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //Track Click
+                Tracker t = TBAAndroid.getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER, c);
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("media_click")
+                        .setAction(linkUrl)
+                        .setLabel(isVideo?"video":"cd_photo")
+                        .build());
+
                 c.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(linkUrl)));
             }
         });

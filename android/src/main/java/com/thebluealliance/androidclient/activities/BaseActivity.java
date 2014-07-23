@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
@@ -24,11 +27,23 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /* Report the activity start to GAnalytics */
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             // Register callback
             mNfcAdapter.setNdefPushMessageCallback(this, this);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        /* Report the activity stop to GAnalytics */
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override

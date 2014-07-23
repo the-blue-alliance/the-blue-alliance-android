@@ -1,6 +1,31 @@
 <resources>
     <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_dev_settings">Debug Settings</string>
     <string name="pref_header_appinfo">Info</string>
     <string name="pref_header_general">General</string>
     <string name="pref_header_account">Account</string>
+
+    <!-- Settings -->
+    <string name="settings_version_label">Version</string>
+    <string name="github_label">The Blue Alliance for Android is open source</string>
+    <string name="github_summary">View project on GitHub</string>
+    <string name="tbasite_label">The Blue Alliance website</string>
+    <string name="tbasite_summary">Visit www.thebluealliance.com</string>
+    <string name="license_label">Open Source Licenses</string>
+    <string name="changelog">View Changelog</string>
+    <string name="contributors">Contributors</string>
+    <string name="contributors_summary">View a list of people who contributed to this project</string>
+    <string name="dev_settings">Debug Settings</string>
+
+    <!-- Debug Settings Screen -->
+    <string name="pref_header_debug">Debug Preferences</string>
+
+    <string name="pref_dry_run">Analytics Dry Run</string>
+    <string name="pref_dry_run_detail">Skip sending analytics data</string>
+
+    <string name="pref_analytics_key">Use Debug Analytics</string>
+    <string name="pref_analytics_detail">Use analytics.id.debug Property ID for analytics</string>
+
+    <string name="pref_tba_host">TBA Host</string>
+    <string name="pref_tba_host_detail">Web address of another TBA instance that the app will use</string>
 </resources>
