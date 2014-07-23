@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 9
-        versionName "1.1"
+        versionCode 10
+        versionName "1.2"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -40,6 +40,11 @@ android {
                     variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + ".apk")
                 }
             }
+            beta.initWith(buildTypes.release)
+            beta {
+                versionNameSuffix "-beta"
+            }
+
         }
     }
 }
@@ -68,7 +73,7 @@ task loadProperties << {
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("packageRelease")) {
+    if (theTask.name.equals("packageRelease") || theTask.name.equals("packageBeta")) {
         theTask.dependsOn "loadProperties"
     }
 }
