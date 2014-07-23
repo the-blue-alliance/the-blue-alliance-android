@@ -26,15 +26,15 @@
     substitute for the full length canonical Activity name in screen view hit. In order to
     specify an alternate screen name use an <screenName> element, with the name attribute
     specifying the canonical name, and the value the alias to use instead. -->
-    <screenName name="com.thebluealliance.androidclient.activities.LaunchActivity">Launch Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.HomeActivity">Home Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.ViewEventActivity">Event View Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.ViewTeamActivity">Team View Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.ViewMatchActivity">Match View Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.TeamAtEventActivity">Team@Event Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.settings.SettingsActivity">Settings Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity">Open Source Licenses Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.SearchResultsActivity">Search Results Activity</screenName>
-    <screenName name="com.thebluealliance.androidclient.activities.MoreSearchResultsActivity">More Search Results Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.LaunchActivity">Launch Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.HomeActivity">Home Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.ViewEventActivity">Event View Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.ViewTeamActivity">Team View Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.ViewMatchActivity">Match View Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.TeamAtEventActivity">Team@Event Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.settings.SettingsActivity">Settings Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.OpenSourceLicensesActivity">Open Source Licenses Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.SearchResultsActivity">Search Results Activity</screenName>
+    <screenName name="com.thebluealliance.androidclient.com.thebluealliance.androidclient.debug.activities.MoreSearchResultsActivity">More Search Results Activity</screenName>
 
 </resources>

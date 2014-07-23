@@ -2,15 +2,4 @@
 <resources>
     <string name="app_name">The Blue Alliance Debug</string>
 
-    <!-- Debug Settings Screen -->
-    <string name="pref_header_debug">Debug Preferences</string>
-
-    <string name="pref_dry_run">Analytics Dry Run</string>
-    <string name="pref_dry_run_detail">Skip sending analytics data</string>
-
-    <string name="pref_analytics_key">Use Debug Analytics</string>
-    <string name="pref_analytics_detail">Use analytics.id.debug Property ID for analytics</string>
-
-    <string name="pref_tba_host">TBA Host</string>
-    <string name="pref_tba_host_detail">Web address of another TBA instance that the app will use</string>
 </resources>

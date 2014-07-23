@@ -62,7 +62,7 @@ public class SettingsActivity extends PreferenceActivity {
 
             Preference devSettings = findPreference("dev_settings");
             if(Utilities.isDebuggable(getActivity())){
-                devSettings.setIntent(new Intent(getActivity(), DevSettingsActivity.class));
+                devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
             }else{
                 getPreferenceScreen().removePreference(devSettings);
             }
