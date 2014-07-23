@@ -4,6 +4,8 @@ import android.database.Cursor;
 
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
@@ -248,4 +250,74 @@ public class ModelInflater {
         return eventTeam;
     }
 
+    public static District inflateDistrict(Cursor data){
+        District district = new District();
+        for (int i = 0; i < data.getColumnCount(); i++){
+            switch (data.getColumnName(i)){
+                case Database.Districts.KEY:
+                    district.setKey(data.getString(i));
+                    break;
+                case Database.Districts.ABBREV:
+                    district.setAbbreviation(data.getString(i));
+                    break;
+                case Database.Districts.ENUM:
+                    district.setEnum(data.getInt(i));
+                    break;
+                case Database.Districts.YEAR:
+                    district.setYear(data.getInt(i));
+                    break;
+                default:
+            }
+        }
+        return district;
+    }
+
+    public static DistrictTeam inflateDistrictTeam(Cursor data){
+        DistrictTeam districtTeam = new DistrictTeam();
+        for (int i = 0; i < data.getColumnCount(); i++){
+            switch (data.getColumnName(i)){
+                case Database.DistrictTeams.KEY:
+                    districtTeam.setKey(data.getString(i));
+                    break;
+                case Database.DistrictTeams.TEAM_KEY:
+                    districtTeam.setTeamKey(data.getString(i));
+                    break;
+                case Database.DistrictTeams.DISTRICT_ENUM:
+                    districtTeam.setDistrictEnum(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.YEAR:
+                    districtTeam.setYear(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.RANK:
+                    districtTeam.setRank(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.EVENT1_KEY:
+                    districtTeam.setEvent1Key(data.getString(i));
+                    break;
+                case Database.DistrictTeams.EVENT1_POINTS:
+                    districtTeam.setEvent1Points(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.EVENT2_KEY:
+                    districtTeam.setEvent2Key(data.getString(i));
+                    break;
+                case Database.DistrictTeams.EVENT2_POINTS:
+                    districtTeam.setEvent2Points(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.CMP_KEY:
+                    districtTeam.setCmpKey(data.getString(i));
+                    break;
+                case Database.DistrictTeams.CMP_POINTS:
+                    districtTeam.setCmpPoints(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.ROOKIE_POINTS:
+                    districtTeam.setRookiePoints(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.TOTAL_POINTS:
+                    districtTeam.setTotalPoints(data.getInt(i));
+                    break;
+                default:
+            }
+        }
+        return districtTeam;
+    }
 }
