@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.text.Html;
@@ -19,12 +20,15 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import me.xuender.unidecode.Unidecode;
 
@@ -223,11 +227,30 @@ public class Utilities {
     public static boolean isInteger(String s) {
         try {
             Integer.parseInt(s);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
         // only got here if we didn't return false
         return true;
+    }
+
+    public static String readLocalProperty(Context c, String property) {
+        Properties properties;
+        properties = new Properties();
+        try {
+            InputStream fileStream = c.getAssets().open("tba.properties");
+            properties.load(fileStream);
+            fileStream.close();
+            return properties.getProperty(property, "");
+        } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "Unable to read from tba.properties");
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static boolean isDebuggable(Context c){
+        return (0 != (c.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
     }
 
 }

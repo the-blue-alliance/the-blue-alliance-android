@@ -19,8 +19,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
@@ -126,8 +129,18 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             return;
         }
         if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
-            PackageManager manager = getActivity().getPackageManager();
             String uri = v.getTag().toString();
+
+            //social button was clicked. Track the call
+            Tracker t = TBAAndroid.getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
+            t.send(new HitBuilders.EventBuilder()
+                    .setCategory("social_click")
+                    .setAction(uri)
+                    .setLabel(eventKey)
+                    .build());
+
+
+            PackageManager manager = getActivity().getPackageManager();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
             if (!handlers.isEmpty()) {

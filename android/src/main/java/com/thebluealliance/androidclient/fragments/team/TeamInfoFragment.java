@@ -19,8 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
@@ -107,6 +110,15 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         if (view.getTag() != null) {
 
             String uri = view.getTag().toString();
+
+            //social button was clicked. Track the call
+            Tracker t = TBAAndroid.getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
+            t.send(new HitBuilders.EventBuilder()
+                    .setCategory("social_click")
+                    .setAction(uri)
+                    .setLabel(mTeamKey)
+                    .build());
+
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
             if (!handlers.isEmpty()) {

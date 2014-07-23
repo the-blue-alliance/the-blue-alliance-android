@@ -45,6 +45,11 @@
             android:persistent="false"
             android:selectable="true"
             android:title="@string/license_label"/>
+
+        <Preference
+            android:key="dev_settings"
+            android:selectable="true"
+            android:title="@string/dev_settings"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

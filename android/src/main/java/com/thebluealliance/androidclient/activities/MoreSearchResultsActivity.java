@@ -13,7 +13,10 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
@@ -47,6 +50,11 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
+        /* Report the activity start to GAnalytics */
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+
         resultsList = (ListView) findViewById(R.id.results);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -92,6 +100,13 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
         });
 
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        /* Report the activity stop to GAnalytics */
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override
