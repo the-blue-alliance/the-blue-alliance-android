@@ -94,7 +94,14 @@ public class MatchListElement extends ListElement implements Serializable{
                     holder.redAlliance.setBackgroundResource(R.drawable.red_border);
                     holder.blueAlliance.setBackgroundResource(R.drawable.no_border);
                 }
+                else {
+                    // tie
+                    holder.redAlliance.setBackgroundResource(R.drawable.no_border);
+                    holder.blueAlliance.setBackgroundResource(R.drawable.no_border);
+                }
             } catch (NumberFormatException e) {
+                holder.redAlliance.setBackgroundResource(R.drawable.no_border);
+                holder.blueAlliance.setBackgroundResource(R.drawable.no_border);
                 Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
             }
         }
