@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -11,13 +12,12 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -56,7 +56,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        if(activity != null) {
+            activity.showMenuProgressBar();
+        }
     }
 
     @Override
@@ -74,7 +76,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
         ListGroup quarterMatches = new ListGroup(activity.getString(R.string.quarters_header));
         ListGroup semiMatches = new ListGroup(activity.getString(R.string.semis_header));
         ListGroup finalMatches = new ListGroup(activity.getString(R.string.finals_header));
-        MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
         APIResponse<ArrayList<Match>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
@@ -127,7 +128,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                     previousIteration = match;
                     lastMatchPlayed = match.hasBeenPlayed();
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't get match type. Missing fields..."+
+                    Log.e(Constants.LOG_TAG, "Can't get match type. Missing fields..." +
                             Arrays.toString(e.getStackTrace()));
                 }
             }
@@ -135,9 +136,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 lastMatch = results.get(results.size() - 1);
             }
 
-            if (!teamKey.isEmpty()) {
-                String recordString = record[0] + "-" + record[1] + "-" + record[2];
-            }
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
             response = new APIResponse<>(null, APIResponse.CODE.NODATA);
@@ -150,6 +148,12 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
+            }
+
+            if(event.isHappeningNow()){
+                //send out that there are live matches happening for other things to pick up
+                Log.d(Constants.LOG_TAG, "Sending live event broadcast: "+eventKey);
+                LocalBroadcastManager.getInstance(activity).sendBroadcast(new LiveEventBroadcast(nextMatch.render(), lastMatch.render()));
             }
 
         } catch (DataManager.NoDataException e) {
@@ -183,8 +187,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || groups == null || adapter.groups.isEmpty()) {
+            // only show the message when try try and actually load data from the web
+            if ( code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups.isEmpty())) {
                 noDataText.setVisibility(View.VISIBLE);
+                noDataText.setText(teamKey.isEmpty()?R.string.no_match_data:R.string.no_team_match_data);
             } else {
                 noDataText.setVisibility(View.GONE);
                 ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
@@ -193,6 +199,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 results.setAdapter(adapter);
                 results.onRestoreInstanceState(state);
                 results.setSelection(firstVisiblePosition);
+                if(groups.size() == 1){
+                    results.expandGroup(0);
+                }
+                adapter.notifyDataSetChanged();
             }
 
             // Remove progress spinner and show content since we're done loading data.

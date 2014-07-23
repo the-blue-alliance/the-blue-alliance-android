@@ -1,25 +1,35 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
+import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.List;
 
@@ -32,6 +42,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     private static final String KEY = "eventKey";
     private PopulateEventInfo task;
     private Activity parent;
+    private BroadcastReceiver receiver;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -58,27 +69,40 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View info = inflater.inflate(R.layout.fragment_event_info, null);
         info.findViewById(R.id.event_venue_container).setOnClickListener(this);
-        info.findViewById(R.id.event_location_container).setOnClickListener(this);
         info.findViewById(R.id.event_website_button).setOnClickListener(this);
         info.findViewById(R.id.event_twitter_button).setOnClickListener(this);
         info.findViewById(R.id.event_youtube_button).setOnClickListener(this);
         info.findViewById(R.id.event_cd_button).setOnClickListener(this);
         info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
-        info.findViewById(R.id.event_top_opr_container).setOnClickListener(this);
+        info.findViewById(R.id.event_top_oprs_container).setOnClickListener(this);
         return info;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        receiver = new LiveEventBroadcastReceiver();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+    }
+
+    @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading "+eventKey+" info");
+        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " info");
         task = new PopulateEventInfo(this, true);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
     }
@@ -90,7 +114,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         }
     }
 
-    public void updateTask(PopulateEventInfo newTask){
+    public void updateTask(PopulateEventInfo newTask) {
         task = newTask;
     }
 
@@ -98,15 +122,25 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.event_top_teams_container) {
-            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(1);
+            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(2);  // Rankings
             return;
-        } else if (id == R.id.event_top_opr_container) {
-            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(5);
+        } else if (id == R.id.event_top_oprs_container) {
+            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(5);  // Stats
             return;
         }
-        if (v.getTag() != null) {
-            PackageManager manager = getActivity().getPackageManager();
+        if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
             String uri = v.getTag().toString();
+
+            //social button was clicked. Track the call
+            Tracker t = TBAAndroid.getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
+            t.send(new HitBuilders.EventBuilder()
+                    .setCategory("social_click")
+                    .setAction(uri)
+                    .setLabel(eventKey)
+                    .build());
+
+
+            PackageManager manager = getActivity().getPackageManager();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
             if (!handlers.isEmpty()) {
@@ -123,5 +157,43 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public void onDestroy() {
         super.onDestroy();
         ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+    }
+
+    protected void showLastMatch(MatchListElement match){
+        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_last_match_container);
+        lastLayout.setVisibility(View.VISIBLE);
+        if (lastLayout.getChildCount() > 1) {
+            lastLayout.removeViewAt(1);
+        }
+        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    }
+
+    protected void showNextMatch(MatchListElement match){
+        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
+        lastLayout.setVisibility(View.VISIBLE);
+        if (lastLayout.getChildCount() > 1) {
+            lastLayout.removeViewAt(1);
+        }
+        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    }
+
+    class LiveEventBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(Constants.LOG_TAG, "Received live event broadcast");
+            if(intent.getAction().equals(LiveEventBroadcast.ACTION)){
+                if(intent.hasExtra(LiveEventBroadcast.LAST_MATCH)){
+                    Log.d(Constants.LOG_TAG, "showing last match");
+                    MatchListElement last = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.LAST_MATCH);
+                    showLastMatch(last);
+                }
+                if(intent.hasExtra(LiveEventBroadcast.NEXT_MATCH)){
+                    Log.d(Constants.LOG_TAG, "showing next match");
+                    MatchListElement next = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.NEXT_MATCH);
+                    showNextMatch(next);
+                }
+            }
+        }
     }
 }

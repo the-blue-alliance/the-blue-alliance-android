@@ -60,7 +60,7 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (mAdapter != null) {
@@ -79,6 +79,14 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).startRefresh(this);
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (mTask != null) {
@@ -87,14 +95,6 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -112,7 +112,7 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventTeams newTask){
+    public void updateTask(PopulateEventTeams newTask) {
         mTask = newTask;
     }
 

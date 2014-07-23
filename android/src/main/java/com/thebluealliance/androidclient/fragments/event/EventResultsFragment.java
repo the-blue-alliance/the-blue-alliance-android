@@ -15,15 +15,9 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventResults;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.Match;
 
 /**
  * File created by phil on 4/22/14.
@@ -81,22 +75,12 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
             Log.d("onCreateView", "using existing adapter");
             mProgressBar.setVisibility(View.GONE);
         }
-        System.out.println("setting on click adapter");
-        mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                String matchKey = view.findViewById(R.id.match_title).getTag().toString();
-                Log.d(Constants.LOG_TAG, "Match key: " + matchKey);
-                startActivity(ViewMatchActivity.newInstance(getActivity(), matchKey));
-                return true;
-            }
-        });
         return v;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
@@ -130,7 +114,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventResults newTask){
+    public void updateTask(PopulateEventResults newTask) {
         mTask = newTask;
     }
 

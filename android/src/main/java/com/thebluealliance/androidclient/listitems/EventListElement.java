@@ -9,14 +9,17 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
+import java.io.Serializable;
+
 /**
  * File created by phil on 4/23/14.
  */
-public class EventListElement extends ListElement {
+public class EventListElement extends ListElement implements Serializable{
 
     private String mEventName;
     private String mEventDates;
     private String mEventLocation;
+    private String mEventKey;
 
     public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
         super(event.getEventKey());
@@ -27,9 +30,14 @@ public class EventListElement extends ListElement {
 
     public EventListElement(String key, String name, String dates, String location) {
         super(key);
+        mEventKey = key;
         mEventName = name;
         mEventDates = dates;
         mEventLocation = location;
+    }
+
+    public String getEventKey(){
+        return mEventKey;
     }
 
     @Override

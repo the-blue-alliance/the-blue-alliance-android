@@ -40,5 +40,6 @@ public class TeamCursorAdapter extends CursorAdapter {
         ((TextView) view.findViewById(R.id.team_name)).setText(teamName.isEmpty() ? "Team " + teamNumber : teamName);
         ((TextView) view.findViewById(R.id.team_location)).setText(cursor.getString(cursor.getColumnIndex(Database.Teams.LOCATION)));
         view.findViewById(R.id.team_info).setVisibility(View.GONE);
+        view.findViewById(R.id.team_info_divider).setVisibility(View.GONE);
     }
 }

@@ -22,8 +22,8 @@ public class EventSortByTypeComparator implements Comparator<Event> {
             } else {
                 return typeCompare;
             }
-        }catch (BasicModel.FieldNotDefinedException e){
-            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields"+
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields" +
                     Arrays.toString(e.getStackTrace()));
             return 0;
         }

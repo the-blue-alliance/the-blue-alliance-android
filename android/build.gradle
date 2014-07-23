@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 7
-        versionName "0.4"
+        versionCode 12
+        versionName "1.2.2"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -26,7 +26,7 @@ android {
 
         buildTypes {
             debug {
-                versionNameSuffix "-#" + gitSha
+                versionNameSuffix "/#" + gitSha
                 applicationIdSuffix ".development"
             }
 
@@ -40,11 +40,25 @@ android {
                     variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + ".apk")
                 }
             }
+
+            beta {
+                versionNameSuffix "-beta"
+                signingConfig signingConfigs.release
+                runProguard false
+                zipAlign true
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+                applicationVariants.all { variant ->
+                    def file = variant.outputFile
+                    variant.outputFile = new File(file.parent, "tba-android-v" + versionName + ".apk")
+                }
+            }
+
         }
     }
 }
 
 task loadProperties << {
+    // add in signing keys from local.properties
     def config = new Properties()
     def propFile = file("../local.properties")
     System.out.println("Loading property file: " + propFile.absolutePath)
@@ -55,23 +69,37 @@ task loadProperties << {
         android.signingConfigs.release.keyAlias = config["release.key.alias"]
         android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
     }
+
+    // check to make sure that an analytics key is defined
+    def tba_config = new Properties();
+    def tba_propFile = file("src/main/assets/tba.properties")
+    tba_config.load(new FileInputStream(tba_propFile));
+    if(!tba_config.containsKey("analytics.id")){
+        throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
+    }
+    System.out.println("Building with analytics key: "+tba_config["analytics.id"]);
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("packageRelease")) {
+    if (theTask.name.equals("packageRelease") || theTask.name.equals("packageBeta")) {
         theTask.dependsOn "loadProperties"
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v13:19.+'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
     compile 'com.android.support:support-v4:19.+'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.77'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/YouTubeAndroidPlayerApi.jar')
 }

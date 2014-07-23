@@ -63,7 +63,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             APIResponse<ArrayList<Team>> response = DataManager.Events.getEventTeams(activity, eventKey, forceFromCache);
             ArrayList<Team> teamList = response.getData();
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 

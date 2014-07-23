@@ -7,7 +7,7 @@
 
     <!-- Framelayout to display Fragments -->
     <FrameLayout
-        android:id="@+id/container"
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/warning_container" />

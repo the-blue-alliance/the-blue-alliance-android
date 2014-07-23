@@ -1,14 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,11 +16,10 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
 /**
@@ -64,6 +60,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
         pager.setOffscreenPageLimit(10);
+        pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
@@ -81,9 +78,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.stats_help_menu, menu);
         mOptionsMenu = menu;
-        mOptionsMenu.findItem(R.id.help).setVisible(false);
         return true;
     }
 
@@ -121,43 +116,11 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                 }
                 return true;
             case R.id.help:
-                showStatsHelpDialog();
+                Utilities.showStatsHelpDialog(this);
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showStatsHelpDialog() {
-        String helpText;
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.stats_help)));
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.getProperty("line.separator"));
-                line = br.readLine();
-            }
-            helpText = sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            helpText = "Error reading help file.";
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.stats_help_title));
-        builder.setMessage(Html.fromHtml(helpText));
-        builder.setCancelable(true);
-        builder.setNeutralButton(getString(R.string.close_stats_help),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }
-        );
-        builder.create().show();
     }
 
     public ViewPager getPager() {
@@ -183,11 +146,23 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     @Override
     public void onPageSelected(int position) {
         if(mOptionsMenu != null) {
+            MenuItem statsSort = mOptionsMenu.findItem(R.id.action_sort_by);
+            MenuItem statsHelp = mOptionsMenu.findItem(R.id.help);
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
-                mOptionsMenu.findItem(R.id.help).setVisible(true);
+                if(statsHelp != null){
+                    statsHelp.setVisible(true);
+                }
+                if(statsSort != null){
+                    statsSort.setVisible(true);
+                }
             } else {
-                mOptionsMenu.findItem(R.id.help).setVisible(false);
+                if(statsHelp != null){
+                    statsHelp.setVisible(false);
+                }
+                if(statsSort != null){
+                    statsSort.setVisible(false);
+                }
             }
         }
     }

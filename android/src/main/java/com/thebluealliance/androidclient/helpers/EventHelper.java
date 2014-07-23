@@ -1,11 +1,14 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -112,9 +115,9 @@ public class EventHelper {
         return WEEKLESS_LABEL;
     }
 
-    public static int weekNumFromLabel(int year, String label){
-        for(int i=0; i<20; i++){
-            if(weekLabelFromNum(year, i).equals(label)){
+    public static int weekNumFromLabel(int year, String label) {
+        for (int i = 0; i < 20; i++) {
+            if (weekLabelFromNum(year, i).equals(label)) {
                 return i;
             }
         }
@@ -122,7 +125,6 @@ public class EventHelper {
     }
 
     public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
-        Log.d(Constants.LOG_TAG, "Sorting "+events.size()+ " events");
         HashMap<String, ArrayList<Event>> groups = new HashMap<>();
         ArrayList<Event> offseason = new ArrayList<>(),
                 preseason = new ArrayList<>(),
@@ -146,6 +148,7 @@ public class EventHelper {
                     if (start == null) {
                         weekless.add(e);
                     } else {
+                        Log.d(Constants.LOG_TAG, "Sorting "+e.getEventKey()+", "+e.getStartDate()+", "+e.getCompetitionWeek());
                         String label = String.format(REGIONAL_LABEL, e.getCompetitionWeek());
                         if (groups.containsKey(label) && groups.get(label) != null) {
                             groups.get(label).add(e);
@@ -160,7 +163,7 @@ public class EventHelper {
                 } else {
                     offseason.add(e);
                 }
-            }catch (BasicModel.FieldNotDefinedException ex){
+            } catch (BasicModel.FieldNotDefinedException ex) {
                 Log.w(Constants.LOG_TAG, "Couldn't determine week for event without the following fields:\n" +
                         "Database.Events.OFFICIAL, Database.Events.TYPE, Database.Events.START");
             }
@@ -176,7 +179,7 @@ public class EventHelper {
             groups.put(PRESEASON_LABEL, preseason);
         }
 
-        Log.d(Constants.LOG_TAG, "Categories: "+groups.keySet().toString());
+        Log.d(Constants.LOG_TAG, "Categories: " + groups.keySet().toString());
 
         return groups;
     }
@@ -280,8 +283,8 @@ public class EventHelper {
      * @param events a list of events to render
      * @return a list of ListItems representing the sorted events
      */
-    public static ArrayList<ListItem> renderEventListForTeam(ArrayList<Event> events) {
-        return renderEventListWithComparator(events, new EventSortByTypeAndDateComparator());
+    public static ArrayList<ListItem> renderEventListForTeam(Context c, ArrayList<Event> events, boolean broadcastIfLive) {
+        return renderEventListWithComparator(c, events, new EventSortByTypeAndDateComparator(), broadcastIfLive);
     }
 
     /**
@@ -292,16 +295,16 @@ public class EventHelper {
      * @return a list of ListItems representing the sorted events
      */
     public static ArrayList<ListItem> renderEventListForWeek(ArrayList<Event> events) {
-        return renderEventListWithComparator(events, new EventSortByTypeAndDateComparator());
+        return renderEventListWithComparator(null, events, new EventSortByTypeAndDateComparator(), false);
     }
 
-    private static ArrayList<ListItem> renderEventListWithComparator(ArrayList<Event> events, Comparator<Event> comparator) {
+    private static ArrayList<ListItem> renderEventListWithComparator(Context c, ArrayList<Event> events, Comparator<Event> comparator, boolean broadcastIfLive) {
         ArrayList<ListItem> eventListItems = new ArrayList<>();
         Collections.sort(events, comparator);
         EventHelper.TYPE lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {
-            try{
+            try {
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
                 if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
@@ -313,7 +316,13 @@ public class EventHelper {
                 }
                 eventListItems.add(event.render());
 
-            }catch (BasicModel.FieldNotDefinedException e){
+                if (broadcastIfLive && event.isHappeningNow()) {
+                    //send out that there are live matches happening for other things to pick up
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
+                    LocalBroadcastManager.getInstance(c).sendBroadcast(new LiveEventBroadcast(event.render()));
+                }
+
+            } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
             }
             lastType = currentType;
@@ -342,7 +351,7 @@ public class EventHelper {
         }
 
         // In case an event has a weird name, return the event name
-        if(shortName.isEmpty()) {
+        if (shortName.isEmpty()) {
             return eventName;
         }
 
@@ -357,14 +366,14 @@ public class EventHelper {
         return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
     }
 
-    public static void addFieldByAPIUrl(Event event, String url, String data){
-        if(url.contains("teams")){
+    public static void addFieldByAPIUrl(Event event, String url, String data) {
+        if (url.contains("teams")) {
             event.setTeams(data);
-        }else if(url.contains("rankings")){
+        } else if (url.contains("rankings")) {
             event.setRankings(data);
-        }else if(url.contains("matches")){
+        } else if (url.contains("matches")) {
             event.setMatches(JSONManager.getasJsonArray(data));
-        }else if(url.contains("stats")){
+        } else if (url.contains("stats")) {
             event.setStats(data);
         }
     }

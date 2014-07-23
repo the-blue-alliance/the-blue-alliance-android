@@ -64,11 +64,10 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (year != -1) {
-            parent.startRefresh(this);
-        }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        parent.startRefresh(this);
+
     }
 
     @Override
@@ -89,7 +88,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
         }
     }
 
-    public void updateTask(PopulateTeamMedia newTask){
+    public void updateTask(PopulateTeamMedia newTask) {
         task = newTask;
     }
 
@@ -103,6 +102,7 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
     @Override
     public void onYearChanged(int newYear) {
         year = newYear;
+        onRefreshStop();
         parent.startRefresh(this);
     }
 }

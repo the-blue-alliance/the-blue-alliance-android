@@ -1,51 +1,51 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 
-import com.thebluealliance.androidclient.background.DownloadEventList;
-import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
+import com.astuetz.PagerSlidingTabStrip;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
+import com.thebluealliance.androidclient.fragments.RefreshableHostFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 
 /**
  * Created by Nathan on 4/22/2014.
  */
-public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
+public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter{
 
     private int mCount;
     private int mYear;
     private ArrayList<String> thisYearsWeekLabels;
+    private PagerSlidingTabStrip tabs;
+    private RefreshableHostFragment parent;
 
-    public EventsByWeekFragmentPagerAdapter(Context c, FragmentManager fm, int year) {
+
+    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, PagerSlidingTabStrip tabs, ViewPager pager, ArrayList<String> labels){
+        this(fragment, fm, year, tabs, pager);
+        thisYearsWeekLabels = labels;
+        mCount = labels.size();
+    }
+
+    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, PagerSlidingTabStrip tabs, ViewPager pager) {
         super(fm);
         mYear = year;
         thisYearsWeekLabels = new ArrayList<>();
-        DownloadEventList task = new DownloadEventList(c);
-        task.execute(year);
-        try {
-            thisYearsWeekLabels.addAll(task.get());
-            Collections.sort(thisYearsWeekLabels, new EventWeekLabelSortComparator());
-            mCount = thisYearsWeekLabels.size();
-        } catch (Exception e) {
-            e.printStackTrace();
-            mCount = 0;
-        }
+        thisYearsWeekLabels.add("");
+        this.tabs = tabs;
+        this.parent = fragment;
+        mCount = 1;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         Date now = new Date();
-        Calendar nowCalendar = Calendar.getInstance();
-        nowCalendar.setTime(now);
-        if (EventHelper.competitionWeek(now) == position && nowCalendar.get(Calendar.YEAR) == mYear) {
+        if (EventHelper.competitionWeek(now) == position && Utilities.getCurrentYear() == mYear) {
             return "Current Week";
         } else {
             return thisYearsWeekLabels.get(position);
@@ -59,10 +59,17 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return EventListFragment.newInstance(mYear, position, null, getPageTitle(position).toString());
+        EventListFragment f = EventListFragment.newInstance(mYear, position, null, getPageTitle(position).toString());
+        f.setHost(parent);
+        return f;
     }
 
     public ArrayList<String> getLabels() {
         return thisYearsWeekLabels;
+    }
+
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        tabs.notifyDataSetChanged();
     }
 }

@@ -11,16 +11,16 @@ import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
-import com.thebluealliance.androidclient.intents.RefreshBroadcast;
+import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
 import java.util.ArrayList;
 
 /**
  * Created by Nathan on 4/29/2014.
  */
-public abstract class RefreshableHostActivity extends BaseActivity {
+public abstract class RefreshableHostActivity extends BaseActivity implements RefreshableHost {
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
@@ -41,7 +41,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
-        if(mRefreshInProgress) {
+        if (mRefreshInProgress) {
             showMenuProgressBar();
         }
         return true;
@@ -68,7 +68,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         refreshListener = new RefreshBroadcastReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(RefreshBroadcast.ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(ConnectionChangeBroadcast.ACTION));
     }
 
     @Override
@@ -120,7 +120,7 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             mCompletedRefreshListeners.add(completedListener);
         }
 
-        if(mCompletedRefreshListeners.size() >= mRefreshListeners.size()) {
+        if (mCompletedRefreshListeners.size() >= mRefreshListeners.size()) {
             onRefreshComplete();
             mCompletedRefreshListeners.clear();
         }
@@ -144,11 +144,10 @@ public abstract class RefreshableHostActivity extends BaseActivity {
             //if a refresh is already happening, don't start another
             return;
         }
-        Log.d(Constants.LOG_TAG, "Refresh listeners: " + mRefreshListeners.size());
-        mRefreshInProgress = true;
         if (mRefreshListeners.isEmpty()) {
             return;
         }
+        mRefreshInProgress = true;
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }
@@ -206,15 +205,15 @@ public abstract class RefreshableHostActivity extends BaseActivity {
         }
     }
 
-    class RefreshBroadcastReceiver extends BroadcastReceiver{
+    class RefreshBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
-            if(ConnectionDetector.isConnectedToInternet(context)) {
+            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_FOUND) {
                 hideWarningMessage();
                 startRefresh();
-            }else{
+            } else {
                 showWarningMessage(getString(R.string.warning_no_internet_connection));
             }
         }

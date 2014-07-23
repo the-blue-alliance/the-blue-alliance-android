@@ -13,19 +13,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventAlliances;
-import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/22/14.
@@ -65,9 +61,14 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+
+        //disable touch feedback (you can't click the elements here...)
+        mListView.setCacheColorHint(android.R.color.transparent);
+        mListView.setSelector(R.drawable.transparent);
+
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
@@ -89,8 +90,8 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }

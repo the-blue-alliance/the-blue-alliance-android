@@ -52,6 +52,8 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         registerRefreshableActivityListener(this);
 
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
+
+        startRefresh();
     }
 
     @Override
@@ -65,19 +67,12 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        startRefresh();
-    }
-
-    @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Match "+mMatchKey+" refresh started");
+        Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh started");
         task = new PopulateMatchInfo(this, true);
         task.execute(mMatchKey);
         // Indicate loading; the task will hide the progressbar and show the content when loading is complete
         findViewById(R.id.progress).setVisibility(View.VISIBLE);
-        findViewById(R.id.match_container).setVisibility(View.GONE);
     }
 
     @Override
@@ -87,13 +82,17 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
     @Override
     public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+        if(warningMessage != null) {
+            warningMessage.setText(message);
+            warningMessage.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        if(warningMessage != null) {
+            warningMessage.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -116,8 +115,8 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
                 String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
+                Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     Log.d(Constants.LOG_TAG, "Navgating to new back stack with key " + eventKey);
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))

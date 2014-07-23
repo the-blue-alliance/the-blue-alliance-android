@@ -41,7 +41,7 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
             Collections.reverse(yearsResponse.getData());
             Integer[] integerYears = yearsResponse.getData().toArray(new Integer[yearsResponse.getData().size()]);
             years = new int[integerYears.length];
-            for(int i = 0; i < years.length; i++) {
+            for (int i = 0; i < years.length; i++) {
                 years[i] = integerYears[i];
             }
             return yearsResponse.getCode();
@@ -54,7 +54,7 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
-        if (activity != null && years.length > 0) {
+        if (activity != null && years != null && years.length > 0) {
             activity.onYearsParticipatedLoaded(years);
         }
     }

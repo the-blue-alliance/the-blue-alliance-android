@@ -12,18 +12,16 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * File created by phil on 4/23/14.
  */
 public class AwardListElement extends ListElement {
 
-    private String mAwardName, mEventKey;
+    private String mAwardName, mEventKey, mSelectedTeamNum;
     private JsonArray mAwardWinners;
     private HashMap<String, Team> mAwardTeams;
 
@@ -34,12 +32,13 @@ public class AwardListElement extends ListElement {
         mAwardTeams = null;
     }
 
-    public AwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams) {
+    public AwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams, String selectedTeamKey) {
         super();
         mAwardName = name;
         mEventKey = eventKey;
         mAwardWinners = winners;
         mAwardTeams = teams;
+        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4)?"":selectedTeamKey.substring(3);
     }
 
     @Override
@@ -69,7 +68,11 @@ public class AwardListElement extends ListElement {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
-                winnerView.setOnClickListener(new TeamAtEventClickListener(context));
+                if(!mSelectedTeamNum.equals(teamNumber)) {
+                    winnerView.setOnClickListener(new TeamAtEventClickListener(context));
+                } else {
+                    winnerView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));  // disable touch feedback
+                }
                 winnerView.setTag("frc" + teamNumber+"@"+mEventKey);
             }
             if (winner.get("awardee").isJsonNull()) {
@@ -120,6 +123,7 @@ public class AwardListElement extends ListElement {
 
         return convertView;
     }
+
     private static class ViewHolder {
         TextView awardName;
         LinearLayout awardRecipients;

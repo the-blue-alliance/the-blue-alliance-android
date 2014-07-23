@@ -5,32 +5,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateTeamAtEvent;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
-public class TeamAtEventActivity extends RefreshableHostActivity implements RefreshListener {
+import java.util.Arrays;
+
+public class TeamAtEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
     private TextView warningMessage;
     private String eventKey, teamKey;
-    private PopulateTeamAtEvent task;
+    private ViewPager pager;
+    private TeamAtEventFragmentPagerAdapter adapter;
 
     public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
@@ -52,45 +51,30 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
 
+        pager = (ViewPager) findViewById(R.id.view_pager);
+        adapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), teamKey, eventKey);
+        pager.setAdapter(adapter);
+        // To support refreshing, all pages must be held in memory at once
+        // This should be increased if we ever add more pages
+        pager.setOffscreenPageLimit(6);
+        pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
+
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setOnPageChangeListener(this);
+        tabs.setViewPager(pager);
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ((ExpandableListView) findViewById(R.id.results)).setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id) {
-                if (view.findViewById(R.id.match_title) != null) {
-                    String matchKey = view.findViewById(R.id.match_title).getTag().toString();
-                    startActivity(ViewMatchActivity.newInstance(TeamAtEventActivity.this, matchKey));
-                    return true;
-                }
-
-                return false;
-            }
-        });
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        registerRefreshableActivityListener(this);
+        if (!ConnectionDetector.isConnectedToInternet(this)) {
+            showWarningMessage(getString(R.string.warning_unable_to_load));
+        }
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         startRefresh();
-    }
-
-    @Override
-    public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, teamKey+"@"+eventKey+" refresh started");
-        task = new PopulateTeamAtEvent(this, true);
-        task.execute(teamKey, eventKey);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        task.cancel(false);
     }
 
     @Override
@@ -98,6 +82,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
         super.onCreateOptionsMenu(menu);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.team_at_event, menu);
+        getMenuInflater().inflate(R.menu.stats_help_menu, menu);
+        mOptionsMenu = menu;
+        mOptionsMenu.findItem(R.id.help).setVisible(false);
         return true;
     }
 
@@ -111,13 +98,16 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
                 int year = Integer.parseInt(eventKey.substring(0,4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
                 return true;
+            case R.id.help:
+                Utilities.showStatsHelpDialog(this);
+                return true;
             case android.R.id.home:
-                if(isDrawerOpen()) {
+                if (isDrawerOpen()) {
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if(NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {
@@ -139,5 +129,27 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements Refr
     @Override
     public void hideWarningMessage() {
         warningMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if(mOptionsMenu != null) {
+            if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
+                //stats position
+                mOptionsMenu.findItem(R.id.help).setVisible(true);
+            } else {
+                mOptionsMenu.findItem(R.id.help).setVisible(false);
+            }
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

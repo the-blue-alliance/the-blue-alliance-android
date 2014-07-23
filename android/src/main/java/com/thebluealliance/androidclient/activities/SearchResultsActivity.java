@@ -13,8 +13,12 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
@@ -45,11 +49,19 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     int closeButtonId;
 
     private SearchResultsHeaderListElement teamsHeader, eventsHeader;
+    private String currentQuery;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
+        /* Report the activity start to GAnalytics */
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+
+        currentQuery = "";
+
         resultsList = (ListView) findViewById(R.id.results);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -84,6 +96,28 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        //track the search query the user submitted
+        //Track the query
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("search")
+                .setAction(currentQuery)
+                .setLabel("search")
+                .build());
+        currentQuery = "";
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        /* Report the activity stop to GAnalytics */
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -95,6 +129,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     }
 
     private void updateQuery(final String query) {
+        currentQuery = query;
 
         String preparedQuery = Utilities.getPreparedQueryForSearch(query);
 
@@ -126,7 +161,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new TeamListElement(team);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't add team search result item. Missing fields... "+
+                    Log.e(Constants.LOG_TAG, "Can't add team search result item. Missing fields... " +
                             Arrays.toString(e.getStackTrace()));
                 }
                 Log.d(Constants.LOG_TAG, "titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
@@ -166,8 +201,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new EventListElement(event);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n"+
-                        Arrays.toString(e.getStackTrace()));
+                    Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n" +
+                            Arrays.toString(e.getStackTrace()));
                 }
             }
             eventQueryResults.close();

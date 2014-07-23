@@ -1,9 +1,12 @@
 package com.thebluealliance.androidclient;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -15,10 +18,16 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import me.xuender.unidecode.Unidecode;
 
@@ -153,12 +162,95 @@ public class Utilities {
                 !data.get(index).isEmpty();
     }
 
-    public static int getCurrentYear(){
+    public static int getCurrentYear() {
         Calendar cal = Calendar.getInstance();
         return cal.get(Calendar.YEAR);
     }
 
-    public static int getCurrentCompWeek(){
-        return getCmpWeek(getCurrentYear());
+    public static int getCurrentCompWeek() {
+        return EventHelper.competitionWeek(new Date());
     }
+
+    public static String getOrdinalFor(int value) {
+        int hundredRemainder = value % 100;
+        int tenRemainder = value % 10;
+        if (hundredRemainder - tenRemainder == 10) {
+            return "th";
+        }
+
+        switch (tenRemainder) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    }
+
+    public static void showStatsHelpDialog(Context c) {
+        String helpText;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(R.raw.stats_help)));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.getProperty("line.separator"));
+                line = br.readLine();
+            }
+            helpText = sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            helpText = "Error reading help file.";
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle(c.getString(R.string.stats_help_title));
+        builder.setMessage(Html.fromHtml(helpText));
+        builder.setCancelable(true);
+        builder.setNeutralButton(c.getString(R.string.close_stats_help),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }
+        );
+        builder.create().show();
+    }
+
+    public static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        // only got here if we didn't return false
+        return true;
+    }
+
+    public static String readLocalProperty(Context c, String property) {
+        Properties properties;
+        properties = new Properties();
+        try {
+            InputStream fileStream = c.getAssets().open("tba.properties");
+            properties.load(fileStream);
+            fileStream.close();
+            return properties.getProperty(property, "");
+        } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "Unable to read from tba.properties");
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static boolean isDebuggable(){
+        Log.i(Constants.LOG_TAG, "Debug: "+BuildConfig.DEBUG);
+        return BuildConfig.DEBUG;
+    }
+
 }

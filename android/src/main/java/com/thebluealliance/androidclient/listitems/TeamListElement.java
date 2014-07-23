@@ -54,6 +54,7 @@ public class TeamListElement extends ListElement {
             holder.teamNumber = (TextView) convertView.findViewById(R.id.team_number);
             holder.teamName = (TextView) convertView.findViewById(R.id.team_name);
             holder.teamLocation = (TextView) convertView.findViewById(R.id.team_location);
+            holder.teamInfoDivider = convertView.findViewById(R.id.team_info_divider);
             holder.teamInfo = (ImageView) convertView.findViewById(R.id.team_info);
             convertView.setTag(holder);
         } else {
@@ -71,6 +72,7 @@ public class TeamListElement extends ListElement {
         holder.teamLocation.setText(mTeamLocation);
 
         if (mShowLinkToTeamDetails) {
+            holder.teamInfoDivider.setVisibility(View.VISIBLE);
             holder.teamInfo.setVisibility(View.VISIBLE);
             holder.teamInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -80,6 +82,7 @@ public class TeamListElement extends ListElement {
                 }
             });
         } else {
+            holder.teamInfoDivider.setVisibility(View.GONE);
             holder.teamInfo.setVisibility(View.GONE);
         }
 
@@ -90,6 +93,7 @@ public class TeamListElement extends ListElement {
         TextView teamNumber;
         TextView teamName;
         TextView teamLocation;
+        View teamInfoDivider;
         ImageView teamInfo;
     }
 }

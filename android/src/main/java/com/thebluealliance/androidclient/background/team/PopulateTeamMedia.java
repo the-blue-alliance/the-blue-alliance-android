@@ -63,11 +63,16 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         team = (String) params[0];
         year = (Integer) params[1];
 
+        if(year == -1){
+            //year has not been set.
+            return APIResponse.CODE.NODATA;
+        }
+
         APIResponse<ArrayList<Media>> response = null;
         try {
             response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
 
-            if(isCancelled()){
+            if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
@@ -89,7 +94,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                             break;
                     }
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't get media type. Missing fields..."+
+                    Log.e(Constants.LOG_TAG, "Can't get media type. Missing fields..." +
                             Arrays.toString(e.getStackTrace()));
                 }
             }
@@ -115,6 +120,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         if (view != null && activity != null) {
             ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
             ExpandableListView media = (ExpandableListView) view.findViewById(R.id.team_media_list);
+
             TextView noDataText = (TextView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.
@@ -154,7 +160,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 secondLoad.execute(team, year);
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Team "+ team + " "+ year+" media refresh complete");
+                Log.i(Constants.REFRESH_LOG, "Team " + team + " " + year + " media refresh complete");
                 if (fragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete(fragment);
                 }

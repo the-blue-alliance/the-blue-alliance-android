@@ -13,12 +13,12 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private String mTeamKey = null, mHeader;
     private ArrayList<ListItem> events;
     private RefreshableHostActivity activity;
+    private RefreshableHost host;
     private boolean forceFromCache;
 
     public PopulateEventList(Fragment fragment, int year, String weekHeader, String teamKey, boolean forceFromCache) {
@@ -40,6 +41,17 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         mYear = year;
         mTeamKey = teamKey;
         mHeader = weekHeader;
+        activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.host = activity;
+        this.forceFromCache = forceFromCache;
+    }
+
+    public PopulateEventList(Fragment fragment, RefreshableHost host, int year, String weekHeader, String teamKey, boolean forceFromCache) {
+        mFragment = fragment;
+        mYear = year;
+        mTeamKey = teamKey;
+        mHeader = weekHeader;
+        this.host = host;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
     }
@@ -63,10 +75,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
         }
 
-        if(mHeader.equals("Preseason Events")){
-            Event ss = Database.getInstance(activity).getEventsTable().get("2014ctss");
-        }
-
         events = new ArrayList<>();
 
         APIResponse<ArrayList<Event>> response;
@@ -78,7 +86,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             try {
                 response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
 
-                if(isCancelled()){
+                if (isCancelled()) {
                     return APIResponse.CODE.NODATA;
                 }
 
@@ -93,11 +101,12 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             }
         } else if (mYear != -1 && mWeek == -1 && mTeamKey != null) {
             // Return a list of all events for a team for a given year
+            Log.d(Constants.LOG_TAG, "Loading events for team " + mTeamKey + " in " + mYear);
             try {
-                response = DataManager.Teams.getEventsForTeam(mFragment.getActivity(), mTeamKey, mYear, forceFromCache);
+                response = DataManager.Teams.getEventsForTeam(activity, mTeamKey, mYear, forceFromCache);
                 ArrayList<Event> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
-                    events = EventHelper.renderEventListForTeam(eventsArray);
+                    events = EventHelper.renderEventListForTeam(activity, eventsArray, true);
                 }
                 return response.getCode();
             } catch (Exception e) {
@@ -122,9 +131,9 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
             ListViewAdapter adapter = new ListViewAdapter(activity, events);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
-            // If there's no event data in the adapter or if we can't download info
+            // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
+            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(R.string.no_event_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
@@ -139,8 +148,10 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
-            view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
+            if(!mHeader.equals("") || mTeamKey != null) {
+                view.findViewById(R.id.progress).setVisibility(View.GONE);
+                view.findViewById(R.id.list).setVisibility(View.VISIBLE);
+            }
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
@@ -148,13 +159,11 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateEventList(mFragment, mYear, mHeader, mTeamKey, false).execute();
+                new PopulateEventList(mFragment, host, mYear, mHeader, mTeamKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Event list refresh complete");
-                if (mFragment instanceof RefreshListener) {
-                    activity.notifyRefreshComplete((RefreshListener) mFragment);
-                }
+                host.notifyRefreshComplete((RefreshListener) mFragment);
             }
 
         }

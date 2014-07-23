@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 
-public class Match extends BasicModel<Match> {
+public class Match extends BasicModel<Match>{
 
     private String selectedTeam;
     private int year;
@@ -42,8 +42,8 @@ public class Match extends BasicModel<Match> {
         super(Database.TABLE_MATCHES);
     }
 
-    public String getKey() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.KEY) && fields.get(Database.Matches.KEY) instanceof String) {
+    public String getKey() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Matches.KEY) && fields.get(Database.Matches.KEY) instanceof String) {
             return (String) fields.get(Database.Matches.KEY);
         }
         throw new FieldNotDefinedException("Field Database.Matches.KEY is not defined");
@@ -59,15 +59,15 @@ public class Match extends BasicModel<Match> {
         this.type = MatchHelper.TYPE.fromKey(key);
     }
 
-    public String getEventKey() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.EVENT) && fields.get(Database.Matches.EVENT) instanceof String) {
+    public String getEventKey() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Matches.EVENT) && fields.get(Database.Matches.EVENT) instanceof String) {
             return (String) fields.get(Database.Matches.EVENT);
         }
         throw new FieldNotDefinedException("Field Database.Matches.EVENT is not defined");
     }
 
-    public String getTimeString() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.TIMESTRING) && fields.get(Database.Matches.TIMESTRING) instanceof String) {
+    public String getTimeString() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Matches.TIMESTRING) && fields.get(Database.Matches.TIMESTRING) instanceof String) {
             return (String) fields.get(Database.Matches.TIMESTRING);
         }
         throw new FieldNotDefinedException("Field Database.Matches.TIMESTRING is not defined");
@@ -77,8 +77,8 @@ public class Match extends BasicModel<Match> {
         fields.put(Database.Matches.TIMESTRING, timeString);
     }
 
-    public Date getTime() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.TIME) && fields.get(Database.Matches.TIME) instanceof Long) {
+    public Date getTime() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Matches.TIME) && fields.get(Database.Matches.TIME) instanceof Long) {
             return new Date((Long) fields.get(Database.Matches.TIME));
         }
         throw new FieldNotDefinedException("Field Database.Matches.TIME is not defined");
@@ -92,8 +92,8 @@ public class Match extends BasicModel<Match> {
         fields.put(Database.Matches.TIME, timestamp);
     }
 
-    public MatchHelper.TYPE getType() throws FieldNotDefinedException{
-        if(type == MatchHelper.TYPE.NONE){
+    public MatchHelper.TYPE getType() throws FieldNotDefinedException {
+        if (type == MatchHelper.TYPE.NONE) {
             throw new FieldNotDefinedException("Field Database.Matches.KEY is not defined");
         }
         return type;
@@ -107,11 +107,11 @@ public class Match extends BasicModel<Match> {
         this.type = MatchHelper.TYPE.fromShortType(type);
     }
 
-    public JsonObject getAlliances() throws FieldNotDefinedException{
-        if(alliances != null){
+    public JsonObject getAlliances() throws FieldNotDefinedException {
+        if (alliances != null) {
             return alliances;
         }
-        if(fields.containsKey(Database.Matches.ALLIANCES) && fields.get(Database.Matches.ALLIANCES) instanceof String) {
+        if (fields.containsKey(Database.Matches.ALLIANCES) && fields.get(Database.Matches.ALLIANCES) instanceof String) {
             alliances = JSONManager.getasJsonObject((String) fields.get(Database.Matches.ALLIANCES));
             return alliances;
         }
@@ -123,15 +123,15 @@ public class Match extends BasicModel<Match> {
         this.alliances = alliances;
     }
 
-    public void setAlliances(String allianceJson){
+    public void setAlliances(String allianceJson) {
         fields.put(Database.Matches.ALLIANCES, allianceJson);
     }
 
-    public JsonArray getVideos() throws FieldNotDefinedException{
-        if(videos != null){
+    public JsonArray getVideos() throws FieldNotDefinedException {
+        if (videos != null) {
             return videos;
         }
-        if(fields.containsKey(Database.Matches.VIDEOS) && fields.get(Database.Matches.VIDEOS) instanceof String) {
+        if (fields.containsKey(Database.Matches.VIDEOS) && fields.get(Database.Matches.VIDEOS) instanceof String) {
             videos = JSONManager.getasJsonArray((String) fields.get(Database.Matches.VIDEOS));
             return videos;
         }
@@ -143,19 +143,19 @@ public class Match extends BasicModel<Match> {
         this.videos = videos;
     }
 
-    public void setVideos(String videosJson){
+    public void setVideos(String videosJson) {
         fields.put(Database.Matches.VIDEOS, videosJson);
     }
 
-    public int getYear() throws FieldNotDefinedException{
-        if(year == -1){
+    public int getYear() throws FieldNotDefinedException {
+        if (year == -1) {
             throw new FieldNotDefinedException("Fields Database.Matches.KEY is not defined");
         }
         return year;
     }
 
-    public int getMatchNumber() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.MATCHNUM) && fields.get(Database.Matches.MATCHNUM) instanceof Integer) {
+    public int getMatchNumber() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Matches.MATCHNUM) && fields.get(Database.Matches.MATCHNUM) instanceof Integer) {
             return (Integer) fields.get(Database.Matches.MATCHNUM);
         }
         throw new FieldNotDefinedException("Field Database.Matches.MATCHNUM is not defined");
@@ -165,8 +165,8 @@ public class Match extends BasicModel<Match> {
         fields.put(Database.Matches.MATCHNUM, matchNumber);
     }
 
-    public int getSetNumber() throws FieldNotDefinedException{
-        if(fields.containsKey(Database.Matches.SETNUM) && fields.get(Database.Matches.SETNUM) instanceof Integer) {
+    public int getSetNumber() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Matches.SETNUM) && fields.get(Database.Matches.SETNUM) instanceof Integer) {
             return (Integer) fields.get(Database.Matches.SETNUM);
         }
         throw new FieldNotDefinedException("Field Database.Matches.MATCHNUM is not defined");
@@ -185,7 +185,7 @@ public class Match extends BasicModel<Match> {
             } else {
                 return MatchHelper.LONG_TYPES.get(type) + (lineBreak ? "\n" : " ") + setNumber + " - " + matchNumber;
             }
-        }catch (FieldNotDefinedException e){
+        } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for title not present\n" +
                     "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
@@ -201,18 +201,19 @@ public class Match extends BasicModel<Match> {
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
             return MatchHelper.PLAY_ORDER.get(type) * 1000000 + setNumber * 1000 + matchNumber;
-        }catch (FieldNotDefinedException e){
+        } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for display order not present\n" +
                     "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return 1000000;
         }
     }
+
     public Integer getPlayOrder() {
         try {
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
             return MatchHelper.PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
-        }catch (FieldNotDefinedException e){
+        } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for display order not present\n" +
                     "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
@@ -244,7 +245,7 @@ public class Match extends BasicModel<Match> {
                 // team did not play in match
                 return false;
             }
-        }catch (FieldNotDefinedException e){
+        } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields not present\n" +
                     "Required: Database.Matches.ALLIANCES");
             return false;
@@ -281,7 +282,7 @@ public class Match extends BasicModel<Match> {
                     }
                 }
             }
-        }catch (FieldNotDefinedException e){
+        } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields not present\n" +
                     "Required: Database.Matches.ALLIANCES");
         }
@@ -298,11 +299,15 @@ public class Match extends BasicModel<Match> {
                     blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
 
             return redScore >= 0 && blueScore >= 0;
-        }catch (FieldNotDefinedException e){
+        } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for title not present\n" +
                     "Required: Database.Matches.ALLIANCES");
             return false;
         }
+    }
+
+    public MatchListElement render() {
+        return render(true, false);
     }
 
     /**
@@ -312,7 +317,7 @@ public class Match extends BasicModel<Match> {
      *
      * @return A MatchListElement to be used to display this match
      */
-    public MatchListElement render() {
+    public MatchListElement render(boolean showVideo, boolean showHeader) {
         try {
             JsonObject alliances = getAlliances();
             JsonArray videos = getVideos();
@@ -353,8 +358,8 @@ public class Match extends BasicModel<Match> {
 
             return new MatchListElement(youTubeVideoKey, getTitle(true),
                     redAlliance, blueAlliance,
-                    redScore, blueScore, key, selectedTeam);
-        }catch (FieldNotDefinedException e){
+                    redScore, blueScore, key, selectedTeam, showVideo, showHeader);
+        } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for rendering not present\n" +
                     "Required: Database.Matches.ALLIANCES, Database.Matches.VIDEOS, Database.Matches.KEY, Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
@@ -362,37 +367,37 @@ public class Match extends BasicModel<Match> {
     }
 
     public static synchronized APIResponse<Match> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: "+whereClause+ Arrays.toString(whereArgs));
+        Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
         Match match;
-        if(cursor != null && cursor.moveToFirst()){
+        if (cursor != null && cursor.moveToFirst()) {
             match = ModelInflater.inflateMatch(cursor);
             cursor.close();
-        }else{
+        } else {
             match = new Match();
         }
 
-        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         ArrayList<Match> allMatches = null;
         boolean changed = false;
         allMatches = new ArrayList<>();
-        for(String url: apiUrls) {
+        for (String url : apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Match updatedMatch = new Match();
-                if(url.contains("event") && url.contains("matches")){
+                if (url.contains("event") && url.contains("matches")) {
                     /* We're requesting the matches for the whole event (there isn't a single match endpoint */
                     JsonArray matchList = JSONManager.getasJsonArray(response.getData());
-                    for(JsonElement m: matchList){
+                    for (JsonElement m : matchList) {
                         Match inflated = JSONManager.getGson().fromJson(m, Match.class);
-                        if(m.getAsJsonObject().get("key").getAsString().equals(key)){
+                        if (m.getAsJsonObject().get("key").getAsString().equals(key)) {
                             updatedMatch = inflated;
                             //this match will be added to the list below
-                        }else{
+                        } else {
                             allMatches.add(inflated);
                         }
                     }
-                }else {
+                } else {
                     updatedMatch = JSONManager.getGson().fromJson(response.getData(), Match.class);
                 }
                 match.merge(updatedMatch);
@@ -403,42 +408,42 @@ public class Match extends BasicModel<Match> {
 
         allMatches.add(match);
 
-        if(changed){
+        if (changed) {
             Database.getInstance(c).getMatchesTable().add(allMatches);
         }
-        Log.d(Constants.DATAMANAGER_LOG, "updated in db? "+changed);
+        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
         return new APIResponse<>(match, code);
     }
 
     public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: "+whereClause+ Arrays.toString(whereArgs));
+        Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Match> matches = new ArrayList<>(), allMatches = new ArrayList<>();
-        if(cursor != null && cursor.moveToFirst()){
-            do{
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
                 matches.add(ModelInflater.inflateMatch(cursor));
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
             cursor.close();
         }
 
-        APIResponse.CODE code = forceFromCache?APIResponse.CODE.LOCAL: APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false, teamSet = teamKey != null && !teamKey.isEmpty();
-        for(String url: apiUrls) {
+        for (String url : apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
                 matches = new ArrayList<>();
                 allMatches = new ArrayList<>();
-                for(JsonElement m: matchList){
+                for (JsonElement m : matchList) {
                     Match match = JSONManager.getGson().fromJson(m, Match.class);
                     try {
-                        if(teamSet && match.getAlliances().toString().contains(teamKey)){
+                        if (teamSet && match.getAlliances().toString().contains(teamKey)) {
                             matches.add(match);
-                        }else{
+                        } else {
                             allMatches.add(match);
                         }
                     } catch (FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Unable to determine if team: "+teamKey+" is involved in match");
+                        Log.w(Constants.LOG_TAG, "Unable to determine if team: " + teamKey + " is involved in match");
                         allMatches.add(match);
                     }
                 }
@@ -447,11 +452,11 @@ public class Match extends BasicModel<Match> {
             code = APIResponse.mergeCodes(code, response.getCode());
         }
 
-        if(changed){
+        if (changed) {
             allMatches.addAll(matches);
             Database.getInstance(c).getMatchesTable().add(allMatches);
         }
-        Log.d(Constants.DATAMANAGER_LOG, "Found "+matches.size()+" matches, updated in db? "+changed);
+        Log.d(Constants.DATAMANAGER_LOG, "Found " + matches.size() + " matches, updated in db? " + changed);
         return new APIResponse<>(matches, code);
     }
 

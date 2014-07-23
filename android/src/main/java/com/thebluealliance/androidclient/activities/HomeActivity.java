@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
@@ -65,10 +66,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        dropdownItems = new String[currentYear - Constants.FIRST_COMP_YEAR + 1];
+        dropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
         for (int i = 0; i < dropdownItems.length; i++) {
-            dropdownItems[i] = Integer.toString(currentYear - i);
+            dropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
         }
 
         int initNavId = R.id.nav_item_events;
@@ -92,7 +92,11 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             }
         } else {
-            mCurrentSelectedYearPosition = 0;
+            if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
+                mCurrentSelectedYearPosition = 0;
+            } else {
+                mCurrentSelectedYearPosition = 1;
+            }
             switchToModeForId(initNavId);
         }
 
@@ -121,8 +125,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Serialize the current dropdown position.
-        outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION,
-                getActionBar().getSelectedNavigationIndex());
+        outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION, mCurrentSelectedYearPosition);
         outState.putInt(STATE_SELECTED_NAV_ID, mCurrentSelectedNavigationItemId);
     }
 
@@ -131,7 +134,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = EventsByWeekFragment.newInstance(2014);
+                fragment = EventsByWeekFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
@@ -198,8 +201,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         if (position == mCurrentSelectedYearPosition) {
             return true;
         }
-        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(dropdownItems[position]));
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(Integer.parseInt(dropdownItems[position])), MAIN_FRAGMENT_TAG).commit();
+        int selectedYear = Constants.MAX_COMP_YEAR - position;
+        Log.d(Constants.LOG_TAG, "year selected: " + selectedYear);
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG).commit();
         mCurrentSelectedYearPosition = position;
         getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
         return true;

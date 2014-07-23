@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
@@ -67,7 +68,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
                 mEncourageLearning, mUseActionBarToggle);
-        mContentView = (FrameLayout) findViewById(R.id.container);
+        mContentView = (FrameLayout) findViewById(R.id.content);
 
         // Restore the state of the navigation drawer on rotation changes
         if (savedInstanceState != null) {
@@ -98,6 +99,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      */
     @Override
     public void setContentView(int layoutResID) {
+        mContentView.removeAllViews();
         getLayoutInflater().inflate(layoutResID, mContentView);
     }
 
@@ -172,7 +174,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      * Closes the navigation drawer
      */
     public void closeDrawer() {
-        if(isDrawerOpen()) {
+        if (isDrawerOpen()) {
             getDrawerLayout().closeDrawer(Gravity.LEFT);
         }
     }
@@ -181,7 +183,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      * Opens the navigation drawer
      */
     public void openDrawer() {
-        if(!isDrawerOpen()) {
+        if (!isDrawerOpen()) {
             getDrawerLayout().openDrawer(Gravity.LEFT);
         }
     }
@@ -220,8 +222,14 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      */
     public void setActionBarTitle(String title) {
         mActionBarTitle = title;
-        if (!isDrawerOpen()) {
+        if (!isDrawerOpen() && getActionBar() != null) {
             getActionBar().setTitle(mActionBarTitle);
+        }
+    }
+
+    public void setActionBarSubtitle(String subtitle){
+        if (!isDrawerOpen() && getActionBar() != null) {
+            getActionBar().setSubtitle(subtitle);
         }
     }
 

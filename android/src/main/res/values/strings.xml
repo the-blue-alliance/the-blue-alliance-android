@@ -49,6 +49,16 @@
     <string name="alliances_header">Alliances</string>
     <string name="alliance_title">Alliance #%d:</string>
     <string name="team_rank">Rank %d</string>
+    <string name="no_location_available">No location available</string>
+
+    <!-- Stats Sort options/dialog -->
+    <string name="action_sort_option">Sort stats</string>
+    <string name="dialog_stats_title">Sort stats by</string>
+    <string name="dialog_stats_sort_team">Team #</string>
+    <string name="dialog_stats_sort_opr">OPR</string>
+    <string name="dialog_stats_sort_dpr">DPR</string>
+    <string name="dialog_stats_sort_ccwm">CCWM</string>
+    <string name="dialog_cancel">Cancel</string>
 
     <!-- Stats Help Dialog -->
     <string name="stats_help_title">Stats Help</string>
@@ -57,11 +67,16 @@
 
     <!-- No Data -->
     <string name="no_data">No data was found for this event.</string>
+    <string name="no_team_info">No data was found for this team.</string>
+    <string name="no_alliance_data">No alliance data was found for this event.</string>
     <string name="no_team_data">No team list was found for this event.</string>
     <string name="no_match_data">No match results were found for this event.</string>
+    <string name="no_team_match_data">No matches found.</string>
     <string name="no_ranking_data">No rankings were found for this event.</string>
     <string name="no_stats_data">No stats data was found for this event.</string>
     <string name="no_awards_data">No awards list was found for this event.</string>
+    <string name="no_team_stats_data">No stats data found.</string>
+    <string name="no_team_awards_data">No awards found.</string>
     <string name="no_event_data">No events were found.</string>
     <string name="no_media_data">No media was found for this team.</string>
     <string name="no_team_list">Unable to load team list.</string>
@@ -89,17 +104,6 @@
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
-
-    <!-- Settings -->
-    <string name="settings_version_label">Version</string>
-    <string name="github_label">The Blue Alliance for Android is open source</string>
-    <string name="github_summary">View project on GitHub</string>
-    <string name="tbasite_label">The Blue Alliance website</string>
-    <string name="tbasite_summary">Visit The Blue Alliance</string>
-    <string name="license_label">Open Source Licenses</string>
-    <string name="changelog">View Changelog</string>
-    <string name="contributors">Contributors</string>
-    <string name="contributors_summary">View a list of people who contributed to this project</string>
 
     <!-- Warnings -->
     <string name="warning_using_cached_data">You are offline and may be viewing outdated information.</string>

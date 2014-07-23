@@ -9,8 +9,10 @@
     <string name="next">Next</string>
 
     <!-- No Connection Dialog -->
-    <string name="warning_no_internet_connection">No internet connection was found. Please check your connection and try again.</string>
+    <string name="warning_no_internet_connection">No internet connection was found. Check your connection and try again.</string>
     <string name="retry">Retry</string>
+    <string name="connection_lost">Your internet connection was interrupted. Check your connection and try again.</string>
+    <string name="ok">OK</string>
 
     <!-- Fatal Error Dialog -->
     <string name="fatal_error">Fatal Error</string>
@@ -23,6 +25,5 @@
     <string name="loading_events">Loading %s events</string>
     <string name="loading_almost_finished">Finishing setup...</string>
     <string name="loading_finished">Loading complete</string>
-    <string name="connection_lost">Internet connection lost</string>
 
 </resources>

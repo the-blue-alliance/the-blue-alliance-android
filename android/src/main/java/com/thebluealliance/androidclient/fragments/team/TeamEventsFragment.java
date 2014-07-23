@@ -67,7 +67,7 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_fragment_with_spinner, null);
+        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) v.findViewById(R.id.list);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mAdapter != null) {
@@ -108,16 +108,14 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mYear != -1) {
-            parent.startRefresh(this);
-        }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        parent.startRefresh(this);
     }
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading "+mTeamKey+" events in "+mYear);
+        Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " events in " + mYear);
         mTask = new PopulateEventList(this, mYear, "", mTeamKey, true);
         mTask.execute();
     }

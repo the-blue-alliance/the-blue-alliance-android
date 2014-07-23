@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/nav_drawer_item_background"
-    android:orientation="horizontal"
-    android:paddingBottom="10dp"
-    android:paddingTop="10dp">
+    android:minHeight="48dp"
+    android:background="@drawable/nav_drawer_item_background">
 
-<ImageView
+    <ImageView
         android:id="@+id/icon"
         style="@style/NavDrawerIconStyle" />
 
@@ -15,4 +13,4 @@
         android:id="@+id/title"
         style="@style/NavDrawerLabelStyle" />
 
-</LinearLayout>
+</RelativeLayout>

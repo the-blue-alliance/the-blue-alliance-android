@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.listitems;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -12,8 +11,6 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 /**
  * File created by phil on 6/4/14.

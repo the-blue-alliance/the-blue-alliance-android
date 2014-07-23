@@ -19,13 +19,14 @@ public class ModelInflater {
 
     /**
      * Inflate an award model from a single row of a cursor returned by a database query.
+     *
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Award model containing the fields as defined in the cursor
      */
-    public static Award inflateAward(Cursor data){
+    public static Award inflateAward(Cursor data) {
         Award award = new Award();
-        for(int i=0; i<data.getColumnCount(); i++){
-            switch(data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Awards.EVENTKEY:
                     award.setEventKey(data.getString(i));
                     break;
@@ -38,6 +39,12 @@ public class ModelInflater {
                 case Database.Awards.WINNERS:
                     award.setWinners(data.getString(i));
                     break;
+                case Database.Awards.KEY:
+                    award.setKey(data.getString(i));
+                    break;
+                case Database.Awards.ENUM:
+                    award.setEnum(data.getInt(i));
+                    break;
                 default:
             }
         }
@@ -46,13 +53,14 @@ public class ModelInflater {
 
     /**
      * Inflate an event model from a single row of a cursor returned by a database query.
+     *
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Event model containing the fields as defined in the cursor
      */
-    public static Event inflateEvent(Cursor data){
+    public static Event inflateEvent(Cursor data) {
         Event event = new Event();
-        for(int i=0; i<data.getColumnCount(); i++){
-            switch(data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Events.KEY:
                     event.setEventKey(data.getString(i));
                     break;
@@ -64,6 +72,9 @@ public class ModelInflater {
                     break;
                 case Database.Events.VENUE:
                     event.setVenue(data.getString(i));
+                    break;
+                case Database.Events.WEBSITE:
+                    event.setWebsite(data.getString(i));
                     break;
                 case Database.Events.TYPE:
                     event.setEventType(data.getInt(i));
@@ -106,13 +117,14 @@ public class ModelInflater {
 
     /**
      * Inflate a match model from a single row of a cursor returned by a database query.
+     *
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Match model containing the fields as defined in the cursor
      */
-    public static Match inflateMatch(Cursor data){
+    public static Match inflateMatch(Cursor data) {
         Match match = new Match();
-        for(int i=0; i<data.getColumnCount(); i++){
-            switch(data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Matches.KEY:
                     match.setKey(data.getString(i));
                     break;
@@ -142,13 +154,14 @@ public class ModelInflater {
 
     /**
      * Inflate a media model from a single row of a cursor returned by a database query.
+     *
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Media model containing the fields as defined in the cursor
      */
-    public static Media inflateMedia(Cursor data){
+    public static Media inflateMedia(Cursor data) {
         Media media = new Media();
-        for(int i=0; i<data.getColumnCount(); i++){
-            switch(data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Medias.TYPE:
                     media.setMediaType(data.getString(i));
                     break;
@@ -169,12 +182,13 @@ public class ModelInflater {
 
     /**
      * Inflate a team model from a single row of a cursor returned by a database query.
+     *
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Team model containing the fields as defined in the cursor
      */
-    public static Team inflateTeam(Cursor data){
+    public static Team inflateTeam(Cursor data) {
         Team team = new Team();
-        for(int i=0; i<data.getColumnCount(); i++) {
+        for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case Database.Teams.KEY:
                     team.setTeamKey(data.getString(i));
@@ -205,13 +219,14 @@ public class ModelInflater {
 
     /**
      * Inflate an eventTeam model from a single row of a cursor returned by a database query.
+     *
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return EventTeam model containing the fields as defined in the cursor
      */
-    public static EventTeam inflateEventTeam(Cursor data){
+    public static EventTeam inflateEventTeam(Cursor data) {
         EventTeam eventTeam = new EventTeam();
-        for(int i=0; i<data.getColumnCount(); i++){
-            switch (data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.EventTeams.TEAMKEY:
                     eventTeam.setTeamKey(data.getString(i));
                     break;
@@ -223,6 +238,9 @@ public class ModelInflater {
                     break;
                 case Database.EventTeams.COMPWEEK:
                     eventTeam.setCompWeek(data.getInt(i));
+                    break;
+                case Database.EventTeams.KEY:
+                    eventTeam.setKey(data.getString(i));
                     break;
                 default:
             }
