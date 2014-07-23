@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient;
 
 import android.app.Application;
+import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -21,18 +22,22 @@ public class TBAAndroid extends Application {
         ANDROID_TRACKER;    // main tracker. We can add others in the future, if we need
     }
 
-    HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
+    static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
 
-    private GoogleAnalytics analytics;
+    private static GoogleAnalytics analytics;
 
-    public synchronized Tracker getTracker(GAnalyticsTracker trackerId) {
+    public Tracker getTracker(GAnalyticsTracker tracker){
+        return getTracker(tracker, this);
+    }
+
+    public static synchronized Tracker getTracker(GAnalyticsTracker trackerId, Context c) {
         if (!mTrackers.containsKey(trackerId)) {
             if(analytics == null) {
-                analytics = GoogleAnalytics.getInstance(this);
+                analytics = GoogleAnalytics.getInstance(c);
                 boolean dryRun;
 
-                if (Utilities.isDebuggable(this)) {
-                    dryRun = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("analytics_dry_run", true);
+                if (Utilities.isDebuggable(c)) {
+                    dryRun = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("analytics_dry_run", true);
                 } else {
                     dryRun = false;
                 }
@@ -41,11 +46,11 @@ public class TBAAndroid extends Application {
             }
 
             String id;
-            if(Utilities.isDebuggable(this)){
-                boolean useDebugKey = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("analytics_debug_key", true);
-                id = Utilities.readLocalProperty(this, useDebugKey ? DEBUG_ANALYTICS_KEY : PROD_ANALYTICS_KEY);
+            if(Utilities.isDebuggable(c)){
+                boolean useDebugKey = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("analytics_debug_key", true);
+                id = Utilities.readLocalProperty(c, useDebugKey ? DEBUG_ANALYTICS_KEY : PROD_ANALYTICS_KEY);
             }else{
-                id = Utilities.readLocalProperty(this, PROD_ANALYTICS_KEY);
+                id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
             }
             Tracker t;
             Log.d("GAV4", "Loaded analytics id: "+id);
