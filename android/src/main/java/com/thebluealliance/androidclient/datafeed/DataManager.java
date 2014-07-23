@@ -328,14 +328,23 @@ public class DataManager {
 
         public static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
             ArrayList<Award> awards = new ArrayList<>();
-            Log.d("event awards", "Fetching awards for " + eventKey);
+            Log.d("event awards", "Fetching awards for " + eventKey+" "+teamKey);
             String apiUrl = String.format(TBAv2.API_URL.get(TBAv2.QUERY.EVENT_AWARDS), eventKey);
             String sqlWhere = Database.Awards.EVENTKEY + " = ?";
             APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, loadFromCache, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Award award : awardResponse.getData()) {
                 try {
-                    if (award.getWinners().toString().contains(teamKey.isEmpty() ? "" : teamKey.substring(3) + ",")) {
+                    if (teamKey.isEmpty()) {
                         awards.add(award);
+                    } else {
+                        JsonArray winners = award.getWinners();
+                        for (JsonElement winner : winners) {
+                            JsonObject w = winner.getAsJsonObject();
+                            if (w.has("team_number") && !w.get("team_number").isJsonNull() && w.get("team_number").getAsString().equals(teamKey.substring(3))) {
+                                awards.add(award);
+                                break;
+                            }
+                        }
                     }
                 } catch (BasicModel.FieldNotDefinedException e) {
                     throw new NoDataException(e.getMessage());
