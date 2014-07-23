@@ -14,6 +14,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -110,6 +111,13 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     }
 
     private void updateQuery(final String query) {
+
+        //Track the query
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("search")
+                .setAction(query)
+                .build());
 
         String preparedQuery = Utilities.getPreparedQueryForSearch(query);
 
