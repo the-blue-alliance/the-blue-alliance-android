@@ -41,7 +41,11 @@ public class TBAv2 {
         EVENT_MATCHES_FOR_TEAM,
         EVENT_STATS,
         EVENT_RANKS,
-        EVENT_AWARDS
+        EVENT_AWARDS,
+        EVENT_DISTRICT_POINTS,
+        DISTRICT_LIST,
+        DISTRICT_EVENTS,
+        DISTRICT_RANKINGS
     }
 
     private static final HashMap<QUERY, String> API_URL;
@@ -66,6 +70,11 @@ public class TBAv2 {
         API_URL.put(QUERY.EVENT_STATS, "/api/v2/event/%s/stats");
         API_URL.put(QUERY.EVENT_AWARDS, "/api/v2/event/%s/awards");
         API_URL.put(QUERY.EVENT_LIST, "/api/v2/events/%d");
+        API_URL.put(QUERY.EVENT_DISTRICT_POINTS, "/api/v2/events/%s/district_points");
+
+        API_URL.put(QUERY.DISTRICT_LIST, "/api/v2/districts/%d");
+        API_URL.put(QUERY.DISTRICT_EVENTS, "/api/v2/district/%s/%d/events");
+        API_URL.put(QUERY.DISTRICT_RANKINGS, "/api/v2/district/%s/%d/rankings");
     }
 
     public static String getTBAApiUrl(Context c, QUERY query){
