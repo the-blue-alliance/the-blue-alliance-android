@@ -148,7 +148,6 @@ public class EventHelper {
                     if (start == null) {
                         weekless.add(e);
                     } else {
-                        Log.d(Constants.LOG_TAG, "Sorting "+e.getEventKey()+", "+e.getStartDate()+", "+e.getCompetitionWeek());
                         String label = String.format(REGIONAL_LABEL, e.getCompetitionWeek());
                         if (groups.containsKey(label) && groups.get(label) != null) {
                             groups.get(label).add(e);

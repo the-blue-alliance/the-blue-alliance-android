@@ -138,6 +138,8 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                 media.setAdapter(adapter);
                 media.onRestoreInstanceState(state);
                 media.setSelection(firstVisiblePosition);
+
+                adapter.notifyDataSetChanged();
             }
 
             // Display warning message if offline.

@@ -1,11 +1,13 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -18,6 +20,9 @@ import java.util.HashMap;
 
 
 public class TBAv2 {
+
+    private static final String TBA_HOST_PREF = "tba_host";
+    private static final String tbaHostDefault = "http://www.thebluealliance.com";
 
     public static enum QUERY {
         CSV_TEAMS,
@@ -39,28 +44,36 @@ public class TBAv2 {
         EVENT_AWARDS
     }
 
-    public static final HashMap<QUERY, String> API_URL;
+    private static final HashMap<QUERY, String> API_URL;
 
     static {
         API_URL = new HashMap<>();
-        API_URL.put(QUERY.CSV_TEAMS, "http://www.thebluealliance.com/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
-        API_URL.put(QUERY.TEAM_LIST, "http://www.thebluealliance.com/api/v2/teams/%s");
+        API_URL.put(QUERY.CSV_TEAMS, "/api/csv/teams/all?X-TBA-App-Id=" + Constants.getApiHeader());
+        API_URL.put(QUERY.TEAM_LIST, "/api/v2/teams/%s");
 
-        API_URL.put(QUERY.TEAM, "http://www.thebluealliance.com/api/v2/team/%s");
-        API_URL.put(QUERY.TEAM_YEAR, "http://www.thebluealliance.com/api/v2/team/%s/%d");
-        API_URL.put(QUERY.TEAM_EVENTS, "http://www.thebluealliance.com/api/v2/team/%s/%d/events");
-        API_URL.put(QUERY.TEAM_EVENT_AWARDS, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/awards");
-        API_URL.put(QUERY.TEAM_EVENT_MATCHES, "http://www.thebluealliance.com/api/v2/team/%s/event/%s/matches");
-        API_URL.put(QUERY.TEAM_YEARS_PARTICIPATED, "http://www.thebluealliance.com/api/v2/team/%s/years_participated");
-        API_URL.put(QUERY.TEAM_MEDIA, "http://www.thebluealliance.com/api/v2/team/%s/%d/media");
+        API_URL.put(QUERY.TEAM, "/api/v2/team/%s");
+        API_URL.put(QUERY.TEAM_YEAR, "/api/v2/team/%s/%d");
+        API_URL.put(QUERY.TEAM_EVENTS, "/api/v2/team/%s/%d/events");
+        API_URL.put(QUERY.TEAM_EVENT_AWARDS, "/api/v2/team/%s/event/%s/awards");
+        API_URL.put(QUERY.TEAM_EVENT_MATCHES, "/api/v2/team/%s/event/%s/matches");
+        API_URL.put(QUERY.TEAM_YEARS_PARTICIPATED, "/api/v2/team/%s/years_participated");
+        API_URL.put(QUERY.TEAM_MEDIA, "/api/v2/team/%s/%d/media");
 
-        API_URL.put(QUERY.EVENT_INFO, "http://www.thebluealliance.com/api/v2/event/%s");
-        API_URL.put(QUERY.EVENT_TEAMS, "http://www.thebluealliance.com/api/v2/event/%s/teams");
-        API_URL.put(QUERY.EVENT_RANKS, "http://www.thebluealliance.com/api/v2/event/%s/rankings");
-        API_URL.put(QUERY.EVENT_MATCHES, "http://www.thebluealliance.com/api/v2/event/%s/matches");
-        API_URL.put(QUERY.EVENT_STATS, "http://www.thebluealliance.com/api/v2/event/%s/stats");
-        API_URL.put(QUERY.EVENT_AWARDS, "http://www.thebluealliance.com/api/v2/event/%s/awards");
-        API_URL.put(QUERY.EVENT_LIST, "http://www.thebluealliance.com/api/v2/events/%d");
+        API_URL.put(QUERY.EVENT_INFO, "/api/v2/event/%s");
+        API_URL.put(QUERY.EVENT_TEAMS, "/api/v2/event/%s/teams");
+        API_URL.put(QUERY.EVENT_RANKS, "/api/v2/event/%s/rankings");
+        API_URL.put(QUERY.EVENT_MATCHES, "/api/v2/event/%s/matches");
+        API_URL.put(QUERY.EVENT_STATS, "/api/v2/event/%s/stats");
+        API_URL.put(QUERY.EVENT_AWARDS, "/api/v2/event/%s/awards");
+        API_URL.put(QUERY.EVENT_LIST, "/api/v2/events/%d");
+    }
+
+    public static String getTBAApiUrl(Context c, QUERY query){
+        String host = PreferenceManager.getDefaultSharedPreferences(c).getString(TBA_HOST_PREF, tbaHostDefault);
+        if(!Utilities.isDebuggable() || host.isEmpty()){
+            host = tbaHostDefault;
+        }
+        return host+API_URL.get(query);
     }
 
     public static ArrayList<Event> getEventList(String json) {
@@ -150,34 +163,40 @@ public class TBAv2 {
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
                 HttpResponse cachedResponse = HTTP.getResponse(URL, cachedData.getLastUpdate());
-                /* If we get a 200-OK back from the server, then we need to return that new data
-                 * Otherwise, we are going to assume the code is 304-Not-Modified
-                 * There is a possibility of other codes, but we can add those in (along with proper error handling) here later
-                 */
-                boolean dataRequiresUpdate = (cachedResponse != null) && (cachedResponse.getStatusLine().getStatusCode() == 200);
 
-                if (dataRequiresUpdate) {
+                if(cachedResponse != null) {
+                    /* If we get a 200-OK back from the server, then we need to return that new data
+                     * Otherwise, we are going to assume the code is 304-Not-Modified
+                     * There is a possibility of other codes, but we can add those in (along with proper error handling) here later
+                     */
+                    boolean dataRequiresUpdate = (cachedResponse.getStatusLine().getStatusCode() == 200);
+
+                    if (dataRequiresUpdate) {
                     /* If we get 200-OK back, read the data from the request
                      * Also, if the server gives a Last-Modified time back, record it and add it to the database for future use
                      */
-                    String response = HTTP.dataFromResponse(cachedResponse),
-                            lastUpdate = "";
-                    Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
-                    if (lastModified != null) {
-                        lastUpdate = lastModified.getValue();
-                    }
+                        String response = HTTP.dataFromResponse(cachedResponse),
+                                lastUpdate = "";
+                        Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
+                        if (lastModified != null) {
+                            lastUpdate = lastModified.getValue();
+                        }
 
-                    Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
+                        Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
 
-                    Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet: " + URL);
-                    return new APIResponse<>(response, APIResponse.CODE.UPDATED); /* This response will contain the data that we fetched */
-                } else {
+                        Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet: " + URL);
+                        return new APIResponse<>(response, APIResponse.CODE.UPDATED); /* This response will contain the data that we fetched */
+                    } else {
                     /* The data does not require an update (we got a 304-Not-Modified back), so simply
                      * Update the lastHit time in the database to make sure the timeout stays active
                      */
-                    Database.getInstance(c).getResponseTable().touchResponse(URL);
+                        Database.getInstance(c).getResponseTable().touchResponse(URL);
 
-                    return cachedData.updateCode(APIResponse.CODE.CACHED304);
+                        return cachedData.updateCode(APIResponse.CODE.CACHED304);
+                    }
+                }else{
+                    Log.e(Constants.DATAMANAGER_LOG, "Unable to update data from the web");
+                    return new APIResponse<String>(null, APIResponse.CODE.NODATA);
                 }
             } else {
                 Log.d(Constants.DATAMANAGER_LOG, "Offline; can't check API. " + URL);
@@ -189,19 +208,24 @@ public class TBAv2 {
                  * But we do have the ability to fetch it from the web.
                  */
                 HttpResponse webResponse = HTTP.getResponse(URL);
-                String response = HTTP.dataFromResponse(webResponse),
-                        lastUpdate = "";
-                Header lastModified = webResponse.getFirstHeader("Last-Modified");
-                if (lastModified != null) {
-                    lastUpdate = lastModified.getValue();
-                }
+                if(webResponse != null) {
+                    String response = HTTP.dataFromResponse(webResponse),
+                            lastUpdate = "";
+                    Header lastModified = webResponse.getFirstHeader("Last-Modified");
+                    if (lastModified != null) {
+                        lastUpdate = lastModified.getValue();
+                    }
 
-                if (cacheLocally) {
-                    Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
-                }
+                    if (cacheLocally) {
+                        Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
+                    }
 
-                Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet: " + URL);
-                return new APIResponse<>(response, APIResponse.CODE.WEBLOAD); /* This response will contain the loaded data */
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet: " + URL);
+                    return new APIResponse<>(response, APIResponse.CODE.WEBLOAD); /* This response will contain the loaded data */
+                }else{
+                    Log.e(Constants.DATAMANAGER_LOG, "Unable to load data from the web");
+                    return new APIResponse<String>(null, APIResponse.CODE.NODATA);
+                }
             } else {
                 /* There is no locally stored data and we are not connected to the internet.
                  * Can't do anything...

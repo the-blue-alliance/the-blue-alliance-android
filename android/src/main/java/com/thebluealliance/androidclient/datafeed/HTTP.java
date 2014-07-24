@@ -33,7 +33,8 @@ public class HTTP {
             }
             return httpclient.execute(httpget);
         } catch (Exception e) {
-            Log.w(Constants.LOG_TAG, "Exception while fetching " + url + ": \n" + Arrays.toString(e.getStackTrace()));
+            Log.w(Constants.LOG_TAG, "Exception while fetching " + url);
+            e.printStackTrace();
             return null;
         }
     }
@@ -42,23 +43,27 @@ public class HTTP {
         InputStream is;
         String result = "";
         // Read response to string
-        try {
-            HttpEntity entity = response.getEntity();
+        if(response != null) {
+            try {
+                HttpEntity entity = response.getEntity();
 
-            is = entity.getContent();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
+                is = entity.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                is.close();
+                result = sb.toString();
+                return result;
+            } catch (Exception e) {
+                Log.w(Constants.LOG_TAG, "Exception while fetching data from " + response.toString());
+                e.printStackTrace();
+                return null;
             }
-            is.close();
-            result = sb.toString();
-        } catch (Exception e) {
-            Log.w(Constants.LOG_TAG, "Exception while fetching data from " + response.toString() + ": \n" + Arrays.toString(e.getStackTrace()));
-            return null;
         }
-        return result;
+        return null;
     }
 
     public static String GET(String url) {
