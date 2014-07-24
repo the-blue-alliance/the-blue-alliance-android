@@ -70,7 +70,9 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 mMatchTitle = match.getTitle();
                 Gson gson = JSONManager.getGson();
                 for(JsonElement v: match.getVideos()){
-                    mMatchDetails.add(gson.fromJson(v, Media.class).render());
+                    if(Media.TYPE.fromString(v.getAsJsonObject().get("type").getAsString()) != Media.TYPE.NONE) {
+                        mMatchDetails.add(gson.fromJson(v, Media.class).render());
+                    }
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Couldn't get match data");
