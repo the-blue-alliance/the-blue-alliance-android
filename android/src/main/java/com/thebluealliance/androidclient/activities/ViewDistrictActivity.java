@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,26 +17,35 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
-import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
 
 /**
  * Created by phil on 7/10/14.
  */
-public class ViewDistrictActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
+public class ViewDistrictActivity extends RefreshableHostActivity {
 
-    public static final String DISTRICT_KEY = "districtKey";
+    public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
 
-    private String districtKey;
+    private String districtAbbrev, districtKey;
     private int year;
     private TextView warningMessage;
     private ViewPager pager;
     private ViewDistrictFragmentPagerAdapter adapter;
 
-    public static Intent newInstance(Context c, String districtKey, int year) {
+    public static Intent newInstance(Context c, String districtAbbrev, int year) {
         Intent intent = new Intent(c, ViewDistrictActivity.class);
-        intent.putExtra(DISTRICT_KEY, districtKey);
+        intent.putExtra(DISTRICT_ABBREV, districtAbbrev);
+        intent.putExtra(YEAR, year);
+        return intent;
+    }
+
+    public static Intent newInstance(Context c, String districtKey){
+        int year = Integer.parseInt(districtKey.substring(0, 4));
+        String abbrev = districtKey.substring(4);
+        Intent intent = new Intent(c, ViewDistrictActivity.class);
+        intent.putExtra(DISTRICT_ABBREV, abbrev);
         intent.putExtra(YEAR, year);
         return intent;
     }
@@ -45,8 +55,8 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_district);
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_KEY)) {
-            districtKey = getIntent().getExtras().getString(DISTRICT_KEY, "");
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_ABBREV)) {
+            districtAbbrev = getIntent().getExtras().getString(DISTRICT_ABBREV, "");
         } else {
             throw new IllegalArgumentException("ViewDistrictActivity must be constructed with a key");
         }
@@ -55,6 +65,8 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         } else {
             throw new IllegalArgumentException("ViewDistrictActivity must be constructed with a year");
         }
+
+        districtKey = DistrictHelper.generateKey(districtAbbrev, year);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -67,7 +79,6 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         pager.setOffscreenPageLimit(10);
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
         setupActionBar();
@@ -76,7 +87,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        setBeamUri(String.format(NfcUris.URI_DISTRICT, districtKey));
+        setBeamUri(String.format(NfcUris.URI_DISTRICT, districtAbbrev));
     }
 
     @Override
@@ -86,8 +97,11 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("");
+        ActionBar bar = getActionBar();
+        if(bar != null) {
+            bar.setDisplayHomeAsUpEnabled(true);
+            setActionBarTitle(year + " " + DistrictHelper.districtTypeFromKey(districtKey).getName());
+        }
     }
 
     @Override
@@ -125,18 +139,4 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         warningMessage.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
 }

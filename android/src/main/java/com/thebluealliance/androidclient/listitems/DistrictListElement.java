@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.listeners.DistrictClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
@@ -16,10 +17,12 @@ import com.thebluealliance.androidclient.models.District;
 public class DistrictListElement extends ListElement {
 
     private DistrictHelper.DISTRICTS type;
+    private String key;
 
     public DistrictListElement(District district) throws BasicModel.FieldNotDefinedException {
         super(district.getKey());
         type = DistrictHelper.DISTRICTS.fromEnum(district.getEnum());
+        key = district.getKey();
     }
 
     @Override
@@ -36,6 +39,8 @@ public class DistrictListElement extends ListElement {
         }
 
         holder.title.setText(type.getName()+" District");
+
+        convertView.setOnClickListener(new DistrictClickListener(c, key));
 
         return convertView;
     }
