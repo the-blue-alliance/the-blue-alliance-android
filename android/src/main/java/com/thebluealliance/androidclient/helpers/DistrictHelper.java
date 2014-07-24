@@ -39,6 +39,17 @@ public class DistrictHelper {
             }
         }
 
+        public String getName(){
+            switch (this){
+                default:
+                case NO_DISTRICT: return "";
+                case MICHIGAN: return "Michigan";
+                case MID_ATLANTIC: return "Mid Atlantic";
+                case NEW_ENGLAND: return "New England";
+                case PACIFIC_NORTHWEST: return "Pacific Northwest";
+            }
+        }
+
     }
 
     public static boolean validateDistrictKey(String key){

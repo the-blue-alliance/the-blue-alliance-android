@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
+import com.thebluealliance.androidclient.listitems.DistrictListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 import java.util.ArrayList;
@@ -84,7 +85,13 @@ public class District extends BasicModel<District> {
     }
 
     @Override
-    public ListElement render() {
+    public DistrictListElement render() {
+        try {
+            return new DistrictListElement(this);
+        } catch (FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Unable to render district");
+            e.printStackTrace();
+        }
         return null;
     }
 

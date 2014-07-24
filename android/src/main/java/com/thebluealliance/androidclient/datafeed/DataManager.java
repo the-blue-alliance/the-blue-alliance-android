@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
@@ -368,6 +369,20 @@ public class DataManager {
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.KEY + " = ?";
             return Match.query(c, matchKey, loadFromCache, null, sqlWhere, new String[]{matchKey}, new String[]{apiUrl});
+        }
+
+    }
+
+    public static class Districts {
+
+        public static APIResponse<ArrayList<District>> getDistrictsInYear(Context c, int year, boolean loadFromCache) throws NoDataException{
+            Log.d(Constants.DATAMANAGER_LOG, "getting districts in : " + year);
+
+            String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_LIST), year);
+            String sqlWhere = Database.Districts.YEAR + " = ?";
+            String[] whereArgs = new String[]{Integer.toString(year)};
+
+            return District.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
     }
