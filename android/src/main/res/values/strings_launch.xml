@@ -23,6 +23,7 @@
     <!-- Status Messages -->
     <string name="loading_teams" formatted="false">Loading teams from %d to %d</string>
     <string name="loading_events">Loading %s events</string>
+    <string name="loading_districts">Loading %d districts</string>
     <string name="loading_almost_finished">Finishing setup...</string>
     <string name="loading_finished">Loading complete</string>
 

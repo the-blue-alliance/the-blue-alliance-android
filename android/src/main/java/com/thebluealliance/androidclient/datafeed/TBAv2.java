@@ -8,6 +8,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -101,6 +103,15 @@ public class TBAv2 {
             teams.add(JSONManager.getGson().fromJson(aData, Team.class));
         }
         return teams;
+    }
+
+    public static ArrayList<District> getDistrictList(String json, String url){
+        ArrayList<District> districts = new ArrayList<>();
+        JsonArray data = JSONManager.getasJsonArray(json);
+        for (JsonElement d : data) {
+            districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
+        }
+        return districts;
     }
 
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {

@@ -144,6 +144,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 break;
             case R.id.nav_item_districts:
                 fragment = DistrictListFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
+                break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
                 break;

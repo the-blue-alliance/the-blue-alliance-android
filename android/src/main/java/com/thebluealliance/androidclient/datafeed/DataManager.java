@@ -375,6 +375,8 @@ public class DataManager {
 
     public static class Districts {
 
+        public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
+
         public static APIResponse<ArrayList<District>> getDistrictsInYear(Context c, int year, boolean loadFromCache) throws NoDataException{
             Log.d(Constants.DATAMANAGER_LOG, "getting districts in : " + year);
 

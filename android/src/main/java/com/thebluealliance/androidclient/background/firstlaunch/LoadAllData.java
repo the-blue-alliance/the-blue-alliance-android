@@ -17,6 +17,8 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -50,6 +52,7 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
         try {
             ArrayList<Team> teams = new ArrayList<>();
             ArrayList<Event> events = new ArrayList<>();
+            ArrayList<District> districts = new ArrayList<>();
             int maxPageNum = 0;
 
             // First we will load all the teams
@@ -95,6 +98,26 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
                 events.addAll(yearEvents);
             }
 
+            //load all districts
+            for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++){
+                if(isCancelled()) {
+                    return null;
+                }
+                publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
+                APIResponse<String> districtListResponse;
+                String url = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.DISTRICT_LIST), year);
+                districtListResponse = TBAv2.getResponseFromURLOrThrow(context, url, true, false);
+                JsonElement responseObject = JSONManager.getParser().parse(districtListResponse.getData());
+                if (responseObject instanceof JsonObject) {
+                    if (((JsonObject) responseObject).has("404")) {
+                        // No events found for that year; skip it
+                        continue;
+                    }
+                }
+                ArrayList<District> yearDistricts = TBAv2.getDistrictList(districtListResponse.getData(), url);
+                districts.addAll(yearDistricts);
+            }
+
             if(isCancelled()) {
                 return null;
             }
@@ -105,6 +128,8 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             Database.getInstance(context).getTeamsTable().storeTeams(teams);
             Log.d(Constants.LOG_TAG, "storing events");
             Database.getInstance(context).getEventsTable().storeEvents(events);
+            Log.d(Constants.LOG_TAG, "storing districts");
+            Database.getInstance(context).getDistrictsTable().add(districts);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
@@ -113,6 +138,10 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             // Loop through all years
             for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                 editor.putBoolean(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
+            }
+            // Loop through years for districts
+            for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++){
+                editor.putBoolean(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.commit();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));

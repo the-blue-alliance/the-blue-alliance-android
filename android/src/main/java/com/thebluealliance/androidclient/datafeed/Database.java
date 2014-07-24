@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -260,41 +260,47 @@ public class Database extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
-        if (newVersion >= DATABASE_VERSION && oldVersion < DATABASE_VERSION) {
-            /* For now, we're just gonna drop all data tables and wipe the data-related
-               shared preferences just to put everyone on track starting from v8.
-
-               For future versions, a possible idea is adding any previous db changes
-               through a while loop/switch statement, incrementing up until the latest version.
-               like http://blog.adamsbros.org/2012/02/28/upgrade-android-sqlite-database/
-
-               If version is less than 8, then wipe remaining tables/data prefs.
-            */
-            // d-d-d-d-drop the tables (ノಠ益ಠ)ノ彡┻━┻ #dubstepwubwubz
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_AWARDS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCHES);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIAS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTTEAMS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
-
-            // Clear the data-related shared prefs
-            Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
-            for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-                if (entry.getKey().contains(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
-                        entry.getKey().contains(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE)) {
-                    PreferenceManager.getDefaultSharedPreferences(context).edit().
-                            remove(entry.getKey()).commit();
-                }
+        int upgradeTo = oldVersion + 1;
+        while (upgradeTo <= newVersion)
+        {
+            switch (upgradeTo)
+            {
+                case 14:
+                    //add districts tables
+                    db.execSQL(CREATE_DISTRICTS);
+                    db.execSQL(CREATE_DISTRICTTEAMS);
             }
-
-            PreferenceManager.getDefaultSharedPreferences(context).edit().
-                    remove(LaunchActivity.ALL_DATA_LOADED).commit();
+            upgradeTo++;
         }
+    }
+
+    private void recreateDb(SQLiteDatabase db){
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_AWARDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCHES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIAS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTTEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTTEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
+
+        // Clear the data-related shared prefs
+        Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getKey().contains(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
+                    entry.getKey().contains(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE) ||
+                    entry.getKey().contains(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().
+                        remove(entry.getKey()).commit();
+            }
+        }
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit().
+                remove(LaunchActivity.ALL_DATA_LOADED).commit();
 
         onCreate(db);
     }
