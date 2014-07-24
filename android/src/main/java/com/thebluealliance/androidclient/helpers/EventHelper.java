@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
@@ -326,6 +327,31 @@ public class EventHelper {
             }
             lastType = currentType;
             lastDistrict = currentDistrict;
+        }
+        return eventListItems;
+    }
+
+    public static ArrayList<ListItem> renderEventListForDistrict(Context c, ArrayList<Event> events, boolean broadcastIfLive) {
+        ArrayList<ListItem> eventListItems = new ArrayList<>();
+        Collections.sort(events, new EventSortByDateComparator());
+        String lastHeader = null, currentHeader = null;
+        for(Event event: events){
+            try {
+                currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
+                if(!currentHeader.equals(lastHeader)){
+                    eventListItems.add(new EventTypeHeader(currentHeader + " Events"));
+                }
+                eventListItems.add(event.render());
+
+                if (broadcastIfLive && event.isHappeningNow()) {
+                    //send out that there are live matches happening for other things to pick up
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
+                    LocalBroadcastManager.getInstance(c).sendBroadcast(new LiveEventBroadcast(event.render()));
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
+            }
+            lastHeader = currentHeader;
         }
         return eventListItems;
     }

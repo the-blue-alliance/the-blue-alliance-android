@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -238,25 +239,17 @@ public class DataManager {
             }
         }
 
-        public static APIResponse<HashMap<MatchHelper.TYPE, ArrayList<Match>>> getEventResults(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
-            HashMap<MatchHelper.TYPE, ArrayList<Match>> results = new HashMap<MatchHelper.TYPE, ArrayList<Match>>();
-            results.put(MatchHelper.TYPE.QUAL, new ArrayList<Match>());
-            results.put(MatchHelper.TYPE.QUARTER, new ArrayList<Match>());
-            results.put(MatchHelper.TYPE.SEMI, new ArrayList<Match>());
-            results.put(MatchHelper.TYPE.FINAL, new ArrayList<Match>());
-            Log.d("event results", "Fetching results for " + eventKey);
+        public static APIResponse<ArrayList<Event>> getEventsInDistrict(Context c, String districtKey, boolean loadFromCache) throws NoDataException{
+            Log.d(Constants.LOG_TAG, "getting for district: " + districtKey);
 
-            String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_MATCHES), eventKey);
-            String sqlWhere = Database.Matches.EVENT + " = ?";
-            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
-            for (Match match : matchResponse.getData()) {
-                try {
-                    results.get(match.getType()).add(match);
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    throw new NoDataException(e.getMessage());
-                }
-            }
-            return new APIResponse<>(results, matchResponse.getCode());
+            int year = Integer.parseInt(districtKey.substring(0, 4));
+            DistrictHelper.DISTRICTS districtType = DistrictHelper.districtTypeFromKey(districtKey);
+
+            String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_EVENTS), districtType.getAbbreviation(), year);
+            String sqlWhere = Database.Events.DISTRICT + " = ? AND " + Database.Events.YEAR + " = ? ";
+            String[] whereArgs = new String[]{Integer.toString(districtType.ordinal()), Integer.toString(year)};
+
+            return Event.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
         public static APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
@@ -352,10 +345,6 @@ public class DataManager {
                 }
             }
             return new APIResponse<>(awards, awardResponse.getCode());
-        }
-
-        public static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
-            return getEventAwards(c, eventKey, "", loadFromCache);
         }
     }
 

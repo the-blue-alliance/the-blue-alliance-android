@@ -50,6 +50,17 @@ public class DistrictHelper {
             }
         }
 
+        public String getAbbreviation(){
+            switch (this){
+                default:
+                case NO_DISTRICT: return "";
+                case MICHIGAN: return "fim";
+                case MID_ATLANTIC: return "mar";
+                case NEW_ENGLAND: return "ne";
+                case PACIFIC_NORTHWEST: return "pnw";
+            }
+        }
+
     }
 
     public static boolean validateDistrictKey(String key){
