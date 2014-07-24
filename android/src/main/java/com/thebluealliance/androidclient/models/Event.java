@@ -32,7 +32,7 @@ public class Event extends BasicModel<Event> {
 
     private String shortName;
     private JsonArray matches, alliances, rankings, webcasts, teams;
-    private JsonObject stats;
+    private JsonObject stats, districtPoints;
 
     public Event() {
         super(Database.TABLE_EVENTS);
@@ -41,6 +41,7 @@ public class Event extends BasicModel<Event> {
         rankings = null;
         webcasts = null;
         stats = null;
+        districtPoints = null;
     }
 
     public JsonArray getAlliances() throws FieldNotDefinedException {
@@ -242,7 +243,26 @@ public class Event extends BasicModel<Event> {
 
     public void setDistrictTitle(String districtTitle) {
         fields.put(Database.Events.DISTRICT_STRING, districtTitle);
+    }
 
+    public JsonObject getDistrictPoints() throws FieldNotDefinedException {
+        if(districtPoints != null){
+            return districtPoints;
+        }
+        if (fields.containsKey(Database.Events.DISTRICT_POINTS) && fields.get(Database.Events.DISTRICT_POINTS) instanceof String) {
+            districtPoints = JSONManager.getasJsonObject ((String) fields.get(Database.Events.DISTRICT_POINTS));
+            return districtPoints;
+        }
+        throw new FieldNotDefinedException("Field Database.Events.DISTRICT_POINTS is not defined");
+    }
+
+    public void setDistrictPoints(String districtPoints) {
+        fields.put(Database.Events.DISTRICT_POINTS, districtPoints);
+    }
+
+    public void setDistrictPoints(JsonObject districtPoints){
+        this.districtPoints = districtPoints;
+        fields.put(Database.Events.DISTRICT_POINTS, districtPoints.toString());
     }
 
     public Date getStartDate() throws FieldNotDefinedException {

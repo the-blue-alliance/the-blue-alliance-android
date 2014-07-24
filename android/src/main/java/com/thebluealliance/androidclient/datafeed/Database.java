@@ -79,6 +79,7 @@ public class Database extends SQLiteOpenHelper {
             + Events.TYPE + " INTEGER DEFAULT -1, "
             + Events.DISTRICT + " INTEGER DEFAULT -1, "
             + Events.DISTRICT_STRING + " TEXT DEFAULT '', "
+            + Events.DISTRICT_POINTS +  " TEXT DEFAULT '', "
             + Events.START + " TIMESTAMP, "
             + Events.END + " TIMESTAMP, "
             + Events.OFFICIAL + " INTEGER DEFAULT 0, "
@@ -141,7 +142,8 @@ public class Database extends SQLiteOpenHelper {
             + DistrictTeams.CMP_KEY + " TEXT DEFAULT '', "
             + DistrictTeams.CMP_POINTS + " INTEGER DEFAULT 0, "
             + DistrictTeams.ROOKIE_POINTS + " INTEGER DEFAULT 0, "
-            + DistrictTeams.TOTAL_POINTS + " INTEGER DEFAULT 0 "
+            + DistrictTeams.TOTAL_POINTS + " INTEGER DEFAULT 0, "
+            + DistrictTeams.JSON + " STRING DEFAULT '' "
             + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
@@ -166,6 +168,8 @@ public class Database extends SQLiteOpenHelper {
     private Medias mediasTable;
     private EventTeams eventTeamsTable;
     private Response responseTable;
+    private Districts districtsTable;
+    private DistrictTeams districtTeamsTable;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -177,6 +181,8 @@ public class Database extends SQLiteOpenHelper {
         matchesTable = new Matches();
         mediasTable = new Medias();
         eventTeamsTable = new EventTeams();
+        districtsTable = new Districts();
+        districtTeamsTable = new DistrictTeams();
         responseTable = new Response();
         mSemaphore = new Semaphore(1);
     }
@@ -218,6 +224,14 @@ public class Database extends SQLiteOpenHelper {
 
     public EventTeams getEventTeamsTable() {
         return eventTeamsTable;
+    }
+
+    public Districts getDistrictsTable(){
+        return districtsTable;
+    }
+
+    public DistrictTeams getDistrictTeamsTable(){
+        return districtTeamsTable;
     }
 
     @Override
@@ -515,6 +529,7 @@ public class Database extends SQLiteOpenHelper {
                 TYPE = "eventType",
                 DISTRICT = "eventDistrict",
                 DISTRICT_STRING = "districtString",
+                DISTRICT_POINTS = "districtPoints",
                 START = "startDate",
                 END = "endDate",
                 OFFICIAL = "official",
@@ -1197,7 +1212,8 @@ public class Database extends SQLiteOpenHelper {
             CMP_KEY = "cmpKey",
             CMP_POINTS = "cmpPoints",
             ROOKIE_POINTS = "rookiePoints",
-            TOTAL_POINTS = "totalPoints";
+            TOTAL_POINTS = "totalPoints",
+            JSON = "json";
 
         @Override
         public long add(DistrictTeam in) {
@@ -1213,13 +1229,13 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public void add(ArrayList<District> districts){
+        public void add(ArrayList<DistrictTeam> districts){
             Semaphore dbSemaphore = null;
             try {
                 dbSemaphore = getSemaphore();
                 dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
-                for (District district : districts) {
+                for (DistrictTeam district : districts) {
                     try {
                         if (!unsafeExists(district.getKey())) {
                             db.insert(TABLE_DISTRICTTEAMS, null, district.getParams());

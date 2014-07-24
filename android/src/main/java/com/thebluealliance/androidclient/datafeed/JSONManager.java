@@ -10,11 +10,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -42,6 +44,7 @@ public class JSONManager {
             builder.registerTypeAdapter(Match.class, new MatchDeserializer());
             builder.registerTypeAdapter(Team.class, new TeamDeserializer());
             builder.registerTypeAdapter(Media.class, new MediaDeserializer());
+            builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
             gson = builder.create();
         }
         return gson;

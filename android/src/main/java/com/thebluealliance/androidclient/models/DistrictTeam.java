@@ -1,9 +1,24 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
+import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.ListElement;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by phil on 7/23/14.
@@ -62,8 +77,8 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         }
     }
 
-    public void setRank(int year){
-        fields.put(Database.DistrictTeams.RANK, year);
+    public void setRank(int rank){
+        fields.put(Database.DistrictTeams.RANK, rank);
     }
 
     public int getRank() throws FieldNotDefinedException {
@@ -170,6 +185,18 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         }
     }
 
+    public void setJson(String json){
+        fields.put(Database.DistrictTeams.JSON, json);
+    }
+
+    public String getJson() throws FieldNotDefinedException{
+        if (fields.containsKey(Database.DistrictTeams.JSON) && fields.get(Database.DistrictTeams.JSON) instanceof String) {
+            return (String) fields.get(Database.DistrictTeams.JSON);
+        }else {
+            throw new FieldNotDefinedException("Field Database.DistrictTeams.JSON is not defined");
+        }
+    }
+
     @Override
     public void write(Context c) {
 
@@ -178,5 +205,100 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
     @Override
     public ListElement render() {
         return null;
+    }
+
+    public static synchronized APIResponse<DistrictTeam> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
+        DistrictTeam team;
+        if (cursor != null && cursor.moveToFirst()) {
+            team = ModelInflater.inflateDistrictTeam(cursor);
+            cursor.close();
+        } else {
+            team = new DistrictTeam();
+        }
+
+        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        ArrayList<DistrictTeam> allTeams = null;
+        boolean changed = false;
+        allTeams = new ArrayList<>();
+        for (String url : apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                DistrictTeam updatedTeam = new DistrictTeam();
+                if (url.contains("district") && url.contains("rankings")) {
+                    /* We're requesting the rankings for an entire district (there isn't yet a single endpoint for this) */
+                    JsonArray teamList = JSONManager.getasJsonArray(response.getData());
+                    for (JsonElement t : teamList) {
+                        DistrictTeam inflated = JSONManager.getGson().fromJson(t, DistrictTeam.class);
+                        DistrictTeamHelper.addFieldsFromKey(inflated, key);
+
+                        try {
+                            if (inflated.getKey().equals(key)) {
+                                updatedTeam = inflated;
+                                //this match will be added to the list below
+                            } else {
+                                allTeams.add(inflated);
+                            }
+                        } catch (FieldNotDefinedException e) {
+                            Log.e(Constants.LOG_TAG, "Unable to get districtTeam key");
+                            allTeams.add(inflated);
+                        }
+                    }
+                } else {
+                    updatedTeam = JSONManager.getGson().fromJson(response.getData(), DistrictTeam.class);
+                }
+                team.merge(updatedTeam);
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        allTeams.add(team);
+
+        if (changed) {
+            team.write(c);
+        }
+        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
+        return new APIResponse<>(team, forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
+    }
+
+    public static synchronized APIResponse<ArrayList<DistrictTeam>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+        Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
+        ArrayList<DistrictTeam> districtTeams = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                districtTeams.add(ModelInflater.inflateDistrictTeam(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        boolean changed = false;
+        for (String url : apiUrls) {
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                JsonArray districtList = JSONManager.getasJsonArray(response.getData());
+                districtTeams = new ArrayList<>();
+                for (JsonElement d : districtList) {
+                    DistrictTeam next = JSONManager.getGson().fromJson(d, DistrictTeam.class);
+                    try {
+                        DistrictTeamHelper.addFieldsFromAPIUrl(next, next.getTeamKey(), url);
+                        districtTeams.add(next);
+                    } catch (FieldNotDefinedException e) {
+                        Log.e(Constants.LOG_TAG, "Unable to complete generation of districtTeam");
+                    }
+                }
+                changed = true;
+            }
+            code = APIResponse.mergeCodes(code, response.getCode());
+        }
+
+        if (changed) {
+            Database.getInstance(c).getDistrictTeamsTable().add(districtTeams);
+        }
+        Log.d(Constants.DATAMANAGER_LOG, "Found " + districtTeams.size() + " districtTeams, updated in db? " + changed);
+        return new APIResponse<>(districtTeams, code);
     }
 }

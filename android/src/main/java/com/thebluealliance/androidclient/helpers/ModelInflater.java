@@ -87,6 +87,9 @@ public class ModelInflater {
                 case Database.Events.DISTRICT_STRING:
                     event.setDistrictTitle(data.getString(i));
                     break;
+                case Database.Events.DISTRICT_POINTS:
+                    event.setDistrictPoints(data.getString(i));
+                    break;
                 case Database.Events.START:
                     event.setStartDate(new Date(data.getLong(i)));
                     break;
@@ -314,6 +317,9 @@ public class ModelInflater {
                     break;
                 case Database.DistrictTeams.TOTAL_POINTS:
                     districtTeam.setTotalPoints(data.getInt(i));
+                    break;
+                case Database.DistrictTeams.JSON:
+                    districtTeam.setJson(data.getString(i));
                     break;
                 default:
             }

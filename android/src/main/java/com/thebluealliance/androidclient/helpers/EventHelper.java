@@ -374,6 +374,8 @@ public class EventHelper {
             event.setMatches(JSONManager.getasJsonArray(data));
         } else if (url.contains("stats")) {
             event.setStats(data);
+        } else if (url.contains("district_points")){
+            event.setDistrictPoints(data);
         }
     }
 }
