@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -75,6 +76,18 @@ public class APIResponse<A> {
 
     public static CODE mergeCodes(CODE... codes) {
         if (codes.length == 0) return CODE.NODATA;
+        CODE merged = CODE.CACHED304; //start with least precedence
+        for (CODE code : codes) {
+            int newIndex = CODE.compareCodes(merged, code);
+            CODE[] values = CODE.values();
+            if (newIndex < 0 || newIndex > values.length) continue;
+            merged = values[newIndex];
+        }
+        return merged;
+    }
+
+    public static CODE mergeCodes(ArrayList<CODE> codes){
+        if (codes.size() == 0) return CODE.NODATA;
         CODE merged = CODE.CACHED304; //start with least precedence
         for (CODE code : codes) {
             int newIndex = CODE.compareCodes(merged, code);

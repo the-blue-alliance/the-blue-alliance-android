@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
+import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 import java.util.ArrayList;
@@ -38,6 +39,18 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
             return (String) fields.get(Database.DistrictTeams.KEY);
         }else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.KEY is not defined");
+        }
+    }
+
+    public void setDistrictKey(String key){
+        fields.put(Database.DistrictTeams.DISTRICT_KEY, key);
+    }
+
+    public String getDistrictKey() throws FieldNotDefinedException{
+        if (fields.containsKey(Database.DistrictTeams.DISTRICT_KEY) && fields.get(Database.DistrictTeams.DISTRICT_KEY) instanceof String) {
+            return (String) fields.get(Database.DistrictTeams.DISTRICT_KEY);
+        }else {
+            throw new FieldNotDefinedException("Field Database.DistrictTeams.DISTRICT_KEY is not defined");
         }
     }
 
@@ -199,12 +212,18 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
 
     @Override
     public void write(Context c) {
-
+        Database.getInstance(c).getDistrictTeamsTable().add(this);
     }
 
     @Override
     public ListElement render() {
-        return null;
+        try {
+            return new DistrictTeamListElement(getTeamKey(), getDistrictKey(), getRank(), getTotalPoints());
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Unable to render districtTeam. Missing fields");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static synchronized APIResponse<DistrictTeam> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {

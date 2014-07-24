@@ -189,7 +189,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
-            if(!mHeader.equals("") || mTeamKey != null) {
+            if(!mHeader.equals("") || mTeamKey != null || mDistrictKey != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.list).setVisibility(View.VISIBLE);
             }
@@ -203,7 +203,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 new PopulateEventList(mFragment, host, mYear, mHeader, mTeamKey, mDistrictKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Event list refresh complete");
+                Log.i(Constants.REFRESH_LOG, "District events refresh complete");
                 host.notifyRefreshComplete((RefreshListener) mFragment);
             }
 

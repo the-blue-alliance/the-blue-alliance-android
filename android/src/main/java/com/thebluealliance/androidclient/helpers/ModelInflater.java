@@ -285,6 +285,9 @@ public class ModelInflater {
                 case Database.DistrictTeams.TEAM_KEY:
                     districtTeam.setTeamKey(data.getString(i));
                     break;
+                case Database.DistrictTeams.DISTRICT_KEY:
+                    districtTeam.setDistrictKey(data.getString(i));
+                    break;
                 case Database.DistrictTeams.DISTRICT_ENUM:
                     districtTeam.setDistrictEnum(data.getInt(i));
                     break;

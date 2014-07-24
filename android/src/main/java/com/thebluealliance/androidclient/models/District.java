@@ -81,7 +81,7 @@ public class District extends BasicModel<District> {
 
     @Override
     public void write(Context c) {
-
+        Database.getInstance(c).getDistrictsTable().add(this);
     }
 
     @Override

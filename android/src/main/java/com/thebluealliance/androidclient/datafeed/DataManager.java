@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
@@ -374,6 +375,16 @@ public class DataManager {
             String[] whereArgs = new String[]{Integer.toString(year)};
 
             return District.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
+        }
+
+        public static APIResponse<ArrayList<DistrictTeam>> getDistrictRankings(Context c, String districtKey, boolean loadFromCache) throws NoDataException{
+            Log.d(Constants.DATAMANAGER_LOG, "getting district rankings for: " + districtKey);
+
+            String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), districtKey.substring(0, 4));
+            String sqlWhere = Database.DistrictTeams.DISTRICT_KEY + " = ?";
+            String[] whereArgs = new String[]{districtKey};
+
+            return DistrictTeam.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
     }

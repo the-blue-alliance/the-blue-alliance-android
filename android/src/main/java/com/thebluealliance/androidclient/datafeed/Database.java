@@ -132,6 +132,7 @@ public class Database extends SQLiteOpenHelper {
     String CREATE_DISTRICTTEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_DISTRICTTEAMS + "("
             + DistrictTeams.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + DistrictTeams.TEAM_KEY + " TEXT NOT NULL, "
+            + DistrictTeams.DISTRICT_KEY + " TEXT NOT NULL, "
             + DistrictTeams.DISTRICT_ENUM + " INTEGER NOT NULL, "
             + DistrictTeams.YEAR + " INTEGER NOT NULL, "
             + DistrictTeams.RANK + " INTEGER DEFAULT -1, "
@@ -1208,6 +1209,7 @@ public class Database extends SQLiteOpenHelper {
 
         public static final String KEY = "key",
             TEAM_KEY = "teamKey",
+            DISTRICT_KEY = "districtKey",
             DISTRICT_ENUM = "districtEnum",
             YEAR = "year",
             RANK = "rank",
