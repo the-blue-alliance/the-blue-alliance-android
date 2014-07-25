@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.models.DistrictTeam;
 
 /**
  * Created by phil on 7/24/14.
@@ -52,7 +51,7 @@ public class DistrictTeamListElement extends ListElement {
         holder.teamNumber.setText(teamKey.substring(3));
         holder.teamRank.setText(String.format(c.getString(R.string.team_rank), teamRank));
         if(teamName.isEmpty()) {
-            holder.teamName.setVisibility(View.GONE);
+            holder.teamName.setVisibility(View.INVISIBLE);
         }else {
             holder.teamName.setText(teamName);
             holder.teamName.setVisibility(View.VISIBLE);
