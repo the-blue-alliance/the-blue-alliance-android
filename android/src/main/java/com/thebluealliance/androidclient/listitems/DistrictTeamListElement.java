@@ -51,10 +51,9 @@ public class DistrictTeamListElement extends ListElement {
         holder.teamNumber.setText(teamKey.substring(3));
         holder.teamRank.setText(String.format(c.getString(R.string.team_rank), teamRank));
         if(teamName.isEmpty()) {
-            holder.teamName.setVisibility(View.INVISIBLE);
+            holder.teamName.setText("Team "+teamKey.substring(3));
         }else {
             holder.teamName.setText(teamName);
-            holder.teamName.setVisibility(View.VISIBLE);
         }
         holder.totalPoints.setText(String.format(c.getString(R.string.district_points_format), totalPoints));
 

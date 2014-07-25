@@ -58,23 +58,17 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
             return APIResponse.CODE.NODATA;
         }
 
-        ArrayList<APIResponse.CODE> teamCodes = new ArrayList<>();
-        teamCodes.add(response.getCode());
         rankings = new ArrayList<>();
         for(DistrictTeam team: response.getData()){
             try {
-                APIResponse<Team> teamData = DataManager.Teams.getTeam(activity, team.getTeamKey(), true);
-                rankings.add(new DistrictTeamListElement(team.getTeamKey(), team.getDistrictKey(), teamData.getData().getNickname(), team.getRank(), team.getTotalPoints()));
-                teamCodes.add(teamData.getCode());
-            } catch (DataManager.NoDataException e) {
-                Log.w(Constants.LOG_TAG, "Unable to fetch team details");
-                e.printStackTrace();
+                Team teamData = DataManager.Teams.getTeamFromDB(activity, team.getTeamKey());
+                rankings.add(new DistrictTeamListElement(team.getTeamKey(), team.getDistrictKey(), teamData.getNickname(), team.getRank(), team.getTotalPoints()));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to render district rankings");
                 e.printStackTrace();
             }
         }
-        return APIResponse.mergeCodes(teamCodes);
+        return response.getCode();
     }
 
     @Override
