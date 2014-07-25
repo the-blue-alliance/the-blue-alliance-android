@@ -92,7 +92,8 @@ public class UpcomingMatchNotification extends BaseNotification {
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(largeIcon)
-                .setContentIntent(intent);
+                .setContentIntent(intent)
+                .setAutoCancel(true);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
