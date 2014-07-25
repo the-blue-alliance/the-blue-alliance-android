@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.gcm.GCMMessageDispatcher;
 
 public class DevSettingsActivity extends PreferenceActivity {
 
@@ -32,6 +33,16 @@ public class DevSettingsActivity extends PreferenceActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     ((TBAAndroid)getActivity().getApplication()).setAnalyticsDryRun((boolean)newValue);
+                    return true;
+                }
+            });
+
+            Preference testUpcomingMatchNotification = findPreference("test_upcoming_match_notification");
+            testUpcomingMatchNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    String data = "{\"match_key\":\"2014ilch_f1m2\",\"event_name\":\"EVENT NAME\",\"team_keys\":[\"frc111\",\"frc118\",\"frc254\",\"frc496\",\"frc1114\",\"frc2056\"],\"scheduled_time\":12345,\"predicted_time\":123456}";
+                    GCMMessageDispatcher.dispatchMessage(getActivity(), "upcoming_match", data);
                     return true;
                 }
             });

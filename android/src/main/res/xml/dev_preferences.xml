@@ -17,6 +17,10 @@
             android:key="analytics_dry_run"
             android:summary="@string/pref_dry_run_detail"
             android:title="@string/pref_dry_run" />
+        <Preference
+            android:key="test_upcoming_match_notification"
+            android:selectable="true"
+            android:title="@string/pref_test_upcoming_match_notification" />
     </PreferenceCategory>
 
 </PreferenceScreen>
