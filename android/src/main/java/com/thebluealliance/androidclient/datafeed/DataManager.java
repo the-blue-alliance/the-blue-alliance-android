@@ -380,7 +380,7 @@ public class DataManager {
         public static APIResponse<ArrayList<DistrictTeam>> getDistrictRankings(Context c, String districtKey, boolean loadFromCache) throws NoDataException{
             Log.d(Constants.DATAMANAGER_LOG, "getting district rankings for: " + districtKey);
 
-            String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), districtKey.substring(0, 4));
+            String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
             String sqlWhere = Database.DistrictTeams.DISTRICT_KEY + " = ?";
             String[] whereArgs = new String[]{districtKey};
 

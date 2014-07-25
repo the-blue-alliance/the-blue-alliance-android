@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,7 +11,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
@@ -79,7 +77,7 @@ public class Database extends SQLiteOpenHelper {
             + Events.TYPE + " INTEGER DEFAULT -1, "
             + Events.DISTRICT + " INTEGER DEFAULT -1, "
             + Events.DISTRICT_STRING + " TEXT DEFAULT '', "
-            + Events.DISTRICT_POINTS +  " TEXT DEFAULT '', "
+            + Events.DISTRICT_POINTS + " TEXT DEFAULT '', "
             + Events.START + " TIMESTAMP, "
             + Events.END + " TIMESTAMP, "
             + Events.OFFICIAL + " INTEGER DEFAULT 0, "
@@ -227,11 +225,11 @@ public class Database extends SQLiteOpenHelper {
         return eventTeamsTable;
     }
 
-    public Districts getDistrictsTable(){
+    public Districts getDistrictsTable() {
         return districtsTable;
     }
 
-    public DistrictTeams getDistrictTeamsTable(){
+    public DistrictTeams getDistrictTeamsTable() {
         return districtTeamsTable;
     }
 
@@ -247,7 +245,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_DISTRICTS);
         db.execSQL(CREATE_DISTRICTTEAMS);
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1){
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
             // http://stackoverflow.com/questions/19849068/near-not-syntax-error-while-compiling-create-virtual-table-if-not-exists
             CREATE_SEARCH_EVENTS = CREATE_SEARCH_EVENTS.replace("IF NOT EXISTS", "");
@@ -262,10 +260,8 @@ public class Database extends SQLiteOpenHelper {
         Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
         int upgradeTo = oldVersion + 1;
-        while (upgradeTo <= newVersion)
-        {
-            switch (upgradeTo)
-            {
+        while (upgradeTo <= newVersion) {
+            switch (upgradeTo) {
                 case 14:
                     //add districts tables
                     db.execSQL(CREATE_DISTRICTS);
@@ -275,7 +271,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    private void recreateDb(SQLiteDatabase db){
+    private void recreateDb(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_AWARDS);
@@ -1099,12 +1095,12 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public class Districts implements ModelTable<District>{
+    public class Districts implements ModelTable<District> {
 
         public static final String KEY = "key",
-            ABBREV = "abbrev",
-            ENUM = "enum",
-            YEAR = "year";
+                ABBREV = "abbrev",
+                ENUM = "enum",
+                YEAR = "year";
 
         @Override
         public long add(District in) {
@@ -1120,7 +1116,7 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public void add(ArrayList<District> districts){
+        public void add(ArrayList<District> districts) {
             Semaphore dbSemaphore = null;
             try {
                 dbSemaphore = getSemaphore();
@@ -1205,23 +1201,23 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public class DistrictTeams implements ModelTable<DistrictTeam>{
+    public class DistrictTeams implements ModelTable<DistrictTeam> {
 
         public static final String KEY = "key",
-            TEAM_KEY = "teamKey",
-            DISTRICT_KEY = "districtKey",
-            DISTRICT_ENUM = "districtEnum",
-            YEAR = "year",
-            RANK = "rank",
-            EVENT1_KEY = "event1Key",
-            EVENT1_POINTS = "event1Points",
-            EVENT2_KEY = "event2Key",
-            EVENT2_POINTS = "event2Points",
-            CMP_KEY = "cmpKey",
-            CMP_POINTS = "cmpPoints",
-            ROOKIE_POINTS = "rookiePoints",
-            TOTAL_POINTS = "totalPoints",
-            JSON = "json";
+                TEAM_KEY = "teamKey",
+                DISTRICT_KEY = "districtKey",
+                DISTRICT_ENUM = "districtEnum",
+                YEAR = "year",
+                RANK = "rank",
+                EVENT1_KEY = "event1Key",
+                EVENT1_POINTS = "event1Points",
+                EVENT2_KEY = "event2Key",
+                EVENT2_POINTS = "event2Points",
+                CMP_KEY = "cmpKey",
+                CMP_POINTS = "cmpPoints",
+                ROOKIE_POINTS = "rookiePoints",
+                TOTAL_POINTS = "totalPoints",
+                JSON = "json";
 
         @Override
         public long add(DistrictTeam in) {
@@ -1237,7 +1233,7 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public void add(ArrayList<DistrictTeam> districts){
+        public void add(ArrayList<DistrictTeam> districts) {
             Semaphore dbSemaphore = null;
             try {
                 dbSemaphore = getSemaphore();

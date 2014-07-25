@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.util.Log;
+
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 /**
@@ -25,6 +28,8 @@ public class DistrictTeamHelper {
         districtTeam.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
         districtTeam.setTeamKey(teamKey);
         districtTeam.setYear(Integer.parseInt(districtKey.substring(0, 4)));
+        districtTeam.setDistrictKey(districtKey);
+        Log.w(Constants.LOG_TAG, "Setting district key: "+districtKey);
     }
 
     public static void addFieldsFromAPIUrl(DistrictTeam districtTeam, String teamKey, String url){
@@ -32,12 +37,14 @@ public class DistrictTeamHelper {
         //   0  1            2             3  4     5      6  7     8
 
         String[] split = url.split("/");
-        String districtKey = generateKey(teamKey, DistrictHelper.generateKey(split[6], Integer.parseInt(split[7])));
+        String districtKey = DistrictHelper.generateKey(split[6], Integer.parseInt(split[7]));
         String dtKey = DistrictTeamHelper.generateKey(teamKey, districtKey);
         districtTeam.setKey(dtKey);
         districtTeam.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
         districtTeam.setTeamKey(teamKey);
         districtTeam.setYear(Integer.parseInt(districtKey.substring(0, 4)));
+        districtTeam.setDistrictKey(districtKey);
+        Log.w(Constants.LOG_TAG, "Setting district key: "+districtKey);
     }
 
 }

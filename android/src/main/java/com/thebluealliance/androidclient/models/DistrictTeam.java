@@ -12,7 +12,6 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
@@ -228,7 +227,7 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
 
     public static synchronized APIResponse<DistrictTeam> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
         DistrictTeam team;
         if (cursor != null && cursor.moveToFirst()) {
             team = ModelInflater.inflateDistrictTeam(cursor);
@@ -284,7 +283,7 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
 
     public static synchronized APIResponse<ArrayList<DistrictTeam>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<DistrictTeam> districtTeams = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {

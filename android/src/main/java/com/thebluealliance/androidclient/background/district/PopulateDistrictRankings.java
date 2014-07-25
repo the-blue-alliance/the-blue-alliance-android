@@ -63,7 +63,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
         rankings = new ArrayList<>();
         for(DistrictTeam team: response.getData()){
             try {
-                APIResponse<Team> teamData = DataManager.Teams.getTeam(activity, team.getTeamKey(), forceFromCache);
+                APIResponse<Team> teamData = DataManager.Teams.getTeam(activity, team.getTeamKey(), true);
                 rankings.add(new DistrictTeamListElement(team.getTeamKey(), team.getDistrictKey(), teamData.getData().getNickname(), team.getRank(), team.getTotalPoints()));
                 teamCodes.add(teamData.getCode());
             } catch (DataManager.NoDataException e) {
@@ -102,8 +102,11 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
 
-            view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
+            if((forceFromCache && adapter.values.size() > 0) || !forceFromCache) {
+                view.findViewById(R.id.progress).setVisibility(View.GONE);
+                view.findViewById(R.id.list).setVisibility(View.VISIBLE);
+                noDataText.setVisibility(View.GONE);
+            }
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
@@ -111,7 +114,9 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateDistrictRankings(fragment, false).execute(districtKey);
+                PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, false);
+                fragment.updateTask(second);
+                second.execute(districtKey);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "District rankings refresh complete");

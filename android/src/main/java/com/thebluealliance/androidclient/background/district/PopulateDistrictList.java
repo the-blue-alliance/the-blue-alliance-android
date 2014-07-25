@@ -96,7 +96,9 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateDistrictList(fragment, false).execute(year);
+                PopulateDistrictList second = new PopulateDistrictList(fragment, false);
+                fragment.updateTask(second);
+                second.execute(year);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Event list refresh complete");
