@@ -4,12 +4,29 @@
     <!-- General strings -->
     <string name="and">and</string>
 
-    <!-- Upcoming match notification -->
+    <!-- ******************************
+         Upcoming match notification
+         ****************************** -->
     <string name="notification_upcoming_match_title">Match starting soon</string>
-    <!-- Example: "Team 111 will be playing in Qualification Match 32, which is scheduled to begin at 2:35PM" -->
-    <string name="notification_upcoming_match_text_single_team">%1$s: Team %2$s will be playing in %3$s at, which is scheduled to begin at %4$s.</string>
-    <!-- Example: "Team 111, 254, and 1114 will be playing in Qualification Match 32, which is scheduled to begin at 2:35PM" -->
+    <!-- Example: "Midwest Regional: Team 111 will be playing in Qualification Match 32, which is scheduled to begin at 2:35PM" -->
+    <string name="notification_upcoming_match_text_single_team">%1$s: Team %2$s will be playing in %3$s, which is scheduled to begin at %4$s.</string>
+    <!-- Example: "Midwest Regional: Teams 111, 254, and 1114 will be playing in Qualification Match 32, which is scheduled to begin at 2:35PM" -->
     <string name="notification_upcoming_match_text_multiple_teams">%1$s: Teams %2$s will be playing in %3$s, which is scheduled to begin at %4$s.</string>
+
+    <!-- *********************
+         Score notification
+         ********************* -->
+    <string name="notification_score_title">Match results</string>
+    <!-- Example: Midwest Regional: 111 and 1114 won in Quals 32 with a score of 523 - 42. -->
+    <string name="notification_score_teams_won">%1$s: %2$s won in %3$s with a score of %4$s</string>
+    <!-- Example: Midwest Regional: 111 and 1114 lost in Quals 32 with a score of 523 - 42. -->
+    <string name="notification_score_teams_lost">%1$s: %2$s lost in %3$s with a score of %4$s</string>
+    <!-- Example: Midwest Regional: 111 and 1114 tied with the opposing alliance in Quals 32 with a score of 42 - 42. -->
+    <string name="notification_score_teams_tied">%1$s: %2$s tied with the opposing alliance in %3$s with a score of %4$s</string>
+    <!-- Example: Midwest Regional: 111 and 1114 beat 564 in Quals 32 with a score of 324 - 42. -->
+    <string name="notification_score_teams_beat_teams">%1$s: %2$s beat %3$s in %4$s with a score of %5$s</string>
+    <!-- Example: Midwest Regional: 111 and 1114 tied with the opposing alliance in Quals 32 with a score of 42 - 42. -->
+    <string name="notification_score_teams_tied_with_teams">%1$s: %2$s tied with %3$s in %3$s with a score of %5$s</string>
 
 
 </resources>

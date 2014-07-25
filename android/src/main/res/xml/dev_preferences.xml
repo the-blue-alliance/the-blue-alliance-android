@@ -21,6 +21,10 @@
             android:key="test_upcoming_match_notification"
             android:selectable="true"
             android:title="@string/pref_test_upcoming_match_notification" />
+        <Preference
+            android:key="test_score_notification"
+            android:selectable="true"
+            android:title="@string/pref_test_score_notification" />
     </PreferenceCategory>
 
 </PreferenceScreen>

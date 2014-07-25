@@ -12,8 +12,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.models.Match;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +38,6 @@ public class UpcomingMatchNotification extends BaseNotification {
 
     /**
      * @param context     a Context object for use by the notificatoin builder
-     * @param messageData extra data from the GCM message in the form of a stringified JSON object.
      * @return A constructed notification
      */
 
@@ -67,29 +68,15 @@ public class UpcomingMatchNotification extends BaseNotification {
             favoritedTeamsFromMatch.add(teamKeys.get(i).getAsString().replace("frc", ""));
         }
 
-        String teamsString = "";
+        String teamsString = Utilities.stringifyListOfStrings(context, favoritedTeamsFromMatch);
+
         int numFavoritedTeams = favoritedTeamsFromMatch.size();
-        if (numFavoritedTeams == 0) {
-            // Looks like we got this GCM message by mistake. Don't show a notification.
-            return null;
-        } else if (numFavoritedTeams == 1) {
-            teamsString = favoritedTeamsFromMatch.get(0);
-        } else if (numFavoritedTeams == 2) {
-            teamsString = favoritedTeamsFromMatch.get(0) + r.getString(R.string.and) + favoritedTeamsFromMatch.get(1);
-            // e.g. "111 and 1114"
-        } else if (numFavoritedTeams > 2) {
-            teamsString += favoritedTeamsFromMatch.get(0);
-            for (int i = 1; i < numFavoritedTeams; i++) {
-                if (i < numFavoritedTeams - 1) {
-                    teamsString += ", " + favoritedTeamsFromMatch.get(i);
-                } else {
-                    teamsString += ", " + r.getString(R.string.and) + " " + favoritedTeamsFromMatch.get(i);
-                }
-            }
-            // e.g. "111, 1114, and 254
-        }
 
         String contentText = "";
+        if (numFavoritedTeams == 0) {
+            // Looks like we got this GCM notification by mistake
+            return null;
+        }
         if (numFavoritedTeams == 1) {
             contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
         } else {
@@ -103,7 +90,6 @@ public class UpcomingMatchNotification extends BaseNotification {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentTitle(r.getString(R.string.notification_upcoming_match_title))
                 .setContentText(contentText)
-                //.setSmallIcon(R.drawable.ic_launcher)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(largeIcon)
                 .setContentIntent(intent);

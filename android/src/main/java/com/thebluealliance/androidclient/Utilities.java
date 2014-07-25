@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -251,6 +253,43 @@ public class Utilities {
     public static boolean isDebuggable(){
         Log.i(Constants.LOG_TAG, "Debug: "+BuildConfig.DEBUG);
         return BuildConfig.DEBUG;
+    }
+
+    /**
+     * Utility method to create a comma separated list of strings. Useful when you have a list of things
+     * that you want to express in a human-readable list, e.g. teams in a match.
+     *
+     * If the length of the list is 1, this method will return the input string verbatim.
+     *
+     * If the length of the list is 2, the returned string will be formatted like "XXXX and YYYY".
+     *
+     * If the length of the list is 3 or more, the returned string will be formatted like "XXXX, YYYY, and ZZZZ".
+     *
+     * This uses a localized "and" string.
+     */
+    public static String stringifyListOfStrings(Context context, ArrayList<String> strings) {
+        String finalString = "";
+        Resources r = context.getResources();
+        int size = strings.size();
+        if (size == 0) {
+            finalString = "";
+        } else if (size == 1) {
+            finalString = strings.get(0);
+        } else if (size == 2) {
+            finalString = strings.get(0) + " " +r.getString(R.string.and) + " " + strings.get(1);
+            // e.g. "111 and 1114"
+        } else if (size > 2) {
+            finalString += strings.get(0);
+            for (int i = 1; i < size; i++) {
+                if (i < size - 1) {
+                    finalString += ", " + strings.get(i);
+                } else {
+                    finalString += ", " + r.getString(R.string.and) + " " + strings.get(i);
+                }
+            }
+            // e.g. "111, 1114, and 254
+        }
+        return finalString;
     }
 
 }
