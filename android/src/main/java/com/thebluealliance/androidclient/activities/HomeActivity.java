@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -238,7 +239,13 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         }
         int selectedYear = Constants.MAX_COMP_YEAR - position;
         Log.d(Constants.LOG_TAG, "year selected: " + selectedYear);
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG).commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support);
+        if(mCurrentSelectedNavigationItemId == R.id.nav_item_events) {
+            transaction = transaction.replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
+        }else if(mCurrentSelectedNavigationItemId == R.id.nav_item_districts){
+            transaction = transaction.replace(R.id.container, DistrictListFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
+        }
+        transaction.commit();
         mCurrentSelectedYearPosition = position;
         getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
         return true;
