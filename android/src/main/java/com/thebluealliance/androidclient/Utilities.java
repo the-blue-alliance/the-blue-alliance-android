@@ -250,21 +250,21 @@ public class Utilities {
         return "";
     }
 
-    public static boolean isDebuggable(){
-        Log.i(Constants.LOG_TAG, "Debug: "+BuildConfig.DEBUG);
+    public static boolean isDebuggable() {
+        Log.i(Constants.LOG_TAG, "Debug: " + BuildConfig.DEBUG);
         return BuildConfig.DEBUG;
     }
 
     /**
      * Utility method to create a comma separated list of strings. Useful when you have a list of things
      * that you want to express in a human-readable list, e.g. teams in a match.
-     *
+     * <p/>
      * If the length of the list is 1, this method will return the input string verbatim.
-     *
+     * <p/>
      * If the length of the list is 2, the returned string will be formatted like "XXXX and YYYY".
-     *
+     * <p/>
      * If the length of the list is 3 or more, the returned string will be formatted like "XXXX, YYYY, and ZZZZ".
-     *
+     * <p/>
      * This uses a localized "and" string.
      */
     public static String stringifyListOfStrings(Context context, ArrayList<String> strings) {
@@ -276,7 +276,7 @@ public class Utilities {
         } else if (size == 1) {
             finalString = strings.get(0);
         } else if (size == 2) {
-            finalString = strings.get(0) + " " +r.getString(R.string.and) + " " + strings.get(1);
+            finalString = strings.get(0) + " " + r.getString(R.string.and) + " " + strings.get(1);
             // e.g. "111 and 1114"
         } else if (size > 2) {
             finalString += strings.get(0);

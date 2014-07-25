@@ -26,7 +26,7 @@
     <!-- Example: Midwest Regional: 111 and 1114 beat 564 in Quals 32 with a score of 324 - 42. -->
     <string name="notification_score_teams_beat_teams">%1$s: %2$s beat %3$s in %4$s with a score of %5$s</string>
     <!-- Example: Midwest Regional: 111 and 1114 tied with the opposing alliance in Quals 32 with a score of 42 - 42. -->
-    <string name="notification_score_teams_tied_with_teams">%1$s: %2$s tied with %3$s in %3$s with a score of %5$s</string>
+    <string name="notification_score_teams_tied_with_teams">%1$s: %2$s tied with %3$s in %4$s with a score of %5$s</string>
 
 
 </resources>
