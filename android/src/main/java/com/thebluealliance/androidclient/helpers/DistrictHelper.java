@@ -83,7 +83,7 @@ public class DistrictHelper {
     }
 
     public static District buildDistrictFromUrl(String districtKey, String url){
-        int year = Integer.parseInt(url.substring(url.lastIndexOf("/")));
+        int year = Integer.parseInt(url.substring(url.lastIndexOf("/") + 1));
         Log.d(Constants.LOG_TAG, "Creating district for "+year);
         District out = new District();
         out.setKey(year+districtKey);

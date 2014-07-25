@@ -87,10 +87,8 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
 
-            if(!districts.isEmpty()) {
-                view.findViewById(R.id.progress).setVisibility(View.GONE);
-                view.findViewById(R.id.list).setVisibility(View.VISIBLE);
-            }
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**

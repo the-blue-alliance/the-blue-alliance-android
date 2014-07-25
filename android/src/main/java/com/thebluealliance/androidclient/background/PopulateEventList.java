@@ -189,7 +189,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
-            if(!mHeader.equals("") || mTeamKey != null || mDistrictKey != null) {
+            if(mHeader != null && !mHeader.equals("") || mTeamKey != null || mDistrictKey != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.list).setVisibility(View.VISIBLE);
             }

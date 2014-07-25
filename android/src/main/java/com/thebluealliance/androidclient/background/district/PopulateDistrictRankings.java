@@ -15,7 +15,6 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFragment;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -103,10 +102,8 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
 
-            if(!rankings.isEmpty()) {
-                view.findViewById(R.id.progress).setVisibility(View.GONE);
-                view.findViewById(R.id.list).setVisibility(View.VISIBLE);
-            }
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
+            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**

@@ -249,7 +249,6 @@ public class Utilities {
     }
 
     public static boolean isDebuggable(){
-        Log.i(Constants.LOG_TAG, "Debug: "+BuildConfig.DEBUG);
         return BuildConfig.DEBUG;
     }
 

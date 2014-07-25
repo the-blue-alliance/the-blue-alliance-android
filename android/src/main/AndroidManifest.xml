@@ -80,6 +80,13 @@
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
         </activity>
         <activity
+            android:name=".activities.ViewDistrictActivity"
+            android:parentActivityName=".activities.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
+        </activity>
+        <activity
             android:name=".activities.settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity

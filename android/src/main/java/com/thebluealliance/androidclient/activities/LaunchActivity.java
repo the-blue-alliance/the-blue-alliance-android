@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 public class LaunchActivity extends Activity implements View.OnClickListener, LoadAllData.LoadAllDataCallbacks {
 
     public static final String ALL_DATA_LOADED = "all_data_loaded";
+    public static final String REDOWNLOAD = "redownload";
 
     private DisableSwipeViewPager viewPager;
 
@@ -53,7 +54,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         Database.getInstance(this);
 
         Log.i(Constants.LOG_TAG, "All data loaded? " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false));
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false) && !(getIntent().getBooleanExtra(REDOWNLOAD, false))) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
