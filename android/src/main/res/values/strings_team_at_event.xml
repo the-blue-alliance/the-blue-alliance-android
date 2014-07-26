@@ -19,6 +19,10 @@
     <string name="team_at_event_alliance">Alliance</string>
     <string name="team_at_event_status">Elimination Status</string>
 
+    <string name="team_at_district_event1">Event 1</string>
+    <string name="team_at_district_event2">Event 2</string>
+    <string name="team_at_district_cmp">District Championship</string>
+
     <!-- possible statuses -->
     <string name="playing_in_quals">Playing in the qualification matches</string>
     <string name="not_picked">Not picked for an alliance</string>

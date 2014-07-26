@@ -16,27 +16,28 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.district.PopulateDistrictRankings;
+import com.thebluealliance.androidclient.background.district.PopulateTeamAtDistrictSummary;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
- * Created by phil on 7/24/14.
+ * File created by phil on 7/26/14.
  */
-public class DistrictRankingsFragment extends Fragment implements RefreshListener {
+public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshListener {
 
-    public static final String KEY = "districtKey";
+    public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 
     private Activity mParent;
-    private String mKey;
+    private String teamKey, districtKey;
+    private PopulateTeamAtDistrictSummary mTask;
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
-    private PopulateDistrictRankings mTask;
 
-    public static DistrictRankingsFragment newInstance(String key){
-        DistrictRankingsFragment f = new DistrictRankingsFragment();
+    public static TeamAtDistrictSummaryFragment newInstance(String teamKey, String districtKey){
+        TeamAtDistrictSummaryFragment f = new TeamAtDistrictSummaryFragment();
         Bundle args = new Bundle();
-        args.putString(KEY, key);
+        args.putString(TEAM, teamKey);
+        args.putString(DISTRICT, districtKey);
         f.setArguments(args);
         return f;
     }
@@ -44,12 +45,11 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mParent = getActivity();
-        if(getArguments() == null || !getArguments().containsKey(KEY)){
-            throw new IllegalArgumentException("DistrictRankingsFragment must be constructed with district key");
+        if (getArguments() != null) {
+            teamKey = getArguments().getString(TEAM);
+            districtKey = getArguments().getString(DISTRICT);
         }
-        mKey = getArguments().getString(KEY);
+        mParent = getActivity();
 
         if (mParent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
@@ -58,21 +58,28 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mListView = (ListView) v.findViewById(R.id.list);
-        ProgressBar mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        // Setup views & listeners
+        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mListView = (ListView) view.findViewById(R.id.list);
+
+        ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+
+        // Either reload data if returning from another fragment/activity
+        // Or get data if viewing fragment for the first time.
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         }
-        return v;
+
+        return view;
     }
 
     @Override
     public void onPause() {
+        // Save the data if moving away from fragment.
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -84,16 +91,16 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(mParent != null && mParent instanceof RefreshableHostActivity) {
+        if (mParent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) mParent).startRefresh(this);
         }
     }
 
     @Override
     public void onRefreshStart() {
-        Log.d(Constants.REFRESH_LOG, "Loading events for district " + mKey);
-        mTask = new PopulateDistrictRankings(this, true);
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mKey);
+        Log.d(Constants.REFRESH_LOG, "Loading summary for "+teamKey + " at "+districtKey);
+        mTask = new PopulateTeamAtDistrictSummary(this, true);
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, districtKey);
     }
 
     @Override
@@ -103,15 +110,14 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
         }
     }
 
-    public void updateTask(PopulateDistrictRankings task){
-        mTask = task;
+    public void updateTask(PopulateTeamAtDistrictSummary newTask) {
+        mTask = newTask;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)mParent).deregisterRefreshableActivityListener(this);
-        }
+        ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
     }
+
 }

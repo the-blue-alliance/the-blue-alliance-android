@@ -82,9 +82,6 @@
     <string name="no_media_data">No media was found for this team.</string>
     <string name="no_team_list">Unable to load team list.</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
-    <string name="no_district_list">No districts found.</string>
-    <string name="no_district_events">No events found for this district.</string>
-    <string name="no_district_rankings">No rankings found for this district</string>
 
     <!-- View Team -->
     <string name="from">from</string>

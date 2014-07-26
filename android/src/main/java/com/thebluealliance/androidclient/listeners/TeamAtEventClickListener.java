@@ -14,22 +14,35 @@ import com.thebluealliance.androidclient.helpers.TeamHelper;
 public class TeamAtEventClickListener implements View.OnClickListener {
 
     private Context c;
+    private String key;
 
     public TeamAtEventClickListener(Context c) {
         super();
         this.c = c;
+        this.key = null;
+    }
+
+    public TeamAtEventClickListener(Context c, String key){
+        super();
+        this.c = c;
+        this.key = key;
     }
 
     @Override
     public void onClick(View v) {
-        String tag = v.getTag().toString();
         String teamKey, eventKey;
-        if(tag.contains("@")) {
-            teamKey = tag.split("@")[0];
-            eventKey =tag.split("@")[1];
+        if(key == null) {
+            String tag = v.getTag().toString();
+            if (tag.contains("@")) {
+                teamKey = tag.split("@")[0];
+                eventKey = tag.split("@")[1];
+            } else {
+                teamKey = tag;
+                eventKey = "";
+            }
         }else{
-            teamKey = tag;
-            eventKey = "";
+            teamKey = key.split("_")[1];
+            eventKey = key.split("_")[0];
         }
         if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
             if (TeamHelper.validateMultiTeamKey(teamKey)) {

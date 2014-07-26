@@ -50,8 +50,8 @@ public class DistrictTeamDeserializer implements JsonDeserializer<DistrictTeam> 
                     districtTeam.setEvent1Points(event.get("total").getAsInt());
                     regularEvents ++;
                 }else if(regularEvents == 1) {
-                    districtTeam.setEvent1Key(e.getKey());
-                    districtTeam.setEvent1Points(event.get("total").getAsInt());
+                    districtTeam.setEvent2Key(e.getKey());
+                    districtTeam.setEvent2Points(event.get("total").getAsInt());
                     regularEvents++;
                 }
             }

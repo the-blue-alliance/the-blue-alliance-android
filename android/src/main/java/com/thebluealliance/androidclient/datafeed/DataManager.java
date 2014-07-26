@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -170,6 +171,13 @@ public class DataManager {
             final String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_INFO), key);
             String sqlWhere = Database.Events.KEY + " = ?";
             return Event.query(c, loadFromCache, null, sqlWhere, new String[]{key}, new String[]{apiUrl});
+        }
+
+        public static APIResponse<Event> getEventTitle(Context c, String key, boolean loadFromCache) throws NoDataException {
+            final String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_INFO), key);
+            String[] fields = new String[]{Database.Events.KEY, Database.Events.NAME};
+            String sqlWhere = Database.Events.KEY + " = ?";
+            return Event.query(c, loadFromCache, fields, sqlWhere, new String[]{key}, new String[]{apiUrl});
         }
 
         public static APIResponse<ArrayList<Event>> getSimpleEventsInWeek(Context c, int year, int week, boolean loadFromCache) throws NoDataException {
@@ -375,6 +383,17 @@ public class DataManager {
             String[] whereArgs = new String[]{Integer.toString(year)};
 
             return District.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
+        }
+
+        public static APIResponse<DistrictTeam> getDistrictTeam(Context c, String districtTeamKey, boolean loadFromCache) throws NoDataException{
+            Log.d(Constants.DATAMANAGER_LOG, "getting district team: " + districtTeamKey);
+
+            String districtKey = DistrictTeamHelper.getDistrictKey(districtTeamKey);
+            String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
+            String sqlWhere = Database.DistrictTeams.DISTRICT_KEY + " = ?";
+            String[] whereArgs = new String[]{districtKey};
+
+            return DistrictTeam.query(c, districtTeamKey, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
         public static APIResponse<ArrayList<DistrictTeam>> getDistrictRankings(Context c, String districtKey, boolean loadFromCache) throws NoDataException{

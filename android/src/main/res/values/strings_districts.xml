@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="no_district_list">No districts found.</string>
+    <string name="no_district_events">No events found for this district.</string>
+    <string name="no_district_rankings">No rankings found for this district</string>
+    <string name="no_district_summary">No summary available.</string>
+
     <string name="district_points_format">%d Points</string>
+
+    <string name="total_district_points">Total Points</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.TeamAtDistrictClickListener;
 
 /**
  * Created by phil on 7/24/14.
@@ -56,7 +57,7 @@ public class DistrictTeamListElement extends ListElement {
             holder.teamName.setText(teamName);
         }
         holder.totalPoints.setText(String.format(c.getString(R.string.district_points_format), totalPoints));
-
+        convertView.setOnClickListener(new TeamAtDistrictClickListener(c, teamKey, districtKey));
         return convertView;
     }
 

@@ -16,6 +16,10 @@ public class DistrictTeamHelper {
         return TeamHelper.validateTeamKey(teamKey) && DistrictHelper.validateDistrictKey(districtKey);
     }
 
+    public static String getDistrictKey(String districtTeamKey){
+        return districtTeamKey.split("_")[0];
+    }
+
     public static String generateKey(String teamKey, String districtKey){
         return districtKey + "_" + teamKey;
     }
