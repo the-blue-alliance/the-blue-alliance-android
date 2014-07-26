@@ -185,11 +185,25 @@ public class TBAv2 {
                 HttpResponse cachedResponse = HTTP.getResponse(URL, cachedData.getLastUpdate());
 
                 if(cachedResponse != null) {
+
+                    int responseStatus = cachedResponse.getStatusLine().getStatusCode();
+
+                    /**
+                     * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
+                     * and with the response contents (e.g. "404 Not Found") as the error message.
+                     * This will have the code APIResponse.ERROR
+                     */
+                    if(responseStatus/100 == 4 || responseStatus/100 == 5){
+                        String responseData = HTTP.dataFromResponse(cachedResponse);
+                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP "+responseStatus+"\n "+responseData+" from updating "+URL);
+                        return new APIResponse<>("", responseData);
+                    }
+
                     /* If we get a 200-OK back from the server, then we need to return that new data
                      * Otherwise, we are going to assume the code is 304-Not-Modified
                      * There is a possibility of other codes, but we can add those in (along with proper error handling) here later
                      */
-                    boolean dataRequiresUpdate = (cachedResponse.getStatusLine().getStatusCode() == 200);
+                    boolean dataRequiresUpdate = (responseStatus == 200);
 
                     if (dataRequiresUpdate) {
                     /* If we get 200-OK back, read the data from the request
@@ -229,6 +243,20 @@ public class TBAv2 {
                  */
                 HttpResponse webResponse = HTTP.getResponse(URL);
                 if(webResponse != null) {
+
+                    int responseStatus = webResponse.getStatusLine().getStatusCode();
+
+                    /**
+                     * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
+                     * and with the response contents (e.g. "404 Not Found") as the error message.
+                     * This will have the code APIResponse.ERROR
+                     */
+                    if(responseStatus/100 == 4 || responseStatus/100 == 5){
+                        String responseData = HTTP.dataFromResponse(webResponse);
+                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP "+responseStatus+"\n "+responseData+" from fetching "+URL);
+                        return new APIResponse<>("", responseData);
+                    }
+
                     String response = HTTP.dataFromResponse(webResponse),
                             lastUpdate = "";
                     Header lastModified = webResponse.getFirstHeader("Last-Modified");

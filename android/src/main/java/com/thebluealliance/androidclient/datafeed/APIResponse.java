@@ -14,6 +14,7 @@ public class APIResponse<A> {
         UPDATED, //data was updated from the API
         OFFLINECACHE, //client is offline, loaded from local cache
         LOCAL, //loaded locally. Could be either CACHED304 or OFFLINECACHE
+        ERROR, //HTTP error happened somewhere
         NODATA; //nothing! uh ohs
 
         public static int compareCodes(CODE one, CODE another) {
@@ -26,7 +27,7 @@ public class APIResponse<A> {
 
     A data;
     CODE code;
-    String lastUpdate;
+    String lastUpdate, errorMessage;
     Date lastHit;
 
     public APIResponse(A data, CODE code, String lastUpdate, Date lastHit) {
@@ -34,6 +35,7 @@ public class APIResponse<A> {
         this.data = data;
         this.code = code;
         this.lastHit = lastHit;
+        this.errorMessage = "";
     }
 
     public APIResponse(A data, CODE code, String lastUpdate) {
@@ -41,12 +43,21 @@ public class APIResponse<A> {
         this.data = data;
         this.code = code;
         this.lastHit = new Date(); //default to now
+        this.errorMessage = "";
     }
 
     public APIResponse(A data, CODE code) {
         this.code = code;
         this.data = data;
         this.lastUpdate = "";
+        this.errorMessage = "";
+    }
+
+    public APIResponse(A data, String errorMessage){
+        this.code = CODE.ERROR;
+        this.data = data;
+        this.lastUpdate = "";
+        this.errorMessage = errorMessage;
     }
 
     public A getData() {
@@ -72,6 +83,14 @@ public class APIResponse<A> {
 
     public void setLastHit(Date lastHit) {
         this.lastHit = lastHit;
+    }
+
+    public String getErrorMessage(){
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String error){
+        errorMessage = error;
     }
 
     public static CODE mergeCodes(CODE... codes) {

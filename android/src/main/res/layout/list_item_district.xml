@@ -3,8 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="72dp"
-    android:padding="16dp">
+    android:paddingTop="16dp"
+    android:minHeight="72dp">
 
     <TextView
         android:id="@+id/title"
