@@ -72,7 +72,7 @@ public class TBAv2 {
         API_URL.put(QUERY.EVENT_STATS, "/api/v2/event/%s/stats");
         API_URL.put(QUERY.EVENT_AWARDS, "/api/v2/event/%s/awards");
         API_URL.put(QUERY.EVENT_LIST, "/api/v2/events/%d");
-        API_URL.put(QUERY.EVENT_DISTRICT_POINTS, "/api/v2/events/%s/district_points");
+        API_URL.put(QUERY.EVENT_DISTRICT_POINTS, "/api/v2/event/%s/district_points");
 
         API_URL.put(QUERY.DISTRICT_LIST, "/api/v2/districts/%d");
         API_URL.put(QUERY.DISTRICT_EVENTS, "/api/v2/district/%s/%d/events");

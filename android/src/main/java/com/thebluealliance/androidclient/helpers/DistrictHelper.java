@@ -2,8 +2,13 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.util.Log;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.District;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by phil on 7/24/14.
@@ -93,8 +98,16 @@ public class DistrictHelper {
         return out;
     }
 
-    public static void addFieldByAPIUrl(District district, String url, String data){
-
+    public static JsonObject findPointsForTeam(JsonObject points, String teamKey){
+        if(points.has("points")) {
+            Set<Map.Entry<String, JsonElement>> allPoints = points.get("points").getAsJsonObject().entrySet();
+            for (Map.Entry<String, JsonElement> team : allPoints) {
+                if (team.getKey().equals(teamKey)) {
+                    return team.getValue().getAsJsonObject();
+                }
+            }
+        }
+        return new JsonObject();
     }
 
 }

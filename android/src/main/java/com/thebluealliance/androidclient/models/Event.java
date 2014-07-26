@@ -260,11 +260,6 @@ public class Event extends BasicModel<Event> {
         fields.put(Database.Events.DISTRICT_POINTS, districtPoints);
     }
 
-    public void setDistrictPoints(JsonObject districtPoints){
-        this.districtPoints = districtPoints;
-        fields.put(Database.Events.DISTRICT_POINTS, districtPoints.toString());
-    }
-
     public Date getStartDate() throws FieldNotDefinedException {
         if (fields.containsKey(Database.Events.START) && fields.get(Database.Events.START) instanceof Long) {
             return new Date((Long) fields.get(Database.Events.START));
@@ -473,7 +468,7 @@ public class Event extends BasicModel<Event> {
         return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    public static synchronized APIResponse<Event> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Event> query(Context c, String eventKey, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
         Event event;
@@ -501,8 +496,10 @@ public class Event extends BasicModel<Event> {
                      * Add them to the model based on which URL we hit
                      */
                     updatedEvent = new Event();
+                    updatedEvent.setEventKey(eventKey);
                     EventHelper.addFieldByAPIUrl(updatedEvent, url, response.getData());
                 }
+                Log.d(Constants.LOG_TAG, "New event: "+updatedEvent);
                 event.merge(updatedEvent);
                 changed = true;
             }
@@ -510,6 +507,7 @@ public class Event extends BasicModel<Event> {
         }
 
         if (changed) {
+            Log.d(Constants.LOG_TAG, "updating event: "+event.fields.toString());
             event.write(c);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);

@@ -9,15 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateTeamAtDistrictBreakdown;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.views.ExpandableListView;
 
 /**
  * File created by phil on 7/26/14.
@@ -30,8 +30,8 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     private String teamKey, districtKey;
     private PopulateTeamAtDistrictBreakdown mTask;
     private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
+    private ExpandableListAdapter mAdapter;
+    private ExpandableListView mListView;
 
     public static TeamAtDistrictBreakdownFragment newInstance(String teamKey, String districtKey){
         TeamAtDistrictBreakdownFragment f = new TeamAtDistrictBreakdownFragment();
@@ -59,8 +59,8 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mListView = (ListView) view.findViewById(R.id.list);
+        View view = inflater.inflate(R.layout.expandable_listview_with_spinner, null);
+        mListView = (ExpandableListView) view.findViewById(R.id.expandable_list);
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
 
@@ -83,7 +83,6 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
             mTask.cancel(false);
         }
         if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
     }

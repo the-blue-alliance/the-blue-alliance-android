@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -41,7 +42,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     public static final String ALL_DATA_LOADED = "all_data_loaded";
     public static final String REDOWNLOAD = "redownload";
     public static final String DATA_TO_REDOWNLOAD = "redownload_data";
-    private static final String APP_VERSION_KEY = "app_version";
+    public static final String APP_VERSION_KEY = "app_version";
 
     private DisableSwipeViewPager viewPager;
 
@@ -105,16 +106,16 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     }
 
     private boolean checkDataRedownload() {
-        int lastVersion = PreferenceManager.getDefaultSharedPreferences(this).getInt(APP_VERSION_KEY, -1);
-        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int lastVersion = prefs.getInt(APP_VERSION_KEY, -1);
         if(getIntent().getBooleanExtra(REDOWNLOAD, false)){
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
             return true;
         }
 
         boolean redownload = false;
-        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE);
-        if(lastVersion != BuildConfig.VERSION_CODE) {
+        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE+" "+prefs.contains(APP_VERSION_KEY));
+        if(!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+            SharedPreferences.Editor editor = prefs.edit();
             //we are updating the app. Do stuffs.
             while (lastVersion <= BuildConfig.VERSION_CODE) {
                 Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
@@ -126,11 +127,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                     default:
                         break;
                 }
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(APP_VERSION_KEY, lastVersion).commit();
+                editor.putInt(APP_VERSION_KEY, lastVersion);
                 lastVersion++;
             }
+            editor.putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
         }
-
+        prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
         return redownload;
     }
 

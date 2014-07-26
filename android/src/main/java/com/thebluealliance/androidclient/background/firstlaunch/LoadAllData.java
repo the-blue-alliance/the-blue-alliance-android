@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -126,6 +127,9 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     APIResponse<String> districtListResponse;
                     String url = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.DISTRICT_LIST), year);
                     districtListResponse = TBAv2.getResponseFromURLOrThrow(context, url, true, false);
+                    if(districtListResponse.getData() == null){
+                        continue;
+                    }
                     JsonElement responseObject = JSONManager.getParser().parse(districtListResponse.getData());
                     if (responseObject instanceof JsonObject) {
                         if (((JsonObject) responseObject).has("404")) {
@@ -163,6 +167,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++){
                 editor.putBoolean(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
+            editor.putInt(LaunchActivity.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
             editor.commit();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));
         } catch (DataManager.NoDataException e) {
