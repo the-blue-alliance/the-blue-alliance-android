@@ -93,7 +93,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading events for district " + mKey);
+        Log.d(Constants.REFRESH_LOG, "Loading events for district " + mKey);
         mTask = new PopulateEventList(this, mKey, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

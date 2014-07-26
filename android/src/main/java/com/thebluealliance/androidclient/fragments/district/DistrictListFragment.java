@@ -97,7 +97,7 @@ public class DistrictListFragment extends Fragment implements RefreshListener{
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mYear + " districts");
+        Log.d(Constants.REFRESH_LOG, "Loading " + mYear + " districts");
         mTask = new PopulateDistrictList(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mYear);
     }

@@ -113,7 +113,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                 second.execute(districtKey);
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "District rankings refresh complete");
+                Log.d(Constants.REFRESH_LOG, "District rankings refresh complete");
                 activity.notifyRefreshComplete(fragment);
             }
 

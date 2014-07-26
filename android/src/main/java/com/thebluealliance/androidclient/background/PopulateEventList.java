@@ -203,7 +203,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 new PopulateEventList(mFragment, host, mYear, mHeader, mTeamKey, mDistrictKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Event List Refresh complete");
+                Log.d(Constants.REFRESH_LOG, "Event List Refresh complete");
                 host.notifyRefreshComplete((RefreshListener) mFragment);
             }
 

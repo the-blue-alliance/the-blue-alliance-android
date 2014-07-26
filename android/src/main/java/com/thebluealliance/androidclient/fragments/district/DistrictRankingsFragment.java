@@ -92,7 +92,7 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading events for district " + mKey);
+        Log.d(Constants.REFRESH_LOG, "Loading events for district " + mKey);
         mTask = new PopulateDistrictRankings(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mKey);
     }
