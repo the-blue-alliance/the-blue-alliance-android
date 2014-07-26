@@ -15,20 +15,20 @@ import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
-import com.thebluealliance.androidclient.listitems.ListElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.xml.transform.dom.DOMSource;
 
 /**
  * Created by phil on 7/23/14.
  */
 public class District extends BasicModel<District> {
 
+    private int numEvents;
+
     public District(){
         super(Database.TABLE_DISTRICTS);
+        numEvents = -1;
     }
 
     public void setKey(String key){
@@ -84,10 +84,18 @@ public class District extends BasicModel<District> {
         Database.getInstance(c).getDistrictsTable().add(this);
     }
 
+    public void setNumEvents(int events){
+        numEvents = events;
+    }
+
+    public int getNumEvents(){
+        return numEvents;
+    }
+
     @Override
     public DistrictListElement render() {
         try {
-            return new DistrictListElement(this);
+            return new DistrictListElement(this, numEvents);
         } catch (FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to render district");
             e.printStackTrace();

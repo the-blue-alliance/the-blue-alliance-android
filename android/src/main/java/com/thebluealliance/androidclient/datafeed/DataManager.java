@@ -387,5 +387,18 @@ public class DataManager {
             return DistrictTeam.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
+        public static int getNumEventsForDistrict(Context c, String districtKey){
+            String[] fields = new String[]{Database.Districts.KEY};
+            String year = districtKey.substring(0, 4);
+            int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtKey.substring(4)).ordinal();
+            String whereClause = Database.Events.YEAR + " = ? AND " + Database.Events.DISTRICT + " = ?";
+            String[] whereArgs = new String[]{year, Integer.toString(districtEnum)};
+            Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+            if(cursor == null || !cursor.moveToFirst()){
+                return 0;
+            }else{
+                return cursor.getCount();
+            }
+        }
     }
 }

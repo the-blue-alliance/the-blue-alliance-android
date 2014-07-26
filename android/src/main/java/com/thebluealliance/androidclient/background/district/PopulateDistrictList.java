@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
 import java.util.ArrayList;
@@ -52,11 +53,17 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
             APIResponse<ArrayList<District>> response = DataManager.Districts.getDistrictsInYear(activity, year, forceFromCache);
             districts = new ArrayList<>();
             for(District district: response.getData()){
+                int numEvents = DataManager.Districts.getNumEventsForDistrict(activity, district.getKey());
+                district.setNumEvents(numEvents);
                 districts.add(district.render());
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to get district list for "+year);
+            return APIResponse.CODE.NODATA;
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.wtf(Constants.LOG_TAG, "District has no key?");
+            e.printStackTrace();
             return APIResponse.CODE.NODATA;
         }
     }

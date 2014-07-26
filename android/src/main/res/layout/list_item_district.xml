@@ -14,4 +14,14 @@
         android:textSize="18sp"
         android:text="Title"/>
 
+    <TextView
+        android:id="@+id/num_events"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_alignLeft="@id/title"
+        android:text="# Events"
+        android:textColor="@color/secondary_text_color"
+        android:textSize="14sp" />
+
 </RelativeLayout>

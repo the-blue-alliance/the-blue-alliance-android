@@ -105,7 +105,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     }
 
     private boolean checkDataRedownload() {
-        int lastVersion = PreferenceManager.getDefaultSharedPreferences(this).getInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE);
+        int lastVersion = PreferenceManager.getDefaultSharedPreferences(this).getInt(APP_VERSION_KEY, -1);
         
         if(getIntent().getBooleanExtra(REDOWNLOAD, false)){
             PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
@@ -114,20 +114,21 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE);
-
-        //we are updating the app. Do stuffs.
-        while (lastVersion <= BuildConfig.VERSION_CODE) {
-            Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
-            switch (lastVersion) {
-                case 14: //addition of districts. Download the required data
-                    redownload = true;
-                    getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
-                    break;
-                default:
-                    break;
+        if(lastVersion != BuildConfig.VERSION_CODE) {
+            //we are updating the app. Do stuffs.
+            while (lastVersion <= BuildConfig.VERSION_CODE) {
+                Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
+                switch (lastVersion) {
+                    case 14: //addition of districts. Download the required data
+                        redownload = true;
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
+                        break;
+                    default:
+                        break;
+                }
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(APP_VERSION_KEY, lastVersion).commit();
+                lastVersion++;
             }
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(APP_VERSION_KEY, lastVersion).commit();
-            lastVersion++;
         }
 
         return redownload;
