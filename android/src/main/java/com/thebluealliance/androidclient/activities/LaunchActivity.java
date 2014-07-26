@@ -40,6 +40,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
     public static final String ALL_DATA_LOADED = "all_data_loaded";
     public static final String REDOWNLOAD = "redownload";
+    public static final String DATA_TO_REDOWNLOAD = "redownload_data";
+    private static final String APP_VERSION_KEY = "app_version";
 
     private DisableSwipeViewPager viewPager;
 
@@ -54,7 +56,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         Database.getInstance(this);
 
         Log.i(Constants.LOG_TAG, "All data loaded? " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false));
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false) && !(getIntent().getBooleanExtra(REDOWNLOAD, false))) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false) && !checkDataRedownload()) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
@@ -100,6 +102,35 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         if (loadFragment != null) {
             viewPager.setCurrentItem(1, false);
         }
+    }
+
+    private boolean checkDataRedownload() {
+        int lastVersion = PreferenceManager.getDefaultSharedPreferences(this).getInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE);
+        
+        if(getIntent().getBooleanExtra(REDOWNLOAD, false)){
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
+            return true;
+        }
+
+        boolean redownload = false;
+        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE);
+
+        //we are updating the app. Do stuffs.
+        while (lastVersion <= BuildConfig.VERSION_CODE) {
+            Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
+            switch (lastVersion) {
+                case 14: //addition of districts. Download the required data
+                    redownload = true;
+                    getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
+                    break;
+                default:
+                    break;
+            }
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(APP_VERSION_KEY, lastVersion).commit();
+            lastVersion++;
+        }
+
+        return redownload;
     }
 
     private void goToHome() {
@@ -165,6 +196,11 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
     private void beginLoading() {
         Fragment f = new LoadAllDataTaskFragment();
+        if (getIntent().hasExtra(DATA_TO_REDOWNLOAD)) {
+            Bundle args = new Bundle();
+            args.putShortArray(LoadAllDataTaskFragment.DATA_TO_LOAD, getIntent().getShortArrayExtra(DATA_TO_REDOWNLOAD));
+            f.setArguments(args);
+        }
         f.setRetainInstance(true);
         getFragmentManager().beginTransaction().add(f, LOAD_FRAGMENT_TAG).commit();
     }
@@ -239,6 +275,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             loadingFinished();
             advanceToNextPage();
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_ERROR) {
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, false).commit();
             errorLoadingData(info.message);
         }
     }
@@ -306,8 +343,15 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     }
 
     public static class LoadAllDataTaskFragment extends Fragment implements LoadAllData.LoadAllDataCallbacks {
+
+        public static final String DATA_TO_LOAD = "data_to_load";
+        public static final short LOAD_TEAMS = 0,
+                LOAD_EVENTS = 1,
+                LOAD_DISTRICTS = 2;
+
         LoadAllData.LoadAllDataCallbacks callback;
         private LoadAllData task;
+        private Short[] dataToLoad;
 
         @Override
         public void onAttach(Activity activity) {
@@ -319,9 +363,19 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 throw new IllegalStateException("TaskFragment must be hosted by an activity that implements LoadAllDataCallbacks");
             }
 
+            if (getArguments() != null && getArguments().containsKey(DATA_TO_LOAD)) {
+                short[] inData = getArguments().getShortArray(DATA_TO_LOAD);
+                dataToLoad = new Short[inData.length];
+                for (int i = 0; i < dataToLoad.length; i++) {
+                    dataToLoad[i] = inData[i];
+                }
+            } else {
+                dataToLoad = new Short[]{LOAD_TEAMS, LOAD_EVENTS, LOAD_DISTRICTS};
+            }
+
             if (task == null) {
                 task = new LoadAllData(this, getActivity());
-                task.execute();
+                task.execute(dataToLoad);
             }
         }
 
