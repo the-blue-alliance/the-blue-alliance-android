@@ -33,6 +33,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     private TextView warningMessage;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
+    private boolean isDistrict;
 
     public static Intent newInstance(Context c, String eventKey) {
         Intent intent = new Intent(c, ViewEventActivity.class);
@@ -73,6 +74,11 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         }
 
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+        isDistrict = true;
+    }
+
+    public void updateDistrict(boolean isDistrict){
+        this.isDistrict = isDistrict;
     }
 
     @Override
@@ -163,6 +169,12 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                 if(statsSort != null){
                     statsSort.setVisible(false);
                 }
+            }
+
+            if (position == 5 && !isDistrict) {
+                showWarningMessage(getString(R.string.warning_not_real_district));
+            }else{
+                hideWarningMessage();
             }
         }
     }

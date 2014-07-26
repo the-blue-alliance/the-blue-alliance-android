@@ -14,5 +14,8 @@
     <string name="total_district_points">Total Points</string>
 
     <string name="district_points_format">%d Points</string>
+    <string name="district_point_rank">Point Rank</string>
+
+    <string name="warning_not_real_district">Since this event is not part of a district, these point calculations are purely hypothetical.</string>
 
 </resources>

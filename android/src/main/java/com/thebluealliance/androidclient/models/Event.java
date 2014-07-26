@@ -499,7 +499,6 @@ public class Event extends BasicModel<Event> {
                     updatedEvent.setEventKey(eventKey);
                     EventHelper.addFieldByAPIUrl(updatedEvent, url, response.getData());
                 }
-                Log.d(Constants.LOG_TAG, "New event: "+updatedEvent);
                 event.merge(updatedEvent);
                 changed = true;
             }
@@ -507,7 +506,6 @@ public class Event extends BasicModel<Event> {
         }
 
         if (changed) {
-            Log.d(Constants.LOG_TAG, "updating event: "+event.fields.toString());
             event.write(c);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);

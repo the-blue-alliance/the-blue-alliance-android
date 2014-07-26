@@ -679,7 +679,7 @@ public class Database extends SQLiteOpenHelper {
                         if (!unsafeExists(award.getKey())) {
                             db.insert(TABLE_AWARDS, null, award.getParams());
                         } else {
-                            db.update(TABLE_AWARDS, award.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{award.getEventKey(), award.getName()});
+                            db.update(TABLE_AWARDS, award.getParams(), Awards.KEY + " = ? ", new String[]{award.getKey()});
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
                         Log.w(Constants.LOG_TAG, "Unable to add award - missing event key or award name");
@@ -737,9 +737,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public boolean unsafeExists(String key) {
-            String eventKey = key.split(":")[0];
-            String awardName = key.split(":")[1];
-            Cursor cursor = db.query(TABLE_AWARDS, new String[]{}, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
+            Cursor cursor = db.query(TABLE_AWARDS, new String[]{}, Awards.KEY + " = ? ", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();

@@ -76,14 +76,14 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             DistrictTeam team = response.getData();
 
             try {
-                summaryItems.add(new LabelValueListItem(activity.getString(R.string.team_at_event_rank),
+                summaryItems.add(new LabelValueListItem(activity.getString(R.string.district_point_rank),
                     team.getRank() + Utilities.getOrdinalFor(team.getRank())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get DistrictTeam rank");
             }
 
             try {
-                APIResponse<Event> event1Name = DataManager.Events.getEventTitle(activity, team.getEvent1Key(), forceFromCache);
+                APIResponse<Event> event1Name = DataManager.Events.getEventBasic(activity, team.getEvent1Key(), forceFromCache);
                 summaryItems.add(new LabelValueDetailListItem(event1Name.getData().getEventName(),
                         String.format(activity.getString(R.string.district_points_format), team.getEvent1Points()) ,
                         EventTeamHelper.generateKey(team.getEvent1Key(), team.getTeamKey())));
@@ -92,7 +92,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             }
 
             try {
-                APIResponse<Event> event2Name = DataManager.Events.getEventTitle(activity, team.getEvent2Key(), forceFromCache);
+                APIResponse<Event> event2Name = DataManager.Events.getEventBasic(activity, team.getEvent2Key(), forceFromCache);
                 summaryItems.add(new LabelValueDetailListItem(event2Name.getData().getEventName(),
                         String.format(activity.getString(R.string.district_points_format), team.getEvent2Points()) ,
                         EventTeamHelper.generateKey(team.getEvent2Key(), team.getTeamKey())));
@@ -101,7 +101,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             }
 
             try {
-                APIResponse<Event> cmpName = DataManager.Events.getEventTitle(activity, team.getCmpKey(), forceFromCache);
+                APIResponse<Event> cmpName = DataManager.Events.getEventBasic(activity, team.getCmpKey(), forceFromCache);
                 summaryItems.add(new LabelValueDetailListItem(cmpName.getData().getEventName(),
                         String.format(activity.getString(R.string.district_points_format), team.getCmpPoints()) ,
                         EventTeamHelper.generateKey(team.getCmpKey(), team.getTeamKey())));

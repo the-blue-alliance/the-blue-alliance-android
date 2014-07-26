@@ -101,7 +101,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
             try {
                 APIResponse<JsonObject> teamPoints = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, teamKey, forceFromCache);
                 pointsCodes.add(teamPoints.getCode());
-                ListGroup eventGroup = new ListGroup(DataManager.Events.getEventTitle(activity, eventKey, forceFromCache).getData().getEventName());
+                ListGroup eventGroup = new ListGroup(DataManager.Events.getEventBasic(activity, eventKey, forceFromCache).getData().getEventName());
 
                 DistrictPointBreakdown breakdown = JSONManager.getGson().fromJson(teamPoints.getData(), DistrictPointBreakdown.class);
 

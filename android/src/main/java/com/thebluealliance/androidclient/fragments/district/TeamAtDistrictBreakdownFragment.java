@@ -71,7 +71,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
             mListView.onRestoreInstanceState(mListState);
             mProgressBar.setVisibility(View.GONE);
         }
-
+        mListView.setSelector(R.drawable.transparent);
         return view;
     }
 

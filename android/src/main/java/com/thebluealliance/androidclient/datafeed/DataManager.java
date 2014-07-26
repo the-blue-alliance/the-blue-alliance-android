@@ -138,7 +138,7 @@ public class DataManager {
             APIResponse.CODE code = eventTeams.getCode();
             for (EventTeam e : eventTeams.getData()) {
                 try {
-                    APIResponse<Event> event = Events.getEventTitle(c, e.getEventKey(), loadFromCache);
+                    APIResponse<Event> event = Events.getEventBasic(c, e.getEventKey(), loadFromCache);
                     events.add(event.getData());
                     code = APIResponse.mergeCodes(code, event.getCode());
                 } catch (BasicModel.FieldNotDefinedException e1) {
@@ -177,9 +177,9 @@ public class DataManager {
             return Event.query(c, key, loadFromCache, null, sqlWhere, new String[]{key}, new String[]{apiUrl});
         }
 
-        public static APIResponse<Event> getEventTitle(Context c, String key, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<Event> getEventBasic(Context c, String key, boolean loadFromCache) throws NoDataException {
             final String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_INFO), key);
-            String[] fields = new String[]{Database.Events.KEY, Database.Events.NAME};
+            String[] fields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.DISTRICT};
             String sqlWhere = Database.Events.KEY + " = ?";
             return Event.query(c, key, loadFromCache, fields, sqlWhere, new String[]{key}, new String[]{apiUrl});
         }

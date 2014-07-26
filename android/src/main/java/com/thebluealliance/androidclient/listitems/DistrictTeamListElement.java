@@ -57,7 +57,11 @@ public class DistrictTeamListElement extends ListElement {
             holder.teamName.setText(teamName);
         }
         holder.totalPoints.setText(String.format(c.getString(R.string.district_points_format), totalPoints));
-        convertView.setOnClickListener(new TeamAtDistrictClickListener(c, teamKey, districtKey));
+        if(districtKey != null && !districtKey.isEmpty()) {
+            convertView.setOnClickListener(new TeamAtDistrictClickListener(c, teamKey, districtKey));
+        }else{
+            convertView.setBackgroundResource(R.drawable.transparent);
+        }
         return convertView;
     }
 
