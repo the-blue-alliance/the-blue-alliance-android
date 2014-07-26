@@ -398,7 +398,8 @@ public class MatchHelper {
         Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
         Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty() ||
-           (allQualMatchesPlayed && !teamIsHere)) {
+           (allQualMatchesPlayed && !teamIsHere) ||
+           (!allQualMatchesPlayed && !e.isHappeningNow())) {
             return EventStatus.NOT_AVAILABLE;
         } else if ((allQualMatchesPlayed && !inAlliance) ||
                 (!e.isHappeningNow() &&
