@@ -89,6 +89,7 @@
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>
+    <string name="time">Time</string>
     <string name="score">Score</string>
     <string name="quals_header">Qualification Matches</string>
     <string name="quarters_header">Quarterfinal Matches</string>
