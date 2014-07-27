@@ -29,6 +29,27 @@ public class GCMHelper {
     private static String senderId;
     private static AtomicInteger msgId = new AtomicInteger();
 
+    public enum MSGTYPE{
+        REGISTRATION,
+        UPCOMING_MATCH,
+        MATCH_SCORE,
+        ALLIANCE_SELECTION,
+        LEVEL_STARTING,
+        SUGGEST_MEDIA;
+
+        public String toString(){
+            switch (this){
+                case REGISTRATION: return "registration";
+                case UPCOMING_MATCH: return "upcoming_match";
+                case MATCH_SCORE: return "match_score";
+                case ALLIANCE_SELECTION: return "alliance_selection";
+                case LEVEL_STARTING: return "starting_comp_level";
+                case SUGGEST_MEDIA: return "suggest_media";
+            }
+            return "";
+        }
+    }
+
     public static GoogleCloudMessaging getGcm(Context context){
         return GoogleCloudMessaging.getInstance(context);
     }
