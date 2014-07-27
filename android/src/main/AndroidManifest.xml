@@ -12,6 +12,7 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.thebluealliance.androidclient.permission.C2D_MESSAGE" />
 
     <application
         android:name=".TBAAndroid"
@@ -101,13 +102,6 @@
         </activity>
         <activity android:name=".activities.SearchResultsActivity" />
         <activity android:name=".activities.MoreSearchResultsActivity" />
-
-        <receiver android:name=".receivers.ConnectivityChangeReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name=".activities.settings.DevSettingsActivity"
             android:label="@string/title_activity_dev_settings"
@@ -116,6 +110,23 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.settings.SettingsActivity" />
         </activity>
+
+        <receiver android:name=".receivers.ConnectivityChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.thebluealliance.androidclient" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".gcm.GCMMessageHandler" />
+
     </application>
 
 </manifest>

@@ -18,6 +18,9 @@ import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotifica
  */
 public class GCMMessageHandler extends IntentService {
 
+    public GCMMessageHandler(){
+        super("GCMMessageHandler");
+    }
 
     public GCMMessageHandler(String name) {
         super(name);
