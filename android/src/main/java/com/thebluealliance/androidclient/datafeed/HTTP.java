@@ -13,7 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.Map;
 
 
 public class HTTP {
@@ -72,5 +72,50 @@ public class HTTP {
         if (response == null) return null;
 
         return dataFromResponse(response);
+    }
+
+    public static String GET(String url, Map<String, String> headers){
+
+        // HTTP
+        HttpResponse response = null;
+        try {
+            HttpClient httpclient = new DefaultHttpClient(); // for port 80 requests!
+            HttpGet httpget = new HttpGet(url);
+            if(headers != null) {
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    httpget.addHeader(header.getKey(), header.getValue());
+                }
+            }
+            response = httpclient.execute(httpget);
+        } catch (Exception e) {
+            Log.w(Constants.LOG_TAG, "Exception while fetching " + url);
+            e.printStackTrace();
+            return null;
+        }
+
+        InputStream is;
+        String result = "";
+        // Read response to string
+        if(response != null) {
+            try {
+                HttpEntity entity = response.getEntity();
+
+                is = entity.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                is.close();
+                result = sb.toString();
+                return result;
+            } catch (Exception e) {
+                Log.w(Constants.LOG_TAG, "Exception while fetching data from " + response.toString());
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
     }
 }

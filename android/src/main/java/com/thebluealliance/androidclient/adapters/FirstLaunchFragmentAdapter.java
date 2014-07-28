@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.R;
  */
 public class FirstLaunchFragmentAdapter extends PagerAdapter {
 
-    private int mCount = 3;
+    private int mCount = 4;
     private Activity activity;
 
     public FirstLaunchFragmentAdapter(Activity activity) {
@@ -35,6 +35,9 @@ public class FirstLaunchFragmentAdapter extends PagerAdapter {
                 resId = R.id.loading_page;
                 break;
             case 2:
+                resId = R.id.account_picker_page;
+                break;
+            case 3:
                 resId = R.id.load_finished_page;
                 break;
         }

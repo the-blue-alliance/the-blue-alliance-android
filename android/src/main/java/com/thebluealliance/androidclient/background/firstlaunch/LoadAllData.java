@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
@@ -21,12 +22,12 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, Void> {
+public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, Void> {
 
     private LoadAllDataCallbacks callbacks;
     private Context context;
@@ -37,10 +38,21 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(Short... params) {
         if (callbacks == null) {
             throw new IllegalArgumentException("callbacks must not be null!");
         }
+
+        Short[] dataToLoad;
+        if(params == null || params.length < 1 ){
+            dataToLoad = new Short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS,
+                    LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS,
+                    LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS};
+        }else{
+            dataToLoad = params;
+        }
+
+        Log.d(Constants.LOG_TAG, "Loading: "+ Arrays.deepToString(dataToLoad));
 
         /* We need to download and cache every team and event into the database. To avoid
          * unexpected behavior caused by changes in network connectivity, we will load all
@@ -52,47 +64,51 @@ public class LoadAllData extends AsyncTask<Void, LoadAllData.LoadProgressInfo, V
             ArrayList<Event> events = new ArrayList<>();
             int maxPageNum = 0;
 
-            // First we will load all the teams
-            for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
-                if(isCancelled()) {
-                    return null;
-                }
-                int start = pageNum * Constants.API_TEAM_LIST_PAGE_SIZE;
-                int end = start + Constants.API_TEAM_LIST_PAGE_SIZE - 1;
-                start = start == 0 ? 1 : start;
-                publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
-                APIResponse<String> teamListResponse;
-                teamListResponse = TBAv2.getResponseFromURLOrThrow(context, String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.TEAM_LIST), pageNum), true, false);
-                JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
-                if (responseObject != null) {
-                    if (responseObject.size() == 0) {
-                        // No teams found for a page; we are done
-                        break;
+            if(Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS) != -1) {
+                // First we will load all the teams
+                for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
+                    if (isCancelled()) {
+                        return null;
                     }
+                    int start = pageNum * Constants.API_TEAM_LIST_PAGE_SIZE;
+                    int end = start + Constants.API_TEAM_LIST_PAGE_SIZE - 1;
+                    start = start == 0 ? 1 : start;
+                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
+                    APIResponse<String> teamListResponse;
+                    teamListResponse = TBAv2.getResponseFromURLOrThrow(context, String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.TEAM_LIST), pageNum), true, false);
+                    JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
+                    if (responseObject != null) {
+                        if (responseObject.size() == 0) {
+                            // No teams found for a page; we are done
+                            break;
+                        }
+                    }
+                    maxPageNum = Math.max(maxPageNum, pageNum);
+                    ArrayList<Team> pageTeams = TBAv2.getTeamList(teamListResponse.getData());
+                    teams.addAll(pageTeams);
                 }
-                maxPageNum = Math.max(maxPageNum, pageNum);
-                ArrayList<Team> pageTeams = TBAv2.getTeamList(teamListResponse.getData());
-                teams.addAll(pageTeams);
             }
 
-            // Now we load all events
-            for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
-                if(isCancelled()) {
-                    return null;
-                }
-                publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
-                APIResponse<String> eventListResponse;
-                String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
-                eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, true, false);
-                JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
-                if (responseObject instanceof JsonObject) {
-                    if (((JsonObject) responseObject).has("404")) {
-                        // No events found for that year; skip it
-                        continue;
+            if(Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS) != -1) {
+                // Now we load all events
+                for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
+                    if (isCancelled()) {
+                        return null;
                     }
+                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
+                    APIResponse<String> eventListResponse;
+                    String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
+                    eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, true, false);
+                    JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
+                    if (responseObject instanceof JsonObject) {
+                        if (((JsonObject) responseObject).has("404")) {
+                            // No events found for that year; skip it
+                            continue;
+                        }
+                    }
+                    ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
+                    events.addAll(yearEvents);
                 }
-                ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
-                events.addAll(yearEvents);
             }
 
             if(isCancelled()) {

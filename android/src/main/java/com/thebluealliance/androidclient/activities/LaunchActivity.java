@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -14,8 +15,10 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
@@ -23,26 +26,36 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadAccountPicker;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by Nathan on 5/25/2014.
  */
-public class LaunchActivity extends Activity implements View.OnClickListener, LoadAllData.LoadAllDataCallbacks {
+public class LaunchActivity extends Activity implements View.OnClickListener, LoadAllData.LoadAllDataCallbacks, ViewPager.OnPageChangeListener {
 
+    private static final int ACCOUNTS_PAGE = 2;
     public static final String ALL_DATA_LOADED = "all_data_loaded";
+    public static final String REDOWNLOAD = "redownload";
+    public static final String DATA_TO_REDOWNLOAD = "redownload_data";
+    public static final String APP_VERSION_KEY = "app_version";
+    public static final String PICK_ACCOUNT = "pick_account";
 
     private DisableSwipeViewPager viewPager;
 
     private TextView loadingMessage;
+    private ListView accountList;
+    private ArrayList<String> accounts;
 
     private LoadAllDataTaskFragment loadFragment;
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
@@ -52,8 +65,10 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         super.onCreate(savedInstanceState);
         Database.getInstance(this);
 
-        Log.i(Constants.LOG_TAG, "All data loaded? " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false));
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false)) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.i(Constants.LOG_TAG, "All data loaded? " + prefs.getBoolean(ALL_DATA_LOADED, false));
+        boolean pickAccount =  true; // getIntent().getBooleanExtra(PICK_ACCOUNT, false);
+        if (prefs.getBoolean(ALL_DATA_LOADED, false) && !(checkDataRedownload() || pickAccount)) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
@@ -90,15 +105,52 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         setContentView(R.layout.activity_launch);
         viewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
         viewPager.setSwipeEnabled(false);
-        viewPager.setOffscreenPageLimit(2);
+        viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(new FirstLaunchFragmentAdapter(this));
+        viewPager.setOnPageChangeListener(this);
         loadingMessage = (TextView) findViewById(R.id.message);
+        accountList = (ListView) findViewById(R.id.account_list);
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
+        findViewById(R.id.pick_account).setOnClickListener(this);
         loadFragment = (LoadAllDataTaskFragment) getFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
-        if (loadFragment != null) {
+
+        if(pickAccount){
+            advanceToAccounts();
+        }else if (loadFragment != null) {
             viewPager.setCurrentItem(1, false);
         }
+    }
+
+    private boolean checkDataRedownload() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int lastVersion = prefs.getInt(APP_VERSION_KEY, -1);
+        if(getIntent().getBooleanExtra(REDOWNLOAD, false)){
+            return true;
+        }
+
+        boolean redownload = false;
+        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE+" "+prefs.contains(APP_VERSION_KEY));
+        if(!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+            SharedPreferences.Editor editor = prefs.edit();
+            //we are updating the app. Do stuffs.
+            while (lastVersion <= BuildConfig.VERSION_CODE) {
+                Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
+                switch (lastVersion) {
+                    case 14: //addition of districts. Download the required data
+                        redownload = true;
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
+                        break;
+                    default:
+                        break;
+                }
+                editor.putInt(APP_VERSION_KEY, lastVersion);
+                lastVersion++;
+            }
+            editor.putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
+        }
+        prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
+        return redownload;
     }
 
     private void goToHome() {
@@ -116,6 +168,11 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             case R.id.finish:
                 startActivity(new Intent(this, HomeActivity.class));
                 finish();
+            case R.id.pick_account:
+                String selectedAccount = accounts.get(accountList.getCheckedItemPosition());
+                AccountHelper.storeAccountId(this, selectedAccount);
+                advanceToNextPage();
+                break;
         }
     }
 
@@ -154,6 +211,10 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         if (viewPager.getCurrentItem() < viewPager.getAdapter().getCount() - 1) {
             viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
         }
+    }
+
+    public void advanceToAccounts(){
+        viewPager.setCurrentItem(ACCOUNTS_PAGE, false);
     }
 
     public void returnToPreviousPage() {
@@ -304,9 +365,37 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         goToHome();
     }
 
+    public void setAccounts(ArrayList<String> accounts){
+        this.accounts = accounts;
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if(position == ACCOUNTS_PAGE){
+            new LoadAccountPicker(this, accountList).execute();
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
     public static class LoadAllDataTaskFragment extends Fragment implements LoadAllData.LoadAllDataCallbacks {
+
+        public static final String DATA_TO_LOAD = "data_to_load";
+        public static final short LOAD_TEAMS = 0,
+                LOAD_EVENTS = 1,
+                LOAD_DISTRICTS = 2;
+
         LoadAllData.LoadAllDataCallbacks callback;
         private LoadAllData task;
+        private Short[] dataToLoad;
 
         @Override
         public void onAttach(Activity activity) {
@@ -318,9 +407,19 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 throw new IllegalStateException("TaskFragment must be hosted by an activity that implements LoadAllDataCallbacks");
             }
 
+            if (getArguments() != null && getArguments().containsKey(DATA_TO_LOAD)) {
+                short[] inData = getArguments().getShortArray(DATA_TO_LOAD);
+                dataToLoad = new Short[inData.length];
+                for (int i = 0; i < dataToLoad.length; i++) {
+                    dataToLoad[i] = inData[i];
+                }
+            } else {
+                dataToLoad = new Short[]{LOAD_TEAMS, LOAD_EVENTS, LOAD_DISTRICTS};
+            }
+
             if (task == null) {
                 task = new LoadAllData(this, getActivity());
-                task.execute();
+                task.execute(dataToLoad);
             }
         }
 

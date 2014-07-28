@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.thebluealliance.androidclient.permission.C2D_MESSAGE" />
 
+    <!-- Device Accounts -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
     <application
         android:name=".TBAAndroid"
         android:allowBackup="true"
