@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -251,6 +252,15 @@ public class Utilities {
 
     public static boolean isDebuggable() {
         return BuildConfig.DEBUG;
+    }
+
+    /**
+     * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware serial number</a>
+     * I hope this actually works universally, android UUIDs are irritatingly difficult
+     * @return UUID
+     */
+    public static String getUUID(){
+        return Build.SERIAL;
     }
 
     /**

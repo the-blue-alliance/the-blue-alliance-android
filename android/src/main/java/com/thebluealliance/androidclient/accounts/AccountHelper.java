@@ -19,7 +19,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.HTTP;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 
@@ -115,11 +114,7 @@ public class AccountHelper {
 
     }
 
-    protected static String getClientId(Context context){
-        if(Utilities.isDebuggable()){
-            return Utilities.readLocalProperty(context, "gms.clientId.debug");
-        }else{
-            return Utilities.readLocalProperty(context, "gms.clientId");
-        }
+    public static String getUserId(Context context){
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(USER_ID, "");
     }
 }

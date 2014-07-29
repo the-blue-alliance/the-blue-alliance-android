@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.gcm.messages;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.thebluealliance.androidclient.gcm.GCMHelper;
@@ -16,6 +17,6 @@ public abstract class BasicGCMMessage {
         this.type = msgtype;
     }
 
-    public abstract Bundle getMessage();
+    public abstract Bundle getMessage(Context context);
 
 }

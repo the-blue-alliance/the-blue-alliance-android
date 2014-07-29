@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.Calendar;
@@ -62,6 +63,13 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+
+        String gcmId = GCMHelper.getRegistrationId(this);
+        if(gcmId.isEmpty()){
+            GCMHelper.registerInBackground(this);
+        }else{
+            Log.d(Constants.LOG_TAG, "GCM: "+gcmId);
+        }
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();

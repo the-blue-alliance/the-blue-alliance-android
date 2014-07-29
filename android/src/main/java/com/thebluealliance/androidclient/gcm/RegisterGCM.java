@@ -22,19 +22,19 @@ public class RegisterGCM extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        String msg = "";
         try {
             GoogleCloudMessaging gcm = GCMHelper.getGcm(context);
 
             String senderId = GCMHelper.getSenderId(context);
             String regid = gcm.register(senderId);
-            msg = "Device registered, registration ID=" + regid;
+
+            Log.d(Constants.LOG_TAG, "Device registered with GCM, ID: "+regid);
 
             // You should send the registration ID to your server over HTTP,
             // so it can use GCM/HTTP or CCS to send messages to your app.
             // The request to your server should be authenticated if your app
             // is using accounts.
-            GCMHelper.sendRegistrationIdToBackend();
+            GCMHelper.sendRegistrationIdToBackend(context, regid);
 
             // For this demo: we don't need to send it because the device
             // will send upstream messages to a server that echo back the

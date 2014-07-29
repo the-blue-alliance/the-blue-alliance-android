@@ -12,6 +12,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.gcm.messages.RegistrationMessage;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -82,7 +83,7 @@ public class GCMHelper {
      * @return registration ID, or empty string if there is no existing
      *         registration ID.
      */
-    private static String getRegistrationId(Context context) {
+    public static String getRegistrationId(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
         if (registrationId.isEmpty()) {
@@ -90,6 +91,10 @@ public class GCMHelper {
             return "";
         }
         return registrationId;
+    }
+
+    public static void registerInBackground(Context c){
+        new RegisterGCM(c).execute();
     }
 
     /**
@@ -119,12 +124,14 @@ public class GCMHelper {
      * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
      * or CCS to send messages to your app.
      */
-    public static void sendRegistrationIdToBackend() {
-        // TODO implement
-        /**
-         * We want to send a secured HTTP POST request to tba.com where we tell it the following:
-         * Registration ID, OS, App Version
-         */
+    public static void sendRegistrationIdToBackend(Context context, String regId) {
+        RegistrationMessage message = new RegistrationMessage(regId);
+        try {
+            sendUpstreamMessage(context, message.getMessage(context));
+        } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "IO Exception while sending registration message");
+            e.printStackTrace();
+        }
     }
 
     public static String getSenderId(Context c){
