@@ -35,7 +35,7 @@ import java.util.Map;
 public class AccountHelper {
 
     private static final String USER_INFO_REQUEST = "https://www.googleapis.com/oauth2/v2/userinfo";
-    private static final String USER_ID = "user_id";
+    private static final String USER_ID = "user_id", USER_EMAIL = "user_email", USER_NAME = "user_name", PIC_URL = "user_pic";
 
     public static void storeAccountId(Activity activity, String accountName){
         new IdGetter(activity).execute(accountName);
@@ -57,19 +57,20 @@ public class AccountHelper {
         protected JsonObject doInBackground(String... params) {
             String accountName = params[0];
             String token = null;
-            String clientId = AccountHelper.getClientId(activity);
             String scope = String.format(OAUTH_SCOPE_FORMAT, TextUtils.join(" ", SCOPES));
-            Log.d(Constants.LOG_TAG, "Fetching token for "+accountName+", scope: "+scope+", clientId: "+clientId);
+            Log.d(Constants.LOG_TAG, "Fetching token for "+accountName);
             try {
                 token = GoogleAuthUtil.getToken(activity,
                         accountName,
                         scope,
                         new Bundle());
-                Log.d(Constants.LOG_TAG, "Got token: "+token);
+                Log.d(Constants.LOG_TAG, "Got oauth token: "+token);
                 if(token != null) {
                     Map<String, String> headers = new HashMap<>();
                     headers.put("Authorization","Bearer "+token);
-                    return JSONManager.getasJsonObject(HTTP.GET(String.format(USER_INFO_REQUEST), headers));
+                    JsonObject result = JSONManager.getasJsonObject(HTTP.GET(String.format(USER_INFO_REQUEST), headers));
+                    result.addProperty(USER_EMAIL, accountName);
+                    return result;
                 }
 
             } catch (GooglePlayServicesAvailabilityException playEx) {
@@ -97,12 +98,18 @@ public class AccountHelper {
         @Override
         protected void onPostExecute(JsonObject result) {
             super.onPostExecute(result);
-            Log.d(Constants.LOG_TAG, "token result: "+result);
             if(result != null) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-                String id = result.get("id").getAsString();
+                String  id = result.get("id").getAsString(),
+                        userName = result.get("name").getAsString(),
+                        userEmail = result.get(USER_EMAIL).getAsString(),
+                        userPicUrl = result.get("picture").getAsString();
                 Log.d(Constants.LOG_TAG, "Got user id: " + id);
-                prefs.edit().putString(USER_ID, id).commit();
+                prefs.edit()    .putString(USER_ID, id)
+                                .putString(USER_NAME, userName)
+                                .putString(USER_EMAIL, userEmail)
+                                .putString(PIC_URL, userPicUrl)
+                                .commit();
             }
         }
 

@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -251,7 +250,6 @@ public class Utilities {
     }
 
     public static boolean isDebuggable() {
-        Log.i(Constants.LOG_TAG, "Debug: " + BuildConfig.DEBUG);
         return BuildConfig.DEBUG;
     }
 

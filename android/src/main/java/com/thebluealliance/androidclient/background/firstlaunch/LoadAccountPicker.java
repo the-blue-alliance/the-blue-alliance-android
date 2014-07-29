@@ -39,10 +39,10 @@ public class LoadAccountPicker extends AsyncTask<Void, Void, Void> {
         Account[] accountList = manager.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
 
         accounts = new ArrayList<>();
+        accounts.add(activity.getString(R.string.no_account));
         for (Account account : accountList) {
             accounts.add(account.name);
         }
-        accounts.add(activity.getString(R.string.no_account));
 
         return null;
     }

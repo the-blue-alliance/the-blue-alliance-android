@@ -67,7 +67,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Log.i(Constants.LOG_TAG, "All data loaded? " + prefs.getBoolean(ALL_DATA_LOADED, false));
-        boolean pickAccount =  true; // getIntent().getBooleanExtra(PICK_ACCOUNT, false);
+        boolean pickAccount = getIntent().getBooleanExtra(PICK_ACCOUNT, false);
         if (prefs.getBoolean(ALL_DATA_LOADED, false) && !(checkDataRedownload() || pickAccount)) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -169,8 +169,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 startActivity(new Intent(this, HomeActivity.class));
                 finish();
             case R.id.pick_account:
-                String selectedAccount = accounts.get(accountList.getCheckedItemPosition());
-                AccountHelper.storeAccountId(this, selectedAccount);
+                if(accountList.getCheckedItemPosition() != 0) {
+                    String selectedAccount = accounts.get(accountList.getCheckedItemPosition());
+                    AccountHelper.storeAccountId(this, selectedAccount);
+                }else{
+                    Log.d(Constants.LOG_TAG, "User didn't pick an account");
+                }
                 advanceToNextPage();
                 break;
         }
