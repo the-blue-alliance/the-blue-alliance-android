@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.gcm;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -75,6 +76,19 @@ public class GCMHelper {
         return true;
     }
 
+    public static String getIdOrRegister(Activity activity){
+        if(checkPlayServices(activity)) {
+            String gcmId = GCMHelper.getRegistrationId(activity);
+            if (gcmId.isEmpty()) {
+                GCMHelper.registerInBackground(activity);
+            }
+            return gcmId;
+        }else{
+            Log.w(Constants.LOG_TAG, "No Play Services. Can't get GCM ID");
+            return "";
+        }
+    }
+
     /**
      * Gets the current registration ID for application on GCM service.
      * <p>
@@ -126,12 +140,7 @@ public class GCMHelper {
      */
     public static void sendRegistrationIdToBackend(Context context, String regId) {
         RegistrationMessage message = new RegistrationMessage(regId);
-        try {
-            sendUpstreamMessage(context, message.getMessage(context));
-        } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "IO Exception while sending registration message");
-            e.printStackTrace();
-        }
+        sendUpstreamMessage(context, message.getMessage(context));
     }
 
     public static String getSenderId(Context c){
@@ -141,12 +150,23 @@ public class GCMHelper {
         return senderId;
     }
 
-    public static void sendUpstreamMessage(Context c, Bundle data) throws IOException{
-        String id = Integer.toString(msgId.incrementAndGet());
-        getGcm(c).send(
-                String.format(GCM_SENDER_FORMAT, getSenderId(c)),
-                id,
-                data);
+    public static void sendUpstreamMessage(final Context c, final Bundle data) {
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void[] params) {
+                String id = Integer.toString(msgId.incrementAndGet());
+                try {
+                    getGcm(c).send(
+                            String.format(GCM_SENDER_FORMAT, getSenderId(c)),
+                            id,
+                            data);
+                } catch (IOException e) {
+                    Log.e(Constants.LOG_TAG, "IO Exception while sending GCM Message");
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 
 }

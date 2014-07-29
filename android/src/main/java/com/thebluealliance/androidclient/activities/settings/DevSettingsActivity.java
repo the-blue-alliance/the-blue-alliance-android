@@ -5,9 +5,11 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 
 public class DevSettingsActivity extends PreferenceActivity {
@@ -69,6 +71,21 @@ public class DevSettingsActivity extends PreferenceActivity {
                     String data = "{\"event_name\":\"EVENT NAME\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010sc_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\"]},\"red\":{\"score\":5,\"teams\":[\"frc1398\",\"frc343\"]}},\"event_key\":\"2010sc\"}}";
                     GCMMessageHandler.handleMessage(getActivity(), "score", data);
                     return true;
+                }
+            });
+
+            Preference gcmRegister = findPreference("gcm_register");
+            gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    String id = GCMHelper.getIdOrRegister(getActivity());
+                    if(id.isEmpty()){
+                        Toast.makeText(getActivity(), "Registering for GCM in background.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        GCMHelper.sendRegistrationIdToBackend(getActivity(), id);
+                        Toast.makeText(getActivity(), "GCM already registered: \n"+id, Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
                 }
             });
         }

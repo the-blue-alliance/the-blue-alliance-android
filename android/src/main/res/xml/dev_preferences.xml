@@ -25,6 +25,10 @@
             android:key="test_score_notification"
             android:selectable="true"
             android:title="@string/pref_test_score_notification" />
+        <Preference
+            android:key="gcm_register"
+            android:selectable="true"
+            android:title="@string/pref_register_gcm"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

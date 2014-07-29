@@ -64,12 +64,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
         setContentView(R.layout.activity_home);
 
-        String gcmId = GCMHelper.getRegistrationId(this);
-        if(gcmId.isEmpty()){
-            GCMHelper.registerInBackground(this);
-        }else{
-            Log.d(Constants.LOG_TAG, "GCM: "+gcmId);
-        }
+        GCMHelper.getIdOrRegister(this);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
