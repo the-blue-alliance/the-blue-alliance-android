@@ -200,7 +200,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         } catch (WindowManager.BadTokenException e){
             // Activity is already gone. Just log the exception
             Log.e(Constants.LOG_TAG, "Error loading data: "+stacktrace);
-            e.printStackTrace(); 
+            e.printStackTrace();
         }
     }
 

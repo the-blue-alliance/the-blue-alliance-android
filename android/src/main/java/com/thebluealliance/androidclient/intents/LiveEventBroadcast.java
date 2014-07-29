@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Match;
 
 /**
  * File created by phil on 7/18/14.
@@ -20,13 +21,20 @@ public class LiveEventBroadcast extends Intent {
         setAction(ACTION);
     }
 
-    public LiveEventBroadcast(MatchListElement nextMatch, MatchListElement lastMatch) {
+    public LiveEventBroadcast(Match nextMatch, Match lastMatch) {
         this();
+        MatchListElement next, last;
         if(nextMatch != null) {
-            putExtra(NEXT_MATCH, nextMatch);
+            next = nextMatch.render();
+            if(next != null) {
+                putExtra(NEXT_MATCH, next);
+            }
         }
         if(lastMatch != null) {
-            putExtra(LAST_MATCH, lastMatch);
+            last = lastMatch.render();
+            if(last != null) {
+                putExtra(LAST_MATCH, lastMatch.render());
+            }
         }
     }
 
