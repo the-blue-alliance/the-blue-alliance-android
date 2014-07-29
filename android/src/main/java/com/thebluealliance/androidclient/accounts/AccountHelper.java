@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -43,7 +44,7 @@ public class AccountHelper {
     private static class IdGetter extends AsyncTask<String, Void, JsonObject>{
 
         static final String OAUTH_SCOPE_FORMAT = "oauth2:%s";
-        final private List<String> SCOPES = Arrays.asList(Scopes.PLUS_LOGIN);
+        final private List<String> SCOPES = Arrays.asList(Scopes.PLUS_LOGIN, Scopes.PROFILE);
         static final int REQUEST_CODE = 1124;
         Activity activity;
 
@@ -57,11 +58,20 @@ public class AccountHelper {
             String accountName = params[0];
             String token = null;
             String clientId = AccountHelper.getClientId(activity);
-            Log.d(Constants.LOG_TAG, "Fetching token for "+accountName+", clientId: "+clientId);
+            String scope = String.format(OAUTH_SCOPE_FORMAT, TextUtils.join(" ", SCOPES));
+            Log.d(Constants.LOG_TAG, "Fetching token for "+accountName+", scope: "+scope+", clientId: "+clientId);
             try {
-                token = GoogleAuthUtil.getToken(activity.getApplicationContext(),
-                            accountName,
-                            String.format(OAUTH_SCOPE_FORMAT, TextUtils.join(" ", SCOPES)));
+                token = GoogleAuthUtil.getToken(activity,
+                        accountName,
+                        scope,
+                        new Bundle());
+                Log.d(Constants.LOG_TAG, "Got token: "+token);
+                if(token != null) {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization","Bearer "+token);
+                    return JSONManager.getasJsonObject(HTTP.GET(String.format(USER_INFO_REQUEST), headers));
+                }
+
             } catch (GooglePlayServicesAvailabilityException playEx) {
                 Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
                         playEx.getConnectionStatusCode(),
@@ -69,23 +79,18 @@ public class AccountHelper {
                         REQUEST_CODE);
                 dialog.show();
             } catch (UserRecoverableAuthException recoverableException) {
+                Log.w(Constants.LOG_TAG, "recoverable: ");
+                recoverableException.printStackTrace();
                 Intent recoveryIntent = recoverableException.getIntent();
                 activity.startActivityForResult(recoveryIntent, REQUEST_CODE);
             } catch (GoogleAuthException authEx) {
                 // This is likely unrecoverable.
                 Log.e(Constants.LOG_TAG, "Unrecoverable authentication exception: " + authEx.getMessage(), authEx);
-                return null;
             } catch (IOException ioEx) {
                 Log.i(Constants.LOG_TAG, "transient error encountered: " + ioEx.getMessage());
                 //TODO should do exponential back off here
-                return null;
             }
 
-            if(token != null) {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization",token);
-                return JSONManager.getasJsonObject(HTTP.GET(String.format(USER_INFO_REQUEST), headers));
-            }
             return null;
         }
 
