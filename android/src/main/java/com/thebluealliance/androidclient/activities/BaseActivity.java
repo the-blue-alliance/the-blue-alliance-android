@@ -39,6 +39,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
+        registerGCMIfNeeded();
+
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             // Register callback
@@ -93,7 +95,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         invalidateOptionsMenu();
     }
 
-    private void registerGCM(){
+    private void registerGCMIfNeeded(){
         if(!GCMHelper.checkPlayServices(this)){
             Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
             return;
@@ -101,7 +103,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         final String registrationId = GCMAuthHelper.getRegistrationId(this);
         if(TextUtils.isEmpty(registrationId)){
             // GCM has not yet been registered on this device
-
+            Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
+            GCMAuthHelper.registerInBackground(this);
         }
     }
 }
