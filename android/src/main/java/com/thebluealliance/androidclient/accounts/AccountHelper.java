@@ -52,7 +52,7 @@ public class AccountHelper {
     private static class IdGetter extends AsyncTask<String, Void, JsonObject>{
 
         static final String OAUTH_SCOPE_FORMAT = "oauth2:%s";
-        final private List<String> SCOPES = Arrays.asList(Scopes.PLUS_LOGIN, Scopes.PROFILE);
+        final private List<String> SCOPES = Arrays.asList(Scopes.PLUS_LOGIN, Scopes.PROFILE, Scopes.DRIVE_APPFOLDER);
         static final int REQUEST_CODE = 1124;
         Activity activity;
 
