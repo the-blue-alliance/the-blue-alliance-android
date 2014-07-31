@@ -2,10 +2,8 @@ package com.thebluealliance.androidclient.gcm;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -14,7 +12,6 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.gcm.messages.RegistrationMessage;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -9,9 +9,11 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.datafeed.HTTP;
+import com.thebluealliance.androidclient.datafeed.TBAv2;
+
+import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,8 +23,6 @@ import java.util.Map;
  * Created by phil on 7/31/14.
  */
 public class GCMAuthHelper {
-
-    public static final String GCM_REGISTER_ENDPOINT = ""; // TODO make this server side
 
     public static final String PROPERTY_GCM_REG_ID = "gcm_registration_id";
     public static final String PROPERTY_GCM_KEY = "gcm_key";
@@ -34,7 +34,7 @@ public class GCMAuthHelper {
         return prefs.getString(PROPERTY_GCM_REG_ID, "");
     }
 
-    public void registerInBackground(final Context context) {
+    public static void registerInBackground(final Context context) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -70,6 +70,7 @@ public class GCMAuthHelper {
 
     public static boolean sendRegistrationToBackend(Context context, String gcmId, String gcmKey) {
         Log.i(Constants.LOG_TAG, "Registering gcmId " + gcmId);
+        Log.i(Constants.LOG_TAG, "Using secret: "+gcmKey);
         JsonObject requestParams = new JsonObject();
         requestParams.addProperty(PROPERTY_GCM_REG_ID, gcmId);
         requestParams.addProperty(PROPERTY_GCM_KEY, gcmKey);
@@ -78,8 +79,8 @@ public class GCMAuthHelper {
         headers.put(REGISTRATION_CHECKSUM, GCMHelper.requestChecksum(context, requestParams));
 
 
-        HTTP.POST(GCM_REGISTER_ENDPOINT, headers, requestParams);
-
+        HttpResponse response = HTTP.postResponse(TBAv2.getGCMRegisterEndpoint(context), headers, requestParams);
+        Log.d(Constants.LOG_TAG, "Result code from registration request: "+response.getStatusLine().getStatusCode());
         // TODO check for error and do exponential backoff
 
         return true;

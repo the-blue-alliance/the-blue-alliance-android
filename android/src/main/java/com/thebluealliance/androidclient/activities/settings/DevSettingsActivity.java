@@ -5,11 +5,10 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 
 public class DevSettingsActivity extends PreferenceActivity {
@@ -78,13 +77,7 @@ public class DevSettingsActivity extends PreferenceActivity {
             gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    String id = GCMHelper.getIdOrRegister(getActivity());
-                    if(id.isEmpty()){
-                        Toast.makeText(getActivity(), "Registering for GCM in background.", Toast.LENGTH_SHORT).show();
-                    }else{
-                        GCMHelper.sendRegistrationIdToBackend(getActivity(), id);
-                        Toast.makeText(getActivity(), "GCM already registered: \n"+id, Toast.LENGTH_SHORT).show();
-                    }
+                    GCMAuthHelper.registerInBackground(getActivity());
                     return false;
                 }
             });

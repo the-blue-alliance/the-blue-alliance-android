@@ -22,7 +22,10 @@ import java.util.HashMap;
 public class TBAv2 {
 
     private static final String TBA_HOST_PREF = "tba_host";
-    private static final String tbaHostDefault = "http://www.thebluealliance.com";
+    private static final String tbaHostDefault = //"http://www.thebluealliance.com";
+        "http://tba-dev-phil.appspot.com";
+
+    private static final String GCM_REGISTER_ENDPOINT_SUFFIX = "/notifications/register";
 
     public static enum QUERY {
         CSV_TEAMS,
@@ -74,6 +77,14 @@ public class TBAv2 {
             host = tbaHostDefault;
         }
         return host+API_URL.get(query);
+    }
+
+    public static String getGCMRegisterEndpoint(Context c){
+        String host = PreferenceManager.getDefaultSharedPreferences(c).getString(TBA_HOST_PREF, tbaHostDefault);
+        if(!Utilities.isDebuggable() || host.isEmpty()){
+            host = tbaHostDefault;
+        }
+        return host+GCM_REGISTER_ENDPOINT_SUFFIX;
     }
 
     public static ArrayList<Event> getEventList(String json) {
