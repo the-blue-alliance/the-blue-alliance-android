@@ -23,8 +23,6 @@ public class TBAv2 {
 
     private static final String TBA_HOST_PREF = "tba_host";
     private static final String tbaHostDefault = "http://www.thebluealliance.com";
-     
-    private static final String GCM_REGISTER_ENDPOINT_SUFFIX = "/notifications/register";
 
     public static enum QUERY {
         CSV_TEAMS,
@@ -45,8 +43,14 @@ public class TBAv2 {
         EVENT_RANKS,
         EVENT_AWARDS
     }
+    public static enum GCM_ENDPOINT {
+        REGISTER,
+        FAVORITE,
+        SUBSCRIBE;
+    }
 
     private static final HashMap<QUERY, String> API_URL;
+    private static final HashMap<GCM_ENDPOINT, String> GCM_URL;
 
     static {
         API_URL = new HashMap<>();
@@ -68,6 +72,9 @@ public class TBAv2 {
         API_URL.put(QUERY.EVENT_STATS, "/api/v2/event/%s/stats");
         API_URL.put(QUERY.EVENT_AWARDS, "/api/v2/event/%s/awards");
         API_URL.put(QUERY.EVENT_LIST, "/api/v2/events/%d");
+
+        GCM_URL = new HashMap<>();
+        GCM_URL.put(GCM_ENDPOINT.REGISTER, "/mobile/register");
     }
 
     public static String getTBAApiUrl(Context c, QUERY query){
@@ -78,12 +85,12 @@ public class TBAv2 {
         return host+API_URL.get(query);
     }
 
-    public static String getGCMRegisterEndpoint(Context c){
+    public static String getGCMEndpoint(Context c, GCM_ENDPOINT endpoint){
         String host = PreferenceManager.getDefaultSharedPreferences(c).getString(TBA_HOST_PREF, tbaHostDefault);
         if(!Utilities.isDebuggable() || host.isEmpty()){
             host = tbaHostDefault;
         }
-        return host+GCM_REGISTER_ENDPOINT_SUFFIX;
+        return host+GCM_URL.get(endpoint);
     }
 
     public static ArrayList<Event> getEventList(String json) {

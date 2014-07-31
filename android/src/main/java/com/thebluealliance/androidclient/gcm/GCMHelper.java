@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.gcm;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -13,7 +11,6 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -79,25 +76,6 @@ public class GCMHelper {
             senderId = Utilities.readLocalProperty(c, "gcm.senderId");
         }
         return senderId;
-    }
-
-    public static void sendUpstreamMessage(final Context c, final Bundle data) {
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void[] params) {
-                String id = Integer.toString(msgId.incrementAndGet());
-                try {
-                    getGcm(c).send(
-                            String.format(GCM_SENDER_FORMAT, getSenderId(c)),
-                            id,
-                            data);
-                } catch (IOException e) {
-                    Log.e(Constants.LOG_TAG, "IO Exception while sending GCM Message");
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
     }
 
     public static String requestChecksum(Context context, JsonObject data){

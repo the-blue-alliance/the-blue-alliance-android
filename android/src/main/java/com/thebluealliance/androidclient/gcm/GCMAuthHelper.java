@@ -79,7 +79,7 @@ public class GCMAuthHelper {
         headers.put(REGISTRATION_CHECKSUM, GCMHelper.requestChecksum(context, requestParams));
 
 
-        HttpResponse response = HTTP.postResponse(TBAv2.getGCMRegisterEndpoint(context), headers, requestParams);
+        HttpResponse response = HTTP.postResponse(TBAv2.getGCMEndpoint(context, TBAv2.GCM_ENDPOINT.REGISTER), headers, requestParams);
         Log.d(Constants.LOG_TAG, "Result code from registration request: "+response.getStatusLine().getStatusCode());
         // TODO check for error and do exponential backoff
 
