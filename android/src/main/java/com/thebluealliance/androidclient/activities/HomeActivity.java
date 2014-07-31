@@ -64,8 +64,6 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
         setContentView(R.layout.activity_home);
 
-        GCMHelper.getIdOrRegister(this);
-
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 

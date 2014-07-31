@@ -61,7 +61,7 @@ public class GCMHelper {
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
      */
-    private static boolean checkPlayServices(Activity activity) {
+    public static boolean checkPlayServices(Activity activity) {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
@@ -74,73 +74,6 @@ public class GCMHelper {
             return false;
         }
         return true;
-    }
-
-    public static String getIdOrRegister(Activity activity){
-        if(checkPlayServices(activity)) {
-            String gcmId = GCMHelper.getRegistrationId(activity);
-            if (gcmId.isEmpty()) {
-                GCMHelper.registerInBackground(activity);
-            }
-            return gcmId;
-        }else{
-            Log.w(Constants.LOG_TAG, "No Play Services. Can't get GCM ID");
-            return "";
-        }
-    }
-
-    /**
-     * Gets the current registration ID for application on GCM service.
-     * <p>
-     * If result is empty, the app needs to register.
-     *
-     * @return registration ID, or empty string if there is no existing
-     *         registration ID.
-     */
-    public static String getRegistrationId(Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
-        if (registrationId.isEmpty()) {
-            Log.i(Constants.LOG_TAG, "GCM Registration not found.");
-            return "";
-        }
-        return registrationId;
-    }
-
-    public static void registerInBackground(Context c){
-        new RegisterGCM(c).execute();
-    }
-
-    /**
-     * If the app gets updated, we  need to clear the GCM registration ID,
-     * as the existing one is not guarateed to continue working
-     */
-    public static void clearGCMRegistration(Context context){
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putString(PROPERTY_GCM_REG_ID, "").commit();
-    }
-
-    /**
-     * Stores the registration ID and app versionCode in the application's
-     * {@code SharedPreferences}.
-     *
-     * @param context application's context.
-     * @param regId registration ID
-     */
-    public static void storeRegistrationId(Context context, String regId) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_GCM_REG_ID, regId);
-        editor.commit();
-    }
-
-    /**
-     * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
-     * or CCS to send messages to your app.
-     */
-    public static void sendRegistrationIdToBackend(Context context, String regId) {
-        RegistrationMessage message = new RegistrationMessage(regId);
-        sendUpstreamMessage(context, message.getMessage(context));
     }
 
     public static String getSenderId(Context c){

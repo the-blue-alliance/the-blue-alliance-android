@@ -1,18 +1,25 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
@@ -71,6 +78,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         beamUri = uri;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
         if (beamUri == null || beamUri.isEmpty()) {
@@ -83,5 +91,17 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     protected void setSearchEnabled(boolean enabled) {
         searchEnabled = enabled;
         invalidateOptionsMenu();
+    }
+
+    private void registerGCM(){
+        if(!GCMHelper.checkPlayServices(this)){
+            Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
+            return;
+        }
+        final String registrationId = GCMAuthHelper.getRegistrationId(this);
+        if(TextUtils.isEmpty(registrationId)){
+            // GCM has not yet been registered on this device
+
+        }
     }
 }
