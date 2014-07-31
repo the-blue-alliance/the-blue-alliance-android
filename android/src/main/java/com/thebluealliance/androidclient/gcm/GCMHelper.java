@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.gcm.messages.RegistrationMessage;
@@ -100,6 +101,14 @@ public class GCMHelper {
                 return null;
             }
         }.execute();
+    }
+
+    public static String requestChecksum(Context context, JsonObject data){
+        String secret = Utilities.readLocalProperty(context, "gcm.registrationSecret");
+        String requestData = data.toString();
+
+        // TODO salt & hash
+        return "";
     }
 
 }

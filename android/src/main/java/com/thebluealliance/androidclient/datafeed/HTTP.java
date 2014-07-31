@@ -2,12 +2,16 @@ package com.thebluealliance.androidclient.datafeed;
 
 import android.util.Log;
 
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
@@ -16,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,31 +51,28 @@ public class HTTP {
         }
     }
 
-    public static String dataFromResponse(HttpResponse response) {
-        InputStream is;
-        String result = "";
-        // Read response to string
-        if(response != null) {
-            try {
-                HttpEntity entity = response.getEntity();
-
-                is = entity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line).append("\n");
-                }
-                is.close();
-                result = sb.toString();
-                return result;
-            } catch (Exception e) {
-                Log.w(Constants.LOG_TAG, "Exception while fetching data from " + response.toString());
-                e.printStackTrace();
-                return null;
+    public static HttpResponse postResponse(String uri, Map<String, String> headers, JsonElement data){
+        try {
+            HttpPost httpPost = new HttpPost(uri);
+            httpPost.setEntity(new StringEntity(data.toString()));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            for(Map.Entry<String, String> header: headers.entrySet()){
+                httpPost.setHeader(header.getKey(), header.getValue());
             }
+            return new DefaultHttpClient().execute(httpPost);
+        } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "Error making POST request");
+            e.printStackTrace();
         }
         return null;
+    }
+
+    public static String POST(String uri, Map<String, String> headers, JsonElement data){
+        HttpResponse response = postResponse(uri, headers, data);
+        if (response == null) return null;
+
+        return dataFromResponse(response);
     }
 
     public static String GET(String url) {
@@ -126,49 +128,31 @@ public class HTTP {
         return null;
     }
 
-    public static void POST(String serverUrl, Map<String, String> params) throws IOException {
-        URL url;
-        try {
-            url = new URL(serverUrl);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("invalid url: " + serverUrl);
-        }
-        StringBuilder bodyBuilder = new StringBuilder();
-        Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
-        // constructs the POST body using the parameters
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> param = iterator.next();
-            bodyBuilder.append(param.getKey()).append('=')
-                    .append(param.getValue());
-            if (iterator.hasNext()) {
-                bodyBuilder.append('&');
+    public static String dataFromResponse(HttpResponse response) {
+        InputStream is;
+        String result = "";
+        // Read response to string
+        if(response != null) {
+            try {
+                HttpEntity entity = response.getEntity();
+
+                is = entity.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"), 8);
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                is.close();
+                result = sb.toString();
+                return result;
+            } catch (Exception e) {
+                Log.w(Constants.LOG_TAG, "Exception while fetching data from " + response.toString());
+                e.printStackTrace();
+                return null;
             }
         }
-        String body = bodyBuilder.toString();
-        HttpURLConnection conn = null;
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setChunkedStreamingMode(0);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded;charset=UTF-8");
-            conn.setRequestProperty("Content-Length",
-                    Integer.toString(body.length()));
-            // post the request
-            OutputStream out = conn.getOutputStream();
-            out.write(body.getBytes());
-            out.close();
-            // handle the response
-            int status = conn.getResponseCode();
-            if (status != 200) {
-                throw new IOException("Post failed with error code " + status);
-            }
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
+        return null;
     }
+
 }
