@@ -81,7 +81,7 @@ public class GCMAuthHelper {
         HTTP.POST(GCM_REGISTER_ENDPOINT, headers, requestParams);
 
         // TODO check for error and do exponential backoff
-        
+
         return true;
     }
 
