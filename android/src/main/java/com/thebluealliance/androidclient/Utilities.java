@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -298,6 +300,33 @@ public class Utilities {
             // e.g. "111, 1114, and 254
         }
         return finalString;
+    }
+
+    private static String bytesToHexString(byte[] bytes){
+        StringBuffer sb = new StringBuffer();
+        for (byte aByte : bytes) {
+            String hex = Integer.toHexString(0xFF & aByte);
+            if (hex.length() == 0) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+
+    public static String sha256(String input){
+        MessageDigest digest = null;
+        String hash = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+            digest.update(input.getBytes());
+
+            hash = bytesToHexString(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(Constants.LOG_TAG, "Can't find SHA-256 algorithm.");
+            e.printStackTrace();
+        }
+        return hash;
     }
 
 }

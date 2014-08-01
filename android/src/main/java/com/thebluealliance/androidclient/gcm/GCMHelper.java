@@ -82,8 +82,7 @@ public class GCMHelper {
         String secret = Utilities.readLocalProperty(context, "gcm.registrationSecret");
         String requestData = data.toString();
 
-        // TODO salt & hash
-        return "";
+        return Utilities.sha256(secret+requestData);
     }
 
 }
