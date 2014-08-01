@@ -1,14 +1,19 @@
 package com.thebluealliance.androidclient.gcm;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
@@ -48,8 +53,18 @@ public class GCMMessageHandler extends IntentService {
 
     public static void handleMessage(Context c, String messageType, String messageData) {
         NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+        JsonObject data = JSONManager.getParser().parse(messageData).getAsJsonObject();
+        String type = data.get("type").getAsString();
         try {
-            switch (messageType) {
+            switch (type) {
+                case "test":
+                    Notification notification =
+                            new NotificationCompat.Builder(c)
+                                    .setSmallIcon(R.drawable.ic_notification)
+                                    .setContentTitle(data.get("title").getAsString())
+                                    .setContentText(data.get("desc").getAsString()).build();
+                    notificationManager.notify(12, notification);
+                    break;
                 case "upcoming_match":
                     BaseNotification n = new UpcomingMatchNotification(messageData);
                     // id allows you to update the notification later on.
