@@ -302,16 +302,16 @@ public class Utilities {
         return finalString;
     }
 
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private static String bytesToHexString(byte[] bytes){
-        StringBuffer sb = new StringBuffer();
-        for (byte aByte : bytes) {
-            String hex = Integer.toHexString(0xFF & aByte);
-            if (hex.length() == 0) {
-                sb.append('0');
-            }
-            sb.append(hex);
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
-        return sb.toString();
+        String output = new String(hexChars);
+        return output.toLowerCase();
     }
 
     public static String sha256(String input){

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
@@ -34,7 +35,7 @@ public class GCMAuthHelper {
         return prefs.getString(PROPERTY_GCM_REG_ID, "");
     }
 
-    public static void registerInBackground(final Context context) {
+    public static void registerInBackground(final Context context, final GoogleApiClient driveClient) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -46,12 +47,14 @@ public class GCMAuthHelper {
 
                     Log.d(Constants.LOG_TAG, "Device registered with GCM, ID: " + regid);
 
-                    // Store the registration ID locally, so we don't have to do this again
-                    GCMAuthHelper.storeRegistrationId(context, regid);
+                    String gcmKey = AccountHelper.getGCMKey(context, driveClient);
 
-                    String gcmKey = AccountHelper.getGCMKey(context);
-
-                    GCMAuthHelper.sendRegistrationToBackend(context, regid, gcmKey);
+                    boolean storeOnServer = GCMAuthHelper.sendRegistrationToBackend(context, regid, gcmKey);
+                    if(storeOnServer){
+                        // we had success on the server. Now store locally
+                        // Store the registration ID locally, so we don't have to do this again
+                        GCMAuthHelper.storeRegistrationId(context, regid);
+                    }
                 } catch (IOException ex) {
                     Log.e(Constants.LOG_TAG, "Error registering gcm:" + ex.getMessage());
                     // If there is an error, don't just keep trying to register.
@@ -78,12 +81,13 @@ public class GCMAuthHelper {
         Map<String, String> headers = new HashMap<>();
         headers.put(REGISTRATION_CHECKSUM, GCMHelper.requestChecksum(context, requestParams));
 
-
-        HttpResponse response = HTTP.postResponse(TBAv2.getGCMEndpoint(context, TBAv2.GCM_ENDPOINT.REGISTER), headers, requestParams);
+        String endpoint = TBAv2.getGCMEndpoint(context, TBAv2.GCM_ENDPOINT.REGISTER);
+        HttpResponse response = HTTP.postResponse(endpoint, headers, requestParams);
         Log.d(Constants.LOG_TAG, "Result code from registration request: "+response.getStatusLine().getStatusCode());
+        Log.d(Constants.LOG_TAG, HTTP.dataFromResponse(response));
         // TODO check for error and do exponential backoff
 
-        return true;
+        return response.getStatusLine().getStatusCode() == 200;
     }
 
 }

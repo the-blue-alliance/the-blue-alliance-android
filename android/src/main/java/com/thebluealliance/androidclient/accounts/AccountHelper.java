@@ -17,6 +17,7 @@ import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.HTTP;
@@ -131,16 +132,16 @@ public class AccountHelper {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_ACTIVE_ACCOUNT, "");
     }
 
-    public static String getGCMKey(Context context){
+    public static String getGCMKey(Context context, GoogleApiClient driveClient){
         String currentUser = getCurrentUser(context);
         if(TextUtils.isEmpty(currentUser)){
             Log.e(Constants.LOG_TAG, "No current user: can't get GCM Key");
             return null;
         }
-        return getGCMKey(context, currentUser);
+        return getGCMKey(context, currentUser, driveClient);
     }
 
-    public static String getGCMKey(Context context, String accountName){
+    public static String getGCMKey(Context context, String accountName, GoogleApiClient driveClient){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String gcmKey = prefs.getString(String.format(PREF_GCM_KEY, accountName), null);
 
@@ -148,17 +149,16 @@ public class AccountHelper {
         if (TextUtils.isEmpty(gcmKey)) {
             gcmKey = UUID.randomUUID().toString();
             Log.d(Constants.LOG_TAG, "No GCM key on account " + accountName + ". Generating random one.");
-            setGcmKey(context, accountName, gcmKey);
+            setGcmKey(context, accountName, gcmKey, driveClient);
         }
 
         return gcmKey;
     }
 
-    public static void setGcmKey(Context context, String accountName, String gcmKey) {
+    public static void setGcmKey(Context context, String accountName, String gcmKey, GoogleApiClient driveClient) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putString(String.format(PREF_GCM_KEY, accountName), gcmKey).commit();
-        // TODO store this in user's Google Drive application data
-        // https://developers.google.com/drive/web/appdata
+        DriveHelper.writeUserSecretToDrive(gcmKey, driveClient);
         Log.d(Constants.LOG_TAG, "Created secret GCM key for account " + accountName);
     }
 }

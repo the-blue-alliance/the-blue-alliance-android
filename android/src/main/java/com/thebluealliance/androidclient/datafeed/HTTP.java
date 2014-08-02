@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.Constants;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -15,16 +14,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -55,7 +47,7 @@ public class HTTP {
         try {
             HttpPost httpPost = new HttpPost(uri);
             httpPost.setEntity(new StringEntity(data.toString()));
-            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Accept", "*/*");
             httpPost.setHeader("Content-type", "application/json");
             for(Map.Entry<String, String> header: headers.entrySet()){
                 httpPost.setHeader(header.getKey(), header.getValue());

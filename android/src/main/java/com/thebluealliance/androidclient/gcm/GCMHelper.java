@@ -81,8 +81,10 @@ public class GCMHelper {
     public static String requestChecksum(Context context, JsonObject data){
         String secret = Utilities.readLocalProperty(context, "gcm.registrationSecret");
         String requestData = data.toString();
-
-        return Utilities.sha256(secret+requestData);
+        Log.d(Constants.LOG_TAG, "Hashing data: "+data.toString());
+        String hash = Utilities.sha256(secret+requestData);
+        Log.d(Constants.LOG_TAG, "calculated hash: "+hash);
+        return hash;
     }
 
 }

@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.activities;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -15,6 +16,10 @@ import android.view.MenuItem;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -25,11 +30,15 @@ import com.thebluealliance.androidclient.gcm.GCMHelper;
  * Provides the features that should be in every activity in the app: a navigation drawer,
  * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
  */
-public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback {
+public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    private final int RESOLVE_CONNECTION_REQUEST = 12897;
 
     String beamUri;
 
     boolean searchEnabled = true;
+
+    private GoogleApiClient driveClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +48,20 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
-        registerGCMIfNeeded();
+        createDriveClient();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             // Register callback
             mNfcAdapter.setNdefPushMessageCallback(this, this);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(driveClient!= null){
+            driveClient.connect();
         }
     }
 
@@ -90,6 +107,17 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         }
     }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        switch (requestCode) {
+            case RESOLVE_CONNECTION_REQUEST:
+                if (resultCode == RESULT_OK && driveClient != null) {
+                    driveClient.connect();
+                }
+                break;
+        }
+    }
+
     protected void setSearchEnabled(boolean enabled) {
         searchEnabled = enabled;
         invalidateOptionsMenu();
@@ -104,7 +132,42 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         if(TextUtils.isEmpty(registrationId)){
             // GCM has not yet been registered on this device
             Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
-            GCMAuthHelper.registerInBackground(this);
+            GCMAuthHelper.registerInBackground(this, driveClient);
+        }
+    }
+
+    private void createDriveClient(){
+        if(driveClient == null){
+            driveClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_APPFOLDER)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        registerGCMIfNeeded();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                // Unable to resolve, message user appropriately
+            }
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
         }
     }
 }
