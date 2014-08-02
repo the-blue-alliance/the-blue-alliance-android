@@ -64,6 +64,15 @@ public class DriveHelper {
         }
     }
 
+    public static String getUserSecret(GoogleApiClient apiClient) throws IOException {
+        DriveFile userFile = lookupUserDataFile(apiClient);
+        JsonObject data = loadFromCloud(userFile, apiClient);
+        if(data == null || !data.has(USER_SECRET)){
+            return null;
+        }
+        return data.get(USER_SECRET).getAsString();
+    }
+
     private static void writeFile(DriveFile file, JsonObject data, GoogleApiClient apiClient) throws IOException {
         DriveApi.ContentsResult contentsResult = file.openContents(apiClient,
                 DriveFile.MODE_WRITE_ONLY, null).await();

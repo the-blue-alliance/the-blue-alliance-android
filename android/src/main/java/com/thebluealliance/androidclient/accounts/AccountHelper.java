@@ -145,6 +145,15 @@ public class AccountHelper {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String gcmKey = prefs.getString(String.format(PREF_GCM_KEY, accountName), null);
 
+        //if we don't have a key stored in sharedPreferences, check the user's drive
+        if(TextUtils.isEmpty(gcmKey)){
+            try {
+                gcmKey = DriveHelper.getUserSecret(driveClient);
+            } catch (IOException e) {
+                Log.w(Constants.LOG_TAG, "Couldn't read user secret from drive");
+            }
+        }
+
         // if there is no current GCM key, generate a new random one
         if (TextUtils.isEmpty(gcmKey)) {
             gcmKey = UUID.randomUUID().toString();

@@ -136,6 +136,14 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         }
     }
 
+    public GoogleApiClient getDriveClient(){
+        if(driveClient == null){
+            createDriveClient();
+            driveClient.connect();
+        }
+        return driveClient;
+    }
+
     private void createDriveClient(){
         if(driveClient == null){
             driveClient = new GoogleApiClient.Builder(this)

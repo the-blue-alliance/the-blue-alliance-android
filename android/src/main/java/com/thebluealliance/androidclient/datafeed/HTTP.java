@@ -22,11 +22,11 @@ import java.util.Map;
 
 public class HTTP {
 
-    public static HttpResponse getResponse(String url) {
-        return getResponse(url, null);
+    public static HttpResponse getRequest(String url) {
+        return getRequest(url, null);
     }
 
-    public static HttpResponse getResponse(String url, String lastUpdated) {
+    public static HttpResponse getRequest(String url, String lastUpdated) {
         // HTTP
         try {
             HttpClient httpclient = new DefaultHttpClient(); // for port 80 requests!
@@ -43,7 +43,7 @@ public class HTTP {
         }
     }
 
-    public static HttpResponse postResponse(String uri, Map<String, String> headers, JsonElement data){
+    public static HttpResponse postRequest(String uri, Map<String, String> headers, JsonElement data){
         try {
             HttpPost httpPost = new HttpPost(uri);
             httpPost.setEntity(new StringEntity(data.toString()));
@@ -61,7 +61,7 @@ public class HTTP {
     }
 
     public static String POST(String uri, Map<String, String> headers, JsonElement data){
-        HttpResponse response = postResponse(uri, headers, data);
+        HttpResponse response = postRequest(uri, headers, data);
         if (response == null) return null;
 
         return dataFromResponse(response);
@@ -69,7 +69,7 @@ public class HTTP {
 
     public static String GET(String url) {
 
-        HttpResponse response = getResponse(url);
+        HttpResponse response = getRequest(url);
         if (response == null) return null;
 
         return dataFromResponse(response);

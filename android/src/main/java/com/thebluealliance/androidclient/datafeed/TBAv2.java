@@ -22,8 +22,8 @@ import java.util.HashMap;
 public class TBAv2 {
 
     private static final String TBA_HOST_PREF = "tba_host";
-    private static final String tbaHostDefault = //"http://www.thebluealliance.com";
-    "http://tba-dev-phil.appspot.com";
+    private static final String tbaHostDefault = "http://www.thebluealliance.com";
+    
 
     public static enum QUERY {
         CSV_TEAMS,
@@ -46,7 +46,7 @@ public class TBAv2 {
     }
     public static enum GCM_ENDPOINT {
         REGISTER,
-        FAVORITE,
+        FAVORITE_ADD,
         SUBSCRIBE;
     }
 
@@ -76,6 +76,7 @@ public class TBAv2 {
 
         GCM_URL = new HashMap<>();
         GCM_URL.put(GCM_ENDPOINT.REGISTER, "/mobile/register");
+        GCM_URL.put(GCM_ENDPOINT.FAVORITE_ADD, "/mobile/favorite/add");
     }
 
     public static String getTBAApiUrl(Context c, QUERY query){
@@ -180,7 +181,7 @@ public class TBAv2 {
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
-                HttpResponse cachedResponse = HTTP.getResponse(URL, cachedData.getLastUpdate());
+                HttpResponse cachedResponse = HTTP.getRequest(URL, cachedData.getLastUpdate());
 
                 if(cachedResponse != null) {
                     /* If we get a 200-OK back from the server, then we need to return that new data
@@ -225,7 +226,7 @@ public class TBAv2 {
                 /* We haven't hit this response before - it doesn't exist in the database
                  * But we do have the ability to fetch it from the web.
                  */
-                HttpResponse webResponse = HTTP.getResponse(URL);
+                HttpResponse webResponse = HTTP.getRequest(URL);
                 if(webResponse != null) {
                     String response = HTTP.dataFromResponse(webResponse),
                             lastUpdate = "";

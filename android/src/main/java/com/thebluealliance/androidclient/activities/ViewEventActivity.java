@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.UserFavorite;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 
@@ -78,6 +79,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.user_favorite_menu, menu);
         mOptionsMenu = menu;
         return true;
     }
@@ -117,6 +119,9 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                 return true;
             case R.id.help:
                 Utilities.showStatsHelpDialog(this);
+                return true;
+            case R.id.action_favorite:
+                new UserFavorite(this, getDriveClient(), item).execute(mEventKey);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
