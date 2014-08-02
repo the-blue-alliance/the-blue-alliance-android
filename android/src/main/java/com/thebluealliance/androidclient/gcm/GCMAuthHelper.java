@@ -51,6 +51,7 @@ public class GCMAuthHelper {
 
                     boolean storeOnServer = GCMAuthHelper.sendRegistrationToBackend(context, regid, gcmKey);
                     if(storeOnServer){
+                        Log.d(Constants.LOG_TAG, "Storing user secret");
                         // we had success on the server. Now store locally
                         // Store the registration ID locally, so we don't have to do this again
                         GCMAuthHelper.storeRegistrationId(context, regid);

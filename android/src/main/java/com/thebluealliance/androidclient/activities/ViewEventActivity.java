@@ -121,7 +121,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                 Utilities.showStatsHelpDialog(this);
                 return true;
             case R.id.action_favorite:
-                new UserFavorite(this, getDriveClient(), item).execute(mEventKey);
+                new UserFavorite(this, getGoogleAPIClient(), item).execute(mEventKey);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

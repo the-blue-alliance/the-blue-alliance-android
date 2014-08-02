@@ -94,32 +94,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/account_picker_page"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/select_account_text"
-            android:textSize="20sp"
-            android:text="@string/select_account_message"/>
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/account_list"
-            android:layout_below="@id/select_account_text"
-            android:layout_above="@+id/pick_account"
-            android:choiceMode="singleChoice"/>
-        <Button
-            android:id="@+id/pick_account"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/select_account" />
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/load_finished_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

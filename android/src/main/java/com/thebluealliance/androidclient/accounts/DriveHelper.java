@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.accounts;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Contents;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
@@ -19,8 +20,8 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import org.apache.commons.io.IOUtils;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringWriter;
 
@@ -62,10 +63,14 @@ public class DriveHelper {
                 e.printStackTrace();
             }
         }
+        Drive.DriveApi.requestSync(apiClient);
     }
 
     public static String getUserSecret(GoogleApiClient apiClient) throws IOException {
         DriveFile userFile = lookupUserDataFile(apiClient);
+        if(userFile == null){
+            return null;
+        }
         JsonObject data = loadFromCloud(userFile, apiClient);
         if(data == null || !data.has(USER_SECRET)){
             return null;
@@ -77,19 +82,17 @@ public class DriveHelper {
         DriveApi.ContentsResult contentsResult = file.openContents(apiClient,
                 DriveFile.MODE_WRITE_ONLY, null).await();
         checkStatus("Open file for writing", contentsResult.getStatus());
-        FileOutputStream os = new FileOutputStream(contentsResult.getContents()
-                .getParcelFileDescriptor().getFileDescriptor());
+        OutputStream os = contentsResult.getContents().getOutputStream();
         String contents = data.toString();
         Log.d(Constants.LOG_TAG, "Saving contents to drive file: " + contents);
         PrintStream writer = new PrintStream(os);
         writer.print(contents);
-        com.google.android.gms.common.api.Status status =
-                file.commitAndCloseContents(apiClient, contentsResult.getContents()).await();
+        Status status = file.commitAndCloseContents(apiClient, contentsResult.getContents()).await();
         writer.close();
         checkStatus("Commit file contents", status);
     }
 
-    public static void checkStatus(String message, com.google.android.gms.common.api.Status status) {
+    public static void checkStatus(String message, Status status) {
         if (!status.isSuccess()) {
             Log.e(Constants.LOG_TAG, "Error " + status.getStatusCode() + " on " + message);
         }
@@ -121,22 +124,18 @@ public class DriveHelper {
     private static DriveFile lookupUserDataFile(GoogleApiClient apiClient) {
         DriveFile result = null;
 
-        // search for a file with the expected name (and get the most recent one, if many)
-        Log.d(Constants.LOG_TAG, "Looking up for a file named " + USERDATA_FILENAME);
-        Metadata metaOfMostRecent = null;
-        MetadataBuffer buffer = Drive.DriveApi.getAppFolder(apiClient).listChildren(apiClient).await().getMetadataBuffer();
-        Log.d(Constants.LOG_TAG, "Found " + buffer.getCount() + " files");
-        for (Metadata metadata : buffer) {
-            if (metaOfMostRecent != null) {
-                Log.w(Constants.LOG_TAG, "Warning, found more than one file named " + USERDATA_FILENAME +
-                        " in AppData folder. Using the most recently modified.");
-            }
-            if (metaOfMostRecent == null || metaOfMostRecent.getModifiedDate().compareTo(metadata.getModifiedDate()) < 0) {
-                metaOfMostRecent = metadata;
+        DriveFolder appDataFolder = Drive.DriveApi.getAppFolder(apiClient);
+        MetadataBuffer buffer = appDataFolder.listChildren(apiClient).await().getMetadataBuffer();
+        Metadata foundFile = null;
+        Log.d(Constants.LOG_TAG, "Found "+buffer.getCount()+" files");
+        for(Metadata file: buffer){
+            if(file.getTitle().equals(USERDATA_FILENAME)){
+                foundFile = file;
             }
         }
-        if (metaOfMostRecent != null) {
-            DriveId driveId = metaOfMostRecent.getDriveId();
+
+        if (foundFile != null) {
+            DriveId driveId = foundFile.getDriveId();
             result = Drive.DriveApi.getFile(apiClient, driveId);
         }
         buffer.close();
@@ -158,7 +157,7 @@ public class DriveHelper {
                         .build();
         Contents contentsObj = contentsResult.getContents();
 
-        FileOutputStream os = new FileOutputStream(contentsObj.getParcelFileDescriptor().getFileDescriptor());
+        OutputStream os = contentsObj.getOutputStream();
         PrintStream writer = new PrintStream(os);
         writer.print(contents);
         DriveFolder.DriveFileResult fileResult = appDataFolder.createFile(

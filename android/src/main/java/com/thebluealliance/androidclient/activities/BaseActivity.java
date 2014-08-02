@@ -19,10 +19,14 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.plus.Plus;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 
@@ -30,7 +34,7 @@ import com.thebluealliance.androidclient.gcm.GCMHelper;
  * Provides the features that should be in every activity in the app: a navigation drawer,
  * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
  */
-public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
 
     private final int RESOLVE_CONNECTION_REQUEST = 12897;
 
@@ -38,7 +42,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
 
     boolean searchEnabled = true;
 
-    private GoogleApiClient driveClient;
+    private GoogleApiClient googleAPIClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
-        createDriveClient();
+        createGoogleClient();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -60,8 +64,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     @Override
     protected void onStart() {
         super.onStart();
-        if(driveClient!= null){
-            driveClient.connect();
+        if(googleAPIClient != null){
+            googleAPIClient.connect();
         }
     }
 
@@ -111,8 +115,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST:
-                if (resultCode == RESULT_OK && driveClient != null) {
-                    driveClient.connect();
+                if (resultCode == RESULT_OK && googleAPIClient != null) {
+                    googleAPIClient.connect();
                 }
                 break;
         }
@@ -132,24 +136,38 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         if(TextUtils.isEmpty(registrationId)){
             // GCM has not yet been registered on this device
             Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
-            GCMAuthHelper.registerInBackground(this, driveClient);
+            GCMAuthHelper.registerInBackground(this, googleAPIClient);
         }
     }
 
-    public GoogleApiClient getDriveClient(){
-        if(driveClient == null){
-            createDriveClient();
-            driveClient.connect();
+    private void getAccountInfoIfNeeded(){
+        if(!GCMHelper.checkPlayServices(this)){
+            Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
+            return;
         }
-        return driveClient;
+        final String accountId = AccountHelper.getCurrentAccountId(this);
+        if(accountId == null){
+            // we don't have an account registered. Fix that.
+            AccountHelper.storeAccountId(this, googleAPIClient);
+        }
     }
 
-    private void createDriveClient(){
-        if(driveClient == null){
-            driveClient = new GoogleApiClient.Builder(this)
+    public GoogleApiClient getGoogleAPIClient(){
+        if(googleAPIClient == null){
+            createGoogleClient();
+            googleAPIClient.connect();
+        }
+        return googleAPIClient;
+    }
+
+    private void createGoogleClient(){
+        if(googleAPIClient == null){
+            googleAPIClient = new GoogleApiClient.Builder(this)
                     .addApi(Drive.API)
+                    .addApi(Plus.API)
                     .addScope(Drive.SCOPE_APPFOLDER)
                     .addScope(Drive.SCOPE_FILE)
+                    .addScope(Plus.SCOPE_PLUS_PROFILE)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
@@ -158,7 +176,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
 
     @Override
     public void onConnected(Bundle bundle) {
-        registerGCMIfNeeded();
+        Drive.DriveApi.requestSync(googleAPIClient).setResultCallback(this);
     }
 
     @Override
@@ -177,5 +195,11 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         } else {
             GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
         }
+    }
+
+    @Override
+    public void onResult(Status status) {
+        getAccountInfoIfNeeded();
+        registerGCMIfNeeded();
     }
 }
