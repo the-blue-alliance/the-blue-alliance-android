@@ -47,6 +47,8 @@ public class TBAv2 {
     public static enum GCM_ENDPOINT {
         REGISTER,
         FAVORITE_ADD,
+        FAVORITE_DELETE,
+        FAVORITE_LIST,
         SUBSCRIBE;
     }
 
@@ -77,6 +79,8 @@ public class TBAv2 {
         GCM_URL = new HashMap<>();
         GCM_URL.put(GCM_ENDPOINT.REGISTER, "/mobile/register");
         GCM_URL.put(GCM_ENDPOINT.FAVORITE_ADD, "/mobile/favorite/add");
+        GCM_URL.put(GCM_ENDPOINT.FAVORITE_DELETE, "/mobile/favorite/remove");
+        GCM_URL.put(GCM_ENDPOINT.FAVORITE_LIST, "/mobile/favorites");
     }
 
     public static String getTBAApiUrl(Context c, QUERY query){
