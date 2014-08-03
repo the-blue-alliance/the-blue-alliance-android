@@ -152,8 +152,13 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
 
             if(event.isHappeningNow()){
                 //send out that there are live matches happening for other things to pick up
-                Log.d(Constants.LOG_TAG, "Sending live event broadcast: "+eventKey);
-                LocalBroadcastManager.getInstance(activity).sendBroadcast(new LiveEventBroadcast(nextMatch.render(), lastMatch.render()));
+                LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(activity);
+                if(broadcastManager != null) {
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: "+eventKey);
+                    broadcastManager.sendBroadcast(new LiveEventBroadcast(nextMatch, lastMatch));
+                }else{
+                    Log.w(Constants.LOG_TAG, "Unable to get LocalBroadcastManager. Can't send live event broadcast.");
+                }
             }
 
         } catch (DataManager.NoDataException e) {

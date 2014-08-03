@@ -16,6 +16,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
@@ -193,8 +194,14 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         // Create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
 
-        // Show it
-        alertDialog.show();
+        try {
+            // Show it
+            alertDialog.show();
+        } catch (WindowManager.BadTokenException e){
+            // Activity is already gone. Just log the exception
+            Log.e(Constants.LOG_TAG, "Error loading data: "+stacktrace);
+            e.printStackTrace();
+        }
     }
 
     public void connectionLost() {
