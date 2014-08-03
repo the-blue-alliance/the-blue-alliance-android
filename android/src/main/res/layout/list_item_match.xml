@@ -46,7 +46,7 @@
             android:minHeight="32dp"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:id="@+id/match_header"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="0dp"

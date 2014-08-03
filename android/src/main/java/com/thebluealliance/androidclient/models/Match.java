@@ -358,7 +358,7 @@ public class Match extends BasicModel<Match>{
 
             return new MatchListElement(youTubeVideoKey, getTitle(true),
                     redAlliance, blueAlliance,
-                    redScore, blueScore, key, selectedTeam, showVideo, showHeader);
+                    redScore, blueScore, key, getTimeString(), selectedTeam, showVideo, showHeader);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for rendering not present\n" +
                     "Required: Database.Matches.ALLIANCES, Database.Matches.VIDEOS, Database.Matches.KEY, Database.Matches.MATCHNUM, Database.Matches.SETNUM");
