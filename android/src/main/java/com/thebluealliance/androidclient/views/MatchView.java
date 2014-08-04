@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.listeners.MatchClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by Nathan on 8/3/2014.
@@ -45,7 +44,7 @@ public class MatchView extends FrameLayout {
 
     private void init() {
         // Inflate the layout
-        LayoutInflater.from(getContext()).inflate(R.layout.list_item_match_v2, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.list_item_match, this, true);
 
         // Grab references to child views to avoid repeated calls to findViewById
         matchContainer = findViewById(R.id.match_container);
@@ -57,7 +56,6 @@ public class MatchView extends FrameLayout {
         red2 = (TextView) findViewById(R.id.red2);
         red3 = (TextView) findViewById(R.id.red3);
         redScore = (TextView) findViewById(R.id.red_score);
-
 
         blue1 = (TextView) findViewById(R.id.blue1);
         blue2 = (TextView) findViewById(R.id.blue2);
@@ -73,9 +71,11 @@ public class MatchView extends FrameLayout {
         blueAlliance = findViewById(R.id.blue_alliance);
 
         videoIcon = findViewById(R.id.match_video);
+
+        time = (TextView) findViewById(R.id.match_time);
     }
 
-    public void initWithParams(String videoKey, String title, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, String timeString, String selectedTeamKey, boolean showVideoIcon) {
+    public void initWithParams(String videoKey, String title, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, long time, String selectedTeamKey, boolean showVideoIcon) {
 
         // Parse selected team key for a number
         String selectedTeamNumber;
@@ -222,17 +222,11 @@ public class MatchView extends FrameLayout {
             this.blueScore.setText(blueScore);
 
             String localTimeString = "";
-            try {
-                long time = Long.parseLong(timeString);
-                Date date = new Date(time * 1000L);
-                java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
-                localTimeString = format.format(date);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+            Date date = new Date(time * 1000L);
+            java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
+            localTimeString = format.format(date);
 
-            time.setText(localTimeString);
+            this.time.setText(localTimeString);
         }
     }
 
@@ -244,10 +238,10 @@ public class MatchView extends FrameLayout {
      */
     public void setClickToShowDetails(boolean clickable) {
         if (clickable) {
+            matchContainer.setOnClickListener(new MatchClickListener(getContext()));
+        } else {
             matchContainer.setClickable(false);
             matchContainer.setBackgroundResource(R.drawable.transparent);
-        } else {
-            matchContainer.setOnClickListener(new MatchClickListener(getContext()));
         }
     }
 

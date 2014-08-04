@@ -1,20 +1,10 @@
 package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.MatchClickListener;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import java.io.Serializable;
@@ -24,10 +14,11 @@ import java.io.Serializable;
  */
 public class MatchListElement extends ListElement implements Serializable {
 
-    private String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey, timeString;
-    private boolean showVideoIcon, showColumnHeaders;
+    private String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
+    long time;
+    private boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
 
-    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, String timeString, String selectedTeamKey, boolean showVideoIcon, boolean showColumnHeaders) {
+    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, long time, String selectedTeamKey, boolean showVideoIcon, boolean showColumnHeaders, boolean showMatchTitle, boolean clickable) {
         super(matchKey);
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
@@ -37,9 +28,11 @@ public class MatchListElement extends ListElement implements Serializable {
         this.blueScore = blueScore;
         this.matchKey = matchKey;
         this.selectedTeamKey = selectedTeamKey;
-        this.timeString = timeString;
+        this.time = time;
         this.showVideoIcon = showVideoIcon;
         this.showColumnHeaders = showColumnHeaders;
+        this.showMatchTitle = showMatchTitle;
+        this.clickable = clickable;
     }
 
     @Override
@@ -53,7 +46,7 @@ public class MatchListElement extends ListElement implements Serializable {
             played = true;
         }
 
-        match.initWithParams(videoKey, matchTitle, redTeams, blueTeams, redScore, blueScore, matchKey, timeString, selectedTeamKey, showVideoIcon);
+        match.initWithParams(videoKey, matchTitle, redTeams, blueTeams, redScore, blueScore, matchKey, time, selectedTeamKey, showVideoIcon);
         match.showColumnHeaders(showColumnHeaders);
         if (played) {
             match.showTime(false);
@@ -62,6 +55,8 @@ public class MatchListElement extends ListElement implements Serializable {
             match.showTime(true);
             match.showScores(false);
         }
+        match.setClickToShowDetails(clickable);
+        match.showMatchTitle(showMatchTitle);
         return match;
     }
 }

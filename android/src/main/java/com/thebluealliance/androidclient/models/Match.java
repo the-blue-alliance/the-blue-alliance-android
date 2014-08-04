@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 
-public class Match extends BasicModel<Match>{
+public class Match extends BasicModel<Match> {
 
     private String selectedTeam;
     private int year;
@@ -82,6 +82,10 @@ public class Match extends BasicModel<Match>{
             return new Date((Long) fields.get(Database.Matches.TIME));
         }
         throw new FieldNotDefinedException("Field Database.Matches.TIME is not defined");
+    }
+
+    public long getTimeMillis() throws FieldNotDefinedException {
+        return getTime().getTime();
     }
 
     public void setTime(Date time) {
@@ -307,7 +311,7 @@ public class Match extends BasicModel<Match>{
     }
 
     public MatchListElement render() {
-        return render(true, false);
+        return render(true, false, true, true);
     }
 
     /**
@@ -317,7 +321,7 @@ public class Match extends BasicModel<Match>{
      *
      * @return A MatchListElement to be used to display this match
      */
-    public MatchListElement render(boolean showVideo, boolean showHeader) {
+    public MatchListElement render(boolean showVideo, boolean showHeaders, boolean showMatchTitle, boolean clickable) {
         try {
             JsonObject alliances = getAlliances();
             JsonArray videos = getVideos();
@@ -358,7 +362,7 @@ public class Match extends BasicModel<Match>{
 
             return new MatchListElement(youTubeVideoKey, getTitle(true),
                     redAlliance, blueAlliance,
-                    redScore, blueScore, key, getTimeString(), selectedTeam, showVideo, showHeader);
+                    redScore, blueScore, key, getTimeMillis(), selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for rendering not present\n" +
                     "Required: Database.Matches.ALLIANCES, Database.Matches.VIDEOS, Database.Matches.KEY, Database.Matches.MATCHNUM, Database.Matches.SETNUM");
@@ -378,9 +382,8 @@ public class Match extends BasicModel<Match>{
         }
 
         APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        ArrayList<Match> allMatches = null;
+        ArrayList<Match> allMatches = new ArrayList<>();
         boolean changed = false;
-        allMatches = new ArrayList<>();
         for (String url : apiUrls) {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
