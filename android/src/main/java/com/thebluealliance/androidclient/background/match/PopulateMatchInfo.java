@@ -66,7 +66,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             try {
                 mMatchDetails = new ArrayList<>();
 
-                mMatchDetails.add(match.render(false, true));
+                mMatchDetails.add(match.render(false, true, false, false));
                 mMatchTitle = match.getTitle();
                 Gson gson = JSONManager.getGson();
                 for(JsonElement v: match.getVideos()){
