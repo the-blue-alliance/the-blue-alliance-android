@@ -222,9 +222,14 @@ public class MatchView extends FrameLayout {
             this.blueScore.setText(blueScore);
 
             String localTimeString = "";
-            Date date = new Date(time * 1000L);
-            java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
-            localTimeString = format.format(date);
+            if(time <= 0) {
+                // Match has no time
+                localTimeString = getContext().getString(R.string.no_time_available);
+            } else {
+                Date date = new Date(time * 1000L);
+                java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
+                localTimeString = format.format(date);
+            }
 
             this.time.setText(localTimeString);
         }
