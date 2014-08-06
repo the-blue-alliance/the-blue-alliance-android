@@ -85,29 +85,28 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
         if (view != null && activity != null) {
             ListViewAdapter adapter = new ListViewAdapter(activity, rankings);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            ListView list = (ListView) view.findViewById(R.id.list);
 
             // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
-            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!forceFromCache && adapter.values.isEmpty())) {
+            Log.e(Constants.LOG_TAG, ""+rankings.isEmpty());
+            if (rankings.isEmpty() || (code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity))) {
+                Log.e(Constants.LOG_TAG, "hiding");
                 noDataText.setText(R.string.no_district_rankings);
                 noDataText.setVisibility(View.VISIBLE);
+                list.setVisibility(View.GONE);
             } else {
-                ListView eventList = (ListView) view.findViewById(R.id.list);
-                Parcelable state = eventList.onSaveInstanceState();
-                eventList.setAdapter(adapter);
+                Parcelable state = list.onSaveInstanceState();
+                list.setAdapter(adapter);
                 noDataText.setVisibility(View.GONE);
-                eventList.onRestoreInstanceState(state);
+                list.onRestoreInstanceState(state);
             }
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(fragment.getString(R.string.warning_using_cached_data));
             }
 
-            if((forceFromCache && adapter.values.size() > 0) || !forceFromCache) {
-                view.findViewById(R.id.progress).setVisibility(View.GONE);
-                view.findViewById(R.id.list).setVisibility(View.VISIBLE);
-                noDataText.setVisibility(View.GONE);
-            }
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
