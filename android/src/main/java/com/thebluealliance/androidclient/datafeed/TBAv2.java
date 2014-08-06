@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -80,9 +81,13 @@ public class TBAv2 {
     }
 
     public static String getTBAApiUrl(Context c, QUERY query){
-        String host = PreferenceManager.getDefaultSharedPreferences(c).getString(TBA_HOST_PREF, tbaHostDefault);
-        if(!Utilities.isDebuggable() || host.isEmpty()){
-            host = tbaHostDefault;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        String host = tbaHostDefault;
+        if(prefs != null) {
+            host = prefs.getString(TBA_HOST_PREF, tbaHostDefault);
+            if (!Utilities.isDebuggable() || host.isEmpty()) {
+                host = tbaHostDefault;
+            }
         }
         return host+API_URL.get(query);
     }

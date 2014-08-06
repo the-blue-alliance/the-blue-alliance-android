@@ -33,6 +33,6 @@
     <string name="playing_in_finals">Playing in the finals</string>
     <string name="eliminated_in_finals">Eliminated in the finals</string>
     <string name="won_event">Won the event</string>
-    <string name="not_available">Not available</string>
-    <string name="no_alli_data">No alliance data</string>
+    <string name="not_available">No match results available.</string>
+    <string name="no_alli_data">No alliance data available.</string>
 </resources>

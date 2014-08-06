@@ -91,7 +91,9 @@
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>
+    <string name="time">Time</string>
     <string name="score">Score</string>
+    <string name="no_time_available">No time available</string>
     <string name="quals_header">Qualification Matches</string>
     <string name="quarters_header">Quarterfinal Matches</string>
     <string name="semis_header">Semifinal Matches</string>

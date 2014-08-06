@@ -16,8 +16,7 @@ public class TBAAndroid extends Application {
         Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v"+BuildConfig.VERSION_NAME);
     }
 
-    public Tracker getTracker(Analytics.GAnalyticsTracker tracker){
+    public Tracker getTracker(Analytics.GAnalyticsTracker tracker) {
         return Analytics.getTracker(tracker, this);
     }
-
 }
