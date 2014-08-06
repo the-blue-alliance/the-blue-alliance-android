@@ -12,10 +12,7 @@
         android:id="@+id/team_number_container"
         android:layout_width="72dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:clickable="true"
-        android:focusable="false"
-        android:background="?android:attr/selectableItemBackground">
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/team_number"
@@ -40,10 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/team_number_container"
         android:layout_toRightOf="@id/team_number_container"
-        android:orientation="vertical"
-        android:clickable="true"
-        android:focusable="false"
-        android:background="?android:attr/selectableItemBackground">
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/team_name"
