@@ -425,8 +425,8 @@ public class DataManager {
 
             String districtKey = DistrictTeamHelper.getDistrictKey(districtTeamKey);
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
-            String sqlWhere = Database.DistrictTeams.DISTRICT_KEY + " = ?";
-            String[] whereArgs = new String[]{districtKey};
+            String sqlWhere = Database.DistrictTeams.KEY + " = ?";
+            String[] whereArgs = new String[]{districtTeamKey};
 
             return DistrictTeam.query(c, districtTeamKey, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
@@ -436,8 +436,8 @@ public class DataManager {
 
             String districtKey = DistrictTeamHelper.getDistrictKey(districtTeamKey);
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
-            String sqlWhere = Database.DistrictTeams.DISTRICT_KEY + " = ?";
-            String[] whereArgs = new String[]{districtKey};
+            String sqlWhere = Database.DistrictTeams.KEY + " = ?";
+            String[] whereArgs = new String[]{districtTeamKey};
             String[] fields = new String[]{Database.DistrictTeams.KEY, Database.DistrictTeams.EVENT1_KEY, Database.DistrictTeams.EVENT2_KEY, Database.DistrictTeams.CMP_KEY};
 
             return DistrictTeam.query(c, districtTeamKey, loadFromCache, fields, sqlWhere, whereArgs, new String[]{apiUrl});

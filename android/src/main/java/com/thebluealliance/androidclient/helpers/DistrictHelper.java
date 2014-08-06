@@ -100,11 +100,9 @@ public class DistrictHelper {
 
     public static JsonObject findPointsForTeam(JsonObject points, String teamKey){
         if(points.has("points")) {
-            Set<Map.Entry<String, JsonElement>> allPoints = points.get("points").getAsJsonObject().entrySet();
-            for (Map.Entry<String, JsonElement> team : allPoints) {
-                if (team.getKey().equals(teamKey)) {
-                    return team.getValue().getAsJsonObject();
-                }
+            JsonObject pointsObject = points.get("points").getAsJsonObject();
+            if(pointsObject.has(teamKey)){
+                return pointsObject.get(teamKey).getAsJsonObject();
             }
         }
         return new JsonObject();

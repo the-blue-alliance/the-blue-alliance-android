@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.helpers;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 /**
@@ -26,13 +27,17 @@ public class DistrictTeamHelper {
 
     public static void addFieldsFromKey(DistrictTeam districtTeam, String key){
         String districtKey = key.split("_")[0];
-        String teamKey = key.split("_")[1];
-        String dtKey = DistrictTeamHelper.generateKey(teamKey, districtKey);
-        districtTeam.setKey(dtKey);
-        districtTeam.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
-        districtTeam.setTeamKey(teamKey);
-        districtTeam.setYear(Integer.parseInt(districtKey.substring(0, 4)));
-        districtTeam.setDistrictKey(districtKey);
+        String dtKey;
+        try {
+            dtKey = DistrictTeamHelper.generateKey(districtTeam.getTeamKey(), districtKey);
+            districtTeam.setKey(dtKey);
+            districtTeam.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
+            districtTeam.setYear(Integer.parseInt(districtKey.substring(0, 4)));
+            districtTeam.setDistrictKey(districtKey);
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(Constants.LOG_TAG, "Unable to add fields from "+key+". DistrictTeam missing fields");
+        }
+
     }
 
     public static void addFieldsFromAPIUrl(DistrictTeam districtTeam, String teamKey, String url){
