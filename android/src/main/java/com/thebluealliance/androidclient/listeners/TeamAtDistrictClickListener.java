@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.View;
 
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.models.District;
 
 /**
  * File created by phil on 7/26/14.
@@ -21,6 +24,8 @@ public class TeamAtDistrictClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        c.startActivity(TeamAtDistrictActivity.newInstance(c, teamKey, districtKey));
+        if(TeamHelper.validateTeamKey(teamKey) && DistrictHelper.validateDistrictKey(districtKey)) {
+            c.startActivity(TeamAtDistrictActivity.newInstance(c, teamKey, districtKey));
+        }
     }
 }

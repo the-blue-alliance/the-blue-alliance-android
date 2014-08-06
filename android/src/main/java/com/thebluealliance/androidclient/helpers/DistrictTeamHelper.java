@@ -33,7 +33,6 @@ public class DistrictTeamHelper {
         districtTeam.setTeamKey(teamKey);
         districtTeam.setYear(Integer.parseInt(districtKey.substring(0, 4)));
         districtTeam.setDistrictKey(districtKey);
-        Log.w(Constants.LOG_TAG, "Setting district key: "+districtKey);
     }
 
     public static void addFieldsFromAPIUrl(DistrictTeam districtTeam, String teamKey, String url){
@@ -48,7 +47,6 @@ public class DistrictTeamHelper {
         districtTeam.setTeamKey(teamKey);
         districtTeam.setYear(Integer.parseInt(districtKey.substring(0, 4)));
         districtTeam.setDistrictKey(districtKey);
-        Log.w(Constants.LOG_TAG, "Setting district key: "+districtKey);
     }
 
 }
