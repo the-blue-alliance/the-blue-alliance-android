@@ -81,12 +81,14 @@ public class TBAv2 {
     }
 
     public static String getTBAApiUrl(Context c, QUERY query){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         String host = tbaHostDefault;
-        if(prefs != null) {
-            host = prefs.getString(TBA_HOST_PREF, tbaHostDefault);
-            if (!Utilities.isDebuggable() || host.isEmpty()) {
-                host = tbaHostDefault;
+        if(c != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            if (prefs != null) {
+                host = prefs.getString(TBA_HOST_PREF, tbaHostDefault);
+                if (!Utilities.isDebuggable() || host.isEmpty()) {
+                    host = tbaHostDefault;
+                }
             }
         }
         return host+API_URL.get(query);

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="action_view_district">View District</string>
+
     <string name="no_district_list">No districts found.</string>
     <string name="no_district_events">No events found for this district.</string>
     <string name="no_district_rankings">No rankings found for this district</string>

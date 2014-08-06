@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -100,12 +101,25 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.team_at_district, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
+            case R.id.action_view_district:
+                startActivity(ViewDistrictActivity.newInstance(this, districtKey));
+                return true;
+            case R.id.action_view_team:
+                int year = Integer.parseInt(districtKey.substring(0,4));
+                startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
+                return true;
             case android.R.id.home:
                 if (isDrawerOpen()) {
                     closeDrawer();
@@ -113,7 +127,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
                 }
                 Intent upIntent = ViewDistrictActivity.newInstance(this, districtKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    TaskStackBuilder.create(this).addNextIntent(ViewDistrictActivity.newInstance(this, districtKey)).startActivities();
+                    TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
                 } else {
                     Log.d(Constants.LOG_TAG, "Navigating up...");
                     NavUtils.navigateUpTo(this, upIntent);
