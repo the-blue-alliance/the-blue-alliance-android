@@ -5,24 +5,24 @@
     android:layout_height="wrap_content"
     android:minHeight="72dp"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
-    android:paddingTop="16dp"
-    android:id="@+id/summary_container">
+    android:paddingLeft="16dp"
+    android:gravity="center_vertical"
+    android:id="@+id/summary_container" >
 
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:textSize="14sp"
-        android:textColor="@color/secondary_text_color" />
+        android:textColor="@color/secondary_text_color"
+        android:text="Title" />
 
     <TextView
         android:id="@+id/value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:text="Details" />
 
 </LinearLayout>
