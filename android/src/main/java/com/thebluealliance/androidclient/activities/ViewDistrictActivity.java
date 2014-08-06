@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -24,7 +25,7 @@ import com.thebluealliance.androidclient.helpers.DistrictHelper;
 /**
  * Created by phil on 7/10/14.
  */
-public class ViewDistrictActivity extends RefreshableHostActivity {
+public class ViewDistrictActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
@@ -82,6 +83,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity {
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
+        tabs.setOnPageChangeListener(this);
 
         setupActionBar();
 
@@ -107,12 +109,23 @@ public class ViewDistrictActivity extends RefreshableHostActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mOptionsMenu = menu;
+        getMenuInflater().inflate(R.menu.district_point_math, menu);
+        menu.findItem(R.id.points_help).setVisible(false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
+            case R.id.points_help:
+                Utilities.showHelpDialog(this, R.raw.district_points_help, getString(R.string.district_points_help));
+                return true;
             case android.R.id.home:
                 if (isDrawerOpen()) {
                     closeDrawer();
@@ -141,4 +154,27 @@ public class ViewDistrictActivity extends RefreshableHostActivity {
         warningMessage.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if(mOptionsMenu != null) {
+            MenuItem pointsHelp = mOptionsMenu.findItem(R.id.points_help);
+            if (position == 1) {
+                showWarningMessage(getString(R.string.warning_unoffical_points));
+                pointsHelp.setVisible(true);
+            } else {
+                hideWarningMessage();
+                pointsHelp.setVisible(false);
+            }
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

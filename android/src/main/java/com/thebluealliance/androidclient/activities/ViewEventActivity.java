@@ -85,6 +85,8 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         mOptionsMenu = menu;
+        getMenuInflater().inflate(R.menu.district_point_math, menu);
+        menu.findItem(R.id.points_help).setVisible(false);
         return true;
     }
 
@@ -121,8 +123,11 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;
-            case R.id.help:
-                Utilities.showStatsHelpDialog(this);
+            case R.id.stats_help:
+                Utilities.showHelpDialog(this, R.raw.stats_help, getString(R.string.stats_help_title));
+                return true;
+            case R.id.points_help:
+                Utilities.showHelpDialog(this, R.raw.district_points_help, getString(R.string.district_points_help));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -153,7 +158,8 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     public void onPageSelected(int position) {
         if(mOptionsMenu != null) {
             MenuItem statsSort = mOptionsMenu.findItem(R.id.action_sort_by);
-            MenuItem statsHelp = mOptionsMenu.findItem(R.id.help);
+            MenuItem statsHelp = mOptionsMenu.findItem(R.id.stats_help);
+            MenuItem pointsHelp = mOptionsMenu.findItem(R.id.points_help);
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
                 if(statsHelp != null){
@@ -170,11 +176,15 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                     statsSort.setVisible(false);
                 }
             }
-
-            if (position == 5 && !isDistrict) {
-                showWarningMessage(getString(R.string.warning_not_real_district));
+            if(position == 5){
+                pointsHelp.setVisible(true);
+                if(isDistrict){
+                    showWarningMessage(getString(R.string.warning_not_real_district));
+                }else{
+                    hideWarningMessage();
+                }
             }else{
-                hideWarningMessage();
+                pointsHelp.setVisible(false);
             }
         }
     }

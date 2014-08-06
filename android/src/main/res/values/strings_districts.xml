@@ -2,6 +2,9 @@
 <resources>
 
     <string name="action_view_district">View District</string>
+    <string name="action_view_point_math">View Ranking System</string>
+
+    <string name="district_points_help">District Points Help</string>
 
     <string name="no_district_list">No districts found.</string>
     <string name="no_district_events">No events found for this district.</string>
@@ -19,5 +22,6 @@
     <string name="district_point_rank">District Rank</string>
 
     <string name="warning_not_real_district">This event is not part of a district — these points are purely hypothetical.</string>
+    <string name="warning_unoffical_points">District rankings are not official and are calculated using the FRC Standard District Points Ranking System.</string>
 
 </resources>
