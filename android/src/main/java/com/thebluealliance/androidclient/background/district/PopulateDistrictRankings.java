@@ -62,7 +62,14 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
         for(DistrictTeam team: response.getData()){
             try {
                 Team teamData = DataManager.Teams.getTeamFromDB(activity, team.getTeamKey());
-                rankings.add(new DistrictTeamListElement(team.getTeamKey(), team.getDistrictKey(), teamData.getNickname(), team.getRank(), team.getTotalPoints()));
+                String nickname;
+                if(teamData != null){
+                    nickname = teamData.getNickname();
+                }else{
+                    Log.w(Constants.LOG_TAG, "Couldn't find "+team.getTeamKey()+" in db");
+                    nickname = "Team "+team.getTeamKey().substring(3);
+                }
+                rankings.add(new DistrictTeamListElement(team.getTeamKey(), team.getDistrictKey(), nickname, team.getRank(), team.getTotalPoints()));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to render district rankings");
                 e.printStackTrace();

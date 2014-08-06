@@ -82,7 +82,7 @@ public class Database extends SQLiteOpenHelper {
             + Events.END + " TIMESTAMP, "
             + Events.OFFICIAL + " INTEGER DEFAULT 0, "
             + Events.WEEK + " INTEGER DEFAULT -1, "
-            + Events.TEAMS + " STRING DEFAULT '', "
+            + Events.TEAMS + " TEXT DEFAULT '', "
             + Events.RANKINGS + " TEXT DEFAULT '', "
             + Events.ALLIANCES + " TEXT DEFAULT '', "
             + Events.WEBCASTS + " TEXT DEFAULT '', "
@@ -142,7 +142,7 @@ public class Database extends SQLiteOpenHelper {
             + DistrictTeams.CMP_POINTS + " INTEGER DEFAULT 0, "
             + DistrictTeams.ROOKIE_POINTS + " INTEGER DEFAULT 0, "
             + DistrictTeams.TOTAL_POINTS + " INTEGER DEFAULT 0, "
-            + DistrictTeams.JSON + " STRING DEFAULT '' "
+            + DistrictTeams.JSON + " TEXT DEFAULT '' "
             + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
@@ -266,6 +266,8 @@ public class Database extends SQLiteOpenHelper {
                     //add districts tables
                     db.execSQL(CREATE_DISTRICTS);
                     db.execSQL(CREATE_DISTRICTTEAMS);
+                    db.execSQL("ALTER TABLE "+TABLE_EVENTS+" ADD COLUMN "+ Events.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                    break;
             }
             upgradeTo++;
         }
