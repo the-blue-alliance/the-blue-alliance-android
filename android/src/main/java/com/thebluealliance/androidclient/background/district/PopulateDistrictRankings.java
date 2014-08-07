@@ -90,7 +90,6 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
             // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
             if (rankings.isEmpty() || (code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity))) {
-                Log.e(Constants.LOG_TAG, "hiding");
                 noDataText.setText(R.string.no_district_rankings);
                 noDataText.setVisibility(View.VISIBLE);
                 list.setVisibility(View.GONE);
