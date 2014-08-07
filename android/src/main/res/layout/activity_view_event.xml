@@ -8,7 +8,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/warning_container"
+        android:layout_above="@+id/overlay_container"
         android:orientation="vertical">
 
         <com.astuetz.PagerSlidingTabStrip
@@ -23,8 +23,16 @@
             android:layout_height="fill_parent" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/warning_container"
-        style="@style/ActivityWarningStyle"
-        android:visibility="gone" />
+    <LinearLayout
+        android:id="@id/overlay_container"
+        style="@style/ActivityOverlayStyle" >
+        <TextView
+            android:id="@+id/info_container"
+            style="@style/ActivityInfoStyle"
+            android:visibility="gone" />
+        <TextView
+            android:id="@id/warning_container"
+            style="@style/ActivityWarningStyle"
+            android:visibility="gone" />
+    </LinearLayout>
 </RelativeLayout>

@@ -30,6 +30,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     public static final String EVENTKEY = "eventKey";
 
     private String mEventKey;
+    private TextView infoMessage;
     private TextView warningMessage;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
@@ -52,7 +53,9 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
 
+        infoMessage = (TextView) findViewById(R.id.info_container);
         warningMessage = (TextView) findViewById(R.id.warning_container);
+        hideInfoMessage();
         hideWarningMessage();
 
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -138,6 +141,15 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         return pager;
     }
 
+    public void showInfoMessage(String message) {
+        infoMessage.setText(message);
+        infoMessage.setVisibility(View.VISIBLE);
+    }
+
+    public void hideInfoMessage() {
+        infoMessage.setVisibility(View.GONE);
+    }
+
     @Override
     public void showWarningMessage(String message) {
         warningMessage.setText(message);
@@ -179,12 +191,13 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             if(position == 5){
                 pointsHelp.setVisible(true);
                 if(!isDistrict){
-                    showWarningMessage(getString(R.string.warning_not_real_district));
+                    showInfoMessage(getString(R.string.warning_not_real_district));
                 }else{
-                    hideWarningMessage();
+                    hideInfoMessage();
                 }
             }else{
                 pointsHelp.setVisible(false);
+                hideInfoMessage();
             }
         }
     }

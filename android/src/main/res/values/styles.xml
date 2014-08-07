@@ -109,13 +109,31 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="ActivityOverlayStyle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="ActivityInfoStyle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Small</item>
+        <item name="android:background">@color/lighter_blue</item>
+        <item name="android:drawableLeft">@drawable/ic_action_about_blue</item>
+    </style>
+
     <style name="ActivityWarningStyle">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentBottom">true</item>
-        <item name="android:padding">4dp</item>
+        <item name="android:padding">8dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Medium</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Small</item>
         <item name="android:background">@color/lighter_red</item>
         <item name="android:drawableLeft">@drawable/ic_action_warning_blue</item>
     </style>
