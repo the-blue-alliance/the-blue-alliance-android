@@ -178,7 +178,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             }
             if(position == 5){
                 pointsHelp.setVisible(true);
-                if(isDistrict){
+                if(!isDistrict){
                     showWarningMessage(getString(R.string.warning_not_real_district));
                 }else{
                     hideWarningMessage();
