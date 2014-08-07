@@ -88,8 +88,6 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         mOptionsMenu = menu;
-        getMenuInflater().inflate(R.menu.district_point_math, menu);
-        menu.findItem(R.id.points_help).setVisible(false);
         return true;
     }
 
@@ -169,34 +167,9 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     @Override
     public void onPageSelected(int position) {
         if(mOptionsMenu != null) {
-            MenuItem statsSort = mOptionsMenu.findItem(R.id.action_sort_by);
-            MenuItem statsHelp = mOptionsMenu.findItem(R.id.stats_help);
-            MenuItem pointsHelp = mOptionsMenu.findItem(R.id.points_help);
-            if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
-                //stats position
-                if(statsHelp != null){
-                    statsHelp.setVisible(true);
-                }
-                if(statsSort != null){
-                    statsSort.setVisible(true);
-                }
-            } else {
-                if(statsHelp != null){
-                    statsHelp.setVisible(false);
-                }
-                if(statsSort != null){
-                    statsSort.setVisible(false);
-                }
-            }
-            if(position == 5){
-                pointsHelp.setVisible(true);
-                if(!isDistrict){
-                    showInfoMessage(getString(R.string.warning_not_real_district));
-                }else{
-                    hideInfoMessage();
-                }
+            if(position == 5 && !isDistrict){
+                showInfoMessage(getString(R.string.warning_not_real_district));
             }else{
-                pointsHelp.setVisible(false);
                 hideInfoMessage();
             }
         }

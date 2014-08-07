@@ -7,6 +7,8 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -57,6 +59,12 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
         isDistrict = true;
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.district_point_math, menu);
     }
 
     @Override
