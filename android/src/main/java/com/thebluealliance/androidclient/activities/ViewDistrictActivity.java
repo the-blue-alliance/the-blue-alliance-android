@@ -164,10 +164,8 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         if(mOptionsMenu != null) {
             MenuItem pointsHelp = mOptionsMenu.findItem(R.id.points_help);
             if (position == 1) {
-                showWarningMessage(getString(R.string.warning_unoffical_points));
                 pointsHelp.setVisible(true);
             } else {
-                hideWarningMessage();
                 pointsHelp.setVisible(false);
             }
         }
