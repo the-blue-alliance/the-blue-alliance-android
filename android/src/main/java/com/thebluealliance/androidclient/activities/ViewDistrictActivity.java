@@ -104,7 +104,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         ActionBar bar = getActionBar();
         if(bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
-            setActionBarTitle(year + " " + DistrictHelper.districtTypeFromKey(districtKey).getName());
+            setActionBarTitle(String.format(getString(R.string.district_title_format), year, DistrictHelper.districtTypeFromKey(districtKey).getName()));
         }
     }
 
