@@ -1,13 +1,15 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.activities.LaunchActivity;
 
 public class DevSettingsActivity extends PreferenceActivity {
 
@@ -31,10 +33,16 @@ public class DevSettingsActivity extends PreferenceActivity {
             analytics_dryRyn.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    ((TBAAndroid)getActivity().getApplication()).setAnalyticsDryRun((boolean)newValue);
+                    Analytics.setAnalyticsDryRun(getActivity(), (boolean) newValue);
                     return true;
                 }
             });
+
+            Preference redownload = findPreference("redownload_data");
+            Intent redownloadIntent = new Intent(getActivity(), LaunchActivity.class);
+            redownloadIntent.putExtra(LaunchActivity.REDOWNLOAD, true);
+            redownload.setIntent(redownloadIntent);
+
         }
     }
 

@@ -28,4 +28,7 @@
 
     <string name="pref_tba_host">TBA Host</string>
     <string name="pref_tba_host_detail">Web address of another TBA instance that the app will use</string>
+
+    <string name="pref_redownload_data">Redownload data</string>
+    <string name="pref_redownload_data_detail">Returns to Launch Activity for data download</string>
 </resources>

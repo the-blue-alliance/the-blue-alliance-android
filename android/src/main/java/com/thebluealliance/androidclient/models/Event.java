@@ -32,7 +32,7 @@ public class Event extends BasicModel<Event> {
 
     private String shortName;
     private JsonArray matches, alliances, rankings, webcasts, teams;
-    private JsonObject stats;
+    private JsonObject stats, districtPoints;
 
     public Event() {
         super(Database.TABLE_EVENTS);
@@ -41,6 +41,7 @@ public class Event extends BasicModel<Event> {
         rankings = null;
         webcasts = null;
         stats = null;
+        districtPoints = null;
     }
 
     public JsonArray getAlliances() throws FieldNotDefinedException {
@@ -242,7 +243,21 @@ public class Event extends BasicModel<Event> {
 
     public void setDistrictTitle(String districtTitle) {
         fields.put(Database.Events.DISTRICT_STRING, districtTitle);
+    }
 
+    public JsonObject getDistrictPoints() throws FieldNotDefinedException {
+        if(districtPoints != null){
+            return districtPoints;
+        }
+        if (fields.containsKey(Database.Events.DISTRICT_POINTS) && fields.get(Database.Events.DISTRICT_POINTS) instanceof String) {
+            districtPoints = JSONManager.getasJsonObject ((String) fields.get(Database.Events.DISTRICT_POINTS));
+            return districtPoints;
+        }
+        throw new FieldNotDefinedException("Field Database.Events.DISTRICT_POINTS is not defined");
+    }
+
+    public void setDistrictPoints(String districtPoints) {
+        fields.put(Database.Events.DISTRICT_POINTS, districtPoints);
     }
 
     public Date getStartDate() throws FieldNotDefinedException {
@@ -453,7 +468,7 @@ public class Event extends BasicModel<Event> {
         return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    public static synchronized APIResponse<Event> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Event> query(Context c, String eventKey, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
         Event event;
@@ -481,6 +496,7 @@ public class Event extends BasicModel<Event> {
                      * Add them to the model based on which URL we hit
                      */
                     updatedEvent = new Event();
+                    updatedEvent.setEventKey(eventKey);
                     EventHelper.addFieldByAPIUrl(updatedEvent, url, response.getData());
                 }
                 event.merge(updatedEvent);

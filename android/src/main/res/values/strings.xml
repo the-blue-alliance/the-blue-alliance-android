@@ -30,6 +30,7 @@
     <string name="tab_insights">Insights</string>
     <string name="title_activity_view_event">View Event</string>
     <string name="events_label">Events</string>
+    <string name="districts_label">Districts</string>
 
     <!-- View Event -->
     <string name="tab_event_info">Info</string>
@@ -79,6 +80,7 @@
     <string name="no_team_awards_data">No awards found.</string>
     <string name="no_event_data">No events were found.</string>
     <string name="no_media_data">No media was found for this team.</string>
+    <string name="no_district_points">No district points were found for this event.</string>
     <string name="no_team_list">Unable to load team list.</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
 

@@ -190,10 +190,10 @@ public class Utilities {
         }
     }
 
-    public static void showStatsHelpDialog(Context c) {
+    public static void showHelpDialog(Context c, int rawText, String dialogTitle) {
         String helpText;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(R.raw.stats_help)));
+            BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(rawText)));
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
@@ -209,7 +209,7 @@ public class Utilities {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle(c.getString(R.string.stats_help_title));
+        builder.setTitle(dialogTitle);
         builder.setMessage(Html.fromHtml(helpText));
         builder.setCancelable(true);
         builder.setNeutralButton(c.getString(R.string.close_stats_help),
@@ -249,7 +249,6 @@ public class Utilities {
     }
 
     public static boolean isDebuggable(){
-        Log.i(Constants.LOG_TAG, "Debug: "+BuildConfig.DEBUG);
         return BuildConfig.DEBUG;
     }
 

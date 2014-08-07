@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,7 +11,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
@@ -20,6 +18,8 @@ import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.interfaces.ModelTable;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -48,6 +48,8 @@ public class Database extends SQLiteOpenHelper {
             TABLE_MATCHES = "matches",
             TABLE_MEDIAS = "medias",
             TABLE_EVENTTEAMS = "eventTeams",
+            TABLE_DISTRICTS = "districts",
+            TABLE_DISTRICTTEAMS = "districtTeams",
             TABLE_SEARCH = "search",
             TABLE_SEARCH_TEAMS = "search_teams",
             TABLE_SEARCH_EVENTS = "search_events";
@@ -75,11 +77,12 @@ public class Database extends SQLiteOpenHelper {
             + Events.TYPE + " INTEGER DEFAULT -1, "
             + Events.DISTRICT + " INTEGER DEFAULT -1, "
             + Events.DISTRICT_STRING + " TEXT DEFAULT '', "
+            + Events.DISTRICT_POINTS + " TEXT DEFAULT '', "
             + Events.START + " TIMESTAMP, "
             + Events.END + " TIMESTAMP, "
             + Events.OFFICIAL + " INTEGER DEFAULT 0, "
             + Events.WEEK + " INTEGER DEFAULT -1, "
-            + Events.TEAMS + " STRING DEFAULT '', "
+            + Events.TEAMS + " TEXT DEFAULT '', "
             + Events.RANKINGS + " TEXT DEFAULT '', "
             + Events.ALLIANCES + " TEXT DEFAULT '', "
             + Events.WEBCASTS + " TEXT DEFAULT '', "
@@ -118,6 +121,29 @@ public class Database extends SQLiteOpenHelper {
             + EventTeams.YEAR + " INTEGER DEFAULT -1, "
             + EventTeams.COMPWEEK + " INTEGER DEFAULT -1 "
             + ")";
+    String CREATE_DISTRICTS = "CREATE TABLE IF NOT EXISTS " + TABLE_DISTRICTS + "("
+            + Districts.KEY + " TEXT PRIMARY KEY NOT NULL, "
+            + Districts.ABBREV + " TEXT NOT NULL, "
+            + Districts.YEAR + " INTEGER NOT NULL, "
+            + Districts.ENUM + " INTEGER NOT NULL"
+            + ")";
+    String CREATE_DISTRICTTEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_DISTRICTTEAMS + "("
+            + DistrictTeams.KEY + " TEXT PRIMARY KEY NOT NULL, "
+            + DistrictTeams.TEAM_KEY + " TEXT NOT NULL, "
+            + DistrictTeams.DISTRICT_KEY + " TEXT NOT NULL, "
+            + DistrictTeams.DISTRICT_ENUM + " INTEGER NOT NULL, "
+            + DistrictTeams.YEAR + " INTEGER NOT NULL, "
+            + DistrictTeams.RANK + " INTEGER DEFAULT -1, "
+            + DistrictTeams.EVENT1_KEY + " TEXT DEFAULT '', "
+            + DistrictTeams.EVENT1_POINTS + " INTEGER DEFAULT 0, "
+            + DistrictTeams.EVENT2_KEY + " TEXT DEFAULT '', "
+            + DistrictTeams.EVENT2_POINTS + " INTEGER DEFAULT 0, "
+            + DistrictTeams.CMP_KEY + " TEXT DEFAULT '', "
+            + DistrictTeams.CMP_POINTS + " INTEGER DEFAULT 0, "
+            + DistrictTeams.ROOKIE_POINTS + " INTEGER DEFAULT 0, "
+            + DistrictTeams.TOTAL_POINTS + " INTEGER DEFAULT 0, "
+            + DistrictTeams.JSON + " TEXT DEFAULT '' "
+            + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
             SearchTeam.KEY + " TEXT PRIMARY KEY, " +
@@ -141,6 +167,8 @@ public class Database extends SQLiteOpenHelper {
     private Medias mediasTable;
     private EventTeams eventTeamsTable;
     private Response responseTable;
+    private Districts districtsTable;
+    private DistrictTeams districtTeamsTable;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -152,6 +180,8 @@ public class Database extends SQLiteOpenHelper {
         matchesTable = new Matches();
         mediasTable = new Medias();
         eventTeamsTable = new EventTeams();
+        districtsTable = new Districts();
+        districtTeamsTable = new DistrictTeams();
         responseTable = new Response();
         mSemaphore = new Semaphore(1);
     }
@@ -195,6 +225,14 @@ public class Database extends SQLiteOpenHelper {
         return eventTeamsTable;
     }
 
+    public Districts getDistrictsTable() {
+        return districtsTable;
+    }
+
+    public DistrictTeams getDistrictTeamsTable() {
+        return districtTeamsTable;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_API);
@@ -204,8 +242,10 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_MATCHES);
         db.execSQL(CREATE_MEDIAS);
         db.execSQL(CREATE_EVENTTEAMS);
+        db.execSQL(CREATE_DISTRICTS);
+        db.execSQL(CREATE_DISTRICTTEAMS);
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1){
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
             // http://stackoverflow.com/questions/19849068/near-not-syntax-error-while-compiling-create-virtual-table-if-not-exists
             CREATE_SEARCH_EVENTS = CREATE_SEARCH_EVENTS.replace("IF NOT EXISTS", "");
@@ -219,41 +259,47 @@ public class Database extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
-        if (newVersion >= DATABASE_VERSION && oldVersion < DATABASE_VERSION) {
-            /* For now, we're just gonna drop all data tables and wipe the data-related
-               shared preferences just to put everyone on track starting from v8.
-
-               For future versions, a possible idea is adding any previous db changes
-               through a while loop/switch statement, incrementing up until the latest version.
-               like http://blog.adamsbros.org/2012/02/28/upgrade-android-sqlite-database/
-
-               If version is less than 8, then wipe remaining tables/data prefs.
-            */
-            // d-d-d-d-drop the tables (ノಠ益ಠ)ノ彡┻━┻ #dubstepwubwubz
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_AWARDS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCHES);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIAS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTTEAMS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
-
-            // Clear the data-related shared prefs
-            Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
-            for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-                if (entry.getKey().contains(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
-                        entry.getKey().contains(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE)) {
-                    PreferenceManager.getDefaultSharedPreferences(context).edit().
-                            remove(entry.getKey()).commit();
-                }
+        int upgradeTo = oldVersion + 1;
+        while (upgradeTo <= newVersion) {
+            switch (upgradeTo) {
+                case 14:
+                    //add districts tables
+                    db.execSQL(CREATE_DISTRICTS);
+                    db.execSQL(CREATE_DISTRICTTEAMS);
+                    db.execSQL("ALTER TABLE "+TABLE_EVENTS+" ADD COLUMN "+ Events.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                    break;
             }
-
-            PreferenceManager.getDefaultSharedPreferences(context).edit().
-                    remove(LaunchActivity.ALL_DATA_LOADED).commit();
+            upgradeTo++;
         }
+    }
+
+    private void recreateDb(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_AWARDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCHES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIAS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTTEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTTEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
+
+        // Clear the data-related shared prefs
+        Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (entry.getKey().contains(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
+                    entry.getKey().contains(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE) ||
+                    entry.getKey().contains(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().
+                        remove(entry.getKey()).commit();
+            }
+        }
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit().
+                remove(LaunchActivity.ALL_DATA_LOADED).commit();
 
         onCreate(db);
     }
@@ -488,6 +534,7 @@ public class Database extends SQLiteOpenHelper {
                 TYPE = "eventType",
                 DISTRICT = "eventDistrict",
                 DISTRICT_STRING = "districtString",
+                DISTRICT_POINTS = "districtPoints",
                 START = "startDate",
                 END = "endDate",
                 OFFICIAL = "official",
@@ -634,7 +681,7 @@ public class Database extends SQLiteOpenHelper {
                         if (!unsafeExists(award.getKey())) {
                             db.insert(TABLE_AWARDS, null, award.getParams());
                         } else {
-                            db.update(TABLE_AWARDS, award.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{award.getEventKey(), award.getName()});
+                            db.update(TABLE_AWARDS, award.getParams(), Awards.KEY + " = ? ", new String[]{award.getKey()});
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
                         Log.w(Constants.LOG_TAG, "Unable to add award - missing event key or award name");
@@ -692,9 +739,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public boolean unsafeExists(String key) {
-            String eventKey = key.split(":")[0];
-            String awardName = key.split(":")[1];
-            Cursor cursor = db.query(TABLE_AWARDS, new String[]{}, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
+            Cursor cursor = db.query(TABLE_AWARDS, new String[]{}, Awards.KEY + " = ? ", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1046,6 +1091,229 @@ public class Database extends SQLiteOpenHelper {
                 safeDelete(TABLE_EVENTTEAMS, TEAMKEY + " = ? AND " + EVENTKEY + " + ?", new String[]{in.getTeamKey(), in.getEventKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete eventTeam without Database.EventTeams.TEAMKEY and EVENTKEY");
+            }
+        }
+    }
+
+    public class Districts implements ModelTable<District> {
+
+        public static final String KEY = "key",
+                ABBREV = "abbrev",
+                ENUM = "enum",
+                YEAR = "year";
+
+        @Override
+        public long add(District in) {
+            try {
+                if (!exists(in.getKey())) {
+                    return safeInsert(TABLE_DISTRICTS, null, in.getParams());
+                } else {
+                    return update(in);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't add District without KEY or ENUM+YEAR");
+                return -1;
+            }
+        }
+
+        public void add(ArrayList<District> districts) {
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                for (District district : districts) {
+                    try {
+                        if (!unsafeExists(district.getKey())) {
+                            db.insert(TABLE_DISTRICTS, null, district.getParams());
+                        } else {
+                            db.update(TABLE_DISTRICTS, district.getParams(), Districts.KEY + " = ?", new String[]{district.getKey()});
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Can't update district. Missing fields");
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+
+        @Override
+        public int update(District in) {
+            try {
+                return safeUpdate(TABLE_DISTRICTS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't update district without KEY");
+                return -1;
+            }
+        }
+
+        @Override
+        public District get(String key, String[] fields) {
+            Cursor cursor = safeQuery(TABLE_DISTRICTS, fields, Districts.KEY + " = ?", new String[]{key}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                District district = ModelInflater.inflateDistrict(cursor);
+                cursor.close();
+                return district;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean exists(String key) {
+            Cursor cursor = safeQuery(TABLE_DISTRICTS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public boolean unsafeExists(String key) {
+            Cursor cursor = db.query(TABLE_DISTRICTS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        @Override
+        public void delete(District in) {
+            try {
+                safeDelete(TABLE_DISTRICTS, KEY + " + ?", new String[]{in.getKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't delete district without KEY");
+            }
+        }
+    }
+
+    public class DistrictTeams implements ModelTable<DistrictTeam> {
+
+        public static final String KEY = "key",
+                TEAM_KEY = "teamKey",
+                DISTRICT_KEY = "districtKey",
+                DISTRICT_ENUM = "districtEnum",
+                YEAR = "year",
+                RANK = "rank",
+                EVENT1_KEY = "event1Key",
+                EVENT1_POINTS = "event1Points",
+                EVENT2_KEY = "event2Key",
+                EVENT2_POINTS = "event2Points",
+                CMP_KEY = "cmpKey",
+                CMP_POINTS = "cmpPoints",
+                ROOKIE_POINTS = "rookiePoints",
+                TOTAL_POINTS = "totalPoints",
+                JSON = "json";
+
+        @Override
+        public long add(DistrictTeam in) {
+            try {
+                if (!exists(in.getKey())) {
+                    return safeInsert(TABLE_DISTRICTTEAMS, null, in.getParams());
+                } else {
+                    return update(in);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't add DistrictTeam without KEY");
+                return -1;
+            }
+        }
+
+        public void add(ArrayList<DistrictTeam> districts) {
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                for (DistrictTeam district : districts) {
+                    try {
+                        if (!unsafeExists(district.getKey())) {
+                            db.insert(TABLE_DISTRICTTEAMS, null, district.getParams());
+                        } else {
+                            db.update(TABLE_DISTRICTTEAMS, district.getParams(), KEY + " = ?", new String[]{district.getKey()});
+                        }
+                    } catch (BasicModel.FieldNotDefinedException e) {
+                        Log.w(Constants.LOG_TAG, "Can't update districtTeam. Missing fields");
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+
+        @Override
+        public int update(DistrictTeam in) {
+            try {
+                return safeUpdate(TABLE_DISTRICTTEAMS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't update districtTeam without KEY");
+                return -1;
+            }
+        }
+
+        @Override
+        public DistrictTeam get(String key, String[] fields) {
+            Cursor cursor = safeQuery(TABLE_DISTRICTTEAMS, fields, KEY + " = ?", new String[]{key}, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                DistrictTeam districtTeam = ModelInflater.inflateDistrictTeam(cursor);
+                cursor.close();
+                return districtTeam;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean exists(String key) {
+            Cursor cursor = safeQuery(TABLE_DISTRICTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public boolean unsafeExists(String key) {
+            Cursor cursor = db.query(TABLE_DISTRICTTEAMS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        @Override
+        public void delete(DistrictTeam in) {
+            try {
+                safeDelete(TABLE_DISTRICTTEAMS, KEY + " + ?", new String[]{in.getKey()});
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't delete districtTeam without KEY");
             }
         }
     }

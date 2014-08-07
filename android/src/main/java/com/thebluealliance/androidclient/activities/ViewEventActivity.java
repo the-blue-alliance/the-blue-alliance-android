@@ -30,9 +30,11 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     public static final String EVENTKEY = "eventKey";
 
     private String mEventKey;
+    private TextView infoMessage;
     private TextView warningMessage;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
+    private boolean isDistrict;
 
     public static Intent newInstance(Context c, String eventKey) {
         Intent intent = new Intent(c, ViewEventActivity.class);
@@ -51,7 +53,9 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
 
+        infoMessage = (TextView) findViewById(R.id.info_container);
         warningMessage = (TextView) findViewById(R.id.warning_container);
+        hideInfoMessage();
         hideWarningMessage();
 
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -73,6 +77,11 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         }
 
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+        isDistrict = true;
+    }
+
+    public void updateDistrict(boolean isDistrict){
+        this.isDistrict = isDistrict;
     }
 
     @Override
@@ -115,8 +124,11 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;
-            case R.id.help:
-                Utilities.showStatsHelpDialog(this);
+            case R.id.stats_help:
+                Utilities.showHelpDialog(this, R.raw.stats_help, getString(R.string.stats_help_title));
+                return true;
+            case R.id.points_help:
+                Utilities.showHelpDialog(this, R.raw.district_points_help, getString(R.string.district_points_help));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -125,6 +137,15 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
 
     public ViewPager getPager() {
         return pager;
+    }
+
+    public void showInfoMessage(String message) {
+        infoMessage.setText(message);
+        infoMessage.setVisibility(View.VISIBLE);
+    }
+
+    public void hideInfoMessage() {
+        infoMessage.setVisibility(View.GONE);
     }
 
     @Override
@@ -146,23 +167,10 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     @Override
     public void onPageSelected(int position) {
         if(mOptionsMenu != null) {
-            MenuItem statsSort = mOptionsMenu.findItem(R.id.action_sort_by);
-            MenuItem statsHelp = mOptionsMenu.findItem(R.id.help);
-            if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
-                //stats position
-                if(statsHelp != null){
-                    statsHelp.setVisible(true);
-                }
-                if(statsSort != null){
-                    statsSort.setVisible(true);
-                }
-            } else {
-                if(statsHelp != null){
-                    statsHelp.setVisible(false);
-                }
-                if(statsSort != null){
-                    statsSort.setVisible(false);
-                }
+            if(position == 5 && !isDistrict){
+                showInfoMessage(getString(R.string.warning_not_real_district));
+            }else{
+                hideInfoMessage();
             }
         }
     }

@@ -30,30 +30,51 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     private Fragment mFragment;
     private int mYear = -1, mWeek = -1;
-    private String mTeamKey = null, mHeader;
+    private String mTeamKey = null, mHeader, mDistrictKey;
     private ArrayList<ListItem> events;
     private RefreshableHostActivity activity;
     private RefreshableHost host;
     private boolean forceFromCache;
 
-    public PopulateEventList(Fragment fragment, int year, String weekHeader, String teamKey, boolean forceFromCache) {
+    private PopulateEventList(Fragment fragment, boolean forceFromCache){
         mFragment = fragment;
+        this.forceFromCache = forceFromCache;
+    }
+    public PopulateEventList(Fragment fragment, String districtKey, boolean forceFromCache){
+        this(fragment, forceFromCache);
+        activity = (RefreshableHostActivity) mFragment.getActivity();
+        this.host = activity;
+
+        mTeamKey = mHeader = null;
+        mYear = -1;
+        mDistrictKey = districtKey;
+    }
+    public PopulateEventList(Fragment fragment, int year, String weekHeader, String teamKey, boolean forceFromCache) {
+        this(fragment, forceFromCache);
         mYear = year;
         mTeamKey = teamKey;
         mHeader = weekHeader;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.host = activity;
-        this.forceFromCache = forceFromCache;
+        mDistrictKey = null;
     }
-
     public PopulateEventList(Fragment fragment, RefreshableHost host, int year, String weekHeader, String teamKey, boolean forceFromCache) {
-        mFragment = fragment;
+        this(fragment, forceFromCache);
         mYear = year;
         mTeamKey = teamKey;
         mHeader = weekHeader;
         this.host = host;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        mDistrictKey = null;
+    }
+    private PopulateEventList(Fragment fragment, RefreshableHost host, int year, String weekHeader, String teamKey, String districtKey, boolean forceFromCache) {
+        this(fragment, forceFromCache);
+        mYear = year;
+        mTeamKey = teamKey;
+        mHeader = weekHeader;
+        this.host = host;
+        activity = (RefreshableHostActivity) mFragment.getActivity();
+        mDistrictKey = districtKey;
     }
 
     @Override
@@ -69,7 +90,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         }
 
         //first, let's generate the event week based on its header (event weeks aren't constant over the years)
-        if (mHeader.equals("")) {
+        if (mHeader == null || mHeader.equals("")) {
             mWeek = -1;
         } else {
             mWeek = EventHelper.weekNumFromLabel(mYear, mHeader);
@@ -81,7 +102,27 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
         if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
             // Return a list of all events for a year
-        } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
+        }else if(mYear == -1 && mDistrictKey != null) {
+            // return a list of all events in a given district in a year
+            try {
+                response = DataManager.Events.getEventsInDistrict(mFragment.getActivity(), mDistrictKey, forceFromCache);
+
+                if (isCancelled()) {
+                    return APIResponse.CODE.NODATA;
+                }
+
+                ArrayList<Event> eventData = response.getData();
+                if (eventData != null && !eventData.isEmpty()) {
+                    events = EventHelper.renderEventListForDistrict(mFragment.getActivity(), eventData, false); // To enable a local broadcast for a live district event, make the last arg true
+                }
+                return response.getCode();
+
+            } catch (DataManager.NoDataException e) {
+                Log.w(Constants.LOG_TAG, "Unable to find events in district "+mDistrictKey);
+                e.printStackTrace();
+            }
+
+        }else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
                 response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
@@ -148,7 +189,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
-            if(!mHeader.equals("") || mTeamKey != null) {
+            if(mHeader != null && !mHeader.equals("") || mTeamKey != null || mDistrictKey != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.list).setVisibility(View.VISIBLE);
             }
@@ -159,10 +200,10 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                new PopulateEventList(mFragment, host, mYear, mHeader, mTeamKey, false).execute();
+                new PopulateEventList(mFragment, host, mYear, mHeader, mTeamKey, mDistrictKey, false).execute();
             } else {
                 // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Event list refresh complete");
+                Log.d(Constants.REFRESH_LOG, "Event List Refresh complete");
                 host.notifyRefreshComplete((RefreshListener) mFragment);
             }
 
