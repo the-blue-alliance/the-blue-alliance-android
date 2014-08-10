@@ -46,7 +46,7 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
         }
-        if (parent instanceof BaseActivity){
+        if (parent instanceof BaseActivity) {
             apiClient = ((BaseActivity) parent).getGoogleAPIClient();
         }
     }
@@ -99,7 +99,7 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateUserFavorites newTask){
+    public void updateTask(PopulateUserFavorites newTask) {
         mTask = newTask;
     }
 

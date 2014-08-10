@@ -15,7 +15,7 @@ public class MatchClickListener implements View.OnClickListener {
 
     Context context;
 
-    public MatchClickListener(Context c){
+    public MatchClickListener(Context c) {
         context = c;
     }
 

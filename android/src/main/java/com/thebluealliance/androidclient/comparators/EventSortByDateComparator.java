@@ -6,25 +6,24 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**
  * File created by phil on 5/7/14.
  */
-public class EventSortByTypeComparator implements Comparator<Event> {
+public class EventSortByDateComparator implements Comparator<Event> {
     @Override
     public int compare(Event event, Event event2) {
         try {
-            int typeCompare = event.getEventType().compareTo(event2.getEventType());
-            if (typeCompare == 0) {
-                return ((Integer) event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
+            int dateCompare = event.getStartDate().compareTo(event2.getStartDate());
+            if (dateCompare == 0) {
+                return event.getEndDate().compareTo(event2.getEndDate());
             } else {
-                return typeCompare;
+                return dateCompare;
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields" +
-                    Arrays.toString(e.getStackTrace()));
+            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields");
+            e.printStackTrace();
             return 0;
         }
     }

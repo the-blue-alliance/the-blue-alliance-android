@@ -52,7 +52,7 @@ public class SettingsActivity extends PreferenceActivity {
                 String sha = version.split("/")[1];
                 sha = sha.replace("#", "");
                 changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/commit/" + sha)));
-            }else{
+            } else {
                 // this is not a debug build, so link to the GitHub release page tagged with the version name
                 changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v" + version)));
             }
@@ -60,7 +60,7 @@ public class SettingsActivity extends PreferenceActivity {
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            if(Utilities.isDebuggable()){
+            if (Utilities.isDebuggable()) {
                 addPreferencesFromResource(R.xml.dev_preference_link);
                 Preference devSettings = findPreference("dev_settings");
                 devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));

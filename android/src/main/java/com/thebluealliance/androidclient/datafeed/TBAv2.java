@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -8,6 +9,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -23,7 +26,7 @@ public class TBAv2 {
 
     private static final String TBA_HOST_PREF = "tba_host";
     private static final String tbaHostDefault = //"http://www.thebluealliance.com";
-    "http://tba-dev-phil.appspot.com";
+            "http://tba-dev-phil.appspot.com";
 
     public static enum QUERY {
         CSV_TEAMS,
@@ -42,8 +45,13 @@ public class TBAv2 {
         EVENT_MATCHES_FOR_TEAM,
         EVENT_STATS,
         EVENT_RANKS,
-        EVENT_AWARDS
+        EVENT_AWARDS,
+        EVENT_DISTRICT_POINTS,
+        DISTRICT_LIST,
+        DISTRICT_EVENTS,
+        DISTRICT_RANKINGS
     }
+
     public static enum GCM_ENDPOINT {
         REGISTER,
         FAVORITE_ADD,
@@ -81,22 +89,33 @@ public class TBAv2 {
         GCM_URL.put(GCM_ENDPOINT.FAVORITE_ADD, "/mobile/favorite/add");
         GCM_URL.put(GCM_ENDPOINT.FAVORITE_DELETE, "/mobile/favorite/remove");
         GCM_URL.put(GCM_ENDPOINT.FAVORITE_LIST, "/mobile/favorites");
+        API_URL.put(QUERY.EVENT_DISTRICT_POINTS, "/api/v2/event/%s/district_points");
+
+        API_URL.put(QUERY.DISTRICT_LIST, "/api/v2/districts/%d");
+        API_URL.put(QUERY.DISTRICT_EVENTS, "/api/v2/district/%s/%d/events");
+        API_URL.put(QUERY.DISTRICT_RANKINGS, "/api/v2/district/%s/%d/rankings");
     }
 
-    public static String getTBAApiUrl(Context c, QUERY query){
-        String host = PreferenceManager.getDefaultSharedPreferences(c).getString(TBA_HOST_PREF, tbaHostDefault);
-        if(!Utilities.isDebuggable() || host.isEmpty()){
-            host = tbaHostDefault;
+    public static String getTBAApiUrl(Context c, QUERY query) {
+        String host = tbaHostDefault;
+        if (c != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            if (prefs != null) {
+                host = prefs.getString(TBA_HOST_PREF, tbaHostDefault);
+                if (!Utilities.isDebuggable() || host.isEmpty()) {
+                    host = tbaHostDefault;
+                }
+            }
         }
-        return host+API_URL.get(query);
+        return host + API_URL.get(query);
     }
 
-    public static String getGCMEndpoint(Context c, GCM_ENDPOINT endpoint){
+    public static String getGCMEndpoint(Context c, GCM_ENDPOINT endpoint) {
         String host = PreferenceManager.getDefaultSharedPreferences(c).getString(TBA_HOST_PREF, tbaHostDefault);
-        if(!Utilities.isDebuggable() || host.isEmpty()){
+        if (!Utilities.isDebuggable() || host.isEmpty()) {
             host = tbaHostDefault;
         }
-        return host+GCM_URL.get(endpoint);
+        return host + GCM_URL.get(endpoint);
     }
 
     public static ArrayList<Event> getEventList(String json) {
@@ -115,6 +134,15 @@ public class TBAv2 {
             teams.add(JSONManager.getGson().fromJson(aData, Team.class));
         }
         return teams;
+    }
+
+    public static ArrayList<District> getDistrictList(String json, String url) {
+        ArrayList<District> districts = new ArrayList<>();
+        JsonArray data = JSONManager.getasJsonArray(json);
+        for (JsonElement d : data) {
+            districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
+        }
+        return districts;
     }
 
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {
@@ -187,12 +215,26 @@ public class TBAv2 {
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
                 HttpResponse cachedResponse = HTTP.getRequest(URL, cachedData.getLastUpdate());
 
-                if(cachedResponse != null) {
+                if (cachedResponse != null) {
+
+                    int responseStatus = cachedResponse.getStatusLine().getStatusCode();
+
+                    /**
+                     * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
+                     * and with the response contents (e.g. "404 Not Found") as the error message.
+                     * This will have the code APIResponse.ERROR
+                     */
+                    if (responseStatus / 100 == 4 || responseStatus / 100 == 5) {
+                        String responseData = HTTP.dataFromResponse(cachedResponse);
+                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP " + responseStatus + "\n " + responseData + " from updating " + URL);
+                        return new APIResponse<>("", responseData);
+                    }
+
                     /* If we get a 200-OK back from the server, then we need to return that new data
                      * Otherwise, we are going to assume the code is 304-Not-Modified
                      * There is a possibility of other codes, but we can add those in (along with proper error handling) here later
                      */
-                    boolean dataRequiresUpdate = (cachedResponse.getStatusLine().getStatusCode() == 200);
+                    boolean dataRequiresUpdate = (responseStatus == 200);
 
                     if (dataRequiresUpdate) {
                     /* If we get 200-OK back, read the data from the request
@@ -217,7 +259,7 @@ public class TBAv2 {
 
                         return cachedData.updateCode(APIResponse.CODE.CACHED304);
                     }
-                }else{
+                } else {
                     Log.e(Constants.DATAMANAGER_LOG, "Unable to update data from the web");
                     return new APIResponse<String>(null, APIResponse.CODE.NODATA);
                 }
@@ -231,7 +273,21 @@ public class TBAv2 {
                  * But we do have the ability to fetch it from the web.
                  */
                 HttpResponse webResponse = HTTP.getRequest(URL);
-                if(webResponse != null) {
+                if (webResponse != null) {
+
+                    int responseStatus = webResponse.getStatusLine().getStatusCode();
+
+                    /**
+                     * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
+                     * and with the response contents (e.g. "404 Not Found") as the error message.
+                     * This will have the code APIResponse.ERROR
+                     */
+                    if (responseStatus / 100 == 4 || responseStatus / 100 == 5) {
+                        String responseData = HTTP.dataFromResponse(webResponse);
+                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP " + responseStatus + "\n " + responseData + " from fetching " + URL);
+                        return new APIResponse<>("", responseData);
+                    }
+
                     String response = HTTP.dataFromResponse(webResponse),
                             lastUpdate = "";
                     Header lastModified = webResponse.getFirstHeader("Last-Modified");
@@ -245,7 +301,7 @@ public class TBAv2 {
 
                     Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet: " + URL);
                     return new APIResponse<>(response, APIResponse.CODE.WEBLOAD); /* This response will contain the loaded data */
-                }else{
+                } else {
                     Log.e(Constants.DATAMANAGER_LOG, "Unable to load data from the web");
                     return new APIResponse<String>(null, APIResponse.CODE.NODATA);
                 }

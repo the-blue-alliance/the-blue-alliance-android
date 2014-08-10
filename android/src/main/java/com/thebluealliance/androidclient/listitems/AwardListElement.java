@@ -38,7 +38,7 @@ public class AwardListElement extends ListElement {
         mEventKey = eventKey;
         mAwardWinners = winners;
         mAwardTeams = teams;
-        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4)?"":selectedTeamKey.substring(3);
+        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4) ? "" : selectedTeamKey.substring(3);
     }
 
     @Override
@@ -68,12 +68,12 @@ public class AwardListElement extends ListElement {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
-                if(!mSelectedTeamNum.equals(teamNumber)) {
+                if (!mSelectedTeamNum.equals(teamNumber)) {
                     winnerView.setOnClickListener(new TeamAtEventClickListener(context));
                 } else {
                     winnerView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));  // disable touch feedback
                 }
-                winnerView.setTag("frc" + teamNumber+"@"+mEventKey);
+                winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
             }
             if (winner.get("awardee").isJsonNull()) {
                 awardee = "";

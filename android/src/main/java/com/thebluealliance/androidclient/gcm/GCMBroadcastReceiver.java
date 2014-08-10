@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.Constants;
 public class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(Constants.LOG_TAG, "Got GCM Message. "+intent);
+        Log.d(Constants.LOG_TAG, "Got GCM Message. " + intent);
         // Explicitly specify that GcmIntentService will handle the intent.
         ComponentName comp = new ComponentName(context.getPackageName(),
                 GCMMessageHandler.class.getName());

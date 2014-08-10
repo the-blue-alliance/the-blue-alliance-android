@@ -7,26 +7,17 @@ import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * File created by phil on 4/20/14.
@@ -96,14 +87,14 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
         View view = mFragment.getView();
         LayoutInflater inflater = activity.getLayoutInflater();
-        if(view != null) {
+        if (view != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             View infoContainer = view.findViewById(R.id.team_info_container);
             if (code == APIResponse.CODE.NODATA) {
                 noDataText.setText(R.string.no_team_info);
                 noDataText.setVisibility(View.VISIBLE);
                 infoContainer.setVisibility(View.GONE);
-            }else{
+            } else {
                 noDataText.setVisibility(View.GONE);
                 TextView teamName = ((TextView) view.findViewById(R.id.team_name));
                 if (mTeamName.isEmpty()) {

@@ -20,7 +20,7 @@ public class EventClickListener implements AdapterView.OnItemClickListener {
     private Context context;
     private String mTeamKey;
 
-    public EventClickListener(Context c, String teamKey){
+    public EventClickListener(Context c, String teamKey) {
         context = c;
         mTeamKey = teamKey;
     }

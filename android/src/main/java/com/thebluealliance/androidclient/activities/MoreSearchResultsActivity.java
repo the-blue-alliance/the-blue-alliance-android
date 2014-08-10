@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
@@ -52,7 +53,7 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
         setContentView(R.layout.activity_search_results);
 
         /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
         resultsList = (ListView) findViewById(R.id.results);

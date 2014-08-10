@@ -1,10 +1,8 @@
 package com.thebluealliance.androidclient.background.event;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -180,11 +178,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             View infoContainer = view.findViewById(R.id.event_info_container);
-            if (c == APIResponse.CODE.NODATA ) {
+            if (c == APIResponse.CODE.NODATA) {
                 noDataText.setText(R.string.no_data);
                 noDataText.setVisibility(View.VISIBLE);
                 infoContainer.setVisibility(View.GONE);
-            }else if(event != null){
+            } else if (event != null) {
                 activity.setActionBarTitle(titleString);
 
                 noDataText.setVisibility(View.GONE);

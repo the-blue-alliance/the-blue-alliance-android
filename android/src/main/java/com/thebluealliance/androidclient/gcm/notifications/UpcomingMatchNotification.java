@@ -15,7 +15,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.models.Match;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -37,7 +36,7 @@ public class UpcomingMatchNotification extends BaseNotification {
     }
 
     /**
-     * @param context     a Context object for use by the notificatoin builder
+     * @param context a Context object for use by the notificatoin builder
      * @return A constructed notification
      */
 

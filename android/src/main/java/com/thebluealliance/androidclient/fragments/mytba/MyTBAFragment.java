@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
 /**
  * File created by phil on 8/2/14.
  */
-public class MyTBAFragment extends Fragment{
+public class MyTBAFragment extends Fragment {
 
     private ViewPager mViewPager;
     private PagerSlidingTabStrip mTabs;

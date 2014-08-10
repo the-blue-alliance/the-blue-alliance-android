@@ -3,9 +3,7 @@ package com.thebluealliance.androidclient.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
@@ -67,7 +65,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         if (completedListener == null) {
             return;
         }
-        if(!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity){
+        if (!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).notifyRefreshComplete(completedListener);
         }
         if (!mCompletedRefreshListeners.contains(completedListener)) {
@@ -115,7 +113,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         mRefreshInProgress = true;
     }
 
-    public void startRefresh(RefreshListener listener){
+    public void startRefresh(RefreshListener listener) {
         if (!mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }

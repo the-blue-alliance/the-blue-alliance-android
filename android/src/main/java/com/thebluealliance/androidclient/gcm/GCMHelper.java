@@ -26,7 +26,7 @@ public class GCMHelper {
     private static String senderId;
     private static AtomicInteger msgId = new AtomicInteger();
 
-    public enum MSGTYPE{
+    public enum MSGTYPE {
         REGISTRATION,
         UPCOMING_MATCH,
         MATCH_SCORE,
@@ -34,20 +34,26 @@ public class GCMHelper {
         LEVEL_STARTING,
         SUGGEST_MEDIA;
 
-        public String toString(){
-            switch (this){
-                case REGISTRATION: return "registration";
-                case UPCOMING_MATCH: return "upcoming_match";
-                case MATCH_SCORE: return "match_score";
-                case ALLIANCE_SELECTION: return "alliance_selection";
-                case LEVEL_STARTING: return "starting_comp_level";
-                case SUGGEST_MEDIA: return "suggest_media";
+        public String toString() {
+            switch (this) {
+                case REGISTRATION:
+                    return "registration";
+                case UPCOMING_MATCH:
+                    return "upcoming_match";
+                case MATCH_SCORE:
+                    return "match_score";
+                case ALLIANCE_SELECTION:
+                    return "alliance_selection";
+                case LEVEL_STARTING:
+                    return "starting_comp_level";
+                case SUGGEST_MEDIA:
+                    return "suggest_media";
             }
             return "";
         }
     }
 
-    public static GoogleCloudMessaging getGcm(Context context){
+    public static GoogleCloudMessaging getGcm(Context context) {
         return GoogleCloudMessaging.getInstance(context);
     }
 
@@ -71,19 +77,19 @@ public class GCMHelper {
         return true;
     }
 
-    public static String getSenderId(Context c){
-        if(senderId == null){
+    public static String getSenderId(Context c) {
+        if (senderId == null) {
             senderId = Utilities.readLocalProperty(c, "gcm.senderId");
         }
         return senderId;
     }
 
-    public static String requestChecksum(Context context, JsonObject data){
+    public static String requestChecksum(Context context, JsonObject data) {
         String secret = Utilities.readLocalProperty(context, "gcm.registrationSecret");
         String requestData = data.toString();
-        Log.d(Constants.LOG_TAG, "Hashing data: "+data.toString());
-        String hash = Utilities.sha256(secret+requestData);
-        Log.d(Constants.LOG_TAG, "calculated hash: "+hash);
+        Log.d(Constants.LOG_TAG, "Hashing data: " + data.toString());
+        String hash = Utilities.sha256(secret + requestData);
+        Log.d(Constants.LOG_TAG, "calculated hash: " + hash);
         return hash;
     }
 

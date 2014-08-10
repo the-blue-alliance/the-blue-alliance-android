@@ -12,7 +12,7 @@
             android:persistent="false"
             android:selectable="true"
             android:title="@string/tbasite_label"
-            android:summary="@string/tbasite_summary"/>
+            android:summary="@string/tbasite_summary" />
 
         <Preference
             android:key="github_link"
@@ -44,7 +44,7 @@
             android:key="licenses"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/license_label"/>
+            android:title="@string/license_label" />
 
     </PreferenceCategory>
 

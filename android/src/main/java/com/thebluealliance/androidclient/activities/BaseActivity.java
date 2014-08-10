@@ -23,6 +23,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.plus.Plus;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -49,7 +50,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         super.onCreate(savedInstanceState);
 
         /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
         createGoogleClient();
@@ -64,7 +65,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     @Override
     protected void onStart() {
         super.onStart();
-        if(googleAPIClient != null){
+        if (googleAPIClient != null) {
             googleAPIClient.connect();
         }
     }
@@ -127,41 +128,41 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         invalidateOptionsMenu();
     }
 
-    private void registerGCMIfNeeded(){
-        if(!GCMHelper.checkPlayServices(this)){
+    private void registerGCMIfNeeded() {
+        if (!GCMHelper.checkPlayServices(this)) {
             Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
             return;
         }
         final String registrationId = GCMAuthHelper.getRegistrationId(this);
-        if(TextUtils.isEmpty(registrationId)){
+        if (TextUtils.isEmpty(registrationId)) {
             // GCM has not yet been registered on this device
             Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
             GCMAuthHelper.registerInBackground(this, googleAPIClient);
         }
     }
 
-    private void getAccountInfoIfNeeded(){
-        if(!GCMHelper.checkPlayServices(this)){
+    private void getAccountInfoIfNeeded() {
+        if (!GCMHelper.checkPlayServices(this)) {
             Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
             return;
         }
         final String accountId = AccountHelper.getCurrentAccountId(this);
-        if(accountId == null){
+        if (accountId == null) {
             // we don't have an account registered. Fix that.
             AccountHelper.storeAccountId(this, googleAPIClient);
         }
     }
 
-    public GoogleApiClient getGoogleAPIClient(){
-        if(googleAPIClient == null){
+    public GoogleApiClient getGoogleAPIClient() {
+        if (googleAPIClient == null) {
             createGoogleClient();
             googleAPIClient.connect();
         }
         return googleAPIClient;
     }
 
-    private void createGoogleClient(){
-        if(googleAPIClient == null){
+    private void createGoogleClient() {
+        if (googleAPIClient == null) {
             googleAPIClient = new GoogleApiClient.Builder(this)
                     .addApi(Drive.API)
                     .addApi(Plus.API)

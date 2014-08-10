@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -57,7 +58,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         setContentView(R.layout.activity_search_results);
 
         /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
         currentQuery = "";
@@ -101,7 +102,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
         //track the search query the user submitted
         //Track the query
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(TBAAndroid.GAnalyticsTracker.ANDROID_TRACKER);
+        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         t.send(new HitBuilders.EventBuilder()
                 .setCategory("search")
                 .setAction(currentQuery)

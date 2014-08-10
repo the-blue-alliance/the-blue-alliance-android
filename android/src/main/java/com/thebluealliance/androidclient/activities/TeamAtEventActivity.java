@@ -84,7 +84,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
         getMenuInflater().inflate(R.menu.team_at_event, menu);
         getMenuInflater().inflate(R.menu.stats_help_menu, menu);
         mOptionsMenu = menu;
-        mOptionsMenu.findItem(R.id.help).setVisible(false);
+        mOptionsMenu.findItem(R.id.stats_help).setVisible(false);
         return true;
     }
 
@@ -95,11 +95,11 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 return true;
             case R.id.action_view_team:
-                int year = Integer.parseInt(eventKey.substring(0,4));
+                int year = Integer.parseInt(eventKey.substring(0, 4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
                 return true;
-            case R.id.help:
-                Utilities.showStatsHelpDialog(this);
+            case R.id.stats_help:
+                Utilities.showHelpDialog(this, R.raw.stats_help, getString(R.string.stats_help_title));
                 return true;
             case android.R.id.home:
                 if (isDrawerOpen()) {
@@ -138,12 +138,12 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
 
     @Override
     public void onPageSelected(int position) {
-        if(mOptionsMenu != null) {
+        if (mOptionsMenu != null) {
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
-                mOptionsMenu.findItem(R.id.help).setVisible(true);
+                mOptionsMenu.findItem(R.id.stats_help).setVisible(true);
             } else {
-                mOptionsMenu.findItem(R.id.help).setVisible(false);
+                mOptionsMenu.findItem(R.id.stats_help).setVisible(false);
             }
         }
     }

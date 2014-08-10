@@ -43,13 +43,13 @@ public class HTTP {
         }
     }
 
-    public static HttpResponse postRequest(String uri, Map<String, String> headers, JsonElement data){
+    public static HttpResponse postRequest(String uri, Map<String, String> headers, JsonElement data) {
         try {
             HttpPost httpPost = new HttpPost(uri);
             httpPost.setEntity(new StringEntity(data.toString()));
             httpPost.setHeader("Accept", "*/*");
             httpPost.setHeader("Content-type", "application/json");
-            for(Map.Entry<String, String> header: headers.entrySet()){
+            for (Map.Entry<String, String> header : headers.entrySet()) {
                 httpPost.setHeader(header.getKey(), header.getValue());
             }
             return new DefaultHttpClient().execute(httpPost);
@@ -60,7 +60,7 @@ public class HTTP {
         return null;
     }
 
-    public static String POST(String uri, Map<String, String> headers, JsonElement data){
+    public static String POST(String uri, Map<String, String> headers, JsonElement data) {
         HttpResponse response = postRequest(uri, headers, data);
         if (response == null) return null;
 
@@ -75,14 +75,14 @@ public class HTTP {
         return dataFromResponse(response);
     }
 
-    public static String GET(String url, Map<String, String> headers){
+    public static String GET(String url, Map<String, String> headers) {
 
         // HTTP
         HttpResponse response = null;
         try {
             HttpClient httpclient = new DefaultHttpClient(); // for port 80 requests!
             HttpGet httpget = new HttpGet(url);
-            if(headers != null) {
+            if (headers != null) {
                 for (Map.Entry<String, String> header : headers.entrySet()) {
                     httpget.addHeader(header.getKey(), header.getValue());
                 }
@@ -97,7 +97,7 @@ public class HTTP {
         InputStream is;
         String result = "";
         // Read response to string
-        if(response != null) {
+        if (response != null) {
             try {
                 HttpEntity entity = response.getEntity();
 
@@ -124,7 +124,7 @@ public class HTTP {
         InputStream is;
         String result = "";
         // Read response to string
-        if(response != null) {
+        if (response != null) {
             try {
                 HttpEntity entity = response.getEntity();
 

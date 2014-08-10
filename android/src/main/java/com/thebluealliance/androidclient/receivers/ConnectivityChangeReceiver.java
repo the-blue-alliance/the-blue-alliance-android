@@ -19,16 +19,17 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
      * Receive the system's broadcast that internet connectivity has changed
      * Second, send out a <a href="http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html">Local Broadcast</a> that the current active
      * RefreshableHostActivity can hook into and initiate a refresh
+     *
      * @param context Input context
-     * @param intent Sent intent
+     * @param intent  Sent intent
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(Constants.LOG_TAG, "Received connectivity change intent: "+intent.getAction());
+        Log.i(Constants.LOG_TAG, "Received connectivity change intent: " + intent.getAction());
 
         // if we now have interwebz, send out a local broadcast telling things to refresh
         int connectionStatus;
-        if(ConnectionDetector.isConnectedToInternet(context)) {
+        if (ConnectionDetector.isConnectedToInternet(context)) {
             connectionStatus = ConnectionChangeBroadcast.CONNECTION_FOUND;
         } else {
             connectionStatus = ConnectionChangeBroadcast.CONNECTION_LOST;

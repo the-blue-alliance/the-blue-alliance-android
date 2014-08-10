@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -10,8 +11,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 
@@ -39,7 +41,7 @@ public class DevSettingsActivity extends PreferenceActivity {
             analytics_dryRyn.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    ((TBAAndroid)getActivity().getApplication()).setAnalyticsDryRun((boolean)newValue);
+                    Analytics.setAnalyticsDryRun(getActivity(), (boolean) newValue);
                     return true;
                 }
             });
@@ -90,8 +92,8 @@ public class DevSettingsActivity extends PreferenceActivity {
         }
 
 
-        void createDriveClient(){
-            if(driveClient == null){
+        void createDriveClient() {
+            if (driveClient == null) {
                 driveClient = new GoogleApiClient.Builder(getActivity())
                         .addApi(Drive.API)
                         .addScope(Drive.SCOPE_APPFOLDER)
@@ -115,6 +117,11 @@ public class DevSettingsActivity extends PreferenceActivity {
         @Override
         public void onConnectionFailed(ConnectionResult connectionResult) {
             GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), getActivity(), 0).show();
+            Preference redownload = findPreference("redownload_data");
+            Intent redownloadIntent = new Intent(getActivity(), LaunchActivity.class);
+            redownloadIntent.putExtra(LaunchActivity.REDOWNLOAD, true);
+            redownload.setIntent(redownloadIntent);
+
         }
     }
 

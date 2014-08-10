@@ -32,7 +32,7 @@ public class UserFavorite extends AsyncTask<String, Void, Boolean> {
     private GoogleApiClient driveClient;
     private MenuItem icon;
 
-    public UserFavorite(Context context, GoogleApiClient driveClient, MenuItem icon){
+    public UserFavorite(Context context, GoogleApiClient driveClient, MenuItem icon) {
         this.context = context;
         this.driveClient = driveClient;
         this.icon = icon;
@@ -58,7 +58,7 @@ public class UserFavorite extends AsyncTask<String, Void, Boolean> {
 
         HttpResponse response = HTTP.postRequest(endpoint, headers, data);
         int responseCode = response.getStatusLine().getStatusCode();
-        Log.d(Constants.LOG_TAG, "Code from adding favorite: "+responseCode);
+        Log.d(Constants.LOG_TAG, "Code from adding favorite: " + responseCode);
         // TODO add exponential backoff
         return responseCode == 200;
     }
@@ -68,10 +68,10 @@ public class UserFavorite extends AsyncTask<String, Void, Boolean> {
         super.onPostExecute(result);
         icon.setActionView(null);
         String text;
-        if(result){
+        if (result) {
             icon.setIcon(R.drawable.ic_action_remove_favorite);
             text = "Favorite added";
-        }else{
+        } else {
             text = "Error adding favorite";
         }
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();

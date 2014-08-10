@@ -35,7 +35,7 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
     private PopulateTeamAtEventSummary task;
     private BroadcastReceiver receiver;
 
-    public static TeamAtEventSummaryFragment newInstance(String teamKey, String eventKey){
+    public static TeamAtEventSummaryFragment newInstance(String teamKey, String eventKey) {
         TeamAtEventSummaryFragment f = new TeamAtEventSummaryFragment();
         Bundle args = new Bundle();
         args.putString(TEAM_KEY, teamKey);
@@ -47,7 +47,7 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)){
+        if (getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)) {
             throw new IllegalArgumentException("TeamAtEventSummaryFragment must contain both team key and event key");
         }
 

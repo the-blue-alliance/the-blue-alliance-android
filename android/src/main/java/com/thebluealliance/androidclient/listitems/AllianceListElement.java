@@ -55,18 +55,18 @@ public class AllianceListElement extends ListElement implements RenderableModel 
             SpannableString underLine = new SpannableString(team1Key.substring(3));
             underLine.setSpan(new UnderlineSpan(), 0, underLine.length(), 0);
             holder.memberOne.setText(underLine);
-            holder.memberOne.setTag(team1Key+"@"+eventKey);
+            holder.memberOne.setTag(team1Key + "@" + eventKey);
             holder.memberOne.setOnClickListener(listener);
 
             String team2Key = teams.get(1).getAsString();
             holder.memberTwo.setText(team2Key.substring(3));
-            holder.memberTwo.setTag(team2Key+"@"+eventKey);
+            holder.memberTwo.setTag(team2Key + "@" + eventKey);
             holder.memberTwo.setOnClickListener(listener);
 
             if (teams.size() >= 3) {
                 String team3Key = teams.get(2).getAsString();
                 holder.memberThree.setText(team3Key.substring(3));
-                holder.memberThree.setTag(team3Key+"@"+eventKey);
+                holder.memberThree.setTag(team3Key + "@" + eventKey);
                 holder.memberThree.setVisibility(View.VISIBLE);
                 holder.memberThree.setOnClickListener(listener);
             }
@@ -74,7 +74,7 @@ public class AllianceListElement extends ListElement implements RenderableModel 
             if (teams.size() >= 4) {
                 String team4Key = teams.get(3).getAsString();
                 holder.memberFour.setText(team4Key.substring(3));
-                holder.memberFour.setTag(team4Key+"@"+eventKey);
+                holder.memberFour.setTag(team4Key + "@" + eventKey);
                 holder.memberFour.setVisibility(View.VISIBLE);
                 holder.memberFour.setOnClickListener(listener);
             }

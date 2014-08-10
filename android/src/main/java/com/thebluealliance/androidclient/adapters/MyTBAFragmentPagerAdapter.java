@@ -20,7 +20,7 @@ public class MyTBAFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+        switch (position) {
             default:
             case 0:
                 return MyFavoritesFragment.newInstance();
@@ -31,7 +31,7 @@ public class MyTBAFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        switch (position){
+        switch (position) {
             default:
             case 0:
                 return "Favorites";

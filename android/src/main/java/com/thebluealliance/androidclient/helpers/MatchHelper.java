@@ -7,7 +7,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -399,7 +398,8 @@ public class MatchHelper {
         Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
         Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty() ||
-                (allQualMatchesPlayed && !teamIsHere)) {
+                (allQualMatchesPlayed && !teamIsHere) ||
+                (!allQualMatchesPlayed && !e.isHappeningNow())) {
             return EventStatus.NOT_AVAILABLE;
         } else if ((allQualMatchesPlayed && !inAlliance) ||
                 (!e.isHappeningNow() &&

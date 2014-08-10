@@ -194,10 +194,10 @@ public class Utilities {
         }
     }
 
-    public static void showStatsHelpDialog(Context c) {
+    public static void showHelpDialog(Context c, int rawText, String dialogTitle) {
         String helpText;
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(R.raw.stats_help)));
+            BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(rawText)));
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
@@ -213,7 +213,7 @@ public class Utilities {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle(c.getString(R.string.stats_help_title));
+        builder.setTitle(dialogTitle);
         builder.setMessage(Html.fromHtml(helpText));
         builder.setCancelable(true);
         builder.setNeutralButton(c.getString(R.string.close_stats_help),
@@ -259,9 +259,10 @@ public class Utilities {
     /**
      * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware serial number</a>
      * I hope this actually works universally, android UUIDs are irritatingly difficult
+     *
      * @return UUID
      */
-    public static String getUUID(){
+    public static String getUUID() {
         return Build.SERIAL;
     }
 
@@ -303,9 +304,10 @@ public class Utilities {
     }
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    private static String bytesToHexString(byte[] bytes){
+
+    private static String bytesToHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
@@ -314,7 +316,7 @@ public class Utilities {
         return output.toLowerCase();
     }
 
-    public static String sha256(String input){
+    public static String sha256(String input) {
         MessageDigest digest = null;
         String hash = null;
         try {

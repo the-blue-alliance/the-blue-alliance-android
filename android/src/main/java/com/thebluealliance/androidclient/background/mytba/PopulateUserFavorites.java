@@ -37,7 +37,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, Void> {
     private boolean forceFromCache;
     private ArrayList<ListItem> favorites;
 
-    public PopulateUserFavorites(MyFavoritesFragment fragment, GoogleApiClient apiClient, boolean forceFromCache){
+    public PopulateUserFavorites(MyFavoritesFragment fragment, GoogleApiClient apiClient, boolean forceFromCache) {
         super();
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
@@ -48,7 +48,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(activity != null) {
+        if (activity != null) {
             activity.showMenuProgressBar();
         }
     }
@@ -71,7 +71,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, Void> {
         JsonArray favoriteList = JSONManager.getasJsonArray(result);
 
         favorites = new ArrayList<>();
-        for(JsonElement e: favoriteList){
+        for (JsonElement e : favoriteList) {
             favorites.add(new LabelValueListItem("", e.getAsString()));
         }
         return null;

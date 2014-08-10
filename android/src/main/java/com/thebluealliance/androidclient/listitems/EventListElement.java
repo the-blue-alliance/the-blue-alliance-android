@@ -14,7 +14,7 @@ import java.io.Serializable;
 /**
  * File created by phil on 4/23/14.
  */
-public class EventListElement extends ListElement implements Serializable{
+public class EventListElement extends ListElement implements Serializable {
 
     private String mEventName;
     private String mEventDates;
@@ -36,7 +36,7 @@ public class EventListElement extends ListElement implements Serializable{
         mEventLocation = location;
     }
 
-    public String getEventKey(){
+    public String getEventKey() {
         return mEventKey;
     }
 

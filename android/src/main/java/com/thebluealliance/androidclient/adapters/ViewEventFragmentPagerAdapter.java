@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.thebluealliance.androidclient.fragments.event.EventAlliancesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
@@ -17,7 +18,7 @@ import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
  */
 public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Info", "Teams", "Rankings", "Matches", "Alliances", "Stats", "Awards"};
+    public final String[] TITLES = {"Info", "Teams", "Rankings", "Matches", "Alliances", "District Points", "Stats", "Awards"};
 
     private String mEventKey;
 
@@ -56,10 +57,13 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
             case 4: //alliances
                 fragment = EventAlliancesFragment.newInstance(mEventKey);
                 break;
-            case 5: //stats
+            case 5: //district points
+                fragment = EventDistrictPointsFragment.newInstance(mEventKey);
+                break;
+            case 6: //stats
                 fragment = EventStatsFragment.newInstance(mEventKey);
                 break;
-            case 6: //awards
+            case 7: //awards
                 fragment = EventAwardsFragment.newInstance(mEventKey);
                 break;
         }

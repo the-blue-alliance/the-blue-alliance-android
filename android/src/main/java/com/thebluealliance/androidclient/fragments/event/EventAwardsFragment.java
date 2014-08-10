@@ -106,7 +106,7 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " awards with team: "+mTeamKey);
+        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " awards with team: " + mTeamKey);
         mTask = new PopulateEventAwards(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey, mTeamKey);
     }

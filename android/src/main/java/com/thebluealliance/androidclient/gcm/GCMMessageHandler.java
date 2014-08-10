@@ -23,7 +23,7 @@ import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotifica
  */
 public class GCMMessageHandler extends IntentService {
 
-    public GCMMessageHandler(){
+    public GCMMessageHandler() {
         super("GCMMessageHandler");
     }
 
@@ -39,7 +39,7 @@ public class GCMMessageHandler extends IntentService {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
         String messageType = gcm.getMessageType(intent);
-        if(GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
+        if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
             // We got a standard message. Parse it and handle it.
             String type = extras.getString("message_type", "");
             String data = extras.getString("message_data", "");

@@ -50,7 +50,7 @@ public class GCMAuthHelper {
                     String gcmKey = AccountHelper.getGCMKey(context, driveClient);
 
                     boolean storeOnServer = GCMAuthHelper.sendRegistrationToBackend(context, regid, gcmKey);
-                    if(storeOnServer){
+                    if (storeOnServer) {
                         Log.d(Constants.LOG_TAG, "Storing user secret");
                         // we had success on the server. Now store locally
                         // Store the registration ID locally, so we don't have to do this again
@@ -74,7 +74,7 @@ public class GCMAuthHelper {
 
     public static boolean sendRegistrationToBackend(Context context, String gcmId, String gcmKey) {
         Log.i(Constants.LOG_TAG, "Registering gcmId " + gcmId);
-        Log.i(Constants.LOG_TAG, "Using secret: "+gcmKey);
+        Log.i(Constants.LOG_TAG, "Using secret: " + gcmKey);
         JsonObject requestParams = new JsonObject();
         requestParams.addProperty(PROPERTY_GCM_REG_ID, gcmId);
         requestParams.addProperty(PROPERTY_GCM_KEY, gcmKey);
@@ -84,7 +84,7 @@ public class GCMAuthHelper {
 
         String endpoint = TBAv2.getGCMEndpoint(context, TBAv2.GCM_ENDPOINT.REGISTER);
         HttpResponse response = HTTP.postRequest(endpoint, headers, requestParams);
-        Log.d(Constants.LOG_TAG, "Result code from registration request: "+response.getStatusLine().getStatusCode());
+        Log.d(Constants.LOG_TAG, "Result code from registration request: " + response.getStatusLine().getStatusCode());
         Log.d(Constants.LOG_TAG, HTTP.dataFromResponse(response));
         // TODO check for error and do exponential backoff
 

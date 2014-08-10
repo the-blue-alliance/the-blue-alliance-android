@@ -36,7 +36,7 @@ public class DriveHelper {
 
     public static void writeUserSecretToDrive(String secret, GoogleApiClient apiClient) {
         DriveFile currentFile = lookupUserDataFile(apiClient);
-        if(currentFile == null){
+        if (currentFile == null) {
             // no file currently exists. Create it
             JsonObject data = new JsonObject();
             data.addProperty(USER_SECRET, secret);
@@ -46,7 +46,7 @@ public class DriveHelper {
                 Log.e(Constants.LOG_TAG, "Unable to write to drive file");
                 e.printStackTrace();
             }
-        }else{
+        } else {
             JsonObject currentData;
             try {
                 currentData = loadFromCloud(currentFile, apiClient);
@@ -68,11 +68,11 @@ public class DriveHelper {
 
     public static String getUserSecret(GoogleApiClient apiClient) throws IOException {
         DriveFile userFile = lookupUserDataFile(apiClient);
-        if(userFile == null){
+        if (userFile == null) {
             return null;
         }
         JsonObject data = loadFromCloud(userFile, apiClient);
-        if(data == null || !data.has(USER_SECRET)){
+        if (data == null || !data.has(USER_SECRET)) {
             return null;
         }
         return data.get(USER_SECRET).getAsString();
@@ -127,9 +127,9 @@ public class DriveHelper {
         DriveFolder appDataFolder = Drive.DriveApi.getAppFolder(apiClient);
         MetadataBuffer buffer = appDataFolder.listChildren(apiClient).await().getMetadataBuffer();
         Metadata foundFile = null;
-        Log.d(Constants.LOG_TAG, "Found "+buffer.getCount()+" files");
-        for(Metadata file: buffer){
-            if(file.getTitle().equals(USERDATA_FILENAME)){
+        Log.d(Constants.LOG_TAG, "Found " + buffer.getCount() + " files");
+        for (Metadata file : buffer) {
+            if (file.getTitle().equals(USERDATA_FILENAME)) {
                 foundFile = file;
             }
         }

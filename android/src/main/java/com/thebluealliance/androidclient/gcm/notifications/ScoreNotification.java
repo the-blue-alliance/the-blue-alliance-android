@@ -14,12 +14,7 @@ import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Match;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 
@@ -122,11 +117,11 @@ public class ScoreNotification extends BaseNotification {
                 // Blue tied
                 notificationString = String.format(r.getString(R.string.notification_score_teams_tied), eventName, Utilities.stringifyListOfStrings(context, blueTeams), matchTitle, scoreString);
             }
-        }  else if ((blueTeams.size() > 0 && redTeams.size() > 0)) {
+        } else if ((blueTeams.size() > 0 && redTeams.size() > 0)) {
             // The user cares about teams on both alliances
             if (blueScore > redScore) {
                 // Blue won
-                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, Utilities.stringifyListOfStrings(context, blueTeams), Utilities.stringifyListOfStrings(context, redTeams),matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, Utilities.stringifyListOfStrings(context, blueTeams), Utilities.stringifyListOfStrings(context, redTeams), matchTitle, scoreString);
             } else if (blueScore < redScore) {
                 // Blue lost
                 notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, Utilities.stringifyListOfStrings(context, redTeams), Utilities.stringifyListOfStrings(context, blueTeams), matchTitle, scoreString);

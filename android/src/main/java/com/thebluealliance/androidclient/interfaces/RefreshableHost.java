@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.interfaces;
 
-import java.io.Serializable;
-
 /**
  * File created by phil on 7/20/14.
  */
@@ -14,8 +12,11 @@ public interface RefreshableHost {
      */
 
     public void registerRefreshableActivityListener(RefreshListener listener);
+
     public void deregisterRefreshableActivityListener(RefreshListener listener);
+
     public void notifyRefreshComplete(RefreshListener completedListener);
+
     public void startRefresh(RefreshListener listener);
 
 }
