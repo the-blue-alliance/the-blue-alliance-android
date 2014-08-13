@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 
 import java.util.Arrays;
 
@@ -50,6 +51,9 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
         } else {
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
+
+        String eventTeamKey = EventTeamHelper.generateKey(eventKey, teamKey);
+        setModelKey(eventTeamKey);
 
         pager = (ViewPager) findViewById(R.id.view_pager);
         adapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), teamKey, eventKey);

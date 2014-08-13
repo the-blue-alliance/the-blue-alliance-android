@@ -66,5 +66,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, Void> {
         listView.setAdapter(adapter);
 
         fragment.getView().findViewById(R.id.progress).setVisibility(View.GONE);
+
+        activity.notifyRefreshComplete(fragment);
     }
 }

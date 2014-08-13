@@ -47,7 +47,7 @@ public class GCMAuthHelper {
 
                     boolean storeOnServer = GCMAuthHelper.sendRegistrationToBackend(activity, regid);
                     if (storeOnServer) {
-                        Log.d(Constants.LOG_TAG, "Storing user secret");
+                        Log.d(Constants.LOG_TAG, "Storing registration ID");
                         // we had success on the server. Now store locally
                         // Store the registration ID locally, so we don't have to do this again
                         GCMAuthHelper.storeRegistrationId(activity, regid);
@@ -87,7 +87,7 @@ public class GCMAuthHelper {
 
         try {
             ModelsMobileApiMessagesBaseResponse response = service.register(request).execute();
-            if(response.getCode() == 200){
+            if(response.getCode() == 200 || response.getCode() == 304){
                 return true;
             }else{
                 Log.e(Constants.LOG_TAG, response.getCode()+":"+response.getMessage());

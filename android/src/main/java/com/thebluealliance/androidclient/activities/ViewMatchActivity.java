@@ -47,6 +47,7 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
 
+        setModelKey(mMatchKey);
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
         registerRefreshableActivityListener(this);

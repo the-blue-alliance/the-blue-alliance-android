@@ -77,6 +77,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
+        setModelKey(mTeamKey);
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
