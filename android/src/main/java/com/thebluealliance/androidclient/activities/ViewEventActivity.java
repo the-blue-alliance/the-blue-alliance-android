@@ -131,7 +131,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                 Utilities.showHelpDialog(this, R.raw.district_points_help, getString(R.string.district_points_help));
                 return true;
             case R.id.action_favorite:
-                new UserFavorite(this, getGoogleAPIClient(), item).execute(mEventKey);
+                new UserFavorite(this, item).execute(mEventKey);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

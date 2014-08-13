@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -16,34 +17,27 @@ import android.view.MenuItem;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.plus.Plus;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.AccountPicker;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
  * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
  */
-public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback {
 
-    private final int RESOLVE_CONNECTION_REQUEST = 12897;
-
+    private static final int ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION = 2222;
     String beamUri;
-
     boolean searchEnabled = true;
 
-    private GoogleApiClient googleAPIClient;
+    GoogleAccountCredential credential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,20 +47,15 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
-        createGoogleClient();
-
+        if (!AccountHelper.isAccountSelected(this)) {
+            signIn();
+        } else {
+            registerGCMIfNeeded();
+        }
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             // Register callback
             mNfcAdapter.setNdefPushMessageCallback(this, this);
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (googleAPIClient != null) {
-            googleAPIClient.connect();
         }
     }
 
@@ -112,24 +101,53 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         }
     }
 
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        switch (requestCode) {
-            case RESOLVE_CONNECTION_REQUEST:
-                if (resultCode == RESULT_OK && googleAPIClient != null) {
-                    googleAPIClient.connect();
-                }
-                break;
-        }
-    }
-
     protected void setSearchEnabled(boolean enabled) {
         searchEnabled = enabled;
         invalidateOptionsMenu();
     }
 
+    private void signIn(){
+        int googleAccounts = AccountHelper.countGoogleAccounts(this);
+        if (googleAccounts == 0) {
+            // No accounts registered, nothing to do.
+            Log.w(Constants.LOG_TAG, "No google accounts found.");
+        } else if (googleAccounts == 1) {
+            // If only one account then select it.
+            AccountManager am = AccountManager.get(this);
+            Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            if (accounts != null && accounts.length > 0) {
+                // Select account and perform authorization check.
+                AccountHelper.setSelectedAccount(this, accounts[0].name);
+            }
+        } else {
+            // More than one Google Account is present, a chooser is necessary.
+
+            // Invoke an {@code Intent} to allow the user to select a Google account.
+            Intent accountSelector = AccountPicker.newChooseAccountIntent(null, null,
+                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false,
+                    "Select the account to use with The Blue Alliance", null, null, null);
+            startActivityForResult(accountSelector,
+                    ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION && resultCode == RESULT_OK) {
+            // This path indicates the account selection activity resulted in the user selecting a
+            // Google account and clicking OK.
+
+            // Set the selected account.
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            AccountHelper.setSelectedAccount(this, accountName);
+            registerGCMIfNeeded();
+        }
+    }
+
     private void registerGCMIfNeeded() {
-        if (!GCMHelper.checkPlayServices(this)) {
+        if (!AccountHelper.checkGooglePlayServicesAvailable(this)) {
             Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
             return;
         }
@@ -137,70 +155,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         if (TextUtils.isEmpty(registrationId)) {
             // GCM has not yet been registered on this device
             Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
-            GCMAuthHelper.registerInBackground(this, googleAPIClient);
+            GCMAuthHelper.registerInBackground(this);
         }
     }
 
-    private void getAccountInfoIfNeeded() {
-        if (!GCMHelper.checkPlayServices(this)) {
-            Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
-            return;
-        }
-        final String accountId = AccountHelper.getCurrentAccountId(this);
-        if (accountId == null) {
-            // we don't have an account registered. Fix that.
-            AccountHelper.storeAccountId(this, googleAPIClient);
-        }
-    }
-
-    public GoogleApiClient getGoogleAPIClient() {
-        if (googleAPIClient == null) {
-            createGoogleClient();
-            googleAPIClient.connect();
-        }
-        return googleAPIClient;
-    }
-
-    private void createGoogleClient() {
-        if (googleAPIClient == null) {
-            googleAPIClient = new GoogleApiClient.Builder(this)
-                    .addApi(Drive.API)
-                    .addApi(Plus.API)
-                    .addScope(Drive.SCOPE_APPFOLDER)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addScope(Plus.SCOPE_PLUS_PROFILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Drive.DriveApi.requestSync(googleAPIClient).setResultCallback(this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                // Unable to resolve, message user appropriately
-            }
-        } else {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
-        }
-    }
-
-    @Override
-    public void onResult(Status status) {
-        getAccountInfoIfNeeded();
-        registerGCMIfNeeded();
-    }
 }

@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.drive.Drive;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
@@ -29,8 +28,6 @@ public class DevSettingsActivity extends PreferenceActivity {
     }
 
     public static class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
-        private GoogleApiClient driveClient;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -85,28 +82,15 @@ public class DevSettingsActivity extends PreferenceActivity {
             gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    createDriveClient();
+
                     return false;
                 }
             });
         }
 
-
-        void createDriveClient() {
-            if (driveClient == null) {
-                driveClient = new GoogleApiClient.Builder(getActivity())
-                        .addApi(Drive.API)
-                        .addScope(Drive.SCOPE_APPFOLDER)
-                        .addScope(Drive.SCOPE_FILE)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .build();
-            }
-        }
-
         @Override
         public void onConnected(Bundle bundle) {
-            GCMAuthHelper.registerInBackground(getActivity(), driveClient);
+            GCMAuthHelper.registerInBackground(getActivity());
         }
 
         @Override

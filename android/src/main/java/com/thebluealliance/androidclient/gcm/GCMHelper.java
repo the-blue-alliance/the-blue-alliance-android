@@ -1,14 +1,8 @@
 package com.thebluealliance.androidclient.gcm;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,40 +51,11 @@ public class GCMHelper {
         return GoogleCloudMessaging.getInstance(context);
     }
 
-    /**
-     * Check the device to make sure it has the Google Play Services APK. If
-     * it doesn't, display a dialog that allows users to download the APK from
-     * the Google Play Store or enable it in the device's system settings.
-     */
-    public static boolean checkPlayServices(Activity activity) {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(Constants.LOG_TAG, "This device is not supported.");
-                activity.finish();
-            }
-            return false;
-        }
-        return true;
-    }
-
     public static String getSenderId(Context c) {
         if (senderId == null) {
             senderId = Utilities.readLocalProperty(c, "gcm.senderId");
         }
         return senderId;
-    }
-
-    public static String requestChecksum(Context context, JsonObject data) {
-        String secret = Utilities.readLocalProperty(context, "gcm.registrationSecret");
-        String requestData = data.toString();
-        Log.d(Constants.LOG_TAG, "Hashing data: " + data.toString());
-        String hash = Utilities.sha256(secret + requestData);
-        Log.d(Constants.LOG_TAG, "calculated hash: " + hash);
-        return hash;
     }
 
 }

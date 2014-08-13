@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.mytba.PopulateUserFavorites;
@@ -27,7 +26,6 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 public class MyFavoritesFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
-    private GoogleApiClient apiClient;
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
@@ -45,9 +43,6 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
-        }
-        if (parent instanceof BaseActivity) {
-            apiClient = ((BaseActivity) parent).getGoogleAPIClient();
         }
     }
 
@@ -88,7 +83,7 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading user favorites");
-        mTask = new PopulateUserFavorites(this, apiClient, true);
+        mTask = new PopulateUserFavorites(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

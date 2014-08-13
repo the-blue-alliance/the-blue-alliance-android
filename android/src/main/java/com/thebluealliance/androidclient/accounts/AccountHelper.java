@@ -1,102 +1,133 @@
 package com.thebluealliance.androidclient.accounts;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
+import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * File created by phil on 7/28/14.
  */
 public class AccountHelper {
+    public static final String PREF_SELECTED_ACCOUNT = "selected_account";
 
-    private static final String PREF_ACTIVE_ACCOUNT = "chosen_account";
-    private static final String PREF_PLUS_ID = "plus_profile_id_%s";
-    private static final String PREF_PLUS_NAME = "plus_name_%s";
-    private static final String PREF_PLUS_PIC = "plus_image_url_%s";
-    private static final String PREF_PLUS_COVER_URL = "plus_cover_url_%s";
-    private static final String PREF_GCM_KEY = "gcm_key_%s";
 
-    public static void storeAccountId(Context context, GoogleApiClient client) {
-        Person current = Plus.PeopleApi.getCurrentPerson(client);
-        String id = current.getId(),
-                userName = current.getDisplayName(),
-                accountName = Plus.AccountApi.getAccountName(client),
-                userPicUrl = current.getImage().getUrl();
-        //coverUrl = current.getCover().getCoverPhoto().getUrl();
-        Log.d(Constants.LOG_TAG, "Got user id: " + id + "\n" + userName + "\n" + accountName + "\n" + userPicUrl);
-        setCurrentUser(context, accountName);
+    public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
+    public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+
+    public static void setSelectedAccount(Context context, String accoutName){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putString(String.format(PREF_PLUS_ID, accountName), id)
-                .putString(String.format(PREF_PLUS_NAME, accountName), userName)
-                .putString(String.format(PREF_PLUS_PIC, accountName), userPicUrl)
-                        //.putString(String.format(PREF_PLUS_COVER_URL, accountName), coverUrl)
-                .commit();
+        prefs.edit().putString(PREF_SELECTED_ACCOUNT, accoutName).apply();
     }
 
-    public static String getCurrentAccountId(Context context) {
-        String currentUser = getCurrentUser(context);
+    public static String getSelectedAccount(Context context){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(String.format(PREF_PLUS_ID, currentUser), null);
+        return prefs.getString(PREF_SELECTED_ACCOUNT, "");
     }
 
-    public static void setCurrentUser(Context context, String accountName) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_ACTIVE_ACCOUNT, accountName).commit();
+    public static boolean isAccountSelected(Context context){
+        return !getSelectedAccount(context).isEmpty();
     }
 
-    public static String getCurrentUser(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_ACTIVE_ACCOUNT, "");
-    }
-
-    public static String getGCMKey(Context context, GoogleApiClient driveClient) {
-        String currentUser = getCurrentUser(context);
-        if (TextUtils.isEmpty(currentUser)) {
-            Log.e(Constants.LOG_TAG, "No current user: can't get GCM Key");
+    public static GoogleAccountCredential getSelectedAccountCredential(Activity activity){
+        String accountName = getSelectedAccount(activity);
+        if(accountName == null || accountName.isEmpty()){
+            Log.w(Constants.LOG_TAG, "Can't get credential without selected account");
             return null;
         }
-        return getGCMKey(context, currentUser, driveClient);
+
+        GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(activity, getAudience(activity));
+        credential.setSelectedAccountName(accountName);
+
+        return credential;
     }
 
-    public static String getGCMKey(Context context, String accountName, GoogleApiClient driveClient) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String gcmKey = prefs.getString(String.format(PREF_GCM_KEY, accountName), null);
+    public static TbaMobile getTbaMobile(GoogleAccountCredential credential) {
+        TbaMobile.Builder tbaMobile = new TbaMobile.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential);
+        tbaMobile.setApplicationName("The Blue Alliance");
+        return tbaMobile.build();
+    }
 
-        //if we don't have a key stored in sharedPreferences, check the user's drive
-        if (gcmKey == null || gcmKey.isEmpty()) {
-            try {
-                gcmKey = DriveHelper.getUserSecret(driveClient);
-                if (gcmKey != null && !gcmKey.isEmpty()) {
-                    Log.d(Constants.LOG_TAG, "Read key from Drive: " + gcmKey);
-                    prefs.edit().putString(String.format(PREF_GCM_KEY, accountName), gcmKey).commit();
-                }
-            } catch (IOException e) {
-                Log.w(Constants.LOG_TAG, "Couldn't read user secret from drive");
+    public static String getWebClientId(Context context) {
+        return Utilities.readLocalProperty(context, "appspot.webClientId");
+    }
+
+    public static String getAndroidClientId(Context context) {
+        return Utilities.readLocalProperty(context, "appspot.androidClientId");
+    }
+
+    public static String getAudience(Context context) {
+        return "server:client_id:" + getWebClientId(context);
+    }
+
+    public static int countGoogleAccounts(Context context) {
+        AccountManager am = AccountManager.get(context);
+        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        if (accounts == null || accounts.length < 1) {
+            return 0;
+        } else {
+            return accounts.length;
+        }
+    }
+
+    public static boolean addFavorite(GoogleAccountCredential credential, String modelKey) {
+        TbaMobile service = AccountHelper.getTbaMobile(credential);
+        ModelsMobileApiMessagesFavoriteMessage request = new ModelsMobileApiMessagesFavoriteMessage();
+        request.setModelKey(modelKey);
+
+        try {
+            ModelsMobileApiMessagesBaseResponse response = service.favorites().add(request).execute();
+            if (response.getCode() == 200) {
+                return true;
+            } else {
+                Log.e(Constants.LOG_TAG, response.getMessage());
+                return false;
             }
+        } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "Error with API call.");
+            e.printStackTrace();
         }
-
-        // if there is no current GCM key, generate a new random one
-        if (gcmKey == null || gcmKey.isEmpty()) {
-            gcmKey = UUID.randomUUID().toString();
-            Log.d(Constants.LOG_TAG, "No GCM key on account " + accountName + ". Generating random one.");
-            setGcmKey(context, accountName, gcmKey, driveClient);
-        }
-
-        return gcmKey;
+        return false;
     }
 
-    public static void setGcmKey(Context context, String accountName, String gcmKey, GoogleApiClient driveClient) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putString(String.format(PREF_GCM_KEY, accountName), gcmKey).commit();
-        DriveHelper.writeUserSecretToDrive(gcmKey, driveClient);
-        Log.d(Constants.LOG_TAG, "Created secret GCM key for account " + accountName);
+    public static boolean checkGooglePlayServicesAvailable(Activity activity) {
+        final int connectionStatusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
+        if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(activity, connectionStatusCode);
+            return false;
+        }
+        return true;
+    }
+
+    public static void showGooglePlayServicesAvailabilityErrorDialog(final Activity activity,
+                                                                     final int connectionStatusCode) {
+        final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
+                        connectionStatusCode, activity, REQUEST_GOOGLE_PLAY_SERVICES);
+                dialog.show();
+            }
+        });
     }
 }
