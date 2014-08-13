@@ -184,7 +184,7 @@ public class Database extends SQLiteOpenHelper {
     private Districts districtsTable;
     private DistrictTeams districtTeamsTable;
     private Favorites favoritesTable;
-    private Subscription subscriptionsTable;
+    private Subscriptions subscriptionsTable;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -198,6 +198,8 @@ public class Database extends SQLiteOpenHelper {
         eventTeamsTable = new EventTeams();
         districtsTable = new Districts();
         districtTeamsTable = new DistrictTeams();
+        favoritesTable = new Favorites();
+        subscriptionsTable = new Subscriptions();
         responseTable = new Response();
         mSemaphore = new Semaphore(1);
     }
@@ -253,7 +255,7 @@ public class Database extends SQLiteOpenHelper {
         return favoritesTable;
     }
 
-    public Subscription getSubscriptionsTable() {
+    public Subscriptions getSubscriptionsTable() {
         return subscriptionsTable;
     }
 
@@ -1381,6 +1383,10 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public void remove(String key){
+            safeDelete(TABLE_FAVORITES, KEY + " = ?", new String[]{key});
+        }
+
         public boolean exists(String key){
             Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
@@ -1416,19 +1422,8 @@ public class Database extends SQLiteOpenHelper {
             return favorites;
         }
 
-        public void recreate(){
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                db.beginTransaction();
-                db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITES);
-                db.execSQL(CREATE_FAVORITES);
-                db.setTransactionSuccessful();
-                db.endTransaction();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        public void recreate(String user){
+            safeDelete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user});
         }
     }
 
@@ -1486,6 +1481,10 @@ public class Database extends SQLiteOpenHelper {
             return result;
         }
 
+        public void remove(String key){
+            safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key});
+        }
+
         public ArrayList<Subscription> getForUser(String user){
             Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, null, null);
             ArrayList<Subscription> subscriptions = new ArrayList<>();
@@ -1497,19 +1496,8 @@ public class Database extends SQLiteOpenHelper {
             return subscriptions;
         }
 
-        public void recreate(){
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                db.beginTransaction();
-                db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBSCRIPTIONS);
-                db.execSQL(TABLE_SUBSCRIPTIONS);
-                db.setTransactionSuccessful();
-                db.endTransaction();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        public void recreate(String user){
+            safeDelete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
         }
     }
 

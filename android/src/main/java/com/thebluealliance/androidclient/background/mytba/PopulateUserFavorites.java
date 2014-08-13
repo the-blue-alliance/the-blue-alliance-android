@@ -1,25 +1,20 @@
 package com.thebluealliance.androidclient.background.mytba;
 
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
-import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.mytba.MyFavoritesFragment;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.Favorite;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * File created by phil on 8/2/14.
@@ -50,22 +45,13 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        // TODO need to associate a data model with this, eventually
-        // (e.g. store favorites locally. Don't forget multi account support)
 
         favorites = new ArrayList<>();
-        TbaMobile service = AccountHelper.getAuthedTbaMobile(activity);
-        try {
-            ModelsMobileApiMessagesFavoriteCollection favoriteCollection = service.favorites().list().execute();
-            List<ModelsMobileApiMessagesFavoriteMessage> collection = favoriteCollection.getFavorites();
-            if(collection != null) {
-                for (ModelsMobileApiMessagesFavoriteMessage favorite : collection) {
-                    favorites.add(new LabelValueListItem("", favorite.getModelKey()));
-                }
+        ArrayList<Favorite> collection = Database.getInstance(activity).getFavoritesTable().getForUser(AccountHelper.getSelectedAccount(activity));
+        if (collection != null) {
+            for (Favorite favorite : collection) {
+                favorites.add(new LabelValueListItem(favorite.getModelKey(), ""));
             }
-        } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "IO Exception fetching favorites");
-            e.printStackTrace();
         }
 
         return null;
