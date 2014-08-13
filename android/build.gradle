@@ -89,8 +89,8 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile ([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
     compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
     compile 'com.android.support:support-v13:19.+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
@@ -101,4 +101,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.+'
+    compile files('libs/tbaMobile-v4-1.19.0-SNAPSHOT.jar')
 }
