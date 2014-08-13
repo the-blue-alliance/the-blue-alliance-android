@@ -13,7 +13,7 @@ public class TBAAndroid extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v"+BuildConfig.VERSION_NAME);
+        Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
     }
 
     public Tracker getTracker(Analytics.GAnalyticsTracker tracker) {

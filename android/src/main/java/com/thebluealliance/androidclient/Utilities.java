@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -24,6 +25,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -248,8 +252,83 @@ public class Utilities {
         return "";
     }
 
-    public static boolean isDebuggable(){
+    public static boolean isDebuggable() {
         return BuildConfig.DEBUG;
+    }
+
+    /**
+     * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware serial number</a>
+     * I hope this actually works universally, android UUIDs are irritatingly difficult
+     *
+     * @return UUID
+     */
+    public static String getUUID() {
+        return Build.SERIAL;
+    }
+
+    /**
+     * Utility method to create a comma separated list of strings. Useful when you have a list of things
+     * that you want to express in a human-readable list, e.g. teams in a match.
+     * <p/>
+     * If the length of the list is 1, this method will return the input string verbatim.
+     * <p/>
+     * If the length of the list is 2, the returned string will be formatted like "XXXX and YYYY".
+     * <p/>
+     * If the length of the list is 3 or more, the returned string will be formatted like "XXXX, YYYY, and ZZZZ".
+     * <p/>
+     * This uses a localized "and" string.
+     */
+    public static String stringifyListOfStrings(Context context, ArrayList<String> strings) {
+        String finalString = "";
+        Resources r = context.getResources();
+        int size = strings.size();
+        if (size == 0) {
+            finalString = "";
+        } else if (size == 1) {
+            finalString = strings.get(0);
+        } else if (size == 2) {
+            finalString = strings.get(0) + " " + r.getString(R.string.and) + " " + strings.get(1);
+            // e.g. "111 and 1114"
+        } else if (size > 2) {
+            finalString += strings.get(0);
+            for (int i = 1; i < size; i++) {
+                if (i < size - 1) {
+                    finalString += ", " + strings.get(i);
+                } else {
+                    finalString += ", " + r.getString(R.string.and) + " " + strings.get(i);
+                }
+            }
+            // e.g. "111, 1114, and 254
+        }
+        return finalString;
+    }
+
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    private static String bytesToHexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        String output = new String(hexChars);
+        return output.toLowerCase();
+    }
+
+    public static String sha256(String input) {
+        MessageDigest digest = null;
+        String hash = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+            digest.update(input.getBytes());
+
+            hash = bytesToHexString(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(Constants.LOG_TAG, "Can't find SHA-256 algorithm.");
+            e.printStackTrace();
+        }
+        return hash;
     }
 
 }

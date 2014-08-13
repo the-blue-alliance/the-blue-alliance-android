@@ -29,7 +29,7 @@ import com.thebluealliance.androidclient.helpers.TeamHelper;
 public class TeamAtDistrictActivity extends RefreshableHostActivity {
 
     public static final String DISTRICT_KEY = "districtKey",
-        TEAM_KEY = "teamKey";
+            TEAM_KEY = "teamKey";
 
     private String districtKey, teamKey;
     private TextView warningMessage;
@@ -50,7 +50,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_KEY)) {
             districtKey = getIntent().getExtras().getString(DISTRICT_KEY, "");
-            if(!DistrictHelper.validateDistrictKey(districtKey)){
+            if (!DistrictHelper.validateDistrictKey(districtKey)) {
                 throw new IllegalArgumentException("Invalid district key");
             }
         } else {
@@ -58,7 +58,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         }
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_KEY)) {
             teamKey = getIntent().getExtras().getString(TEAM_KEY, "");
-            if(!TeamHelper.validateTeamKey(teamKey)){
+            if (!TeamHelper.validateTeamKey(teamKey)) {
                 throw new IllegalArgumentException("Invalid team key");
             }
         } else {
@@ -96,7 +96,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
 
     private void setupActionBar() {
         ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             setActionBarTitle("");
         }
@@ -119,7 +119,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
                 startActivity(ViewDistrictActivity.newInstance(this, districtKey));
                 return true;
             case R.id.action_view_team:
-                int year = Integer.parseInt(districtKey.substring(0,4));
+                int year = Integer.parseInt(districtKey.substring(0, 4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
                 return true;
             case android.R.id.home:

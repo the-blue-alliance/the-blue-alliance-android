@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFrag
 /**
  * Created by phil on 7/10/14.
  */
-public class ViewDistrictFragmentPagerAdapter extends FragmentPagerAdapter{
+public class ViewDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public final String[] TITLES = {"Events", "Standings"};
 
@@ -20,10 +20,11 @@ public class ViewDistrictFragmentPagerAdapter extends FragmentPagerAdapter{
         super(fm);
         mDistrictKey = districtKey;
     }
+
     @Override
     public Fragment getItem(int position) {
         Fragment f;
-        switch (position){
+        switch (position) {
             default:
             case 0:
                 f = DistrictEventsFragment.newInstance(mDistrictKey);

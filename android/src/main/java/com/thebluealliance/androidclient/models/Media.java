@@ -20,8 +20,6 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.net.ssl.CertPathTrustManagerParameters;
-
 
 public class Media extends BasicModel<Media> {
 
@@ -138,7 +136,7 @@ public class Media extends BasicModel<Media> {
             if (mediaType == TYPE.CD_PHOTO_THREAD) {
                 JsonObject details = getDetails();
                 imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
-            } else if(mediaType == TYPE.YOUTUBE){
+            } else if (mediaType == TYPE.YOUTUBE) {
                 imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
             } else {
                 imageUrl = "";

@@ -15,7 +15,8 @@
     <string name="changelog">View Changelog</string>
     <string name="contributors">Contributors</string>
     <string name="contributors_summary">View a list of people who contributed to this project</string>
-    <string name="dev_settings">Debug Settings</string>
+    <string name="dev_settings">Debug Settings</string>\
+
 
     <!-- Debug Settings Screen -->
     <string name="pref_header_debug">Debug Preferences</string>
@@ -29,6 +30,10 @@
     <string name="pref_tba_host">TBA Host</string>
     <string name="pref_tba_host_detail">Web address of another TBA instance that the app will use</string>
 
+    <string name="pref_test_upcoming_match_notification">Test upcoming match notification</string>
+    <string name="pref_test_score_notification">Test score notification</string>
+
+    <string name="pref_register_gcm">Re-register with GCM</string>
     <string name="pref_redownload_data">Redownload data</string>
     <string name="pref_redownload_data_detail">Returns to Launch Activity for data download</string>
 </resources>

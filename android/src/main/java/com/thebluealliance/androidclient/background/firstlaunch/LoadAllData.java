@@ -45,18 +45,18 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             throw new IllegalArgumentException("callbacks must not be null!");
         }
 
-        Log.d(Constants.LOG_TAG, "Input: "+Arrays.deepToString(params));
+        Log.d(Constants.LOG_TAG, "Input: " + Arrays.deepToString(params));
 
         Short[] dataToLoad;
-        if(params == null || params.length < 1 ){
+        if (params == null || params.length < 1) {
             dataToLoad = new Short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS,
-                                 LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS,
-                                 LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS};
-        }else{
+                    LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS,
+                    LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS};
+        } else {
             dataToLoad = params;
         }
 
-        Log.d(Constants.LOG_TAG, "Loading: "+Arrays.deepToString(dataToLoad));
+        Log.d(Constants.LOG_TAG, "Loading: " + Arrays.deepToString(dataToLoad));
 
         /* We need to download and cache every team and event into the database. To avoid
          * unexpected behavior caused by changes in network connectivity, we will load all
@@ -70,7 +70,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             ArrayList<District> districts = new ArrayList<>();
             int maxPageNum = 0;
 
-            if(Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS) != -1) {
                 // First we will load all the teams
                 for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
                     if (isCancelled()) {
@@ -95,7 +95,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 }
             }
 
-            if(Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS) != -1) {
                 // Now we load all events
                 for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                     if (isCancelled()) {
@@ -119,7 +119,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 }
             }
 
-            if(Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS) != -1) {
                 //load all districts
                 for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                     if (isCancelled()) {
@@ -129,7 +129,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     APIResponse<String> districtListResponse;
                     String url = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.DISTRICT_LIST), year);
                     districtListResponse = TBAv2.getResponseFromURLOrThrow(context, url, true, false);
-                    if(districtListResponse.getData() == null){
+                    if (districtListResponse.getData() == null) {
                         continue;
                     }
                     JsonElement responseObject = JSONManager.getParser().parse(districtListResponse.getData());
@@ -144,7 +144,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 }
             }
 
-            if(isCancelled()) {
+            if (isCancelled()) {
                 return null;
             }
             // If no exception has been thrown at this point, we have all the data. We can now
@@ -166,7 +166,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 editor.putBoolean(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             // Loop through years for districts
-            for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++){
+            for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                 editor.putBoolean(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.putInt(LaunchActivity.APP_VERSION_KEY, BuildConfig.VERSION_CODE);

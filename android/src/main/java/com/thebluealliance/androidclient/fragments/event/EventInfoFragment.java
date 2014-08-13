@@ -159,7 +159,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
     }
 
-    protected void showLastMatch(MatchListElement match){
+    protected void showLastMatch(MatchListElement match) {
         LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_last_match_container);
         lastLayout.setVisibility(View.VISIBLE);
         if (lastLayout.getChildCount() > 1) {
@@ -168,7 +168,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
     }
 
-    protected void showNextMatch(MatchListElement match){
+    protected void showNextMatch(MatchListElement match) {
         LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
         lastLayout.setVisibility(View.VISIBLE);
         if (lastLayout.getChildCount() > 1) {
@@ -177,20 +177,20 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
     }
 
-    class LiveEventBroadcastReceiver extends BroadcastReceiver{
+    class LiveEventBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(Constants.LOG_TAG, "Received live event broadcast");
-            if(intent.getAction().equals(LiveEventBroadcast.ACTION)){
-                if(intent.hasExtra(LiveEventBroadcast.LAST_MATCH)){
+            if (intent.getAction().equals(LiveEventBroadcast.ACTION)) {
+                if (intent.hasExtra(LiveEventBroadcast.LAST_MATCH)) {
                     Log.d(Constants.LOG_TAG, "showing last match");
-                    MatchListElement last = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.LAST_MATCH);
+                    MatchListElement last = (MatchListElement) intent.getSerializableExtra(LiveEventBroadcast.LAST_MATCH);
                     showLastMatch(last);
                 }
-                if(intent.hasExtra(LiveEventBroadcast.NEXT_MATCH)){
+                if (intent.hasExtra(LiveEventBroadcast.NEXT_MATCH)) {
                     Log.d(Constants.LOG_TAG, "showing next match");
-                    MatchListElement next = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.NEXT_MATCH);
+                    MatchListElement next = (MatchListElement) intent.getSerializableExtra(LiveEventBroadcast.NEXT_MATCH);
                     showNextMatch(next);
                 }
             }

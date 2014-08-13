@@ -56,7 +56,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(activity != null) {
+        if (activity != null) {
             activity.showMenuProgressBar();
         }
     }
@@ -150,13 +150,13 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 return APIResponse.CODE.NODATA;
             }
 
-            if(event.isHappeningNow()){
+            if (event.isHappeningNow()) {
                 //send out that there are live matches happening for other things to pick up
                 LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(activity);
-                if(broadcastManager != null) {
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: "+eventKey);
+                if (broadcastManager != null) {
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
                     broadcastManager.sendBroadcast(new LiveEventBroadcast(nextMatch, lastMatch));
-                }else{
+                } else {
                     Log.w(Constants.LOG_TAG, "Unable to get LocalBroadcastManager. Can't send live event broadcast.");
                 }
             }
@@ -193,9 +193,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
             // only show the message when try try and actually load data from the web
-            if ( code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups.isEmpty())) {
+            if (code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups.isEmpty())) {
                 noDataText.setVisibility(View.VISIBLE);
-                noDataText.setText(teamKey.isEmpty()?R.string.no_match_data:R.string.no_team_match_data);
+                noDataText.setText(teamKey.isEmpty() ? R.string.no_match_data : R.string.no_team_match_data);
             } else {
                 noDataText.setVisibility(View.GONE);
                 ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
@@ -204,7 +204,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 results.setAdapter(adapter);
                 results.onRestoreInstanceState(state);
                 results.setSelection(firstVisiblePosition);
-                if(groups.size() == 1){
+                if (groups.size() == 1) {
                     results.expandGroup(0);
                 }
                 adapter.notifyDataSetChanged();

@@ -23,7 +23,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * Created by phil on 7/23/14.
  */
-public class DistrictListFragment extends Fragment implements RefreshListener{
+public class DistrictListFragment extends Fragment implements RefreshListener {
 
     public static final String YEAR = "year";
 
@@ -34,7 +34,7 @@ public class DistrictListFragment extends Fragment implements RefreshListener{
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    public static DistrictListFragment newInstance(int year){
+    public static DistrictListFragment newInstance(int year) {
         DistrictListFragment f = new DistrictListFragment();
         Bundle args = new Bundle();
         args.putInt(YEAR, year);

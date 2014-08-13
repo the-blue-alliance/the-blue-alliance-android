@@ -33,7 +33,7 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    public static TeamAtDistrictSummaryFragment newInstance(String teamKey, String districtKey){
+    public static TeamAtDistrictSummaryFragment newInstance(String teamKey, String districtKey) {
         TeamAtDistrictSummaryFragment f = new TeamAtDistrictSummaryFragment();
         Bundle args = new Bundle();
         args.putString(TEAM, teamKey);
@@ -98,7 +98,7 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
 
     @Override
     public void onRefreshStart() {
-        Log.d(Constants.REFRESH_LOG, "Loading summary for "+teamKey + " at "+districtKey);
+        Log.d(Constants.REFRESH_LOG, "Loading summary for " + teamKey + " at " + districtKey);
         mTask = new PopulateTeamAtDistrictSummary(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, districtKey);
     }

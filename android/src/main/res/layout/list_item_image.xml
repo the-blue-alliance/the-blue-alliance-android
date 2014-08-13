@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:duplicateParentState="true"
-        android:foreground="?android:attr/selectableItemBackground" >
+        android:foreground="?android:attr/selectableItemBackground">
 
         <ImageView
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_youtube"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </FrameLayout>
 

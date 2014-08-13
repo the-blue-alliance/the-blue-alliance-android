@@ -98,7 +98,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onPause() {
         super.onPause();
-        if(task != null){
+        if (task != null) {
             task.cancel(false);
         }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
@@ -155,14 +155,14 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         parent.deregisterRefreshableActivityListener(this);
     }
 
-    public void showCurrentEvent(EventListElement event){
-        LinearLayout eventLayout = (LinearLayout)getView().findViewById(R.id.team_current_event);
+    public void showCurrentEvent(EventListElement event) {
+        LinearLayout eventLayout = (LinearLayout) getView().findViewById(R.id.team_current_event);
         eventLayout.removeAllViews();
         eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
 
         RelativeLayout container = (RelativeLayout) getView().findViewById(R.id.team_current_event_container);
-        container.setVisibility(View.VISIBLE); 
-        container.setTag(mTeamKey+"@"+event.getEventKey());
+        container.setVisibility(View.VISIBLE);
+        container.setTag(mTeamKey + "@" + event.getEventKey());
         container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
     }
 
@@ -171,14 +171,14 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         parent.notifyRefreshComplete(this);
     }
 
-    class LiveEventBroadcastReceiver extends BroadcastReceiver{
+    class LiveEventBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(Constants.LOG_TAG, "Received live event broadcast");
-            if(intent.getAction().equals(LiveEventBroadcast.ACTION)){
-                if(intent.hasExtra(LiveEventBroadcast.EVENT)){
-                    EventListElement event = (EventListElement)intent.getSerializableExtra(LiveEventBroadcast.EVENT);
+            if (intent.getAction().equals(LiveEventBroadcast.ACTION)) {
+                if (intent.hasExtra(LiveEventBroadcast.EVENT)) {
+                    EventListElement event = (EventListElement) intent.getSerializableExtra(LiveEventBroadcast.EVENT);
                     showCurrentEvent(event);
                 }
             }

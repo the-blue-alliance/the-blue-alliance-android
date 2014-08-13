@@ -18,12 +18,12 @@ public class AwardHelper {
 
     public static boolean validateAwardKey(String key) {
         String[] split = key.split(":");
-        return  split.length == 2 &&
+        return split.length == 2 &&
                 EventHelper.validateEventKey(split[0]) &&
                 Utilities.isInteger(split[1]);
     }
 
-    public static String createAwardKey(String eventKey, int awardEnum){
-        return eventKey + ":"+awardEnum;
+    public static String createAwardKey(String eventKey, int awardEnum) {
+        return eventKey + ":" + awardEnum;
     }
 }

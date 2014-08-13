@@ -11,21 +11,21 @@ import com.thebluealliance.androidclient.models.DistrictTeam;
  */
 public class DistrictTeamHelper {
 
-    public static boolean validateDistrictTeamKey(String key){
+    public static boolean validateDistrictTeamKey(String key) {
         String districtKey = key.split("_")[0];
         String teamKey = key.split("_")[1];
         return TeamHelper.validateTeamKey(teamKey) && DistrictHelper.validateDistrictKey(districtKey);
     }
 
-    public static String getDistrictKey(String districtTeamKey){
+    public static String getDistrictKey(String districtTeamKey) {
         return districtTeamKey.split("_")[0];
     }
 
-    public static String generateKey(String teamKey, String districtKey){
+    public static String generateKey(String teamKey, String districtKey) {
         return districtKey + "_" + teamKey;
     }
 
-    public static void addFieldsFromKey(DistrictTeam districtTeam, String key){
+    public static void addFieldsFromKey(DistrictTeam districtTeam, String key) {
         String districtKey = key.split("_")[0];
         String dtKey;
         try {
@@ -35,12 +35,12 @@ public class DistrictTeamHelper {
             districtTeam.setYear(Integer.parseInt(districtKey.substring(0, 4)));
             districtTeam.setDistrictKey(districtKey);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to add fields from "+key+". DistrictTeam missing fields");
+            Log.e(Constants.LOG_TAG, "Unable to add fields from " + key + ". DistrictTeam missing fields");
         }
 
     }
 
-    public static void addFieldsFromAPIUrl(DistrictTeam districtTeam, String teamKey, String url){
+    public static void addFieldsFromAPIUrl(DistrictTeam districtTeam, String teamKey, String url) {
         // http://www.thebluealliance.com/api/v2/district/ne/2014/rankings
         //   0  1            2             3  4     5      6  7     8
 

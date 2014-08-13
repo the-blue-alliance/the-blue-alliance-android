@@ -22,7 +22,7 @@ import com.thebluealliance.androidclient.views.ExpandableListView;
 /**
  * File created by phil on 7/26/14.
  */
-public class TeamAtDistrictBreakdownFragment extends Fragment implements RefreshListener{
+public class TeamAtDistrictBreakdownFragment extends Fragment implements RefreshListener {
 
     public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 
@@ -33,7 +33,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     private ExpandableListAdapter mAdapter;
     private ExpandableListView mListView;
 
-    public static TeamAtDistrictBreakdownFragment newInstance(String teamKey, String districtKey){
+    public static TeamAtDistrictBreakdownFragment newInstance(String teamKey, String districtKey) {
         TeamAtDistrictBreakdownFragment f = new TeamAtDistrictBreakdownFragment();
         Bundle args = new Bundle();
         args.putString(TEAM, teamKey);
@@ -97,7 +97,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
 
     @Override
     public void onRefreshStart() {
-        Log.d(Constants.REFRESH_LOG, "Loading breakdown for "+teamKey + " at "+districtKey);
+        Log.d(Constants.REFRESH_LOG, "Loading breakdown for " + teamKey + " at " + districtKey);
         mTask = new PopulateTeamAtDistrictBreakdown(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, districtKey);
     }

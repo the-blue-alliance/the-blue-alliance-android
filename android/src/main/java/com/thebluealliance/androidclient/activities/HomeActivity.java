@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.Calendar;
@@ -74,7 +75,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         }
 
         districtsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_DISTRICT_YEAR + 1];
-        for (int i=0; i < districtsDropdownItems.length; i++){
+        for (int i = 0; i < districtsDropdownItems.length; i++) {
             districtsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
         }
 
@@ -152,6 +153,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             case R.id.nav_item_insights:
                 fragment = new InsightsFragment();
                 break;
+            case R.id.nav_item_my_tba:
+                fragment = new MyTBAFragment();
+                break;
             case R.id.nav_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
@@ -164,7 +168,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
     private void resetActionBar() {
         ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             bar.setDisplayShowCustomEnabled(false);
             bar.setDisplayShowTitleEnabled(true);
@@ -190,6 +194,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 case R.id.nav_item_insights:
                     getActionBar().setTitle("Insights");
                     break;
+                case R.id.nav_item_my_tba:
+                    getActionBar().setTitle("My TBA");
+                    break;
             }
         }
 
@@ -198,7 +205,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
     private void setupActionBarForEvents() {
         ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             bar.setDisplayShowTitleEnabled(false);
 
             ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_events, R.id.year, eventsDropdownItems);
@@ -207,23 +214,25 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             bar.setListNavigationCallbacks(actionBarAdapter, this);
             bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
         }
+
     }
 
-    private void setupActionBarForDistricts(){
+    private void setupActionBarForDistricts() {
         ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             bar.setDisplayShowTitleEnabled(false);
 
             ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_districts, R.id.year, districtsDropdownItems);
             actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             bar.setListNavigationCallbacks(actionBarAdapter, this);
-            if(mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < districtsDropdownItems.length) {
+            if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < districtsDropdownItems.length) {
                 bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
-            }else{
+            } else {
                 bar.setSelectedNavigationItem(0);
             }
         }
+
     }
 
     @Override
@@ -240,9 +249,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         int selectedYear = Constants.MAX_COMP_YEAR - position;
         Log.d(Constants.LOG_TAG, "year selected: " + selectedYear);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support);
-        if(mCurrentSelectedNavigationItemId == R.id.nav_item_events) {
+        if (mCurrentSelectedNavigationItemId == R.id.nav_item_events) {
             transaction = transaction.replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
-        }else if(mCurrentSelectedNavigationItemId == R.id.nav_item_districts){
+        } else if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts) {
             transaction = transaction.replace(R.id.container, DistrictListFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
         }
         transaction.commit();

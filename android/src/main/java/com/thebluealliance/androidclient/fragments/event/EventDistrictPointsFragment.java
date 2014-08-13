@@ -25,7 +25,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * File created by phil on 7/26/14.
  */
-public class EventDistrictPointsFragment extends Fragment implements RefreshListener{
+public class EventDistrictPointsFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
@@ -119,9 +119,9 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
         mTask = newTask;
     }
 
-    public void updateDistrict(boolean isDistrict){
+    public void updateDistrict(boolean isDistrict) {
         this.isDistrict = isDistrict;
-        if(parent instanceof ViewEventActivity){
+        if (parent instanceof ViewEventActivity) {
             Log.d(Constants.LOG_TAG, "updating status");
             ((ViewEventActivity) parent).updateDistrict(isDistrict);
         }

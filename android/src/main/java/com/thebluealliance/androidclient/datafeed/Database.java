@@ -266,7 +266,7 @@ public class Database extends SQLiteOpenHelper {
                     //add districts tables
                     db.execSQL(CREATE_DISTRICTS);
                     db.execSQL(CREATE_DISTRICTTEAMS);
-                    db.execSQL("ALTER TABLE "+TABLE_EVENTS+" ADD COLUMN "+ Events.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                    db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.DISTRICT_POINTS + " TEXT DEFAULT '' ");
                     break;
             }
             upgradeTo++;

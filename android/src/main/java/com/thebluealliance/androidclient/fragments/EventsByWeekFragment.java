@@ -45,9 +45,9 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
             // Default to the current year if no year is provided in the arguments
             mYear = getArguments().getInt(YEAR, currentYear);
         }
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             selectedTab = savedInstanceState.getInt(TAB, -1);
-        }else {
+        } else {
             selectedTab = -1;
         }
     }
@@ -55,7 +55,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if(pagerAdapter != null){
+        if (pagerAdapter != null) {
             pagerAdapter.notifyDataSetChanged();
         }
     }
@@ -77,11 +77,11 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(mViewPager != null){
+        if (mViewPager != null) {
             pagerState = mViewPager.onSaveInstanceState();
             selectedTab = mViewPager.getCurrentItem();
         }
-        if(pagerAdapter != null){
+        if (pagerAdapter != null) {
             adapterState = pagerAdapter.saveState();
         }
     }
@@ -89,37 +89,37 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mViewPager != null) {
+        if (mViewPager != null) {
             outState.putInt(TAB, mViewPager.getCurrentItem());
         }
     }
 
     @Override
     public void onRefreshStart() {
-        if(mViewPager != null && mViewPager.getCurrentItem() != 0){
+        if (mViewPager != null && mViewPager.getCurrentItem() != 0) {
             selectedTab = mViewPager.getCurrentItem();
         }
         task = new BuildEventWeekTabs(this);
         task.execute(mYear);
     }
 
-    public void updateLabels(ArrayList<String> labels){
+    public void updateLabels(ArrayList<String> labels) {
         getView().findViewById(R.id.tabs_progress).setVisibility(View.GONE);
         pagerAdapter = new EventsByWeekFragmentPagerAdapter(this, getChildFragmentManager(), mYear, mTabs, mViewPager, labels);
         mViewPager.setAdapter(pagerAdapter);
         mTabs.setViewPager(mViewPager);
-        if(pagerState != null){
+        if (pagerState != null) {
             mViewPager.onRestoreInstanceState(pagerState);
             pagerAdapter.restoreState(adapterState, ClassLoader.getSystemClassLoader());
-        }else{
+        } else {
             setPagerWeek();
         }
-        if(selectedTab != -1){
+        if (selectedTab != -1) {
             mViewPager.setCurrentItem(selectedTab);
         }
     }
 
-    private void setPagerWeek(){
+    private void setPagerWeek() {
         int currentWeek = Utilities.getCurrentCompWeek();
         int currentYear = Utilities.getCurrentYear();
         //set the currently selected tab to the current week or week 1
@@ -140,7 +140,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
 
     @Override
     public void onRefreshStop() {
-        if(task != null){
+        if (task != null) {
             task.cancel(false);
         }
     }

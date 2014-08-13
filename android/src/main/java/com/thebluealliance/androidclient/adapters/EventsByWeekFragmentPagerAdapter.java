@@ -17,7 +17,7 @@ import java.util.Date;
 /**
  * Created by Nathan on 4/22/2014.
  */
-public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter{
+public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int mCount;
     private int mYear;
@@ -26,7 +26,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter{
     private RefreshableHostFragment parent;
 
 
-    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, PagerSlidingTabStrip tabs, ViewPager pager, ArrayList<String> labels){
+    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, PagerSlidingTabStrip tabs, ViewPager pager, ArrayList<String> labels) {
         this(fragment, fm, year, tabs, pager);
         thisYearsWeekLabels = labels;
         mCount = labels.size();

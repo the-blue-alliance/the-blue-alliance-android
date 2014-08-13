@@ -61,7 +61,7 @@ public class ImageListElement extends ListElement {
                 t.send(new HitBuilders.EventBuilder()
                         .setCategory("media_click")
                         .setAction(linkUrl)
-                        .setLabel(isVideo?"video":"cd_photo")
+                        .setLabel(isVideo ? "video" : "cd_photo")
                         .build());
 
                 c.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(linkUrl)));

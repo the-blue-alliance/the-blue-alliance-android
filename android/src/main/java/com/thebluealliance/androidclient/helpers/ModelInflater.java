@@ -253,10 +253,10 @@ public class ModelInflater {
         return eventTeam;
     }
 
-    public static District inflateDistrict(Cursor data){
+    public static District inflateDistrict(Cursor data) {
         District district = new District();
-        for (int i = 0; i < data.getColumnCount(); i++){
-            switch (data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Districts.KEY:
                     district.setKey(data.getString(i));
                     break;
@@ -275,10 +275,10 @@ public class ModelInflater {
         return district;
     }
 
-    public static DistrictTeam inflateDistrictTeam(Cursor data){
+    public static DistrictTeam inflateDistrictTeam(Cursor data) {
         DistrictTeam districtTeam = new DistrictTeam();
-        for (int i = 0; i < data.getColumnCount(); i++){
-            switch (data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.DistrictTeams.KEY:
                     districtTeam.setKey(data.getString(i));
                     break;

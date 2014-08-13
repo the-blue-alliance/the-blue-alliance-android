@@ -33,7 +33,7 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     private ListView mListView;
     private PopulateDistrictRankings mTask;
 
-    public static DistrictRankingsFragment newInstance(String key){
+    public static DistrictRankingsFragment newInstance(String key) {
         DistrictRankingsFragment f = new DistrictRankingsFragment();
         Bundle args = new Bundle();
         args.putString(KEY, key);
@@ -46,7 +46,7 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
         super.onCreate(savedInstanceState);
 
         mParent = getActivity();
-        if(getArguments() == null || !getArguments().containsKey(KEY)){
+        if (getArguments() == null || !getArguments().containsKey(KEY)) {
             throw new IllegalArgumentException("DistrictRankingsFragment must be constructed with district key");
         }
         mKey = getArguments().getString(KEY);
@@ -72,7 +72,7 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     @Override
     public void onPause() {
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -84,7 +84,7 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(mParent != null && mParent instanceof RefreshableHostActivity) {
+        if (mParent != null && mParent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) mParent).startRefresh(this);
         }
     }
@@ -103,15 +103,15 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
         }
     }
 
-    public void updateTask(PopulateDistrictRankings task){
+    public void updateTask(PopulateDistrictRankings task) {
         mTask = task;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)mParent).deregisterRefreshableActivityListener(this);
+        if (mParent != null && mParent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
         }
     }
 }

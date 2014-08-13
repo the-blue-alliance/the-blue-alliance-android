@@ -246,11 +246,11 @@ public class Event extends BasicModel<Event> {
     }
 
     public JsonObject getDistrictPoints() throws FieldNotDefinedException {
-        if(districtPoints != null){
+        if (districtPoints != null) {
             return districtPoints;
         }
         if (fields.containsKey(Database.Events.DISTRICT_POINTS) && fields.get(Database.Events.DISTRICT_POINTS) instanceof String) {
-            districtPoints = JSONManager.getasJsonObject ((String) fields.get(Database.Events.DISTRICT_POINTS));
+            districtPoints = JSONManager.getasJsonObject((String) fields.get(Database.Events.DISTRICT_POINTS));
             return districtPoints;
         }
         throw new FieldNotDefinedException("Field Database.Events.DISTRICT_POINTS is not defined");

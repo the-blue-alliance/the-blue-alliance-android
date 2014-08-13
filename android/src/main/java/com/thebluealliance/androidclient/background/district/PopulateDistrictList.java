@@ -25,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by phil on 7/24/14.
  */
-public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.CODE>{
+public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.CODE> {
 
     private boolean forceFromCache;
     private DistrictListFragment fragment;
@@ -33,7 +33,7 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
     private int year;
     private ArrayList<ListItem> districts;
 
-    public PopulateDistrictList(DistrictListFragment fragment, boolean forceFromCache){
+    public PopulateDistrictList(DistrictListFragment fragment, boolean forceFromCache) {
         this.forceFromCache = forceFromCache;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
@@ -52,14 +52,14 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
         try {
             APIResponse<ArrayList<District>> response = DataManager.Districts.getDistrictsInYear(activity, year, forceFromCache);
             districts = new ArrayList<>();
-            for(District district: response.getData()){
+            for (District district : response.getData()) {
                 int numEvents = DataManager.Districts.getNumEventsForDistrict(activity, district.getKey());
                 district.setNumEvents(numEvents);
                 districts.add(district.render());
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            Log.w(Constants.LOG_TAG, "Unable to get district list for "+year);
+            Log.w(Constants.LOG_TAG, "Unable to get district list for " + year);
             return APIResponse.CODE.NODATA;
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.wtf(Constants.LOG_TAG, "District has no key?");

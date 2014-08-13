@@ -92,7 +92,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                 return APIResponse.CODE.NODATA;
             }
 
-            if(event.isHappeningNow() && teamMatches != null) {
+            if (event.isHappeningNow() && teamMatches != null) {
                 nextMatch = MatchHelper.getNextMatchPlayed(teamMatches);
                 lastMatch = MatchHelper.getLastMatchPlayed(teamMatches);
             }
@@ -106,7 +106,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
         if (event != null) {
             eventShort = event.getShortName();
-            eventYear = eventKey.substring(0,4);
+            eventYear = eventKey.substring(0, 4);
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
             JsonArray alliances;
@@ -168,17 +168,17 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
             // Alliance
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
-                status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+                    status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_alliance), generateAllianceSummary(activity.getResources(), allianceNumber, alliancePick)));
             }
 
             // Status
             summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
 
-            if(lastMatch != null) {
+            if (lastMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_last_match), lastMatch.render()));
             }
-            if(nextMatch != null){
+            if (nextMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_next_match), nextMatch.render()));
             }
         }

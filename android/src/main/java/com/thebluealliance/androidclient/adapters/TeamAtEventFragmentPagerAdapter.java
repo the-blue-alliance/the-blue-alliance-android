@@ -18,7 +18,7 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private String teamKey, eventKey;
 
-    public TeamAtEventFragmentPagerAdapter(FragmentManager fm, String teamKey, String eventKey){
+    public TeamAtEventFragmentPagerAdapter(FragmentManager fm, String teamKey, String eventKey) {
         super(fm);
         this.teamKey = teamKey;
         this.eventKey = eventKey;
@@ -32,7 +32,7 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
-        switch (position){
+        switch (position) {
             default:
             case 0: //summary
                 fragment = TeamAtEventSummaryFragment.newInstance(teamKey, eventKey);

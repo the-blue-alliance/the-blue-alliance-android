@@ -82,7 +82,7 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
     @Override
     public void showWarningMessage(String message) {
-        if(warningMessage != null) {
+        if (warningMessage != null) {
             warningMessage.setText(message);
             warningMessage.setVisibility(View.VISIBLE);
         }
@@ -90,7 +90,7 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
     @Override
     public void hideWarningMessage() {
-        if(warningMessage != null) {
+        if (warningMessage != null) {
             warningMessage.setVisibility(View.GONE);
         }
     }
@@ -109,16 +109,16 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case android.R.id.home:
-                if(isDrawerOpen()) {
+                if (isDrawerOpen()) {
                     closeDrawer();
                     return true;
                 }
                 String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
                 Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    Log.d(Constants.LOG_TAG, "Navgating to new back stack with key " + eventKey);
+                    Log.d(Constants.LOG_TAG, "Navigating to new back stack with key " + eventKey);
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {

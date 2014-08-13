@@ -41,7 +41,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
     private String teamKey, districtKey;
     private ArrayList<ListItem> summaryItems;
 
-    public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, boolean forceFromCache){
+    public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, boolean forceFromCache) {
         this.forceFromCache = forceFromCache;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
@@ -55,16 +55,16 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
-        if(params.length != 2){
+        if (params.length != 2) {
             throw new IllegalArgumentException("PopulateTeamAtDistrictSummary must be constructed with team key & district key");
         }
         teamKey = params[0];
         districtKey = params[1];
 
-        if(!TeamHelper.validateTeamKey(teamKey)){
+        if (!TeamHelper.validateTeamKey(teamKey)) {
             throw new IllegalArgumentException("Invalid team key");
         }
-        if(!DistrictHelper.validateDistrictKey(districtKey)){
+        if (!DistrictHelper.validateDistrictKey(districtKey)) {
             throw new IllegalArgumentException("Invalid district key");
         }
 
@@ -77,7 +77,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
 
             try {
                 summaryItems.add(new LabelValueListItem(activity.getString(R.string.district_point_rank),
-                    team.getRank() + Utilities.getOrdinalFor(team.getRank())));
+                        team.getRank() + Utilities.getOrdinalFor(team.getRank())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get DistrictTeam rank");
             }
@@ -85,7 +85,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             try {
                 APIResponse<Event> event1Name = DataManager.Events.getEventBasic(activity, team.getEvent1Key(), forceFromCache);
                 summaryItems.add(new LabelValueDetailListItem(event1Name.getData().getEventName(),
-                        String.format(activity.getString(R.string.district_points_format), team.getEvent1Points()) ,
+                        String.format(activity.getString(R.string.district_points_format), team.getEvent1Points()),
                         EventTeamHelper.generateKey(team.getEvent1Key(), team.getTeamKey())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get Event 1 details");
@@ -94,7 +94,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             try {
                 APIResponse<Event> event2Name = DataManager.Events.getEventBasic(activity, team.getEvent2Key(), forceFromCache);
                 summaryItems.add(new LabelValueDetailListItem(event2Name.getData().getEventName(),
-                        String.format(activity.getString(R.string.district_points_format), team.getEvent2Points()) ,
+                        String.format(activity.getString(R.string.district_points_format), team.getEvent2Points()),
                         EventTeamHelper.generateKey(team.getEvent2Key(), team.getTeamKey())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get Event 2 details");
@@ -103,7 +103,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             try {
                 APIResponse<Event> cmpName = DataManager.Events.getEventBasic(activity, team.getCmpKey(), forceFromCache);
                 summaryItems.add(new LabelValueDetailListItem(cmpName.getData().getEventName(),
-                        String.format(activity.getString(R.string.district_points_format), team.getCmpPoints()) ,
+                        String.format(activity.getString(R.string.district_points_format), team.getCmpPoints()),
                         EventTeamHelper.generateKey(team.getCmpKey(), team.getTeamKey())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get CMP details");
@@ -118,7 +118,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
 
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            Log.e(Constants.LOG_TAG, "Unable to fetch DistrictTeam "+districtTeamKey);
+            Log.e(Constants.LOG_TAG, "Unable to fetch DistrictTeam " + districtTeamKey);
             e.printStackTrace();
             return APIResponse.CODE.NODATA;
         }

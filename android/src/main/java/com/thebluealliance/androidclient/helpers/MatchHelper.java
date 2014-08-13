@@ -7,7 +7,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -15,6 +14,8 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Support methods for dealing with Match models
@@ -190,7 +191,6 @@ public class MatchHelper {
         ListGroup quarterMatches = new ListGroup(c.getString(R.string.quarters_header));
         ListGroup semiMatches = new ListGroup(c.getString(R.string.semis_header));
         ListGroup finalMatches = new ListGroup(c.getString(R.string.finals_header));
-        MatchSortByPlayOrderComparator comparator = new MatchSortByPlayOrderComparator();
 
         ListGroup currentGroup = qualMatches;
         TYPE lastType = null;
@@ -252,7 +252,7 @@ public class MatchHelper {
      * Used if no alliance data available
      *
      * @param teamMatches team's match list for an event
-     * @param teamKey key associated with team
+     * @param teamKey     key associated with team
      * @return alliance number for team, or -1 if not on an alliance
      */
     public static int getAllianceForTeam(ArrayList<Match> teamMatches, String teamKey) {
@@ -309,9 +309,9 @@ public class MatchHelper {
     /**
      * Determines the past/current status of a team at an event.
      *
-     * @param e       the event the team is competing at
+     * @param e           the event the team is competing at
      * @param teamMatches team's match list
-     * @param teamKey key associated with team
+     * @param teamKey     key associated with team
      * @return team's past/current event status
      */
     public static EventStatus evaluateStatusOfTeam(Event e, ArrayList<Match> teamMatches, String teamKey) throws BasicModel.FieldNotDefinedException {
@@ -398,14 +398,14 @@ public class MatchHelper {
         Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
         Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty() ||
-           (allQualMatchesPlayed && !teamIsHere) ||
-           (!allQualMatchesPlayed && !e.isHappeningNow())) {
+                (allQualMatchesPlayed && !teamIsHere) ||
+                (!allQualMatchesPlayed && !e.isHappeningNow())) {
             return EventStatus.NOT_AVAILABLE;
         } else if ((allQualMatchesPlayed && !inAlliance) ||
                 (!e.isHappeningNow() &&
-                (quarterMatches.isEmpty() &&
-                semiMatches.isEmpty() &&
-                finalMatches.isEmpty()))) {
+                        (quarterMatches.isEmpty() &&
+                                semiMatches.isEmpty() &&
+                                finalMatches.isEmpty()))) {
             return EventStatus.NOT_PICKED;
         }
 
@@ -434,8 +434,7 @@ public class MatchHelper {
             } else {
                 return EventStatus.PLAYING_IN_QUARTERS;
             }
-        }
-        else {
+        } else {
             // We've already checked for not picked/no alliance data/etc above, so if the current group is empty,
             // then the team is likely playing the first match of quarters/semis/finals.
             return EventStatus.PLAYING_IN_QUARTERS;
@@ -498,6 +497,35 @@ public class MatchHelper {
             }
         } else {
             return EventStatus.PLAYING_IN_FINALS;
+        }
+    }
+
+    public static String getMatchTitleFromMatchKey(String matchKey) {
+        // match key comes in the form of (EVENTKEY)_(TYPE)(MATCHNUM)m(MATCHNUM)
+        // e.g. "2014ilch_f1m1"
+
+        // Strip out the event key
+        String keyWithoutEvent = matchKey.replaceAll(".*_", "");
+
+        Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)?");
+        Matcher m = regexPattern.matcher(keyWithoutEvent);
+        if (m.matches()) {
+
+            String set = null, number = null;
+            String type = m.group(1);
+            // If the match key looks like AA##, then the numbers correspond to the match number.
+            // Otherwise, if it looks like AA##m##, then the first group of numbers corresponds
+            // to the set number and the second group of numbers corresponds to the match number.
+            if (m.group(3) == null || m.group(3).isEmpty()) {
+                number = m.group(2);
+            } else {
+                set = m.group(2);
+                number = m.group(3);
+            }
+
+            return LONG_TYPES.get(TYPE.fromShortType(type)) + " " + number + (set == null ? "" : " Match " + set);
+        } else {
+            return "Could not find match title";
         }
     }
 }

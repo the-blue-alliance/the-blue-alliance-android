@@ -11,7 +11,7 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 /**
  * File created by phil on 7/26/14.
  */
-public class DistrictPointBreakdown implements RenderableModel{
+public class DistrictPointBreakdown implements RenderableModel {
 
     private int qualPoints, elimPoints, alliancePoints, awardPoints, totalPoints;
     private String teamKey, districtKey, teamName;
@@ -61,23 +61,23 @@ public class DistrictPointBreakdown implements RenderableModel{
         this.totalPoints = totalPoints;
     }
 
-    public RenderableModel renderQualPoints(Context c){
+    public RenderableModel renderQualPoints(Context c) {
         return new BreakdownItem(c.getString(R.string.district_qual_points), String.format(c.getString(R.string.district_points_format), qualPoints));
     }
 
-    public RenderableModel renderElimPoints(Context c){
+    public RenderableModel renderElimPoints(Context c) {
         return new BreakdownItem(c.getString(R.string.district_elim_points), String.format(c.getString(R.string.district_points_format), elimPoints));
     }
 
-    public RenderableModel renderAlliancePoints(Context c){
+    public RenderableModel renderAlliancePoints(Context c) {
         return new BreakdownItem(c.getString(R.string.district_alliance_points), String.format(c.getString(R.string.district_points_format), alliancePoints));
     }
 
-    public RenderableModel renderAwardPoints(Context c){
+    public RenderableModel renderAwardPoints(Context c) {
         return new BreakdownItem(c.getString(R.string.district_award_points), String.format(c.getString(R.string.district_points_format), awardPoints));
     }
 
-    public RenderableModel renderTotalPoints(Context c){
+    public RenderableModel renderTotalPoints(Context c) {
         return new BreakdownItem(c.getString(R.string.total_district_points), String.format(c.getString(R.string.district_points_format), totalPoints));
     }
 
@@ -118,11 +118,11 @@ public class DistrictPointBreakdown implements RenderableModel{
         return new DistrictTeamListElement(teamKey, districtKey, teamName, rank, totalPoints);
     }
 
-    private class BreakdownItem implements RenderableModel{
+    private class BreakdownItem implements RenderableModel {
 
         private String key, value;
 
-        public BreakdownItem(String key, String value){
+        public BreakdownItem(String key, String value) {
             this.key = key;
             this.value = value;
         }

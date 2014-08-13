@@ -371,18 +371,18 @@ public class DataManager {
             String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.DISTRICT_POINTS};
             APIResponse<Event> eventResponse = Event.query(c, eventKey, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
-                if(teamKey.isEmpty()) {
+                if (teamKey.isEmpty()) {
                     //we want all the event's points
-                    if(eventResponse.getData().getDistrictPoints().has("points")) {
+                    if (eventResponse.getData().getDistrictPoints().has("points")) {
                         return new APIResponse<>(eventResponse.getData().getDistrictPoints().get("points").getAsJsonObject(), eventResponse.getCode());
-                    }else{
+                    } else {
                         return new APIResponse<>(new JsonObject(), eventResponse.getCode());
                     }
-                }else{
+                } else {
                     //we want a single team's points at this event
-                    if(eventResponse.getData().getDistrictPoints().has("points")) {
+                    if (eventResponse.getData().getDistrictPoints().has("points")) {
                         return new APIResponse<>(DistrictHelper.findPointsForTeam(eventResponse.getData().getDistrictPoints().getAsJsonObject(), teamKey), eventResponse.getCode());
-                    }else{
+                    } else {
                         return new APIResponse<>(new JsonObject(), eventResponse.getCode());
                     }
                 }

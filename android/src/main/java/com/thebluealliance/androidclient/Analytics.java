@@ -20,7 +20,7 @@ public class Analytics {
 
     public static synchronized Tracker getTracker(GAnalyticsTracker trackerId, Context c) {
         if (!mTrackers.containsKey(trackerId)) {
-            if(analytics == null) {
+            if (analytics == null) {
                 analytics = GoogleAnalytics.getInstance(c);
                 boolean dryRun;
 
@@ -34,14 +34,14 @@ public class Analytics {
             }
 
             String id;
-            if(Utilities.isDebuggable()){
+            if (Utilities.isDebuggable()) {
                 boolean useDebugKey = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("analytics_debug_key", true);
                 id = Utilities.readLocalProperty(c, useDebugKey ? DEBUG_ANALYTICS_KEY : PROD_ANALYTICS_KEY);
-            }else{
+            } else {
                 id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
             }
             Tracker t;
-            Log.d("GAV4", "Loaded analytics id: "+id);
+            Log.d("GAV4", "Loaded analytics id: " + id);
             t = analytics.newTracker(id);
             t.enableAutoActivityTracking(true);
             t.enableExceptionReporting(true);
@@ -50,15 +50,15 @@ public class Analytics {
         return mTrackers.get(trackerId);
     }
 
-    public static void setAnalyticsDryRun(Context c, boolean dryRun){
-        if(analytics == null) {
+    public static void setAnalyticsDryRun(Context c, boolean dryRun) {
+        if (analytics == null) {
             analytics = GoogleAnalytics.getInstance(c);
             analytics.setDryRun(dryRun);
             Log.d("GAV4", "Setting analytics dry run? " + dryRun);
         }
     }
 
-    public enum GAnalyticsTracker{
+    public enum GAnalyticsTracker {
         ANDROID_TRACKER;    // main tracker. We can add others in the future, if we need
     }
 }

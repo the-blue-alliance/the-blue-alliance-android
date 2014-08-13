@@ -43,7 +43,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         return intent;
     }
 
-    public static Intent newInstance(Context c, String districtKey){
+    public static Intent newInstance(Context c, String districtKey) {
         int year = Integer.parseInt(districtKey.substring(0, 4));
         String abbrev = districtKey.substring(4);
         Intent intent = new Intent(c, ViewDistrictActivity.class);
@@ -102,7 +102,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
 
     private void setupActionBar() {
         ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             setActionBarTitle(String.format(getString(R.string.district_title_format), year, DistrictHelper.districtTypeFromKey(districtKey).getName()));
         }
@@ -161,7 +161,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
 
     @Override
     public void onPageSelected(int position) {
-        if(mOptionsMenu != null) {
+        if (mOptionsMenu != null) {
             MenuItem pointsHelp = mOptionsMenu.findItem(R.id.points_help);
             if (position == 1) {
                 pointsHelp.setVisible(true);

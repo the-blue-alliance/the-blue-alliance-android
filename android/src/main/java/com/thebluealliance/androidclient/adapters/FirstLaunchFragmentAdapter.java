@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.R;
  */
 public class FirstLaunchFragmentAdapter extends PagerAdapter {
 
-    private int mCount = 3;
+    private int mCount = 4;
     private Activity activity;
 
     public FirstLaunchFragmentAdapter(Activity activity) {

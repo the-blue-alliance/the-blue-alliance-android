@@ -113,13 +113,13 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     private boolean checkDataRedownload() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int lastVersion = prefs.getInt(APP_VERSION_KEY, -1);
-        if(getIntent().getBooleanExtra(REDOWNLOAD, false)){
+        if (getIntent().getBooleanExtra(REDOWNLOAD, false)) {
             return true;
         }
 
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
-        if(!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+        if (!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
             SharedPreferences.Editor editor = prefs.edit();
             //we are updating the app. Do stuffs.
             while (lastVersion <= BuildConfig.VERSION_CODE) {
@@ -242,9 +242,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         try {
             // Show it
             alertDialog.show();
-        } catch (WindowManager.BadTokenException e){
+        } catch (WindowManager.BadTokenException e) {
             // Activity is already gone. Just log the exception
-            Log.e(Constants.LOG_TAG, "Error loading data: "+stacktrace);
+            Log.e(Constants.LOG_TAG, "Error loading data: " + stacktrace);
             e.printStackTrace();
         }
     }

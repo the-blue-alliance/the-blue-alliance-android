@@ -143,7 +143,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     private void setupActionBar() {
         ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             if (yearsParticipated != null) {
                 ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, yearsParticipated);

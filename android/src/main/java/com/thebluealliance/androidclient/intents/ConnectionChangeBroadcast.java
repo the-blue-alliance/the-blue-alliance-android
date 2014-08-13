@@ -13,7 +13,7 @@ public class ConnectionChangeBroadcast extends Intent {
 
     public static final String ACTION = "com.thebluealliance.androidclient.REFRESH";
 
-    public ConnectionChangeBroadcast(int connectionStatus){
+    public ConnectionChangeBroadcast(int connectionStatus) {
         super();
         setAction(ACTION);
         putExtra(CONNECTION_STATUS, connectionStatus);
