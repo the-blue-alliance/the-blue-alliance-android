@@ -32,6 +32,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
     private ViewPager pager;
     private TeamAtEventFragmentPagerAdapter adapter;
 
+    public static Intent newInstance(Context c, String eventTeamKey){
+        return newInstance(c, EventTeamHelper.getEventKey(eventTeamKey), EventTeamHelper.getTeamKey(eventTeamKey));
+    }
+
     public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
         intent.putExtra(EVENT, eventKey);

@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtDistrictFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 /**
@@ -35,6 +36,10 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
     private TextView warningMessage;
     private ViewPager pager;
     private TeamAtDistrictFragmentPagerAdapter adapter;
+
+    public static Intent newInstance(Context c, String teamAtDistrictKey){
+        return newInstance(c, DistrictTeamHelper.getTeamKey(teamAtDistrictKey), DistrictTeamHelper.getDistrictKey(teamAtDistrictKey));
+    }
 
     public static Intent newInstance(Context c, String teamKey, String districtKey) {
         Intent intent = new Intent(c, TeamAtDistrictActivity.class);

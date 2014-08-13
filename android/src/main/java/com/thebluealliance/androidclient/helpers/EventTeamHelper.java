@@ -22,6 +22,14 @@ public class EventTeamHelper {
         return eventKey + "_" + teamKey;
     }
 
+    public static String getEventKey(String eventTeamKey){
+        return eventTeamKey.split("_")[0];
+    }
+
+    public static String getTeamKey(String eventTeamKey){
+        return eventTeamKey.split("_")[1];
+    }
+
     public static boolean validateEventTeamKey(String key) {
         String[] split = key.split("_");
         return split.length == 2 &&

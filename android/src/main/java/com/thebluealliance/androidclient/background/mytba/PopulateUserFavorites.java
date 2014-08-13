@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.mytba.MyFavoritesFragment;
-import com.thebluealliance.androidclient.listitems.LabelValueListItem;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Favorite;
 
@@ -50,7 +50,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, Void> {
         ArrayList<Favorite> collection = Database.getInstance(activity).getFavoritesTable().getForUser(AccountHelper.getSelectedAccount(activity));
         if (collection != null) {
             for (Favorite favorite : collection) {
-                favorites.add(new LabelValueListItem(favorite.getModelKey(), ""));
+                favorites.add(ModelHelper.renderModelFromKey(activity, favorite.getModelKey()));
             }
         }
 

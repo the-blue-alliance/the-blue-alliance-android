@@ -21,6 +21,10 @@ public class DistrictTeamHelper {
         return districtTeamKey.split("_")[0];
     }
 
+    public static String getTeamKey(String districtTeamKey){
+        return districtTeamKey.split("_")[1];
+    }
+
     public static String generateKey(String teamKey, String districtKey) {
         return districtKey + "_" + teamKey;
     }
