@@ -170,7 +170,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 editor.putBoolean(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.putInt(LaunchActivity.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
-            editor.commit();
+            editor.apply();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
