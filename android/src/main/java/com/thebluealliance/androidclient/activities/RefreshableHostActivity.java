@@ -25,6 +25,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
     private RefreshBroadcastReceiver refreshListener;
+    private boolean mRefreshed = false;
 
     Menu mOptionsMenu;
 
@@ -69,6 +70,9 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         super.onResume();
         refreshListener = new RefreshBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(ConnectionChangeBroadcast.ACTION));
+        if(!mRefreshed){
+            startRefresh();
+        }
     }
 
     @Override
@@ -134,6 +138,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     protected void onRefreshComplete() {
         hideMenuProgressBar();
         mRefreshInProgress = false;
+        mRefreshed = true;
     }
 
     /*
