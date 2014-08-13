@@ -26,6 +26,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.AddRemoveUserFavorite;
+import com.thebluealliance.androidclient.accounts.AddRemoveUserSubscription;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.background.mytba.SetActionBarIcons;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
@@ -96,6 +97,11 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
             case R.id.action_favorite:
                 if(myTbaEnabled) {
                     new AddRemoveUserFavorite(this, item).execute(modelKey);
+                }
+                return true;
+            case R.id.action_subscribe:
+                if(myTbaEnabled){
+                    new AddRemoveUserSubscription(this, item).execute(modelKey);
                 }
                 return true;
         }

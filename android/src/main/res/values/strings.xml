@@ -110,6 +110,10 @@
     <string name="cd_header">Chief Delphi Photos</string>
     <string name="yt_header">YouTube Videos</string>
 
+    <!-- My TBA -->
+    <string name="no_favorite_data">No favorites found.</string>
+    <string name="no_subscription_data">No subscriptions found</string>
+
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
 
