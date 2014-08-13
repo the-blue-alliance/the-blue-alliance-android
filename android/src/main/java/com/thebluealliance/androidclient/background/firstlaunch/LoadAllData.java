@@ -105,15 +105,17 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     APIResponse<String> eventListResponse;
                     String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
                     eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, true, false);
-                    JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
-                    if (responseObject instanceof JsonObject) {
-                        if (((JsonObject) responseObject).has("404")) {
-                            // No events found for that year; skip it
-                            continue;
+                    if(eventListResponse.getCode() == APIResponse.CODE.WEBLOAD || eventListResponse.getCode() == APIResponse.CODE.UPDATED) {
+                        JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
+                        if (responseObject instanceof JsonObject) {
+                            if (((JsonObject) responseObject).has("404")) {
+                                // No events found for that year; skip it
+                                continue;
+                            }
                         }
+                        ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
+                        events.addAll(yearEvents);
                     }
-                    ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
-                    events.addAll(yearEvents);
                 }
             }
 

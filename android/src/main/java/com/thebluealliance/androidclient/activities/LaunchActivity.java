@@ -58,7 +58,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         Database.getInstance(this);
 
         Log.i(Constants.LOG_TAG, "All data loaded? " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false));
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false) && !checkDataRedownload()) {
+        boolean redownload = checkDataRedownload();
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false) && !redownload) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
@@ -100,6 +101,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         loadingMessage = (TextView) findViewById(R.id.message);
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
+        if(redownload){
+            ((TextView)findViewById(R.id.welcome_message)).setText(getString(R.string.update_message));
+        }
         loadFragment = (LoadAllDataTaskFragment) getFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
         if (loadFragment != null) {
             viewPager.setCurrentItem(1, false);
@@ -114,7 +118,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         }
 
         boolean redownload = false;
-        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE+" "+prefs.contains(APP_VERSION_KEY));
+        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
         if(!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
             SharedPreferences.Editor editor = prefs.edit();
             //we are updating the app. Do stuffs.
@@ -123,7 +127,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 switch (lastVersion) {
                     case 14: //addition of districts. Download the required data
                         redownload = true;
-                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS, LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
+                        getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
                         break;
                     default:
                         break;
@@ -355,6 +360,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     public static class LoadAllDataTaskFragment extends Fragment implements LoadAllData.LoadAllDataCallbacks {
 
         public static final String DATA_TO_LOAD = "data_to_load";
+        public static final String REDOWNLOAD = "redownload";
         public static final short LOAD_TEAMS = 0,
                 LOAD_EVENTS = 1,
                 LOAD_DISTRICTS = 2;
