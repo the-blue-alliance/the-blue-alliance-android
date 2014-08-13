@@ -9,8 +9,6 @@ import android.widget.Toast;
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 
@@ -38,17 +36,7 @@ public class UserFavorite extends AsyncTask<String, Void, Boolean> {
     @Override
     protected Boolean doInBackground(String... params) {
         String modelKey = params[0];
-        GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(activity);
-        try {
-            String token = currentCredential.getToken();
-        } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "IO Exception while fetching account token for " + currentCredential.getSelectedAccountName());
-            e.printStackTrace();
-        } catch (GoogleAuthException e) {
-            Log.e(Constants.LOG_TAG, "Auth exception while fetching token for "+currentCredential.getSelectedAccountName());
-            e.printStackTrace();
-        }
-        TbaMobile service = AccountHelper.getTbaMobile(currentCredential);
+        TbaMobile service = AccountHelper.getAuthedTbaMobile(activity);
         ModelsMobileApiMessagesFavoriteMessage request = new ModelsMobileApiMessagesFavoriteMessage();
         request.setModelKey(modelKey);
         try {

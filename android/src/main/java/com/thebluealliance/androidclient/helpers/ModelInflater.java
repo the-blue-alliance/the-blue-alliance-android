@@ -8,8 +8,10 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
+import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.Date;
@@ -328,5 +330,37 @@ public class ModelInflater {
             }
         }
         return districtTeam;
+    }
+
+    public static Favorite inflateFavorite(Cursor data){
+        Favorite favorite = new Favorite();
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case Database.Favorites.MODEL_KEY:
+                    favorite.setModelKey(data.getString(i));
+                    break;
+                case Database.Favorites.USER_NAME:
+                    favorite.setUserName(data.getString(i));
+                    break;
+                default:
+            }
+        }
+        return favorite;
+    }
+
+    public static Subscription inflateSubscription(Cursor data){
+        Subscription subscription = new Subscription();
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case Database.Subscriptions.MODEL_KEY:
+                    subscription.setModelKey(data.getString(i));
+                    break;
+                case Database.Subscriptions.USER_NAME:
+                    subscription.setUserName(data.getString(i));
+                    break;
+                default:
+            }
+        }
+        return subscription;
     }
 }

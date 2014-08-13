@@ -12,6 +12,7 @@ import android.util.Log;
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -48,14 +49,14 @@ public class AccountHelper {
         return !getSelectedAccount(context).isEmpty();
     }
 
-    public static GoogleAccountCredential getSelectedAccountCredential(Activity activity){
-        String accountName = getSelectedAccount(activity);
+    public static GoogleAccountCredential getSelectedAccountCredential(Context context){
+        String accountName = getSelectedAccount(context);
         if(accountName == null || accountName.isEmpty()){
             Log.w(Constants.LOG_TAG, "Can't get credential without selected account");
             return null;
         }
 
-        GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(activity, getAudience(activity));
+        GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(context, getAudience(context));
         credential.setSelectedAccountName(accountName);
 
         return credential;
@@ -65,6 +66,20 @@ public class AccountHelper {
         TbaMobile.Builder tbaMobile = new TbaMobile.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential);
         tbaMobile.setApplicationName("The Blue Alliance");
         return tbaMobile.build();
+    }
+
+    public static TbaMobile getAuthedTbaMobile(Context context){
+        GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
+        try {
+            String token = currentCredential.getToken();
+        } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "IO Exception while fetching account token for " + currentCredential.getSelectedAccountName());
+            e.printStackTrace();
+        } catch (GoogleAuthException e) {
+            Log.e(Constants.LOG_TAG, "Auth exception while fetching token for "+currentCredential.getSelectedAccountName());
+            e.printStackTrace();
+        }
+        return AccountHelper.getTbaMobile(currentCredential);
     }
 
     public static String getWebClientId(Context context) {
