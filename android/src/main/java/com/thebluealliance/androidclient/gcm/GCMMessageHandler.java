@@ -39,14 +39,15 @@ public class GCMMessageHandler extends IntentService {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
         String messageType = gcm.getMessageType(intent);
-        if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-            // We got a standard message. Parse it and handle it.
-            String type = extras.getString("message_type", "");
-            String data = extras.getString("message_data", "");
-            handleMessage(getApplicationContext(), type, data);
+        Log.d(Constants.LOG_TAG, "GCM Message type: " + messageType);
+        Log.d(Constants.LOG_TAG, "Intent extras: " + extras.toString());
 
-            Log.i(Constants.LOG_TAG, "Received : (" + type + ")  " + data);
-        }
+        // We got a standard message. Parse it and handle it.
+        String type = extras.getString("message_type", "");
+        String data = extras.getString("message_data", "");
+        handleMessage(getApplicationContext(), type, data);
+
+        Log.i(Constants.LOG_TAG, "Received : (" + type + ")  " + data);
 
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
@@ -54,9 +55,8 @@ public class GCMMessageHandler extends IntentService {
     public static void handleMessage(Context c, String messageType, String messageData) {
         NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
         JsonObject data = JSONManager.getParser().parse(messageData).getAsJsonObject();
-        String type = data.get("type").getAsString();
         try {
-            switch (type) {
+            switch (messageType) {
                 case "test":
                     Notification notification =
                             new NotificationCompat.Builder(c)
@@ -64,6 +64,10 @@ public class GCMMessageHandler extends IntentService {
                                     .setContentTitle(data.get("title").getAsString())
                                     .setContentText(data.get("desc").getAsString()).build();
                     notificationManager.notify(12, notification);
+                    break;
+                case "score_update":
+                    ScoreNotification sn = new ScoreNotification(data);
+                    notificationManager.notify(sn.getNotificationId(), sn.buildNotification(c));
                     break;
                 case "upcoming_match":
                     BaseNotification n = new UpcomingMatchNotification(messageData);

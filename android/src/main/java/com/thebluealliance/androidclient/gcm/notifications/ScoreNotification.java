@@ -31,6 +31,11 @@ public class ScoreNotification extends BaseNotification {
         jsonData = new JsonParser().parse(messageData).getAsJsonObject();
     }
 
+    public ScoreNotification(JsonObject data){
+        super("score", data.toString());
+        jsonData = data;
+    }
+
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
