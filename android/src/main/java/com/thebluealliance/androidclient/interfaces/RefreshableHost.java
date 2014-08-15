@@ -13,8 +13,8 @@ public interface RefreshableHost {
      * end up being declared as synchronized on implementation.
      */
 
-    public void registerRefreshableActivityListener(RefreshListener listener);
-    public void deregisterRefreshableActivityListener(RefreshListener listener);
+    public void registerRefreshListener(RefreshListener listener);
+    public void unregisterRefreshListener(RefreshListener listener);
     public void notifyRefreshComplete(RefreshListener completedListener);
     public void startRefresh(RefreshListener listener);
 

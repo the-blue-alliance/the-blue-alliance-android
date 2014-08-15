@@ -1,21 +1,17 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
+import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
 import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Nathan on 4/29/2014.
@@ -24,7 +20,6 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
-    private RefreshBroadcastReceiver refreshListener;
     private boolean mRefreshed = false;
 
     Menu mOptionsMenu;
@@ -70,8 +65,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     @Override
     protected void onResume() {
         super.onResume();
-        refreshListener = new RefreshBroadcastReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(ConnectionChangeBroadcast.ACTION));
+        EventBus.getDefault().register(this);
         if (!mRefreshed) {
             startRefresh();
         }
@@ -81,17 +75,16 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     protected void onPause() {
         super.onPause();
         cancelRefresh();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshListener);
-        refreshListener = null;
+        EventBus.getDefault().unregister(this);
     }
 
-    public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void registerRefreshListener(RefreshListener listener) {
         if (listener != null && !mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
     }
 
-    public synchronized void deregisterRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void unregisterRefreshListener(RefreshListener listener) {
         if (listener != null && mRefreshListeners.contains(listener)) {
             mRefreshListeners.remove(listener);
         }
@@ -169,6 +162,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             mRefreshListeners.add(listener);
         }
         listener.onRefreshStart();
+        setMenuProgressBarVisible(true);
     }
 
     /*
@@ -224,17 +218,12 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
 
     }
 
-    class RefreshBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
-            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_FOUND) {
-                hideWarningMessage();
-                startRefresh();
-            } else {
-                showWarningMessage(getString(R.string.warning_no_internet_connection));
-            }
+    public void onEvent(ConnectivityChangeEvent event) {
+        if (event.getConnectivityChangeType() == ConnectivityChangeEvent.CONNECTION_FOUND) {
+            hideWarningMessage();
+            startRefresh();
+        } else {
+            showWarningMessage(getString(R.string.warning_no_internet_connection));
         }
     }
 }

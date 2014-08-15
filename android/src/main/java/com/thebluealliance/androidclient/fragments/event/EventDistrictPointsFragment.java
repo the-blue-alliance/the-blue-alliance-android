@@ -56,7 +56,7 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
         isDistrict = true;
         setHasOptionsMenu(true);
@@ -130,6 +130,6 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

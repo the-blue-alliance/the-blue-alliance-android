@@ -57,7 +57,7 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
         parent = getActivity();
 
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -124,7 +124,7 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
 }

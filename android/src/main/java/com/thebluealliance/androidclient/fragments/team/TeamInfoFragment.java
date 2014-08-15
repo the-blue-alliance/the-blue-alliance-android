@@ -26,6 +26,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
+import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -45,7 +46,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     private String mTeamKey;
 
     private PopulateTeamInfo task;
-    private BroadcastReceiver receiver;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -68,7 +68,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
             parent = (ViewTeamActivity) getActivity();
         }
 
-        parent.registerRefreshableActivityListener(this);
+        parent.registerRefreshListener(this);
     }
 
     @Override
@@ -90,19 +90,11 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        receiver = new LiveEventBroadcastReceiver();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         if(task != null){
             task.cancel(false);
         }
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
         EventBus.getDefault().unregister(this);
     }
 
@@ -160,7 +152,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        parent.deregisterRefreshableActivityListener(this);
+        parent.unregisterRefreshListener(this);
     }
 
     public void showCurrentEvent(EventListElement event){
@@ -178,17 +170,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         parent.notifyRefreshComplete(this);
     }
 
-    class LiveEventBroadcastReceiver extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Constants.LOG_TAG, "Received live event broadcast");
-            if(intent.getAction().equals(LiveEventBroadcast.ACTION)){
-                if(intent.hasExtra(LiveEventBroadcast.EVENT)){
-                    EventListElement event = (EventListElement)intent.getSerializableExtra(LiveEventBroadcast.EVENT);
-                    showCurrentEvent(event);
-                }
-            }
+    public void onEvent(LiveEventEventUpdateEvent event) {
+        if(event.getEvent() != null) {
+            showCurrentEvent(event.getEvent().render());
         }
     }
 }

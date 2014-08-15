@@ -49,7 +49,7 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
-        registerRefreshableActivityListener(this);
+        registerRefreshListener(this);
 
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
 

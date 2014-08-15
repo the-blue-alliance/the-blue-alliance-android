@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,7 +27,6 @@ import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.util.regex.Matcher;
@@ -410,17 +407,6 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
             if (callback != null) {
                 callback.onProgressUpdate(info);
-            }
-        }
-    }
-
-    class RefreshBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
-            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_LOST) {
-                connectionLost();
             }
         }
     }

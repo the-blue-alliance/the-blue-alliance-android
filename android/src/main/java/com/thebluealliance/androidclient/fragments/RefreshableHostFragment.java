@@ -3,9 +3,7 @@ package com.thebluealliance.androidclient.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
@@ -39,7 +37,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
     @Override
@@ -48,13 +46,13 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         cancelRefresh();
     }
 
-    public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void registerRefreshListener(RefreshListener listener) {
         if (listener != null && !mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
     }
 
-    public synchronized void deregisterRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void unregisterRefreshListener(RefreshListener listener) {
         if (listener != null && mRefreshListeners.contains(listener)) {
             mRefreshListeners.remove(listener);
         }

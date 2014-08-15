@@ -63,7 +63,7 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
             parent = (ViewTeamActivity) getActivity();
         }
 
-        parent.registerRefreshableActivityListener(this);
+        parent.registerRefreshListener(this);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        parent.deregisterRefreshableActivityListener(this);
+        parent.unregisterRefreshListener(this);
     }
 
     public void onEvent(YearChangedEvent event) {
