@@ -17,15 +17,18 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by Nathan on 6/20/2014.
  */
-public class TeamEventsFragment extends Fragment implements RefreshListener, OnYearChangedListener {
+public class TeamEventsFragment extends Fragment implements RefreshListener {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
@@ -62,7 +65,6 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
         }
 
         parent.registerRefreshableActivityListener(this);
-        parent.addOnYearChangedListener(this);
     }
 
     @Override
@@ -105,6 +107,13 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -131,12 +140,10 @@ public class TeamEventsFragment extends Fragment implements RefreshListener, OnY
     public void onDestroy() {
         super.onDestroy();
         parent.deregisterRefreshableActivityListener(this);
-        parent.removeOnYearChangedListener(this);
     }
 
-    @Override
-    public void onYearChanged(int newYear) {
-        mYear = newYear;
+    public void onEvent(YearChangedEvent event) {
+        mYear = event.getYear();
         onRefreshStart();
     }
 }

@@ -21,10 +21,13 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * File created by nathan on 4/21/14.
@@ -49,9 +52,6 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     private int mYear;
 
     private ViewPager pager;
-
-    // List of objects to notify when the year is changed
-    private ArrayList<OnYearChangedListener> yearChangedListeners = new ArrayList<>();
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
@@ -171,7 +171,8 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
         setupActionBar();
 
-        notifyOnYearChangedListeners(Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition]));
+        // Notify anyone that cares that the year changed
+        EventBus.getDefault().post(new YearChangedEvent(Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition])));
     }
 
     @Override
@@ -211,7 +212,7 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         mCurrentSelectedYearPosition = position;
         mYear = Integer.valueOf(yearsParticipated[mCurrentSelectedYearPosition]);
 
-        notifyOnYearChangedListeners(mYear);
+        EventBus.getDefault().post(new YearChangedEvent(mYear));
 
         setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
 
@@ -231,25 +232,6 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     public void onPageScrollStateChanged(int state) {
 
-    }
-
-    public void addOnYearChangedListener(OnYearChangedListener listener) {
-        if (!yearChangedListeners.contains(listener)) {
-            yearChangedListeners.add(listener);
-        }
-    }
-
-    public void removeOnYearChangedListener(OnYearChangedListener listener) {
-        if (yearChangedListeners.contains(listener)) {
-            yearChangedListeners.remove(listener);
-        }
-    }
-
-    private void notifyOnYearChangedListeners(int newYear) {
-        Log.d(Constants.LOG_TAG, "notifying year changed");
-        for (OnYearChangedListener listener : yearChangedListeners) {
-            listener.onYearChanged(newYear);
-        }
     }
 
     public int getCurrentSelectedYearPosition() {

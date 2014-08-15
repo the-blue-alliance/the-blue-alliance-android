@@ -13,13 +13,16 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
+import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * File created by phil on 5/31/14.
  */
-public class TeamMediaFragment extends Fragment implements RefreshListener, OnYearChangedListener {
+public class TeamMediaFragment extends Fragment implements RefreshListener {
 
     private ViewTeamActivity parent;
 
@@ -55,12 +58,23 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
         }
 
         parent.registerRefreshableActivityListener(this);
-        parent.addOnYearChangedListener(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_team_media, container, false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -96,12 +110,10 @@ public class TeamMediaFragment extends Fragment implements RefreshListener, OnYe
     public void onDestroy() {
         super.onDestroy();
         parent.deregisterRefreshableActivityListener(this);
-        parent.removeOnYearChangedListener(this);
     }
 
-    @Override
-    public void onYearChanged(int newYear) {
-        year = newYear;
+    public void onEvent(YearChangedEvent event) {
+        year = event.getYear();
         onRefreshStop();
         parent.startRefresh(this);
     }
