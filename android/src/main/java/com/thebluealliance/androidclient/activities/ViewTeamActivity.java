@@ -22,9 +22,7 @@ import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import de.greenrobot.event.EventBus;

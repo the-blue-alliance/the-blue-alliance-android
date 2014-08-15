@@ -36,11 +36,12 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private RefreshableHost host;
     private boolean forceFromCache;
 
-    private PopulateEventList(Fragment fragment, boolean forceFromCache){
+    private PopulateEventList(Fragment fragment, boolean forceFromCache) {
         mFragment = fragment;
         this.forceFromCache = forceFromCache;
     }
-    public PopulateEventList(Fragment fragment, String districtKey, boolean forceFromCache){
+
+    public PopulateEventList(Fragment fragment, String districtKey, boolean forceFromCache) {
         this(fragment, forceFromCache);
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.host = activity;
@@ -49,6 +50,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         mYear = -1;
         mDistrictKey = districtKey;
     }
+
     public PopulateEventList(Fragment fragment, int year, String weekHeader, String teamKey, boolean forceFromCache) {
         this(fragment, forceFromCache);
         mYear = year;
@@ -58,6 +60,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         this.host = activity;
         mDistrictKey = null;
     }
+
     public PopulateEventList(Fragment fragment, RefreshableHost host, int year, String weekHeader, String teamKey, boolean forceFromCache) {
         this(fragment, forceFromCache);
         mYear = year;
@@ -67,6 +70,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         activity = (RefreshableHostActivity) mFragment.getActivity();
         mDistrictKey = null;
     }
+
     private PopulateEventList(Fragment fragment, RefreshableHost host, int year, String weekHeader, String teamKey, String districtKey, boolean forceFromCache) {
         this(fragment, forceFromCache);
         mYear = year;
@@ -102,7 +106,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
         if (mYear != -1 && mWeek == -1 && mTeamKey == null) {
             // Return a list of all events for a year
-        }else if(mYear == -1 && mDistrictKey != null) {
+        } else if (mYear == -1 && mDistrictKey != null) {
             // return a list of all events in a given district in a year
             try {
                 response = DataManager.Events.getEventsInDistrict(mFragment.getActivity(), mDistrictKey, forceFromCache);
@@ -118,11 +122,11 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 return response.getCode();
 
             } catch (DataManager.NoDataException e) {
-                Log.w(Constants.LOG_TAG, "Unable to find events in district "+mDistrictKey);
+                Log.w(Constants.LOG_TAG, "Unable to find events in district " + mDistrictKey);
                 e.printStackTrace();
             }
 
-        }else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
+        } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
                 response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
@@ -189,7 +193,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 activity.showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
             }
 
-            if(mHeader != null && !mHeader.equals("") || mTeamKey != null || mDistrictKey != null) {
+            if (mHeader != null && !mHeader.equals("") || mTeamKey != null || mDistrictKey != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
                 view.findViewById(R.id.list).setVisibility(View.VISIBLE);
             }

@@ -31,6 +31,8 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
 
     private boolean mRefreshInProgress = false;
 
+    private boolean mProgressBarShowing = false;
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         mOptionsMenu = menu;
@@ -43,7 +45,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
         if (mRefreshInProgress) {
-            showMenuProgressBar();
+            setMenuProgressBarVisible(true);
         }
         return true;
     }
@@ -70,7 +72,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         super.onResume();
         refreshListener = new RefreshBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(ConnectionChangeBroadcast.ACTION));
-        if(!mRefreshed){
+        if (!mRefreshed) {
             startRefresh();
         }
     }
@@ -136,7 +138,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     call super.onRefreshComplete() to ensure proper behavior.
      */
     protected void onRefreshComplete() {
-        hideMenuProgressBar();
+        setMenuProgressBarVisible(false);
         mRefreshInProgress = false;
         mRefreshed = true;
     }
@@ -156,7 +158,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart();
         }
-        showMenuProgressBar();
+        setMenuProgressBarVisible(true);
     }
 
     /*
@@ -177,7 +179,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             listener.onRefreshStop();
         }
         mRefreshInProgress = false;
-        hideMenuProgressBar();
+        setMenuProgressBarVisible(false);
     }
 
     /*
@@ -191,23 +193,35 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             listener.onRefreshStart();
         }
         mRefreshInProgress = true;
-        showMenuProgressBar();
+        setMenuProgressBarVisible(true);
+    }
+
+    private void setMenuProgressBarVisible(boolean visible) {
+        MenuItem refresh;
+        if (mOptionsMenu != null) {
+            refresh = mOptionsMenu.findItem(R.id.refresh);
+        } else {
+            return;
+        }
+
+        if (mProgressBarShowing && !visible) {
+            // Hide progress indicator
+            Log.d("RHA", "hidden");
+            refresh.setActionView(null);
+            mProgressBarShowing = false;
+        } else if (!mProgressBarShowing && visible) {
+            // Show progress indicator
+            Log.d("RHA", "shown!");
+            refresh.setActionView(R.layout.actionbar_indeterminate_progress);
+            mProgressBarShowing = true;
+        } else {
+            Log.d("RHA", "did nothing! showing: " + mProgressBarShowing + "; desired: " + visible);
+            // Do nothing
+        }
     }
 
     public void showMenuProgressBar() {
-        if (mOptionsMenu != null) {
-            // Show refresh indicator
-            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
-            refresh.setActionView(R.layout.actionbar_indeterminate_progress);
-        }
-    }
 
-    private void hideMenuProgressBar() {
-        if (mOptionsMenu != null) {
-            // Hide refresh indicator
-            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
-            refresh.setActionView(null);
-        }
     }
 
     class RefreshBroadcastReceiver extends BroadcastReceiver {

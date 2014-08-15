@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 import de.greenrobot.event.EventBus;

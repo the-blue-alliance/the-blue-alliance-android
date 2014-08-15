@@ -18,7 +18,6 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
