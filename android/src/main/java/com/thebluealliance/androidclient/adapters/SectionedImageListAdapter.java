@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -19,7 +22,9 @@ import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.views.ImageViewWithForeground;
 
 import java.util.ArrayList;
 
@@ -137,30 +142,39 @@ public class SectionedImageListAdapter extends BaseAdapter {
             }
         }
 
-        View v = null;
         LayoutInflater inflater = LayoutInflater.from(mContext);
         if (header) {
             // This is a header
-            v = inflater.inflate(R.layout.section_name_row, null);
+            View v = inflater.inflate(R.layout.section_name_row, null);
             ((TextView) v.findViewById(R.id.section_name)).setText(mSections.get(sectionNum).getTitle());
             return v;
         } else {
             // This is a row of images. Construct a layout to hold the images.
-            v = inflater.inflate(R.layout.image_row, null);
+            View v = inflater.inflate(R.layout.image_row, null);
             Media[] medias = mSections.get(sectionNum).getMediasForRow(sectionRow, mImagesPerRow);
             Picasso picasso = Picasso.with(mContext);
             for (int i = 0; i < medias.length; i++) {
-                ImageView image = new ImageView(mContext);
+                ImageViewWithForeground image = new ImageViewWithForeground(mContext);
                 // These two are required to make the images clickable
                 image.setClickable(true);
                 image.setFocusable(true);
+                // Add a foreground to the ImageView that will show touch feedback
+                int[] attrs = new int[] {android.R.attr.selectableItemBackground};
+                TypedArray ta = mContext.obtainStyledAttributes(attrs);
+                Drawable foreground = ta.getDrawable(0);
+                ta.recycle();
+                image.setForeground(foreground);
                 image.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(mImageSize, mImageSize);
                 // If the image is the farthest to the right in this row, don't put space on the left side.
                 // Similarly, if the image is in the last row of the section, don't put space below it.
                 lp.setMargins(0, 0, i != medias.length - 1 ? mDividerWidth : 0, mSections.get(sectionNum).isLastRowInSection(sectionRow, mImagesPerRow) ? 0 : mDividerWidth);
                 ((LinearLayout) v).addView(image, i, lp);
-                picasso.load(medias[i].getMediaURL()).into(image);
+                try {
+                    picasso.load(medias[i].getMediaURL()).into(image);
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    e.printStackTrace();
+                }
                 // This will associate an analytics tracker and a click handler with this view.
                 bindMediaToView(image, medias[i]);
             }
@@ -180,15 +194,20 @@ public class SectionedImageListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                //Track Click
-                Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, mContext);
-                t.send(new HitBuilders.EventBuilder()
-                        .setCategory("media_click")
-                        .setAction(media.getMediaURL())
-                        .setLabel(media.isVideo() ? "video" : "cd_photo")
-                        .build());
+                try {
+                    //Track Click
+                    Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, mContext);
+                    t.send(new HitBuilders.EventBuilder()
+                            .setCategory("media_click")
+                            .setAction(media.getLinkURL())
+                            .setLabel(media.isVideo() ? "video" : "cd_photo")
+                            .build());
 
-                mContext.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(media.getMediaURL())));
+                    mContext.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(media.getLinkURL())));
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    e.printStackTrace();
+                    Toast.makeText(mContext, R.string.error_opening_image, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -220,10 +239,7 @@ public class SectionedImageListAdapter extends BaseAdapter {
         }
 
         public boolean isLastRowInSection(int row, int imagesPerRow) {
-            if (getImageRowCount(imagesPerRow) - 1 == row) {
-                return true;
-            }
-            return false;
+            return getImageRowCount(imagesPerRow) - 1 == row;
         }
 
         public Media[] getMediasForRow(int row, int imagesPerRow) throws ArrayIndexOutOfBoundsException {
