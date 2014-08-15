@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="false"
-    android:focusable="false"
-    android:paddingBottom="@dimen/sectioned_image_list_divider_width">
+    android:focusable="false">
 
 </LinearLayout>

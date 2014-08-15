@@ -30,26 +30,47 @@ public class SectionedImageListAdapter extends BaseAdapter {
 
     public ArrayList<Section> mSections;
 
+    /**
+     * The number of images in each row of the list
+     */
     private int mImagesPerRow = -1;
 
+    /**
+     * Size of each side of the image, in pixels
+     */
     private int mImageSize = -1;
 
+    /**
+     * Width of the dividers between images, in pixels
+     */
     private int mDividerWidth;
 
     private Context mContext;
 
+    /**
+     * Constructs an adapter from the given parameters.
+     *
+     * @param context  A context for use in the adapter
+     * @param listView The ListView that the adapter will be added to (used for determining dimensions)
+     * @param sections An ArrayList of sections, each composed of a title and a number of Media objects
+     */
     public SectionedImageListAdapter(Context context, ListView listView, ArrayList<Section> sections) {
         mContext = context;
         mSections = sections;
 
+        // Get the width of the ListView that will be used to show this adapter's contents
         int listViewWidth = listView.getWidth();
+
+        // Retrieve and store some resources
         int minImageWidth = mContext.getResources().getDimensionPixelSize(R.dimen.sectioned_image_list_image_min_width);
         mDividerWidth = mContext.getResources().getDimensionPixelSize(R.dimen.sectioned_image_list_divider_width);
 
         // Calculate number of items that can fit horizontally in a row
         int numChildrenPerRow = listViewWidth / minImageWidth;
 
-        // Calculate the width of each image
+        // Calculate the width of each image by increasing the minimum width of the image until
+        // the sum of the widths of all the images and dividers is equal to or greater than the
+        // width of the containing view.
         int totalDividerWidth = mDividerWidth * (numChildrenPerRow - 1);
         while ((numChildrenPerRow * minImageWidth) + totalDividerWidth < listViewWidth) {
             minImageWidth++;
@@ -62,7 +83,7 @@ public class SectionedImageListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         // Count the number of rows we have. That amounts to one header and a certain number of image
-        // rows per section
+        // rows per section.
         int count = 0;
         for (Section section : mSections) {
             count++;
@@ -84,23 +105,21 @@ public class SectionedImageListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Locate the specific section we need to get the row from
-        Log.d(Constants.LOG_TAG, "getView position: " + position);
         int currentRow = -1;
         int sectionNum = -1;
         int sectionRow = -1;
         boolean header = false;
         boolean foundRow = false;
+        // Iterate through each of the sections
         for (Section section : mSections) {
             currentRow++;
             sectionNum++;
             // If the first row in the section is the desired position, this is a header row.
             if (currentRow == position) {
                 header = true;
-                Log.d(Constants.LOG_TAG, "Position: " + position + "; header");
                 break;
             } else {
-                // Iterate through the rows of the section to see if the one we want is in here.
-                Log.d(Constants.LOG_TAG, "Image row count: " + section.getImageRowCount(mImagesPerRow));
+                // Iterate through the rows of the section to see if the position we want is in here.
                 // New section; reset the position of the row within the section
                 sectionRow = -1;
                 for (int i = 0; i < section.getImageRowCount(mImagesPerRow); i++) {
@@ -108,12 +127,11 @@ public class SectionedImageListAdapter extends BaseAdapter {
                     sectionRow++;
                     if (currentRow == position) {
                         header = false;
-                        Log.d(Constants.LOG_TAG, "Position: " + position + "; not header; section row: " + sectionRow);
                         foundRow = true;
                         break;
                     }
                 }
-                if(foundRow) {
+                if (foundRow) {
                     break;
                 }
             }
@@ -127,28 +145,36 @@ public class SectionedImageListAdapter extends BaseAdapter {
             ((TextView) v.findViewById(R.id.section_name)).setText(mSections.get(sectionNum).getTitle());
             return v;
         } else {
+            // This is a row of images. Construct a layout to hold the images.
             v = inflater.inflate(R.layout.image_row, null);
             Media[] medias = mSections.get(sectionNum).getMediasForRow(sectionRow, mImagesPerRow);
             Picasso picasso = Picasso.with(mContext);
             for (int i = 0; i < medias.length; i++) {
-                // This is an image
                 ImageView image = new ImageView(mContext);
+                // These two are required to make the images clickable
                 image.setClickable(true);
                 image.setFocusable(true);
                 image.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(mImageSize, mImageSize);
-                // Only set right margin if it's not the last item in a row
-                if (i != medias.length - 1) {
-                    lp.setMargins(0, 0, mDividerWidth, 0);
-                }
+                // If the image is the farthest to the right in this row, don't put space on the left side.
+                // Similarly, if the image is in the last row of the section, don't put space below it.
+                lp.setMargins(0, 0, i != medias.length - 1 ? mDividerWidth : 0, mSections.get(sectionNum).isLastRowInSection(sectionRow, mImagesPerRow) ? 0 : mDividerWidth);
                 ((LinearLayout) v).addView(image, i, lp);
                 picasso.load(medias[i].getMediaURL()).into(image);
+                // This will associate an analytics tracker and a click handler with this view.
                 bindMediaToView(image, medias[i]);
             }
             return v;
         }
     }
 
+    /**
+     * Attaches a click listener to the specified view with the URL from the given Media. This will also
+     * report the click to Analytics.
+     *
+     * @param v the view to attach the click listener to
+     * @param media the media used to construct the intent that will be fired on a click
+     */
     private void bindMediaToView(View v, final Media media) {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +185,7 @@ public class SectionedImageListAdapter extends BaseAdapter {
                 t.send(new HitBuilders.EventBuilder()
                         .setCategory("media_click")
                         .setAction(media.getMediaURL())
-                        .setLabel(media.isVideo()?"video":"cd_photo")
+                        .setLabel(media.isVideo() ? "video" : "cd_photo")
                         .build());
 
                 mContext.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(media.getMediaURL())));
@@ -167,6 +193,10 @@ public class SectionedImageListAdapter extends BaseAdapter {
         });
     }
 
+    /**
+     * Represents a section in the adapter. A section is composed of a title and a number of Media objects,
+     * which are displayed in a grid below the title.
+     */
     public static class Section {
         String title;
         ArrayList<Media> medias;
@@ -187,6 +217,13 @@ public class SectionedImageListAdapter extends BaseAdapter {
                 rows++;
             }
             return rows;
+        }
+
+        public boolean isLastRowInSection(int row, int imagesPerRow) {
+            if (getImageRowCount(imagesPerRow) - 1 == row) {
+                return true;
+            }
+            return false;
         }
 
         public Media[] getMediasForRow(int row, int imagesPerRow) throws ArrayIndexOutOfBoundsException {
