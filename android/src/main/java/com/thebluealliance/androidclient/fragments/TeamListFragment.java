@@ -32,7 +32,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
  * File created by phil on 4/20/14.
  */
 
-public class TeamListFragment extends Fragment implements RefreshListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class TeamListFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
@@ -83,38 +83,6 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
             }
         });
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Each loader needs a unique id; use the sum of the start and end numbers
-        int id = mTeamNumberStart + mTeamNumberEnd;
-        getActivity().getSupportLoaderManager().initLoader(id, null, this);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new SimpleCursorLoader(getActivity()) {
-            @Override
-            public Cursor loadInBackground() {
-                return Database.getInstance(getActivity()).getTeamsTable().getCursorForTeamsInRange(mTeamNumberStart, mTeamNumberEnd);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (cursorLoader.getId() != mTeamNumberStart + mTeamNumberEnd) {
-            return;
-        }
-        mProgressBar.setVisibility(View.GONE);
-        mListView.setAdapter(new TeamCursorAdapter(getActivity(), cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mListView.setAdapter(null);
     }
 
     @Override
