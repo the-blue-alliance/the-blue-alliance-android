@@ -41,12 +41,6 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         mTeamKey = params[0];
         try {

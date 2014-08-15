@@ -47,12 +47,6 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(Object... params) {
         if (params.length != 2 || !(params[0] instanceof String) || !(params[1] instanceof Integer)) {
             throw new IllegalArgumentException("PopulateTeamMedia must be called with the team key and year (String, int)");

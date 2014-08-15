@@ -57,7 +57,6 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     protected void onPreExecute() {
         super.onPreExecute(); // reset event settings
         showRanks = showStats = false;
-        activity.showMenuProgressBar();
 
         View view = mFragment.getView();
         eventName = (TextView) view.findViewById(R.id.event_name);

@@ -82,12 +82,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(Void... params) {
         if (mFragment == null) {
             throw new IllegalArgumentException("Fragment must not be null!");

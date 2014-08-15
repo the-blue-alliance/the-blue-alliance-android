@@ -214,10 +214,6 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         }
     }
 
-    public void showMenuProgressBar() {
-
-    }
-
     public void onEvent(ConnectivityChangeEvent event) {
         if (event.getConnectivityChangeType() == ConnectivityChangeEvent.CONNECTION_FOUND) {
             hideWarningMessage();

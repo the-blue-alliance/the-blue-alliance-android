@@ -46,12 +46,6 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         if(params.length != 2){
             throw new IllegalArgumentException("PopulateTeamAtDistrictSummary must be constructed with team key & district key");

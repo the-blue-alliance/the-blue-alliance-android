@@ -57,14 +57,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if (activity != null) {
-            activity.showMenuProgressBar();
-        }
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
         if (params.length == 2) {
