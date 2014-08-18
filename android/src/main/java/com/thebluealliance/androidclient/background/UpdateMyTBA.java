@@ -19,14 +19,17 @@ import com.thebluealliance.androidclient.models.Subscription;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * File created by phil on 8/13/14.
  */
-public class UpdateMyTBA extends AsyncTask<Void, Void, Void> {
+public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
 
     private static final String LAST_MY_TBA_UPDATE = "last_mytba_update_%s";
+    public static final short UPDATE_FAVORITES = 0, UPDATE_SUBSCRIPTION = 1;
 
     private Context context;
 
@@ -35,7 +38,14 @@ public class UpdateMyTBA extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(Short... params) {
+
+        List<Short> toUpdate;
+        if(params.length > 0){
+            toUpdate = Arrays.asList(params);
+        }else{
+            toUpdate = Arrays.asList(UPDATE_FAVORITES, UPDATE_SUBSCRIPTION);
+        }
 
         String currentUser = AccountHelper.getSelectedAccount(context);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -52,35 +62,46 @@ public class UpdateMyTBA extends AsyncTask<Void, Void, Void> {
 
         Log.d(Constants.LOG_TAG, "Updating myTBA data");
         TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-        ModelsMobileApiMessagesFavoriteCollection favoriteCollection = null;
-        ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = null;
-        try {
-            favoriteCollection = service.favorites().list().execute();
-            subscriptionCollection = service.subscriptions().list().execute();
-        } catch (IOException e) {
-            Log.w(Constants.LOG_TAG, "Unable to update myTBA");
-            e.printStackTrace();
-            return null;
+
+        if(toUpdate.contains(UPDATE_FAVORITES)) {
+            ModelsMobileApiMessagesFavoriteCollection favoriteCollection = null;
+            try {
+                favoriteCollection = service.favorites().list().execute();
+            } catch (IOException e) {
+                Log.w(Constants.LOG_TAG, "Unable to update myTBA favorites");
+                e.printStackTrace();
+                return null;
+            }
+
+            Database.Favorites favorites = Database.getInstance(context).getFavoritesTable();
+            favorites.recreate(currentUser);
+            if (favoriteCollection.getFavorites() != null) {
+                ArrayList<Favorite> favoriteModels = new ArrayList<>();
+                for (ModelsMobileApiMessagesFavoriteMessage f : favoriteCollection.getFavorites()) {
+                    favoriteModels.add(new Favorite(currentUser, f.getModelKey()));
+                }
+                favorites.add(favoriteModels);
+            }
         }
 
-        Database.Favorites favorites = Database.getInstance(context).getFavoritesTable();
-        favorites.recreate(currentUser);
-        if(favoriteCollection.getFavorites() != null){
-            ArrayList<Favorite> favoriteModels = new ArrayList<>();
-            for(ModelsMobileApiMessagesFavoriteMessage f: favoriteCollection.getFavorites()){
-                favoriteModels.add(new Favorite(currentUser, f.getModelKey()));
+        if(toUpdate.contains(UPDATE_SUBSCRIPTION)) {
+            ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = null;
+            try {
+                subscriptionCollection = service.subscriptions().list().execute();
+            } catch (IOException e) {
+                Log.w(Constants.LOG_TAG, "Unable to update myTBA subscriptions");
+                e.printStackTrace();
+                return null;
             }
-            favorites.add(favoriteModels);
-        }
-
-        Database.Subscriptions subscriptions = Database.getInstance(context).getSubscriptionsTable();
-        subscriptions.recreate(currentUser);
-        if(subscriptionCollection.getSubscriptions() != null){
-            ArrayList<Subscription> subscriptionModels = new ArrayList<>();
-            for(ModelsMobileApiMessagesSubscriptionMessage s: subscriptionCollection.getSubscriptions()){
-                subscriptionModels.add(new Subscription(currentUser, s.getModelKey()));
+            Database.Subscriptions subscriptions = Database.getInstance(context).getSubscriptionsTable();
+            subscriptions.recreate(currentUser);
+            if (subscriptionCollection.getSubscriptions() != null) {
+                ArrayList<Subscription> subscriptionModels = new ArrayList<>();
+                for (ModelsMobileApiMessagesSubscriptionMessage s : subscriptionCollection.getSubscriptions()) {
+                    subscriptionModels.add(new Subscription(currentUser, s.getModelKey()));
+                }
+                subscriptions.add(subscriptionModels);
             }
-            subscriptions.add(subscriptionModels);
         }
 
         prefs.edit().putLong(prefString, new Date().getTime()).apply();

@@ -81,7 +81,7 @@ public class MySubscriptionsFragment extends Fragment implements RefreshListener
 
     @Override
     public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading user favorites");
+        Log.i(Constants.REFRESH_LOG, "Loading user subscriptions");
         mTask = new PopulateUserSubscriptions(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

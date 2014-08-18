@@ -13,8 +13,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 
@@ -54,9 +56,18 @@ public class GCMMessageHandler extends IntentService {
 
     public static void handleMessage(Context c, String messageType, String messageData) {
         NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-        JsonObject data = JSONManager.getParser().parse(messageData).getAsJsonObject();
+        JsonObject data = null;
+        if(messageData != null && !messageData.isEmpty()){
+            data = JSONManager.getParser().parse(messageData).getAsJsonObject();
+        }
         try {
             switch (messageType) {
+                case NotificationTypes.UPDATE_FAVORITES:
+                    new UpdateMyTBA(c).execute(UpdateMyTBA.UPDATE_FAVORITES);
+                    break;
+                case NotificationTypes.UPDATE_SUBSCRIPTIONS:
+                    new UpdateMyTBA(c).execute(UpdateMyTBA.UPDATE_FAVORITES);
+                    break;
                 case "test":
                     Notification notification =
                             new NotificationCompat.Builder(c)
@@ -65,11 +76,11 @@ public class GCMMessageHandler extends IntentService {
                                     .setContentText(data.get("desc").getAsString()).build();
                     notificationManager.notify(12, notification);
                     break;
-                case "score_update":
+                case NotificationTypes.MATCH_SCORE:
                     ScoreNotification sn = new ScoreNotification(data);
                     notificationManager.notify(sn.getNotificationId(), sn.buildNotification(c));
                     break;
-                case "upcoming_match":
+                case NotificationTypes.UPCOMING_MATCH:
                     BaseNotification n = new UpcomingMatchNotification(messageData);
                     // id allows you to update the notification later on.
                     notificationManager.notify(n.getNotificationId(), n.buildNotification(c));
@@ -79,8 +90,8 @@ public class GCMMessageHandler extends IntentService {
                     // id allows you to update the notification later on.
                     notificationManager.notify(n.getNotificationId(), n.buildNotification(c));
                     break;
-                case "alliance_selection":
-                case "starting_comp_level":
+                case NotificationTypes.ALLIANCE_SELECTION:
+                case NotificationTypes.LEVEL_STARTING:
                     // TODO implement notifications for these message types
                     break;
             }
