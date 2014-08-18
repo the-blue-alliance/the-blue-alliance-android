@@ -56,6 +56,7 @@ public class AccountHelper {
             return null;
         }
 
+        Log.d(Constants.LOG_TAG, "Getting credential for "+accountName);
         GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(context, getAudience(context));
         credential.setSelectedAccountName(accountName);
 

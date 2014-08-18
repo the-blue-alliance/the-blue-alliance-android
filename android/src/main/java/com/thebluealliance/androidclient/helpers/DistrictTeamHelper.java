@@ -12,6 +12,9 @@ import com.thebluealliance.androidclient.models.DistrictTeam;
 public class DistrictTeamHelper {
 
     public static boolean validateDistrictTeamKey(String key) {
+        if(key == null || key.isEmpty() || !key.contains("_")){
+            return false;
+        }
         String districtKey = key.split("_")[0];
         String teamKey = key.split("_")[1];
         return TeamHelper.validateTeamKey(teamKey) && DistrictHelper.validateDistrictKey(districtKey);

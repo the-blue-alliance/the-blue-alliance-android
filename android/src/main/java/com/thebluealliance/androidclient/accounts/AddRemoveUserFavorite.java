@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.accounts;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
@@ -15,6 +14,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Favorite;
+import com.thebluealliance.androidclient.views.FloatingActionButton;
 
 import java.io.IOException;
 
@@ -27,30 +27,30 @@ public class AddRemoveUserFavorite extends AsyncTask<String, Void, AddRemoveUser
         ADDED, REMOVED, ERROR
     }
 
-    private Activity activity;
-    private MenuItem icon;
+    private Context context;
+    private FloatingActionButton icon;
 
-    public AddRemoveUserFavorite(Activity activity, MenuItem icon) {
-        this.activity = activity;
+    public AddRemoveUserFavorite(Context context, FloatingActionButton icon) {
+        this.context = context;
         this.icon = icon;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        icon.setActionView(R.layout.actionbar_indeterminate_progress);
     }
 
     @Override
     protected Result doInBackground(String... params) {
         String modelKey = params[0];
-        String user = AccountHelper.getSelectedAccount(activity);
+        Log.d(Constants.LOG_TAG, "Favorite: "+modelKey);
+        String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
-        Database.Favorites table = Database.getInstance(activity).getFavoritesTable();
-        TbaMobile service = AccountHelper.getAuthedTbaMobile(activity);
+        Database.Favorites table = Database.getInstance(context).getFavoritesTable();
+        TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
         ModelsMobileApiMessagesFavoriteMessage request = new ModelsMobileApiMessagesFavoriteMessage();
         request.setModelKey(modelKey);
-        request.setDeviceKey(GCMAuthHelper.getRegistrationId(activity));
+        request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
         if(!table.exists(key)) {
             Log.d(Constants.LOG_TAG, "Favorite doesn't exist. Adding it");
             try {
@@ -89,19 +89,16 @@ public class AddRemoveUserFavorite extends AsyncTask<String, Void, AddRemoveUser
     @Override
     protected void onPostExecute(Result result) {
         super.onPostExecute(result);
-        icon.setActionView(null);
         String text;
         if (result == Result.ADDED) {
-            icon.setIcon(R.drawable.ic_action_remove_favorite);
-            icon.setTitle(activity.getString(R.string.action_remove_favorite));
+            icon.setImageResource(R.drawable.ic_action_remove_favorite);
             text = "Favorite added";
         } else if (result == Result.REMOVED) {
-            icon.setIcon(R.drawable.ic_action_add_favorite);
-            icon.setTitle(activity.getString(R.string.action_add_favorite));
+            icon.setImageResource(R.drawable.ic_action_add_favorite);
             text = "Favorite removed";
         } else{
             text = "Error adding favorite";
         }
-        Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 }

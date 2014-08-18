@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 
@@ -27,6 +29,7 @@ public abstract class SlidingPageActivity extends RefreshableHostActivity {
         LayoutInflater inflater = getLayoutInflater();
         inflater.inflate(contentLayout, root);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_panel, new NotificationSettingsFragment(), PANEL_TAG).commit();
+        Log.d(Constants.LOG_TAG, "Model: "+modelKey);
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_panel, NotificationSettingsFragment.newInstance(modelKey), PANEL_TAG).commit();
     }
 }

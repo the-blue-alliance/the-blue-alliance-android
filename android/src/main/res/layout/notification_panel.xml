@@ -44,8 +44,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/shadow"
         android:layout_marginRight="8dp"
-        app:colorNormal="@color/fab_yellow"
-        app:colorPressed="@color/fab_yellow_pressed"
-        android:src="@drawable/ic_action_important" />
+        app:colorNormal="@android:color/transparent"
+        app:colorPressed="@android:color/background_light"
+        android:src="@drawable/ic_action_add_favorite" />
 
 </RelativeLayout>

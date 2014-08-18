@@ -78,6 +78,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
             if (favoriteCollection.getFavorites() != null) {
                 ArrayList<Favorite> favoriteModels = new ArrayList<>();
                 for (ModelsMobileApiMessagesFavoriteMessage f : favoriteCollection.getFavorites()) {
+                    Log.d(Constants.LOG_TAG, "Adding favorite "+f.getModelKey());
                     favoriteModels.add(new Favorite(currentUser, f.getModelKey()));
                 }
                 favorites.add(favoriteModels);

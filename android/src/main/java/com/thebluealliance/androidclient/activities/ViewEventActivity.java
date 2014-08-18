@@ -43,7 +43,6 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_event);
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
             mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
@@ -52,6 +51,8 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
         }
 
         setModelKey(mEventKey);
+        setContentView(R.layout.activity_view_event);
+
         infoMessage = (TextView) findViewById(R.id.info_container);
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideInfoMessage();

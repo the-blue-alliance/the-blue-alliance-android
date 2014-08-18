@@ -85,6 +85,9 @@ public class DistrictHelper {
     }
 
     public static boolean validateDistrictKey(String key) {
+        if(key == null || key.length() <= 4){
+            return false;
+        }
         try {
             int year = Integer.parseInt(key.substring(0, 4));
             String districtAbbrev = key.substring(4);
