@@ -1,0 +1,17 @@
+package com.thebluealliance.androidclient.gcm.notifications;
+
+/**
+ * File created by phil on 8/17/14.
+ */
+public class NotificationTypes {
+    public static final String
+            UPCOMING_MATCH = "upcoming_match",
+            MATCH_SCORE = "match_score",
+            LEVEL_STARTING = "starting_comp_level",
+            ALLIANCE_SELECTION = "alliance_selection",
+            AWARDS = "awards_posted",
+            MEDIA_POSTED = "media_posted",
+            DISTRICT_POINTS_UPDATED = "district_points_updated",
+            SCHEDULE_POSTED = "schedule_posted",
+            FINAL_RESULTS = "final_results";
+}

@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -156,7 +156,8 @@ public class Database extends SQLiteOpenHelper {
     String CREATE_SUBSCRIPTIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_SUBSCRIPTIONS + "("
             + Subscriptions.KEY + " TEXT PRIMARY KEY NOT NULL,"
             + Subscriptions.USER_NAME + " TEXT NOT NULL,"
-            + Subscriptions.MODEL_KEY + " TEXT NOT NULL"
+            + Subscriptions.MODEL_KEY + " TEXT NOT NULL,"
+            + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]'"
             + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
@@ -300,6 +301,10 @@ public class Database extends SQLiteOpenHelper {
                     //add favorites and subscriptions
                     db.execSQL(CREATE_FAVORITES);
                     db.execSQL(CREATE_SUBSCRIPTIONS);
+                    break;
+                case 16:
+                    // add column for individual notification settings
+                    db.execSQL("ALTER TABLE "+TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
                     break;
             }
             upgradeTo++;
@@ -1430,7 +1435,8 @@ public class Database extends SQLiteOpenHelper {
     public class Subscriptions {
         public static final String KEY = "key",
                 USER_NAME = "userName",
-                MODEL_KEY = "modelKey";
+                MODEL_KEY = "modelKey",
+                NOTIFICATION_SETTINGS = "settings";
 
         public long add(Subscription in){
             if(!exists(in.getKey())){

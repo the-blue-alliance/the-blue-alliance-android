@@ -96,15 +96,22 @@ public class AwardListElement extends ListElement {
                     team = mAwardTeams.get("frc" + teamNumber);
                 }
 
-                if (awardee.isEmpty() && team.getNickname().isEmpty()) {
+                String nickname;
+                if(team == null){
+                    nickname = "Team "+teamNumber;
+                }else{
+                    nickname = team.getNickname();
+                }
+
+                if (awardee.isEmpty() && nickname.isEmpty()) {
                     awardLine1 = teamNumber;
                     awardLine2 = "Team " + teamNumber;
                 } else if (awardee.isEmpty()) {
                     awardLine1 = teamNumber;
-                    awardLine2 = team.getNickname();
+                    awardLine2 = nickname;
                 } else {
                     awardLine1 = awardee;
-                    awardLine2 = teamNumber + " " + team.getNickname();
+                    awardLine2 = nickname;
                 }
             }
 

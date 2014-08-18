@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 public class Subscription {
     private String userName;
     private String modelKey;
+    private String notificationSettings;
 
     public Subscription(){
 
@@ -38,6 +39,14 @@ public class Subscription {
 
     public void setModelKey(String modelKey) {
         this.modelKey = modelKey;
+    }
+
+    public String getNotificationSettings() {
+        return notificationSettings;
+    }
+
+    public void setNotificationSettings(String notificationSettings) {
+        this.notificationSettings = notificationSettings;
     }
 
     public ContentValues getParams(){

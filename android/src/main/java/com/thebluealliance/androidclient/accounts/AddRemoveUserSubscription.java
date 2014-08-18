@@ -9,9 +9,12 @@ import android.widget.Toast;
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Subscription;
 
@@ -43,12 +46,19 @@ public class AddRemoveUserSubscription extends AsyncTask<String, Void, AddRemove
     @Override
     protected Result doInBackground(String... params) {
         String modelKey = params[0];
+        JsonArray notifications = new JsonArray();
+        for( int i=1; i<params.length; i++){
+            notifications.add(new JsonPrimitive(params[i]));
+        }
         String user = AccountHelper.getSelectedAccount(activity);
         String key = MyTBAHelper.createKey(user, modelKey);
         Database.Subscriptions table = Database.getInstance(activity).getSubscriptionsTable();
         TbaMobile service = AccountHelper.getAuthedTbaMobile(activity);
         ModelsMobileApiMessagesSubscriptionMessage request = new ModelsMobileApiMessagesSubscriptionMessage();
         request.setModelKey(modelKey);
+        request.setDeviceKey(GCMAuthHelper.getRegistrationId(activity));
+        request.setSettings(notifications.toString());
+
         if(!table.exists(key)) {
             Log.d(Constants.LOG_TAG, "Subscription doesn't exist. Adding it");
             try {

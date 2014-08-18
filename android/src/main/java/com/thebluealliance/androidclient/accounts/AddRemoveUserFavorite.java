@@ -12,6 +12,7 @@ import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteM
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Favorite;
 
@@ -49,6 +50,7 @@ public class AddRemoveUserFavorite extends AsyncTask<String, Void, AddRemoveUser
         TbaMobile service = AccountHelper.getAuthedTbaMobile(activity);
         ModelsMobileApiMessagesFavoriteMessage request = new ModelsMobileApiMessagesFavoriteMessage();
         request.setModelKey(modelKey);
+        request.setDeviceKey(GCMAuthHelper.getRegistrationId(activity));
         if(!table.exists(key)) {
             Log.d(Constants.LOG_TAG, "Favorite doesn't exist. Adding it");
             try {

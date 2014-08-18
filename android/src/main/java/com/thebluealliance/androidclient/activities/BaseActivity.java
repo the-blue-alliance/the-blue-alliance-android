@@ -30,6 +30,7 @@ import com.thebluealliance.androidclient.accounts.AddRemoveUserSubscription;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.background.mytba.SetActionBarIcons;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
@@ -101,7 +102,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
                 return true;
             case R.id.action_subscribe:
                 if(myTbaEnabled){
-                    new AddRemoveUserSubscription(this, item).execute(modelKey);
+                    new AddRemoveUserSubscription(this, item).execute(modelKey, NotificationTypes.MATCH_SCORE);
                 }
                 return true;
         }

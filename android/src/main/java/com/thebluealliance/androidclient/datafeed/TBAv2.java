@@ -52,16 +52,7 @@ public class TBAv2 {
         DISTRICT_RANKINGS
     }
 
-    public static enum GCM_ENDPOINT {
-        REGISTER,
-        FAVORITE_ADD,
-        FAVORITE_DELETE,
-        FAVORITE_LIST,
-        SUBSCRIBE;
-    }
-
     private static final HashMap<QUERY, String> API_URL;
-    private static final HashMap<GCM_ENDPOINT, String> GCM_URL;
 
     static {
         API_URL = new HashMap<>();
@@ -83,12 +74,6 @@ public class TBAv2 {
         API_URL.put(QUERY.EVENT_STATS, "/api/v2/event/%s/stats");
         API_URL.put(QUERY.EVENT_AWARDS, "/api/v2/event/%s/awards");
         API_URL.put(QUERY.EVENT_LIST, "/api/v2/events/%d");
-
-        GCM_URL = new HashMap<>();
-        GCM_URL.put(GCM_ENDPOINT.REGISTER, "/mobile/register");
-        GCM_URL.put(GCM_ENDPOINT.FAVORITE_ADD, "/mobile/favorite/add");
-        GCM_URL.put(GCM_ENDPOINT.FAVORITE_DELETE, "/mobile/favorite/remove");
-        GCM_URL.put(GCM_ENDPOINT.FAVORITE_LIST, "/mobile/favorites");
         API_URL.put(QUERY.EVENT_DISTRICT_POINTS, "/api/v2/event/%s/district_points");
 
         API_URL.put(QUERY.DISTRICT_LIST, "/api/v2/districts/%d");
@@ -108,14 +93,6 @@ public class TBAv2 {
             }
         }
         return host + API_URL.get(query);
-    }
-
-    public static String getGCMEndpoint(Context c, GCM_ENDPOINT endpoint) {
-        String host = PreferenceManager.getDefaultSharedPreferences(c).getString(TBA_HOST_PREF, tbaHostDefault);
-        if (!Utilities.isDebuggable() || host.isEmpty()) {
-            host = tbaHostDefault;
-        }
-        return host + GCM_URL.get(endpoint);
     }
 
     public static ArrayList<Event> getEventList(String json) {

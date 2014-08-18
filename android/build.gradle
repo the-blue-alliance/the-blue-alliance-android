@@ -102,4 +102,5 @@ dependencies {
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.+'
     compile files('libs/tbaMobile-v4-1.19.0-SNAPSHOT.jar')
+    compile files('libs/tbaMobile-v5-1.19.0-SNAPSHOT.jar')
 }

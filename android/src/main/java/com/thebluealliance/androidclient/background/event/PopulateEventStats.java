@@ -175,7 +175,13 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     teamKey = teamKey.substring(0, teamKey.length() - 1);
                 }
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
-                teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), team.getNickname(), statsString,
+                String nickname;
+                if(team == null){
+                    nickname = "Team "+teamKey.substring(3);
+                }else{
+                    nickname = team.getNickname();
+                }
+                teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), nickname, statsString,
                         Double.valueOf(oprSorted.values().toArray()[i].toString()),
                         Double.valueOf(dprSorted.values().toArray()[i].toString()),
                         Double.valueOf(ccwmSorted.values().toArray()[i].toString())));
