@@ -58,7 +58,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
             signIn();
         } else {
             registerGCMIfNeeded();
-            new UpdateMyTBA(this).execute();
         }
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
