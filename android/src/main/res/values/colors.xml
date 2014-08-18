@@ -47,5 +47,8 @@
     <color name="internet_blue">#4D4D89</color>
     <color name="internet_blue_darker">#333378</color>
 
+    <!-- FAB colors -->
+    <color name="fab_yellow">#ffeb3b</color>
+    <color name="fab_yellow_pressed">#e6e600</color>
 
 </resources>

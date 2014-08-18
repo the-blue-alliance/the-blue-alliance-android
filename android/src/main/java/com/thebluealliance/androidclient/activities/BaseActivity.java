@@ -25,12 +25,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.accounts.AddRemoveUserFavorite;
-import com.thebluealliance.androidclient.accounts.AddRemoveUserSubscription;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.background.mytba.SetActionBarIcons;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
@@ -41,7 +37,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     private static final int ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION = 2222;
     String beamUri;
     boolean searchEnabled = true;
-    boolean myTbaEnabled = false;
     String modelKey = "";
 
     GoogleAccountCredential credential;
@@ -79,12 +74,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         if (searchEnabled) {
             getMenuInflater().inflate(R.menu.search_menu, menu);
         }
-        if(myTbaEnabled){
-            getMenuInflater().inflate(R.menu.user_favorite_menu, menu);
-            getMenuInflater().inflate(R.menu.user_subscription_menu, menu);
-
-            new SetActionBarIcons(this, menu.findItem(R.id.action_favorite), menu.findItem(R.id.action_subscribe)).execute(modelKey);
-        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -93,16 +82,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         switch (item.getItemId()) {
             case R.id.search:
                 startActivity(new Intent(this, SearchResultsActivity.class));
-                return true;
-            case R.id.action_favorite:
-                if(myTbaEnabled) {
-                    new AddRemoveUserFavorite(this, item).execute(modelKey);
-                }
-                return true;
-            case R.id.action_subscribe:
-                if(myTbaEnabled){
-                    new AddRemoveUserSubscription(this, item).execute(modelKey, NotificationTypes.MATCH_SCORE);
-                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -132,7 +111,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     }
 
     protected void setModelKey(String key){
-        myTbaEnabled = true;
         modelKey = key;
     }
 
