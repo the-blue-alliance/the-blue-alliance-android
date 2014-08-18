@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
 import android.os.Parcelable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -15,9 +14,8 @@ import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
-import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -38,9 +36,9 @@ import de.greenrobot.event.EventBus;
  *         <p/>
  *         File created by phil on 4/22/14.
  */
-public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
+public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private EventResultsFragment mFragment;
+    private EventMatchesFragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
     private String teamKey;
@@ -50,7 +48,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     Event event;
     MatchListAdapter adapter;
 
-    public PopulateEventResults(EventResultsFragment f, boolean forceFromCache) {
+    public PopulateEventMatches(EventMatchesFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
@@ -145,17 +143,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 return APIResponse.CODE.NODATA;
             }
 
-            if (event.isHappeningNow()) {
-                // Send out that there are live matches happening for other things to pick up
-                LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(activity);
-                if (broadcastManager != null) {
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
-                    EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
-                } else {
-                    Log.w(Constants.LOG_TAG, "Unable to get LocalBroadcastManager. Can't send live event broadcast.");
-                }
-            }
-
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
@@ -205,6 +192,15 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 adapter.notifyDataSetChanged();
             }
 
+            // Alert any interested parties of matches that are being played if this is a live event
+            if(code != APIResponse.CODE.NODATA) {
+                if (event.isHappeningNow()) {
+                    // Send out that there are live matches happening for other things to pick up
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
+                    EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+                }
+            }
+
             // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.match_results).setVisibility(View.VISIBLE);
@@ -221,7 +217,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventResults secondLoad = new PopulateEventResults(mFragment, false);
+            PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, false);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey, teamKey);
         } else {

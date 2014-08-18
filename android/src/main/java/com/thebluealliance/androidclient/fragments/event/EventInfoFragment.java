@@ -169,12 +169,12 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     protected void showNextMatch(MatchListElement match){
-        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
-        lastLayout.setVisibility(View.VISIBLE);
-        if (lastLayout.getChildCount() > 1) {
-            lastLayout.removeViewAt(1);
+        LinearLayout nextLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
+        nextLayout.setVisibility(View.VISIBLE);
+        if (nextLayout.getChildCount() > 1) {
+            nextLayout.removeViewAt(1);
         }
-        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+        nextLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
     }
 
     public void onEvent(LiveEventMatchUpdateEvent event) {
