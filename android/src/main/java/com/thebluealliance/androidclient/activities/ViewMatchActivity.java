@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * Created by Nathan on 5/14/2014.
  */
-public class ViewMatchActivity extends RefreshableHostActivity implements RefreshListener {
+public class ViewMatchActivity extends SlidingPageActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
 
@@ -39,15 +39,15 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_match);
-        setupActionBar();
 
         mMatchKey = getIntent().getStringExtra(MATCH_KEY);
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-
         setModelKey(mMatchKey);
+        setContentView(R.layout.activity_view_match);
+        setupActionBar();
+
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
         registerRefreshableActivityListener(this);

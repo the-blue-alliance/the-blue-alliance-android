@@ -23,7 +23,7 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 
 import java.util.Arrays;
 
-public class TeamAtEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
+public class TeamAtEventActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
@@ -46,7 +46,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_team_at_event);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
@@ -58,6 +57,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
 
         String eventTeamKey = EventTeamHelper.generateKey(eventKey, teamKey);
         setModelKey(eventTeamKey);
+        setContentView(R.layout.activity_team_at_event);
 
         pager = (ViewPager) findViewById(R.id.view_pager);
         adapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), teamKey, eventKey);

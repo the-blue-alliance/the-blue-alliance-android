@@ -25,7 +25,7 @@ import com.thebluealliance.androidclient.helpers.DistrictHelper;
 /**
  * Created by phil on 7/10/14.
  */
-public class ViewDistrictActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
+public class ViewDistrictActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
@@ -55,7 +55,6 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_district);
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_ABBREV)) {
             districtAbbrev = getIntent().getExtras().getString(DISTRICT_ABBREV, "");
@@ -69,6 +68,8 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         }
 
         districtKey = DistrictHelper.generateKey(districtAbbrev, year);
+        setModelKey(districtKey);
+        setContentView(R.layout.activity_view_district);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
