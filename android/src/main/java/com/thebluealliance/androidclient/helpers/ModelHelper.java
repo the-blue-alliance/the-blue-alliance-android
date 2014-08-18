@@ -28,7 +28,20 @@ public class ModelHelper {
         EVENTTEAM,
         DISTRICT,
         DISTRICTTEAM,
-        AWARD
+        AWARD;
+
+        public String getTitle(){
+            switch (this){
+                case EVENT:         return "Events";
+                case TEAM:          return "Teams";
+                case MATCH:         return "Matches";
+                case EVENTTEAM:     return "Team@Event";
+                case DISTRICT:      return "Districts";
+                case DISTRICTTEAM:  return "Team@District";
+                case AWARD:         return "Awards";
+            }
+            return "";
+        }
     }
 
     public static MODELS getModelFromKey(String key){

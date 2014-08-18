@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.mytba.MySubscriptionsFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Subscription;
 
@@ -49,8 +50,13 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, Void> {
 
         subscriptions = new ArrayList<>();
         ArrayList<Subscription> collection = Database.getInstance(activity).getSubscriptionsTable().getForUser(AccountHelper.getSelectedAccount(activity));
+        int lastModel = -1;
         if (collection != null) {
             for (Subscription subscription : collection) {
+                if(lastModel != subscription.getModelEnum()){
+                    subscriptions.add(new EventTypeHeader(subscription.getModelType().getTitle()));
+                }
+                lastModel = subscription.getModelEnum();
                 subscriptions.add(ModelHelper.renderModelFromKey(activity, subscription.getModelKey()));
             }
         }

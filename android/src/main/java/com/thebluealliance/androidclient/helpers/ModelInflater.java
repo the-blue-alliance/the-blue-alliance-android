@@ -342,6 +342,9 @@ public class ModelInflater {
                 case Database.Favorites.USER_NAME:
                     favorite.setUserName(data.getString(i));
                     break;
+                case Database.Favorites.MODEL_ENUM:
+                    favorite.setModelEnum(data.getInt(i));
+                    break;
                 default:
             }
         }
@@ -357,6 +360,12 @@ public class ModelInflater {
                     break;
                 case Database.Subscriptions.USER_NAME:
                     subscription.setUserName(data.getString(i));
+                    break;
+                case Database.Subscriptions.MODEL_ENUM:
+                    subscription.setModelEnum(data.getInt(i));
+                    break;
+                case Database.Subscriptions.NOTIFICATION_SETTINGS:
+                    subscription.setNotificationSettings(data.getString(i));
                     break;
                 default:
             }

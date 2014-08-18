@@ -151,12 +151,14 @@ public class Database extends SQLiteOpenHelper {
     String CREATE_FAVORITES = "CREATE TABLE IF NOT EXISTS " + TABLE_FAVORITES + "("
             + Favorites.KEY + " TEXT PRIMARY KEY NOT NULL,"
             + Favorites.USER_NAME + " TEXT NOT NULL, "
-            + Favorites.MODEL_KEY + " TEXT NOT NULL"
+            + Favorites.MODEL_KEY + " TEXT NOT NULL,"
+            + Favorites.MODEL_ENUM + " INTEGER NOT NULL"
             + ")";
     String CREATE_SUBSCRIPTIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_SUBSCRIPTIONS + "("
             + Subscriptions.KEY + " TEXT PRIMARY KEY NOT NULL,"
             + Subscriptions.USER_NAME + " TEXT NOT NULL,"
             + Subscriptions.MODEL_KEY + " TEXT NOT NULL,"
+            + Subscriptions.MODEL_ENUM + " INTEGER NOT NULL,"
             + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]'"
             + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
@@ -303,8 +305,10 @@ public class Database extends SQLiteOpenHelper {
                     db.execSQL(CREATE_SUBSCRIPTIONS);
                     break;
                 case 16:
-                    // add column for individual notification settings
-                    db.execSQL("ALTER TABLE "+TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
+                    // add column for individual notification settings and sorting by model type
+                    db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
+                    db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.MODEL_ENUM + " INTEGER NOT NULL");
+                    db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + Favorites.MODEL_ENUM + " INTEGER NOT NULL");
                     break;
             }
             upgradeTo++;
@@ -1361,7 +1365,8 @@ public class Database extends SQLiteOpenHelper {
     public class Favorites {
         public static final String KEY = "key",
                 USER_NAME = "userName",
-                MODEL_KEY = "modelKey";
+                MODEL_KEY = "modelKey",
+                MODEL_ENUM = "model_enum";
 
         public long add(Favorite in){
             if(!exists(in.getKey())){
@@ -1417,7 +1422,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Favorite> getForUser(String user){
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, null, null);
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
             ArrayList<Favorite> favorites = new ArrayList<>();
             if(cursor != null && cursor.moveToFirst()){
                 do {
@@ -1436,6 +1441,7 @@ public class Database extends SQLiteOpenHelper {
         public static final String KEY = "key",
                 USER_NAME = "userName",
                 MODEL_KEY = "modelKey",
+                MODEL_ENUM = "model_enum",
                 NOTIFICATION_SETTINGS = "settings";
 
         public long add(Subscription in){
@@ -1492,7 +1498,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Subscription> getForUser(String user){
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, null, null);
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
             ArrayList<Subscription> subscriptions = new ArrayList<>();
             if(cursor != null && cursor.moveToFirst()){
                 do {
