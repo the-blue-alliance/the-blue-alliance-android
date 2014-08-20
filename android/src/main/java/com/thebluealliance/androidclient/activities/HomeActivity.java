@@ -279,4 +279,20 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     public void hideWarningMessage() {
         warningMessage.setVisibility(View.GONE);
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        Log.d(Constants.LOG_TAG, "New intent received!");
+        int requestedMode = intent.getExtras().getInt(REQUESTED_MODE, R.id.nav_item_events);
+        if (requestedMode == mCurrentSelectedNavigationItemId) {
+            // We are already in the appropriate mode
+            return;
+        } else {
+            switchToModeForId(requestedMode);
+            // Ensure that the Action Bar is properly configured for the current mode
+            invalidateOptionsMenu();
+        }
+    }
 }

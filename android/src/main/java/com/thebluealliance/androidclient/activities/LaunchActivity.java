@@ -44,10 +44,13 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     public static final String REDOWNLOAD = "redownload";
     public static final String DATA_TO_REDOWNLOAD = "redownload_data";
     public static final String APP_VERSION_KEY = "app_version";
+    private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
 
     private DisableSwipeViewPager viewPager;
 
     private TextView loadingMessage;
+
+    private String currentLoadingMessage = "";
 
     private LoadAllDataTaskFragment loadFragment;
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
@@ -99,10 +102,19 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new FirstLaunchFragmentAdapter(this));
         loadingMessage = (TextView) findViewById(R.id.message);
+
+        // If the activity is being recreated after a config change, restore the message that was
+        // being shown when the last activity was destroyed
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(CURRENT_LOADING_MESSAGE_KEY)) {
+                currentLoadingMessage = savedInstanceState.getString(CURRENT_LOADING_MESSAGE_KEY);
+                loadingMessage.setText(currentLoadingMessage);
+            }
+        }
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
-        if(redownload){
-            ((TextView)findViewById(R.id.welcome_message)).setText(getString(R.string.update_message));
+        if (redownload) {
+            ((TextView) findViewById(R.id.welcome_message)).setText(getString(R.string.update_message));
         }
         loadFragment = (LoadAllDataTaskFragment) getFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
         if (loadFragment != null) {
@@ -110,9 +122,20 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(CURRENT_LOADING_MESSAGE_KEY, currentLoadingMessage);
+    }
+
     private boolean checkDataRedownload() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int lastVersion = prefs.getInt(APP_VERSION_KEY, -1);
+
+        if (lastVersion == -1 && !prefs.getBoolean(ALL_DATA_LOADED, false)) {
+            // on a clean install, don't think we're updating
+            return false;
+        }
         if (getIntent().getBooleanExtra(REDOWNLOAD, false)) {
             return true;
         }
@@ -120,7 +143,6 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
         if (!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
-            SharedPreferences.Editor editor = prefs.edit();
             //we are updating the app. Do stuffs.
             while (lastVersion <= BuildConfig.VERSION_CODE) {
                 Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
@@ -133,12 +155,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                     default:
                         break;
                 }
-                editor.putInt(APP_VERSION_KEY, lastVersion);
                 lastVersion++;
             }
-            editor.putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
         }
-        prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).commit();
         return redownload;
     }
 
@@ -162,7 +181,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
     private void beginLoadingIfConnected() {
         if (ConnectionDetector.isConnectedToInternet(this)) {
-            advanceToNextPage();
+            viewPager.advanceToNextPage();
             beginLoading();
         } else {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -188,18 +207,6 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
             // Show it
             alertDialog.show();
-        }
-    }
-
-    public void advanceToNextPage() {
-        if (viewPager.getCurrentItem() < viewPager.getAdapter().getCount() - 1) {
-            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-        }
-    }
-
-    public void returnToPreviousPage() {
-        if (viewPager.getCurrentItem() > 0) {
-            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
 
@@ -285,10 +292,11 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         if (info.state == LoadAllData.LoadProgressInfo.STATE_NO_CONNECTION) {
             connectionLost();
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_LOADING) {
-            loadingMessage.setText(info.message);
+            currentLoadingMessage = info.message;
+            loadingMessage.setText(currentLoadingMessage);
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_FINISHED) {
             loadingFinished();
-            advanceToNextPage();
+            viewPager.advanceToNextPage();
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_ERROR) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, false).commit();
             errorLoadingData(info.message);

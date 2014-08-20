@@ -3,17 +3,13 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -116,13 +112,9 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();
-                } else {
-                    Log.d(Constants.LOG_TAG, "Navigating up...");
-                    NavUtils.navigateUpTo(this, upIntent);
-                }
+                // If this tasks exists in the back stack, it will be brought to the front and all other activities
+                // will be destroyed. HomeActivity will be delivered this intent via onNewIntent().
+                startActivity(HomeActivity.newInstance(this, R.id.nav_item_events).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 return true;
             case R.id.stats_help:
                 Utilities.showHelpDialog(this, R.raw.stats_help, getString(R.string.stats_help_title));

@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -185,8 +184,9 @@ public class ViewTeamActivity extends SlidingPageActivity implements ActionBar.O
                 return true;
             }
 
-            // We recreate the back stack every time so we can assure that "up" goes to the teams view
-            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
+            // If this tasks exists in the back stack, it will be brought to the front and all other activities
+            // will be destroyed. HomeActivity will be delivered this intent via onNewIntent().
+            startActivity(HomeActivity.newInstance(this, R.id.nav_item_teams).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             return true;
         }
         return super.onOptionsItemSelected(item);
