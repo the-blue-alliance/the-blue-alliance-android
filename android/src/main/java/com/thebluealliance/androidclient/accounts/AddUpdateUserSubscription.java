@@ -75,12 +75,14 @@ public class AddUpdateUserSubscription extends AsyncTask<String, Void, AddUpdate
     @Override
     protected void onPostExecute(Result result) {
         super.onPostExecute(result);
-        String text;
+        String text = null;
         if (result == Result.ADDED) {
             text = "Subscription "+(added?"added":"updated");
-        } else {
+        } else if(result == Result.ERROR){
             text = "Error adding subscription";
         }
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        if(text != null) {
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        }
     }
 }
