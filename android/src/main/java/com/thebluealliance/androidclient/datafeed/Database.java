@@ -1447,8 +1447,13 @@ public class Database extends SQLiteOpenHelper {
         public long add(Subscription in){
             if(!exists(in.getKey())){
                 return safeInsert(TABLE_SUBSCRIPTIONS, null, in.getParams());
+            } else{
+                return update(in.getKey(), in);
             }
-            return -1;
+        }
+
+        public int update(String key, Subscription in){
+            return safeUpdate(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key});
         }
 
         public void add(ArrayList<Subscription> in) {
@@ -1495,6 +1500,14 @@ public class Database extends SQLiteOpenHelper {
 
         public void remove(String key){
             safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key});
+        }
+
+        public Subscription get(String key){
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            if(cursor != null && cursor.moveToFirst()){
+                return ModelInflater.inflateSubscription(cursor);
+            }
+            return null;
         }
 
         public ArrayList<Subscription> getForUser(String user){

@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
@@ -29,6 +30,16 @@ import java.util.Date;
 
 
 public class Event extends BasicModel<Event> {
+
+    public static final String[] NOTIFICATION_TYPES = {
+            NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE,
+            NotificationTypes.LEVEL_STARTING,
+            NotificationTypes.ALLIANCE_SELECTION,
+            NotificationTypes.AWARDS,
+            NotificationTypes.SCHEDULE_POSTED,
+            NotificationTypes.FINAL_RESULTS
+    };
 
     private String shortName;
     private JsonArray matches, alliances, rankings, webcasts, teams;

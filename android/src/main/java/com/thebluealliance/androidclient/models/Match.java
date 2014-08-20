@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
@@ -23,6 +24,11 @@ import java.util.Date;
 
 
 public class Match extends BasicModel<Match> {
+
+    public static final String[] NOTIFICATION_TYPES = {
+            NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE,
+    };
 
     private String selectedTeam;
     private int year;

@@ -91,7 +91,7 @@ public class AddRemoveUserFavorite extends AsyncTask<String, Void, AddRemoveUser
         super.onPostExecute(result);
         String text;
         if (result == Result.ADDED) {
-            icon.setImageResource(R.drawable.ic_action_remove_favorite);
+            icon.setImageResource(R.drawable.ic_my_tba_blue);
             text = "Favorite added";
         } else if (result == Result.REMOVED) {
             icon.setImageResource(R.drawable.ic_action_add_favorite);

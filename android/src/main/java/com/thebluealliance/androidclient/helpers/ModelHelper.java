@@ -13,7 +13,9 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -61,6 +63,17 @@ public class ModelHelper {
             return MODELS.AWARD;
         } else{
             return null;
+        }
+    }
+
+    public static String[] getNotificationTypes(MODELS type){
+        switch (type){
+            case EVENT:     return Event.NOTIFICATION_TYPES;
+            case TEAM:      return Team.NOTIFICATION_TYPES;
+            case MATCH:     return Match.NOTIFICATION_TYPES;
+            case EVENTTEAM: return EventTeam.NOTIFICATION_TYPES;
+            case DISTRICT:  return District.NOTIFICATION_TYPES;
+            default:        return new String[]{};
         }
     }
 

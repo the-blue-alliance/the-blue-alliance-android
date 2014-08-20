@@ -99,7 +99,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
             if (subscriptionCollection.getSubscriptions() != null) {
                 ArrayList<Subscription> subscriptionModels = new ArrayList<>();
                 for (ModelsMobileApiMessagesSubscriptionMessage s : subscriptionCollection.getSubscriptions()) {
-                    subscriptionModels.add(new Subscription(currentUser, s.getModelKey()));
+                    subscriptionModels.add(new Subscription(currentUser, s.getModelKey(), s.getSettings()));
                 }
                 subscriptions.add(subscriptionModels);
             }

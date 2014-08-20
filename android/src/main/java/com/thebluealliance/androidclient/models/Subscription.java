@@ -18,9 +18,10 @@ public class Subscription {
 
     }
 
-    public Subscription(String userName, String modelKey) {
+    public Subscription(String userName, String modelKey, String notificationSettings) {
         this.userName = userName;
         this.modelKey = modelKey;
+        this.notificationSettings = notificationSettings;
         setModelEnum(ModelHelper.getModelFromKey(modelKey).ordinal());
     }
 

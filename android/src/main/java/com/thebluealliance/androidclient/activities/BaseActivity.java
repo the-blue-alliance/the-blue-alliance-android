@@ -3,11 +3,13 @@ package com.thebluealliance.androidclient.activities;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,14 +18,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
@@ -45,9 +44,15 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        final Activity activity = this;
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void[] params) {
+                /* Report the activity start to GAnalytics */
+                GoogleAnalytics.getInstance(activity).reportActivityStart(activity);
+                return null;
+            }
+        }.execute();
 
         if (!AccountHelper.isAccountSelected(this)) {
             signIn();

@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -23,6 +24,14 @@ import java.util.Arrays;
  * Created by phil on 7/1/14.
  */
 public class EventTeam extends BasicModel<EventTeam> {
+
+    public static final String[] NOTIFICATION_TYPES = {
+            NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE,
+            NotificationTypes.ALLIANCE_SELECTION,
+            NotificationTypes.AWARDS,
+            NotificationTypes.FINAL_RESULTS
+    };
 
     public EventTeam() {
         super(Database.TABLE_EVENTTEAMS);

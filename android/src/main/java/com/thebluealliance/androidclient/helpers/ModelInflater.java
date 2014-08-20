@@ -1,7 +1,9 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.database.Cursor;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
@@ -365,6 +367,7 @@ public class ModelInflater {
                     subscription.setModelEnum(data.getInt(i));
                     break;
                 case Database.Subscriptions.NOTIFICATION_SETTINGS:
+                    Log.d(Constants.LOG_TAG, "Settings: "+data.getString(i));
                     subscription.setNotificationSettings(data.getString(i));
                     break;
                 default:

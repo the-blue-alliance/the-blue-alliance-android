@@ -17,4 +17,19 @@ public class NotificationTypes {
 
             UPDATE_FAVORITES = "update_favorites",
             UPDATE_SUBSCRIPTIONS = "update_subscriptions";
+
+    public static String getDisplayName(String notificationType){
+        switch (notificationType){
+            case UPCOMING_MATCH:            return "Upcoming Matches";
+            case MATCH_SCORE:               return "Match Scores";
+            case LEVEL_STARTING:            return "Competition Level Starting";
+            case ALLIANCE_SELECTION:        return "Alliance Selections";
+            case AWARDS:                    return "Awards Posted";
+            case MEDIA_POSTED:              return "Media Posted";
+            case DISTRICT_POINTS_UPDATED:   return "Points Updated";
+            case SCHEDULE_POSTED:           return "Match Schedule Posted";
+            case FINAL_RESULTS:             return "Final Results";
+            default:                        return "";
+        }
+    }
 }
