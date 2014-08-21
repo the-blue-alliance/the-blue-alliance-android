@@ -4,17 +4,13 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -43,7 +39,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
         return intent;
     }
 
-    public static Intent newInstance(Context c, String districtKey){
+    public static Intent newInstance(Context c, String districtKey) {
         int year = Integer.parseInt(districtKey.substring(0, 4));
         String abbrev = districtKey.substring(4);
         Intent intent = new Intent(c, ViewDistrictActivity.class);
@@ -102,7 +98,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
 
     private void setupActionBar() {
         ActionBar bar = getActionBar();
-        if(bar != null) {
+        if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             setActionBarTitle(String.format(getString(R.string.district_title_format), year, DistrictHelper.districtTypeFromKey(districtKey).getName()));
         }
@@ -131,13 +127,10 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();
-                } else {
-                    Log.d(Constants.LOG_TAG, "Navigating up...");
-                    NavUtils.navigateUpTo(this, upIntent);
-                }
+
+                // If this tasks exists in the back stack, it will be brought to the front and all other activities
+                // will be destroyed. HomeActivity will be delivered this intent via onNewIntent().
+                startActivity(HomeActivity.newInstance(this, R.id.nav_item_districts).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -161,7 +154,7 @@ public class ViewDistrictActivity extends RefreshableHostActivity implements Vie
 
     @Override
     public void onPageSelected(int position) {
-        if(mOptionsMenu != null) {
+        if (mOptionsMenu != null) {
             MenuItem pointsHelp = mOptionsMenu.findItem(R.id.points_help);
             if (position == 1) {
                 pointsHelp.setVisible(true);
