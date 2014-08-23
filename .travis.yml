@@ -7,6 +7,7 @@ android:
     - android-19
     - extra-android-m2repository
     - extra-google-m2repository
+    - extra-google-google_play_services
     
 jdk: oraclejdk7
 env:
