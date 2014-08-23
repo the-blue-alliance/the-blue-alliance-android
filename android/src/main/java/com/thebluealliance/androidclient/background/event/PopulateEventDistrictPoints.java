@@ -48,12 +48,6 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
@@ -71,7 +65,6 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
             try {
                 DistrictHelper.DISTRICTS type = DistrictHelper.DISTRICTS.fromEnum(eventResponse.getData().getDistrictEnum());
                 isDistrict = type != DistrictHelper.DISTRICTS.NO_DISTRICT;
-                mFragment.updateDistrict(isDistrict);
                 if(isDistrict) {
                     districtKey = eventKey.substring(0, 4) + type.getAbbreviation();
                 }
@@ -125,6 +118,9 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
                 rankings.onRestoreInstanceState(state);
                 noDataText.setVisibility(View.GONE);
             }
+
+            // Update district status
+            mFragment.updateDistrict(isDistrict);
 
             // Display a warning if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {

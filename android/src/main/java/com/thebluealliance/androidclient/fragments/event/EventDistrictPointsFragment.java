@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -25,7 +26,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * File created by phil on 7/26/14.
  */
-public class EventDistrictPointsFragment extends Fragment implements RefreshListener{
+public class EventDistrictPointsFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
@@ -35,6 +36,8 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
+
+    private TextView infoContainer;
 
     private PopulateEventDistrictPoints mTask;
 
@@ -56,7 +59,7 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
         isDistrict = true;
         setHasOptionsMenu(true);
@@ -78,6 +81,7 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
             progressBar.setVisibility(View.GONE);
         }
         mListView.setSelector(R.drawable.transparent);
+
         return view;
     }
 
@@ -119,17 +123,20 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
         mTask = newTask;
     }
 
-    public void updateDistrict(boolean isDistrict){
+    public void updateDistrict(boolean isDistrict) {
         this.isDistrict = isDistrict;
-        if(parent instanceof ViewEventActivity){
-            Log.d(Constants.LOG_TAG, "updating status");
-            ((ViewEventActivity) parent).updateDistrict(isDistrict);
+        infoContainer = (TextView) getView().findViewById(R.id.info_container);
+        if (isDistrict) {
+            infoContainer.setVisibility(View.GONE);
+        } else {
+            infoContainer.setVisibility(View.VISIBLE);
+            infoContainer.setText(getActivity().getText(R.string.warning_not_real_district));
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

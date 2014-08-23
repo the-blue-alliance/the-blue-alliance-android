@@ -52,7 +52,7 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
         mKey = getArguments().getString(KEY);
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -111,7 +111,7 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     public void onDestroy() {
         super.onDestroy();
         if(mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)mParent).deregisterRefreshableActivityListener(this);
+            ((RefreshableHostActivity)mParent).unregisterRefreshListener(this);
         }
     }
 }

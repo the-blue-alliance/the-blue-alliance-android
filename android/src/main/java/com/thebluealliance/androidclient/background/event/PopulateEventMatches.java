@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.background.event;
 
 import android.os.AsyncTask;
 import android.os.Parcelable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -14,9 +13,9 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
+import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -25,6 +24,8 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Retrieves event results for an FRC event.
@@ -35,9 +36,9 @@ import java.util.Arrays;
  *         <p/>
  *         File created by phil on 4/22/14.
  */
-public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CODE> {
+public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private EventResultsFragment mFragment;
+    private EventMatchesFragment mFragment;
     private RefreshableHostActivity activity;
     private String eventKey;
     private String teamKey;
@@ -47,18 +48,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
     Event event;
     MatchListAdapter adapter;
 
-    public PopulateEventResults(EventResultsFragment f, boolean forceFromCache) {
+    public PopulateEventMatches(EventMatchesFragment f, boolean forceFromCache) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.forceFromCache = forceFromCache;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if(activity != null) {
-            activity.showMenuProgressBar();
-        }
     }
 
     @Override
@@ -150,17 +143,6 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 return APIResponse.CODE.NODATA;
             }
 
-            if(event.isHappeningNow()){
-                //send out that there are live matches happening for other things to pick up
-                LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(activity);
-                if(broadcastManager != null) {
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: "+eventKey);
-                    broadcastManager.sendBroadcast(new LiveEventBroadcast(nextMatch, lastMatch));
-                }else{
-                    Log.w(Constants.LOG_TAG, "Unable to get LocalBroadcastManager. Can't send live event broadcast.");
-                }
-            }
-
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
             return APIResponse.CODE.NODATA;
@@ -193,9 +175,9 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
             // only show the message when try try and actually load data from the web
-            if ( code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups.isEmpty())) {
+            if (code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups.isEmpty())) {
                 noDataText.setVisibility(View.VISIBLE);
-                noDataText.setText(teamKey.isEmpty()?R.string.no_match_data:R.string.no_team_match_data);
+                noDataText.setText(teamKey.isEmpty() ? R.string.no_match_data : R.string.no_team_match_data);
             } else {
                 noDataText.setVisibility(View.GONE);
                 ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
@@ -204,10 +186,19 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
                 results.setAdapter(adapter);
                 results.onRestoreInstanceState(state);
                 results.setSelection(firstVisiblePosition);
-                if(groups.size() == 1){
+                if (groups.size() == 1) {
                     results.expandGroup(0);
                 }
                 adapter.notifyDataSetChanged();
+            }
+
+            // Alert any interested parties of matches that are being played if this is a live event
+            if(code != APIResponse.CODE.NODATA) {
+                if (event.isHappeningNow()) {
+                    // Send out that there are live matches happening for other things to pick up
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
+                    EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+                }
             }
 
             // Remove progress spinner and show content since we're done loading data.
@@ -226,7 +217,7 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventResults secondLoad = new PopulateEventResults(mFragment, false);
+            PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, false);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey, teamKey);
         } else {

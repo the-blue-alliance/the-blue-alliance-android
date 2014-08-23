@@ -41,14 +41,6 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if (mActivity != null) {
-            mActivity.showMenuProgressBar();
-        }
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         mMatchKey = params[0];
         if (!MatchHelper.validateMatchKey(mMatchKey)) {

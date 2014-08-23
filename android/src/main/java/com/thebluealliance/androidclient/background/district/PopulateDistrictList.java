@@ -40,12 +40,6 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(Integer... params) {
         year = params[0];
 

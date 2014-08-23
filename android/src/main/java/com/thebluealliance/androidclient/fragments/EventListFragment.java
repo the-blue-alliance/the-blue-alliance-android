@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -9,20 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/20/14.
@@ -72,7 +67,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
 
     public void setHost(RefreshableHost host){
         mHost = host;
-        mHost.registerRefreshableActivityListener(this);
+        mHost.registerRefreshListener(this);
     }
 
     @Override
@@ -132,6 +127,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHost.deregisterRefreshableActivityListener(this);
+        mHost.unregisterRefreshListener(this);
     }
 }

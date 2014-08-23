@@ -7,26 +7,17 @@ import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * File created by phil on 4/20/14.
@@ -47,12 +38,6 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         mFragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
         this.forceFromCache = forceFromCache;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
     }
 
     @Override
@@ -96,14 +81,14 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
         View view = mFragment.getView();
         LayoutInflater inflater = activity.getLayoutInflater();
-        if(view != null) {
+        if (view != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             View infoContainer = view.findViewById(R.id.team_info_container);
             if (code == APIResponse.CODE.NODATA) {
                 noDataText.setText(R.string.no_team_info);
                 noDataText.setVisibility(View.VISIBLE);
                 infoContainer.setVisibility(View.GONE);
-            }else{
+            } else {
                 noDataText.setVisibility(View.GONE);
                 TextView teamName = ((TextView) view.findViewById(R.id.team_name));
                 if (mTeamName.isEmpty()) {
@@ -111,9 +96,18 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 } else {
                     teamName.setText(mTeamName);
                 }
-                ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
-                // Tag is used to create an ACTION_VIEW intent for a maps application
-                view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
+
+                View teamLocationContainer = view.findViewById(R.id.team_location_container);
+                if (mLocation.isEmpty()) {
+                    // No location; hide the location view
+                    teamLocationContainer.setVisibility(View.GONE);
+                } else {
+                    // Show and populate the location view
+                    ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
+                    // Tag is used to create an ACTION_VIEW intent for a maps application
+                    view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
+                }
+
                 view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
                 view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query=" + mTeamKey);
                 view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + mTeamKey);

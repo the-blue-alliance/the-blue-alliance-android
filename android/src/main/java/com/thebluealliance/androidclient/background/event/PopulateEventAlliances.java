@@ -40,12 +40,6 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
 
         eventKey = params[0];

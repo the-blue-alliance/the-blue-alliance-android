@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
-import com.thebluealliance.androidclient.fragments.event.EventResultsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
 
@@ -52,7 +52,7 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
                 fragment = EventRankingsFragment.newInstance(mEventKey);
                 break;
             case 3: //results
-                fragment = EventResultsFragment.newInstance(mEventKey);
+                fragment = EventMatchesFragment.newInstance(mEventKey);
                 break;
             case 4: //alliances
                 fragment = EventAlliancesFragment.newInstance(mEventKey);

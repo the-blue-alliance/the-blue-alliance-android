@@ -93,4 +93,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.77'
+    compile 'de.greenrobot:eventbus:2.2.+'
 }

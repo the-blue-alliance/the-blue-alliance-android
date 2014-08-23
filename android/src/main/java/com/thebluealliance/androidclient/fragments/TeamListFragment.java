@@ -3,18 +3,14 @@ package com.thebluealliance.androidclient.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -22,17 +18,15 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * File created by phil on 4/20/14.
  */
 
-public class TeamListFragment extends Fragment implements RefreshListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class TeamListFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
@@ -63,7 +57,7 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
         mTeamNumberEnd = getArguments().getInt(END);
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -83,38 +77,6 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
             }
         });
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Each loader needs a unique id; use the sum of the start and end numbers
-        int id = mTeamNumberStart + mTeamNumberEnd;
-        getActivity().getSupportLoaderManager().initLoader(id, null, this);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new SimpleCursorLoader(getActivity()) {
-            @Override
-            public Cursor loadInBackground() {
-                return Database.getInstance(getActivity()).getTeamsTable().getCursorForTeamsInRange(mTeamNumberStart, mTeamNumberEnd);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (cursorLoader.getId() != mTeamNumberStart + mTeamNumberEnd) {
-            return;
-        }
-        mProgressBar.setVisibility(View.GONE);
-        mListView.setAdapter(new TeamCursorAdapter(getActivity(), cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mListView.setAdapter(null);
     }
 
     @Override
@@ -146,6 +108,6 @@ public class TeamListFragment extends Fragment implements RefreshListener, Loade
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }
