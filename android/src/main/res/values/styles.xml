@@ -138,17 +138,15 @@
         <item name="android:background">@color/lighter_red</item>
         <item name="android:drawableLeft">@drawable/ic_action_warning_blue</item>
     </style>
-3
+
     <style name="NoDataFoundStyle">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>s
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:paddingTop">16dp</item>
     </style>
 
-    <style name="DropDownNav" parent="@android:style/Widget.Holo.Spinner">
-        <item name="android:popupBackground">@color/action_bar_background</item>
-    </style>
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
 
 </resources>
