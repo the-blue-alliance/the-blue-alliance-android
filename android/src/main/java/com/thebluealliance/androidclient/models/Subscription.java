@@ -2,8 +2,12 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+
+import java.util.List;
 
 /**
  * File created by phil on 8/13/14.
@@ -18,10 +22,10 @@ public class Subscription {
 
     }
 
-    public Subscription(String userName, String modelKey, String notificationSettings) {
+    public Subscription(String userName, String modelKey, List<String> notificationSettings) {
         this.userName = userName;
         this.modelKey = modelKey;
-        this.notificationSettings = notificationSettings;
+        this.notificationSettings = makeNotificationJSON(notificationSettings);
         setModelEnum(ModelHelper.getModelFromKey(modelKey).ordinal());
     }
 
@@ -63,6 +67,14 @@ public class Subscription {
 
     public void setModelEnum(int modelEnum) {
         this.modelEnum = modelEnum;
+    }
+
+    private static String makeNotificationJSON(List<String> input){
+        JsonArray out = new JsonArray();
+        for(String s: input){
+            out.add(new JsonPrimitive(s));
+        }
+        return out.toString();
     }
 
     public ContentValues getParams(){

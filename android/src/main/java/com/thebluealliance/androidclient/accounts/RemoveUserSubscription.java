@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * File created by phil on 8/18/14.
@@ -41,7 +42,7 @@ public class RemoveUserSubscription extends AsyncTask<String, Void, RemoveUserSu
             ModelsMobileApiMessagesSubscriptionMessage request = new ModelsMobileApiMessagesSubscriptionMessage();
             request.setModelKey(modelKey);
             request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
-            request.setSettings("");
+            request.setNotifications(new ArrayList<String>());
             Log.d(Constants.LOG_TAG, "Subscription already exists. Removing it");
             try {
                 ModelsMobileApiMessagesBaseResponse response = service.subscriptions().remove(request).execute();
