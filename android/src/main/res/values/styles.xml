@@ -5,6 +5,7 @@
         <item name="android:actionBarStyle">@style/ActionBarStyle</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionOverflowButtonStyle</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_ab_back_holo_dark_am</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav</item>
     </style>
 
     <style name="ActionBarStyle" parent="android:Widget.Holo.ActionBar">
@@ -137,13 +138,17 @@
         <item name="android:background">@color/lighter_red</item>
         <item name="android:drawableLeft">@drawable/ic_action_warning_blue</item>
     </style>
-
+3
     <style name="NoDataFoundStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:paddingTop">16dp</item>
+    </style>
+
+    <style name="DropDownNav" parent="@android:style/Widget.Holo.Spinner">
+        <item name="android:popupBackground">@color/action_bar_background</item>
     </style>
 
 </resources>
