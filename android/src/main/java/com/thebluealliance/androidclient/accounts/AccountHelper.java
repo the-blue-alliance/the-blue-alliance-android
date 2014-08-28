@@ -73,6 +73,7 @@ public class AccountHelper {
         GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
         try {
             String token = currentCredential.getToken();
+            Log.d(Constants.LOG_TAG, "token: "+token);
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "IO Exception while fetching account token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();

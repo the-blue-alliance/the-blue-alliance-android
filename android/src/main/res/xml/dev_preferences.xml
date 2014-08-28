@@ -32,9 +32,9 @@
             android:selectable="true"
             android:title="@string/pref_test_score_notification" />
         <Preference
-            android:key="gcm_register"
+            android:key="select_account"
             android:selectable="true"
-            android:title="@string/pref_register_gcm" />
+            android:title="@string/pref_select_account" />
     </PreferenceCategory>
 
 </PreferenceScreen>

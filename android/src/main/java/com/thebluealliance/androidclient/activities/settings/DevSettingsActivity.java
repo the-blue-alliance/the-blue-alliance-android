@@ -10,8 +10,10 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
@@ -78,11 +80,12 @@ public class DevSettingsActivity extends PreferenceActivity {
                 }
             });
 
-            Preference gcmRegister = findPreference("gcm_register");
+            Preference gcmRegister = findPreference("select_account");
             gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-
+                    GoogleAccountCredential credential = AccountHelper.getSelectedAccountCredential(getActivity());
+                    getActivity().startActivity(credential.newChooseAccountIntent());
                     return false;
                 }
             });
