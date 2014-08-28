@@ -25,8 +25,7 @@ import java.util.HashMap;
 public class TBAv2 {
 
     private static final String TBA_HOST_PREF = "tba_host";
-    private static final String tbaHostDefault = //"http://www.thebluealliance.com";
-            "http://tba-dev-phil.appspot.com";
+    private static final String tbaHostDefault = "http://www.thebluealliance.com";
 
     public static enum QUERY {
         CSV_TEAMS,
