@@ -12,7 +12,6 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
@@ -26,7 +25,7 @@ import java.util.Arrays;
 public class District extends BasicModel<District> {
 
     public static final String[] NOTIFICATION_TYPES = {
-            NotificationTypes.DISTRICT_POINTS_UPDATED
+           // NotificationTypes.DISTRICT_POINTS_UPDATED
     };
 
     private int numEvents;

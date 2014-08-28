@@ -32,13 +32,13 @@ import java.util.Date;
 public class Event extends BasicModel<Event> {
 
     public static final String[] NOTIFICATION_TYPES = {
-            NotificationTypes.UPCOMING_MATCH,
-            NotificationTypes.MATCH_SCORE,
-            NotificationTypes.LEVEL_STARTING,
-            NotificationTypes.ALLIANCE_SELECTION,
-            NotificationTypes.AWARDS,
-            NotificationTypes.SCHEDULE_POSTED,
-            NotificationTypes.FINAL_RESULTS
+            //NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE
+            //NotificationTypes.LEVEL_STARTING,
+            //NotificationTypes.ALLIANCE_SELECTION,
+            //NotificationTypes.AWARDS,
+            //NotificationTypes.SCHEDULE_POSTED,
+            //NotificationTypes.FINAL_RESULTS
     };
 
     private String shortName;

@@ -2,7 +2,9 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
@@ -47,7 +49,9 @@ public class ModelHelper {
     }
 
     public static MODELS getModelFromKey(String key){
-        if(EventHelper.validateEventKey(key)){
+        if(DistrictHelper.validateDistrictKey(key)){
+            return MODELS.DISTRICT;
+        }else if(EventHelper.validateEventKey(key)){
             return MODELS.EVENT;
         } else if(TeamHelper.validateTeamKey(key)){
             return MODELS.TEAM;
@@ -55,8 +59,6 @@ public class ModelHelper {
             return MODELS.MATCH;
         } else if(EventTeamHelper.validateEventTeamKey(key)){
             return MODELS.EVENTTEAM;
-        } else if(DistrictHelper.validateDistrictKey(key)){
-            return MODELS.DISTRICT;
         } else if(DistrictTeamHelper.validateDistrictTeamKey(key)){
             return MODELS.DISTRICTTEAM;
         } else if(AwardHelper.validateAwardKey(key)){
@@ -67,6 +69,7 @@ public class ModelHelper {
     }
 
     public static String[] getNotificationTypes(MODELS type){
+        Log.d(Constants.LOG_TAG, "getting notifications for: "+type);
         switch (type){
             case EVENT:     return Event.NOTIFICATION_TYPES;
             case TEAM:      return Team.NOTIFICATION_TYPES;

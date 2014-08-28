@@ -26,8 +26,8 @@ import java.util.Date;
 public class Match extends BasicModel<Match> {
 
     public static final String[] NOTIFICATION_TYPES = {
-            NotificationTypes.UPCOMING_MATCH,
-            NotificationTypes.MATCH_SCORE,
+            //NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE
     };
 
     private String selectedTeam;

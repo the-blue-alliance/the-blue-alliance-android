@@ -26,11 +26,11 @@ import java.util.Arrays;
 public class EventTeam extends BasicModel<EventTeam> {
 
     public static final String[] NOTIFICATION_TYPES = {
-            NotificationTypes.UPCOMING_MATCH,
-            NotificationTypes.MATCH_SCORE,
-            NotificationTypes.ALLIANCE_SELECTION,
-            NotificationTypes.AWARDS,
-            NotificationTypes.FINAL_RESULTS
+            //NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE
+            //NotificationTypes.ALLIANCE_SELECTION,
+            //NotificationTypes.AWARDS,
+            //NotificationTypes.FINAL_RESULTS
     };
 
     public EventTeam() {
