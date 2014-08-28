@@ -67,7 +67,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
 
     public void setHost(RefreshableHost host) {
         mHost = host;
-        mHost.registerRefreshableActivityListener(this);
+        mHost.registerRefreshListener(this);
     }
 
     @Override
@@ -127,6 +127,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHost.deregisterRefreshableActivityListener(this);
+        mHost.unregisterRefreshListener(this);
     }
 }

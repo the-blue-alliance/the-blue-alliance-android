@@ -41,12 +41,6 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         mTeamKey = params[0];
         try {
@@ -102,9 +96,18 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 } else {
                     teamName.setText(mTeamName);
                 }
-                ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
-                // Tag is used to create an ACTION_VIEW intent for a maps application
-                view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
+
+                View teamLocationContainer = view.findViewById(R.id.team_location_container);
+                if (mLocation.isEmpty()) {
+                    // No location; hide the location view
+                    teamLocationContainer.setVisibility(View.GONE);
+                } else {
+                    // Show and populate the location view
+                    ((TextView) view.findViewById(R.id.team_location)).setText(mLocation);
+                    // Tag is used to create an ACTION_VIEW intent for a maps application
+                    view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
+                }
+
                 view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
                 view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query=" + mTeamKey);
                 view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + mTeamKey);

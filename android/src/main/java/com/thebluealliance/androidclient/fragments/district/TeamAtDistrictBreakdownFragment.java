@@ -52,7 +52,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
         mParent = getActivity();
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -116,7 +116,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 
 }

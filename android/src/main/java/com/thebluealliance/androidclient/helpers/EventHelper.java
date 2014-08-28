@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -25,6 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * File created by phil on 6/15/14.
@@ -319,7 +322,7 @@ public class EventHelper {
                 if (broadcastIfLive && event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
-                    LocalBroadcastManager.getInstance(c).sendBroadcast(new LiveEventBroadcast(event.render()));
+                    EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
 
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -346,7 +349,7 @@ public class EventHelper {
                 if (broadcastIfLive && event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
-                    LocalBroadcastManager.getInstance(c).sendBroadcast(new LiveEventBroadcast(event.render()));
+                    EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");

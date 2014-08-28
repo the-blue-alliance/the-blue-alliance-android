@@ -51,7 +51,7 @@ public class DistrictListFragment extends Fragment implements RefreshListener {
         mParent = getActivity();
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -116,6 +116,6 @@ public class DistrictListFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 }

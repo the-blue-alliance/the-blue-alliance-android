@@ -52,7 +52,7 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
         mParent = getActivity();
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -117,7 +117,7 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 
 }

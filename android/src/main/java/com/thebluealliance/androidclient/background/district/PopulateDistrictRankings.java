@@ -41,12 +41,6 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         districtKey = params[0];
 

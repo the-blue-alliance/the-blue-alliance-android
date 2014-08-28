@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -42,7 +41,7 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         super.onCreate(savedInstanceState);
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -101,7 +100,7 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
 }

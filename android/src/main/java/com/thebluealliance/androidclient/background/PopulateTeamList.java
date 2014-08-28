@@ -40,13 +40,6 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-        teamItems = new ArrayList<>();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(Integer... params) {
         start = params[0];
         end = params[1];

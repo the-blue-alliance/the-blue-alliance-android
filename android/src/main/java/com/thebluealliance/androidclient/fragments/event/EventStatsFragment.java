@@ -81,7 +81,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
 
         if (savedInstanceState != null) {
@@ -224,7 +224,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
     private String getSortTypeFromPosition(int position) {

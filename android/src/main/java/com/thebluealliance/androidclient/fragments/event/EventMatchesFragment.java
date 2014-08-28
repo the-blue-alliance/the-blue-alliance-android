@@ -16,13 +16,13 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventResults;
+import com.thebluealliance.androidclient.background.event.PopulateEventMatches;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * File created by phil on 4/22/14.
  */
-public class EventResultsFragment extends Fragment implements RefreshListener {
+public class EventMatchesFragment extends Fragment implements RefreshListener {
 
     private Activity parent;
 
@@ -35,10 +35,10 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
     private int mFirstVisiblePosition;
     private ProgressBar mProgressBar;
 
-    private PopulateEventResults mTask;
+    private PopulateEventMatches mTask;
 
-    public static EventResultsFragment newInstance(String eventKey, String teamKey) {
-        EventResultsFragment f = new EventResultsFragment();
+    public static EventMatchesFragment newInstance(String eventKey, String teamKey) {
+        EventMatchesFragment f = new EventMatchesFragment();
         Bundle data = new Bundle();
         data.putString(KEY, eventKey);
         data.putString(TEAM, teamKey);
@@ -46,7 +46,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         return f;
     }
 
-    public static EventResultsFragment newInstance(String eventKey) {
+    public static EventMatchesFragment newInstance(String eventKey) {
         return newInstance(eventKey, "");
     }
 
@@ -59,7 +59,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -103,7 +103,7 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " results");
-        mTask = new PopulateEventResults(this, true);
+        mTask = new PopulateEventMatches(this, true);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey, teamKey);
     }
 
@@ -114,13 +114,13 @@ public class EventResultsFragment extends Fragment implements RefreshListener {
         }
     }
 
-    public void updateTask(PopulateEventResults newTask) {
+    public void updateTask(PopulateEventMatches newTask) {
         mTask = newTask;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

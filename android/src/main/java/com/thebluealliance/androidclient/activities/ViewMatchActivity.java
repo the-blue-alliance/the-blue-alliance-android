@@ -50,7 +50,7 @@ public class ViewMatchActivity extends SlidingPageActivity implements RefreshLis
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
-        registerRefreshableActivityListener(this);
+        registerRefreshListener(this);
 
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
 

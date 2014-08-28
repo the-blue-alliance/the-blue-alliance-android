@@ -27,11 +27,14 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
+import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * File created by phil on 4/22/14.
@@ -42,7 +45,6 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     private static final String KEY = "eventKey";
     private PopulateEventInfo task;
     private Activity parent;
-    private BroadcastReceiver receiver;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -61,7 +63,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         parent = getActivity();
 
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -87,17 +89,15 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        receiver = new LiveEventBroadcastReceiver();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
     protected void showLastMatch(MatchListElement match) {
@@ -168,32 +168,23 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
     }
 
-    protected void showNextMatch(MatchListElement match) {
-        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
-        lastLayout.setVisibility(View.VISIBLE);
-        if (lastLayout.getChildCount() > 1) {
-            lastLayout.removeViewAt(1);
+    protected void showNextMatch(MatchListElement match){
+        LinearLayout nextLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
+        nextLayout.setVisibility(View.VISIBLE);
+        if (nextLayout.getChildCount() > 1) {
+            nextLayout.removeViewAt(1);
         }
-        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+        nextLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
     }
 
-    class LiveEventBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Constants.LOG_TAG, "Received live event broadcast");
-            if (intent.getAction().equals(LiveEventBroadcast.ACTION)) {
-                if (intent.hasExtra(LiveEventBroadcast.LAST_MATCH)) {
-                    Log.d(Constants.LOG_TAG, "showing last match");
-                    MatchListElement last = (MatchListElement) intent.getSerializableExtra(LiveEventBroadcast.LAST_MATCH);
-                    showLastMatch(last);
-                }
-                if (intent.hasExtra(LiveEventBroadcast.NEXT_MATCH)) {
-                    Log.d(Constants.LOG_TAG, "showing next match");
-                    MatchListElement next = (MatchListElement) intent.getSerializableExtra(LiveEventBroadcast.NEXT_MATCH);
-                    showNextMatch(next);
-                }
-            }
+    public void onEvent(LiveEventMatchUpdateEvent event) {
+        if(event.getLastMatch() != null){
+            Log.d(Constants.LOG_TAG, "showing last match");
+            showLastMatch(event.getLastMatch().render());
+        }
+        if(event.getNextMatch() != null){
+            Log.d(Constants.LOG_TAG, "showing next match");
+            showNextMatch(event.getNextMatch().render());
         }
     }
 }

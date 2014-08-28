@@ -52,12 +52,6 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
 
         if (params.length != 2)

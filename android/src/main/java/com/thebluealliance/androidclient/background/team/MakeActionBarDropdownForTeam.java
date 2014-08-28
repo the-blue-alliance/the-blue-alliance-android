@@ -32,6 +32,7 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
+        Log.d(Constants.LOG_TAG, "Starting doInBackground: " + getClass().getName());
         if (params.length < 1 || !TeamHelper.validateTeamKey(params[0])) {
             throw new IllegalArgumentException("You must pass a valid team key to create the action bar");
         }

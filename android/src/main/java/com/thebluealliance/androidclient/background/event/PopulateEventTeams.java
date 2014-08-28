@@ -47,12 +47,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         Log.d("EventTeamsFragment", "doInBackground started");
         eventKey = params[0];

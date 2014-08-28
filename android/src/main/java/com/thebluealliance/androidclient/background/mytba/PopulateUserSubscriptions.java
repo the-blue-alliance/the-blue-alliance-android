@@ -38,14 +38,6 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if (activity != null) {
-            activity.showMenuProgressBar();
-        }
-    }
-
-    @Override
     protected Void doInBackground(Void... params) {
 
         subscriptions = new ArrayList<>();

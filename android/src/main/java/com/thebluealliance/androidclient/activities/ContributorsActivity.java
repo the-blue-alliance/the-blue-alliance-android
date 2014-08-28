@@ -37,7 +37,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
             }
         });
 
-        registerRefreshableActivityListener(this);
+        registerRefreshListener(this);
 
         setSearchEnabled(false);
     }

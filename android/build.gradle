@@ -102,8 +102,7 @@ dependencies {
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:5.0.+'
     compile 'com.sothree.slidinguppanel:library:+'
-    compile files('libs/tbaMobile-v4-1.19.0-SNAPSHOT.jar')
-    compile files('libs/tbaMobile-v5-1.19.0-SNAPSHOT.jar')
-    compile files('libs/tbaMobile-v6-1.19.0-SNAPSHOT.jar')
+    compile 'de.greenrobot:eventbus:2.2.+'
+
     compile files('libs/tbaMobile-v7-1.19.0-SNAPSHOT.jar')
 }

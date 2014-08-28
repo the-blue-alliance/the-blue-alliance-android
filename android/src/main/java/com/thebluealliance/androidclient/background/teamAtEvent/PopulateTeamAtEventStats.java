@@ -40,12 +40,6 @@ public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIRespons
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        activity.showMenuProgressBar();
-    }
-
-    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         if (params.length != 2)
             throw new IllegalArgumentException("PopulateTeamAtEventStats must be constructed with teamKey, eventKey, recordString");

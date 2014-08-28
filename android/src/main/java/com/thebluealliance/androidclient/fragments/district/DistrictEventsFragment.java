@@ -53,7 +53,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
         mKey = getArguments().getString(KEY);
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -109,8 +109,8 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
+        if(mParent != null && mParent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity)mParent).unregisterRefreshListener(this);
         }
     }
 }
