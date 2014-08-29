@@ -23,6 +23,7 @@ import com.google.api.client.json.JsonFactory;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 import java.io.IOException;
@@ -44,6 +45,14 @@ public class AccountHelper {
         Log.d(Constants.LOG_TAG, "Enabling myTBA: "+enabled);
         if(enabled && !isAccountSelected(activity)){
             signIn(activity);
+        }else if (!enabled && isAccountSelected(activity)){
+            //disabled myTBA.
+            String currentUser = getSelectedAccount(activity);
+            if(!currentUser.isEmpty()){
+                Log.d(Constants.LOG_TAG, "removing: "+currentUser);
+                //Remove all local content and deregister from GCM
+                new DisableMyTBA(activity).execute(currentUser);
+            }
         }
     }
 

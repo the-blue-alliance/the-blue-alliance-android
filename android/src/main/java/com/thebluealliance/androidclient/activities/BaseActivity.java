@@ -60,6 +60,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
             AccountHelper.signIn(this);
         } else if(mytba){
             GCMHelper.registerGCMIfNeeded(this);
+        } else{
+            AccountHelper.enableMyTBA(this, false);
         }
     }
 

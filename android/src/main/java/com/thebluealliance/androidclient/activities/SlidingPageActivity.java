@@ -7,6 +7,7 @@ import android.widget.RelativeLayout;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 
 /**
@@ -23,13 +24,17 @@ public abstract class SlidingPageActivity extends RefreshableHostActivity {
 
     @Override
     public void setContentView(int contentLayout){
-        super.setContentView(R.layout.activity_sliding_panel);
+        if(AccountHelper.isMyTBAEnabled(this)) {
+            super.setContentView(R.layout.activity_sliding_panel);
 
-        RelativeLayout root = (RelativeLayout)findViewById(R.id.activity_content);
-        LayoutInflater inflater = getLayoutInflater();
-        inflater.inflate(contentLayout, root);
+            RelativeLayout root = (RelativeLayout) findViewById(R.id.activity_content);
+            LayoutInflater inflater = getLayoutInflater();
+            inflater.inflate(contentLayout, root);
 
-        Log.d(Constants.LOG_TAG, "Model: "+modelKey);
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_panel, NotificationSettingsFragment.newInstance(modelKey), PANEL_TAG).commit();
+            Log.d(Constants.LOG_TAG, "Model: " + modelKey);
+            getSupportFragmentManager().beginTransaction().replace(R.id.activity_panel, NotificationSettingsFragment.newInstance(modelKey), PANEL_TAG).commit();
+        }else{
+            super.setContentView(contentLayout);
+        }
     }
 }
