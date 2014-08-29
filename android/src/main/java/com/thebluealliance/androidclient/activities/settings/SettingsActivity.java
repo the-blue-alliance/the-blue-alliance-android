@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,9 +8,11 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -62,20 +65,27 @@ public class SettingsActivity extends PreferenceActivity {
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
+            final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
+            final Activity activity = getActivity();
+            enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Log.d(Constants.LOG_TAG, "Change");
+                    boolean newState = !enable_mytba.isChecked(); //it was reversed, for some reason...
+                    Log.d(Constants.LOG_TAG, "Checked: "+newState);
+                    if(newState != AccountHelper.isMyTBAEnabled(activity)){
+                        AccountHelper.enableMyTBA(activity, newState);
+                    }
+                    return true;
+                }
+            });
+
+
             if (Utilities.isDebuggable()) {
                 addPreferencesFromResource(R.xml.dev_preference_link);
                 Preference devSettings = findPreference("dev_settings");
                 devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
             }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SwitchPreference enable_mytba = (SwitchPreference)findPreference("enable_mytba");
-        if(enable_mytba.isChecked() != AccountHelper.isMyTBAEnabled(this)){
-            AccountHelper.enableMyTBA(this, enable_mytba.isChecked());
         }
     }
 
@@ -87,5 +97,11 @@ public class SettingsActivity extends PreferenceActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
     }
 }
