@@ -1,24 +1,21 @@
 package com.thebluealliance.androidclient.gcm;
 
+import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
-
-import java.util.concurrent.atomic.AtomicInteger;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 
 /**
  * File created by phil on 7/27/14.
  */
 public class GCMHelper {
 
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    public static final String PROPERTY_GCM_REG_ID = "gcm_registration_id";
-    private static final String GCM_SENDER_FORMAT = "%s@gcm.googleapis.com";
-
-    private static GoogleCloudMessaging gcm;
     private static String senderId;
-    private static AtomicInteger msgId = new AtomicInteger();
 
     public enum MSGTYPE {
         REGISTRATION,
@@ -56,6 +53,19 @@ public class GCMHelper {
             senderId = Utilities.readLocalProperty(c, "gcm.senderId");
         }
         return senderId;
+    }
+
+    public static void registerGCMIfNeeded(Activity activity){
+        if (!AccountHelper.checkGooglePlayServicesAvailable(activity)) {
+            Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
+            return;
+        }
+        final String registrationId = GCMAuthHelper.getRegistrationId(activity);
+        if (TextUtils.isEmpty(registrationId)) {
+            // GCM has not yet been registered on this device
+            Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
+            GCMAuthHelper.registerInBackground(activity);
+        }
     }
 
 }

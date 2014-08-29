@@ -5,15 +5,15 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -22,6 +22,8 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 import java.io.IOException;
 
@@ -29,11 +31,66 @@ import java.io.IOException;
  * File created by phil on 7/28/14.
  */
 public class AccountHelper {
+
+    public static final String PREF_MYTBA_ENABLED = "mytba_enabled";
     public static final String PREF_SELECTED_ACCOUNT = "selected_account";
 
+    private static final int ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION = 2222;
 
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+
+    public static void enableMyTBA(Activity activity, boolean enabled){
+        Log.d(Constants.LOG_TAG, "Enabling myTBA: "+enabled);
+        if(enabled && !isAccountSelected(activity)){
+            signIn(activity);
+        }
+    }
+
+    public static void signIn(Activity activity){
+        int googleAccounts = AccountHelper.countGoogleAccounts(activity);
+        if (googleAccounts == 0) {
+            // No accounts registered, nothing to do.
+            Log.w(Constants.LOG_TAG, "No google accounts found.");
+        } else if (googleAccounts == 1) {
+            // If only one account then select it.
+            AccountManager am = AccountManager.get(activity);
+            Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            if (accounts != null && accounts.length > 0) {
+                // Select account and perform authorization check.
+                AccountHelper.setSelectedAccount(activity, accounts[0].name);
+            }
+        } else {
+            // More than one Google Account is present, a chooser is necessary.
+
+            // Invoke an {@code Intent} to allow the user to select a Google account.
+            Intent accountSelector = AccountPicker.newChooseAccountIntent(null, null,
+                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false,
+                    "Select the account to use with The Blue Alliance", null, null, null);
+            activity.startActivityForResult(accountSelector,
+                    ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION);
+        }
+    }
+
+    public static void onSignInResult(Activity activity, int requestCode, int resultCode, Intent data){
+        if (requestCode == ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION && resultCode == activity.RESULT_OK) {
+            // This path indicates the account selection activity resulted in the user selecting a
+            // Google account and clicking OK.
+
+            // Set the selected account.
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            AccountHelper.setSelectedAccount(activity, accountName);
+            GCMHelper.registerGCMIfNeeded(activity);
+            new UpdateMyTBA(activity).execute();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
+        }
+    }
+
+    public static boolean isMyTBAEnabled(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PREF_MYTBA_ENABLED, false);
+    }
 
     public static void setSelectedAccount(Context context, String accoutName){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -104,26 +161,6 @@ public class AccountHelper {
         } else {
             return accounts.length;
         }
-    }
-
-    public static boolean addFavorite(GoogleAccountCredential credential, String modelKey) {
-        TbaMobile service = AccountHelper.getTbaMobile(credential);
-        ModelsMobileApiMessagesFavoriteMessage request = new ModelsMobileApiMessagesFavoriteMessage();
-        request.setModelKey(modelKey);
-
-        try {
-            ModelsMobileApiMessagesBaseResponse response = service.favorites().add(request).execute();
-            if (response.getCode() == 200) {
-                return true;
-            } else {
-                Log.e(Constants.LOG_TAG, response.getMessage());
-                return false;
-            }
-        } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "Error with API call.");
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public static boolean checkGooglePlayServicesAvailable(Activity activity) {

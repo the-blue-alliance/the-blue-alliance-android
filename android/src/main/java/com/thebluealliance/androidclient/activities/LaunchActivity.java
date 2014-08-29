@@ -16,6 +16,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
@@ -23,6 +24,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -51,6 +53,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
     private LoadAllDataTaskFragment loadFragment;
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
+
+    private Switch enableMyTBA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         viewPager.setAdapter(new FirstLaunchFragmentAdapter(this));
         loadingMessage = (TextView) findViewById(R.id.message);
 
+        enableMyTBA = (Switch)findViewById(R.id.enable_mytba);
+
         // If the activity is being recreated after a config change, restore the message that was
         // being shown when the last activity was destroyed
         if (savedInstanceState != null) {
@@ -110,6 +116,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         }
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
+        findViewById(R.id.submit_mytba).setOnClickListener(this);
         if (redownload) {
             ((TextView) findViewById(R.id.welcome_message)).setText(getString(R.string.update_message));
         }
@@ -173,6 +180,11 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             case R.id.finish:
                 startActivity(new Intent(this, HomeActivity.class));
                 finish();
+                break;
+            case R.id.submit_mytba:
+                AccountHelper.enableMyTBA(this, enableMyTBA.isChecked());
+                viewPager.advanceToNextPage();
+                break;
         }
     }
 

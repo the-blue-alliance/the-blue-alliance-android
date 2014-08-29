@@ -5,6 +5,9 @@
     <string name="pref_header_general">General</string>
     <string name="pref_header_account">Account</string>
 
+    <!-- Account -->
+    <string name="is_mytba_eabled">Enable myTBA</string>
+
     <!-- Settings -->
     <string name="settings_version_label">Version</string>
     <string name="github_label">The Blue Alliance for Android is open source</string>

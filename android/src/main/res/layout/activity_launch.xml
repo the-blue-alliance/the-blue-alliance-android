@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.thebluealliance.androidclient.views.DisableSwipeViewPager xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_pager"
     android:layout_width="match_parent"
@@ -92,6 +91,58 @@
                     android:textSize="40sp" />
             </RelativeLayout>
         </ScrollView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mytba_enable_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/submit_mytba">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/mytba_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mytba_title"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:gravity="center_horizontal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_below="@id/mytba_title"
+                    android:padding="6dp"
+                    android:id="@+id/mytba_description"
+                    android:text="@string/mytba_description" />
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/mytba_description"
+                    android:text="@string/enable_mytba"
+                    android:id="@+id/enable_mytba"
+                    android:checked="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="24dp" />
+
+            </RelativeLayout>
+        </ScrollView>
+        <Button
+            android:id="@+id/submit_mytba"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/finish" />
     </RelativeLayout>
 
     <RelativeLayout

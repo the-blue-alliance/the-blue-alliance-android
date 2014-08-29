@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,20 +10,14 @@ import android.nfc.NfcEvent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
@@ -33,7 +25,6 @@ import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
  */
 public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback {
 
-    private static final int ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION = 2222;
     String beamUri;
     boolean searchEnabled = true;
     String modelKey = "";
@@ -54,16 +45,21 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
             }
         }.execute();
 
-        if (!AccountHelper.isAccountSelected(this)) {
-            signIn();
-        } else {
-            registerGCMIfNeeded();
-        }
-
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             // Register callback
             mNfcAdapter.setNdefPushMessageCallback(this, this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean mytba = AccountHelper.isMyTBAEnabled(this);
+        if (!AccountHelper.isAccountSelected(this) && mytba) {
+            AccountHelper.signIn(this);
+        } else if(mytba){
+            GCMHelper.registerGCMIfNeeded(this);
         }
     }
 
@@ -119,58 +115,11 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         modelKey = key;
     }
 
-    private void signIn(){
-        int googleAccounts = AccountHelper.countGoogleAccounts(this);
-        if (googleAccounts == 0) {
-            // No accounts registered, nothing to do.
-            Log.w(Constants.LOG_TAG, "No google accounts found.");
-        } else if (googleAccounts == 1) {
-            // If only one account then select it.
-            AccountManager am = AccountManager.get(this);
-            Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            if (accounts != null && accounts.length > 0) {
-                // Select account and perform authorization check.
-                AccountHelper.setSelectedAccount(this, accounts[0].name);
-            }
-        } else {
-            // More than one Google Account is present, a chooser is necessary.
-
-            // Invoke an {@code Intent} to allow the user to select a Google account.
-            Intent accountSelector = AccountPicker.newChooseAccountIntent(null, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false,
-                    "Select the account to use with The Blue Alliance", null, null, null);
-            startActivityForResult(accountSelector,
-                    ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION && resultCode == RESULT_OK) {
-            // This path indicates the account selection activity resulted in the user selecting a
-            // Google account and clicking OK.
-
-            // Set the selected account.
-            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            AccountHelper.setSelectedAccount(this, accountName);
-            registerGCMIfNeeded();
-            new UpdateMyTBA(this).execute();
-        }
-    }
-
-    private void registerGCMIfNeeded() {
-        if (!AccountHelper.checkGooglePlayServicesAvailable(this)) {
-            Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
-            return;
-        }
-        final String registrationId = GCMAuthHelper.getRegistrationId(this);
-        if (TextUtils.isEmpty(registrationId)) {
-            // GCM has not yet been registered on this device
-            Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
-            GCMAuthHelper.registerInBackground(this);
-        }
+        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
     }
 
 }
