@@ -48,7 +48,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
         Log.d(Constants.LOG_TAG, "Input: " + Arrays.deepToString(params));
 
         Short[] dataToLoad;
-        if (params == null || params.length < 1) {
+        if (params == null) {
             dataToLoad = new Short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS,
                     LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS,
                     LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS};

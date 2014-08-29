@@ -34,7 +34,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
     private Context context;
     private boolean force;
 
-    public UpdateMyTBA(Context context, boolean force){
+    public UpdateMyTBA(Context context, boolean force) {
         this.context = context;
         this.force = force;
     }
@@ -43,9 +43,9 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
     protected Void doInBackground(Short... params) {
 
         List<Short> toUpdate;
-        if(params.length > 0){
+        if (params.length > 0) {
             toUpdate = Arrays.asList(params);
-        }else{
+        } else {
             toUpdate = Arrays.asList(UPDATE_FAVORITES, UPDATE_SUBSCRIPTION);
         }
 
@@ -65,7 +65,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
         Log.d(Constants.LOG_TAG, "Updating myTBA data");
         TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
 
-        if(toUpdate.contains(UPDATE_FAVORITES)) {
+        if (toUpdate.contains(UPDATE_FAVORITES)) {
             ModelsMobileApiMessagesFavoriteCollection favoriteCollection = null;
             try {
                 favoriteCollection = service.favorites().list().execute();
@@ -80,14 +80,14 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
             if (favoriteCollection.getFavorites() != null) {
                 ArrayList<Favorite> favoriteModels = new ArrayList<>();
                 for (ModelsMobileApiMessagesFavoriteMessage f : favoriteCollection.getFavorites()) {
-                    Log.d(Constants.LOG_TAG, "Adding favorite "+f.getModelKey());
+                    Log.d(Constants.LOG_TAG, "Adding favorite " + f.getModelKey());
                     favoriteModels.add(new Favorite(currentUser, f.getModelKey()));
                 }
                 favorites.add(favoriteModels);
             }
         }
 
-        if(toUpdate.contains(UPDATE_SUBSCRIPTION)) {
+        if (toUpdate.contains(UPDATE_SUBSCRIPTION)) {
             ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = null;
             try {
                 subscriptionCollection = service.subscriptions().list().execute();

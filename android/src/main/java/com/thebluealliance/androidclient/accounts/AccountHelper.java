@@ -82,6 +82,8 @@ public class AccountHelper {
     }
 
     public static void onSignInResult(Activity activity, int requestCode, int resultCode, Intent data){
+        Log.d(Constants.LOG_TAG, "Activity result");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (requestCode == ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION && resultCode == activity.RESULT_OK) {
             // This path indicates the account selection activity resulted in the user selecting a
             // Google account and clicking OK.
@@ -89,10 +91,9 @@ public class AccountHelper {
             // Set the selected account.
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             AccountHelper.setSelectedAccount(activity, accountName);
+            prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
             GCMHelper.registerGCMIfNeeded(activity);
             new UpdateMyTBA(activity, true).execute();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
         }
     }
 

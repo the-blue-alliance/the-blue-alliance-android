@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
@@ -65,6 +67,15 @@ public class SettingsActivity extends PreferenceActivity {
                 Preference devSettings = findPreference("dev_settings");
                 devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
             }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SwitchPreference enable_mytba = (SwitchPreference)findPreference("enable_mytba");
+        if(enable_mytba.isChecked() != AccountHelper.isMyTBAEnabled(this)){
+            AccountHelper.enableMyTBA(this, enable_mytba.isChecked());
         }
     }
 
