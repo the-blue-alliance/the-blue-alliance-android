@@ -32,9 +32,11 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
     public static final short UPDATE_FAVORITES = 0, UPDATE_SUBSCRIPTION = 1;
 
     private Context context;
+    private boolean force;
 
-    public UpdateMyTBA(Context context){
+    public UpdateMyTBA(Context context, boolean force){
         this.context = context;
+        this.force = force;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
         Date now = new Date();
         Date futureTime = new Date(prefs.getLong(prefString, 0) + Constants.MY_TBA_UPDATE_TIMEOUT);
         // TODO this endpoint needs some caching so we keep load off the server
-        if (now.before(futureTime)) {
+        if (!force && now.before(futureTime)) {
             //don't hit the API too often.
             Log.d(Constants.LOG_TAG, "Not updating myTBA. Too soon since last update");
             return null;

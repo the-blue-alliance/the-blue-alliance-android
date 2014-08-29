@@ -90,7 +90,7 @@ public class AccountHelper {
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             AccountHelper.setSelectedAccount(activity, accountName);
             GCMHelper.registerGCMIfNeeded(activity);
-            new UpdateMyTBA(activity).execute();
+            new UpdateMyTBA(activity, true).execute();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
         }
