@@ -204,6 +204,8 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                     // Send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
                     EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+                } else{
+                    Log.d(Constants.LOG_TAG, "Not sending live event broadcast");
                 }
             }
 
