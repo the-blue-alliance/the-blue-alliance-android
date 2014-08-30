@@ -295,4 +295,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             invalidateOptionsMenu();
         }
     }
+
+    public void onEvent(){
+
+    }
+
 }

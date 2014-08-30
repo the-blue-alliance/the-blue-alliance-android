@@ -244,6 +244,9 @@ public class Utilities {
             InputStream fileStream = c.getAssets().open("tba.properties");
             properties.load(fileStream);
             fileStream.close();
+            if(isDebuggable() && properties.containsKey(property + ".debug")){
+                return properties.getProperty(property + ".debug");
+            }
             return properties.getProperty(property, "");
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "Unable to read from tba.properties");

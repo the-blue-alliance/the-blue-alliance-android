@@ -14,7 +14,6 @@ import java.util.HashMap;
  */
 public class Analytics {
     private static final String PROD_ANALYTICS_KEY = "analytics.id";
-    private static final String DEBUG_ANALYTICS_KEY = "analytics.id.debug";
     static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
     private static GoogleAnalytics analytics;
 
@@ -33,13 +32,7 @@ public class Analytics {
                 Log.d("GAV4", "Setting analytics dry run? " + dryRun);
             }
 
-            String id;
-            if (Utilities.isDebuggable()) {
-                boolean useDebugKey = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("analytics_debug_key", true);
-                id = Utilities.readLocalProperty(c, useDebugKey ? DEBUG_ANALYTICS_KEY : PROD_ANALYTICS_KEY);
-            } else {
-                id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
-            }
+            String id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
             Tracker t;
             Log.d("GAV4", "Loaded analytics id: " + id);
             t = analytics.newTracker(id);
