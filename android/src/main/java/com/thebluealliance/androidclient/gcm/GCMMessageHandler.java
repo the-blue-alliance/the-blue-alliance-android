@@ -63,10 +63,10 @@ public class GCMMessageHandler extends IntentService {
         try {
             switch (messageType) {
                 case NotificationTypes.UPDATE_FAVORITES:
-                    new UpdateMyTBA(c, false).execute(UpdateMyTBA.UPDATE_FAVORITES);
+                    new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_FAVORITES);
                     break;
                 case NotificationTypes.UPDATE_SUBSCRIPTIONS:
-                    new UpdateMyTBA(c, false).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
+                    new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
                     break;
                 case "test":
                     Notification notification =
