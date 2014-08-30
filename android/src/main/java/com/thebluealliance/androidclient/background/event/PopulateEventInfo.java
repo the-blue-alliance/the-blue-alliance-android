@@ -1,10 +1,8 @@
 package com.thebluealliance.androidclient.background.event;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -174,7 +172,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE c) {
         super.onPostExecute(c);
 
-        if (activity != null && mFragment != null) {
+        if (activity != null && mFragment != null && mFragment.getView() != null) {
             View view = mFragment.getView();
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
