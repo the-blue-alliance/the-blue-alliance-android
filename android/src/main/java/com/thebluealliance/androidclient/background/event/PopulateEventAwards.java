@@ -45,7 +45,9 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
     public PopulateEventAwards(EventAwardsFragment f, boolean forceFromCache) {
         mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        if(mFragment != null) {
+            activity = (RefreshableHostActivity) mFragment.getActivity();
+        }
         this.forceFromCache = forceFromCache;
     }
 

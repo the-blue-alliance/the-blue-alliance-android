@@ -85,11 +85,7 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamPoints.getKey());
                 DistrictPointBreakdown b = JSONManager.getGson().fromJson(teamPoints.getValue(), DistrictPointBreakdown.class);
                 b.setTeamKey(teamPoints.getKey());
-                if(team != null) {
-                    b.setTeamName(team.getNickname());
-                } else {
-                    b.setTeamName("Team "+teamPoints.getKey().substring(3));
-                }
+                b.setTeamName(team != null ? team.getNickname() : "Team "+teamPoints.getKey().substring(3));
                 b.setDistrictKey(districtKey);
                 pointBreakdowns.add(b);
             }

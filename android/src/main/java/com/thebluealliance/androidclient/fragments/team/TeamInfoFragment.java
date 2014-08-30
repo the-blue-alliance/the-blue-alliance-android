@@ -1,16 +1,12 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +24,6 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -155,15 +150,22 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         parent.unregisterRefreshListener(this);
     }
 
-    public void showCurrentEvent(EventListElement event) {
-        LinearLayout eventLayout = (LinearLayout) getView().findViewById(R.id.team_current_event);
-        eventLayout.removeAllViews();
-        eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    public void showCurrentEvent(final EventListElement event){
 
-        RelativeLayout container = (RelativeLayout) getView().findViewById(R.id.team_current_event_container);
-        container.setVisibility(View.VISIBLE);
-        container.setTag(mTeamKey + "@" + event.getEventKey());
-        container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
+        final LinearLayout eventLayout = (LinearLayout)getView().findViewById(R.id.team_current_event);
+        final RelativeLayout container = (RelativeLayout) getView().findViewById(R.id.team_current_event_container);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                eventLayout.removeAllViews();
+                eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
+
+                container.setVisibility(View.VISIBLE);
+                container.setTag(mTeamKey+"@"+event.getEventKey());
+                container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
+            }
+        });
     }
 
     public void onEvent(YearChangedEvent event) {

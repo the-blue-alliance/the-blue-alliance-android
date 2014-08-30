@@ -353,6 +353,13 @@ public class Event extends BasicModel<Event> {
         try {
             Date startDate = getStartDate(),
                     endDate = getEndDate();
+
+            //since the Dates are at time 0:00, we need to add one day to the end date so that times during that day count as part of the event
+            Calendar c = Calendar.getInstance();
+            c.setTime(endDate);
+            c.add(Calendar.DATE, 1);
+            endDate = c.getTime();
+
             if (startDate == null || endDate == null) return false;
             Date now = new Date();
             return now.after(startDate) && now.before(endDate);

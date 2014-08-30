@@ -82,6 +82,9 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             MatchHelper.TYPE lastType = null;
             Match previousIteration = null;
             boolean lastMatchPlayed = false;
+            if(results.size() > 0){
+                nextMatch = results.get(0);
+            }
             for (Match match : results) {
                 try {
                     MatchHelper.TYPE currentType = match.getType();
@@ -125,7 +128,10 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                 }
             }
             if (lastMatch == null && !results.isEmpty()) {
-                lastMatch = results.get(results.size() - 1);
+                Match last = results.get(results.size() - 1);
+                if(last.hasBeenPlayed()) {
+                    lastMatch = last;
+                }
             }
 
         } catch (DataManager.NoDataException e) {
@@ -197,6 +203,8 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                     // Send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
                     EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+                } else{
+                    Log.d(Constants.LOG_TAG, "Not sending live event broadcast");
                 }
             }
 
