@@ -306,9 +306,17 @@ public class Database extends SQLiteOpenHelper {
                     break;
                 case 16:
                     // add column for individual notification settings and sorting by model type
-                    db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
-                    db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.MODEL_ENUM + " INTEGER NOT NULL");
-                    db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + Favorites.MODEL_ENUM + " INTEGER NOT NULL");
+                    Cursor sub = db.rawQuery("SELECT * FROM "+TABLE_SUBSCRIPTIONS+" LIMIT 0,1", null);
+                    if(sub.getColumnIndex(Subscriptions.NOTIFICATION_SETTINGS) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
+                    }
+                    if(sub.getColumnIndex(Subscriptions.MODEL_ENUM) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.MODEL_ENUM + " INTEGER NOT NULL");
+                    }
+                    Cursor fav = db.rawQuery("SELECT * FROM "+TABLE_FAVORITES+" LIMIT 0,1", null);
+                    if(fav.getColumnIndex(Favorites.MODEL_ENUM) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + Favorites.MODEL_ENUM + " INTEGER NOT NULL");
+                    }
                     break;
             }
             upgradeTo++;

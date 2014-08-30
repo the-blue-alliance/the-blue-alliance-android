@@ -159,6 +159,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                         break;
                     case 16: //addition of myTBA - Prompt the user for an account
                         redownload = true;
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
+                        getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
                         getIntent().putExtra(ADD_ACCOUNT, true);
                         break;
                     default:
