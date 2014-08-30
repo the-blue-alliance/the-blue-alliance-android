@@ -83,6 +83,9 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             MatchHelper.TYPE lastType = null;
             Match previousIteration = null;
             boolean lastMatchPlayed = false;
+            if(results.size() > 0){
+                nextMatch = results.get(0);
+            }
             for (Match match : results) {
                 try {
                     MatchHelper.TYPE currentType = match.getType();
@@ -126,7 +129,10 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                 }
             }
             if (lastMatch == null && !results.isEmpty()) {
-                lastMatch = results.get(results.size() - 1);
+                Match last = results.get(results.size() - 1);
+                if(last.hasBeenPlayed()) {
+                    lastMatch = last;
+                }
             }
 
         } catch (DataManager.NoDataException e) {
