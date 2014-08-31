@@ -153,7 +153,10 @@ public class PopulateEventResults extends AsyncTask<String, Void, APIResponse.CO
             if(event.isHappeningNow()){
                 //send out that there are live matches happening for other things to pick up
                 Log.d(Constants.LOG_TAG, "Sending live event broadcast: "+eventKey);
-                LocalBroadcastManager.getInstance(activity).sendBroadcast(new LiveEventBroadcast(nextMatch.render(), lastMatch.render()));
+                LocalBroadcastManager.getInstance(activity).sendBroadcast(
+                        new LiveEventBroadcast(
+                                nextMatch == null ? null : nextMatch.render(),
+                                lastMatch == null ? null : lastMatch.render()));
             }
 
         } catch (DataManager.NoDataException e) {
