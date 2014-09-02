@@ -3,4 +3,5 @@
     android:id="@+id/year"
     style="@android:style/Widget.Holo.Light.DropDownItem"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeightSmall" />
+    android:layout_height="?android:attr/listPreferredItemHeightSmall"
+    android:textColor="@android:color/primary_text_light"/>
