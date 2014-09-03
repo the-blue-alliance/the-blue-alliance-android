@@ -73,7 +73,8 @@ public class GCMMessageHandler extends IntentService {
                             new NotificationCompat.Builder(c)
                                     .setSmallIcon(R.drawable.ic_notification)
                                     .setContentTitle(data.get("title").getAsString())
-                                    .setContentText(data.get("desc").getAsString()).build();
+                                    .setContentText(data.get("desc").getAsString())
+                                    .setStyle(new NotificationCompat.BigTextStyle().bigText(data.get("desc").getAsString())).build();
                     notificationManager.notify(12, notification);
                     break;
                 case NotificationTypes.MATCH_SCORE:
