@@ -68,7 +68,7 @@ public class GCMMessageHandler extends IntentService {
                 case NotificationTypes.UPDATE_SUBSCRIPTIONS:
                     new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
                     break;
-                case "test":
+                case NotificationTypes.PING:
                     Notification notification =
                             new NotificationCompat.Builder(c)
                                     .setSmallIcon(R.drawable.ic_notification)
