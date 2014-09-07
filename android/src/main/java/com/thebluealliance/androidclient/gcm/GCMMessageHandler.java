@@ -5,17 +5,17 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
+import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
@@ -57,10 +57,8 @@ public class GCMMessageHandler extends IntentService {
     public static void handleMessage(Context c, String messageType, String messageData) {
         NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
         JsonObject data = null;
-        if(messageData != null && !messageData.isEmpty()){
-            data = JSONManager.getParser().parse(messageData).getAsJsonObject();
-        }
         try {
+            BaseNotification notification = null;
             switch (messageType) {
                 case NotificationTypes.UPDATE_FAVORITES:
                     new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_FAVORITES);
@@ -69,32 +67,34 @@ public class GCMMessageHandler extends IntentService {
                     new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
                     break;
                 case NotificationTypes.PING:
-                    Notification notification =
-                            new NotificationCompat.Builder(c)
-                                    .setSmallIcon(R.drawable.ic_notification)
-                                    .setContentTitle(data.get("title").getAsString())
-                                    .setContentText(data.get("desc").getAsString())
-                                    .setStyle(new NotificationCompat.BigTextStyle().bigText(data.get("desc").getAsString())).build();
-                    notificationManager.notify(12, notification);
+                    notification = new GenericNotification(messageData);
                     break;
                 case NotificationTypes.MATCH_SCORE:
-                    ScoreNotification sn = new ScoreNotification(data);
-                    notificationManager.notify(sn.getNotificationId(), sn.buildNotification(c));
+                    notification = new ScoreNotification(data);
                     break;
                 case NotificationTypes.UPCOMING_MATCH:
-                    BaseNotification n = new UpcomingMatchNotification(messageData);
-                    // id allows you to update the notification later on.
-                    notificationManager.notify(n.getNotificationId(), n.buildNotification(c));
+                    notification = new UpcomingMatchNotification(messageData);
                     break;
                 case "score":
-                    n = new ScoreNotification(messageData);
-                    // id allows you to update the notification later on.
-                    notificationManager.notify(n.getNotificationId(), n.buildNotification(c));
+                    notification = new ScoreNotification(messageData);
                     break;
                 case NotificationTypes.ALLIANCE_SELECTION:
                 case NotificationTypes.LEVEL_STARTING:
                     // TODO implement notifications for these message types
                     break;
+            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            boolean enabled = prefs.getBoolean("enable_notifications", true);
+            if(enabled && notification != null){
+                Notification built = notification.buildNotification(c);
+                if(prefs.getBoolean("notification_vibrate", true)){
+                    built.defaults |= Notification.DEFAULT_VIBRATE;
+                }
+                if(prefs.getBoolean("notification_tone", true)){
+                    built.defaults |= Notification.DEFAULT_SOUND;
+                }
+
+                notificationManager.notify(notification.getNotificationId(), built);
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...

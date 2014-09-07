@@ -49,6 +49,9 @@ public class SettingsActivity extends PreferenceActivity {
             Preference contributors = findPreference("contributors");
             contributors.setIntent(new Intent(getActivity(), ContributorsActivity.class));
 
+            Preference notifications = findPreference("notifications");
+            notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
+
             Preference changelog = findPreference("changelog");
             String version = BuildConfig.VERSION_NAME;
             if (version.contains("/")) {

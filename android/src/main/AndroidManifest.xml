@@ -127,6 +127,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.settings.SettingsActivity" />
         </activity>
+        <activity
+            android:name=".activities.settings.NotificationSettingsActivity"
+            android:label="@string/notification_settings"
+            android:parentActivityName=".activities.settings.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thebluealliance.androidclient.activities.settings.SettingsActivity" />
+        </activity>
 
         <receiver android:name=".receivers.ConnectivityChangeReceiver">
             <intent-filter>

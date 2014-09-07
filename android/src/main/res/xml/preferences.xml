@@ -7,6 +7,9 @@
         <SwitchPreference
             android:key="mytba_enabled"
             android:title="@string/is_mytba_eabled" />
+        <Preference
+            android:key="notifications"
+            android:title="@string/notification_settings"/>
 
     </PreferenceCategory>
 
