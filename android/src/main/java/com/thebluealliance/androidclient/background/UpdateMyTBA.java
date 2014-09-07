@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
 
-    private static final String LAST_MY_TBA_UPDATE = "last_mytba_update_%s";
+    public static final String LAST_MY_TBA_UPDATE = "last_mytba_update_%s";
     public static final short UPDATE_FAVORITES = 0, UPDATE_SUBSCRIPTION = 1;
 
     private Context context;

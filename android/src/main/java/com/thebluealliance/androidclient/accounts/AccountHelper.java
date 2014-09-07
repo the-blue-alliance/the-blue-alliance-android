@@ -102,6 +102,16 @@ public class AccountHelper {
         return prefs.getBoolean(PREF_MYTBA_ENABLED, false);
     }
 
+    public static boolean hasMyTBAData(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String account = getSelectedAccount(context);
+        if(account.isEmpty()){
+            return false;
+        }
+        String prefString = String.format(UpdateMyTBA.LAST_MY_TBA_UPDATE, account);
+        return prefs.getLong(prefString, -1) != -1;
+    }
+
     public static void setSelectedAccount(Context context, String accoutName){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putString(PREF_SELECTED_ACCOUNT, accoutName).apply();

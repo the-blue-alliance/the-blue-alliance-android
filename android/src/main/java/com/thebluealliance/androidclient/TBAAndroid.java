@@ -17,7 +17,7 @@ public class TBAAndroid extends Application {
         super.onCreate();
         Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
 
-        if(AccountHelper.isAccountSelected(this)){
+        if(AccountHelper.isAccountSelected(this) && !AccountHelper.hasMyTBAData(this)){
             new UpdateMyTBA(this, true).execute();
         }
     }
