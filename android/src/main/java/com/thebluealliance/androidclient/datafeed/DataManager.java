@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -26,7 +25,6 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -287,7 +285,6 @@ public class DataManager {
                 }
             }
 
-            Collections.sort(results, new MatchSortByDisplayOrderComparator());
             return new APIResponse<>(results, matchResponse.getCode());
         }
 

@@ -11,7 +11,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -56,7 +55,6 @@ public class GCMMessageHandler extends IntentService {
 
     public static void handleMessage(Context c, String messageType, String messageData) {
         NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
-        JsonObject data = null;
         try {
             BaseNotification notification = null;
             switch (messageType) {
@@ -70,7 +68,7 @@ public class GCMMessageHandler extends IntentService {
                     notification = new GenericNotification(messageData);
                     break;
                 case NotificationTypes.MATCH_SCORE:
-                    notification = new ScoreNotification(data);
+                    notification = new ScoreNotification(messageData);
                     break;
                 case NotificationTypes.UPCOMING_MATCH:
                     notification = new UpcomingMatchNotification(messageData);

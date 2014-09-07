@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
@@ -26,6 +27,7 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * File created by phil on 6/3/14.
@@ -68,7 +70,9 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                 return APIResponse.CODE.NODATA;
             }
 
-            eventMatches = matchResponse.getData(); //sorted by play order
+            eventMatches = matchResponse.getData();
+            Collections.sort(eventMatches, new MatchSortByPlayOrderComparator());
+
             teamMatches = MatchHelper.getMatchesForTeam(eventMatches, teamKey);
 
             int[] record = MatchHelper.getRecordForTeam(eventMatches, teamKey);

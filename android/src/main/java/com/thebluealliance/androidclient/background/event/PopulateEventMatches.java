@@ -11,6 +11,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
+import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
@@ -24,6 +26,7 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import de.greenrobot.event.EventBus;
 
@@ -63,6 +66,20 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             teamKey = "";
         }
 
+        APIResponse<Event> eventResponse;
+        try {
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
+            event = eventResponse.getData();
+
+            if (isCancelled()) {
+                return APIResponse.CODE.NODATA;
+            }
+
+        } catch (DataManager.NoDataException e) {
+            Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
+            return APIResponse.CODE.NODATA;
+        }
+
         groups = new ArrayList<>();
         ListGroup qualMatches = new ListGroup(activity.getString(R.string.quals_header));
         ListGroup quarterMatches = new ListGroup(activity.getString(R.string.quarters_header));
@@ -72,7 +89,13 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
             response = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
-            ArrayList<Match> results = response.getData(); //sorted by play order
+            ArrayList<Match> results = response.getData();
+
+            if(event != null && event.isHappeningNow()){
+                Collections.sort(results, new MatchSortByPlayOrderComparator());
+            } else {
+                Collections.sort(results, new MatchSortByDisplayOrderComparator());
+            }
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -137,20 +160,6 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
             response = new APIResponse<>(null, APIResponse.CODE.NODATA);
-        }
-
-        APIResponse<Event> eventResponse;
-        try {
-            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
-            event = eventResponse.getData();
-
-            if (isCancelled()) {
-                return APIResponse.CODE.NODATA;
-            }
-
-        } catch (DataManager.NoDataException e) {
-            Log.w(Constants.LOG_TAG, "Unable to fetch event data for " + teamKey + "@" + eventKey);
-            return APIResponse.CODE.NODATA;
         }
 
         if (!qualMatches.children.isEmpty()) {
