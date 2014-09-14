@@ -85,11 +85,13 @@ public class NotificationSettingsFragment extends Fragment {
             subscribed.add(modelKey);
             String[] modelNotifications = ModelHelper.getNotificationTypes(modelType);
             ListViewAdapter adapter = ((ListViewAdapter)list.getAdapter());
-            for(int i=0; i<adapter.values.size(); i++){
-                NotificationTypeListElement element = ((NotificationTypeListElement)adapter.values.get(i));
-                Log.d(Constants.LOG_TAG, "Pos: "+i+": "+element.isEnabled());
-                if(element.isEnabled()){
-                    subscribed.add(modelNotifications[element.getPosition()]);
+            if(adapter != null) {
+                for (int i = 0; i < adapter.values.size(); i++) {
+                    NotificationTypeListElement element = ((NotificationTypeListElement) adapter.values.get(i));
+                    Log.d(Constants.LOG_TAG, "Pos: " + i + ": " + element.isEnabled());
+                    if (element.isEnabled()) {
+                        subscribed.add(modelNotifications[element.getPosition()]);
+                    }
                 }
             }
             Log.d(Constants.LOG_TAG, "notifications: "+ subscribed);
