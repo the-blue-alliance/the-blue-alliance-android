@@ -112,6 +112,7 @@
     <!-- Warnings -->
     <string name="warning_using_cached_data">You are offline and may be viewing outdated information.</string>
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
+    <string name="error_opening_image">Error opening image. Try refreshing this team.</string>
 
     <!-- Search -->
     <string name="search_title">Search</string>

@@ -20,8 +20,6 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.net.ssl.CertPathTrustManagerParameters;
-
 
 public class Media extends BasicModel<Media> {
 
@@ -129,23 +127,49 @@ public class Media extends BasicModel<Media> {
         fields.put(Database.Medias.YEAR, year);
     }
 
-    @Override
-    public ListElement render() {
+    /**
+     * @return the URL that points to the image that should represent this media.
+     */
+    public String getMediaURL() throws FieldNotDefinedException {
         String imageUrl;
+        TYPE mediaType = getMediaType();
+        String foreignKey = getForeignKey();
+        if (mediaType == TYPE.CD_PHOTO_THREAD) {
+            JsonObject details = getDetails();
+            imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
+        } else if (mediaType == TYPE.YOUTUBE) {
+            imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
+        } else {
+            imageUrl = "";
+        }
+        return imageUrl;
+    }
+
+    /**
+     * @return the URL that points to the source of the media (for instance, a YouTube video or
+     * ChiefDelphi thread.
+     */
+    public String getLinkURL() throws FieldNotDefinedException {
         try {
             TYPE mediaType = getMediaType();
             String foreignKey = getForeignKey();
-            if (mediaType == TYPE.CD_PHOTO_THREAD) {
-                JsonObject details = getDetails();
-                imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
-            } else if(mediaType == TYPE.YOUTUBE){
-                imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
-            } else {
-                imageUrl = "";
-            }
-            Boolean isVideo = mediaType == TYPE.YOUTUBE;
-            return new ImageListElement(imageUrl,
-                    String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey), isVideo);
+            return String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey);
+        } catch (FieldNotDefinedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean isVideo() throws FieldNotDefinedException {
+            TYPE mediaType = getMediaType();
+            return mediaType == TYPE.YOUTUBE;
+    }
+
+    @Override
+    public ListElement render() {
+        try {
+            return new ImageListElement(getMediaURL(),
+                    getLinkURL(), isVideo());
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
                     "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");

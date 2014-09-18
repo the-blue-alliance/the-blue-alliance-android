@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.thebluealliance.androidclient.fragments.team.TeamEventsFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
+import com.thebluealliance.androidclient.fragments.team.TeamMediaFragmentV2;
 
 /**
  * Created by Nathan on 4/22/2014.
@@ -42,7 +43,7 @@ public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
                 return TeamEventsFragment.newInstance(mTeamKey, -1);
             case 2: // media
             default:
-                return TeamMediaFragment.newInstance(mTeamKey, -1);
+                return TeamMediaFragmentV2.newInstance(mTeamKey, -1);
         }
 
     }
