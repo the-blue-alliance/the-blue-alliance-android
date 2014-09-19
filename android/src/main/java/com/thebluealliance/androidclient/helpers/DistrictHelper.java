@@ -2,13 +2,9 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.util.Log;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.District;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by phil on 7/24/14.
@@ -21,7 +17,8 @@ public class DistrictHelper {
         MICHIGAN,
         MID_ATLANTIC,
         NEW_ENGLAND,
-        PACIFIC_NORTHWEST;
+        PACIFIC_NORTHWEST,
+        INDIANA;
 
         public static DISTRICTS fromEnum(int districtEnum){
             switch (districtEnum){
@@ -31,6 +28,7 @@ public class DistrictHelper {
                 case 2: return MID_ATLANTIC;
                 case 3: return NEW_ENGLAND;
                 case 4: return PACIFIC_NORTHWEST;
+                case 5: return INDIANA;
             }
         }
 
@@ -40,6 +38,7 @@ public class DistrictHelper {
                 case "mar": return MID_ATLANTIC;
                 case "ne":  return NEW_ENGLAND;
                 case "pnw": return PACIFIC_NORTHWEST;
+                case "in":  return INDIANA;
                 default:    return NO_DISTRICT;
             }
         }
@@ -52,6 +51,7 @@ public class DistrictHelper {
                 case MID_ATLANTIC: return "Mid Atlantic";
                 case NEW_ENGLAND: return "New England";
                 case PACIFIC_NORTHWEST: return "Pacific Northwest";
+                case INDIANA: return "Indiana";
             }
         }
 
@@ -63,6 +63,7 @@ public class DistrictHelper {
                 case MID_ATLANTIC: return "mar";
                 case NEW_ENGLAND: return "ne";
                 case PACIFIC_NORTHWEST: return "pnw";
+                case INDIANA: return "in";
             }
         }
 
