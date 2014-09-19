@@ -116,7 +116,8 @@ public class TBAv2 {
         ArrayList<District> districts = new ArrayList<>();
         JsonArray data = JSONManager.getasJsonArray(json);
         for (JsonElement d : data) {
-            districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
+            if (!d.isJsonNull())
+                districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
         }
         return districts;
     }

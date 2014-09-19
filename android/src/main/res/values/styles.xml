@@ -5,6 +5,7 @@
         <item name="android:actionBarStyle">@style/ActionBarStyle</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionOverflowButtonStyle</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_ab_back_holo_dark_am</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNavStyle</item>
     </style>
 
     <style name="ActionBarStyle" parent="android:Widget.Holo.ActionBar">
@@ -145,5 +146,7 @@
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:paddingTop">16dp</item>
     </style>
+
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
 
 </resources>
