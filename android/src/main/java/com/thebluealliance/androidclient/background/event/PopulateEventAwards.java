@@ -54,9 +54,9 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
-        if(params.length >= 2){
+        if (params.length >= 2) {
             teamKey = params[1];
-        }else{
+        } else {
             teamKey = "";
         }
 
@@ -77,7 +77,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                         }
                     }
                     awards.add(new AwardListElement(a.getName(), eventKey, a.getWinners(), teams, teamKey));
-                }catch(BasicModel.FieldNotDefinedException e){
+                } catch (BasicModel.FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
                 }
             }
@@ -99,8 +99,8 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
-            if ( code == APIResponse.CODE.NODATA || (!forceFromCache && adapter.values.isEmpty())) {
-                noDataText.setText(teamKey.isEmpty()?R.string.no_awards_data:R.string.no_team_awards_data);
+            if (code == APIResponse.CODE.NODATA || (!forceFromCache && adapter.values.isEmpty())) {
+                noDataText.setText(teamKey.isEmpty() ? R.string.no_awards_data : R.string.no_team_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);

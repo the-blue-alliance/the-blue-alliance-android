@@ -29,7 +29,7 @@ import de.greenrobot.event.EventBus;
 /**
  * File created by nathan on 4/21/14.
  */
-public class ViewTeamActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
+public class ViewTeamActivity extends SlidingPageActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
 
     public static final String TEAM_KEY = "team_key",
             TEAM_YEAR = "team_year",
@@ -67,12 +67,14 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_team);
 
         mTeamKey = getIntent().getStringExtra(TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
+
+        setModelKey(mTeamKey);
+        setContentView(R.layout.activity_view_team);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();

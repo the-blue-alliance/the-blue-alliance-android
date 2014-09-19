@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.Calendar;
@@ -152,6 +153,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             case R.id.nav_item_insights:
                 fragment = new InsightsFragment();
                 break;
+            case R.id.nav_item_my_tba:
+                fragment = new MyTBAFragment();
+                break;
             case R.id.nav_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
@@ -190,6 +194,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 case R.id.nav_item_insights:
                     getActionBar().setTitle("Insights");
                     break;
+                case R.id.nav_item_my_tba:
+                    getActionBar().setTitle("My TBA");
+                    break;
             }
         }
 
@@ -207,6 +214,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             bar.setListNavigationCallbacks(actionBarAdapter, this);
             bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
         }
+
     }
 
     private void setupActionBarForDistricts() {
@@ -224,6 +232,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                 bar.setSelectedNavigationItem(0);
             }
         }
+
     }
 
     @Override
@@ -286,4 +295,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
             invalidateOptionsMenu();
         }
     }
+
+    public void onEvent(){
+
+    }
+
 }

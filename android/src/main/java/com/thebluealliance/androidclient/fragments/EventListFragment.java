@@ -60,12 +60,12 @@ public class EventListFragment extends Fragment implements RefreshListener {
         mWeek = getArguments().getInt(WEEK, -1);
         mTeamKey = getArguments().getString(TEAM_KEY);
         mHeader = getArguments().getString(WEEK_HEADER);
-        if(mHost == null && getActivity() instanceof RefreshableHost){
-            mHost = (RefreshableHost)getActivity();
+        if (mHost == null && getActivity() instanceof RefreshableHost) {
+            mHost = (RefreshableHost) getActivity();
         }
     }
 
-    public void setHost(RefreshableHost host){
+    public void setHost(RefreshableHost host) {
         mHost = host;
         mHost.registerRefreshListener(this);
     }
@@ -92,7 +92,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -104,7 +104,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(mHost != null) {
+        if (mHost != null) {
             mHost.startRefresh(this);
         }
     }

@@ -87,7 +87,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onPause() {
         super.onPause();
-        if(task != null){
+        if (task != null) {
             task.cancel(false);
         }
         EventBus.getDefault().unregister(this);

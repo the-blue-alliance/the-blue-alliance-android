@@ -1,15 +1,19 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.database.Cursor;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
+import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.Date;
@@ -253,10 +257,10 @@ public class ModelInflater {
         return eventTeam;
     }
 
-    public static District inflateDistrict(Cursor data){
+    public static District inflateDistrict(Cursor data) {
         District district = new District();
-        for (int i = 0; i < data.getColumnCount(); i++){
-            switch (data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Districts.KEY:
                     district.setKey(data.getString(i));
                     break;
@@ -275,10 +279,10 @@ public class ModelInflater {
         return district;
     }
 
-    public static DistrictTeam inflateDistrictTeam(Cursor data){
+    public static DistrictTeam inflateDistrictTeam(Cursor data) {
         DistrictTeam districtTeam = new DistrictTeam();
-        for (int i = 0; i < data.getColumnCount(); i++){
-            switch (data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.DistrictTeams.KEY:
                     districtTeam.setKey(data.getString(i));
                     break;
@@ -328,5 +332,47 @@ public class ModelInflater {
             }
         }
         return districtTeam;
+    }
+
+    public static Favorite inflateFavorite(Cursor data){
+        Favorite favorite = new Favorite();
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case Database.Favorites.MODEL_KEY:
+                    favorite.setModelKey(data.getString(i));
+                    break;
+                case Database.Favorites.USER_NAME:
+                    favorite.setUserName(data.getString(i));
+                    break;
+                case Database.Favorites.MODEL_ENUM:
+                    favorite.setModelEnum(data.getInt(i));
+                    break;
+                default:
+            }
+        }
+        return favorite;
+    }
+
+    public static Subscription inflateSubscription(Cursor data){
+        Subscription subscription = new Subscription();
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case Database.Subscriptions.MODEL_KEY:
+                    subscription.setModelKey(data.getString(i));
+                    break;
+                case Database.Subscriptions.USER_NAME:
+                    subscription.setUserName(data.getString(i));
+                    break;
+                case Database.Subscriptions.MODEL_ENUM:
+                    subscription.setModelEnum(data.getInt(i));
+                    break;
+                case Database.Subscriptions.NOTIFICATION_SETTINGS:
+                    Log.d(Constants.LOG_TAG, "Settings: "+data.getString(i));
+                    subscription.setNotificationSettings(data.getString(i));
+                    break;
+                default:
+            }
+        }
+        return subscription;
     }
 }

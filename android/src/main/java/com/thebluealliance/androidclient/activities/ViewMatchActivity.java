@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * Created by Nathan on 5/14/2014.
  */
-public class ViewMatchActivity extends RefreshableHostActivity implements RefreshListener {
+public class ViewMatchActivity extends SlidingPageActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
 
@@ -39,13 +39,14 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_match);
-        setupActionBar();
 
         mMatchKey = getIntent().getStringExtra(MATCH_KEY);
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
+        setModelKey(mMatchKey);
+        setContentView(R.layout.activity_view_match);
+        setupActionBar();
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
@@ -82,7 +83,7 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
     @Override
     public void showWarningMessage(String message) {
-        if(warningMessage != null) {
+        if (warningMessage != null) {
             warningMessage.setText(message);
             warningMessage.setVisibility(View.VISIBLE);
         }
@@ -90,7 +91,7 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
 
     @Override
     public void hideWarningMessage() {
-        if(warningMessage != null) {
+        if (warningMessage != null) {
             warningMessage.setVisibility(View.GONE);
         }
     }
@@ -109,16 +110,16 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case android.R.id.home:
-                if(isDrawerOpen()) {
+                if (isDrawerOpen()) {
                     closeDrawer();
                     return true;
                 }
                 String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
                 Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    Log.d(Constants.LOG_TAG, "Navgating to new back stack with key " + eventKey);
+                    Log.d(Constants.LOG_TAG, "Navigating to new back stack with key " + eventKey);
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {

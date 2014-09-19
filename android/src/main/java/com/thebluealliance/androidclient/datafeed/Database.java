@@ -22,8 +22,10 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
+import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 16;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -50,6 +52,8 @@ public class Database extends SQLiteOpenHelper {
             TABLE_EVENTTEAMS = "eventTeams",
             TABLE_DISTRICTS = "districts",
             TABLE_DISTRICTTEAMS = "districtTeams",
+            TABLE_FAVORITES = "favorites",
+            TABLE_SUBSCRIPTIONS = "subscriptions",
             TABLE_SEARCH = "search",
             TABLE_SEARCH_TEAMS = "search_teams",
             TABLE_SEARCH_EVENTS = "search_events";
@@ -144,6 +148,19 @@ public class Database extends SQLiteOpenHelper {
             + DistrictTeams.TOTAL_POINTS + " INTEGER DEFAULT 0, "
             + DistrictTeams.JSON + " TEXT DEFAULT '' "
             + ")";
+    String CREATE_FAVORITES = "CREATE TABLE IF NOT EXISTS " + TABLE_FAVORITES + "("
+            + Favorites.KEY + " TEXT PRIMARY KEY NOT NULL,"
+            + Favorites.USER_NAME + " TEXT NOT NULL, "
+            + Favorites.MODEL_KEY + " TEXT NOT NULL,"
+            + Favorites.MODEL_ENUM + " INTEGER NOT NULL"
+            + ")";
+    String CREATE_SUBSCRIPTIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_SUBSCRIPTIONS + "("
+            + Subscriptions.KEY + " TEXT PRIMARY KEY NOT NULL,"
+            + Subscriptions.USER_NAME + " TEXT NOT NULL,"
+            + Subscriptions.MODEL_KEY + " TEXT NOT NULL,"
+            + Subscriptions.MODEL_ENUM + " INTEGER NOT NULL,"
+            + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]'"
+            + ")";
     String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
             " USING fts3 (" +
             SearchTeam.KEY + " TEXT PRIMARY KEY, " +
@@ -169,6 +186,8 @@ public class Database extends SQLiteOpenHelper {
     private Response responseTable;
     private Districts districtsTable;
     private DistrictTeams districtTeamsTable;
+    private Favorites favoritesTable;
+    private Subscriptions subscriptionsTable;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -182,6 +201,8 @@ public class Database extends SQLiteOpenHelper {
         eventTeamsTable = new EventTeams();
         districtsTable = new Districts();
         districtTeamsTable = new DistrictTeams();
+        favoritesTable = new Favorites();
+        subscriptionsTable = new Subscriptions();
         responseTable = new Response();
         mSemaphore = new Semaphore(1);
     }
@@ -233,6 +254,14 @@ public class Database extends SQLiteOpenHelper {
         return districtTeamsTable;
     }
 
+    public Favorites getFavoritesTable() {
+        return favoritesTable;
+    }
+
+    public Subscriptions getSubscriptionsTable() {
+        return subscriptionsTable;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_API);
@@ -244,6 +273,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_EVENTTEAMS);
         db.execSQL(CREATE_DISTRICTS);
         db.execSQL(CREATE_DISTRICTTEAMS);
+        db.execSQL(CREATE_FAVORITES);
+        db.execSQL(CREATE_SUBSCRIPTIONS);
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
@@ -266,7 +297,26 @@ public class Database extends SQLiteOpenHelper {
                     //add districts tables
                     db.execSQL(CREATE_DISTRICTS);
                     db.execSQL(CREATE_DISTRICTTEAMS);
-                    db.execSQL("ALTER TABLE "+TABLE_EVENTS+" ADD COLUMN "+ Events.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                    db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                    break;
+                case 15:
+                    //add favorites and subscriptions
+                    db.execSQL(CREATE_FAVORITES);
+                    db.execSQL(CREATE_SUBSCRIPTIONS);
+                    break;
+                case 16:
+                    // add column for individual notification settings and sorting by model type
+                    Cursor sub = db.rawQuery("SELECT * FROM "+TABLE_SUBSCRIPTIONS+" LIMIT 0,1", null);
+                    if(sub.getColumnIndex(Subscriptions.NOTIFICATION_SETTINGS) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
+                    }
+                    if(sub.getColumnIndex(Subscriptions.MODEL_ENUM) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.MODEL_ENUM + " INTEGER NOT NULL");
+                    }
+                    Cursor fav = db.rawQuery("SELECT * FROM "+TABLE_FAVORITES+" LIMIT 0,1", null);
+                    if(fav.getColumnIndex(Favorites.MODEL_ENUM) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + Favorites.MODEL_ENUM + " INTEGER NOT NULL");
+                    }
                     break;
             }
             upgradeTo++;
@@ -282,6 +332,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTTEAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTTEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBSCRIPTIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
@@ -1315,6 +1367,170 @@ public class Database extends SQLiteOpenHelper {
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete districtTeam without KEY");
             }
+        }
+    }
+
+    public class Favorites {
+        public static final String KEY = "key",
+                USER_NAME = "userName",
+                MODEL_KEY = "modelKey",
+                MODEL_ENUM = "model_enum";
+
+        public long add(Favorite in){
+            if(!exists(in.getKey())){
+                return safeInsert(TABLE_FAVORITES, null, in.getParams());
+            }
+            return -1;
+        }
+
+        public void add(ArrayList<Favorite> in) {
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                for (Favorite favorite : in) {
+                    if (!unsafeExists(favorite.getKey())) {
+                        db.insert(TABLE_FAVORITES, null, favorite.getParams());
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void remove(String key){
+            safeDelete(TABLE_FAVORITES, KEY + " = ?", new String[]{key});
+        }
+
+        public boolean exists(String key){
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public boolean unsafeExists(String key){
+            Cursor cursor = db.query(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public ArrayList<Favorite> getForUser(String user){
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
+            ArrayList<Favorite> favorites = new ArrayList<>();
+            if(cursor != null && cursor.moveToFirst()){
+                do {
+                    favorites.add(ModelInflater.inflateFavorite(cursor));
+                } while(cursor.moveToNext());
+            }
+            return favorites;
+        }
+
+        public void recreate(String user){
+            safeDelete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user});
+        }
+    }
+
+    public class Subscriptions {
+        public static final String KEY = "key",
+                USER_NAME = "userName",
+                MODEL_KEY = "modelKey",
+                MODEL_ENUM = "model_enum",
+                NOTIFICATION_SETTINGS = "settings";
+
+        public long add(Subscription in){
+            if(!exists(in.getKey())){
+                return safeInsert(TABLE_SUBSCRIPTIONS, null, in.getParams());
+            } else{
+                return update(in.getKey(), in);
+            }
+        }
+
+        public int update(String key, Subscription in){
+            return safeUpdate(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key});
+        }
+
+        public void add(ArrayList<Subscription> in) {
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                for (Subscription subscription : in) {
+                    if (!unsafeExists(subscription.getKey())) {
+                        db.insert(TABLE_SUBSCRIPTIONS, null, subscription.getParams());
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public boolean exists(String key){
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public boolean unsafeExists(String key){
+            Cursor cursor = db.query(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            boolean result;
+            if (cursor != null) {
+                result = cursor.moveToFirst();
+                cursor.close();
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        public void remove(String key){
+            safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key});
+        }
+
+        public Subscription get(String key){
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            if(cursor != null && cursor.moveToFirst()){
+                return ModelInflater.inflateSubscription(cursor);
+            }
+            return null;
+        }
+
+        public ArrayList<Subscription> getForUser(String user){
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
+            ArrayList<Subscription> subscriptions = new ArrayList<>();
+            if(cursor != null && cursor.moveToFirst()){
+                do {
+                    subscriptions.add(ModelInflater.inflateSubscription(cursor));
+                } while(cursor.moveToNext());
+            }
+            return subscriptions;
+        }
+
+        public void recreate(String user){
+            safeDelete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
         }
     }
 

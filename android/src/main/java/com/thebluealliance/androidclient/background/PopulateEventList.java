@@ -123,7 +123,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         } else if (mYear != -1 && mWeek != -1 && mTeamKey == null) {
             // Return a list of all events for a week in a given year
             try {
-                response = DataManager.Events.getSimpleEventsInWeek(mFragment.getActivity(), mYear, mWeek, forceFromCache);
+                response = DataManager.Events.getSimpleEventsInWeek(activity, mYear, mWeek, forceFromCache);
 
                 if (isCancelled()) {
                     return APIResponse.CODE.NODATA;

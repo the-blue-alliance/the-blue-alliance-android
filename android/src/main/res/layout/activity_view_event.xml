@@ -30,6 +30,7 @@
             android:id="@+id/info_container"
             style="@style/InfoOverlayStyle"
             android:visibility="gone" />
+
         <TextView
             android:id="@id/warning_container"
             style="@style/WarningOverlayStyle"

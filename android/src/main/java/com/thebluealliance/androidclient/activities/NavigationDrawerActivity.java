@@ -227,7 +227,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         }
     }
 
-    public void setActionBarSubtitle(String subtitle){
+    public void setActionBarSubtitle(String subtitle) {
         if (!isDrawerOpen() && getActionBar() != null) {
             getActionBar().setSubtitle(subtitle);
         }

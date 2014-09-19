@@ -14,11 +14,11 @@ public class DistrictClickListener implements View.OnClickListener {
     private Context context;
     private String key;
 
-    public DistrictClickListener(Context context, String key){
+    public DistrictClickListener(Context context, String key) {
         this.context = context;
-        if(DistrictHelper.validateDistrictKey(key)) {
+        if (DistrictHelper.validateDistrictKey(key)) {
             this.key = key;
-        }else{
+        } else {
             throw new IllegalArgumentException("Invalid district key");
         }
     }

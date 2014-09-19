@@ -20,8 +20,8 @@ public class DistrictHelper {
         PACIFIC_NORTHWEST,
         INDIANA;
 
-        public static DISTRICTS fromEnum(int districtEnum){
-            switch (districtEnum){
+        public static DISTRICTS fromEnum(int districtEnum) {
+            switch (districtEnum) {
                 default:
                 case 0: return NO_DISTRICT;
                 case 1: return MICHIGAN;
@@ -43,8 +43,8 @@ public class DistrictHelper {
             }
         }
 
-        public String getName(){
-            switch (this){
+        public String getName() {
+            switch (this) {
                 default:
                 case NO_DISTRICT: return "";
                 case MICHIGAN: return "Michigan";
@@ -55,8 +55,8 @@ public class DistrictHelper {
             }
         }
 
-        public String getAbbreviation(){
-            switch (this){
+        public String getAbbreviation() {
+            switch (this) {
                 default:
                 case NO_DISTRICT: return "";
                 case MICHIGAN: return "fim";
@@ -69,40 +69,43 @@ public class DistrictHelper {
 
     }
 
-    public static boolean validateDistrictKey(String key){
+    public static boolean validateDistrictKey(String key) {
+        if(key == null || key.length() <= 4){
+            return false;
+        }
         try {
             int year = Integer.parseInt(key.substring(0, 4));
             String districtAbbrev = key.substring(4);
             return DISTRICTS.fromAbbreviation(districtAbbrev) != DISTRICTS.NO_DISTRICT;
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return false;
         }
     }
 
-    public static String generateKey(String districtAbbrev, int year){
+    public static String generateKey(String districtAbbrev, int year) {
         return year + districtAbbrev;
     }
 
-    public static DISTRICTS districtTypeFromKey(String districtKey){
+    public static DISTRICTS districtTypeFromKey(String districtKey) {
         String districtAbbrev = districtKey.substring(4);
         return DISTRICTS.fromAbbreviation(districtAbbrev);
     }
 
-    public static District buildDistrictFromUrl(String districtKey, String url){
+    public static District buildDistrictFromUrl(String districtKey, String url) {
         int year = Integer.parseInt(url.substring(url.lastIndexOf("/") + 1));
-        Log.d(Constants.LOG_TAG, "Creating district for "+year);
+        Log.d(Constants.LOG_TAG, "Creating district for " + year);
         District out = new District();
-        out.setKey(year+districtKey);
+        out.setKey(year + districtKey);
         out.setYear(year);
         out.setAbbreviation(districtKey);
         out.setEnum(DISTRICTS.fromAbbreviation(districtKey).ordinal());
         return out;
     }
 
-    public static JsonObject findPointsForTeam(JsonObject points, String teamKey){
-        if(points.has("points")) {
+    public static JsonObject findPointsForTeam(JsonObject points, String teamKey) {
+        if (points.has("points")) {
             JsonObject pointsObject = points.get("points").getAsJsonObject();
-            if(pointsObject.has(teamKey)){
+            if (pointsObject.has(teamKey)) {
                 return pointsObject.get(teamKey).getAsJsonObject();
             }
         }

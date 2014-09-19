@@ -65,7 +65,13 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
             try {
                 DistrictHelper.DISTRICTS type = DistrictHelper.DISTRICTS.fromEnum(eventResponse.getData().getDistrictEnum());
                 isDistrict = type != DistrictHelper.DISTRICTS.NO_DISTRICT;
-                if(isDistrict) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mFragment.updateDistrict(isDistrict);
+                    }
+                });
+                if (isDistrict) {
                     districtKey = eventKey.substring(0, 4) + type.getAbbreviation();
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -75,7 +81,7 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
 
             teams = new ArrayList<>();
             ArrayList<DistrictPointBreakdown> pointBreakdowns = new ArrayList<>();
-            for(Map.Entry<String, JsonElement> teamPoints : points.entrySet()){
+            for (Map.Entry<String, JsonElement> teamPoints : points.entrySet()) {
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamPoints.getKey());
                 DistrictPointBreakdown b = JSONManager.getGson().fromJson(teamPoints.getValue(), DistrictPointBreakdown.class);
                 b.setTeamKey(teamPoints.getKey());
@@ -86,8 +92,8 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
 
             Collections.sort(pointBreakdowns, new PointBreakdownComparater());
 
-            for(int i = 0; i<pointBreakdowns.size(); i++){
-                pointBreakdowns.get(i).setRank( i + 1 );
+            for (int i = 0; i < pointBreakdowns.size(); i++) {
+                pointBreakdowns.get(i).setRank(i + 1);
                 teams.add(pointBreakdowns.get(i).render());
             }
 

@@ -34,18 +34,18 @@ public class DistrictListElement extends ListElement {
             convertView = inflater.inflate(R.layout.list_item_district, null);
 
             holder = new ViewHolder();
-            holder.title = (TextView)convertView.findViewById(R.id.title);
-            holder.events = (TextView)convertView.findViewById(R.id.num_events);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.events = (TextView) convertView.findViewById(R.id.num_events);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.title.setText(type.getName()+" District");
-        if(numEvents != -1) {
+        holder.title.setText(type.getName() + " District");
+        if (numEvents != -1) {
             holder.events.setVisibility(View.VISIBLE);
             holder.events.setText(numEvents + " Events");
-        }else{
+        } else {
             holder.events.setVisibility(View.GONE);
         }
 
@@ -54,7 +54,7 @@ public class DistrictListElement extends ListElement {
         return convertView;
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         TextView title;
         TextView events;
     }

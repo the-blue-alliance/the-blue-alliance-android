@@ -65,7 +65,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         if (completedListener == null) {
             return;
         }
-        if(!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity){
+        if (!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).notifyRefreshComplete(completedListener);
         }
         if (!mCompletedRefreshListeners.contains(completedListener)) {
@@ -113,7 +113,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         mRefreshInProgress = true;
     }
 
-    public void startRefresh(RefreshListener listener){
+    public void startRefresh(RefreshListener listener) {
         if (!mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }

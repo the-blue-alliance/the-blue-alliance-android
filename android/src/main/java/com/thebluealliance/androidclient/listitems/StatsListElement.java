@@ -64,13 +64,16 @@ public class StatsListElement extends ListElement {
     public String getTeamNumber() {
         return mTeamNumber;
     }
-    public Double getOpr(){
+
+    public Double getOpr() {
         return opr;
     }
-    public Double getDpr(){
+
+    public Double getDpr() {
         return dpr;
     }
-    public Double getCcwm(){
+
+    public Double getCcwm() {
         return ccwm;
     }
 }

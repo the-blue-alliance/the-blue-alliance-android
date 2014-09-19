@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 /**
  * File created by phil on 4/20/14.
  */
-public class ViewEventActivity extends RefreshableHostActivity {
+public class ViewEventActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENTKEY = "eventKey";
 
@@ -28,6 +28,7 @@ public class ViewEventActivity extends RefreshableHostActivity {
     private TextView warningMessage;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
+    private boolean isDistrict;
 
     public static Intent newInstance(Context c, String eventKey) {
         Intent intent = new Intent(c, ViewEventActivity.class);
@@ -38,13 +39,15 @@ public class ViewEventActivity extends RefreshableHostActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_event);
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
             mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
         } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
+
+        setModelKey(mEventKey);
+        setContentView(R.layout.activity_view_event);
 
         infoMessage = (TextView) findViewById(R.id.info_container);
         warningMessage = (TextView) findViewById(R.id.warning_container);
@@ -60,6 +63,7 @@ public class ViewEventActivity extends RefreshableHostActivity {
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
         setupActionBar();
@@ -69,6 +73,11 @@ public class ViewEventActivity extends RefreshableHostActivity {
         }
 
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+        isDistrict = true;
+    }
+
+    public void updateDistrict(boolean isDistrict) {
+        this.isDistrict = isDistrict;
     }
 
     @Override
@@ -140,5 +149,26 @@ public class ViewEventActivity extends RefreshableHostActivity {
     @Override
     public void hideWarningMessage() {
         warningMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (mOptionsMenu != null) {
+            if (position == 5 && !isDistrict) {
+                showInfoMessage(getString(R.string.warning_not_real_district));
+            } else {
+                hideInfoMessage();
+            }
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

@@ -1,19 +1,23 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
@@ -22,21 +26,40 @@ import com.thebluealliance.androidclient.TBAAndroid;
 public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback {
 
     String beamUri;
-
     boolean searchEnabled = true;
+    String modelKey = "";
+
+    GoogleAccountCredential credential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        final Activity activity = this;
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void[] params) {
+                /* Report the activity start to GAnalytics */
+                GoogleAnalytics.getInstance(activity).reportActivityStart(activity);
+                return null;
+            }
+        }.execute();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             // Register callback
             mNfcAdapter.setNdefPushMessageCallback(this, this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean mytba = AccountHelper.isMyTBAEnabled(this);
+        if (!AccountHelper.isAccountSelected(this) && mytba) {
+            AccountHelper.signIn(this);
+        } else if(mytba){
+            GCMHelper.registerGCMIfNeeded(this);
         }
     }
 
@@ -60,6 +83,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         switch (item.getItemId()) {
             case R.id.search:
                 startActivity(new Intent(this, SearchResultsActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -72,6 +96,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         beamUri = uri;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
         if (beamUri == null || beamUri.isEmpty()) {
@@ -85,4 +110,16 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         searchEnabled = enabled;
         invalidateOptionsMenu();
     }
+
+    protected void setModelKey(String key){
+        modelKey = key;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
+    }
+
 }

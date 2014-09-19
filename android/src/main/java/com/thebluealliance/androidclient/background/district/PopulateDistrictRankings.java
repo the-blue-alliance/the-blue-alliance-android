@@ -34,7 +34,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     private String districtKey;
     private ArrayList<ListItem> rankings;
 
-    public PopulateDistrictRankings(DistrictRankingsFragment fragment, boolean forceFromCache){
+    public PopulateDistrictRankings(DistrictRankingsFragment fragment, boolean forceFromCache) {
         this.forceFromCache = forceFromCache;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
@@ -53,15 +53,15 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
         }
 
         rankings = new ArrayList<>();
-        for(DistrictTeam team: response.getData()){
+        for (DistrictTeam team : response.getData()) {
             try {
                 Team teamData = DataManager.Teams.getTeamFromDB(activity, team.getTeamKey());
                 String nickname;
-                if(teamData != null){
+                if (teamData != null) {
                     nickname = teamData.getNickname();
-                }else{
-                    Log.w(Constants.LOG_TAG, "Couldn't find "+team.getTeamKey()+" in db");
-                    nickname = "Team "+team.getTeamKey().substring(3);
+                } else {
+                    Log.w(Constants.LOG_TAG, "Couldn't find " + team.getTeamKey() + " in db");
+                    nickname = "Team " + team.getTeamKey().substring(3);
                 }
                 rankings.add(new DistrictTeamListElement(team.getTeamKey(), team.getDistrictKey(), nickname, team.getRank(), team.getTotalPoints()));
             } catch (BasicModel.FieldNotDefinedException e) {

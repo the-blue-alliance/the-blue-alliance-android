@@ -159,7 +159,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
-    protected void showLastMatch(MatchListElement match){
+    protected void showLastMatch(MatchListElement match) {
         LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_last_match_container);
         lastLayout.setVisibility(View.VISIBLE);
         if (lastLayout.getChildCount() > 1) {

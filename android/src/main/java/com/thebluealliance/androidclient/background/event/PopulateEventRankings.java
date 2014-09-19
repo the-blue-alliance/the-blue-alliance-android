@@ -122,7 +122,13 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                         }
                     }
                     Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
-                    teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), team.getNickname(), row.get(0).getAsInt(), record, rankingString));
+                    String nickname;
+                    if(team != null){
+                        nickname = team.getNickname();
+                    }else{
+                        nickname = "Team " + teamKey.substring(3);
+                    }
+                    teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), nickname, row.get(0).getAsInt(), record, rankingString));
                 }
                 adapter = new ListViewAdapter(activity, teams);
                 return response.getCode();

@@ -14,7 +14,7 @@
         android:paddingRight="16dp"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:layout_toLeftOf="@+id/item_detail" >
+        android:layout_toLeftOf="@+id/item_detail">
 
         <TextView
             android:id="@+id/label"

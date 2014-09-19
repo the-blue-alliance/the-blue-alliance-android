@@ -114,7 +114,7 @@
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/chief_delphi_orange_selector"
                     android:padding="4dp"
-                    android:src="@drawable/ic_cd_light"/>
+                    android:src="@drawable/ic_cd_light" />
             </LinearLayout>
 
             <LinearLayout

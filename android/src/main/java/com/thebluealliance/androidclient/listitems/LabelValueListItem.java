@@ -9,8 +9,8 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 
 /**
-* Created by phil on 7/16/14.
-*/
+ * Created by phil on 7/16/14.
+ */
 public class LabelValueListItem extends ListElement {
 
     String label, value;
@@ -22,7 +22,7 @@ public class LabelValueListItem extends ListElement {
         this.listItem = null;
     }
 
-    public LabelValueListItem(String label, ListItem value){
+    public LabelValueListItem(String label, ListItem value) {
         this.label = label;
         this.listItem = value;
         this.value = null;
@@ -45,13 +45,13 @@ public class LabelValueListItem extends ListElement {
         }
 
         holder.label.setText(label);
-        if(holder.container.getChildCount() > 2){
+        if (holder.container.getChildCount() > 2) {
             holder.container.removeViewAt(2);
         }
-        if(value != null) {
+        if (value != null) {
             holder.value.setVisibility(View.VISIBLE);
             holder.value.setText(value);
-        }else{
+        } else {
             holder.value.setVisibility(View.GONE);
             holder.container.addView(listItem.getView(c, inflater, null), 2);
         }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:id="@+id/points_help"
-    android:title="@string/action_view_point_math"
-    android:showAsAction="ifRoom"
-    android:icon="@drawable/ic_action_help"
-    android:orderInCategory="100" />
+    <item
+        android:id="@+id/points_help"
+        android:title="@string/action_view_point_math"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_help"
+        android:orderInCategory="100" />
 </menu>

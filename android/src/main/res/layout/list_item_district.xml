@@ -16,7 +16,7 @@
         android:layout_marginLeft="16dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="Title"/>
+        android:text="Title" />
 
     <TextView
         android:id="@+id/num_events"

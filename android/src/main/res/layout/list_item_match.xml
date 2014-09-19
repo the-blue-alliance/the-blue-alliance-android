@@ -180,6 +180,7 @@
 
                 </LinearLayout>
             </LinearLayout>
+
             <TextView
                 android:id="@+id/match_time"
                 android:layout_width="0dp"
@@ -189,7 +190,6 @@
                 android:text="88:88 PM" />
         </TableRow>
     </TableLayout>
-
 
 
 </LinearLayout>

@@ -222,7 +222,7 @@ public class MatchView extends FrameLayout {
             this.blueScore.setText(blueScore);
 
             String localTimeString = "";
-            if(time <= 0) {
+            if (time <= 0) {
                 // Match has no time
                 localTimeString = getContext().getString(R.string.no_time_available);
             } else {

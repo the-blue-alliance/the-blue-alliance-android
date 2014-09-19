@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 15
-        versionName "1.3.1"
+        versionCode 16
+        versionName "1.4"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -45,6 +45,11 @@ android {
                 }
             }
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
 }
 
@@ -84,14 +89,19 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
+    compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
     compile 'com.android.support:support-v13:19.+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
     compile 'com.android.support:support-v4:19.+'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'org.apache.commons:commons-lang3:3.0'
+    compile 'org.apache.commons:commons-io:1.3.2'
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'me.xuender:unidecode:0.0.+'
-    compile 'com.google.android.gms:play-services:5.2.08'
+    compile 'com.google.android.gms:play-services:5.0.+'
+    compile 'com.sothree.slidinguppanel:library:+'
     compile 'de.greenrobot:eventbus:2.2.+'
+    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
 }

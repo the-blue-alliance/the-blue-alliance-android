@@ -34,7 +34,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     private ListView mListView;
     private PopulateEventList mTask;
 
-    public static DistrictEventsFragment newInstance(String key){
+    public static DistrictEventsFragment newInstance(String key) {
         DistrictEventsFragment f = new DistrictEventsFragment();
         Bundle args = new Bundle();
         args.putString(KEY, key);
@@ -47,7 +47,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
         super.onCreate(savedInstanceState);
 
         mParent = getActivity();
-        if(getArguments() == null || !getArguments().containsKey(KEY)){
+        if (getArguments() == null || !getArguments().containsKey(KEY)) {
             throw new IllegalArgumentException("DistrictEventsFragment must be constructed with district key");
         }
         mKey = getArguments().getString(KEY);
@@ -74,7 +74,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     @Override
     public void onPause() {
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -86,7 +86,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(mParent != null && mParent instanceof RefreshableHostActivity) {
+        if (mParent != null && mParent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) mParent).startRefresh(this);
         }
     }

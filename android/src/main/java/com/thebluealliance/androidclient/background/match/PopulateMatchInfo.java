@@ -7,7 +7,6 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -61,8 +60,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 mMatchDetails.add(match.render(false, true, false, false));
                 mMatchTitle = match.getTitle();
                 Gson gson = JSONManager.getGson();
-                for(JsonElement v: match.getVideos()){
-                    if(Media.TYPE.fromString(v.getAsJsonObject().get("type").getAsString()) != Media.TYPE.NONE) {
+                for (JsonElement v : match.getVideos()) {
+                    if (Media.TYPE.fromString(v.getAsJsonObject().get("type").getAsString()) != Media.TYPE.NONE) {
                         mMatchDetails.add(gson.fromJson(v, Media.class).render());
                     }
                 }
@@ -91,10 +90,10 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         if (code != APIResponse.CODE.NODATA) {
 
             mActivity.setActionBarTitle(mMatchTitle);
-            mActivity.setActionBarSubtitle("@ " + mMatchKey.substring(0,4) + " " + mEventShortName);
+            mActivity.setActionBarSubtitle("@ " + mMatchKey.substring(0, 4) + " " + mEventShortName);
 
             ListViewAdapter adapter = new ListViewAdapter(mActivity, mMatchDetails);
-            ListView list = (ListView)mActivity.findViewById(R.id.match_details);
+            ListView list = (ListView) mActivity.findViewById(R.id.match_details);
 
             //disable touch feedback (you can't click the elements here...)
             list.setCacheColorHint(android.R.color.transparent);

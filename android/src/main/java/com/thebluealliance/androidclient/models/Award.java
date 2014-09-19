@@ -36,18 +36,18 @@ public class Award extends BasicModel<Award> {
         setWinners(winners);
     }
 
-    public void setKey(String key){
-        if(AwardHelper.validateAwardKey(key)) {
+    public void setKey(String key) {
+        if (AwardHelper.validateAwardKey(key)) {
             fields.put(Database.Awards.KEY, key);
-        }else{
-            throw new IllegalArgumentException("Invalid award key: "+key);
+        } else {
+            throw new IllegalArgumentException("Invalid award key: " + key);
         }
     }
 
     public String getKey() throws FieldNotDefinedException {
         if (fields.containsKey(Database.Awards.KEY) && fields.get(Database.Awards.KEY) instanceof String) {
             return (String) fields.get(Database.Awards.KEY);
-        }else {
+        } else {
             try {
                 String newKey = AwardHelper.createAwardKey(getEventKey(), getEnum());
                 setKey(newKey);
@@ -58,7 +58,7 @@ public class Award extends BasicModel<Award> {
         }
     }
 
-    public void generateKey(){
+    public void generateKey() {
 
     }
 
@@ -69,7 +69,7 @@ public class Award extends BasicModel<Award> {
         throw new FieldNotDefinedException("Field Database.Awards.ENUM is not defined");
     }
 
-    public void setEnum(int awardEnum){
+    public void setEnum(int awardEnum) {
         fields.put(Database.Awards.ENUM, awardEnum);
     }
 

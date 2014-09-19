@@ -53,7 +53,7 @@ public class APIResponse<A> {
         this.errorMessage = "";
     }
 
-    public APIResponse(A data, String errorMessage){
+    public APIResponse(A data, String errorMessage) {
         this.code = CODE.ERROR;
         this.data = data;
         this.lastUpdate = "";
@@ -85,11 +85,11 @@ public class APIResponse<A> {
         this.lastHit = lastHit;
     }
 
-    public String getErrorMessage(){
+    public String getErrorMessage() {
         return errorMessage;
     }
 
-    public void setErrorMessage(String error){
+    public void setErrorMessage(String error) {
         errorMessage = error;
     }
 
@@ -105,7 +105,7 @@ public class APIResponse<A> {
         return merged;
     }
 
-    public static CODE mergeCodes(ArrayList<CODE> codes){
+    public static CODE mergeCodes(ArrayList<CODE> codes) {
         if (codes.size() == 0) return CODE.NODATA;
         CODE merged = CODE.CACHED304; //start with least precedence
         for (CODE code : codes) {

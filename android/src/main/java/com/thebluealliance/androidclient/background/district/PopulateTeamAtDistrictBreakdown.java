@@ -38,7 +38,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
     private String teamKey, districtKey;
     private ArrayList<ListGroup> groups;
 
-    public PopulateTeamAtDistrictBreakdown(TeamAtDistrictBreakdownFragment fragment, boolean forceFromCache){
+    public PopulateTeamAtDistrictBreakdown(TeamAtDistrictBreakdownFragment fragment, boolean forceFromCache) {
         super();
         this.forceFromCache = forceFromCache;
         this.fragment = fragment;
@@ -47,16 +47,16 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
-        if(params.length != 2){
+        if (params.length != 2) {
             throw new IllegalArgumentException("PopulateTeamAtDistrictSummary must be constructed with team key & district key");
         }
         teamKey = params[0];
         districtKey = params[1];
 
-        if(!TeamHelper.validateTeamKey(teamKey)){
+        if (!TeamHelper.validateTeamKey(teamKey)) {
             throw new IllegalArgumentException("Invalid team key");
         }
-        if(!DistrictHelper.validateDistrictKey(districtKey)){
+        if (!DistrictHelper.validateDistrictKey(districtKey)) {
             throw new IllegalArgumentException("Invalid district key");
         }
 
@@ -66,7 +66,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
         try {
             teamEvents = DataManager.Districts.getDistrictTeamEvents(activity, districtTeamKey, forceFromCache);
         } catch (DataManager.NoDataException e) {
-            Log.e(Constants.LOG_TAG, "Unable to fetch events for "+teamKey+" in "+districtKey);
+            Log.e(Constants.LOG_TAG, "Unable to fetch events for " + teamKey + " in " + districtKey);
             return APIResponse.CODE.NODATA;
         }
 
@@ -91,7 +91,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
         }
 
         groups = new ArrayList<>();
-        for(String eventKey: eventKeys){
+        for (String eventKey : eventKeys) {
             try {
                 APIResponse<JsonObject> teamPoints = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, teamKey, forceFromCache);
                 pointsCodes.add(teamPoints.getCode());
@@ -99,25 +99,25 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
 
                 DistrictPointBreakdown breakdown = JSONManager.getGson().fromJson(teamPoints.getData(), DistrictPointBreakdown.class);
 
-                if(breakdown.getQualPoints() > -1){
+                if (breakdown.getQualPoints() > -1) {
                     eventGroup.children.add(breakdown.renderQualPoints(activity));
                 }
-                if(breakdown.getElimPoints() > -1){
+                if (breakdown.getElimPoints() > -1) {
                     eventGroup.children.add(breakdown.renderElimPoints(activity));
                 }
-                if(breakdown.getAlliancePoints() > -1){
+                if (breakdown.getAlliancePoints() > -1) {
                     eventGroup.children.add(breakdown.renderAlliancePoints(activity));
                 }
-                if(breakdown.getAwardPoints() > -1){
+                if (breakdown.getAwardPoints() > -1) {
                     eventGroup.children.add(breakdown.renderAwardPoints(activity));
                 }
-                if(breakdown.getTotalPoints() > -1){
+                if (breakdown.getTotalPoints() > -1) {
                     eventGroup.children.add(breakdown.renderTotalPoints(activity));
                 }
 
                 groups.add(eventGroup);
             } catch (DataManager.NoDataException e) {
-                Log.e(Constants.LOG_TAG, "Unable to get district points for "+eventKey+" "+teamKey);
+                Log.e(Constants.LOG_TAG, "Unable to get district points for " + eventKey + " " + teamKey);
                 e.printStackTrace();
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Unable to fetch event title");
@@ -140,7 +140,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
             // only show the message when try try and actually load data from the web
-            if ( code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups == null || adapter.groups.isEmpty())) {
+            if (code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups == null || adapter.groups.isEmpty())) {
                 noDataText.setVisibility(View.VISIBLE);
                 noDataText.setText(R.string.no_team_district_breakdown);
             } else {
@@ -151,7 +151,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
                 results.setAdapter(adapter);
                 results.onRestoreInstanceState(state);
                 results.setSelection(firstVisiblePosition);
-                if(groups.size() == 1){
+                if (groups.size() == 1) {
                     results.expandGroup(0);
                 }
                 adapter.notifyDataSetChanged();

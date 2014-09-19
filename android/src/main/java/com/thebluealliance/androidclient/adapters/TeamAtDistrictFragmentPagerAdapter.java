@@ -16,7 +16,7 @@ public class TeamAtDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private String mDistrictKey, mTeamKey;
 
-    public TeamAtDistrictFragmentPagerAdapter(FragmentManager fm, String teamKey, String districtKey){
+    public TeamAtDistrictFragmentPagerAdapter(FragmentManager fm, String teamKey, String districtKey) {
         super(fm);
         mTeamKey = teamKey;
         mDistrictKey = districtKey;
@@ -25,7 +25,7 @@ public class TeamAtDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment f;
-        switch (position){
+        switch (position) {
             default:
             case 0:
                 f = TeamAtDistrictSummaryFragment.newInstance(mTeamKey, mDistrictKey);

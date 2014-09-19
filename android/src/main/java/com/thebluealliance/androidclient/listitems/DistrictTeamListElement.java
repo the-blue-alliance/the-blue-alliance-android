@@ -51,15 +51,15 @@ public class DistrictTeamListElement extends ListElement {
 
         holder.teamNumber.setText(teamKey.substring(3));
         holder.teamRank.setText(String.format(c.getString(R.string.team_rank), teamRank));
-        if(teamName.isEmpty()) {
-            holder.teamName.setText("Team "+teamKey.substring(3));
-        }else {
+        if (teamName.isEmpty()) {
+            holder.teamName.setText("Team " + teamKey.substring(3));
+        } else {
             holder.teamName.setText(teamName);
         }
         holder.totalPoints.setText(String.format(c.getString(R.string.district_points_format), totalPoints));
-        if(districtKey != null && !districtKey.isEmpty()) {
+        if (districtKey != null && !districtKey.isEmpty()) {
             convertView.setOnClickListener(new TeamAtDistrictClickListener(c, teamKey, districtKey));
-        }else{
+        } else {
             convertView.setBackgroundResource(R.drawable.transparent);
         }
         return convertView;

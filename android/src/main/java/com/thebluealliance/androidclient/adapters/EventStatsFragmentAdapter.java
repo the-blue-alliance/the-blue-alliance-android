@@ -22,6 +22,7 @@ public class EventStatsFragmentAdapter extends ListViewAdapter {
 
     /**
      * Sorts event stats based on given stat.
+     *
      * @param stat stat to sort by
      */
     public void sortStats(String stat) {

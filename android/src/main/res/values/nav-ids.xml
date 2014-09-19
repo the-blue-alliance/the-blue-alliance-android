@@ -5,4 +5,5 @@
     <item type="id" name="nav_item_teams" />
     <item type="id" name="nav_item_insights" />
     <item type="id" name="nav_item_settings" />
+    <item type="id" name="nav_item_my_tba" />
 </resources>

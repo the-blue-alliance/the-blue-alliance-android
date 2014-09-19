@@ -32,7 +32,7 @@ public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIRespons
     String teamKey, eventKey;
     boolean forceFromCache;
 
-    public PopulateTeamAtEventStats(TeamAtEventStatsFragment fragment, boolean forceFromCache){
+    public PopulateTeamAtEventStats(TeamAtEventStatsFragment fragment, boolean forceFromCache) {
         super();
         this.fragment = fragment;
         this.activity = (RefreshableHostActivity) fragment.getActivity();

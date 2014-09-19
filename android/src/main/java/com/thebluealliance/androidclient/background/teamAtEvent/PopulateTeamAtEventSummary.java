@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
@@ -26,6 +27,7 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * File created by phil on 6/3/14.
@@ -68,7 +70,9 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                 return APIResponse.CODE.NODATA;
             }
 
-            eventMatches = matchResponse.getData(); //sorted by play order
+            eventMatches = matchResponse.getData();
+            Collections.sort(eventMatches, new MatchSortByPlayOrderComparator());
+
             teamMatches = MatchHelper.getMatchesForTeam(eventMatches, teamKey);
 
             int[] record = MatchHelper.getRecordForTeam(eventMatches, teamKey);
@@ -86,7 +90,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                 return APIResponse.CODE.NODATA;
             }
 
-            if(event.isHappeningNow() && teamMatches != null) {
+            if (event.isHappeningNow() && teamMatches != null) {
                 nextMatch = MatchHelper.getNextMatchPlayed(teamMatches);
                 lastMatch = MatchHelper.getLastMatchPlayed(teamMatches);
             }
@@ -100,7 +104,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
         if (event != null) {
             eventShort = event.getShortName();
-            eventYear = eventKey.substring(0,4);
+            eventYear = eventKey.substring(0, 4);
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
             JsonArray alliances;
@@ -162,17 +166,17 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
             // Alliance
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
-                status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+                    status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_alliance), generateAllianceSummary(activity.getResources(), allianceNumber, alliancePick)));
             }
 
             // Status
             summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
 
-            if(lastMatch != null) {
+            if (lastMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_last_match), lastMatch.render()));
             }
-            if(nextMatch != null){
+            if (nextMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_next_match), nextMatch.render()));
             }
         }

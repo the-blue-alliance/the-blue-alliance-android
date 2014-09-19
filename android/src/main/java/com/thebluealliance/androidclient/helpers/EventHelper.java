@@ -338,10 +338,10 @@ public class EventHelper {
         ArrayList<ListItem> eventListItems = new ArrayList<>();
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
-        for(Event event: events){
+        for (Event event : events) {
             try {
                 currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
-                if(!currentHeader.equals(lastHeader)){
+                if (!currentHeader.equals(lastHeader)) {
                     eventListItems.add(new EventTypeHeader(currentHeader + " Events"));
                 }
                 eventListItems.add(event.render());
@@ -403,7 +403,7 @@ public class EventHelper {
             event.setMatches(JSONManager.getasJsonArray(data));
         } else if (url.contains("stats")) {
             event.setStats(data);
-        } else if (url.contains("district_points")){
+        } else if (url.contains("district_points")) {
             event.setDistrictPoints(data);
         }
     }

@@ -76,7 +76,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     dpr = new ArrayList<>(),
                     ccwm = new ArrayList<>(),
                     statToUse = new ArrayList<>();
-                    // to get the total size of the stats list elements, take the size of the stat array list being sorted.
+            // to get the total size of the stats list elements, take the size of the stat array list being sorted.
 
             LinkedHashMap<String, Double>
                     oprSorted = new LinkedHashMap<>(),
@@ -86,8 +86,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             // Default to OPR on first startup.
             // Also putting team sort in here since sorting using another comparator makes life easier
             // rather than creating a different list for teams which doesn't have the same properties as the stats.
-            if (statToSortBy == null || statToSortBy.equals("opr") || statToSortBy.equals("team")){
-                if (stats.has("oprs") && !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()){
+            if (statToSortBy == null || statToSortBy.equals("opr") || statToSortBy.equals("team")) {
+                if (stats.has("oprs") && !stats.get("oprs").getAsJsonObject().entrySet().isEmpty()) {
 
                     opr.addAll(stats.get("oprs").getAsJsonObject().entrySet());
                     statToUse = opr;
@@ -96,8 +96,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         // Sort OPRs in decreasing order (highest to lowest)
                         Collections.sort(opr, new TeamSortByStatComparator());
                         Collections.reverse(opr);
-                    }
-                    else if (statToSortBy.equals("team")){
+                    } else if (statToSortBy.equals("team")) {
                         Collections.sort(opr, new TeamSortByAlphanumComparator());
                     }
 
@@ -112,9 +111,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         ccwmSorted = sortedListByStat(opr, stats.get("ccwms").getAsJsonObject());
                     }
                 }
-            }
-            else if (statToSortBy.equals("dpr")){
-                if (stats.has("dprs") && !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()){
+            } else if (statToSortBy.equals("dpr")) {
+                if (stats.has("dprs") && !stats.get("dprs").getAsJsonObject().entrySet().isEmpty()) {
 
                     dpr.addAll(stats.get("dprs").getAsJsonObject().entrySet());
                     statToUse = dpr;
@@ -133,9 +131,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                         ccwmSorted = sortedListByStat(dpr, stats.get("ccwms").getAsJsonObject());
                     }
                 }
-            }
-            else if (statToSortBy.equals("ccwm")){
-                if (stats.has("ccwms") && !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()){
+            } else if (statToSortBy.equals("ccwm")) {
+                if (stats.has("ccwms") && !stats.get("ccwms").getAsJsonObject().entrySet().isEmpty()) {
 
                     ccwm.addAll(stats.get("ccwms").getAsJsonObject().entrySet());
                     statToUse = ccwm;
@@ -172,7 +169,13 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                     teamKey = teamKey.substring(0, teamKey.length() - 1);
                 }
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
-                teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), team.getNickname(), statsString,
+                String nickname;
+                if(team == null){
+                    nickname = "Team "+teamKey.substring(3);
+                }else{
+                    nickname = team.getNickname();
+                }
+                teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), nickname, statsString,
                         Double.valueOf(oprSorted.values().toArray()[i].toString()),
                         Double.valueOf(dprSorted.values().toArray()[i].toString()),
                         Double.valueOf(ccwmSorted.values().toArray()[i].toString())));
@@ -244,11 +247,11 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
      * @param data the data to sort with
      * @return newly sorted linked hash map
      */
-    private LinkedHashMap<String, Double> sortedListByStat(ArrayList<Map.Entry<String, JsonElement>> stat, JsonObject data){
+    private LinkedHashMap<String, Double> sortedListByStat(ArrayList<Map.Entry<String, JsonElement>> stat, JsonObject data) {
 
         LinkedHashMap<String, Double> statSorted = new LinkedHashMap<>();
 
-        for (int i = 0; i < stat.size(); i++){
+        for (int i = 0; i < stat.size(); i++) {
             String newKey = stat.get(i).getKey();
             Double newValue = data.get(newKey).getAsDouble();
             statSorted.put(newKey, newValue);

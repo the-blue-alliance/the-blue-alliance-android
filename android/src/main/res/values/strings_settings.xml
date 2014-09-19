@@ -1,0 +1,47 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_dev_settings">Debug Settings</string>
+    <string name="pref_header_appinfo">Info</string>
+    <string name="pref_header_general">General</string>
+    <string name="pref_header_account">Account</string>
+
+    <!-- Account -->
+    <string name="is_mytba_eabled">Enable myTBA</string>
+
+    <!-- Debug Settings Screen -->
+    <string name="pref_header_debug">Debug Preferences</string>
+
+    <string name="pref_dry_run">Analytics Dry Run</string>
+    <string name="pref_dry_run_detail">Skip sending analytics data</string>
+
+    <string name="pref_analytics_key">Use Debug Analytics</string>
+    <string name="pref_analytics_detail">Use analytics.id.debug Property ID for analytics</string>
+
+    <string name="pref_tba_host">TBA Host</string>
+    <string name="pref_tba_host_detail">Web address of another TBA instance that the app will use</string>
+
+    <string name="pref_test_upcoming_match_notification">Test upcoming match notification</string>
+    <string name="pref_test_score_notification">Test score notification</string>
+
+    <string name="pref_select_account">Select Account</string>
+    <string name="pref_redownload_data">Redownload data</string>
+    <string name="pref_redownload_data_detail">Returns to Launch Activity for data download</string>
+
+    <!-- Settings -->
+    <string name="settings_version_label">Version</string>
+    <string name="github_label">The Blue Alliance for Android is open source</string>
+    <string name="github_summary">View project on GitHub</string>
+    <string name="tbasite_label">The Blue Alliance website</string>
+    <string name="tbasite_summary">Visit www.thebluealliance.com</string>
+    <string name="license_label">Open Source Licenses</string>
+    <string name="changelog">View Changelog</string>
+    <string name="contributors">Contributors</string>
+    <string name="contributors_summary">View a list of people who contributed to this project</string>
+    <string name="dev_settings">Debug Settings</string>
+    <string name="notification_settings">Notification Settings</string>
+
+    <!-- Notificatino Settings-->
+    <string name="pref_enable_notifications">Enable Notifications</string>
+    <string name="pref_notification_tone">Play Sound</string>
+    <string name="pref_notification_vibrate">Vibrate</string>
+</resources>

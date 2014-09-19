@@ -22,7 +22,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * Created by phil on 7/16/14.
  */
-public class TeamAtEventStatsFragment extends Fragment implements RefreshListener{
+public class TeamAtEventStatsFragment extends Fragment implements RefreshListener {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -33,7 +33,7 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     private ListView listView;
     private PopulateTeamAtEventStats task;
 
-    public static TeamAtEventStatsFragment newInstance(String teamKey, String eventKey){
+    public static TeamAtEventStatsFragment newInstance(String teamKey, String eventKey) {
         TeamAtEventStatsFragment f = new TeamAtEventStatsFragment();
         Bundle args = new Bundle();
         args.putString(TEAM_KEY, teamKey);
@@ -45,7 +45,7 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)){
+        if (getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)) {
             throw new IllegalArgumentException("TeamAtEventSummaryFragment must contain both team key and event key");
         }
 

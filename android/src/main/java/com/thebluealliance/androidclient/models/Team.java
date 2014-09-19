@@ -11,12 +11,21 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
 
 import java.util.Arrays;
 
 public class Team extends BasicModel<Team> {
+
+    public static final String[] NOTIFICATION_TYPES = {
+            //NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE
+            //NotificationTypes.ALLIANCE_SELECTION,
+            //NotificationTypes.AWARDS,
+            //NotificationTypes.MEDIA_POSTED
+    };
 
     private JsonArray yearsParticipated;
 

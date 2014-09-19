@@ -111,7 +111,7 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
         }
     }
 
-    public void updateTask(PopulateEventAlliances newTask){
+    public void updateTask(PopulateEventAlliances newTask) {
         mTask = newTask;
     }
 

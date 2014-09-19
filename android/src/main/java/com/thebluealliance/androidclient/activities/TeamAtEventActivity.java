@@ -19,10 +19,11 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 
 import java.util.Arrays;
 
-public class TeamAtEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
+public class TeamAtEventActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
@@ -30,6 +31,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
     private String eventKey, teamKey;
     private ViewPager pager;
     private TeamAtEventFragmentPagerAdapter adapter;
+
+    public static Intent newInstance(Context c, String eventTeamKey){
+        return newInstance(c, EventTeamHelper.getEventKey(eventTeamKey), EventTeamHelper.getTeamKey(eventTeamKey));
+    }
 
     public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
@@ -41,7 +46,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_team_at_event);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
@@ -50,6 +54,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
         } else {
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
+
+        String eventTeamKey = EventTeamHelper.generateKey(eventKey, teamKey);
+        setModelKey(eventTeamKey);
+        setContentView(R.layout.activity_team_at_event);
 
         pager = (ViewPager) findViewById(R.id.view_pager);
         adapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), teamKey, eventKey);
@@ -95,7 +103,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 return true;
             case R.id.action_view_team:
-                int year = Integer.parseInt(eventKey.substring(0,4));
+                int year = Integer.parseInt(eventKey.substring(0, 4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
                 return true;
             case R.id.stats_help:
@@ -138,7 +146,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
 
     @Override
     public void onPageSelected(int position) {
-        if(mOptionsMenu != null) {
+        if (mOptionsMenu != null) {
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
                 mOptionsMenu.findItem(R.id.stats_help).setVisible(true);

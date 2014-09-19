@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -26,7 +25,6 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -287,7 +285,6 @@ public class DataManager {
                 }
             }
 
-            Collections.sort(results, new MatchSortByDisplayOrderComparator());
             return new APIResponse<>(results, matchResponse.getCode());
         }
 
@@ -371,18 +368,18 @@ public class DataManager {
             String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.DISTRICT_POINTS};
             APIResponse<Event> eventResponse = Event.query(c, eventKey, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
-                if(teamKey.isEmpty()) {
+                if (teamKey.isEmpty()) {
                     //we want all the event's points
-                    if(eventResponse.getData().getDistrictPoints().has("points")) {
+                    if (eventResponse.getData().getDistrictPoints().has("points")) {
                         return new APIResponse<>(eventResponse.getData().getDistrictPoints().get("points").getAsJsonObject(), eventResponse.getCode());
-                    }else{
+                    } else {
                         return new APIResponse<>(new JsonObject(), eventResponse.getCode());
                     }
-                }else{
+                } else {
                     //we want a single team's points at this event
-                    if(eventResponse.getData().getDistrictPoints().has("points")) {
+                    if (eventResponse.getData().getDistrictPoints().has("points")) {
                         return new APIResponse<>(DistrictHelper.findPointsForTeam(eventResponse.getData().getDistrictPoints().getAsJsonObject(), teamKey), eventResponse.getCode());
-                    }else{
+                    } else {
                         return new APIResponse<>(new JsonObject(), eventResponse.getCode());
                     }
                 }

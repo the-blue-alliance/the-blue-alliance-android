@@ -38,7 +38,7 @@ public class AwardListElement extends ListElement {
         mEventKey = eventKey;
         mAwardWinners = winners;
         mAwardTeams = teams;
-        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4)?"":selectedTeamKey.substring(3);
+        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4) ? "" : selectedTeamKey.substring(3);
     }
 
     @Override
@@ -68,12 +68,12 @@ public class AwardListElement extends ListElement {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
-                if(!mSelectedTeamNum.equals(teamNumber)) {
+                if (!mSelectedTeamNum.equals(teamNumber)) {
                     winnerView.setOnClickListener(new TeamAtEventClickListener(context));
                 } else {
                     winnerView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));  // disable touch feedback
                 }
-                winnerView.setTag("frc" + teamNumber+"@"+mEventKey);
+                winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
             }
             if (winner.get("awardee").isJsonNull()) {
                 awardee = "";
@@ -96,15 +96,22 @@ public class AwardListElement extends ListElement {
                     team = mAwardTeams.get("frc" + teamNumber);
                 }
 
-                if (awardee.isEmpty() && team.getNickname().isEmpty()) {
+                String nickname;
+                if(team == null){
+                    nickname = "Team "+teamNumber;
+                }else{
+                    nickname = team.getNickname();
+                }
+
+                if (awardee.isEmpty() && nickname.isEmpty()) {
                     awardLine1 = teamNumber;
                     awardLine2 = "Team " + teamNumber;
                 } else if (awardee.isEmpty()) {
                     awardLine1 = teamNumber;
-                    awardLine2 = team.getNickname();
+                    awardLine2 = nickname;
                 } else {
                     awardLine1 = awardee;
-                    awardLine2 = teamNumber + " " + team.getNickname();
+                    awardLine2 = nickname;
                 }
             }
 

@@ -57,7 +57,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         team = (String) params[0];
         year = (Integer) params[1];
 
-        if(year == -1){
+        if (year == -1) {
             //year has not been set.
             return APIResponse.CODE.NODATA;
         }

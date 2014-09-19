@@ -84,10 +84,10 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             selectedStatSort = savedInstanceState.getInt(SORT, -1);
         }
-        if(selectedStatSort == -1){
+        if (selectedStatSort == -1) {
             /* Sort has not yet been set. Default to OPR */
             selectedStatSort = Arrays.binarySearch(getResources().getStringArray(R.array.statsDialogArray),
                     getString(R.string.dialog_stats_sort_opr));
@@ -227,7 +227,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
-    private String getSortTypeFromPosition(int position){
+    private String getSortTypeFromPosition(int position) {
         if (items[position].equals(getString(R.string.dialog_stats_sort_opr))) {
             return "opr";
         } else if (items[position].equals(getString(R.string.dialog_stats_sort_dpr))) {

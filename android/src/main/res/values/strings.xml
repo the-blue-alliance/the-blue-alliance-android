@@ -10,6 +10,10 @@
     <string name="menuitem_refresh">Refresh</string>
     <string name="cancel">Cancel</string>
     <string name="refresh_complete">Refresh complete</string>
+    <string name="action_add_favorite">Add Favorite</string>
+    <string name="action_remove_favorite">Remove Favorite</string>
+    <string name="action_add_subscription">Add Subscription</string>
+    <string name="action_remove_subscription">Remove Subscription</string>
 
     <!-- Main Activity -->
     <string-array name="event_list_year_selector">
@@ -105,6 +109,10 @@
     <!-- Team Media -->
     <string name="cd_header">Chief Delphi Photos</string>
     <string name="yt_header">YouTube Videos</string>
+
+    <!-- My TBA -->
+    <string name="no_favorite_data">No favorites found.</string>
+    <string name="no_subscription_data">No subscriptions found</string>
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>

@@ -25,186 +25,186 @@ import java.util.Arrays;
  */
 public class DistrictTeam extends BasicModel<DistrictTeam> {
 
-    public DistrictTeam(){
+    public DistrictTeam() {
         super(Database.TABLE_DISTRICTTEAMS);
     }
 
-    public void setKey(String key){
+    public void setKey(String key) {
         fields.put(Database.DistrictTeams.KEY, key);
     }
 
-    public String getKey() throws FieldNotDefinedException{
+    public String getKey() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.KEY) && fields.get(Database.DistrictTeams.KEY) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.KEY);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.KEY is not defined");
         }
     }
 
-    public void setDistrictKey(String key){
+    public void setDistrictKey(String key) {
         fields.put(Database.DistrictTeams.DISTRICT_KEY, key);
     }
 
-    public String getDistrictKey() throws FieldNotDefinedException{
+    public String getDistrictKey() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.DISTRICT_KEY) && fields.get(Database.DistrictTeams.DISTRICT_KEY) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.DISTRICT_KEY);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.DISTRICT_KEY is not defined");
         }
     }
 
-    public void setTeamKey(String key){
+    public void setTeamKey(String key) {
         fields.put(Database.DistrictTeams.TEAM_KEY, key);
     }
 
-    public String getTeamKey() throws FieldNotDefinedException{
+    public String getTeamKey() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.TEAM_KEY) && fields.get(Database.DistrictTeams.TEAM_KEY) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.TEAM_KEY);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.TEAM_KEY is not defined");
         }
     }
 
-    public void setDistrictEnum(int districtEnum){
+    public void setDistrictEnum(int districtEnum) {
         fields.put(Database.DistrictTeams.DISTRICT_ENUM, districtEnum);
     }
 
-    public int getDistrictEnum() throws FieldNotDefinedException{
+    public int getDistrictEnum() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.DISTRICT_ENUM) && fields.get(Database.DistrictTeams.DISTRICT_ENUM) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.DISTRICT_ENUM);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.DISTRICT_ENUM is not defined");
         }
     }
 
-    public void setYear(int year){
+    public void setYear(int year) {
         fields.put(Database.DistrictTeams.YEAR, year);
     }
 
     public int getYear() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.YEAR) && fields.get(Database.DistrictTeams.YEAR) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.YEAR);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.YEAR is not defined");
         }
     }
 
-    public void setRank(int rank){
+    public void setRank(int rank) {
         fields.put(Database.DistrictTeams.RANK, rank);
     }
 
     public int getRank() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.RANK) && fields.get(Database.DistrictTeams.RANK) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.RANK);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.RANK is not defined");
         }
     }
 
-    public void setEvent1Key(String key){
+    public void setEvent1Key(String key) {
         fields.put(Database.DistrictTeams.EVENT1_KEY, key);
     }
 
-    public String getEvent1Key() throws FieldNotDefinedException{
+    public String getEvent1Key() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.EVENT1_KEY) && fields.get(Database.DistrictTeams.EVENT1_KEY) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.EVENT1_KEY);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.EVENT1_KEY is not defined");
         }
     }
 
-    public void setEvent1Points(int points){
+    public void setEvent1Points(int points) {
         fields.put(Database.DistrictTeams.EVENT1_POINTS, points);
     }
 
     public int getEvent1Points() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.EVENT1_POINTS) && fields.get(Database.DistrictTeams.EVENT1_POINTS) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.EVENT1_POINTS);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.EVENT1_POINTS is not defined");
         }
     }
 
-    public void setEvent2Key(String key){
+    public void setEvent2Key(String key) {
         fields.put(Database.DistrictTeams.EVENT2_KEY, key);
     }
 
-    public String getEvent2Key() throws FieldNotDefinedException{
+    public String getEvent2Key() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.EVENT2_KEY) && fields.get(Database.DistrictTeams.EVENT2_KEY) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.EVENT2_KEY);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.EVENT2_KEY is not defined");
         }
     }
 
-    public void setEvent2Points(int points){
+    public void setEvent2Points(int points) {
         fields.put(Database.DistrictTeams.EVENT2_POINTS, points);
     }
 
     public int getEvent2Points() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.EVENT2_POINTS) && fields.get(Database.DistrictTeams.EVENT2_POINTS) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.EVENT2_POINTS);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.EVENT1_POINTS is not defined");
         }
     }
 
-    public void setCmpKey(String key){
+    public void setCmpKey(String key) {
         fields.put(Database.DistrictTeams.CMP_KEY, key);
     }
 
-    public String getCmpKey() throws FieldNotDefinedException{
+    public String getCmpKey() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.CMP_KEY) && fields.get(Database.DistrictTeams.CMP_KEY) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.CMP_KEY);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.CMP_KEY is not defined");
         }
     }
 
-    public void setCmpPoints(int points){
+    public void setCmpPoints(int points) {
         fields.put(Database.DistrictTeams.CMP_POINTS, points);
     }
 
     public int getCmpPoints() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.CMP_POINTS) && fields.get(Database.DistrictTeams.CMP_POINTS) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.CMP_POINTS);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.CMP_POINTS is not defined");
         }
     }
 
-    public void setRookiePoints(int points){
+    public void setRookiePoints(int points) {
         fields.put(Database.DistrictTeams.ROOKIE_POINTS, points);
     }
 
     public int getRookiePoints() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.ROOKIE_POINTS) && fields.get(Database.DistrictTeams.ROOKIE_POINTS) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.ROOKIE_POINTS);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.CMP_POINTS is not defined");
         }
     }
 
-    public void setTotalPoints(int points){
+    public void setTotalPoints(int points) {
         fields.put(Database.DistrictTeams.TOTAL_POINTS, points);
     }
 
     public int getTotalPoints() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.TOTAL_POINTS) && fields.get(Database.DistrictTeams.TOTAL_POINTS) instanceof Integer) {
             return (Integer) fields.get(Database.DistrictTeams.TOTAL_POINTS);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.TOTAL_POINTS is not defined");
         }
     }
 
-    public void setJson(String json){
+    public void setJson(String json) {
         fields.put(Database.DistrictTeams.JSON, json);
     }
 
-    public String getJson() throws FieldNotDefinedException{
+    public String getJson() throws FieldNotDefinedException {
         if (fields.containsKey(Database.DistrictTeams.JSON) && fields.get(Database.DistrictTeams.JSON) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.JSON);
-        }else {
+        } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.JSON is not defined");
         }
     }

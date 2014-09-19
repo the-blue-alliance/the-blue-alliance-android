@@ -2,7 +2,16 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<PreferenceCategory android:title="@string/pref_header_account" />-->
+    <PreferenceCategory android:title="@string/pref_header_account" >
+
+        <SwitchPreference
+            android:key="mytba_enabled"
+            android:title="@string/is_mytba_eabled" />
+        <Preference
+            android:key="notifications"
+            android:title="@string/notification_settings"/>
+
+    </PreferenceCategory>
 
     <!--<PreferenceCategory android:title="@string/pref_header_general" />-->
 
@@ -12,7 +21,7 @@
             android:persistent="false"
             android:selectable="true"
             android:title="@string/tbasite_label"
-            android:summary="@string/tbasite_summary"/>
+            android:summary="@string/tbasite_summary" />
 
         <Preference
             android:key="github_link"
@@ -44,7 +53,7 @@
             android:key="licenses"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/license_label"/>
+            android:title="@string/license_label" />
 
     </PreferenceCategory>
 

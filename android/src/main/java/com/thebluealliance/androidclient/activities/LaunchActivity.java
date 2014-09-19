@@ -16,6 +16,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
@@ -23,6 +24,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
@@ -39,11 +41,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
     public static final String ALL_DATA_LOADED = "all_data_loaded";
     public static final String REDOWNLOAD = "redownload";
+    public static final String ADD_ACCOUNT = "add_account";
     public static final String DATA_TO_REDOWNLOAD = "redownload_data";
     public static final String APP_VERSION_KEY = "app_version";
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
 
-    private DisableSwipeViewPager viewPager;
+    protected DisableSwipeViewPager viewPager;
 
     private TextView loadingMessage;
 
@@ -51,6 +54,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
     private LoadAllDataTaskFragment loadFragment;
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
+
+    private Switch enableMyTBA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +105,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         viewPager.setAdapter(new FirstLaunchFragmentAdapter(this));
         loadingMessage = (TextView) findViewById(R.id.message);
 
+        enableMyTBA = (Switch) findViewById(R.id.enable_mytba);
+
         // If the activity is being recreated after a config change, restore the message that was
         // being shown when the last activity was destroyed
         if (savedInstanceState != null) {
@@ -110,6 +117,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         }
         findViewById(R.id.welcome_next_page).setOnClickListener(this);
         findViewById(R.id.finish).setOnClickListener(this);
+        findViewById(R.id.submit_mytba).setOnClickListener(this);
         if (redownload) {
             ((TextView) findViewById(R.id.welcome_message)).setText(getString(R.string.update_message));
         }
@@ -128,6 +136,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     private boolean checkDataRedownload() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int lastVersion = prefs.getInt(APP_VERSION_KEY, -1);
+
         if (lastVersion == -1 && !prefs.getBoolean(ALL_DATA_LOADED, false)) {
             // on a clean install, don't think we're updating
             return false;
@@ -138,7 +147,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
-        if (!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+        if (prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
             //we are updating the app. Do stuffs.
             while (lastVersion <= BuildConfig.VERSION_CODE) {
                 Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
@@ -147,6 +156,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                         redownload = true;
                         getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS, LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
                         getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
+                        break;
+                    case 16: //addition of myTBA - Prompt the user for an account
+                        redownload = true;
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
+                        getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
+                        getIntent().putExtra(ADD_ACCOUNT, true);
                         break;
                     default:
                         break;
@@ -172,13 +187,25 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             case R.id.finish:
                 startActivity(new Intent(this, HomeActivity.class));
                 finish();
+                break;
+            case R.id.submit_mytba:
+                AccountHelper.enableMyTBA(this, enableMyTBA.isChecked());
+                viewPager.advanceToNextPage();
+                break;
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
+    }
+
     private void beginLoadingIfConnected() {
+        Log.d(Constants.LOG_TAG, "Add account: "+getIntent().getBooleanExtra(ADD_ACCOUNT, false));
         if (ConnectionDetector.isConnectedToInternet(this)) {
-            viewPager.advanceToNextPage();
-            beginLoading();
+                viewPager.advanceToNextPage();
+                beginLoading(getIntent().getBooleanExtra(ADD_ACCOUNT, false));
         } else {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -206,11 +233,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         }
     }
 
-    private void beginLoading() {
+    private void beginLoading(boolean skip) {
         Fragment f = new LoadAllDataTaskFragment();
         if (getIntent().hasExtra(DATA_TO_REDOWNLOAD)) {
             Bundle args = new Bundle();
             args.putShortArray(LoadAllDataTaskFragment.DATA_TO_LOAD, getIntent().getShortArrayExtra(DATA_TO_REDOWNLOAD));
+            args.putBoolean(ADD_ACCOUNT, skip);
             f.setArguments(args);
         }
         f.setRetainInstance(true);
@@ -389,7 +417,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 for (int i = 0; i < dataToLoad.length; i++) {
                     dataToLoad[i] = inData[i];
                 }
-            } else {
+            } else if(getArguments() != null && getArguments().getBoolean(ADD_ACCOUNT, false)) {
+                //don't load any data
+            }else{
                 dataToLoad = new Short[]{LOAD_TEAMS, LOAD_EVENTS, LOAD_DISTRICTS};
             }
 
