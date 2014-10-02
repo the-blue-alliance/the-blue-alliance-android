@@ -51,12 +51,17 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         String eventName = jsonData.get("event_name").getAsString();
 
-        long scheduledStartTimeUNIX = jsonData.get("scheduled_time").getAsLong();
-        // We multiply by 1000 because the Date constructor expects
-        Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
-        DateFormat format = new SimpleDateFormat("HH:mm");
-        format.setTimeZone(TimeZone.getDefault());
-        String scheduledStartTimeString = format.format(scheduledStartTime);
+        String scheduledStartTimeString;
+        if(jsonData.get("scheduled_time").isJsonNull()){
+           scheduledStartTimeString = "";
+        }else{
+            long scheduledStartTimeUNIX = jsonData.get("scheduled_time").getAsLong();
+            // We multiply by 1000 because the Date constructor expects
+            Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
+            DateFormat format = new SimpleDateFormat("HH:mm");
+            format.setTimeZone(TimeZone.getDefault());
+            scheduledStartTimeString = format.format(scheduledStartTime);
+        }
 
         ArrayList<String> favoritedTeamsFromMatch = new ArrayList<>();
         JsonArray teamKeys = jsonData.get("team_keys").getAsJsonArray();
@@ -76,10 +81,18 @@ public class UpcomingMatchNotification extends BaseNotification {
             // Looks like we got this GCM notification by mistake
             return null;
         }
-        if (numFavoritedTeams == 1) {
-            contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
-        } else {
-            contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams), eventName, teamsString, matchTitle, scheduledStartTimeString);
+        if(scheduledStartTimeString.isEmpty()){
+            if (numFavoritedTeams == 1) {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team_no_time), eventName, teamsString, matchTitle);
+            } else {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time), eventName, teamsString, matchTitle);
+            }
+        }else{
+            if (numFavoritedTeams == 1) {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
+            } else {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams), eventName, teamsString, matchTitle, scheduledStartTimeString);
+            }
         }
 
         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_time_light);
