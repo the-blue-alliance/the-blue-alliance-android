@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class Team extends BasicModel<Team> {
 
     public static final String[] NOTIFICATION_TYPES = {
-            //NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.UPCOMING_MATCH,
             NotificationTypes.MATCH_SCORE
             //NotificationTypes.ALLIANCE_SELECTION,
             //NotificationTypes.AWARDS,

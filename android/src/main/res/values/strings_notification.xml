@@ -10,8 +10,10 @@
     <string name="notification_upcoming_match_title">Match starting soon</string>
     <!-- Example: "Midwest Regional: Team 111 will be playing in Qualification Match 32, which is scheduled to begin at 2:35PM" -->
     <string name="notification_upcoming_match_text_single_team">%1$s: Team %2$s will be playing in %3$s, which is scheduled to begin at %4$s.</string>
+    <string name="notification_upcoming_match_text_single_team_no_time">%1$s: Team %2$s will be playing in %3$s.</string>
     <!-- Example: "Midwest Regional: Teams 111, 254, and 1114 will be playing in Qualification Match 32, which is scheduled to begin at 2:35PM" -->
     <string name="notification_upcoming_match_text_multiple_teams">%1$s: Teams %2$s will be playing in %3$s, which is scheduled to begin at %4$s.</string>
+    <string name="notification_upcoming_match_text_multiple_teams_no_time">%1$s: Teams %2$s will be playing in %3$s.</string>
 
     <!-- *********************
          Score notification
