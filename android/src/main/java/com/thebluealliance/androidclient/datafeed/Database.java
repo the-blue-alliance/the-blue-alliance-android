@@ -176,6 +176,7 @@ public class Database extends SQLiteOpenHelper {
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
     private Semaphore mSemaphore;
+    private Semaphore mMyTBASemaphore;
 
     private Teams teamsTable;
     private Events eventsTable;
@@ -205,10 +206,15 @@ public class Database extends SQLiteOpenHelper {
         subscriptionsTable = new Subscriptions();
         responseTable = new Response();
         mSemaphore = new Semaphore(1);
+        mMyTBASemaphore = new Semaphore(1);
     }
 
     public Semaphore getSemaphore() {
         return mSemaphore;
+    }
+
+    public Semaphore getMyTBASemaphore(){
+        return mMyTBASemaphore;
     }
 
     public static synchronized Database getInstance(Context context) {
@@ -1378,7 +1384,7 @@ public class Database extends SQLiteOpenHelper {
 
         public long add(Favorite in){
             if(!exists(in.getKey())){
-                return safeInsert(TABLE_FAVORITES, null, in.getParams());
+                return safeInsert(TABLE_FAVORITES, null, in.getParams(), getMyTBASemaphore());
             }
             return -1;
         }
@@ -1386,7 +1392,7 @@ public class Database extends SQLiteOpenHelper {
         public void add(ArrayList<Favorite> in) {
             Semaphore dbSemaphore = null;
             try {
-                dbSemaphore = getSemaphore();
+                dbSemaphore = getMyTBASemaphore();
                 dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Favorite favorite : in) {
@@ -1397,16 +1403,21 @@ public class Database extends SQLiteOpenHelper {
                 db.setTransactionSuccessful();
                 db.endTransaction();
             } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
             }
         }
 
         public void remove(String key){
-            safeDelete(TABLE_FAVORITES, KEY + " = ?", new String[]{key});
+            safeDelete(TABLE_FAVORITES, KEY + " = ?", new String[]{key}, getMyTBASemaphore());
         }
 
         public boolean exists(String key){
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null, getMyTBASemaphore());
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1430,7 +1441,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Favorite> getForUser(String user){
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null, getMyTBASemaphore());
             ArrayList<Favorite> favorites = new ArrayList<>();
             if(cursor != null && cursor.moveToFirst()){
                 do {
@@ -1441,7 +1452,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void recreate(String user){
-            safeDelete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user});
+            safeDelete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user}, getMyTBASemaphore());
         }
     }
 
@@ -1454,20 +1465,20 @@ public class Database extends SQLiteOpenHelper {
 
         public long add(Subscription in){
             if(!exists(in.getKey())){
-                return safeInsert(TABLE_SUBSCRIPTIONS, null, in.getParams());
+                return safeInsert(TABLE_SUBSCRIPTIONS, null, in.getParams(), getMyTBASemaphore());
             } else{
                 return update(in.getKey(), in);
             }
         }
 
         public int update(String key, Subscription in){
-            return safeUpdate(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key});
+            return safeUpdate(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key}, getMyTBASemaphore());
         }
 
         public void add(ArrayList<Subscription> in) {
             Semaphore dbSemaphore = null;
             try {
-                dbSemaphore = getSemaphore();
+                dbSemaphore = getMyTBASemaphore();
                 dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (Subscription subscription : in) {
@@ -1478,12 +1489,17 @@ public class Database extends SQLiteOpenHelper {
                 db.setTransactionSuccessful();
                 db.endTransaction();
             } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
             }
         }
 
         public boolean exists(String key){
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null, getMyTBASemaphore());
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1507,11 +1523,11 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void remove(String key){
-            safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key});
+            safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key}, getMyTBASemaphore());
         }
 
         public Subscription get(String key){
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null, getMyTBASemaphore());
             if(cursor != null && cursor.moveToFirst()){
                 return ModelInflater.inflateSubscription(cursor);
             }
@@ -1519,7 +1535,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Subscription> getForUser(String user){
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null, getMyTBASemaphore());
             ArrayList<Subscription> subscriptions = new ArrayList<>();
             if(cursor != null && cursor.moveToFirst()){
                 do {
@@ -1530,7 +1546,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void recreate(String user){
-            safeDelete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
+            safeDelete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user}, getMyTBASemaphore());
         }
     }
 
@@ -1548,18 +1564,23 @@ public class Database extends SQLiteOpenHelper {
                 YEAR = "year";
     }
 
-    public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
-        Semaphore dbSemaphore = null;
+    public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit){
+        return safeQuery(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, null);
+    }
+
+    public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, Semaphore semaphore) {
+        if(semaphore == null){
+            semaphore = getSemaphore();
+        }
         Cursor cursor = null;
         try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            semaphore.tryAcquire(10, TimeUnit.SECONDS);
             cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         } catch (InterruptedException e) {
             Log.w("database", "Unable to acquire database semaphore");
         } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
+            if (semaphore != null) {
+                semaphore.release();
             }
         }
         return cursor;
@@ -1582,52 +1603,68 @@ public class Database extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
-        Semaphore dbSemaphore = null;
+    public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs){
+        return safeUpdate(table, values, whereClause, whereArgs, null);
+    }
+
+    public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs, Semaphore semaphore) {
+        if(semaphore == null){
+            semaphore = getSemaphore();
+        }
         int response = -1;
         try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            semaphore = getSemaphore();
+            semaphore.tryAcquire(10, TimeUnit.SECONDS);
             response = db.update(table, values, whereClause, whereArgs);
         } catch (InterruptedException e) {
             Log.w("database", "Unable to aquire database semaphore");
         } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
+            if (semaphore != null) {
+                semaphore.release();
             }
         }
         return response;
     }
 
-    public long safeInsert(String table, String nullColumnHack, ContentValues values) {
-        Semaphore dbSemaphore = null;
+    public long safeInsert(String table, String nullColumnHack, ContentValues values){
+        return safeInsert(table, nullColumnHack, values, null);
+    }
+
+    public long safeInsert(String table, String nullColumnHack, ContentValues values, Semaphore semaphore) {
+        if(semaphore == null){
+            semaphore = getSemaphore();
+        }
         long response = -1;
         try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            semaphore.tryAcquire(10, TimeUnit.SECONDS);
             response = db.insert(table, nullColumnHack, values);
         } catch (InterruptedException e) {
-            Log.w("database", "Unable to aquire database semaphore");
+            Log.w("database", "Unable to acquire database semaphore");
         } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
+            if (semaphore != null) {
+                semaphore.release();
             }
         }
         return response;
     }
 
-    public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        Semaphore dbSemaphore = null;
+    public int safeDelete(String table, String whereClause, String[] whereArgs){
+        return safeDelete(table, whereClause, whereArgs);
+    }
+
+    public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {
+        if(semaphore == null){
+            semaphore = getSemaphore();
+        }
         int response = -1;
         try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            semaphore.tryAcquire(10, TimeUnit.SECONDS);
             response = db.delete(table, whereClause, whereArgs);
         } catch (InterruptedException e) {
-            Log.w("database", "Unable to aquire database semaphore");
+            Log.w("database", "Unable to acquire database semaphore");
         } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
+            if (semaphore != null) {
+                semaphore.release();
             }
         }
         return response;
