@@ -30,5 +30,11 @@
     <!-- Example: Midwest Regional: 111 and 1114 tied with the opposing alliance in Quals 32 with a score of 42 - 42. -->
     <string name="notification_score_teams_tied_with_teams">%1$s: %2$s tied with %3$s in %4$s with a score of %5$s</string>
 
+    <!-- *********************
+        Comp Level Starting Notification
+        ********************* -->
+    <string name="notification_level_starting_title">Competition Level Starting</string>
+    <string name="notification_level_starting">%1$s: %2$s are starting</string>
+    <string name="notification_level_starting_with_time">%1$s: %2$s are scheduled to start at %3$s</string>
 
 </resources>

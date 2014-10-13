@@ -99,6 +99,7 @@
     <string name="score">Score</string>
     <string name="no_time_available">No time available</string>
     <string name="quals_header">Qualification Matches</string>
+    <string name="eigths_header">Eighth Final Matches</string>
     <string name="quarters_header">Quarterfinal Matches</string>
     <string name="semis_header">Semifinal Matches</string>
     <string name="finals_header">Finals Matches</string>
