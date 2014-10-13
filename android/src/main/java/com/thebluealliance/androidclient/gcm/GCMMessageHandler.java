@@ -14,6 +14,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
+import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
@@ -77,8 +78,9 @@ public class GCMMessageHandler extends IntentService {
                     notification = new ScoreNotification(messageData);
                     break;
                 case NotificationTypes.ALLIANCE_SELECTION:
+                    break;
                 case NotificationTypes.LEVEL_STARTING:
-                    // TODO implement notifications for these message types
+                    notification = new CompLevelStartingNotification(messageData);
                     break;
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
