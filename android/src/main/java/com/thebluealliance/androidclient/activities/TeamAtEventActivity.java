@@ -71,7 +71,7 @@ public class TeamAtEventActivity extends SlidingPageActivity implements ViewPage
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();

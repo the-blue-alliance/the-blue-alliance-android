@@ -63,7 +63,7 @@ public class ViewMatchActivity extends SlidingPageActivity implements RefreshLis
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle("Match");
     }
 

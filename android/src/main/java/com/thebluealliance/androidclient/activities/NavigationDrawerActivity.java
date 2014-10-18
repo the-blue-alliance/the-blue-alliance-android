@@ -2,9 +2,9 @@ package com.thebluealliance.androidclient.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.Menu;
 import android.widget.FrameLayout;
@@ -21,7 +21,7 @@ import com.thebluealliance.androidclient.listitems.NavDrawerItem;
  * <p/>
  * Created by Nathan on 5/15/2014.
  */
-public abstract class NavigationDrawerActivity extends FragmentActivity implements NavigationDrawerFragment.NavigationDrawerListener {
+public abstract class NavigationDrawerActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerListener {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
@@ -61,6 +61,19 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         super.setContentView(R.layout.activity_navigation_drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
 
+        mContentView = (FrameLayout) findViewById(R.id.content);
+    }
+
+    /**
+     * We set up the nav drawer here to give child activities a chance to set the window's Action Bar
+     * if they're using a Toolbar instead of the default Action Bar.
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
         // Call this so that subclasses can configure the navigation drawer before it is created
         onCreateNavigationDrawer();
 
@@ -68,7 +81,6 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
                 mEncourageLearning, mUseActionBarToggle);
-        mContentView = (FrameLayout) findViewById(R.id.content);
 
         // Restore the state of the navigation drawer on rotation changes
         if (savedInstanceState != null) {
@@ -132,7 +144,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isDrawerOpen()) {
-            getActionBar().setTitle(R.string.app_name);
+            getSupportActionBar().setTitle(R.string.app_name);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -167,7 +179,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      * @return true if the drawer is open
      */
     public boolean isDrawerOpen() {
-        return mNavDrawerFragment.isDrawerOpen();
+        return mDrawerLayout.isDrawerOpen(Gravity.LEFT);
     }
 
     /**
@@ -222,14 +234,14 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      */
     public void setActionBarTitle(String title) {
         mActionBarTitle = title;
-        if (!isDrawerOpen() && getActionBar() != null) {
-            getActionBar().setTitle(mActionBarTitle);
+        if (!isDrawerOpen() && getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mActionBarTitle);
         }
     }
 
     public void setActionBarSubtitle(String subtitle) {
-        if (!isDrawerOpen() && getActionBar() != null) {
-            getActionBar().setSubtitle(subtitle);
+        if (!isDrawerOpen() && getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 
@@ -244,20 +256,20 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
     public void setActionBarTitle(int resID) {
         mActionBarTitle = getResources().getString(resID);
         if (!isDrawerOpen()) {
-            getActionBar().setTitle(mActionBarTitle);
+            getSupportActionBar().setTitle(mActionBarTitle);
         }
     }
 
     @Override
     public void onNavDrawerClosed() {
         if (mActionBarTitle != null) {
-            getActionBar().setTitle(mActionBarTitle);
+            getSupportActionBar().setTitle(mActionBarTitle);
         }
     }
 
     @Override
     public void onNavDrawerOpened() {
-        getActionBar().setTitle(R.string.app_name);
+        getSupportActionBar().setTitle(R.string.app_name);
     }
 
 }

@@ -94,7 +94,7 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // The title is empty now; the EventInfoFragment will set the appropriate title
         // once it is loaded.
         setActionBarTitle("");

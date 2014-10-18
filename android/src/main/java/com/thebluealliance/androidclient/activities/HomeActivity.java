@@ -1,15 +1,18 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
+import android.support.v7.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
@@ -25,10 +28,12 @@ import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.Calendar;
 
+import static android.widget.AdapterView.OnItemSelectedListener;
+
 /**
  * File created by phil on 4/20/14.
  */
-public class HomeActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener {
+public class HomeActivity extends RefreshableHostActivity implements OnItemSelectedListener {
 
     /**
      * Saved instance state key representing the last select navigation drawer item
@@ -54,6 +59,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
     private TextView warningMessage;
 
+    private Toolbar toolbar;
+    private Spinner toolbarSpinner;
+
     public static Intent newInstance(Context context, int requestedMode) {
         Intent i = new Intent(context, HomeActivity.class);
         i.putExtra(REQUESTED_MODE, requestedMode);
@@ -65,6 +73,11 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        toolbarSpinner = (Spinner) findViewById(R.id.toolbar_spinner);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -167,9 +180,9 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     }
 
     private void resetActionBar() {
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null) {
-            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            toolbarSpinner.setVisibility(View.GONE);
             bar.setDisplayShowCustomEnabled(false);
             bar.setDisplayShowTitleEnabled(true);
         }
@@ -189,13 +202,13 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
                     setupActionBarForDistricts();
                     break;
                 case R.id.nav_item_teams:
-                    getActionBar().setTitle("Teams");
+                    getSupportActionBar().setTitle("Teams");
                     break;
                 case R.id.nav_item_insights:
-                    getActionBar().setTitle("Insights");
+                    getSupportActionBar().setTitle("Insights");
                     break;
                 case R.id.nav_item_my_tba:
-                    getActionBar().setTitle("My TBA");
+                    getSupportActionBar().setTitle("My TBA");
                     break;
             }
         }
@@ -204,32 +217,35 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
     }
 
     private void setupActionBarForEvents() {
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayShowTitleEnabled(false);
 
             ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_events, R.id.year, eventsDropdownItems);
+            //ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), android.R.layout.simple_list_item_1, eventsDropdownItems);
+
             actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-            bar.setListNavigationCallbacks(actionBarAdapter, this);
-            bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+            toolbarSpinner.setVisibility(View.VISIBLE);
+            toolbarSpinner.setAdapter(actionBarAdapter);
+            toolbarSpinner.setOnItemSelectedListener(this);
         }
 
     }
 
     private void setupActionBarForDistricts() {
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayShowTitleEnabled(false);
 
             ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_districts, R.id.year, districtsDropdownItems);
             actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-            bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-            bar.setListNavigationCallbacks(actionBarAdapter, this);
+            toolbarSpinner.setVisibility(View.VISIBLE);
+            toolbarSpinner.setAdapter(actionBarAdapter);
+            toolbarSpinner.setOnItemSelectedListener(this);
             if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < districtsDropdownItems.length) {
-                bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+                toolbarSpinner.setSelection(mCurrentSelectedYearPosition);
             } else {
-                bar.setSelectedNavigationItem(0);
+                toolbarSpinner.setSelection(0);
             }
         }
 
@@ -237,27 +253,7 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
     @Override
     public void setTitle(CharSequence title) {
-        getActionBar().setTitle(title);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(int position, long id) {
-        // Only handle this if the year has actually changed
-        if (position == mCurrentSelectedYearPosition) {
-            return true;
-        }
-        int selectedYear = Constants.MAX_COMP_YEAR - position;
-        Log.d(Constants.LOG_TAG, "year selected: " + selectedYear);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support);
-        if (mCurrentSelectedNavigationItemId == R.id.nav_item_events) {
-            transaction = transaction.replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
-        } else if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts) {
-            transaction = transaction.replace(R.id.container, DistrictListFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
-        }
-        transaction.commit();
-        mCurrentSelectedYearPosition = position;
-        getActionBar().setSelectedNavigationItem(mCurrentSelectedYearPosition);
-        return true;
+        getSupportActionBar().setTitle(title);
     }
 
     @Override
@@ -300,4 +296,27 @@ public class HomeActivity extends RefreshableHostActivity implements ActionBar.O
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // Only handle this if the year has actually changed
+        if (position == mCurrentSelectedYearPosition) {
+            return;
+        }
+        int selectedYear = Constants.MAX_COMP_YEAR - position;
+        Log.d(Constants.LOG_TAG, "year selected: " + selectedYear);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support);
+        if (mCurrentSelectedNavigationItemId == R.id.nav_item_events) {
+            transaction = transaction.replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
+        } else if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts) {
+            transaction = transaction.replace(R.id.container, DistrictListFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
+        }
+        transaction.commit();
+        mCurrentSelectedYearPosition = position;
+        toolbarSpinner.setSelection(mCurrentSelectedYearPosition);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

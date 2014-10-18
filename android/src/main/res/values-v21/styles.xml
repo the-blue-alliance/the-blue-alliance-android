@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <!-- Main theme colors -->
         <!--   your app's branding color (for the app bar) -->
         <item name="android:colorPrimary">@color/primary</item>
@@ -9,22 +9,16 @@
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="android:colorAccent">@color/accent</item>
-        <!-- <item name="android:actionBarStyle">@style/ActionBarStyle</item> -->
-        <!--<item name="android:actionDropDownStyle">@style/DropDownNavStyle</item>-->
     </style>
 
-    <style name="ActionBarStyle" parent="android:Widget.Material.ActionBar">
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
-        <item name="android:subtitleTextStyle">@style/ActionBarSubtitleStyle</item>
-    </style>
-
-    <style name="ActionBarTitleStyle" parent="android:TextAppearance.Material.Widget.ActionBar.Title">
-        <item name="android:textColor">#FFFFFF</item>
-    </style>
-
-    <style name="ActionBarSubtitleStyle" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">#FFFFFF</item>
+    <style name="NoActionBarTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <!-- Main theme colors -->
+        <!--   your app's branding color (for the app bar) -->
+        <item name="android:colorPrimary">@color/primary</item>
+        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="android:colorAccent">@color/accent</item>
     </style>
 
     <style name="InfoItemStyle">
@@ -146,7 +140,5 @@
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:paddingTop">16dp</item>
     </style>
-
-    <style name="DropDownNavStyle" parent="@android:style/Widget.Material.Light.Spinner"/>
 
 </resources>

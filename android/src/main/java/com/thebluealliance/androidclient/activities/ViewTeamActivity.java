@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
+import android.support.v7.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -141,7 +141,7 @@ public class ViewTeamActivity extends SlidingPageActivity implements ActionBar.O
     }
 
     private void setupActionBar() {
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             if (yearsParticipated != null) {

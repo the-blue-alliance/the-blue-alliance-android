@@ -2,23 +2,22 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/spinner_content"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingEnd="10dp">
 
     <TextView
         android:id="@+id/year"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="@color/white" />
+        android:layout_height="match_parent"
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/event_label"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:paddingLeft="5dp"
         android:text="@string/events_label"
-        android:textSize="18sp"
-        android:textColor="@color/white" />
+        android:textSize="20sp" />
 </LinearLayout>

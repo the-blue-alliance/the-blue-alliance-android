@@ -71,6 +71,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         mViewPager.setOffscreenPageLimit(50);
         mTabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
+        Log.d(Constants.LOG_TAG, "EventByWeekFragment view created!");
         return view;
     }
 
