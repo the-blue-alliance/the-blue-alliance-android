@@ -51,4 +51,9 @@
     <color name="fab_yellow">#ffeb3b</color>
     <color name="fab_yellow_pressed">#e6e600</color>
 
+    <!-- MateriYOLO colors -->
+    <color name="primary">#5677fc</color>
+    <color name="primary_dark">#455ede</color>
+    <color name="accent">#ffd600</color>
+
 </resources>

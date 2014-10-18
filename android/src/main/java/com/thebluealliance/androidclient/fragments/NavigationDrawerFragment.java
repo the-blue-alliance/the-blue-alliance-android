@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -151,7 +151,6 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerToggle = new ActionBarDrawerToggle(
                     getActivity(),                    /* host Activity */
                     mDrawerLayout,                    /* DrawerLayout object */
-                    R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
                     R.string.drawer_open,  /* "open drawer" description for accessibility */
                     R.string.drawer_close  /* "close drawer" description for accessibility */
             ) {

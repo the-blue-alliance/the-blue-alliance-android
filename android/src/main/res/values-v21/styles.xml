@@ -1,0 +1,152 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+        <!-- Main theme colors -->
+        <!--   your app's branding color (for the app bar) -->
+        <item name="android:colorPrimary">@color/primary</item>
+        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="android:colorAccent">@color/accent</item>
+        <!-- <item name="android:actionBarStyle">@style/ActionBarStyle</item> -->
+        <!--<item name="android:actionDropDownStyle">@style/DropDownNavStyle</item>-->
+    </style>
+
+    <style name="ActionBarStyle" parent="android:Widget.Material.ActionBar">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
+        <item name="android:subtitleTextStyle">@style/ActionBarSubtitleStyle</item>
+    </style>
+
+    <style name="ActionBarTitleStyle" parent="android:TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="ActionBarSubtitleStyle" parent="android:TextAppearance.Material.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="InfoItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="InfoItemLabelStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/secondary_text_color</item>
+    </style>
+
+    <style name="InfoItemTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">72dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="InfoItemImageStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="InfoItemButtonBarImageStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="InfoItemNavigationArrowStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:src">@drawable/ic_action_forward</item>
+    </style>
+
+    <style name="InfoItemDividerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">72dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="NavDrawerIconStyle">
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+    <style name="NavDrawerLabelStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/nav_text_color_selected</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">72dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
+    <style name="NavDrawerSmallLabelStyle" parent="NavDrawerLabelStyle">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ContentOverlayStyle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="InfoOverlayStyle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Small</item>
+        <item name="android:background">@color/lighter_blue</item>
+        <item name="android:drawableLeft">@drawable/ic_action_about_blue</item>
+    </style>
+
+    <style name="WarningOverlayStyle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Small</item>
+        <item name="android:background">@color/lighter_red</item>
+        <item name="android:drawableLeft">@drawable/ic_action_warning_blue</item>
+    </style>
+
+    <style name="NoDataFoundStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+    </style>
+
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Material.Light.Spinner"/>
+
+</resources>
