@@ -1,11 +1,12 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.support.v7.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import static android.widget.AdapterView.OnItemSelectedListener;
 /**
  * File created by phil on 4/20/14.
  */
+
 public class HomeActivity extends RefreshableHostActivity implements OnItemSelectedListener {
 
     /**
@@ -80,6 +82,7 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
         toolbarSpinner = (Spinner) findViewById(R.id.toolbar_spinner);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
+
         hideWarningMessage();
 
         eventsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
@@ -211,6 +214,8 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
                     getSupportActionBar().setTitle("My TBA");
                     break;
             }
+        } else {
+            toolbarSpinner.setVisibility(View.GONE);
         }
 
         return super.onPrepareOptionsMenu(menu);
