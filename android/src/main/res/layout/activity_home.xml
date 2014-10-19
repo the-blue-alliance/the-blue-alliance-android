@@ -8,13 +8,12 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
+        android:layout_height="56dp"
         android:background="@color/primary"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <Spinner
+    <Spinner
             android:id="@+id/toolbar_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,8 +25,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/toolbar"
-        android:layout_above="@+id/warning_container" />
+        android:layout_above="@+id/warning_container"
+        android:layout_below="@id/toolbar"/>
 
     <TextView
         android:id="@id/warning_container"
