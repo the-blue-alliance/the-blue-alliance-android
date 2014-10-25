@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
 import android.app.Activity;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.content.SharedPreferences;
@@ -318,13 +319,16 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private void showGlobalContextActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle(R.string.app_name);
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            actionBar.setTitle(R.string.app_name);
+        }
     }
 
+    @Nullable
     private ActionBar getSupportActionBar() {
-        return ((ActionBarActivity) getActivity()).getSupportActionBar();
+        return getActivity() != null ? ((ActionBarActivity) getActivity()).getSupportActionBar() : null;
     }
 
     /**

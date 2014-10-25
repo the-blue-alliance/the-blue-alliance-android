@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
@@ -21,6 +23,7 @@ import com.thebluealliance.androidclient.listitems.NavDrawerItem;
  * <p/>
  * Created by Nathan on 5/15/2014.
  */
+//TODO Fix the navigation drawer to compensate custom toolbars
 public abstract class NavigationDrawerActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerListener {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
