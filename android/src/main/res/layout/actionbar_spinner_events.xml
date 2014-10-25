@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingEnd="10dp">
+    android:paddingRight="10dp">
 
     <TextView
         android:id="@+id/year"
-        style="@android:style/TextAppearance.Material.Widget.ActionBar.Title"
+        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/event_label"
-        style="@android:style/TextAppearance.Material.Widget.ActionBar.Title"
+        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:paddingLeft="5dp"

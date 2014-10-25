@@ -2,20 +2,14 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
-        <item name="android:actionOverflowButtonStyle">@style/ActionOverflowButtonStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_ab_back_holo_dark_am</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNavStyle</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="ActionBarStyle" parent="android:Widget.Holo.ActionBar">
-        <item name="android:background">@color/action_bar_background</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
-        <item name="android:subtitleTextStyle">@style/ActionBarSubtitleStyle</item>
+    <style name="AppThemeNoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="ActionBarTitleStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
@@ -150,6 +144,6 @@
         <item name="android:paddingTop">16dp</item>
     </style>
 
-    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner" />
 
 </resources>

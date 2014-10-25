@@ -65,7 +65,7 @@
         </activity>
         <activity
             android:name=".activities.HomeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/AppThemeNoActionBar"
             android:launchMode="singleTop"/>
         <activity
             android:name=".activities.ViewEventActivity"

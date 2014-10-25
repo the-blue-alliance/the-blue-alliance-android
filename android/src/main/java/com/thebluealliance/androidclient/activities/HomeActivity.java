@@ -227,7 +227,6 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
             bar.setDisplayShowTitleEnabled(false);
 
             ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_events, R.id.year, eventsDropdownItems);
-            //ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), android.R.layout.simple_list_item_1, eventsDropdownItems);
 
             actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
             toolbarSpinner.setVisibility(View.VISIBLE);

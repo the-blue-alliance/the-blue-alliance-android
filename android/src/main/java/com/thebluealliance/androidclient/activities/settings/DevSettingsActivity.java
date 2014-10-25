@@ -3,8 +3,8 @@ package com.thebluealliance.androidclient.activities.settings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -18,7 +18,7 @@ import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 
-public class DevSettingsActivity extends PreferenceActivity {
+public class DevSettingsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
