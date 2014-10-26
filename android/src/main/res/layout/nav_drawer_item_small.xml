@@ -15,7 +15,7 @@
         android:layout_height="fill_parent"
         android:minHeight="48dp">
 
-        <ImageView
+        <com.thebluealliance.androidclient.views.SelectableImage
             android:id="@+id/icon"
             style="@style/NavDrawerIconStyle" />
 
