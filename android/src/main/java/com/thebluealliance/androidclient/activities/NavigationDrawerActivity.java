@@ -34,6 +34,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
 
     private boolean mUseActionBarToggle = false;
     private boolean mEncourageLearning = false;
+    private boolean mShowAppNameWhenDrawerOpened = false;
 
     /**
      * Tells the activity whether or not to use the action bar toggle for
@@ -261,6 +262,10 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         }
     }
 
+    public void showAppNameWhenDrawerOpened(boolean show) {
+        mShowAppNameWhenDrawerOpened = show;
+    }
+
     @Override
     public void onNavDrawerClosed() {
         if (mActionBarTitle != null) {
@@ -270,7 +275,9 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
 
     @Override
     public void onNavDrawerOpened() {
-        getSupportActionBar().setTitle(R.string.app_name);
+        if(mShowAppNameWhenDrawerOpened) {
+            getSupportActionBar().setTitle(R.string.app_name);
+        }
     }
 
 }

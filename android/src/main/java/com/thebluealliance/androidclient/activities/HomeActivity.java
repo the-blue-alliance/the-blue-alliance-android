@@ -231,6 +231,11 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
             toolbarSpinner.setVisibility(View.VISIBLE);
             toolbarSpinner.setAdapter(actionBarAdapter);
             toolbarSpinner.setOnItemSelectedListener(this);
+            if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < eventsDropdownItems.length) {
+                toolbarSpinner.setSelection(mCurrentSelectedYearPosition);
+            } else {
+                toolbarSpinner.setSelection(0);
+            }
         }
 
     }

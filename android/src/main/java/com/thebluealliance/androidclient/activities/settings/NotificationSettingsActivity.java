@@ -5,19 +5,20 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 
 import com.thebluealliance.androidclient.R;
 
 /**
  * File created by phil on 9/5/14.
  */
-public class NotificationSettingsActivity extends PreferenceActivity {
+public class NotificationSettingsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new NotificationSettingsFragment())
                 .commit();
