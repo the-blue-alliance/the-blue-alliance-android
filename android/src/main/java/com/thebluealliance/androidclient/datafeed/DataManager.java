@@ -407,6 +407,12 @@ public class DataManager {
 
         public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
+        public static APIResponse<District> getDistrict(Context c, String districtKey) throws NoDataException {
+            String sqlWhere = Database.Districts.KEY + " = ?";
+            String[] whereArgs = new String[]{districtKey};
+            return District.query(c, true, null, sqlWhere, whereArgs, new String[]{});
+        }
+
         public static APIResponse<ArrayList<District>> getDistrictsInYear(Context c, int year, boolean loadFromCache) throws NoDataException {
             Log.d(Constants.DATAMANAGER_LOG, "getting districts in : " + year);
 
