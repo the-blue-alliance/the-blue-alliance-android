@@ -30,7 +30,20 @@ android {
                 applicationIdSuffix ".development"
                 applicationVariants.all { variant ->
                     def file = variant.outputFile
-                    variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + "#"+gitSha+"-debug.apk")
+                    variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
+                }
+            }
+
+            // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
+            // the apk will be in android/build/outputs/apk and you can install it by running
+            // 'adb install -r <file name>'
+            debugBlue{
+                signingConfig signingConfigs.debug
+                versionNameSuffix "/#" + gitSha
+                applicationIdSuffix ".development"
+                applicationVariants.all { variant ->
+                    def file = variant.outputFile
+                    variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
                 }
             }
 
