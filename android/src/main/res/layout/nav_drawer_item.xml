@@ -5,7 +5,7 @@
     android:minHeight="48dp"
     android:background="@drawable/nav_drawer_item_background">
 
-    <ImageView
+    <com.thebluealliance.androidclient.views.SelectableImage
         android:id="@+id/icon"
         style="@style/NavDrawerIconStyle" />
 

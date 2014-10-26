@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 
 import com.thebluealliance.androidclient.R;
@@ -25,13 +26,7 @@ public class SlidingTabs extends SlidingTabLayout {
     }
 
     private void init() {
-        this.setCustomTabView(R.layout.tab_title_view, R.id.tab_title_view);
-        this.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                // Make the indicator white
-                return 0xFFFFFFFF;
-            }
-        });
+        this.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+        this.setSelectedIndicatorColors(Color.WHITE);
     }
 }
