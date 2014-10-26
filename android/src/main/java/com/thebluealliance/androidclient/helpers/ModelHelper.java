@@ -123,6 +123,10 @@ public class ModelHelper {
                     Event eEvent = DataManager.Events.getEvent(context, EventTeamHelper.getEventKey(key), false).getData();
                     text = eTeam.getNickname() + " @ " + eEvent.getEventYear() + " " + eEvent.getShortName();
                     break;
+                case DISTRICT:
+                    District district = DataManager.Districts.getDistrict(context, key).getData();
+                    text = district.getYear() + " " + DistrictHelper.DISTRICTS.fromAbbreviation(district.getAbbreviation()).getName();
+                    break;
                 default:
                     return null;
             }
