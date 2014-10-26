@@ -1,17 +1,17 @@
 package com.thebluealliance.androidclient.fragments;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,7 +56,7 @@ public class NavigationDrawerFragment extends Fragment {
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.districts_icon_selector, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.team_icon_selector, R.layout.nav_drawer_item));
         //NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_insights, "Insights", R.drawable.insights_icon_selector, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, "SETTINGS", R.drawable.settings_icon_selector, R.layout.nav_drawer_item_small));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, "Settings", R.drawable.settings_icon_selector, R.layout.nav_drawer_item_small));
     }
 
     /**

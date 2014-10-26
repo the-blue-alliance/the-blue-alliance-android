@@ -31,7 +31,7 @@ import android.widget.TextView;
  * The views used as tabs can be customized by calling {@link #setCustomTabView(int, int)},
  * providing the layout ID of your custom layout.
  */
-public class SlidingTabLayout extends HorizontalScrollView
+public abstract class SlidingTabLayout extends HorizontalScrollView
 {
     /**
      * Allows complete control over the colors drawn in the tab layout. Set with
@@ -47,7 +47,7 @@ public class SlidingTabLayout extends HorizontalScrollView
 
     }
 
-    private static final int TITLE_OFFSET_DIPS = 24;
+    private static final int TITLE_OFFSET_DIPS = 48;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
 

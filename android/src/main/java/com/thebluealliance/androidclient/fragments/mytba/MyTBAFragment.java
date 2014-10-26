@@ -9,11 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * File created by phil on 8/2/14.
@@ -21,7 +21,7 @@ import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
 public class MyTBAFragment extends Fragment {
 
     private ViewPager mViewPager;
-    private PagerSlidingTabStrip mTabs;
+    private SlidingTabs mTabs;
 
     @Override
     public void onResume() {
@@ -57,7 +57,7 @@ public class MyTBAFragment extends Fragment {
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
-        mTabs = (PagerSlidingTabStrip) v.findViewById(R.id.my_tba_tabs);
+        mTabs = (SlidingTabs) v.findViewById(R.id.my_tba_tabs);
 
         /**
          * Fix for really strange bug. Menu bar items wouldn't appear only when navigated to from 'Events' in the nav drawer

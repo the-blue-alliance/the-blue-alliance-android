@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;

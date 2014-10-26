@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient.eventbus;
 
-import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Match;
 
 /**
  * Created by Nathan on 8/15/2014.

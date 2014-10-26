@@ -1,22 +1,22 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.support.v7.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * Created by phil on 7/10/14.
@@ -78,7 +78,7 @@ public class ViewDistrictActivity extends SlidingPageActivity implements ViewPag
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
 

@@ -5,23 +5,13 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorAccent">@color/accent</item>
+        <!-- Hides the shadow below the actionbar -->
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="AppThemeNoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="ActionBarTitleStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">#FFFFFF</item>
-    </style>
-
-    <style name="ActionBarSubtitleStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">#FFFFFF</item>
-    </style>
-
-    <style name="ActionOverflowButtonStyle" parent="@android:style/Widget.Holo.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_action_overflow</item>
     </style>
 
     <style name="InfoItemStyle">
@@ -94,17 +84,19 @@
     <style name="NavDrawerLabelStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/nav_text_color_selected</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_marginLeft">72dp</item>
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingBottom">16dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="NavDrawerSmallLabelStyle" parent="NavDrawerLabelStyle">
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="ContentOverlayStyle">

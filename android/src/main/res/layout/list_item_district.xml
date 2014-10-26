@@ -16,6 +16,7 @@
         android:layout_marginLeft="16dp"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="@color/primary_text_color"
         android:text="Title" />
 
     <TextView

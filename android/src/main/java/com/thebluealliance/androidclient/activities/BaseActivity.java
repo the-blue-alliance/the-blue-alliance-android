@@ -53,6 +53,16 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        // Hide the shadow below the Action Bar
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setElevation(0);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         boolean mytba = AccountHelper.isMyTBAEnabled(this);

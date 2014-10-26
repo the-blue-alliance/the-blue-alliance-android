@@ -93,7 +93,6 @@ dependencies {
     compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
     compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
     compile 'com.android.support:support-v13:21.+'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
     compile 'com.android.support:support-v4:21.+'
     compile 'com.android.support:appcompat-v7:21.+'
     compile 'com.google.code.gson:gson:2.2.4'

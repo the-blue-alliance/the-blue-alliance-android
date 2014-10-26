@@ -9,12 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * File created by phil on 4/20/14.
@@ -62,7 +62,7 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
