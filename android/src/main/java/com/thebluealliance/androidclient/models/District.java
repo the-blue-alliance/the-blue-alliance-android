@@ -83,6 +83,18 @@ public class District extends BasicModel<District> {
         }
     }
 
+    public String getName() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Districts.NAME) && fields.get(Database.Districts.NAME) instanceof String) {
+            return (String) fields.get(Database.Districts.NAME);
+        } else {
+            throw new FieldNotDefinedException("Field Database.Districts.NAME is not defined");
+        }
+    }
+
+    public void setName(String name) {
+        fields.put(Database.Districts.NAME, name);
+    }
+
     @Override
     public void write(Context c) {
         Database.getInstance(c).getDistrictsTable().add(this);
