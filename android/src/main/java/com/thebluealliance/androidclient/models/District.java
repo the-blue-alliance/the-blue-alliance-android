@@ -119,6 +119,7 @@ public class District extends BasicModel<District> {
         return null;
     }
 
+    // This method will only return a locally stored district
     public static synchronized APIResponse<District> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districts table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
@@ -161,10 +162,7 @@ public class District extends BasicModel<District> {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray districtList = JSONManager.getasJsonArray(response.getData());
-                districts = new ArrayList<>();
-                for (JsonElement d : districtList) {
-                    districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
-                }
+                districts = DistrictHelper.buildVersionedDistrictList(districtList, url, response.getVersion());
                 changed = true;
             }
             code = APIResponse.mergeCodes(code, response.getCode());
