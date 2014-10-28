@@ -229,10 +229,17 @@ public class TBAv2 {
                             lastUpdate = lastModified.getValue();
                         }
 
+                        int apiVersion;
+                        if(cachedResponse.containsHeader("X-TBA-Version")){
+                            apiVersion = Integer.parseInt(cachedResponse.getFirstHeader("X-TBA-Version").getValue());
+                        }else{
+                            apiVersion = 0;
+                        }
+
                         Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
 
-                        Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet: " + URL);
-                        return new APIResponse<>(response, APIResponse.CODE.UPDATED); /* This response will contain the data that we fetched */
+                        Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet v"+apiVersion+": " + URL);
+                        return new APIResponse<>(response, APIResponse.CODE.UPDATED, apiVersion); /* This response will contain the data that we fetched */
                     } else {
                     /* The data does not require an update (we got a 304-Not-Modified back), so simply
                      * Update the lastHit time in the database to make sure the timeout stays active
@@ -281,8 +288,15 @@ public class TBAv2 {
                         Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
                     }
 
-                    Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet: " + URL);
-                    return new APIResponse<>(response, APIResponse.CODE.WEBLOAD); /* This response will contain the loaded data */
+                    int apiVersion;
+                    if(webResponse.containsHeader("X-TBA-Version")){
+                       apiVersion = Integer.parseInt(webResponse.getFirstHeader("X-TBA-Version").getValue());
+                    }else{
+                        apiVersion = 0;
+                    }
+
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet v"+apiVersion+": " + URL);
+                    return new APIResponse<>(response, APIResponse.CODE.WEBLOAD, apiVersion); /* This response will contain the loaded data */
                 } else {
                     Log.e(Constants.DATAMANAGER_LOG, "Unable to load data from the web");
                     return new APIResponse<String>(null, APIResponse.CODE.NODATA);
