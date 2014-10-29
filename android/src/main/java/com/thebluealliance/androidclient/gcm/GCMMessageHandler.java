@@ -100,7 +100,24 @@ public class GCMMessageHandler extends IntentService {
                     switch (messageType){
                         case NotificationTypes.PING: priority = Notification.PRIORITY_LOW;
                     }
-                    built.priority = priority;
+
+                    boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
+                    if(headsUpPref) {
+                        built.priority = priority;
+                    }else{
+                        built.priority = Notification.PRIORITY_DEFAULT;
+                    }
+
+                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+                        String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility","private");
+                        Log.e(Constants.LOG_TAG, "Pref: "+pref);
+                        switch (pref){
+                            case "public":  built.visibility = Notification.VISIBILITY_PUBLIC; break;
+                            default:
+                            case "private": built.visibility = Notification.VISIBILITY_PRIVATE; break;
+                            case "secret":  built.visibility = Notification.VISIBILITY_SECRET; break;
+                        }
+                    }
                 }
 
                 notificationManager.notify(notification.getNotificationId(), built);

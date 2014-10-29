@@ -1,10 +1,13 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.provider.Settings;
 
 import com.thebluealliance.androidclient.R;
 
@@ -28,6 +31,11 @@ public class NotificationSettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.notification_preferences);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+                addPreferencesFromResource(R.xml.notification_preferences_lollipop);
+                Preference systemSettings = findPreference("system_notification_settings");
+                systemSettings.setIntent(new Intent(Settings.ACTION_SETTINGS));
+            }
 
             CheckBoxPreference enableNotifications = (CheckBoxPreference)findPreference("enable_notifications");
             final Preference notificationTone = findPreference("notification_tone");

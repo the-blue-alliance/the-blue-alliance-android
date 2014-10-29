@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_header_privacy">
+        <Preference
+            android:key="system_notification_settings"
+            android:title="@string/pref_system_notification_settings"
+            android:summary="@string/pref_system_notification_settings_summary"/>
+        <ListPreference
+            android:key="notification_visibility"
+            android:title="@string/pref_notification_lockscreen"
+            android:defaultValue="private"
+            android:entries="@array/notification_visibility"
+            android:entryValues="@array/notification_visibility_values" />
+        <SwitchPreference
+            android:key="notification_headsup"
+            android:title="@string/pref_notification_headsup"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+</PreferenceScreen>
