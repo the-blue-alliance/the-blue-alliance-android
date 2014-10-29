@@ -95,6 +95,8 @@ public class GCMMessageHandler extends IntentService {
                     built.defaults |= Notification.DEFAULT_SOUND;
                 }
 
+                built.category = Notification.CATEGORY_SOCIAL;
+
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     int priority = Notification.PRIORITY_HIGH;
                     switch (messageType){
