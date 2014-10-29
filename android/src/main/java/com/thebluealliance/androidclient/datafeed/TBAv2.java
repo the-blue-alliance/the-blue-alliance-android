@@ -112,14 +112,9 @@ public class TBAv2 {
         return teams;
     }
 
-    public static ArrayList<District> getDistrictList(String json, String url) {
-        ArrayList<District> districts = new ArrayList<>();
+    public static ArrayList<District> getDistrictList(String json, String url, int version) {
         JsonArray data = JSONManager.getasJsonArray(json);
-        for (JsonElement d : data) {
-            if (!d.isJsonNull())
-                districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
-        }
-        return districts;
+        return DistrictHelper.buildVersionedDistrictList(data, url, version);
     }
 
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {

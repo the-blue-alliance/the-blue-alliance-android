@@ -109,13 +109,15 @@ public class DistrictHelper {
     public static ArrayList<District> buildVersionedDistrictList(JsonArray districtList, String url, int version){
         ArrayList<District> districts = new ArrayList<>();
         for (JsonElement d : districtList) {
-            if(version > 1) {
-                JsonObject data = d.getAsJsonObject();
-                District district = DistrictHelper.buildDistrictFromUrl(data.get("key").getAsString(), url);
-                district.setName(data.get("name").getAsString());
-                districts.add(district);
-            }else{
-                districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
+            if(!d.isJsonNull()) {
+                if (version > 1) {
+                    JsonObject data = d.getAsJsonObject();
+                    District district = DistrictHelper.buildDistrictFromUrl(data.get("key").getAsString(), url);
+                    district.setName(data.get("name").getAsString());
+                    districts.add(district);
+                } else {
+                    districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
+                }
             }
         }
         return districts;
