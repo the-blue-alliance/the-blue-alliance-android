@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -92,6 +93,14 @@ public class GCMMessageHandler extends IntentService {
                 }
                 if(prefs.getBoolean("notification_tone", true)){
                     built.defaults |= Notification.DEFAULT_SOUND;
+                }
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    int priority = Notification.PRIORITY_HIGH;
+                    switch (messageType){
+                        case NotificationTypes.PING: priority = Notification.PRIORITY_LOW;
+                    }
+                    built.priority = priority;
                 }
 
                 notificationManager.notify(notification.getNotificationId(), built);
