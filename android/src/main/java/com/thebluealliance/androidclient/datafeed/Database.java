@@ -1655,7 +1655,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs){
-        return safeDelete(table, whereClause, whereArgs);
+        return safeDelete(table, whereClause, whereArgs, null);
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {
