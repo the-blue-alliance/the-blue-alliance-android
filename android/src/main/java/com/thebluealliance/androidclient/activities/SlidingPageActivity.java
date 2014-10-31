@@ -23,8 +23,8 @@ public abstract class SlidingPageActivity extends RefreshableHostActivity {
     }
 
     @Override
-    public void setContentView(int contentLayout){
-        if(AccountHelper.isMyTBAEnabled(this)) {
+    public void setContentView(int contentLayout) {
+        if (AccountHelper.isMyTBAEnabled(this)) {
             super.setContentView(R.layout.activity_sliding_panel);
 
             RelativeLayout root = (RelativeLayout) findViewById(R.id.activity_content);
@@ -33,7 +33,7 @@ public abstract class SlidingPageActivity extends RefreshableHostActivity {
 
             Log.d(Constants.LOG_TAG, "Model: " + modelKey);
             getSupportFragmentManager().beginTransaction().replace(R.id.activity_panel, NotificationSettingsFragment.newInstance(modelKey), PANEL_TAG).commit();
-        }else{
+        } else {
             super.setContentView(contentLayout);
         }
     }
