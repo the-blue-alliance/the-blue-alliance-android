@@ -21,7 +21,7 @@ import com.thebluealliance.androidclient.helpers.DistrictHelper;
 /**
  * Created by phil on 7/10/14.
  */
-public class ViewDistrictActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
+public class ViewDistrictActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";

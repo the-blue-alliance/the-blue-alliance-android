@@ -98,8 +98,9 @@ public class AccountHelper {
     }
 
     public static boolean isMyTBAEnabled(Context context){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(PREF_MYTBA_ENABLED, false);
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        //return prefs.getBoolean(PREF_MYTBA_ENABLED, false);
+        return false;
     }
 
     public static boolean hasMyTBAData(Context context){

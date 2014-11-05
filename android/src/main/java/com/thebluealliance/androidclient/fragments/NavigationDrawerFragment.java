@@ -49,7 +49,7 @@ public class NavigationDrawerFragment extends Fragment {
     private static final List<ListItem> NAVIGATION_ITEMS = new ArrayList<>();
 
     static {
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "My TBA", R.drawable.my_tba_icon_selector, R.layout.nav_drawer_item));
+        //NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "My TBA", R.drawable.my_tba_icon_selector, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.event_icon_selector, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.districts_icon_selector, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.team_icon_selector, R.layout.nav_drawer_item));

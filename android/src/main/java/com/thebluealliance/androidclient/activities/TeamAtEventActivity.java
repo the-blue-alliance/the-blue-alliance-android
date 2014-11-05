@@ -23,7 +23,7 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 
 import java.util.Arrays;
 
-public class TeamAtEventActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
+public class TeamAtEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 

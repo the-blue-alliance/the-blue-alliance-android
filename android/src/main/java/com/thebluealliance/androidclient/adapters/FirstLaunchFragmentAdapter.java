@@ -35,8 +35,8 @@ public class FirstLaunchFragmentAdapter extends PagerAdapter {
                 resId = R.id.loading_page;
                 break;
             case 2:
-                resId = R.id.mytba_enable_page;
-                break;
+                //resId = R.id.mytba_enable_page;
+                //break;
             case 3:
                 resId = R.id.load_finished_page;
                 break;

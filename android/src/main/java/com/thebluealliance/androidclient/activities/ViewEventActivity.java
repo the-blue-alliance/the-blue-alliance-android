@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 /**
  * File created by phil on 4/20/14.
  */
-public class ViewEventActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
+public class ViewEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENTKEY = "eventKey";
 
