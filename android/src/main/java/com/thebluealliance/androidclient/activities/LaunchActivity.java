@@ -321,7 +321,6 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_FINISHED) {
             loadingFinished();
             viewPager.advanceToNextPage();
-            viewPager.advanceToNextPage(); // skip over the myTBA setup page
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_ERROR) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, false).commit();
             errorLoadingData(info.message);
