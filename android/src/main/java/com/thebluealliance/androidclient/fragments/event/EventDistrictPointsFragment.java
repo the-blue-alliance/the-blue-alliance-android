@@ -124,6 +124,10 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
 
     public void updateDistrict(boolean isDistrict) {
         this.isDistrict = isDistrict;
+        if(getView() == null) {
+            return;
+        }
+
         infoContainer = (TextView) getView().findViewById(R.id.info_container);
         if (isDistrict) {
             infoContainer.setVisibility(View.GONE);
