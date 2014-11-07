@@ -32,7 +32,7 @@ public abstract class SlidingPageActivity extends RefreshableHostActivity {
             inflater.inflate(contentLayout, root);
 
             Log.d(Constants.LOG_TAG, "Model: " + modelKey);
-            getSupportFragmentManager().beginTransaction().replace(R.id.activity_panel, NotificationSettingsFragment.newInstance(modelKey), PANEL_TAG).commit();
+            //getSupportFragmentManager().beginTransaction().replace(R.id.activity_panel, NotificationSettingsFragment.newInstance(modelKey), PANEL_TAG).commit();
         } else {
             super.setContentView(contentLayout);
         }

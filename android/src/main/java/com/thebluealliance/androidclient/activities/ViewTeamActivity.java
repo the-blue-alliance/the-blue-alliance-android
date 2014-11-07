@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
@@ -30,7 +32,7 @@ import de.greenrobot.event.EventBus;
 /**
  * File created by nathan on 4/21/14.
  */
-public class ViewTeamActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
+public class ViewTeamActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener, AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     public static final String TEAM_KEY = "team_key",
             TEAM_YEAR = "team_year",
@@ -50,6 +52,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     private int mYear;
 
     private ViewPager pager;
+
+    private Toolbar toolbar;
+    private Spinner toolbarSpinner;
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
@@ -76,6 +81,11 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
         setModelKey(mTeamKey);
         setContentView(R.layout.activity_view_team);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        toolbarSpinner = (Spinner) findViewById(R.id.toolbar_spinner);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -112,6 +122,8 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         }
 
         new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
+
+
     }
 
     @Override
@@ -146,13 +158,20 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             if (yearsParticipated != null) {
+
                 ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, yearsParticipated);
-                actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
                 String teamNumber = mTeamKey.replace("frc", "");
                 setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
-                bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-                bar.setListNavigationCallbacks(actionBarAdapter, this);
-                bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+
+                actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
+                toolbarSpinner.setVisibility(View.VISIBLE);
+                toolbarSpinner.setAdapter(actionBarAdapter);
+                toolbarSpinner.setOnItemSelectedListener(this);
+                if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < yearsParticipated.length) {
+                    toolbarSpinner.setSelection(mCurrentSelectedYearPosition);
+                } else {
+                    toolbarSpinner.setSelection(0);
+                }
             }
         }
     }
@@ -204,23 +223,6 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     }
 
     @Override
-    public boolean onNavigationItemSelected(int position, long itemId) {
-        if (position == mCurrentSelectedYearPosition) {
-            return true;
-        }
-        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(yearsParticipated[position]));
-
-        mCurrentSelectedYearPosition = position;
-        mYear = Integer.valueOf(yearsParticipated[mCurrentSelectedYearPosition]);
-
-        EventBus.getDefault().post(new YearChangedEvent(mYear));
-
-        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
-
-        return true;
-    }
-
-    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
@@ -228,6 +230,12 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     public void onPageSelected(int position) {
         mSelectedTab = position;
+        // hide the FAB if we aren't on the first page
+        if(position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
+        }
     }
 
     @Override
@@ -237,5 +245,25 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     public int getCurrentSelectedYearPosition() {
         return mCurrentSelectedYearPosition;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (position == mCurrentSelectedYearPosition) {
+            return;
+        }
+        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(yearsParticipated[position]));
+
+        mCurrentSelectedYearPosition = position;
+        mYear = Integer.valueOf(yearsParticipated[mCurrentSelectedYearPosition]);
+
+        EventBus.getDefault().post(new YearChangedEvent(mYear));
+
+        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +22,7 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 /**
  * Created by phil on 7/10/14.
  */
-public class ViewDistrictActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
+public class ViewDistrictActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
@@ -82,6 +83,7 @@ public class ViewDistrictActivity extends SlidingPageActivity implements ViewPag
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {

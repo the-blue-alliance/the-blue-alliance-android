@@ -14,6 +14,7 @@
     <string name="action_remove_favorite">Remove Favorite</string>
     <string name="action_add_subscription">Add Subscription</string>
     <string name="action_remove_subscription">Remove Subscription</string>
+    <string name="close">Close</string>
 
     <!-- Main Activity -->
     <string-array name="event_list_year_selector">

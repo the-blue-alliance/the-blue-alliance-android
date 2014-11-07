@@ -2,6 +2,11 @@ package com.thebluealliance.androidclient.background.mytba;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -10,6 +15,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -26,14 +32,13 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
 
     private Context context;
     private boolean favExists;
-    private FloatingActionButton icon;
-    private ListView listView;
-    private ArrayList<ListItem> notifications;
+    private PreferenceFragment fragment;
+    private ArrayList<Preference> notifications;
+    private PreferenceCategory notificationSettingsCategory;
 
-    public CreateSubscriptionPanel(Context context, FloatingActionButton icon, ListView listView) {
+    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment) {
         this.context = context;
-        this.icon = icon;
-        this.listView = listView;
+        this.fragment = preferenceFragment;
     }
 
     @Override
@@ -55,14 +60,17 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
 
         String[] notificationTypes = ModelHelper.getNotificationTypes(type);
         notifications = new ArrayList<>();
-        int pos = 0;
+
         for(String notification: notificationTypes){
             boolean enabled = currentSettings.contains(notification);
-            notifications.add(new NotificationTypeListElement(NotificationTypes.getDisplayName(notification), enabled, pos));
-            listView.setItemChecked(pos, enabled);
-            pos++;
+            CheckBoxPreference preference = new CheckBoxPreference(context);
+            preference.setTitle(NotificationTypes.getDisplayName(notification));
+            preference.setKey(notification);
+            preference.setChecked(enabled);
+            // Don't store this in shared prefs
+            preference.setPersistent(false);
+            notifications.add(preference);
         }
-        Log.d(Constants.LOG_TAG, "Started with checked: "+listView.getCheckedItemPositions());
 
         return null;
     }
@@ -70,14 +78,27 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(favExists){
-            icon.setImageResource(R.drawable.ic_my_tba_blue);
-        } else{
-            icon.setImageResource(R.drawable.ic_action_add_favorite);
-        }
+        PreferenceScreen preferenceScreen = fragment.getPreferenceScreen();
+        CheckBoxPreference favorite = new CheckBoxPreference(context);
+        favorite.setTitle("Favorite");
+        favorite.setSummary("You can save teams, events, and more for easy access by marking them as \"favorites\".");
+        favorite.setChecked(favExists);
+        favorite.setPersistent(false);
+        preferenceScreen.addPreference(favorite);
 
-        ListViewAdapter adapter = new ListViewAdapter(context, notifications);
-        listView.setAdapter(adapter);
-        listView.setItemsCanFocus(false);
+        // Only show the notification section if there is at least one enabled notification
+        if(!notifications.isEmpty()) {
+            notificationSettingsCategory = new PreferenceCategory(context);
+            notificationSettingsCategory.setTitle("Notification settings");
+            preferenceScreen.addPreference(notificationSettingsCategory);
+
+            Preference summary = new Preference(context);
+            summary.setSummary("Subscribing to something lets you get a push notification whenever there is an update.");
+            summary.setSelectable(false);
+            notificationSettingsCategory.addPreference(summary);
+            for (Preference p : notifications) {
+                notificationSettingsCategory.addPreference(p);
+            }
+        }
     }
 }

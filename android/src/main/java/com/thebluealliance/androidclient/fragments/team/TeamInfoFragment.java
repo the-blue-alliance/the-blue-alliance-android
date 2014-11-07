@@ -49,11 +49,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     private PopulateTeamInfo task;
 
-    private RelativeLayout notificationSettings;
-    private ImageButton openNotificationSettingsButton;
-    private View openNotificationSettingsButtonContainer;
-    private ImageButton closeNotificationSettingsButton;
-    private View closeNotificationSettingsButtonContainer;
+
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -88,18 +84,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         v.findViewById(R.id.team_cd_button).setOnClickListener(this);
         v.findViewById(R.id.team_youtube_button).setOnClickListener(this);
         v.findViewById(R.id.team_website_button).setOnClickListener(this);
-        notificationSettings = (RelativeLayout) v.findViewById(R.id.notification_settings);
-        openNotificationSettingsButton = (ImageButton) v.findViewById(R.id.open_notification_settings_button);
-        openNotificationSettingsButton.setOnClickListener(this);
-        openNotificationSettingsButtonContainer = v.findViewById(R.id.open_notification_settings_button_container);
-        closeNotificationSettingsButton = (ImageButton) v.findViewById(R.id.close_notification_settings_button);
-        closeNotificationSettingsButton.setOnClickListener(this);
-        closeNotificationSettingsButtonContainer = v.findViewById(R.id.close_notification_settings_button_container);
 
-        // Hide the notification settings button if myTBA isn't enabled
-        if(!AccountHelper.isMyTBAEnabled(getActivity())) {
-            notificationSettings.setVisibility(View.INVISIBLE);
-        }
         return v;
     }
 
@@ -149,93 +134,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
         }
-
-        if (view.getId() == R.id.open_notification_settings_button) {
-            openNotificationSettingsView();
-        } else if (view.getId() == R.id.close_notification_settings_button) {
-            closeNotificationSettingsWindow();
-        }
     }
 
-    private void openNotificationSettingsView() {
-        // get the centers for the clipping circles
-        // this is the center of the button itself, relative to its container. We need to use these coordinates to clip the button.
-        int centerOfButtonInsideX = (openNotificationSettingsButton.getLeft() + openNotificationSettingsButton.getRight()) / 2;
-        int centerOfButtonInsideY = (openNotificationSettingsButton.getTop() + openNotificationSettingsButton.getBottom()) / 2;
 
-        // this is the center of the button in relation to the main view. This provides the center of the clipping circle for the notification settings view.
-        int centerOfButtonOutsideX = (openNotificationSettingsButtonContainer.getLeft() + openNotificationSettingsButtonContainer.getRight()) / 2;
-        int centerOfButtonOutsideY = (openNotificationSettingsButtonContainer.getTop() + openNotificationSettingsButtonContainer.getBottom()) / 2;
-
-        float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
-
-        if (notificationSettings.getVisibility() == View.INVISIBLE) {
-            notificationSettings.setVisibility(View.VISIBLE);
-
-            // Only create the circular reveal on L or greater. Otherwise, default to some other transition.
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
-                Animator anim = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
-                anim.setDuration(500);
-
-                // We create the circular reveals on the buttons container, because we can't create a clipping circle on the button itself
-                openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-
-                closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                final Animator closeButtonAnimator = ViewAnimationUtils.createCircularReveal(closeNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, 0, (closeNotificationSettingsButton.getWidth() / 2));
-                closeButtonAnimator.setDuration(anim.getDuration());
-
-                anim.start();
-                closeButtonAnimator.start();
-            } else {
-                openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                notificationSettings.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    private void closeNotificationSettingsWindow() {
-        int centerOfButtonInsideX = (openNotificationSettingsButton.getLeft() + openNotificationSettingsButton.getRight()) / 2;
-        int centerOfButtonInsideY = (openNotificationSettingsButton.getTop() + openNotificationSettingsButton.getBottom()) / 2;
-
-        int centerOfButtonOutsideX = (openNotificationSettingsButtonContainer.getLeft() + openNotificationSettingsButtonContainer.getRight()) / 2;
-        int centerOfButtonOutsideY = (openNotificationSettingsButtonContainer.getTop() + openNotificationSettingsButtonContainer.getBottom()) / 2;
-
-        float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
-        if (notificationSettings.getVisibility() == View.VISIBLE) {
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
-                Animator reveal =
-                        ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
-                reveal.addListener(new AnimatorListenerAdapter() {
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        notificationSettings.setVisibility(View.INVISIBLE);
-                    }
-                });
-                reveal.setDuration(500);
-                final Animator openButtonAnimator = ViewAnimationUtils.createCircularReveal(openNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, 0, (openNotificationSettingsButton.getWidth() / 2));
-                openButtonAnimator.setDuration(reveal.getDuration());
-                Animator closeButtonAnimator = ViewAnimationUtils.createCircularReveal(closeNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, (closeNotificationSettingsButton.getWidth() / 2), 0);
-                closeButtonAnimator.setDuration(reveal.getDuration() / 2);
-                closeButtonAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                        openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                        openButtonAnimator.start();
-                    }
-                });
-                closeButtonAnimator.start();
-                reveal.start();
-            } else {
-                openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                notificationSettings.setVisibility(View.INVISIBLE);
-            }
-        }
-    }
 
     @Override
     public void onRefreshStart() {

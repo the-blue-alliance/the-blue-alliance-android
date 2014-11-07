@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 /**
  * Created by Nathan on 5/14/2014.
  */
-public class ViewMatchActivity extends SlidingPageActivity implements RefreshListener {
+public class ViewMatchActivity extends FABNotificationSettingsActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
 
@@ -46,6 +47,7 @@ public class ViewMatchActivity extends SlidingPageActivity implements RefreshLis
         }
         setModelKey(mMatchKey);
         setContentView(R.layout.activity_view_match);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
         warningMessage = (TextView) findViewById(R.id.warning_container);

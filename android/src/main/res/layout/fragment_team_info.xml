@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="88dp"
+            android:paddingBottom="104dp"
             android:visibility="gone">
 
             <RelativeLayout
@@ -202,74 +202,6 @@
                 android:layout_height="0dp" />
         </LinearLayout>
     </ScrollView>
-
-    <RelativeLayout
-        android:id="@+id/notification_settings"
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/accent"
-        android:padding="16dp"
-        android:focusable="true">
-
-        <CheckedTextView
-            android:id="@+id/favorite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:text="Favorite"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:textSize="16sp"
-            android:gravity="center_vertical"
-            android:focusable="false"
-            android:layout_marginBottom="32dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/favorite"
-            android:text="Notification Settings"
-            android:textSize="20dp"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
-
-    <FrameLayout
-        android:id="@+id/open_notification_settings_button_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp">
-
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/open_notification_settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_star_white_24dp"
-            app:colorNormal="@color/accent"
-            app:colorPressed="@color/accent_dark" />
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/close_notification_settings_button_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:visibility="invisible"
-        android:layout_margin="16dp">
-
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/close_notification_settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_check_white_24dp"
-            app:colorNormal="@color/primary"
-            app:colorPressed="@color/primary_dark" />
-    </FrameLayout>
 
     <ProgressBar
         android:id="@+id/progress"
