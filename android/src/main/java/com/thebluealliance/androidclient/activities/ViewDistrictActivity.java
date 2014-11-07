@@ -91,6 +91,8 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
         }
 
         setBeamUri(String.format(NfcUris.URI_DISTRICT, districtAbbrev));
+
+        setSettingsToolbarTitle("District Settings");
     }
 
     @Override

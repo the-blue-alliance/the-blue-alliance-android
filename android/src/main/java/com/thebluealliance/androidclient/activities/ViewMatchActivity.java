@@ -50,6 +50,8 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
+        setSettingsToolbarTitle("Match settings");
+
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
         registerRefreshListener(this);

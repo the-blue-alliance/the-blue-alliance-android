@@ -76,6 +76,8 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
 
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
         isDistrict = true;
+
+        setSettingsToolbarTitle("Event Settings");
     }
 
     public void updateDistrict(boolean isDistrict) {

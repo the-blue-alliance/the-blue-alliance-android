@@ -35,6 +35,12 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     private NotificationSettingsFragment settings;
 
+    private boolean isSettingsPanelOpen = false;
+
+    private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
+
+    private Bundle savedPreferenceState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,13 +74,40 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         // Setup the settings menu
 
         Log.d(Constants.LOG_TAG, "Model: " + modelKey);
+        if(savedInstanceState != null) {
+            isSettingsPanelOpen = savedInstanceState.getBoolean(SETTINGS_PANEL_OPEN);
+            if(isSettingsPanelOpen) {
+                openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
+                closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+                notificationSettings.setVisibility(View.VISIBLE);
+                getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
+            } else {
+                openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+                closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
+                notificationSettings.setVisibility(View.INVISIBLE);
+            }
+            savedPreferenceState = savedInstanceState.getBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SETTINGS_PANEL_OPEN, isSettingsPanelOpen);
+        // Only save the preference state if they've already been successfully loaded
+        // Also, only save them if the settings panel is open. Otherwise, clear them on rotate
+        if(settings != null && settings.arePreferencesLoaded() && isSettingsPanelOpen) {
+            Bundle b = new Bundle();
+            settings.writeStateToBundle(b);
+            outState.putBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE, b);
+        }
     }
 
     @Override
     protected void setModelKey(String key) {
         super.setModelKey(key);
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
-        settings = NotificationSettingsFragment.newInstance(modelKey);
+        settings = NotificationSettingsFragment.newInstance(modelKey, savedPreferenceState);
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
     }
 
@@ -94,12 +127,14 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             // The user wants to save the preferences
             settings.saveSettings();
         } else {
-            Log.d(Constants.LOG_TAG, "Clidked id: " + v.getId() + " tag: " + v.getTag() + " view: " + v.toString());
+            Log.d(Constants.LOG_TAG, "Clicked id: " + v.getId() + " tag: " + v.getTag() + " view: " + v.toString());
         }
     }
 
     private void onNotificationSettingsCloseButtonClick() {
         closeNotificationSettingsWindow();
+        // Cancel any changes made by the user
+        settings.restoreInitialState();
     }
 
     private void openNotificationSettingsView() {
@@ -152,6 +187,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
                 notificationSettings.setVisibility(View.VISIBLE);
             }
+            isSettingsPanelOpen = true;
         }
     }
 
@@ -211,6 +247,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
                 notificationSettings.setVisibility(View.INVISIBLE);
             }
+            isSettingsPanelOpen = false;
         }
     }
 
@@ -220,5 +257,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     public void hideFab(boolean animate) {
         openNotificationSettingsButton.hide(animate);
+    }
+
+    public void setSettingsToolbarTitle(String title) {
+        notificationSettingsToolbar.setTitle(title);
     }
 }

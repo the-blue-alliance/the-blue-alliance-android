@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPane
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * File created by phil on 8/18/14.
@@ -24,13 +25,19 @@ import java.util.ArrayList;
 public class NotificationSettingsFragment extends PreferenceFragment {
 
     public static final String MODEL_KEY = "model_key";
+    public static final String SAVED_STATE_BUNDLE = "saved_state_bundle";
+    private Bundle savedStateBundle;
+    private Bundle initialStateBundle;
     private String modelKey;
     private ModelHelper.MODELS modelType;
 
-    public static NotificationSettingsFragment newInstance(String modelKey) {
+    private boolean preferencesLoaded = false;
+
+    public static NotificationSettingsFragment newInstance(String modelKey, Bundle savedStateBundle) {
         NotificationSettingsFragment fragment = new NotificationSettingsFragment();
         Bundle args = new Bundle();
         args.putString(MODEL_KEY, modelKey);
+        args.putBundle(SAVED_STATE_BUNDLE, savedStateBundle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,6 +55,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         }
         modelKey = getArguments().getString(MODEL_KEY);
         modelType = ModelHelper.getModelFromKey(modelKey);
+        savedStateBundle = getArguments().getBundle(SAVED_STATE_BUNDLE);
     }
 
     @Override
@@ -59,7 +67,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         this.setPreferenceScreen(p);
 
         // Create the list of preferences
-        new CreateSubscriptionPanel(getActivity(), this).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle).execute(modelKey);
     }
 
     public void saveSettings() {
@@ -89,6 +97,68 @@ public class NotificationSettingsFragment extends PreferenceFragment {
                 }
             } else if (currentPreference instanceof PreferenceGroup) {
                 writeSettingsFromPreferenceGroupToStringArray((PreferenceGroup) currentPreference, strings);
+            }
+        }
+    }
+
+    public void writeStateToBundle(Bundle b) {
+        PreferenceGroup pg = getPreferenceScreen();
+        for(int i = 0; i < pg.getPreferenceCount(); i++) {
+            Preference currentPreference = pg.getPreference(i);
+            if (currentPreference instanceof CheckBoxPreference) {
+                b.putBoolean(currentPreference.getKey(), ((CheckBoxPreference) currentPreference).isChecked());
+            } else if (currentPreference instanceof PreferenceGroup) {
+                writeStateToBundle(b, (PreferenceGroup) currentPreference);
+            }
+        }
+    }
+
+    private void writeStateToBundle(Bundle b, PreferenceGroup pg) {
+        for (int i = 0; i < pg.getPreferenceCount(); i++) {
+            Preference currentPreference = pg.getPreference(i);
+            if (currentPreference instanceof CheckBoxPreference) {
+                b.putBoolean(currentPreference.getKey(), ((CheckBoxPreference) currentPreference).isChecked());
+            } else if (currentPreference instanceof PreferenceGroup) {
+                writeStateToBundle(b, (PreferenceGroup) currentPreference);
+            }
+        }
+    }
+
+    // Call when preferences have been loaded into the fragment
+    public void setPreferencesLoaded() {
+        preferencesLoaded = true;
+    }
+
+    public boolean arePreferencesLoaded() {
+        return preferencesLoaded;
+    }
+
+    public void setInitialStateBundle(Bundle b) {
+        initialStateBundle = b;
+    }
+
+    // Call to restore the preference fragment to its initial state, before the user unchecked or checked anything.
+    public void restoreInitialState() {
+        if(initialStateBundle == null) {
+            return;
+        }
+
+        Set<String> keys = initialStateBundle.keySet();
+        for(String key : keys) {
+            setPreferenceChecked(getPreferenceScreen(), key, initialStateBundle.getBoolean(key));
+        }
+    }
+
+    private void setPreferenceChecked(PreferenceGroup pg, String preferenceKey, boolean checked) {
+        for (int i = 0; i < pg.getPreferenceCount(); i++) {
+            Preference currentPreference = pg.getPreference(i);
+            if (currentPreference instanceof CheckBoxPreference) {
+                if(currentPreference.getKey().equals(preferenceKey)) {
+                    ((CheckBoxPreference) currentPreference).setChecked(checked);
+                    return;
+                }
+            } else if (currentPreference instanceof PreferenceGroup) {
+                setPreferenceChecked((PreferenceGroup) currentPreference, preferenceKey, checked);
             }
         }
     }

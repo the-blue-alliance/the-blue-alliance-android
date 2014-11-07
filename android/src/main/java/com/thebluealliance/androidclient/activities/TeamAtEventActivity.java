@@ -85,6 +85,8 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
         startRefresh();
+
+        setSettingsToolbarTitle("Team at Event Settings");
     }
 
     @Override
