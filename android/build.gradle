@@ -116,5 +116,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:5.0.+'
     compile 'com.sothree.slidinguppanel:library:+'
     compile 'de.greenrobot:eventbus:2.2.+'
-    compile files('libs/tbaMobile-v9-1.19.0-SNAPSHOT.jar')
+    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
 }
