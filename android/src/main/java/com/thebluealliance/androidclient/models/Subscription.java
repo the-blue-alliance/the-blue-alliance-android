@@ -16,6 +16,7 @@ public class Subscription {
     private String userName;
     private String modelKey;
     private String notificationSettings;
+    private List<String> notificationList;
     private int modelEnum;
 
     public Subscription(){
@@ -25,6 +26,7 @@ public class Subscription {
     public Subscription(String userName, String modelKey, List<String> notificationSettings) {
         this.userName = userName;
         this.modelKey = modelKey;
+        this.notificationList = notificationSettings;
         this.notificationSettings = makeNotificationJSON(notificationSettings);
         setModelEnum(ModelHelper.getModelFromKey(modelKey).ordinal());
     }
@@ -55,6 +57,10 @@ public class Subscription {
 
     public void setNotificationSettings(String notificationSettings) {
         this.notificationSettings = notificationSettings;
+    }
+
+    public List<String> getNotificationList() {
+        return notificationList;
     }
 
     public int getModelEnum() {

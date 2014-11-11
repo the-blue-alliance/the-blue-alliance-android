@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.accounts;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -8,8 +7,7 @@ import android.widget.Toast;
 
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
@@ -22,6 +20,8 @@ import com.thebluealliance.androidclient.models.Subscription;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * File created by phil on 8/2/14.
@@ -59,156 +59,67 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         Subscription initialSubscriptionState;
         Favorite initialFavorite;
 
-        // Handle notifications first
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
-        Database.Subscriptions subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
-        initialSubscriptionState = subscriptionsTable.get(key);
-        if (notifications.size() == 0) {
-            // All notifications were removed
-            if (subscriptionsTable.exists(key)) {
-                TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-                ModelsMobileApiMessagesSubscriptionMessage request = new ModelsMobileApiMessagesSubscriptionMessage();
-                request.setModelKey(modelKey);
-                request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
-                request.setNotifications(new ArrayList<String>());
-                Log.d(Constants.LOG_TAG, "Subscription already exists. Removing it");
-                try {
-                    ModelsMobileApiMessagesBaseResponse response = service.subscriptions().remove(request).execute();
-                    if (response.getCode() == 200 || response.getCode() == 304) {
-                        subscriptionsTable.remove(key);
-                        notificationsResult = Result.SUCCESS;
-                    } else {
-                        Log.w(Constants.LOG_TAG, "Code " + response.getCode() + " while adding subscription.\n" + response.getMessage());
-                        notificationsResult = Result.ERROR;
-                    }
-                } catch (IOException e) {
-                    Log.e(Constants.LOG_TAG, "IO Exception while adding subscription");
-                    e.printStackTrace();
-                    notificationsResult = Result.ERROR;
-                }
-            } else {
-                notificationsResult = Result.NOOP;
-            }
-        } else {
-            // At least some notifications still exist. Update the list.
-            TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-            ModelsMobileApiMessagesSubscriptionMessage request = new ModelsMobileApiMessagesSubscriptionMessage();
-            request.setModelKey(modelKey);
-            request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
-            request.setNotifications(notifications);
 
-            ContentValues newValues = new Subscription(user, modelKey, notifications).getParams();
-            Subscription oldSub = subscriptionsTable.get(key);
-            if(oldSub == null) {
-                oldSub = new Subscription();
-            }
-            ContentValues oldValues = oldSub.getParams();
-
-            if(!newValues.equals(oldValues)) {
-                // Subscriptions have changed
-                Log.d(Constants.LOG_TAG, "Updating subscriptions");
-                try {
-                    ModelsMobileApiMessagesBaseResponse response = service.subscriptions().add(request).execute();
-                    if (response.getCode() == 200) {
-                        subscriptionsTable.add(new Subscription(user, modelKey, notifications));
-                        notificationsResult = Result.SUCCESS;
-                    } else if (response.getCode() == 304) {
-                        Log.d(Constants.LOG_TAG, "Subscription not modified");
-                        notificationsResult = Result.NOOP;
-                    } else {
-                        Log.w(Constants.LOG_TAG, "Code " + response.getCode() + " while adding subscription.\n" + response.getMessage());
-                        notificationsResult = Result.ERROR;
-                    }
-                } catch (IOException e) {
-                    Log.e(Constants.LOG_TAG, "IO Exception while adding subscription");
-                    e.printStackTrace();
-                    notificationsResult = Result.ERROR;
-                }
-            } else {
-                // Nothing has changed. No-op
-                notificationsResult = Result.NOOP;
-            }
-        }
-
-        // Now handle favorite
-        Log.d(Constants.LOG_TAG, "Favorite: " + modelKey);
-        Database.Favorites table = Database.getInstance(context).getFavoritesTable();
-
-        // Note the initial state
-        initialFavorite = table.get(key);
-
-        TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-        ModelsMobileApiMessagesFavoriteMessage request = new ModelsMobileApiMessagesFavoriteMessage();
+        ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
         request.setModelKey(modelKey);
         request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
-        if (isFavorite && table.exists(key)) {
-            // Already favorited; no op
-            favoriteResult = Result.NOOP;
-        } else if (isFavorite && !table.exists(key)) {
-            Log.d(Constants.LOG_TAG, "Favorite doesn't exist. Adding it");
-            try {
-                ModelsMobileApiMessagesBaseResponse response = service.favorites().add(request).execute();
-                if (response.getCode() == 200 || response.getCode() == 304) {
-                    table.add(new Favorite(user, modelKey));
-                    favoriteResult = Result.SUCCESS;
-                } else {
-                    Log.w(Constants.LOG_TAG, "Code " + response.getCode() + " while adding favorite.\n" + response.getMessage());
-                    favoriteResult = Result.ERROR;
-                }
-            } catch (IOException e) {
-                Log.e(Constants.LOG_TAG, "IO Exampetion while adding favorite");
-                e.printStackTrace();
-                favoriteResult = Result.ERROR;
-            }
-        } else if (!isFavorite && !table.exists(key)) {
-            // Already not favorited; no op
-            favoriteResult = Result.NOOP;
-        } else if (!isFavorite && table.exists(key)) {
-            Log.d(Constants.LOG_TAG, "Favorite already exists. Removing it");
-            try {
-                ModelsMobileApiMessagesBaseResponse response = service.favorites().remove(request).execute();
-                if (response.getCode() == 200 || response.getCode() == 304) {
-                    table.remove(key);
-                    favoriteResult = Result.SUCCESS;
-                } else {
-                    Log.w(Constants.LOG_TAG, "Code " + response.getCode() + " while adding favorite.\n" + response.getMessage());
-                    favoriteResult = Result.ERROR;
-                }
-            } catch (IOException e) {
-                Log.e(Constants.LOG_TAG, "IO Exception while adding favorite");
-                e.printStackTrace();
-                favoriteResult = Result.ERROR;
-            }
-        } else {
-            // We should never get to this point, but the compiler complains if we don't initialize favoriteResult
-            favoriteResult = Result.NOOP;
+        request.setNotifications(notifications);
+        request.setFavorite(isFavorite);
+
+        Database.Subscriptions subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
+        Database.Favorites favoritesTable = Database.getInstance(context).getFavoritesTable();
+
+        // Determine if we have to do anything
+        List<String> existingNotificationsList = new ArrayList<>();
+        Subscription existingSubscription = subscriptionsTable.get(key);
+        if(existingSubscription != null) {
+            existingNotificationsList = existingSubscription.getNotificationList();
         }
 
-        if (notificationsResult == Result.ERROR || favoriteResult == Result.ERROR) {
-            // If either thing errored, roll back the database transaction
-            if(initialFavorite != null) {
-                // There was something in the database before; remove any changes and commit the old data
-                table.remove(key);
-                table.add(initialFavorite);
-            } else {
-                // Delete anything that was added
-                table.remove(key);
-            }
+        Collections.sort(notifications);
+        Collections.sort(existingNotificationsList);
 
-            if(initialSubscriptionState != null) {
-                // There was something in the database before; remove any changes and commit the old data
-                subscriptionsTable.remove(key);
-                subscriptionsTable.add(initialSubscriptionState);
-            } else {
-                // Delete anything that was added
-                subscriptionsTable.remove(key);
-            }
-            return Result.ERROR;
-        } else if (notificationsResult == Result.NOOP && favoriteResult == Result.NOOP) {
+        boolean notificationsHaveChanged = !(notifications.equals(existingNotificationsList));
+
+        // If the user is requesting a favorite and is already a favorite,
+        // or if the user is requesting an unfavorite and it is already not a favorite,
+        // and if the existing notification settings equal the new ones, do nothing.
+        if (((isFavorite && favoritesTable.exists(key)) || (!isFavorite && !favoritesTable.exists(key))) && notificationsHaveChanged) {
+            // nothing has changed, no-op
             return Result.NOOP;
         } else {
-            return Result.SUCCESS;
+            try {
+                TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
+                ModelsMobileApiMessagesBaseResponse response = service.model().setPreferences(request).execute();
+                if (response.getCode() == 200 || response.getCode() == 304) {
+                    // Request was successful, update the local databases
+                    if(notifications.isEmpty()) {
+                        subscriptionsTable.remove(key);
+                    } else if (subscriptionsTable.exists(key)){
+                        subscriptionsTable.update(key, new Subscription(user, modelKey, notifications));
+                    } else {
+                        subscriptionsTable.add(new Subscription(user, modelKey, notifications));
+                    }
+
+                    if(!isFavorite) {
+                        favoritesTable.remove(key);
+                    } else if (favoritesTable.exists(key)) {
+                        // Already favorited, do nothing
+                    } else {
+                        favoritesTable.add(new Favorite(user, modelKey));
+                    }
+                    return Result.SUCCESS;
+                } else {
+                    Log.w(Constants.LOG_TAG, "Code " + response.getCode() + " while adding subscription.\n" + response.getMessage());
+                    return Result.ERROR;
+                }
+            } catch (IOException e) {
+                Log.e(Constants.LOG_TAG, "IO Exception while adding subscription");
+                e.printStackTrace();
+                return Result.ERROR;
+            }
         }
     }
 
@@ -216,7 +127,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
     protected void onPostExecute(Result result) {
         super.onPostExecute(result);
 
-        if(callbacks.get() != null) {
+        if (callbacks.get() != null) {
             ModelSettingsCallbacks cb = callbacks.get();
             switch (result) {
                 case SUCCESS:
