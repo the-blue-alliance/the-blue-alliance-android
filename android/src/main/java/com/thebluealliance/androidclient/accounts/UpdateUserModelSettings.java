@@ -53,12 +53,6 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         ArrayList<String> notifications = settings.enabledNotifications;
         boolean isFavorite = settings.isFavorite;
 
-        Result notificationsResult, favoriteResult;
-
-        // Save initial state so we can do a rollback
-        Subscription initialSubscriptionState;
-        Favorite initialFavorite;
-
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
 
