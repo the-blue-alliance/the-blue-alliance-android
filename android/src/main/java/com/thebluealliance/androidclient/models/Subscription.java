@@ -61,6 +61,11 @@ public class Subscription {
 
     public void setNotificationSettings(String notificationSettings) {
         this.notificationSettings = notificationSettings;
+        // Update the ArrayList
+        notificationList.clear();
+        for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
+            notificationList.add(element.getAsString());
+        }
     }
 
     public List<String> getNotificationList() {
