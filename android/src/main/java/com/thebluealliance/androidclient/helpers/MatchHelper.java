@@ -523,7 +523,13 @@ public class MatchHelper {
                 number = m.group(3);
             }
 
-            return LONG_TYPES.get(TYPE.fromShortType(type)) + " " + set + (set == null ? "" : " Match " + number);
+            if(set == null) {
+                // No set specified; this is a quals match
+                return LONG_TYPES.get(TYPE.fromShortType(type)) + " " + number;
+            } else {
+                // This is an elims match
+                return LONG_TYPES.get(TYPE.fromShortType(type)) + " " + set + " Match " + number;
+            }
         } else {
             return "Could not find match title";
         }
