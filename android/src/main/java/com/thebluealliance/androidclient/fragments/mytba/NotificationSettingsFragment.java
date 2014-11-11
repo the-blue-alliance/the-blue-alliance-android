@@ -11,10 +11,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.accounts.AddUpdateUserSubscription;
-import com.thebluealliance.androidclient.accounts.RemoveUserSubscription;
+import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -70,22 +71,43 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         new CreateSubscriptionPanel(getActivity(), this, savedStateBundle).execute(modelKey);
     }
 
-    public void saveSettings() {
+
+    public ModelNotificationFavoriteSettings getSettings() {
         ArrayList<String> subscribed = new ArrayList<>();
-        subscribed.add(modelKey);
 
         PreferenceScreen preferences = getPreferenceScreen();
         // Use recursion to make sure we catch any preferences nested in groups
         writeSettingsFromPreferenceGroupToStringArray(preferences, subscribed);
+
+        // Don't pass the favorite preference to the updater.
+        subscribed.remove(MyTBAHelper.getFavoritePreferenceKey());
         Log.d(Constants.LOG_TAG, "notifications: " + subscribed);
 
-        if (subscribed.size() == 1) {
-            // The user has unsubscribed from everything
-            new RemoveUserSubscription(getActivity()).execute(modelKey);
-        } else {
-            // At least one subscription exists or has been created or updated.
-            new AddUpdateUserSubscription(getActivity()).execute(subscribed.toArray(new String[subscribed.size()]));
-        }
+        ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
+        settings.isFavorite = ((CheckBoxPreference) findPreference(MyTBAHelper.getFavoritePreferenceKey())).isChecked();
+        settings.enabledNotifications = subscribed;
+        settings.modelKey = modelKey;
+
+        return settings;
+    }
+
+    public void saveSettings() {
+        ArrayList<String> subscribed = new ArrayList<>();
+
+        PreferenceScreen preferences = getPreferenceScreen();
+        // Use recursion to make sure we catch any preferences nested in groups
+        writeSettingsFromPreferenceGroupToStringArray(preferences, subscribed);
+
+        // Don't pass the favorite preference to the updater.
+        subscribed.remove(MyTBAHelper.getFavoritePreferenceKey());
+        Log.d(Constants.LOG_TAG, "notifications: " + subscribed);
+
+        ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
+        settings.isFavorite = ((CheckBoxPreference) findPreference(MyTBAHelper.getFavoritePreferenceKey())).isChecked();
+        settings.enabledNotifications = subscribed;
+        settings.modelKey = modelKey;
+
+        new UpdateUserModelSettings(getActivity(), settings).execute();
     }
 
     private void writeSettingsFromPreferenceGroupToStringArray(PreferenceGroup pg, ArrayList<String> strings) {
@@ -103,7 +125,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
 
     public void writeStateToBundle(Bundle b) {
         PreferenceGroup pg = getPreferenceScreen();
-        for(int i = 0; i < pg.getPreferenceCount(); i++) {
+        for (int i = 0; i < pg.getPreferenceCount(); i++) {
             Preference currentPreference = pg.getPreference(i);
             if (currentPreference instanceof CheckBoxPreference) {
                 b.putBoolean(currentPreference.getKey(), ((CheckBoxPreference) currentPreference).isChecked());
@@ -139,27 +161,13 @@ public class NotificationSettingsFragment extends PreferenceFragment {
 
     // Call to restore the preference fragment to its initial state, before the user unchecked or checked anything.
     public void restoreInitialState() {
-        if(initialStateBundle == null) {
+        if (initialStateBundle == null) {
             return;
         }
 
         Set<String> keys = initialStateBundle.keySet();
-        for(String key : keys) {
-            setPreferenceChecked(getPreferenceScreen(), key, initialStateBundle.getBoolean(key));
-        }
-    }
-
-    private void setPreferenceChecked(PreferenceGroup pg, String preferenceKey, boolean checked) {
-        for (int i = 0; i < pg.getPreferenceCount(); i++) {
-            Preference currentPreference = pg.getPreference(i);
-            if (currentPreference instanceof CheckBoxPreference) {
-                if(currentPreference.getKey().equals(preferenceKey)) {
-                    ((CheckBoxPreference) currentPreference).setChecked(checked);
-                    return;
-                }
-            } else if (currentPreference instanceof PreferenceGroup) {
-                setPreferenceChecked((PreferenceGroup) currentPreference, preferenceKey, checked);
-            }
+        for (String key : keys) {
+            ((CheckBoxPreference) findPreference(key)).setChecked(initialStateBundle.getBoolean(key));
         }
     }
 }

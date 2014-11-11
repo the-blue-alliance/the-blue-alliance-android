@@ -118,4 +118,5 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.2.+'
     compile 'com.melnykov:floatingactionbutton:1.0.5'
     compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
+    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT-update-debug.jar')
 }

@@ -13,17 +13,20 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
+import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
+import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 /**
  * Created by Nathan on 11/6/2014.
  */
-public abstract class FABNotificationSettingsActivity extends RefreshableHostActivity implements View.OnClickListener {
+public abstract class FABNotificationSettingsActivity extends RefreshableHostActivity implements View.OnClickListener, ModelSettingsCallbacks {
 
     private RelativeLayout notificationSettings;
     private FloatingActionButton openNotificationSettingsButton;
@@ -35,9 +38,13 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     private NotificationSettingsFragment settings;
 
+    private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
+
     private boolean isSettingsPanelOpen = false;
 
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
+
+    private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
     private Bundle savedPreferenceState;
 
@@ -56,7 +63,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         closeNotificationSettingsButtonContainer = findViewById(R.id.close_notification_settings_button_container);
 
         // Hide the notification settings button if myTBA isn't enabled
-        if(!AccountHelper.isMyTBAEnabled(this)) {
+        if (!AccountHelper.isMyTBAEnabled(this)) {
             notificationSettings.setVisibility(View.INVISIBLE);
         }
 
@@ -74,13 +81,15 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         // Setup the settings menu
 
         Log.d(Constants.LOG_TAG, "Model: " + modelKey);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             isSettingsPanelOpen = savedInstanceState.getBoolean(SETTINGS_PANEL_OPEN);
-            if(isSettingsPanelOpen) {
+            if (isSettingsPanelOpen) {
                 openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
                 closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
                 notificationSettings.setVisibility(View.VISIBLE);
-                getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
+                }
             } else {
                 openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
                 closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
@@ -88,6 +97,8 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             }
             savedPreferenceState = savedInstanceState.getBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE);
         }
+
+        saveSettingsTaskFragment = (UpdateUserModelSettingsTaskFragment) getSupportFragmentManager().findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
     }
 
     @Override
@@ -96,7 +107,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         outState.putBoolean(SETTINGS_PANEL_OPEN, isSettingsPanelOpen);
         // Only save the preference state if they've already been successfully loaded
         // Also, only save them if the settings panel is open. Otherwise, clear them on rotate
-        if(settings != null && settings.arePreferencesLoaded() && isSettingsPanelOpen) {
+        if (settings != null && settings.arePreferencesLoaded() && isSettingsPanelOpen) {
             Bundle b = new Bundle();
             settings.writeStateToBundle(b);
             outState.putBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE, b);
@@ -125,7 +136,10 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         } else if (v.getId() == R.id.close_notification_settings_button) {
             closeNotificationSettingsWindow();
             // The user wants to save the preferences
-            settings.saveSettings();
+            if (saveSettingsTaskFragment == null) {
+                saveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(settings.getSettings());
+                getSupportFragmentManager().beginTransaction().add(saveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
+            }
         } else {
             Log.d(Constants.LOG_TAG, "Clicked id: " + v.getId() + " tag: " + v.getTag() + " view: " + v.toString());
         }
@@ -153,7 +167,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             notificationSettings.setVisibility(View.VISIBLE);
 
             // Only create the circular reveal on L or greater. Otherwise, default to some other transition.
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
                 Animator anim = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
                 anim.setDuration(500);
 
@@ -176,7 +190,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
                     @Override
                     public void onAnimationUpdate(ValueAnimator animator) {
-                        getWindow().setStatusBarColor((Integer)animator.getAnimatedValue());
+                        getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
                     }
 
                 });
@@ -201,7 +215,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
         if (notificationSettings.getVisibility() == View.VISIBLE) {
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
                 Animator anim =
                         ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
                 anim.addListener(new AnimatorListenerAdapter() {
@@ -236,7 +250,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
                     @Override
                     public void onAnimationUpdate(ValueAnimator animator) {
-                        getWindow().setStatusBarColor((Integer)animator.getAnimatedValue());
+                        getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
                     }
 
                 });
@@ -261,5 +275,38 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     public void setSettingsToolbarTitle(String title) {
         notificationSettingsToolbar.setTitle(title);
+    }
+
+    @Override
+    public void onSuccess() {
+        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
+        saveSettingsTaskFragment = null;
+    }
+
+    @Override
+    public void onNoOp() {
+        Toast.makeText(this, "No op", Toast.LENGTH_SHORT).show();
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
+        saveSettingsTaskFragment = null;
+    }
+
+    @Override
+    public void onError() {
+        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
+        saveSettingsTaskFragment = null;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isSettingsPanelOpen) {
+            closeNotificationSettingsWindow();
+            return;
+        }
+        super.onBackPressed();
     }
 }
