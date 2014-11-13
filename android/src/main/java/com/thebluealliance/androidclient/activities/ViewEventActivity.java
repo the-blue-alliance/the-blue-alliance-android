@@ -169,6 +169,13 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
                 hideInfoMessage();
             }
         }
+
+        // hide the FAB if we aren't on the first page
+        if(position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
+        }
     }
 
     @Override

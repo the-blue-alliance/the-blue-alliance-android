@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/label"
@@ -20,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:background="@color/blue"
+        android:background="@color/primary"
         android:visibility="gone"
         android:padding="6dp"
         android:textStyle="bold"

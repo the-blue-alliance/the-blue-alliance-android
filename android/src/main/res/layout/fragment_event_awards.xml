@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/info_container">
+
+        <!-- This ListView displays cards that should have a spacing of 8dp between the
+        cards. The cards have a bottom margin of 8dp to provide the spacing. However, that means
+        that the first card will be placed touching the top of the list. To add the appropriate padding,
+        we'll add a paddingTop of 8dp to the list and the disable clipping to padding so that content
+        can scroll over the padding. -->
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:clipToPadding="false"
+            android:dividerHeight="0dp"
+            android:divider="@null"/>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="visible" />
+
+        <TextView
+            style="@style/NoDataFoundStyle"
+            android:id="@+id/no_data"
+            android:visibility="gone"
+            android:singleLine="false" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@id/info_container"
+        style="@style/InfoOverlayStyle"
+        android:visibility="gone" />
+
+</RelativeLayout>

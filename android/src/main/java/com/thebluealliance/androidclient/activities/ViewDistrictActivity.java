@@ -167,6 +167,13 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
                 pointsHelp.setVisible(false);
             }
         }
+
+        // hide the FAB if we aren't on the first page
+        if (position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
+        }
     }
 
     @Override

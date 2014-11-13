@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -51,6 +52,8 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         /* Report the activity start to GAnalytics */
         Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);

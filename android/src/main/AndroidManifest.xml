@@ -63,10 +63,12 @@
                 <data android:pathPattern="/match/.*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.HomeActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppThemeNoActionBar" />
+
         <activity
             android:name=".activities.ViewEventActivity"
             android:launchMode="singleTop"
@@ -76,6 +78,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
         </activity>
+
         <activity
             android:name=".activities.ViewTeamActivity"
             android:launchMode="singleTop"
@@ -85,6 +88,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
         </activity>
+
         <activity
             android:name=".activities.ViewMatchActivity"
             android:parentActivityName=".activities.ViewEventActivity"
@@ -93,6 +97,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
         </activity>
+
         <activity
             android:name=".activities.ViewDistrictActivity"
             android:parentActivityName=".activities.HomeActivity"
@@ -101,6 +106,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
         </activity>
+
         <activity
             android:name=".activities.TeamAtDistrictActivity"
             android:parentActivityName=".activities.ViewDistrictActivity">
@@ -108,13 +114,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewDistrictActivity" />
         </activity>
+
         <activity
             android:name=".activities.settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
+
         <activity
             android:name=".activities.OpenSourceLicensesActivity"
             android:label="@string/license_label" />
+
         <activity android:name=".activities.ContributorsActivity" />
+
         <activity
             android:name=".activities.TeamAtEventActivity"
             android:parentActivityName=".activities.ViewEventActivity"
@@ -123,8 +133,29 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
         </activity>
-        <activity android:name=".activities.SearchResultsActivity" />
-        <activity android:name=".activities.MoreSearchResultsActivity" />
+
+        <activity
+            android:name=".activities.SearchResultsActivity"
+            android:theme="@style/AppThemeNoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.google.android.gms.actions.SEARCH_ACTION"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity
+            android:name=".activities.MoreSearchResultsActivity"
+            android:theme="@style/AppThemeNoActionBar" />
+
         <activity
             android:name=".activities.settings.DevSettingsActivity"
             android:label="@string/title_activity_dev_settings"
@@ -133,6 +164,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.settings.SettingsActivity" />
         </activity>
+
         <activity
             android:name=".activities.settings.NotificationSettingsActivity"
             android:label="@string/notification_settings"
@@ -151,6 +183,7 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">

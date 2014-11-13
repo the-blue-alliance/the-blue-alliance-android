@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
         /* Report the activity start to GAnalytics */
         Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
@@ -94,6 +98,14 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         // Change search hint text color
         int searchTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         ((TextView) searchView.findViewById(searchTextId)).setHintTextColor(getResources().getColor(R.color.search_hint));
+
+        // Check if we got a search as the intent
+
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchView.setQuery(query, true);
+        }
     }
 
     @Override

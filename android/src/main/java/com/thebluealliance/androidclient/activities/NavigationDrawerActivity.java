@@ -64,6 +64,8 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
 
         mContentView = (FrameLayout) findViewById(R.id.content);
+
+        mDrawerLayout.setStatusBarBackground(R.color.primary_dark);
     }
 
     /**
@@ -80,7 +82,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         onCreateNavigationDrawer();
 
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
-        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
+        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment_container,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
                 mEncourageLearning, mUseActionBarToggle);
 
@@ -141,14 +143,6 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
          * back button functionality and so we get the proper "activity finish" animation
          */
         TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, id)).startActivities();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (isDrawerOpen()) {
-            getSupportActionBar().setTitle(R.string.app_name);
-        }
-        return super.onPrepareOptionsMenu(menu);
     }
 
 

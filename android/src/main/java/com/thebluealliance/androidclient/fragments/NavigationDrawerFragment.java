@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -214,7 +213,6 @@ public class NavigationDrawerFragment extends Fragment {
                     }
 
                     mListener.onNavDrawerOpened();
-                    getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
 
                 @Override
@@ -224,7 +222,6 @@ public class NavigationDrawerFragment extends Fragment {
                     }
 
                     mListener.onNavDrawerClosed();
-                    getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
             });
         }
@@ -296,34 +293,11 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        // If the drawer is open, show the global app actions in the action bar. See also
-        // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (mDrawerLayout != null && isDrawerOpen()) {
-            showGlobalContextActionBar();
-        }
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mUseActionBarToggle && mDrawerToggle != null) {
             return mDrawerToggle.onOptionsItemSelected(item);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Per the navigation drawer design guidelines, updates the action bar to show the global app
-     * title, rather than just what's in the current screen.
-     */
-    private void showGlobalContextActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-            actionBar.setTitle(R.string.app_name);
-        }
     }
 
     @Nullable

@@ -8,6 +8,7 @@
         <item name="colorControlHighlight">@color/control_highlight</item>
         <!-- Hides the shadow below the actionbar -->
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="AppThemeNoActionBar" parent="AppTheme">

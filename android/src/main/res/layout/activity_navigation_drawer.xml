@@ -3,7 +3,8 @@
     android:id="@+id/nav_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <!-- Framelayout to display Fragments -->
     <FrameLayout
@@ -12,12 +13,20 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/warning_container" />
 
-    <fragment
-        android:id="@+id/navigation_drawer_fragment"
-        android:name="com.thebluealliance.androidclient.fragments.NavigationDrawerFragment"
+    <FrameLayout
+        android:id="@+id/navigation_drawer_fragment_container"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        tools:layout="@layout/fragment_navigation_drawer" />
+        android:fitsSystemWindows="true"
+        android:layout_gravity="start">
+
+        <fragment
+            android:id="@+id/navigation_drawer_fragment"
+            android:name="com.thebluealliance.androidclient.fragments.NavigationDrawerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_navigation_drawer" />
+
+    </FrameLayout>
 
 </android.support.v4.widget.DrawerLayout>

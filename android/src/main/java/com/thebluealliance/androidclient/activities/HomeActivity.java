@@ -193,28 +193,24 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // This will be triggered whenever the drawer opens or closes.
-        if (!isDrawerOpen()) {
-            resetActionBar();
+        resetActionBar();
 
-            switch (mCurrentSelectedNavigationItemId) {
-                case R.id.nav_item_events:
-                    setupActionBarForEvents();
-                    break;
-                case R.id.nav_item_districts:
-                    setupActionBarForDistricts();
-                    break;
-                case R.id.nav_item_teams:
-                    getSupportActionBar().setTitle("Teams");
-                    break;
-                case R.id.nav_item_insights:
-                    getSupportActionBar().setTitle("Insights");
-                    break;
-                case R.id.nav_item_my_tba:
-                    getSupportActionBar().setTitle("My TBA");
-                    break;
-            }
-        } else {
-            toolbarSpinner.setVisibility(View.GONE);
+        switch (mCurrentSelectedNavigationItemId) {
+            case R.id.nav_item_events:
+                setupActionBarForEvents();
+                break;
+            case R.id.nav_item_districts:
+                setupActionBarForDistricts();
+                break;
+            case R.id.nav_item_teams:
+                getSupportActionBar().setTitle("Teams");
+                break;
+            case R.id.nav_item_insights:
+                getSupportActionBar().setTitle("Insights");
+                break;
+            case R.id.nav_item_my_tba:
+                getSupportActionBar().setTitle("My TBA");
+                break;
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -300,7 +296,7 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
         }
     }
 
-    public void onEvent(){
+    public void onEvent() {
 
     }
 
