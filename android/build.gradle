@@ -119,4 +119,5 @@ dependencies {
     compile 'com.melnykov:floatingactionbutton:1.0.5'
     // compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
     compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT-debug.jar')
+    compile 'de.hdodenhof:circleimageview:1.2.0'
 }

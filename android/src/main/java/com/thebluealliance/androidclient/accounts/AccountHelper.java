@@ -41,22 +41,22 @@ public class AccountHelper {
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
 
-    public static void enableMyTBA(Activity activity, boolean enabled){
-        Log.d(Constants.LOG_TAG, "Enabling myTBA: "+enabled);
-        if(enabled && !isAccountSelected(activity)){
+    public static void enableMyTBA(Activity activity, boolean enabled) {
+        Log.d(Constants.LOG_TAG, "Enabling myTBA: " + enabled);
+        if (enabled && !isAccountSelected(activity)) {
             signIn(activity);
-        }else if (!enabled && isAccountSelected(activity)){
+        } else if (!enabled && isAccountSelected(activity)) {
             //disabled myTBA.
             String currentUser = getSelectedAccount(activity);
-            if(!currentUser.isEmpty()){
-                Log.d(Constants.LOG_TAG, "removing: "+currentUser);
+            if (!currentUser.isEmpty()) {
+                Log.d(Constants.LOG_TAG, "removing: " + currentUser);
                 //Remove all local content and deregister from GCM
                 new DisableMyTBA(activity).execute(currentUser);
             }
         }
     }
 
-    public static void signIn(Activity activity){
+    public static void signIn(Activity activity) {
         int googleAccounts = AccountHelper.countGoogleAccounts(activity);
         if (googleAccounts == 0) {
             // No accounts registered, nothing to do.
@@ -81,7 +81,7 @@ public class AccountHelper {
         }
     }
 
-    public static void onSignInResult(Activity activity, int requestCode, int resultCode, Intent data){
+    public static void onSignInResult(Activity activity, int requestCode, int resultCode, Intent data) {
         Log.d(Constants.LOG_TAG, "Activity result");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (requestCode == ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION && resultCode == activity.RESULT_OK) {
@@ -97,43 +97,43 @@ public class AccountHelper {
         }
     }
 
-    public static boolean isMyTBAEnabled(Context context){
+    public static boolean isMyTBAEnabled(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(PREF_MYTBA_ENABLED, false);
     }
 
-    public static boolean hasMyTBAData(Context context){
+    public static boolean hasMyTBAData(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String account = getSelectedAccount(context);
-        if(account.isEmpty()){
+        if (account.isEmpty()) {
             return false;
         }
         String prefString = String.format(UpdateMyTBA.LAST_MY_TBA_UPDATE, account);
         return prefs.getLong(prefString, -1) != -1;
     }
 
-    public static void setSelectedAccount(Context context, String accoutName){
+    public static void setSelectedAccount(Context context, String accoutName) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putString(PREF_SELECTED_ACCOUNT, accoutName).apply();
     }
 
-    public static String getSelectedAccount(Context context){
+    public static String getSelectedAccount(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(PREF_SELECTED_ACCOUNT, "");
     }
 
-    public static boolean isAccountSelected(Context context){
+    public static boolean isAccountSelected(Context context) {
         return !getSelectedAccount(context).isEmpty();
     }
 
-    public static GoogleAccountCredential getSelectedAccountCredential(Context context){
+    public static GoogleAccountCredential getSelectedAccountCredential(Context context) {
         String accountName = getSelectedAccount(context);
-        if(accountName == null || accountName.isEmpty()){
+        if (accountName == null || accountName.isEmpty()) {
             Log.w(Constants.LOG_TAG, "Can't get credential without selected account");
             return null;
         }
 
-        Log.d(Constants.LOG_TAG, "Getting credential for "+accountName);
+        Log.d(Constants.LOG_TAG, "Getting credential for " + accountName);
         GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(context, getAudience(context));
         credential.setSelectedAccountName(accountName);
 
@@ -146,16 +146,16 @@ public class AccountHelper {
         return tbaMobile.build();
     }
 
-    public static TbaMobile getAuthedTbaMobile(Context context){
+    public static TbaMobile getAuthedTbaMobile(Context context) {
         GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
         try {
             String token = currentCredential.getToken();
-            Log.d(Constants.LOG_TAG, "token: "+token);
+            Log.d(Constants.LOG_TAG, "token: " + token);
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "IO Exception while fetching account token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
         } catch (GoogleAuthException e) {
-            Log.e(Constants.LOG_TAG, "Auth exception while fetching token for "+currentCredential.getSelectedAccountName());
+            Log.e(Constants.LOG_TAG, "Auth exception while fetching token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
         }
         return AccountHelper.getTbaMobile(currentCredential);
