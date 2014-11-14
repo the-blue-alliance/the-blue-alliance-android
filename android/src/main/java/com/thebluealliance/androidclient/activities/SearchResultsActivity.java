@@ -101,8 +101,18 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
         // Check if we got a search as the intent
 
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        handleIntent(getIntent());
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()) || intent.getAction().equals("com.google.android.gms.actions.SEARCH_ACTION")) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchView.setQuery(query, true);
         }
