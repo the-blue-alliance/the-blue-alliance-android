@@ -8,8 +8,12 @@ import android.widget.Toast;
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -22,6 +26,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * File created by phil on 8/2/14.
@@ -87,30 +92,41 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
             try {
                 TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
                 ModelsMobileApiMessagesBaseResponse response = service.model().setPreferences(request).execute();
-                if (response.getCode() == 200 || response.getCode() == 304) {
+                JsonObject responseJson = JSONManager.getasJsonObject(response.getMessage());
+                JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
+                        sub = responseJson.get("subscription").getAsJsonObject();
+                int favCode = fav.get("code").getAsInt(),
+                        subCode = sub.get("code").getAsInt();
+                if(subCode == 200) {
                     // Request was successful, update the local databases
-                    if(notifications.isEmpty()) {
+                    if (notifications.isEmpty()) {
                         subscriptionsTable.remove(key);
-                    } else if (subscriptionsTable.exists(key)){
+                    } else if (subscriptionsTable.exists(key)) {
                         subscriptionsTable.update(key, new Subscription(user, modelKey, notifications));
                     } else {
                         subscriptionsTable.add(new Subscription(user, modelKey, notifications));
                     }
+                }else if(subCode == 500){
+                    Toast.makeText(context, String.format(context.getString(R.string.mytba_error), subCode, sub.get("message").getAsString()), Toast.LENGTH_SHORT).show();
+                }
+                // otherwise, we tried to add a favorite that already exists or remove one that didn't
+                // so the database doesn't need to be changed
 
-                    if(!isFavorite) {
+                if(favCode == 200) {
+                    if (!isFavorite) {
                         favoritesTable.remove(key);
                     } else if (favoritesTable.exists(key)) {
                         // Already favorited, do nothing
                     } else {
                         favoritesTable.add(new Favorite(user, modelKey));
                     }
-                    return Result.SUCCESS;
-                } else {
-                    Log.w(Constants.LOG_TAG, "Code " + response.getCode() + " while adding subscription.\n" + response.getMessage());
-                    return Result.ERROR;
+                }else if(favCode == 500){
+                    Toast.makeText(context, String.format(context.getString(R.string.mytba_error), favCode, fav.get("message").getAsString()), Toast.LENGTH_SHORT).show();
                 }
+                    return Result.SUCCESS;
+
             } catch (IOException e) {
-                Log.e(Constants.LOG_TAG, "IO Exception while adding subscription");
+                Log.e(Constants.LOG_TAG, "IO Exception while updating model preferences!");
                 e.printStackTrace();
                 return Result.ERROR;
             }
