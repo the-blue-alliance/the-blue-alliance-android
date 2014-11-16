@@ -3,6 +3,8 @@
 
     <string name="app_name">The Blue Alliance</string>
     <string name="app_name_short">TBA</string>
+    <string name="package_name">com.thebluealliance.androidclient</string>
+    <string name="account_type">com.thebluealliance.androidclient.account.TBAACCOUNT</string>
     <string name="web_url_host">thebluealliance.com</string>
     <string name="web_url_host_www">www.thebluealliance.com</string>
     <string name="action_settings">Settings</string>

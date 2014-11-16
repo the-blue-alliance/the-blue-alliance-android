@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
@@ -70,14 +71,19 @@ public class SettingsActivity extends ActionBarActivity
 
             final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
             final Activity activity = getActivity();
+            final Intent authIntent = new Intent(getActivity(), AuthenticatorActivity.class);
             enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Log.d(Constants.LOG_TAG, "Change");
                     boolean newState = !enable_mytba.isChecked(); //it was reversed, for some reason...
-                    Log.d(Constants.LOG_TAG, "Checked: "+newState);
-                    if(newState != AccountHelper.isMyTBAEnabled(activity)){
-                        AccountHelper.enableMyTBA(activity, newState);
+                    boolean current = AccountHelper.isMyTBAEnabled(activity);
+                    if(newState &&  !current){
+                        // we want to enable mytba
+                        startActivity(authIntent);
+                        getActivity().finish();
+                    }else if(!newState && current){
+                        // we want to disable mytba
+
                     }
                     return true;
                 }
@@ -100,11 +106,5 @@ public class SettingsActivity extends ActionBarActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
     }
 }

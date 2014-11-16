@@ -37,7 +37,7 @@ android {
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
             // the apk will be in android/build/outputs/apk and you can install it by running
             // 'adb install -r <file name>'
-            debugBlue{
+            debugBlue {
                 signingConfig signingConfigs.debug
                 versionNameSuffix "/#" + gitSha
                 applicationIdSuffix ".development"
@@ -83,10 +83,10 @@ task loadProperties << {
     def tba_config = new Properties();
     def tba_propFile = file("src/main/assets/tba.properties")
     tba_config.load(new FileInputStream(tba_propFile));
-    if(!tba_config.containsKey("analytics.id")){
+    if (!tba_config.containsKey("analytics.id")) {
         throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
     }
-    System.out.println("Building with analytics key: "+tba_config["analytics.id"]);
+    System.out.println("Building with analytics key: " + tba_config["analytics.id"]);
 }
 
 tasks.whenTaskAdded { theTask ->
@@ -105,10 +105,12 @@ dependencies {
     // compile fileTree(dir: 'libs', include: ['*.jar'])
     compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
     compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
-    compile 'com.android.support:support-v13:21.+'
-    compile 'com.android.support:cardview-v7:21.+'
-    compile 'com.android.support:support-v4:21.+'
-    compile 'com.android.support:appcompat-v7:21.+'
+    // compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
+    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT-debug.jar')
+    compile 'com.android.support:support-v13:21.0.0'
+    compile 'com.android.support:cardview-v7:21.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'org.apache.commons:commons-io:1.3.2'
@@ -118,7 +120,5 @@ dependencies {
     compile 'com.sothree.slidinguppanel:library:+'
     compile 'de.greenrobot:eventbus:2.2.+'
     compile 'com.melnykov:floatingactionbutton:1.0.5'
-    // compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
-    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT-debug.jar')
     compile 'de.hdodenhof:circleimageview:1.2.0'
 }

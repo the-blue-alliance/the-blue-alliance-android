@@ -21,7 +21,9 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.PlusBaseActivity;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
@@ -44,7 +46,7 @@ public class AccountHelper {
     public static void enableMyTBA(Activity activity, boolean enabled) {
         Log.d(Constants.LOG_TAG, "Enabling myTBA: " + enabled);
         if (enabled && !isAccountSelected(activity)) {
-            signIn(activity);
+
         } else if (!enabled && isAccountSelected(activity)) {
             //disabled myTBA.
             String currentUser = getSelectedAccount(activity);
@@ -52,48 +54,9 @@ public class AccountHelper {
                 Log.d(Constants.LOG_TAG, "removing: " + currentUser);
                 //Remove all local content and deregister from GCM
                 new DisableMyTBA(activity).execute(currentUser);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                prefs.edit().putBoolean(PREF_MYTBA_ENABLED, false).apply();
             }
-        }
-    }
-
-    public static void signIn(Activity activity) {
-        int googleAccounts = AccountHelper.countGoogleAccounts(activity);
-        if (googleAccounts == 0) {
-            // No accounts registered, nothing to do.
-            Log.w(Constants.LOG_TAG, "No google accounts found.");
-        } else if (googleAccounts == 1) {
-            // If only one account then select it.
-            AccountManager am = AccountManager.get(activity);
-            Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            if (accounts != null && accounts.length > 0) {
-                // Select account and perform authorization check.
-                AccountHelper.setSelectedAccount(activity, accounts[0].name);
-            }
-        } else {
-            // More than one Google Account is present, a chooser is necessary.
-
-            // Invoke an {@code Intent} to allow the user to select a Google account.
-            Intent accountSelector = AccountPicker.newChooseAccountIntent(null, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false,
-                    "Select the account to use with The Blue Alliance", null, null, null);
-            activity.startActivityForResult(accountSelector,
-                    ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION);
-        }
-    }
-
-    public static void onSignInResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        Log.d(Constants.LOG_TAG, "Activity result");
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (requestCode == ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION && resultCode == activity.RESULT_OK) {
-            // This path indicates the account selection activity resulted in the user selecting a
-            // Google account and clicking OK.
-
-            // Set the selected account.
-            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            AccountHelper.setSelectedAccount(activity, accountName);
-            prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
-            GCMHelper.registerGCMIfNeeded(activity);
-            new UpdateMyTBA(activity, true).execute();
         }
     }
 

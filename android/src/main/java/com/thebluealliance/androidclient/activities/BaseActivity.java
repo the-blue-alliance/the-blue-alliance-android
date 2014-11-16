@@ -67,7 +67,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         super.onResume();
         boolean mytba = AccountHelper.isMyTBAEnabled(this);
         if (!AccountHelper.isAccountSelected(this) && mytba) {
-            AccountHelper.signIn(this);
+            startActivity(new Intent(this, AuthenticatorActivity.class));
+            finish();
         } else if(mytba){
             GCMHelper.registerGCMIfNeeded(this);
         }
@@ -123,13 +124,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
 
     protected void setModelKey(String key){
         modelKey = key;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
     }
 
 }
