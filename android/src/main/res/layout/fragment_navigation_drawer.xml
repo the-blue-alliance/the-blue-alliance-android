@@ -3,20 +3,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <com.thebluealliance.androidclient.views.SixteenNineAspectRatioLayout
+        android:id="@+id/mytba_profile_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="false">
+        android:clickable="true">
 
         <ImageView
+            android:id="@+id/profile_cover_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/default_cover"
-            android:id="@+id/profile_cover_image" />
+            android:src="@drawable/default_cover" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -24,18 +25,22 @@
             android:layout_height="60dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:src="@drawable/our_lord_and_savior"
-            />
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/our_lord_and_savior" />
 
         <TextView
             android:id="@+id/profile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Matias Duarte"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:textSize="14dp"
+            android:text="Matias Duarte"
             android:textColor="@color/white"
-            android:layout_alignParentBottom="true"/>
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"/>
 
     </com.thebluealliance.androidclient.views.SixteenNineAspectRatioLayout>
 
