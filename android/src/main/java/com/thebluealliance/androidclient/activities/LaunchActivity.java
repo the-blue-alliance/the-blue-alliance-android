@@ -16,7 +16,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;

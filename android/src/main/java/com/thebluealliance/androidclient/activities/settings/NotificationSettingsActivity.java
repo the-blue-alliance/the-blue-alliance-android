@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.activities.settings;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBarActivity;
 

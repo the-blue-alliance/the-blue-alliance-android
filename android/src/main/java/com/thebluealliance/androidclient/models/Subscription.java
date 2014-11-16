@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

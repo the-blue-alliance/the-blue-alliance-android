@@ -6,7 +6,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
-import android.view.Menu;
 import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
