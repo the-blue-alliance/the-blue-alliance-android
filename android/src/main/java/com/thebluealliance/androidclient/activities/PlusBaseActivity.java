@@ -13,9 +13,11 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.PlusClient;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 
@@ -23,8 +25,7 @@ import com.thebluealliance.androidclient.gcm.GCMHelper;
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
 public abstract class PlusBaseActivity extends Activity
-        implements GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener{
 
     private static final String TAG = PlusBaseActivity.class.getSimpleName();
 
@@ -36,9 +37,6 @@ public abstract class PlusBaseActivity extends Activity
 
     // A flag to track when a connection is already in progress
     public boolean mPlusClientIsConnecting = false;
-
-    // This is the helper object that connects to Google Play Services.
-    private PlusClient mPlusClient;
 
     // The saved result from {@link #onConnectionFailed(ConnectionResult)}.  If a connection
     // attempt has been made, this is non-null.
@@ -74,22 +72,11 @@ public abstract class PlusBaseActivity extends Activity
      */
     protected abstract void updateConnectButtonState();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Initialize the PlusClient connection.
-        // Scopes indicate the information about the user your application will be able to access.
-        mPlusClient =
-                new PlusClient.Builder(this, this, this).setScopes(Scopes.PLUS_LOGIN,
-                        Scopes.PLUS_ME).build();
-    }
-
     /**
      * Try to sign in the user.
      */
     public void signIn() {
-        if (!mPlusClient.isConnected()) {
+        if (!PlusHelper.isConnected()) {
             // Show the dialog as we are now signing in.
             setProgressBarVisible(true);
             // Make sure that we will start the resolution (e.g. fire the intent and pop up a
@@ -115,8 +102,8 @@ public abstract class PlusBaseActivity extends Activity
      * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
      */
     private void initiatePlusClientConnect() {
-        if (!mPlusClient.isConnected() && !mPlusClient.isConnecting()) {
-            mPlusClient.connect();
+        if (!PlusHelper.isConnected() && !PlusHelper.isConnecting()) {
+            PlusHelper.connect(this, this, this);
         }
     }
 
@@ -125,8 +112,8 @@ public abstract class PlusBaseActivity extends Activity
      * This will call back to {@link #onDisconnected()}.
      */
     private void initiatePlusClientDisconnect() {
-        if (mPlusClient.isConnected()) {
-            mPlusClient.disconnect();
+        if (PlusHelper.isConnected()) {
+            PlusHelper.disconnect();
         }
     }
 
@@ -136,10 +123,10 @@ public abstract class PlusBaseActivity extends Activity
     public void signOut() {
 
         // We only want to sign out if we're connected.
-        if (mPlusClient.isConnected()) {
+        if (PlusHelper.isConnected()) {
             // Clear the default account in order to allow the user to potentially choose a
             // different account from the account chooser.
-            mPlusClient.clearDefaultAccount();
+            PlusHelper.clearDefaultAccount();
 
             // Disconnect from Google Play Services, then reconnect in order to restart the
             // process from scratch.
@@ -156,14 +143,14 @@ public abstract class PlusBaseActivity extends Activity
      */
     public void revokeAccess() {
 
-        if (mPlusClient.isConnected()) {
+        if (PlusHelper.isConnected()) {
             // Clear the default account as in the Sign Out.
-            mPlusClient.clearDefaultAccount();
+            PlusHelper.clearDefaultAccount();
 
             // Revoke access to this entire application. This will call back to
             // onAccessRevoked when it is complete, as it needs to reach the Google
             // authentication servers to revoke all tokens.
-            mPlusClient.revokeAccessAndDisconnect(new PlusClient.OnAccessRevokedListener() {
+            PlusHelper.revokeAccessAndDisconnect(new PlusClient.OnAccessRevokedListener() {
                 public void onAccessRevoked(ConnectionResult result) {
                     updateConnectButtonState();
                     onPlusClientRevokeAccess();
@@ -248,7 +235,7 @@ public abstract class PlusBaseActivity extends Activity
         updateConnectButtonState();
         setProgressBarVisible(false);
 
-        String accountName = getPlusClient().getAccountName();
+        String accountName = PlusHelper.getAccountName();
         AccountHelper.setSelectedAccount(this, accountName);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
@@ -291,10 +278,6 @@ public abstract class PlusBaseActivity extends Activity
                 startResolution();
             }
         }
-    }
-
-    public PlusClient getPlusClient() {
-        return mPlusClient;
     }
 
     public boolean registerSystemAccount(String accountName){

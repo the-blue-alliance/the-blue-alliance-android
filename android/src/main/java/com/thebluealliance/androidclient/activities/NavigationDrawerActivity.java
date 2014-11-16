@@ -273,4 +273,10 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         }
     }
 
+    protected void setDrawerProfileInfo(){
+        if(mNavDrawerFragment != null){
+            mNavDrawerFragment.setDrawerProfileInfo();
+        }
+    }
+
 }

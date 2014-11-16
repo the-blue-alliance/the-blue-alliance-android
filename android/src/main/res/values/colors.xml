@@ -60,4 +60,6 @@
     <color name="accent_dark">#e6c100</color>
     <color name="control_highlight">#c5cae9</color>
 
+    <color name="photo_tint">#6000</color>
+
 </resources>

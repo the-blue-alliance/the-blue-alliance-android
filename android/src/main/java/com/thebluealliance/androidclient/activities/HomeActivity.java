@@ -285,14 +285,16 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
         super.onNewIntent(intent);
 
         Log.d(Constants.LOG_TAG, "New intent received!");
-        int requestedMode = intent.getExtras().getInt(REQUESTED_MODE, R.id.nav_item_events);
-        if (requestedMode == mCurrentSelectedNavigationItemId) {
-            // We are already in the appropriate mode
-            return;
-        } else {
-            switchToModeForId(requestedMode);
-            // Ensure that the Action Bar is properly configured for the current mode
-            invalidateOptionsMenu();
+        if(intent != null && intent.getExtras() != null) {
+            int requestedMode = intent.getExtras().getInt(REQUESTED_MODE, R.id.nav_item_events);
+            if (requestedMode == mCurrentSelectedNavigationItemId) {
+                // We are already in the appropriate mode
+                return;
+            } else {
+                switchToModeForId(requestedMode);
+                // Ensure that the Action Bar is properly configured for the current mode
+                invalidateOptionsMenu();
+            }
         }
     }
 

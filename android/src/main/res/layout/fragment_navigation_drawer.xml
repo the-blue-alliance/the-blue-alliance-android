@@ -9,9 +9,14 @@
     <com.thebluealliance.androidclient.views.SixteenNineAspectRatioLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/blue"
-        android:padding="16dp"
-        android:clickable="true">
+        android:clickable="false">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_cover"
+            android:id="@+id/profile_cover_image" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
@@ -19,8 +24,8 @@
             android:layout_height="60dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:padding="16dp"
-            android:src="@drawable/our_lord_and_savior"/>
+            android:src="@drawable/our_lord_and_savior"
+            />
 
         <TextView
             android:id="@+id/profile_name"

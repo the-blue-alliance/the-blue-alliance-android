@@ -23,7 +23,7 @@ public class Subscription {
     private int modelEnum;
 
     public Subscription(){
-
+        notificationList = new ArrayList<>();
     }
 
     public Subscription(String userName, String modelKey, List<String> notificationSettings) {

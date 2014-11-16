@@ -19,6 +19,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
@@ -78,6 +79,16 @@ public class AccountHelper {
     public static String getSelectedAccount(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(PREF_SELECTED_ACCOUNT, "");
+    }
+
+    public static Account getCurrentAccount(Context context){
+        AccountManager am = AccountManager.get(context);
+        Account[] accounts = am.getAccountsByType(context.getString(R.string.account_type));
+        String selectedAccount = getSelectedAccount(context);
+        for(Account account: accounts){
+            if(account.name.equals(selectedAccount)) return account;
+        }
+        return null;
     }
 
     public static boolean isAccountSelected(Context context) {

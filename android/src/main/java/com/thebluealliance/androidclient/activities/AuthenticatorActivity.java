@@ -16,6 +16,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
 
 /**
  * A login screen that offers login via email/password and via Google+ sign in.
@@ -67,7 +68,7 @@ public class AuthenticatorActivity extends PlusBaseActivity {
             return;
         }
 
-        final Intent homeIntent = new Intent(this, HomeActivity.class);
+        final Intent homeIntent = HomeActivity.newInstance(this, 0);
         mPlusNotNowButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +118,7 @@ public class AuthenticatorActivity extends PlusBaseActivity {
     @Override
     protected void onPlusClientSignIn() {
         AccountHelper.enableMyTBA(this, true);
-        startActivity(new Intent(this, HomeActivity.class));
+        startActivity(HomeActivity.newInstance(this, 0));
         finish();
     }
 
@@ -128,7 +129,7 @@ public class AuthenticatorActivity extends PlusBaseActivity {
 
     @Override
     protected void updateConnectButtonState() {
-        boolean connected = getPlusClient().isConnected();
+        boolean connected = PlusHelper.isConnected();
 
         mPlusSignInButton.setVisibility(connected ? View.GONE : View.VISIBLE);
         mPlusNotNowButton.setVisibility(connected ? View.GONE : View.VISIBLE);

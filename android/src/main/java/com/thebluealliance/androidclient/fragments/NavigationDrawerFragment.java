@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -12,20 +13,32 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.google.android.gms.plus.PlusClient;
+import com.google.android.gms.plus.model.people.Person;
+import com.squareup.picasso.Picasso;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.views.SixteenNineAspectRatioLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -65,6 +78,9 @@ public class NavigationDrawerFragment extends Fragment {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
+    private CircleImageView profilePicture;
+    private ImageView coverPhoto;
+    private TextView profileName;
     private View mFragmentContainerView;
     private NavigationDrawerAdapter mNavigationAdapter;
     private NavigationDrawerListener mListener;
@@ -112,7 +128,27 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setAdapter(mNavigationAdapter);
 
+        profileName = (TextView)v.findViewById(R.id.profile_name);
+        profilePicture = (CircleImageView)v.findViewById(R.id.profile_image);
+        coverPhoto = (ImageView)v.findViewById(R.id.profile_cover_image);
+        setDrawerProfileInfo();
         return v;
+    }
+
+    public void setDrawerProfileInfo(){
+        Person person = PlusHelper.getCurrentPerson();
+        if(person != null){
+            profileName.setText(person.getDisplayName());
+            Picasso picasso = Picasso.with(getActivity());
+            if(person.hasImage()) {
+                picasso.load(person.getImage().getUrl()).into(profilePicture);
+            }
+            if(person.hasCover()){
+                picasso.load(person.getCover().getCoverPhoto().getUrl()).into(coverPhoto);
+            }else{
+                coverPhoto.setImageResource(R.drawable.default_cover);
+            }
+        }
     }
 
     public boolean isDrawerOpen() {
