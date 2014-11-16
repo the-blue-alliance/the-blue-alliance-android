@@ -1,9 +1,19 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.accounts.Account;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.ComposeShader;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -13,7 +23,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,17 +32,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
-import com.thebluealliance.androidclient.Constants;
+import com.squareup.picasso.Transformation;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
-import com.thebluealliance.androidclient.views.SixteenNineAspectRatioLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +89,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ImageView coverPhoto;
     private TextView profileName;
     private View mFragmentContainerView;
+    private View myTbaProfileInfoContainer;
     private NavigationDrawerAdapter mNavigationAdapter;
     private NavigationDrawerListener mListener;
 
@@ -128,25 +136,33 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setAdapter(mNavigationAdapter);
 
-        profileName = (TextView)v.findViewById(R.id.profile_name);
-        profilePicture = (CircleImageView)v.findViewById(R.id.profile_image);
-        coverPhoto = (ImageView)v.findViewById(R.id.profile_cover_image);
+        myTbaProfileInfoContainer = v.findViewById(R.id.mytba_profile_info);
+
+        if (!AccountHelper.isMyTBAEnabled(getActivity())) {
+            myTbaProfileInfoContainer.setVisibility(View.GONE);
+        } else {
+            myTbaProfileInfoContainer.setVisibility(View.VISIBLE);
+        }
+        profileName = (TextView) v.findViewById(R.id.profile_name);
+        profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
+        coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
         setDrawerProfileInfo();
+
         return v;
     }
 
-    public void setDrawerProfileInfo(){
+    public void setDrawerProfileInfo() {
         Person person = PlusHelper.getCurrentPerson();
-        if(person != null){
+        if (person != null) {
             profileName.setText(person.getDisplayName());
             Picasso picasso = Picasso.with(getActivity());
-            if(person.hasImage()) {
+            if (person.hasImage()) {
                 picasso.load(person.getImage().getUrl()).into(profilePicture);
             }
-            if(person.hasCover()){
-                picasso.load(person.getCover().getCoverPhoto().getUrl()).into(coverPhoto);
-            }else{
-                coverPhoto.setImageResource(R.drawable.default_cover);
+            if (person.hasCover()) {
+                picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);
+            } else {
+                picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
             }
         }
     }
@@ -362,5 +378,37 @@ public class NavigationDrawerFragment extends Fragment {
          */
         public void onNavDrawerClosed();
 
+    }
+
+    public static class LinearGradientTransformation implements Transformation {
+        @Override
+        public Bitmap transform(Bitmap source) {
+            Bitmap outBitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), source.getConfig());
+
+            // Create shaders
+            Shader bitmapShader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+            Shader linearGradient = new LinearGradient(0, 0, 0, source.getHeight(), Color.TRANSPARENT, 0xB4000000, Shader.TileMode.MIRROR);
+
+            // create a shader that combines both effects
+            ComposeShader shader = new ComposeShader(bitmapShader, linearGradient, PorterDuff.Mode.DST_OUT);
+
+            Paint p = new Paint();
+            p.setAntiAlias(true);
+            p.setShader(shader);
+
+            Paint black = new Paint();
+            black.setColor(Color.BLACK);
+
+            Canvas c = new Canvas(outBitmap);
+            c.drawRect(0, 0, source.getWidth(), source.getHeight(), black);
+            c.drawPaint(p);
+            source.recycle();
+            return outBitmap;
+        }
+
+        @Override
+        public String key() {
+            return null;
+        }
     }
 }
