@@ -10,7 +10,8 @@
         android:id="@+id/mytba_profile_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true">
+        android:clickable="true"
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/profile_cover_image"

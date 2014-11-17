@@ -8,7 +8,6 @@ import android.widget.Toast;
 import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -26,7 +25,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * File created by phil on 8/2/14.
@@ -73,19 +71,22 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         // Determine if we have to do anything
         List<String> existingNotificationsList = new ArrayList<>();
         Subscription existingSubscription = subscriptionsTable.get(key);
-        if(existingSubscription != null) {
+        if (existingSubscription != null) {
             existingNotificationsList = existingSubscription.getNotificationList();
         }
 
         Collections.sort(notifications);
         Collections.sort(existingNotificationsList);
 
+        Log.d(Constants.LOG_TAG, "New notifications: " + notifications.toString());
+        Log.d(Constants.LOG_TAG, "Existing notifications: " + existingNotificationsList.toString());
+
         boolean notificationsHaveChanged = !(notifications.equals(existingNotificationsList));
 
         // If the user is requesting a favorite and is already a favorite,
         // or if the user is requesting an unfavorite and it is already not a favorite,
         // and if the existing notification settings equal the new ones, do nothing.
-        if (((isFavorite && favoritesTable.exists(key)) || (!isFavorite && !favoritesTable.exists(key))) && notificationsHaveChanged) {
+        if (((isFavorite && favoritesTable.exists(key)) || (!isFavorite && !favoritesTable.exists(key))) && !notificationsHaveChanged) {
             // nothing has changed, no-op
             return Result.NOOP;
         } else {
@@ -97,7 +98,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                         sub = responseJson.get("subscription").getAsJsonObject();
                 int favCode = fav.get("code").getAsInt(),
                         subCode = sub.get("code").getAsInt();
-                if(subCode == 200) {
+                if (subCode == 200) {
                     // Request was successful, update the local databases
                     if (notifications.isEmpty()) {
                         subscriptionsTable.remove(key);
@@ -106,13 +107,13 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                     } else {
                         subscriptionsTable.add(new Subscription(user, modelKey, notifications));
                     }
-                }else if(subCode == 500){
+                } else if (subCode == 500) {
                     Toast.makeText(context, String.format(context.getString(R.string.mytba_error), subCode, sub.get("message").getAsString()), Toast.LENGTH_SHORT).show();
                 }
                 // otherwise, we tried to add a favorite that already exists or remove one that didn't
                 // so the database doesn't need to be changed
 
-                if(favCode == 200) {
+                if (favCode == 200) {
                     if (!isFavorite) {
                         favoritesTable.remove(key);
                     } else if (favoritesTable.exists(key)) {
@@ -120,10 +121,10 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                     } else {
                         favoritesTable.add(new Favorite(user, modelKey));
                     }
-                }else if(favCode == 500){
+                } else if (favCode == 500) {
                     Toast.makeText(context, String.format(context.getString(R.string.mytba_error), favCode, fav.get("message").getAsString()), Toast.LENGTH_SHORT).show();
                 }
-                    return Result.SUCCESS;
+                return Result.SUCCESS;
 
             } catch (IOException e) {
                 Log.e(Constants.LOG_TAG, "IO Exception while updating model preferences!");

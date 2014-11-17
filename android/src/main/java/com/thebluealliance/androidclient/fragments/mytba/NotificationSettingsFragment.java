@@ -170,4 +170,8 @@ public class NotificationSettingsFragment extends PreferenceFragment {
             ((CheckBoxPreference) findPreference(key)).setChecked(initialStateBundle.getBoolean(key));
         }
     }
+
+    public void refreshSettingsFromDatabase() {
+        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle).execute(modelKey);
+    }
 }

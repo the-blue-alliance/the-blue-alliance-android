@@ -7,12 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.ComposeShader;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.Shader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +34,7 @@ import android.widget.TextView;
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
@@ -66,6 +66,8 @@ public class NavigationDrawerFragment extends Fragment {
      * expands it. This shared preference tracks this.
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+
+    private static final int PROFILE_PIC_SIZE = 200;
 
     private static final List<ListItem> NAVIGATION_ITEMS = new ArrayList<>();
 
@@ -155,9 +157,16 @@ public class NavigationDrawerFragment extends Fragment {
         Person person = PlusHelper.getCurrentPerson();
         if (person != null) {
             profileName.setText(person.getDisplayName());
+            String personPhotoUrl = person.getImage().getUrl();
+            personPhotoUrl = personPhotoUrl.substring(0,
+                    personPhotoUrl.length() - 2)
+                    + PROFILE_PIC_SIZE;
+
+            Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+
             Picasso picasso = Picasso.with(getActivity());
             if (person.hasImage()) {
-                picasso.load(person.getImage().getUrl()).into(profilePicture);
+                picasso.load(personPhotoUrl).into(profilePicture);
             }
             if (person.hasCover()) {
                 picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);

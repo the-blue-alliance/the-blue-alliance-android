@@ -61,6 +61,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
             return;
         }
         PreferenceScreen preferenceScreen = fragment.getPreferenceScreen();
+        preferenceScreen.removeAll();
         CheckBoxPreference favorite = new CheckBoxPreference(context);
         favorite.setTitle("Favorite");
         favorite.setSummary("You can save teams, events, and more for easy access by marking them as \"favorites\".");
