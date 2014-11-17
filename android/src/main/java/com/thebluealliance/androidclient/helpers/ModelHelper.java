@@ -128,7 +128,7 @@ public class ModelHelper {
             switch (getModelFromKey(key)) {
                 case EVENT:
                     Event event = DataManager.Events.getEvent(context, key, false).getData();
-                    text = event.getEventYear() + " " + event.getEventName();
+                    text = event.getEventYear() + " " + event.getShortName();
                     break;
                 case TEAM:
                     Team team = DataManager.Teams.getTeam(context, key, false).getData();
