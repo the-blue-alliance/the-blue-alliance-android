@@ -20,28 +20,34 @@
             android:scaleType="centerCrop"
             android:src="@drawable/default_cover" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/our_lord_and_savior" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/account_details_container">
 
-        <TextView
-            android:id="@+id/profile_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:text="Matias Duarte"
-            android:textColor="@color/white"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/our_lord_and_savior" />
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:text="Matias Duarte"
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp" />
+        </RelativeLayout>
 
     </com.thebluealliance.androidclient.views.SixteenNineAspectRatioLayout>
 

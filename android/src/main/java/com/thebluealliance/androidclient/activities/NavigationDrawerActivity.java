@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +13,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
 
 /**
  * Activity that provides a navigation drawer.
@@ -20,7 +22,7 @@ import com.thebluealliance.androidclient.listitems.NavDrawerItem;
  * <p/>
  * Created by Nathan on 5/15/2014.
  */
-//TODO Fix the navigation drawer to compensate custom toolbars
+
 public abstract class NavigationDrawerActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerListener {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
@@ -28,6 +30,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
     private NavigationDrawerFragment mNavDrawerFragment;
     private DrawerLayout mDrawerLayout;
     private FrameLayout mContentView;
+    private ScrimInsetsFrameLayout drawerContainer;
 
     private String mActionBarTitle;
 
@@ -65,6 +68,8 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         mContentView = (FrameLayout) findViewById(R.id.content);
 
         mDrawerLayout.setStatusBarBackground(R.color.primary_dark);
+
+        drawerContainer = (ScrimInsetsFrameLayout) findViewById(R.id.navigation_drawer_fragment_container);
     }
 
     /**
@@ -84,6 +89,12 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment_container,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
                 mEncourageLearning, mUseActionBarToggle);
+        drawerContainer.setOnInsetsCallback(new ScrimInsetsFrameLayout.OnInsetsCallback() {
+            @Override
+            public void onInsetsChanged(Rect insets) {
+                mNavDrawerFragment.onInsetsChanged(insets);
+            }
+        });
 
         // Restore the state of the navigation drawer on rotation changes
         if (savedInstanceState != null) {

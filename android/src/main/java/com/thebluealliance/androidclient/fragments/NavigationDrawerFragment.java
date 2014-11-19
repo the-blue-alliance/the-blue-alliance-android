@@ -11,6 +11,7 @@ import android.graphics.ComposeShader;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.Shader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -29,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.plus.model.people.Person;
@@ -41,6 +43,7 @@ import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +73,8 @@ public class NavigationDrawerFragment extends Fragment {
     private static final int PROFILE_PIC_SIZE = 200;
 
     private static final List<ListItem> NAVIGATION_ITEMS = new ArrayList<>();
+
+    private ScrimInsetsFrameLayout scrimLayout;
 
     static {
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "My TBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
@@ -140,11 +145,11 @@ public class NavigationDrawerFragment extends Fragment {
 
         myTbaProfileInfoContainer = v.findViewById(R.id.mytba_profile_info);
 
-        if (!AccountHelper.isMyTBAEnabled(getActivity())) {
+        /*if (!AccountHelper.isMyTBAEnabled(getActivity())) {
             myTbaProfileInfoContainer.setVisibility(View.GONE);
         } else {
             myTbaProfileInfoContainer.setVisibility(View.VISIBLE);
-        }
+        }*/
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
@@ -419,5 +424,19 @@ public class NavigationDrawerFragment extends Fragment {
         public String key() {
             return null;
         }
+    }
+
+    /**
+     * Called when the insets of the nav drawer are changed. This allows us to properly place the contents so
+     * that they don't flow under the status bar.
+     *
+     */
+    public void onInsetsChanged(Rect insets) {
+        RelativeLayout accountDetailsContainer = (RelativeLayout) getView().findViewById(R.id.account_details_container);
+
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)
+                accountDetailsContainer.getLayoutParams();
+        lp.topMargin = insets.top;
+        accountDetailsContainer.setLayoutParams(lp);
     }
 }
