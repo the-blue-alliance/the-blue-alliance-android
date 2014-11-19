@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -84,6 +85,8 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
 
         hideWarningMessage();
 
+        handler = new Handler();
+
         eventsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
         for (int i = 0; i < eventsDropdownItems.length; i++) {
             eventsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
@@ -95,6 +98,7 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
         }
 
         int initNavId = R.id.nav_item_events;
+
         Bundle b = getIntent().getExtras();
         if (b != null) {
             if (b.containsKey(REQUESTED_MODE)) {
@@ -179,6 +183,9 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
         // This must be done before we lose the drawer
         mCurrentSelectedNavigationItemId = id;
+
+        // Call this to make sure the toolbar has the correct contents
+        invalidateOptionsMenu();
     }
 
     private void resetActionBar() {
@@ -263,9 +270,15 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
     @Override
     public void onNavDrawerItemClicked(NavDrawerItem item) {
         // Don't reload the fragment if the user selects the tab we are currently on
-        int id = item.getId();
+        final int id = item.getId();
         if (id != mCurrentSelectedNavigationItemId) {
-            switchToModeForId(id);
+            // Launch after a short delay to give the drawer time to close.
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switchToModeForId(id);
+                }
+            }, DRAWER_CLOSE_ANIMATION_DURATION);
         }
     }
 
@@ -285,7 +298,7 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
         super.onNewIntent(intent);
 
         Log.d(Constants.LOG_TAG, "New intent received!");
-        if(intent != null && intent.getExtras() != null) {
+        if (intent != null && intent.getExtras() != null) {
             int requestedMode = intent.getExtras().getInt(REQUESTED_MODE, R.id.nav_item_events);
             if (requestedMode == mCurrentSelectedNavigationItemId) {
                 // We are already in the appropriate mode

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -27,6 +28,8 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
+    protected static final int DRAWER_CLOSE_ANIMATION_DURATION = 250;
+
     private NavigationDrawerFragment mNavDrawerFragment;
     private DrawerLayout mDrawerLayout;
     private FrameLayout mContentView;
@@ -37,6 +40,8 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
     private boolean mUseActionBarToggle = false;
     private boolean mEncourageLearning = false;
     private boolean mShowAppNameWhenDrawerOpened = false;
+
+    protected Handler handler;
 
     /**
      * Tells the activity whether or not to use the action bar toggle for
@@ -70,6 +75,8 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         mDrawerLayout.setStatusBarBackground(R.color.primary_dark);
 
         drawerContainer = (ScrimInsetsFrameLayout) findViewById(R.id.navigation_drawer_fragment_container);
+
+        handler = new Handler();
     }
 
     /**
@@ -140,19 +147,33 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
      */
     @Override
     public void onNavDrawerItemClicked(NavDrawerItem item) {
-        int id = item.getId();
+        final int id = item.getId();
 
         // Open settings in the foreground
         if (id == R.id.nav_item_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return;
+            // Launch after a short delay to give the drawer time to close.
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(NavigationDrawerActivity.this, SettingsActivity.class));
+                }
+            }, DRAWER_CLOSE_ANIMATION_DURATION);
         }
+
 
         /*
          * We manually add the start activity to the back stack so that we maintain proper
-         * back button functionality and so we get the proper "activity finish" animation
+         * back button functionality and so we get the proper "activity finish" animation.
+         *
+         * Launch after a short delay to give the drawer time to close.
          */
-        TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, id)).startActivities();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TaskStackBuilder.create(NavigationDrawerActivity.this).addNextIntent(HomeActivity.newInstance(NavigationDrawerActivity.this, id)).startActivities();
+            }
+        }, DRAWER_CLOSE_ANIMATION_DURATION);
     }
 
 
@@ -279,13 +300,13 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
 
     @Override
     public void onNavDrawerOpened() {
-        if(mShowAppNameWhenDrawerOpened) {
+        if (mShowAppNameWhenDrawerOpened) {
             getSupportActionBar().setTitle(R.string.app_name);
         }
     }
 
-    protected void setDrawerProfileInfo(){
-        if(mNavDrawerFragment != null){
+    protected void setDrawerProfileInfo() {
+        if (mNavDrawerFragment != null) {
             mNavDrawerFragment.setDrawerProfileInfo();
         }
     }

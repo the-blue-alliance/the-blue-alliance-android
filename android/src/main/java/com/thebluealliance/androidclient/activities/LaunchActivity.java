@@ -164,7 +164,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     }
 
     private void goToHome() {
-        startActivity(HomeActivity.newInstance(this, 0));
+        startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
 
