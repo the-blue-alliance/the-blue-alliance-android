@@ -153,7 +153,14 @@ public class NavigationDrawerFragment extends Fragment {
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
-        setDrawerProfileInfo();
+        if(AccountHelper.isMyTBAEnabled(getActivity())) {
+            profilePicture.setVisibility(View.VISIBLE);
+            profileName.setVisibility(View.VISIBLE);
+            setDrawerProfileInfo();
+        }else{
+            profilePicture.setVisibility(View.GONE);
+            profileName.setVisibility(View.GONE);
+        }
 
         return v;
     }
