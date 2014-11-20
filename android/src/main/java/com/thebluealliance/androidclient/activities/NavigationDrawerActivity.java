@@ -28,7 +28,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
-    protected static final int DRAWER_CLOSE_ANIMATION_DURATION = 250;
+    protected static final int DRAWER_CLOSE_ANIMATION_DURATION = 600;
 
     private NavigationDrawerFragment mNavDrawerFragment;
     private DrawerLayout mDrawerLayout;
