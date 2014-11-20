@@ -55,7 +55,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
     @Override
     protected Result doInBackground(String... params) {
         String modelKey = settings.modelKey;
-        ArrayList<String> notifications = settings.enabledNotifications;
+        List<String> notifications = settings.enabledNotifications;
         boolean isFavorite = settings.isFavorite;
 
         String user = AccountHelper.getSelectedAccount(context);
@@ -85,7 +85,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         // If the user is requesting a favorite and is already a favorite,
         // or if the user is requesting an unfavorite and it is already not a favorite,
         // and if the existing notification settings equal the new ones, do nothing.
-        if (((isFavorite && favoritesTable.exists(key)) || (!isFavorite && !favoritesTable.exists(key))) && notificationsHaveChanged) {
+        if (((isFavorite && favoritesTable.exists(key)) || (!isFavorite && !favoritesTable.exists(key))) && !notificationsHaveChanged) {
             // nothing has changed, no-op
             return Result.NOOP;
         } else {
