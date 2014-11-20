@@ -48,8 +48,8 @@ public class SettingsActivity extends ActionBarActivity
             Preference contributors = findPreference("contributors");
             contributors.setIntent(new Intent(getActivity(), ContributorsActivity.class));
 
-            Preference notifications = findPreference("notifications");
-            notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
+            //Preference notifications = findPreference("notifications");
+            //notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
 
             Preference changelog = findPreference("changelog");
             String version = BuildConfig.VERSION_NAME;
@@ -67,7 +67,7 @@ public class SettingsActivity extends ActionBarActivity
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
+            /*final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
             final Activity activity = getActivity();
             final Intent authIntent = new Intent(getActivity(), AuthenticatorActivity.class);
             enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -85,7 +85,7 @@ public class SettingsActivity extends ActionBarActivity
                     }
                     return true;
                 }
-            });
+            });*/
 
 
             if (Utilities.isDebuggable()) {

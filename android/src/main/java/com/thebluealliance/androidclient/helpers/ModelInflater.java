@@ -273,6 +273,9 @@ public class ModelInflater {
                 case Database.Districts.YEAR:
                     district.setYear(data.getInt(i));
                     break;
+                case Database.Districts.NAME:
+                    district.setName(data.getString(i));
+                    break;
                 default:
             }
         }

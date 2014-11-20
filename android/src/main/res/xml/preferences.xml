@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
+<!--
     <PreferenceCategory android:title="@string/pref_header_account" >
 
         <SwitchPreference
@@ -12,7 +12,7 @@
             android:title="@string/notification_settings"/>
 
     </PreferenceCategory>
-
+-->
     <!--<PreferenceCategory android:title="@string/pref_header_general" />-->
 
     <PreferenceCategory android:title="@string/pref_header_appinfo">

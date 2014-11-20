@@ -10,7 +10,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 18
-        versionName "2.0.1"
+        versionName "2.0.2-test"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -106,7 +106,7 @@ dependencies {
     compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
     compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
     // compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
-    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT-debug.jar')
+    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
     compile 'com.android.support:support-v13:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.0'
     compile 'com.android.support:support-v4:21.0.0'

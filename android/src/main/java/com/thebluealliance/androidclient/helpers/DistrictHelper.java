@@ -2,9 +2,13 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.util.Log;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.District;
+
+import java.util.ArrayList;
 
 /**
  * Created by phil on 7/24/14.
@@ -100,6 +104,23 @@ public class DistrictHelper {
         out.setAbbreviation(districtKey);
         out.setEnum(DISTRICTS.fromAbbreviation(districtKey).ordinal());
         return out;
+    }
+
+    public static ArrayList<District> buildVersionedDistrictList(JsonArray districtList, String url, int version){
+        ArrayList<District> districts = new ArrayList<>();
+        for (JsonElement d : districtList) {
+            if(!d.isJsonNull()) {
+                if (version > 1) {
+                    JsonObject data = d.getAsJsonObject();
+                    District district = DistrictHelper.buildDistrictFromUrl(data.get("key").getAsString(), url);
+                    district.setName(data.get("name").getAsString());
+                    districts.add(district);
+                } else {
+                    districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
+                }
+            }
+        }
+        return districts;
     }
 
     public static JsonObject findPointsForTeam(JsonObject points, String teamKey) {
