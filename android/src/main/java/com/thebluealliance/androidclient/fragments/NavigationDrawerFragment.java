@@ -7,12 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.ComposeShader;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
 import android.graphics.Shader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,6 +22,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,17 +30,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +70,11 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
+    private static final int PROFILE_PIC_SIZE = 200;
+
     private static final List<ListItem> NAVIGATION_ITEMS = new ArrayList<>();
+
+    private ScrimInsetsFrameLayout scrimLayout;
 
     static {
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "My TBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
@@ -138,11 +145,11 @@ public class NavigationDrawerFragment extends Fragment {
 
         myTbaProfileInfoContainer = v.findViewById(R.id.mytba_profile_info);
 
-        if (!AccountHelper.isMyTBAEnabled(getActivity())) {
+        /*if (!AccountHelper.isMyTBAEnabled(getActivity())) {
             myTbaProfileInfoContainer.setVisibility(View.GONE);
         } else {
             myTbaProfileInfoContainer.setVisibility(View.VISIBLE);
-        }
+        }*/
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
@@ -155,9 +162,16 @@ public class NavigationDrawerFragment extends Fragment {
         Person person = PlusHelper.getCurrentPerson();
         if (person != null) {
             profileName.setText(person.getDisplayName());
+            String personPhotoUrl = person.getImage().getUrl();
+            personPhotoUrl = personPhotoUrl.substring(0,
+                    personPhotoUrl.length() - 2)
+                    + PROFILE_PIC_SIZE;
+
+            Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+
             Picasso picasso = Picasso.with(getActivity());
             if (person.hasImage()) {
-                picasso.load(person.getImage().getUrl()).into(profilePicture);
+                picasso.load(personPhotoUrl).into(profilePicture);
             }
             if (person.hasCover()) {
                 picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);
@@ -410,5 +424,19 @@ public class NavigationDrawerFragment extends Fragment {
         public String key() {
             return null;
         }
+    }
+
+    /**
+     * Called when the insets of the nav drawer are changed. This allows us to properly place the contents so
+     * that they don't flow under the status bar.
+     *
+     */
+    public void onInsetsChanged(Rect insets) {
+        RelativeLayout accountDetailsContainer = (RelativeLayout) getView().findViewById(R.id.account_details_container);
+
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)
+                accountDetailsContainer.getLayoutParams();
+        lp.topMargin = insets.top;
+        accountDetailsContainer.setLayoutParams(lp);
     }
 }

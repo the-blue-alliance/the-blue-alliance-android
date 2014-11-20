@@ -150,7 +150,8 @@ public class ScoreNotification extends BaseNotification {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(largeIcon)
                 .setContentIntent(intent)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationString);
         builder.setStyle(style);

@@ -120,7 +120,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'me.xuender:unidecode:0.0.+'
     compile 'com.google.android.gms:play-services:6.1.11'
-    compile 'com.sothree.slidinguppanel:library:+'
     compile 'de.greenrobot:eventbus:2.2.+'
     compile 'com.melnykov:floatingactionbutton:1.0.5'
     compile 'de.hdodenhof:circleimageview:1.2.0'

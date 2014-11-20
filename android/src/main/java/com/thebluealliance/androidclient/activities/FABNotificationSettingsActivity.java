@@ -42,6 +42,8 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     private boolean isSettingsPanelOpen = false;
 
+    private boolean saveInProgress = false;
+
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
 
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
@@ -132,13 +134,16 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.open_notification_settings_button) {
-            openNotificationSettingsView();
+            if(!saveInProgress) {
+                openNotificationSettingsView();
+            }
         } else if (v.getId() == R.id.close_notification_settings_button) {
             closeNotificationSettingsWindow();
             // The user wants to save the preferences
             if (saveSettingsTaskFragment == null) {
                 saveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(settings.getSettings());
                 getSupportFragmentManager().beginTransaction().add(saveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
+                saveInProgress = true;
             }
         } else {
             Log.d(Constants.LOG_TAG, "Clicked id: " + v.getId() + " tag: " + v.getTag() + " view: " + v.toString());
@@ -283,6 +288,12 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
         saveSettingsTaskFragment = null;
+
+        // Tell the settings fragment to reload the now-updated
+        settings.refreshSettingsFromDatabase();
+
+        // Save finished
+        saveInProgress = false;
     }
 
     @Override
@@ -291,6 +302,8 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
         saveSettingsTaskFragment = null;
+
+        saveInProgress = false;
     }
 
     @Override
@@ -299,6 +312,11 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
         saveSettingsTaskFragment = null;
+
+        // Something went wrong, restore the initial state
+        settings.restoreInitialState();
+
+        saveInProgress = false;
     }
 
     @Override
