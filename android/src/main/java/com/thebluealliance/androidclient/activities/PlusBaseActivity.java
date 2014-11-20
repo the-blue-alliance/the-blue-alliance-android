@@ -76,7 +76,6 @@ public abstract class PlusBaseActivity extends Activity
      * Try to sign in the user.
      */
     public void signIn() {
-        if (!PlusHelper.isConnected()) {
             // Show the dialog as we are now signing in.
             setProgressBarVisible(true);
             // Make sure that we will start the resolution (e.g. fire the intent and pop up a
@@ -91,7 +90,6 @@ public abstract class PlusBaseActivity extends Activity
                 // order to retrieve one.
                 initiatePlusClientConnect();
             }
-        }
 
         updateConnectButtonState();
     }
@@ -158,18 +156,6 @@ public abstract class PlusBaseActivity extends Activity
             });
         }
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initiatePlusClientConnect();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        initiatePlusClientDisconnect();
     }
 
     public boolean isPlusClientConnecting() {
