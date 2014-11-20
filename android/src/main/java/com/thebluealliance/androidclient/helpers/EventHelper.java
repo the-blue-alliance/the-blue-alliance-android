@@ -357,33 +357,6 @@ public class EventHelper {
         return eventListItems;
     }
 
-    public static String getShortNameForEvent(String eventName, TYPE eventType) {
-        // Preseason and offseason events will probably fail our regex matcher
-        if (eventType == EventHelper.TYPE.PRESEASON || eventType == EventHelper.TYPE.OFFSEASON) {
-            return eventName;
-        }
-        String shortName = "";
-        Pattern regexPattern = Pattern.compile("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)( FIRST Robotics| FRC)?( District| Regional| Region| State| Tournament| FRC| Field| Division)( Competition| Event| Championship)?( sponsored by.*)?");
-        Matcher m = regexPattern.matcher(eventName);
-        if (m.matches()) {
-            String s = m.group(3);
-            regexPattern = Pattern.compile("(.*)(FIRST Robotics|FRC)");
-            m = regexPattern.matcher(s);
-            if (m.matches()) {
-                shortName = m.group(1).trim();
-            } else {
-                shortName = s.trim();
-            }
-        }
-
-        // In case an event has a weird name, return the event name
-        if (shortName.isEmpty()) {
-            return eventName;
-        }
-
-        return shortName;
-    }
-
     public static String getDateString(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) return "";
         if (startDate.equals(endDate)) {

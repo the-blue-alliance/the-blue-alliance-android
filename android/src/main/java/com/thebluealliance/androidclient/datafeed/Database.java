@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 17;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -76,6 +76,7 @@ public class Database extends SQLiteOpenHelper {
             + Events.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Events.YEAR + " INTEGER NOT NULL, "
             + Events.NAME + " TEXT DEFAULT '', "
+            + Events.SHORTNAME + " TEXT DEFAULT '', "
             + Events.LOCATION + " TEXT DEFAULT '', "
             + Events.VENUE + " TEXT DEFAULT '', "
             + Events.TYPE + " INTEGER DEFAULT -1, "
@@ -587,6 +588,7 @@ public class Database extends SQLiteOpenHelper {
         public static final String KEY = "key",
                 YEAR = "year",
                 NAME = "name",
+                SHORTNAME = "shortName",
                 LOCATION = "location",
                 VENUE = "venue",
                 TYPE = "eventType",
@@ -1878,6 +1880,7 @@ public class Database extends SQLiteOpenHelper {
             cursor = db.rawQuery("SELECT " + TABLE_EVENTS + ".rowid as '_id',"
                             + Events.KEY + ","
                             + Events.NAME + ","
+                            + Events.SHORTNAME + ","
                             + Events.TYPE + ","
                             + Events.DISTRICT + ","
                             + Events.START + ","

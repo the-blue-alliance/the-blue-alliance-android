@@ -128,7 +128,7 @@ public class ModelHelper {
             switch (getModelFromKey(key)) {
                 case EVENT:
                     Event event = DataManager.Events.getEvent(context, key, false).getData();
-                    text = event.getEventYear() + " " + event.getShortName();
+                    text = event.getEventYear() + " " + event.getEventShortName();
                     break;
                 case TEAM:
                     Team team = DataManager.Teams.getTeam(context, key, false).getData();
@@ -141,7 +141,7 @@ public class ModelHelper {
                 case EVENTTEAM:
                     Team eTeam = DataManager.Teams.getTeam(context, EventTeamHelper.getTeamKey(key), false).getData();
                     Event eEvent = DataManager.Events.getEvent(context, EventTeamHelper.getEventKey(key), false).getData();
-                    text = eTeam.getNickname() + " @ " + eEvent.getEventYear() + " " + eEvent.getShortName();
+                    text = eTeam.getNickname() + " @ " + eEvent.getEventYear() + " " + eEvent.getEventShortName();
                     break;
                 case DISTRICT:
                     District district = DataManager.Districts.getDistrict(context, key).getData();
