@@ -5,9 +5,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
+import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
@@ -59,12 +60,14 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
 
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
+        ModelHelper.MODELS modelType = settings.modelType;
 
         ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
         request.setModelKey(modelKey);
         request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
         request.setNotifications(notifications);
         request.setFavorite(isFavorite);
+        request.setModelType(new Long(settings.modelType.getEnum()));
 
         Database.Subscriptions subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
         Database.Favorites favoritesTable = Database.getInstance(context).getFavoritesTable();
@@ -104,9 +107,9 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                     if (notifications.isEmpty()) {
                         subscriptionsTable.remove(key);
                     } else if (subscriptionsTable.exists(key)) {
-                        subscriptionsTable.update(key, new Subscription(user, modelKey, notifications));
+                        subscriptionsTable.update(key, new Subscription(user, modelKey, notifications, modelType.getEnum()));
                     } else {
-                        subscriptionsTable.add(new Subscription(user, modelKey, notifications));
+                        subscriptionsTable.add(new Subscription(user, modelKey, notifications, modelType.getEnum()));
                     }
                 } else if (subCode == 500) {
                     Toast.makeText(context, String.format(context.getString(R.string.mytba_error), subCode, sub.get("message").getAsString()), Toast.LENGTH_SHORT).show();
@@ -120,7 +123,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                     } else if (favoritesTable.exists(key)) {
                         // Already favorited, do nothing
                     } else {
-                        favoritesTable.add(new Favorite(user, modelKey));
+                        favoritesTable.add(new Favorite(user, modelKey, modelType.getEnum()));
                     }
                 } else if (favCode == 500) {
                     Toast.makeText(context, String.format(context.getString(R.string.mytba_error), favCode, fav.get("message").getAsString()), Toast.LENGTH_SHORT).show();

@@ -26,6 +26,7 @@ import java.util.Set;
 public class NotificationSettingsFragment extends PreferenceFragment {
 
     public static final String MODEL_KEY = "model_key";
+    public static final String MODEL_TYPE = "model_type";
     public static final String SAVED_STATE_BUNDLE = "saved_state_bundle";
     private Bundle savedStateBundle;
     private Bundle initialStateBundle;
@@ -34,10 +35,11 @@ public class NotificationSettingsFragment extends PreferenceFragment {
 
     private boolean preferencesLoaded = false;
 
-    public static NotificationSettingsFragment newInstance(String modelKey, Bundle savedStateBundle) {
+    public static NotificationSettingsFragment newInstance(String modelKey, ModelHelper.MODELS modelType, Bundle savedStateBundle) {
         NotificationSettingsFragment fragment = new NotificationSettingsFragment();
         Bundle args = new Bundle();
         args.putString(MODEL_KEY, modelKey);
+        args.putInt(MODEL_TYPE, modelType.getEnum());
         args.putBundle(SAVED_STATE_BUNDLE, savedStateBundle);
         fragment.setArguments(args);
         return fragment;
@@ -55,7 +57,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
             throw new IllegalArgumentException("NotificationSettingsFragment must be constructed with a model key");
         }
         modelKey = getArguments().getString(MODEL_KEY);
-        modelType = ModelHelper.getModelFromKey(modelKey);
+        modelType = ModelHelper.getModelFromEnum(getArguments().getInt(MODEL_TYPE));
         savedStateBundle = getArguments().getBundle(SAVED_STATE_BUNDLE);
     }
 
@@ -68,7 +70,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         this.setPreferenceScreen(p);
 
         // Create the list of preferences
-        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
     }
 
 
@@ -87,6 +89,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         settings.isFavorite = ((CheckBoxPreference) findPreference(MyTBAHelper.getFavoritePreferenceKey())).isChecked();
         settings.enabledNotifications = subscribed;
         settings.modelKey = modelKey;
+        settings.modelType = modelType;
 
         return settings;
     }
@@ -172,6 +175,6 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     }
 
     public void refreshSettingsFromDatabase() {
-        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
     }
 }

@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Calendar;
@@ -79,7 +80,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
-        setModelKey(mTeamKey);
+        setModelKey(mTeamKey, ModelHelper.MODELS.TEAM);
         setContentView(R.layout.activity_view_team);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -27,16 +27,16 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     private ModelHelper.MODELS type;
     private String currentSettings;
 
-    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState) {
+    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelHelper.MODELS type) {
         this.context = context;
         this.fragment = preferenceFragment;
         this.savedState = savedState;
+        this.type = type;
     }
 
     @Override
     protected Void doInBackground(String... params) {
         String modelKey = params[0];
-        type = ModelHelper.getModelFromKey(modelKey);
 
         Database.Favorites favTable = Database.getInstance(context).getFavoritesTable();
         Database.Subscriptions subTable = Database.getInstance(context).getSubscriptionsTable();
