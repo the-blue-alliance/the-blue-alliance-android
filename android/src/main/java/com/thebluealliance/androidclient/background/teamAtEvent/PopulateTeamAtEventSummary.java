@@ -103,7 +103,12 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         }
 
         if (event != null) {
-            eventShort = event.getShortName();
+            try {
+                eventShort = event.getEventShortName();
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't get event short name");
+                return APIResponse.CODE.NODATA;
+            }
             eventYear = eventKey.substring(0, 4);
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
