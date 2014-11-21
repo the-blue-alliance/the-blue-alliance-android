@@ -12,6 +12,8 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.interfaces.ModelTable;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -125,25 +127,32 @@ public class ModelHelper {
     public static ListItem renderModelFromKey(Context context, String key) {
         try {
             String text;
+            Database db = Database.getInstance(context);
             switch (getModelFromKey(key)) {
                 case EVENT:
-                    Event event = DataManager.Events.getEvent(context, key, false).getData();
-                    text = event.getEventYear() + " " + event.getShortName();
+                    if(!db.getEventsTable().exists(key)) return null;
+                        Event event = DataManager.Events.getEvent(context, key, false).getData();
+                        text = event.getEventYear() + " " + event.getEventShortName();
                     break;
                 case TEAM:
+                    if(!db.getTeamsTable().exists(key)) return null;
                     Team team = DataManager.Teams.getTeam(context, key, false).getData();
                     text = team.getNickname();
                     break;
                 case MATCH:
+                    if(!db.getMatchesTable().exists(key)) return null;
                     Match match = DataManager.Matches.getMatch(context, key, false).getData();
                     text = match.getEventKey() + " " + match.getTitle();
                     break;
                 case EVENTTEAM:
-                    Team eTeam = DataManager.Teams.getTeam(context, EventTeamHelper.getTeamKey(key), false).getData();
-                    Event eEvent = DataManager.Events.getEvent(context, EventTeamHelper.getEventKey(key), false).getData();
-                    text = eTeam.getNickname() + " @ " + eEvent.getEventYear() + " " + eEvent.getShortName();
+                    String teamKey = EventTeamHelper.getTeamKey(key), eventKey = EventTeamHelper.getEventKey(key);
+                    if(!db.getEventsTable().exists(eventKey) || !db.getTeamsTable().exists(teamKey)) return null;
+                    Team eTeam = DataManager.Teams.getTeam(context, teamKey, false).getData();
+                    Event eEvent = DataManager.Events.getEvent(context, eventKey, false).getData();
+                    text = eTeam.getNickname() + " @ " + eEvent.getEventYear() + " " + eEvent.getEventShortName();
                     break;
                 case DISTRICT:
+                    if(!db.getDistrictsTable().exists(key)) return null;
                     District district = DataManager.Districts.getDistrict(context, key).getData();
                     text = district.getYear() + " " + DistrictHelper.DISTRICTS.fromAbbreviation(district.getAbbreviation()).getName();
                     break;

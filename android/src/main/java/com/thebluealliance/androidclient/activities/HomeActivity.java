@@ -216,7 +216,7 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
                 getSupportActionBar().setTitle("Insights");
                 break;
             case R.id.nav_item_my_tba:
-                getSupportActionBar().setTitle("My TBA");
+                getSupportActionBar().setTitle("myTBA");
                 break;
         }
 

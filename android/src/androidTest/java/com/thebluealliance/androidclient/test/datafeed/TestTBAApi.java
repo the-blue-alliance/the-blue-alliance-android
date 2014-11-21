@@ -38,7 +38,7 @@ public class TestTBAApi extends TestCase {
             assertEquals(event.getStartDate(), new Date(114, 2, 8));
             assertEquals(event.getEndDate(), new Date(114, 2, 9));
             assertEquals(event.getEventName(), "Groton District Event");
-            assertEquals(event.getShortName(), "Groton");
+            assertEquals(event.getEventShortName(), "Groton");
             assertEquals(event.isOfficial(), true);
             assertEquals(event.getLocation(), "Groton, CT, USA");
             assertEquals(event.getEventType(), EventHelper.TYPE.DISTRICT);

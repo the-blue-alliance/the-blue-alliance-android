@@ -77,7 +77,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ScrimInsetsFrameLayout scrimLayout;
 
     static {
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "My TBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "myTBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.ic_event_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.ic_assignment_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.ic_group_black_24dp, R.layout.nav_drawer_item));
@@ -153,30 +153,39 @@ public class NavigationDrawerFragment extends Fragment {
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
-        setDrawerProfileInfo();
+        if(AccountHelper.isMyTBAEnabled(getActivity())) {
+            profilePicture.setVisibility(View.VISIBLE);
+            profileName.setVisibility(View.VISIBLE);
+            setDrawerProfileInfo();
+        }else{
+            profilePicture.setVisibility(View.GONE);
+            profileName.setVisibility(View.GONE);
+        }
 
         return v;
     }
 
     public void setDrawerProfileInfo() {
-        Person person = PlusHelper.getCurrentPerson();
-        if (person != null) {
-            profileName.setText(person.getDisplayName());
-            String personPhotoUrl = person.getImage().getUrl();
-            personPhotoUrl = personPhotoUrl.substring(0,
-                    personPhotoUrl.length() - 2)
-                    + PROFILE_PIC_SIZE;
+        if(PlusHelper.isConnected()) {
+            Person person = PlusHelper.getCurrentPerson();
+            if (person != null) {
+                profileName.setText(person.getDisplayName());
+                String personPhotoUrl = person.getImage().getUrl();
+                personPhotoUrl = personPhotoUrl.substring(0,
+                        personPhotoUrl.length() - 2)
+                        + PROFILE_PIC_SIZE;
 
-            Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+                Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
 
-            Picasso picasso = Picasso.with(getActivity());
-            if (person.hasImage()) {
-                picasso.load(personPhotoUrl).into(profilePicture);
-            }
-            if (person.hasCover()) {
-                picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);
-            } else {
-                picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
+                Picasso picasso = Picasso.with(getActivity());
+                if (person.hasImage()) {
+                    picasso.load(personPhotoUrl).into(profilePicture);
+                }
+                if (person.hasCover()) {
+                    picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);
+                } else {
+                    picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
+                }
             }
         }
     }

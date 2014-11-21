@@ -156,7 +156,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
             try {
                 nameString = event.getEventName();
-                titleString = event.getEventYear() + " " + event.getShortName();
+                titleString = event.getEventYear() + " " + event.getEventShortName();
                 venueString = event.getVenue();
                 locationString = event.getLocation();
             } catch (BasicModel.FieldNotDefinedException e) {

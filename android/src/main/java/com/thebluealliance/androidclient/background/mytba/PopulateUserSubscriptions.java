@@ -45,11 +45,14 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, Void> {
         int lastModel = -1;
         if (collection != null) {
             for (Subscription subscription : collection) {
-                if(lastModel != subscription.getModelEnum()){
-                    subscriptions.add(new EventTypeHeader(subscription.getModelType().getTitle()));
+                ListItem item = ModelHelper.renderModelFromKey(activity, subscription.getModelKey());
+                if(item != null) {
+                    if(lastModel != subscription.getModelEnum()){
+                        subscriptions.add(new EventTypeHeader(subscription.getModelType().getTitle()));
+                    }
+                    subscriptions.add(item);
                 }
                 lastModel = subscription.getModelEnum();
-                subscriptions.add(ModelHelper.renderModelFromKey(activity, subscription.getModelKey()));
             }
         }
 

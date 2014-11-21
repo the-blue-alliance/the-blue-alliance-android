@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 18;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -76,6 +76,7 @@ public class Database extends SQLiteOpenHelper {
             + Events.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Events.YEAR + " INTEGER NOT NULL, "
             + Events.NAME + " TEXT DEFAULT '', "
+            + Events.SHORTNAME + " TEXT DEFAULT '', "
             + Events.LOCATION + " TEXT DEFAULT '', "
             + Events.VENUE + " TEXT DEFAULT '', "
             + Events.TYPE + " INTEGER DEFAULT -1, "
@@ -129,7 +130,8 @@ public class Database extends SQLiteOpenHelper {
             + Districts.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Districts.ABBREV + " TEXT NOT NULL, "
             + Districts.YEAR + " INTEGER NOT NULL, "
-            + Districts.ENUM + " INTEGER NOT NULL"
+            + Districts.ENUM + " INTEGER NOT NULL,"
+            + Districts.NAME + " TEXT DEFAULT ''"
             + ")";
     String CREATE_DISTRICTTEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_DISTRICTTEAMS + "("
             + DistrictTeams.KEY + " TEXT PRIMARY KEY NOT NULL, "
@@ -323,6 +325,14 @@ public class Database extends SQLiteOpenHelper {
                     if (fav.getColumnIndex(Favorites.MODEL_ENUM) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + Favorites.MODEL_ENUM + " INTEGER NOT NULL");
                     }
+                    break;
+                case 17:
+                    // add column for district name
+                    db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + Districts.NAME + " TEXT DEFAULT '' ");
+                    break;
+                case 18:
+                    // add column for event short name
+                    db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
                     break;
             }
             upgradeTo++;
@@ -587,6 +597,7 @@ public class Database extends SQLiteOpenHelper {
         public static final String KEY = "key",
                 YEAR = "year",
                 NAME = "name",
+                SHORTNAME = "shortName",
                 LOCATION = "location",
                 VENUE = "venue",
                 TYPE = "eventType",
@@ -1158,7 +1169,8 @@ public class Database extends SQLiteOpenHelper {
         public static final String KEY = "key",
                 ABBREV = "abbrev",
                 ENUM = "enum",
-                YEAR = "year";
+                YEAR = "year",
+                NAME = "name";
 
         @Override
         public long add(District in) {
@@ -1656,8 +1668,8 @@ public class Database extends SQLiteOpenHelper {
         return response;
     }
 
-    public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        return safeDelete(table, whereClause, whereArgs);
+    public int safeDelete(String table, String whereClause, String[] whereArgs){
+        return safeDelete(table, whereClause, whereArgs, null);
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {
@@ -1878,6 +1890,7 @@ public class Database extends SQLiteOpenHelper {
             cursor = db.rawQuery("SELECT " + TABLE_EVENTS + ".rowid as '_id',"
                             + Events.KEY + ","
                             + Events.NAME + ","
+                            + Events.SHORTNAME + ","
                             + Events.TYPE + ","
                             + Events.DISTRICT + ","
                             + Events.START + ","

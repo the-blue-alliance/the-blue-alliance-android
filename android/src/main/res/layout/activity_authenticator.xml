@@ -53,11 +53,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/mytba_opt_out_button"
                 android:text="@string/not_now"/>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/plus_sign_out_button"
-                android:text="@string/sign_out"/>
         </LinearLayout>
     </ScrollView>
 

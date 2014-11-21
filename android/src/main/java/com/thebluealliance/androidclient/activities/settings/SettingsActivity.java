@@ -18,7 +18,6 @@ import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
-//TODO
 public class SettingsActivity extends ActionBarActivity
 {
 
@@ -67,22 +66,19 @@ public class SettingsActivity extends ActionBarActivity
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
+            final Preference enable_mytba = findPreference("mytba_enabled");
+            if(AccountHelper.isMyTBAEnabled(getActivity())){
+                enable_mytba.setSummary(getString(R.string.mytba_enabled));
+            }else{
+                enable_mytba.setSummary(getString(R.string.mytba_disabled));
+            }
             final Activity activity = getActivity();
             final Intent authIntent = new Intent(getActivity(), AuthenticatorActivity.class);
-            enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            enable_mytba.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean newState = !enable_mytba.isChecked(); //it was reversed, for some reason...
-                    boolean current = AccountHelper.isMyTBAEnabled(activity);
-                    if(newState &&  !current){
-                        // we want to enable mytba
-                        startActivity(authIntent);
-                        getActivity().finish();
-                    }else if(!newState && current){
-                        // we want to disable mytba
-
-                    }
+                public boolean onPreferenceClick(Preference preference) {
+                    activity.startActivity(authIntent);
+                    activity.finish();
                     return true;
                 }
             });

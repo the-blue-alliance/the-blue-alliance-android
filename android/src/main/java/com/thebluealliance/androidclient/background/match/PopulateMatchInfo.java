@@ -73,7 +73,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, forceFromCache);
             Event event = eventResponse.getData();
             if (event != null) {
-                mEventShortName = event.getShortName();
+                try {
+                    mEventShortName = event.getEventShortName();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Unable to render match info. Missing stuff");
+                }
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
