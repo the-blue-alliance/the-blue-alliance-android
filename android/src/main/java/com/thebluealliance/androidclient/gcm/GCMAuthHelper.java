@@ -9,9 +9,9 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesRegistrationRequest;
+import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesRegistrationRequest;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
