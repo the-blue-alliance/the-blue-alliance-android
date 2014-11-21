@@ -34,7 +34,8 @@ public class ModelHelper {
         EVENTTEAM,
         DISTRICT,
         DISTRICTTEAM,
-        AWARD;
+        AWARD,
+        MEDIA;
 
         public String getTitle() {
             switch (this) {
