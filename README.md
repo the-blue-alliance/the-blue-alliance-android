@@ -34,4 +34,4 @@ Environment Setup
 myTBA Debug Setup
 ------------------
 
-For help setting up your own development server to test myTBA with, checkout [this wiki page](https://github.com/the-blue-alliance/the-blue-alliance-android/wiki/myTBA-Configuration)
+For help setting up your own development server to test myTBA with, check out [this wiki page](https://github.com/the-blue-alliance/the-blue-alliance-android/wiki/myTBA-Configuration)
