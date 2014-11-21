@@ -240,7 +240,6 @@ public class HomeActivity extends RefreshableHostActivity implements OnItemSelec
                 toolbarSpinner.setSelection(0);
             }
         }
-
     }
 
     private void setupActionBarForDistricts() {

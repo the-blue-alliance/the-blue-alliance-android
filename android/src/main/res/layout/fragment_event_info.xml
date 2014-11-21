@@ -36,7 +36,9 @@
             <RelativeLayout
                 android:id="@+id/event_date_container"
                 style="@style/InfoItemStyle"
-                android:clickable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
 
                 <ImageView
                     android:id="@+id/event_date_icon"
@@ -57,13 +59,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
 
                 <View style="@style/InfoItemDividerStyle" />
 
-                <RelativeLayout
-                    style="@style/InfoItemStyle"
-                    android:background="?android:attr/selectableItemBackground">
+                <RelativeLayout style="@style/InfoItemStyle">
 
                     <ImageView
                         android:id="@+id/venue_location_icon"
@@ -182,13 +183,12 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
 
                 <View style="@style/InfoItemDividerStyle" />
 
-                <RelativeLayout
-                    style="@style/InfoItemStyle"
-                    android:background="?android:attr/selectableItemBackground">
+                <RelativeLayout style="@style/InfoItemStyle">
 
                     <TextView
                         android:layout_width="wrap_content"

@@ -123,7 +123,9 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
         new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
 
-
+        // We can call this even though the years particiapted haven't been loaded yet.
+        // The years won't be shown yet; this just shows the team number in the toolbar.
+        setupActionBar();
     }
 
     @Override
@@ -157,12 +159,11 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
+            String teamNumber = mTeamKey.replace("frc", "");
+            setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
+            // If we call this and the years participated haven't been loaded yet, don't try to use them
             if (yearsParticipated != null) {
-
                 ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, yearsParticipated);
-                String teamNumber = mTeamKey.replace("frc", "");
-                setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
-
                 actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
                 toolbarSpinner.setVisibility(View.VISIBLE);
                 toolbarSpinner.setAdapter(actionBarAdapter);
@@ -231,7 +232,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     public void onPageSelected(int position) {
         mSelectedTab = position;
         // hide the FAB if we aren't on the first page
-        if(position != 0) {
+        if (position != 0) {
             hideFab(true);
         } else {
             showFab(true);

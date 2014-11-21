@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Retrieves general information about an FRC event, like name, location, and social media links.
@@ -244,6 +247,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + eventKey);
 
                 infoContainer.setVisibility(View.VISIBLE);
+
+                EventBus.getDefault().post(new EventInfoLoadedEvent(event));
             }
 
             // Display warning if offline.

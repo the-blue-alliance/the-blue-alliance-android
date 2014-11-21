@@ -11,6 +11,13 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <!-- on v21 or later, this lets us draw the status bar background. on < v21,
+    this is the same as simply not showing the action bar. -->
+    <style name="AppThemeNoActionBarTranslucentStatus" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="AppThemeNoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
