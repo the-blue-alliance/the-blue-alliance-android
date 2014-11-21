@@ -73,10 +73,6 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         mTabs = (SlidingTabs) view.findViewById(R.id.event_pager_tabs);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
-            mTabs.setElevation(getResources().getInteger(R.integer.window_controls_elevation));
-        }
-
         Log.d(Constants.LOG_TAG, "EventByWeekFragment view created!");
         return view;
     }
