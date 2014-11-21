@@ -32,7 +32,7 @@ public class MyTBAFragment extends Fragment {
             //show a dialog to reenable myTBA
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             final Intent authIntent = new Intent(getActivity(), AuthenticatorActivity.class);
-            builder.setTitle("MyTBA is Disabled");
+            builder.setTitle("myTBA is Disabled");
             builder.setMessage("Do you want to enable myTBA?").
                     setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override

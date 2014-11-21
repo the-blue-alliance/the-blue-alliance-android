@@ -77,7 +77,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ScrimInsetsFrameLayout scrimLayout;
 
     static {
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "My TBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "myTBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.ic_event_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.ic_assignment_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.ic_group_black_24dp, R.layout.nav_drawer_item));
