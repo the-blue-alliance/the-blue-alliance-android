@@ -5,9 +5,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
+import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -53,7 +54,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
     @Override
     protected Result doInBackground(String... params) {
         String modelKey = settings.modelKey;
-        ArrayList<String> notifications = settings.enabledNotifications;
+        List<String> notifications = settings.enabledNotifications;
         boolean isFavorite = settings.isFavorite;
 
         String user = AccountHelper.getSelectedAccount(context);

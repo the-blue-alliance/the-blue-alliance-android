@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
+import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -34,16 +34,16 @@ public class AccountHelper {
     public static final String PREF_MYTBA_ENABLED = "mytba_enabled";
     public static final String PREF_SELECTED_ACCOUNT = "selected_account";
 
-    private static final int ACTIVITY_RESULT_FROM_ACCOUNT_SELECTION = 2222;
-
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
 
     public static void enableMyTBA(Activity activity, boolean enabled) {
         Log.d(Constants.LOG_TAG, "Enabling myTBA: " + enabled);
-        if (enabled && !isAccountSelected(activity)) {
-
-        } else if (!enabled && isAccountSelected(activity)) {
+        if (enabled) {
+            // enable myTBA
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
+        } else {
             //disabled myTBA.
             String currentUser = getSelectedAccount(activity);
             if (!currentUser.isEmpty()) {

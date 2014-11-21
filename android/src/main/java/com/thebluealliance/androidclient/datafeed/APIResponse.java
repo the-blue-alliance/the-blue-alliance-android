@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -8,6 +11,8 @@ import java.util.Date;
  */
 public class APIResponse<A> {
 
+    public static String JSON_VERSION = "version",
+                         JSON_DATA = "data";
     public static enum CODE { /* DO NOT CHANGE ORDER. USED FOR COMPARING (ordered least to most precedence) */
         CACHED304, //data was found to have not changed (API returned 304-Not-Modified)
         WEBLOAD, //data was first loaded from the web
@@ -29,6 +34,7 @@ public class APIResponse<A> {
     CODE code;
     String lastUpdate, errorMessage;
     Date lastHit;
+    int version;
 
     public APIResponse(A data, CODE code, String lastUpdate, Date lastHit) {
         this.lastUpdate = lastUpdate;
@@ -36,6 +42,7 @@ public class APIResponse<A> {
         this.code = code;
         this.lastHit = lastHit;
         this.errorMessage = "";
+        this.version = -1;
     }
 
     public APIResponse(A data, CODE code, String lastUpdate) {
@@ -44,6 +51,7 @@ public class APIResponse<A> {
         this.code = code;
         this.lastHit = new Date(); //default to now
         this.errorMessage = "";
+        this.version = -1;
     }
 
     public APIResponse(A data, CODE code) {
@@ -51,6 +59,12 @@ public class APIResponse<A> {
         this.data = data;
         this.lastUpdate = "";
         this.errorMessage = "";
+        this.version = -1;
+    }
+
+    public APIResponse(A data, CODE code, int version){
+        this(data, code);
+        this.version = version;
     }
 
     public APIResponse(A data, String errorMessage) {
@@ -58,6 +72,7 @@ public class APIResponse<A> {
         this.data = data;
         this.lastUpdate = "";
         this.errorMessage = errorMessage;
+        this.version = -1;
     }
 
     public A getData() {
@@ -91,6 +106,28 @@ public class APIResponse<A> {
 
     public void setErrorMessage(String error) {
         errorMessage = error;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public static JSONObject getVersionedJsonObject(APIResponse<String> response) throws JSONException {
+        JSONObject object = new JSONObject();
+        object.put(JSON_VERSION, response.getVersion());
+        object.put(JSON_DATA, JSONManager.getasJsonObject(response.getData()));
+        return object;
+    }
+
+    public static JSONObject getVersionedJsonArray(APIResponse<String> response) throws JSONException {
+        JSONObject object = new JSONObject();
+        object.put(JSON_VERSION, response.getVersion());
+        object.put(JSON_DATA, JSONManager.getasJsonArray(response.getData()));
+        return object;
     }
 
     public static CODE mergeCodes(CODE... codes) {

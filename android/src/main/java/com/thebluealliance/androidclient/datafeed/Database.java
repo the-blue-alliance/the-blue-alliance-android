@@ -130,7 +130,8 @@ public class Database extends SQLiteOpenHelper {
             + Districts.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Districts.ABBREV + " TEXT NOT NULL, "
             + Districts.YEAR + " INTEGER NOT NULL, "
-            + Districts.ENUM + " INTEGER NOT NULL"
+            + Districts.ENUM + " INTEGER NOT NULL,"
+            + Districts.NAME + " TEXT DEFAULT ''"
             + ")";
     String CREATE_DISTRICTTEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_DISTRICTTEAMS + "("
             + DistrictTeams.KEY + " TEXT PRIMARY KEY NOT NULL, "
@@ -324,6 +325,10 @@ public class Database extends SQLiteOpenHelper {
                     if (fav.getColumnIndex(Favorites.MODEL_ENUM) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + Favorites.MODEL_ENUM + " INTEGER NOT NULL");
                     }
+                    break;
+                case 17:
+                    // add column for district name
+                    db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + Districts.NAME + " TEXT DEFAULT '' ");
                     break;
             }
             upgradeTo++;
@@ -1160,7 +1165,8 @@ public class Database extends SQLiteOpenHelper {
         public static final String KEY = "key",
                 ABBREV = "abbrev",
                 ENUM = "enum",
-                YEAR = "year";
+                YEAR = "year",
+                NAME = "name";
 
         @Override
         public long add(District in) {
@@ -1658,8 +1664,8 @@ public class Database extends SQLiteOpenHelper {
         return response;
     }
 
-    public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        return safeDelete(table, whereClause, whereArgs);
+    public int safeDelete(String table, String whereClause, String[] whereArgs){
+        return safeDelete(table, whereClause, whereArgs, null);
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {

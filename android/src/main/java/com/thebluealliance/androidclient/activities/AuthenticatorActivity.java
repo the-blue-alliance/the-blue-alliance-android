@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +33,6 @@ public class AuthenticatorActivity extends PlusBaseActivity {
     private View mProgressView;
     private SignInButton mPlusSignInButton;
     private Button mPlusNotNowButton;
-    private Button mPlusSignOutButton;
     private View mLoginFormView;
 
     @Override
@@ -42,7 +42,6 @@ public class AuthenticatorActivity extends PlusBaseActivity {
 
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
-        mPlusSignOutButton = (Button) findViewById(R.id.plus_sign_out_button);
         mPlusNotNowButton = (Button) findViewById(R.id.mytba_opt_out_button);
         if (supportsGooglePlayServices()) {
             // Set a listener to connect the user when the G+ button is clicked.
@@ -52,29 +51,30 @@ public class AuthenticatorActivity extends PlusBaseActivity {
                     signIn();
                 }
             });
-            mPlusSignOutButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    signOut();
-                }
-            });
         } else {
             // Don't offer G+ sign in if the app's version is too low to support Google Play
             // Services.
             mPlusSignInButton.setVisibility(View.GONE);
-            mPlusSignOutButton.setVisibility(View.GONE);
             TextView desc = (TextView)findViewById(R.id.mytba_message);
             desc.setText(getString(R.string.gms_not_supported));
             return;
         }
 
         final Intent homeIntent = HomeActivity.newInstance(this, 0);
+        final Activity activity = this;
         mPlusNotNowButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                AccountHelper.enableMyTBA(activity, false);
                 startActivity(homeIntent);
             }
         });
+
+        if(AccountHelper.isMyTBAEnabled(this)){
+            // if mytba is enabled, don't show the sign in button again
+            mPlusSignInButton.setVisibility(View.GONE);
+        }
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -118,6 +118,7 @@ public class AuthenticatorActivity extends PlusBaseActivity {
     @Override
     protected void onPlusClientSignIn() {
         AccountHelper.enableMyTBA(this, true);
+        AccountHelper.setSelectedAccount(this, PlusHelper.getAccountName());
         startActivity(HomeActivity.newInstance(this, 0));
         finish();
     }
@@ -133,7 +134,6 @@ public class AuthenticatorActivity extends PlusBaseActivity {
 
         mPlusSignInButton.setVisibility(connected ? View.GONE : View.VISIBLE);
         mPlusNotNowButton.setVisibility(connected ? View.GONE : View.VISIBLE);
-        mPlusSignOutButton.setVisibility(connected ? View.VISIBLE : View.GONE);
     }
 
     @Override
