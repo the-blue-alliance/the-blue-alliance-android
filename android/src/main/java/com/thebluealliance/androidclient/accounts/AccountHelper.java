@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
+import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.GooglePlayServicesUtil;

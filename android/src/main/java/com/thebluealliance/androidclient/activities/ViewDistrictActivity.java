@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
@@ -65,7 +66,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
         }
 
         districtKey = DistrictHelper.generateKey(districtAbbrev, year);
-        setModelKey(districtKey);
+        setModelKey(districtKey, ModelHelper.MODELS.DISTRICT);
         setContentView(R.layout.activity_view_district);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);

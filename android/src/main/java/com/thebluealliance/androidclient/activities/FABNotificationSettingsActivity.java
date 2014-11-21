@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 /**
@@ -117,10 +118,10 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     }
 
     @Override
-    protected void setModelKey(String key) {
-        super.setModelKey(key);
+    protected void setModelKey(String key, ModelHelper.MODELS modelType) {
+        super.setModelKey(key, modelType);
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
-        settings = NotificationSettingsFragment.newInstance(modelKey, savedPreferenceState);
+        settings = NotificationSettingsFragment.newInstance(modelKey, modelType, savedPreferenceState);
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
     }
 

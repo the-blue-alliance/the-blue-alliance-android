@@ -26,6 +26,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
@@ -37,6 +38,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     String beamUri;
     boolean searchEnabled = true;
     String modelKey = "";
+    ModelHelper.MODELS modelType;
 
     GoogleAccountCredential credential;
 
@@ -131,8 +133,9 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         invalidateOptionsMenu();
     }
 
-    protected void setModelKey(String key){
+    protected void setModelKey(String key, ModelHelper.MODELS type){
         modelKey = key;
+        modelType = type;
     }
 
     /**

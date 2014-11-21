@@ -26,12 +26,12 @@ public class Subscription {
         notificationList = new ArrayList<>();
     }
 
-    public Subscription(String userName, String modelKey, List<String> notificationSettings) {
+    public Subscription(String userName, String modelKey, List<String> notificationSettings, int model_type) {
         this.userName = userName;
         this.modelKey = modelKey;
         this.notificationList = notificationSettings;
         this.notificationSettings = makeNotificationJSON(notificationSettings);
-        setModelEnum(ModelHelper.getModelFromKey(modelKey).ordinal());
+        setModelEnum(model_type);
     }
 
     public String getKey(){

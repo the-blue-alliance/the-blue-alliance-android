@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Arrays;
@@ -57,7 +58,7 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
         }
 
         String eventTeamKey = EventTeamHelper.generateKey(eventKey, teamKey);
-        setModelKey(eventTeamKey);
+        setModelKey(eventTeamKey, ModelHelper.MODELS.EVENTTEAM);
         setContentView(R.layout.activity_team_at_event);
 
         pager = (ViewPager) findViewById(R.id.view_pager);

@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesRegistrationRequest;
+import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesRegistrationRequest;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.datafeed.Database;
