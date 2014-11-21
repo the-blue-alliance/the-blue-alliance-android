@@ -154,6 +154,11 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                         getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
                         getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
                         break;
+                    case 21: //redownload to get event short names
+                        redownload = true;
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
+                        getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
+                        break;
                     default:
                         break;
                 }
