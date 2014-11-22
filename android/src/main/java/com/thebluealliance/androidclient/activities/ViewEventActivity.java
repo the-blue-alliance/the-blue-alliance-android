@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
@@ -47,7 +48,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
 
-        setModelKey(mEventKey);
+        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
         setContentView(R.layout.activity_view_event);
 
         infoMessage = (TextView) findViewById(R.id.info_container);

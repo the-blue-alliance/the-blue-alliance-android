@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -45,7 +46,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setModelKey(mMatchKey);
+        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
         setContentView(R.layout.activity_view_match);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();

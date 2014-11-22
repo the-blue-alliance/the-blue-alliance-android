@@ -34,7 +34,8 @@ public class ModelHelper {
         EVENTTEAM,
         DISTRICT,
         DISTRICTTEAM,
-        AWARD;
+        AWARD,
+        MEDIA;
 
         public String getTitle() {
             switch (this) {
@@ -55,26 +56,14 @@ public class ModelHelper {
             }
             return "";
         }
+
+        public int getEnum(){
+            return this.ordinal();
+        }
     }
 
-    public static MODELS getModelFromKey(String key) {
-        if (DistrictHelper.validateDistrictKey(key)) {
-            return MODELS.DISTRICT;
-        } else if (EventHelper.validateEventKey(key)) {
-            return MODELS.EVENT;
-        } else if (TeamHelper.validateTeamKey(key)) {
-            return MODELS.TEAM;
-        } else if (MatchHelper.validateMatchKey(key)) {
-            return MODELS.MATCH;
-        } else if (EventTeamHelper.validateEventTeamKey(key)) {
-            return MODELS.EVENTTEAM;
-        } else if (DistrictTeamHelper.validateDistrictTeamKey(key)) {
-            return MODELS.DISTRICTTEAM;
-        } else if (AwardHelper.validateAwardKey(key)) {
-            return MODELS.AWARD;
-        } else {
-            return null;
-        }
+    public static MODELS getModelFromEnum(int model_enum) {
+        return MODELS.values()[model_enum];
     }
 
     public static String[] getNotificationTypes(MODELS type) {
@@ -95,14 +84,7 @@ public class ModelHelper {
         }
     }
 
-    public static Intent getIntentFromKey(Context context, String key) {
-        return getIntentFromKey(context, key, null);
-    }
-
     public static Intent getIntentFromKey(Context context, String key, MODELS type) {
-        if (type == null) {
-            type = getModelFromKey(key);
-        }
         if (type == null) {
             return null;
         }
@@ -124,11 +106,11 @@ public class ModelHelper {
         }
     }
 
-    public static ListItem renderModelFromKey(Context context, String key) {
+    public static ListItem renderModelFromKey(Context context, String key, MODELS type) {
         try {
             String text;
             Database db = Database.getInstance(context);
-            switch (getModelFromKey(key)) {
+            switch (type) {
                 case EVENT:
                     if(!db.getEventsTable().exists(key)) return null;
                         Event event = DataManager.Events.getEvent(context, key, false).getData();
@@ -159,7 +141,7 @@ public class ModelHelper {
                 default:
                     return null;
             }
-            return new ModelListElement(text, key);
+            return new ModelListElement(text, key, type);
         } catch (BasicModel.FieldNotDefinedException | DataManager.NoDataException e) {
             e.printStackTrace();
         }
