@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 
@@ -70,18 +71,19 @@ public class GCMMessageHandler extends IntentService {
                     notification = new GenericNotification(messageData);
                     break;
                 case NotificationTypes.MATCH_SCORE:
+                case "score":
                     notification = new ScoreNotification(messageData);
                     break;
                 case NotificationTypes.UPCOMING_MATCH:
                     notification = new UpcomingMatchNotification(messageData);
                     break;
-                case "score":
-                    notification = new ScoreNotification(messageData);
-                    break;
                 case NotificationTypes.ALLIANCE_SELECTION:
                     break;
                 case NotificationTypes.LEVEL_STARTING:
                     notification = new CompLevelStartingNotification(messageData);
+                    break;
+                case NotificationTypes.SCHEDULE_POSTED:
+                    notification = new ScheduleUpdatedNotification(messageData);
                     break;
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);

@@ -37,4 +37,10 @@
     <string name="notification_level_starting">%1$s: %2$s are starting</string>
     <string name="notification_level_starting_with_time">%1$s: %2$s are scheduled to start at %3$s</string>
 
+    <!-- *********************
+        Event Schedule Updated Notification
+        ********************* -->
+    <string name="notification_schedule_updated_with_time">The match schedule at %1$s has been updated. The next match starts at %2$s.</string>
+    <string name="notification_schedule_updated_without_time">The match schedule at %1$s has been updated.</string>
+
 </resources>
