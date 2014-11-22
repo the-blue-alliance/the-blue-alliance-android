@@ -14,6 +14,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
@@ -85,6 +86,9 @@ public class GCMMessageHandler extends IntentService {
                 case NotificationTypes.SCHEDULE_POSTED:
                     notification = new ScheduleUpdatedNotification(messageData);
                     break;
+                case NotificationTypes.AWARDS:
+                    notification = new AwardsPostedNotification(messageData);
+                    break;
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
             boolean enabled = prefs.getBoolean("enable_notifications", true);
@@ -96,8 +100,6 @@ public class GCMMessageHandler extends IntentService {
                 if(prefs.getBoolean("notification_tone", true)){
                     built.defaults |= Notification.DEFAULT_SOUND;
                 }
-
-                built.category = Notification.CATEGORY_SOCIAL;
 
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     int priority = Notification.PRIORITY_HIGH;
@@ -112,7 +114,7 @@ public class GCMMessageHandler extends IntentService {
                         built.priority = Notification.PRIORITY_DEFAULT;
                     }
 
-                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                         String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility","private");
                         Log.e(Constants.LOG_TAG, "Pref: "+pref);
                         switch (pref){
@@ -121,6 +123,8 @@ public class GCMMessageHandler extends IntentService {
                             case "private": built.visibility = Notification.VISIBILITY_PRIVATE; break;
                             case "secret":  built.visibility = Notification.VISIBILITY_SECRET; break;
                         }
+
+                        built.category = Notification.CATEGORY_SOCIAL;
                     }
                 }
 

@@ -43,4 +43,9 @@
     <string name="notification_schedule_updated_with_time">The match schedule at %1$s has been updated. The next match starts at %2$s.</string>
     <string name="notification_schedule_updated_without_time">The match schedule at %1$s has been updated.</string>
 
+    <!-- *********************
+        Awards Updated Notification
+        ********************* -->
+    <string name="notification_awards_updated">Awards have been updated at %1$s.</string>
+
 </resources>
