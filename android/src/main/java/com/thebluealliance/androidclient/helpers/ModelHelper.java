@@ -84,10 +84,6 @@ public class ModelHelper {
         }
     }
 
-    public static Intent getIntentFromKey(Context context, String key) {
-        return getIntentFromKey(context, key, null);
-    }
-
     public static Intent getIntentFromKey(Context context, String key, MODELS type) {
         if (type == null) {
             return null;
@@ -145,7 +141,7 @@ public class ModelHelper {
                 default:
                     return null;
             }
-            return new ModelListElement(text, key);
+            return new ModelListElement(text, key, type);
         } catch (BasicModel.FieldNotDefinedException | DataManager.NoDataException e) {
             e.printStackTrace();
         }

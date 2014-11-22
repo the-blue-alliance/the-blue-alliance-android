@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listeners.ModelClickListener;
 
 /**
@@ -15,10 +16,12 @@ public class ModelListElement extends ListElement {
 
     private String text;
     private String key;
+    private ModelHelper.MODELS type;
 
-    public ModelListElement(String text, String key) {
+    public ModelListElement(String text, String key, ModelHelper.MODELS type) {
         this.text = text;
         this.key = key;
+        this.type = type;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ModelListElement extends ListElement {
         holder.text.setText(text);
 
         if(!key.isEmpty()){
-            convertView.setOnClickListener(new ModelClickListener(context, key));
+            convertView.setOnClickListener(new ModelClickListener(context, key, type));
         }
 
         return convertView;

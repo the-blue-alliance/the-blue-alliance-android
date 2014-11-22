@@ -10,7 +10,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 21
-        versionName "2.0.4-test"
+        versionName "2.0.5-test"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -27,7 +27,7 @@ android {
         buildTypes {
             debug {
                 versionNameSuffix "/#" + gitSha
-                applicationIdSuffix ".development"
+                applicationIdSuffix ".develtba_dev_philopment"
                 applicationVariants.all { variant ->
                     def file = variant.outputFile
                     variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
