@@ -47,9 +47,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_star_white_24dp"
-            app:colorNormal="@color/accent"
-            app:colorPressed="@color/accent_dark"
-            android:layout_margin="16dp"/>
+            app:fab_colorNormal="@color/accent"
+            app:fab_colorPressed="@color/accent_dark"
+            app:fab_colorRipple="@color/accent_dark_ripple"
+            android:layout_margin="16dp" />
     </FrameLayout>
 
     <FrameLayout
@@ -59,7 +60,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:visibility="invisible"
-        android:padding="16dp"
         android:layout_above="@id/warning_container">
 
         <com.melnykov.fab.FloatingActionButton
@@ -67,7 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_check_white_24dp"
-            app:colorNormal="@color/primary"
-            app:colorPressed="@color/primary_dark" />
+            app:fab_colorNormal="@color/accent"
+            app:fab_colorPressed="@color/accent_dark"
+            app:fab_colorRipple="@color/accent_dark_ripple"
+            android:layout_margin="16dp"/>
     </FrameLayout>
 </RelativeLayout>

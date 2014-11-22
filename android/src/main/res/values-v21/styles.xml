@@ -12,4 +12,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <!-- Uses selectableItemBackgroundBorderless on API >= 21 -->
+    <style name="ListItemButtonStyle" parent="ListItemButtonStyle">
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+    </style>
 </resources>
