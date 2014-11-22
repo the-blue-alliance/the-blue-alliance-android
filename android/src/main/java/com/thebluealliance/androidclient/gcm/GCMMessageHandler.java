@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNoti
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
+import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
@@ -90,6 +91,9 @@ public class GCMMessageHandler extends IntentService {
                     break;
                 case NotificationTypes.AWARDS:
                     notification = new AwardsPostedNotification(messageData);
+                    break;
+                case NotificationTypes.DISTRICT_POINTS_UPDATED:
+                    notification = new DistrictPointsUpdatedNotification(messageData);
                     break;
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);

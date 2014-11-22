@@ -53,4 +53,9 @@
         ********************* -->
     <string name="notification_alliances_updated">Alliances have been updated at %1$s.</string>
 
+    <!-- *********************
+        DistrictPoints Updated Notification
+        ********************* -->
+    <string name="notification_district_points_updated">District point calculations have been updated for %1$s.</string>
+
 </resources>
