@@ -38,7 +38,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewDistrictActivity.newInstance(context, districtKey), 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setContentTitle(r.getString(R.string.notification_level_starting_title))
+                .setContentTitle(r.getString(R.string.notification_district_points_title))
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(largeIcon)

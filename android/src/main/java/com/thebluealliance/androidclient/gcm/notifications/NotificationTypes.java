@@ -12,7 +12,7 @@ public class NotificationTypes {
             AWARDS = "awards_posted",
             MEDIA_POSTED = "media_posted",
             DISTRICT_POINTS_UPDATED = "district_points_updated",
-            SCHEDULE_POSTED = "schedule_posted",
+            SCHEDULE_UPDATED = "schedule_updated",
             FINAL_RESULTS = "final_results",
             PING = "ping",
             BROADCAST = "broadcast",
@@ -29,7 +29,7 @@ public class NotificationTypes {
             case AWARDS:                    return "Awards Posted";
             case MEDIA_POSTED:              return "Media Posted";
             case DISTRICT_POINTS_UPDATED:   return "Points Updated";
-            case SCHEDULE_POSTED:           return "Match Schedule Posted";
+            case SCHEDULE_UPDATED:           return "Match Schedule Posted";
             case FINAL_RESULTS:             return "Final Results";
             default:                        return "";
         }

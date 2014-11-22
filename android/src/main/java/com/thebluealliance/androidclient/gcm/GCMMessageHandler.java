@@ -86,7 +86,7 @@ public class GCMMessageHandler extends IntentService {
                 case NotificationTypes.LEVEL_STARTING:
                     notification = new CompLevelStartingNotification(messageData);
                     break;
-                case NotificationTypes.SCHEDULE_POSTED:
+                case NotificationTypes.SCHEDULE_UPDATED:
                     notification = new ScheduleUpdatedNotification(messageData);
                     break;
                 case NotificationTypes.AWARDS:

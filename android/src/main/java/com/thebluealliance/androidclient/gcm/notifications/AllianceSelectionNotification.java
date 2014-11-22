@@ -37,7 +37,7 @@ public class AllianceSelectionNotification extends BaseNotification{
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewEventActivity.newInstance(context, eventKey), 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setContentTitle(r.getString(R.string.notification_level_starting_title))
+                .setContentTitle(r.getString(R.string.notification_alliances_updated_title))
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(largeIcon)

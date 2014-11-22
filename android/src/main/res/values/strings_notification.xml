@@ -40,22 +40,26 @@
     <!-- *********************
         Event Schedule Updated Notification
         ********************* -->
+    <string name="notification_schedule_updated_title">Event Schedule Updated</string>
     <string name="notification_schedule_updated_with_time">The match schedule at %1$s has been updated. The next match starts at %2$s.</string>
     <string name="notification_schedule_updated_without_time">The match schedule at %1$s has been updated.</string>
 
     <!-- *********************
         Awards Updated Notification
         ********************* -->
+    <string name="notification_awards_updated_title">Event Awards Updated</string>
     <string name="notification_awards_updated">Awards have been updated at %1$s.</string>
 
     <!-- *********************
         Alliances Updated Notification
         ********************* -->
+    <string name="notification_alliances_updated_title">Event Alliances Updated</string>
     <string name="notification_alliances_updated">Alliances have been updated at %1$s.</string>
 
     <!-- *********************
         DistrictPoints Updated Notification
         ********************* -->
+    <string name="notification_district_points_title">District Points Updated</string>
     <string name="notification_district_points_updated">District point calculations have been updated for %1$s.</string>
 
 </resources>
