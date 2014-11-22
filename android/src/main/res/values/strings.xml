@@ -114,6 +114,7 @@
     <string name="yt_header">YouTube Videos</string>
 
     <!-- My TBA -->
+    <string name="default_user_name">MyTBA User</string>
     <string name="no_favorite_data">No favorites found.</string>
     <string name="no_subscription_data">No subscriptions found</string>
     <string name="mytba_error">Error code %1$d: %2$s</string>
