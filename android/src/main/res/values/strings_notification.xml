@@ -48,4 +48,9 @@
         ********************* -->
     <string name="notification_awards_updated">Awards have been updated at %1$s.</string>
 
+    <!-- *********************
+        Alliances Updated Notification
+        ********************* -->
+    <string name="notification_alliances_updated">Alliances have been updated at %1$s.</string>
+
 </resources>

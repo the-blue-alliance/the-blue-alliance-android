@@ -14,6 +14,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
@@ -79,6 +80,7 @@ public class GCMMessageHandler extends IntentService {
                     notification = new UpcomingMatchNotification(messageData);
                     break;
                 case NotificationTypes.ALLIANCE_SELECTION:
+                    notification = new AllianceSelectionNotification(messageData);
                     break;
                 case NotificationTypes.LEVEL_STARTING:
                     notification = new CompLevelStartingNotification(messageData);
