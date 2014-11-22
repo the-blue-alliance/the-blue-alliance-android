@@ -73,6 +73,9 @@ public class ModelInflater {
                 case Database.Events.NAME:
                     event.setEventName(data.getString(i));
                     break;
+                case Database.Events.SHORTNAME:
+                    event.setEventShortName(data.getString(i));
+                    break;
                 case Database.Events.LOCATION:
                     event.setLocation(data.getString(i));
                     break;
@@ -272,6 +275,9 @@ public class ModelInflater {
                     break;
                 case Database.Districts.YEAR:
                     district.setYear(data.getInt(i));
+                    break;
+                case Database.Districts.NAME:
+                    district.setName(data.getString(i));
                     break;
                 default:
             }

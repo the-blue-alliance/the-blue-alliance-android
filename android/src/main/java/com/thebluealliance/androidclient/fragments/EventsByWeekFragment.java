@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
@@ -8,13 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.BuildEventWeekTabs;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,7 +62,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     private ViewPager mViewPager;
-    private PagerSlidingTabStrip mTabs;
+    private SlidingTabs mTabs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,8 +70,10 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
-        mTabs = (PagerSlidingTabStrip) view.findViewById(R.id.event_pager_tabs);
+        mTabs = (SlidingTabs) view.findViewById(R.id.event_pager_tabs);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
+
+        Log.d(Constants.LOG_TAG, "EventByWeekFragment view created!");
         return view;
     }
 
@@ -104,7 +107,9 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
     }
 
     public void updateLabels(ArrayList<String> labels) {
-        getView().findViewById(R.id.tabs_progress).setVisibility(View.GONE);
+        if (getView() != null) {
+            getView().findViewById(R.id.tabs_progress).setVisibility(View.GONE);
+        }
         pagerAdapter = new EventsByWeekFragmentPagerAdapter(this, getChildFragmentManager(), mYear, mTabs, mViewPager, labels);
         mViewPager.setAdapter(pagerAdapter);
         mTabs.setViewPager(mViewPager);

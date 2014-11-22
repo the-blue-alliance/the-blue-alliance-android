@@ -1,30 +1,54 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ComposeShader;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.google.android.gms.plus.model.people.Person;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -46,15 +70,19 @@ public class NavigationDrawerFragment extends Fragment {
      */
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
+    private static final int PROFILE_PIC_SIZE = 200;
+
     private static final List<ListItem> NAVIGATION_ITEMS = new ArrayList<>();
 
+    private ScrimInsetsFrameLayout scrimLayout;
+
     static {
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "My TBA", R.drawable.my_tba_icon_selector, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.event_icon_selector, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.districts_icon_selector, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.team_icon_selector, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "myTBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.ic_event_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.ic_assignment_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.ic_group_black_24dp, R.layout.nav_drawer_item));
         //NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_insights, "Insights", R.drawable.insights_icon_selector, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, "SETTINGS", R.drawable.settings_icon_selector, R.layout.nav_drawer_item_small));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, "Settings", R.drawable.ic_settings_black_24dp, R.layout.nav_drawer_item_small));
     }
 
     /**
@@ -64,7 +92,11 @@ public class NavigationDrawerFragment extends Fragment {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
+    private CircleImageView profilePicture;
+    private ImageView coverPhoto;
+    private TextView profileName;
     private View mFragmentContainerView;
+    private View myTbaProfileInfoContainer;
     private NavigationDrawerAdapter mNavigationAdapter;
     private NavigationDrawerListener mListener;
 
@@ -100,8 +132,8 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false);
+        View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        mDrawerListView = (ListView) v.findViewById(R.id.left_drawer);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -111,7 +143,51 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setAdapter(mNavigationAdapter);
 
-        return mDrawerListView;
+        myTbaProfileInfoContainer = v.findViewById(R.id.mytba_profile_info);
+
+        /*if (!AccountHelper.isMyTBAEnabled(getActivity())) {
+            myTbaProfileInfoContainer.setVisibility(View.GONE);
+        } else {
+            myTbaProfileInfoContainer.setVisibility(View.VISIBLE);
+        }*/
+        profileName = (TextView) v.findViewById(R.id.profile_name);
+        profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
+        coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
+        if(AccountHelper.isMyTBAEnabled(getActivity())) {
+            profilePicture.setVisibility(View.VISIBLE);
+            profileName.setVisibility(View.VISIBLE);
+            setDrawerProfileInfo();
+        }else{
+            profilePicture.setVisibility(View.GONE);
+            profileName.setVisibility(View.GONE);
+        }
+
+        return v;
+    }
+
+    public void setDrawerProfileInfo() {
+        if(PlusHelper.isConnected()) {
+            Person person = PlusHelper.getCurrentPerson();
+            if (person != null) {
+                profileName.setText(person.getDisplayName());
+                String personPhotoUrl = person.getImage().getUrl();
+                personPhotoUrl = personPhotoUrl.substring(0,
+                        personPhotoUrl.length() - 2)
+                        + PROFILE_PIC_SIZE;
+
+                Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+
+                Picasso picasso = Picasso.with(getActivity());
+                if (person.hasImage()) {
+                    picasso.load(personPhotoUrl).into(profilePicture);
+                }
+                if (person.hasCover()) {
+                    picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);
+                } else {
+                    picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
+                }
+            }
+        }
     }
 
     public boolean isDrawerOpen() {
@@ -142,7 +218,7 @@ public class NavigationDrawerFragment extends Fragment {
         // set up the drawer's list view with items and click listener
 
         if (mUseActionBarToggle) {
-            ActionBar actionBar = getActionBar();
+            ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
 
@@ -151,7 +227,6 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerToggle = new ActionBarDrawerToggle(
                     getActivity(),                    /* host Activity */
                     mDrawerLayout,                    /* DrawerLayout object */
-                    R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
                     R.string.drawer_open,  /* "open drawer" description for accessibility */
                     R.string.drawer_close  /* "close drawer" description for accessibility */
             ) {
@@ -213,7 +288,6 @@ public class NavigationDrawerFragment extends Fragment {
                     }
 
                     mListener.onNavDrawerOpened();
-                    getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
 
                 @Override
@@ -223,7 +297,6 @@ public class NavigationDrawerFragment extends Fragment {
                     }
 
                     mListener.onNavDrawerClosed();
-                    getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
             });
         }
@@ -295,16 +368,6 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        // If the drawer is open, show the global app actions in the action bar. See also
-        // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (mDrawerLayout != null && isDrawerOpen()) {
-            showGlobalContextActionBar();
-        }
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mUseActionBarToggle && mDrawerToggle != null) {
             return mDrawerToggle.onOptionsItemSelected(item);
@@ -312,19 +375,9 @@ public class NavigationDrawerFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Per the navigation drawer design guidelines, updates the action bar to show the global app
-     * title, rather than just what's in the current screen.
-     */
-    private void showGlobalContextActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle(R.string.app_name);
-    }
-
-    private ActionBar getActionBar() {
-        return getActivity().getActionBar();
+    @Nullable
+    private ActionBar getSupportActionBar() {
+        return getActivity() != null ? ((ActionBarActivity) getActivity()).getSupportActionBar() : null;
     }
 
     /**
@@ -348,5 +401,51 @@ public class NavigationDrawerFragment extends Fragment {
          */
         public void onNavDrawerClosed();
 
+    }
+
+    public static class LinearGradientTransformation implements Transformation {
+        @Override
+        public Bitmap transform(Bitmap source) {
+            Bitmap outBitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), source.getConfig());
+
+            // Create shaders
+            Shader bitmapShader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+            Shader linearGradient = new LinearGradient(0, 0, 0, source.getHeight(), Color.TRANSPARENT, 0xB4000000, Shader.TileMode.MIRROR);
+
+            // create a shader that combines both effects
+            ComposeShader shader = new ComposeShader(bitmapShader, linearGradient, PorterDuff.Mode.DST_OUT);
+
+            Paint p = new Paint();
+            p.setAntiAlias(true);
+            p.setShader(shader);
+
+            Paint black = new Paint();
+            black.setColor(Color.BLACK);
+
+            Canvas c = new Canvas(outBitmap);
+            c.drawRect(0, 0, source.getWidth(), source.getHeight(), black);
+            c.drawPaint(p);
+            source.recycle();
+            return outBitmap;
+        }
+
+        @Override
+        public String key() {
+            return null;
+        }
+    }
+
+    /**
+     * Called when the insets of the nav drawer are changed. This allows us to properly place the contents so
+     * that they don't flow under the status bar.
+     *
+     */
+    public void onInsetsChanged(Rect insets) {
+        RelativeLayout accountDetailsContainer = (RelativeLayout) getView().findViewById(R.id.account_details_container);
+
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)
+                accountDetailsContainer.getLayoutParams();
+        lp.topMargin = insets.top;
+        accountDetailsContainer.setLayoutParams(lp);
     }
 }

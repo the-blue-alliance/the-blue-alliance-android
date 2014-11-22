@@ -81,7 +81,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
                 ArrayList<Favorite> favoriteModels = new ArrayList<>();
                 for (ModelsMobileApiMessagesFavoriteMessage f : favoriteCollection.getFavorites()) {
                     Log.d(Constants.LOG_TAG, "Adding favorite " + f.getModelKey());
-                    favoriteModels.add(new Favorite(currentUser, f.getModelKey()));
+                    favoriteModels.add(new Favorite(currentUser, f.getModelKey(), f.getModelType().intValue()));
                 }
                 favorites.add(favoriteModels);
             }
@@ -101,7 +101,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
             if (subscriptionCollection.getSubscriptions() != null) {
                 ArrayList<Subscription> subscriptionModels = new ArrayList<>();
                 for (ModelsMobileApiMessagesSubscriptionMessage s : subscriptionCollection.getSubscriptions()) {
-                    subscriptionModels.add(new Subscription(currentUser, s.getModelKey(), s.getNotifications()));
+                    subscriptionModels.add(new Subscription(currentUser, s.getModelKey(), s.getNotifications(), s.getModelType().intValue()));
                 }
                 subscriptions.add(subscriptionModels);
             }

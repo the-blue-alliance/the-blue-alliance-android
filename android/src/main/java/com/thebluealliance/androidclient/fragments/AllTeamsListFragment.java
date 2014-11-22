@@ -8,15 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class AllTeamsListFragment extends Fragment {
 
     private ViewPager mViewPager;
-    private PagerSlidingTabStrip mTabs;
+    private SlidingTabs mTabs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,7 +27,7 @@ public class AllTeamsListFragment extends Fragment {
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
-        mTabs = (PagerSlidingTabStrip) v.findViewById(R.id.team_pager_tabs);
+        mTabs = (SlidingTabs) v.findViewById(R.id.team_pager_tabs);
 
         /**
          * Fix for really strange bug. Menu bar items wouldn't appear only when navigated to from 'Events' in the nav drawer

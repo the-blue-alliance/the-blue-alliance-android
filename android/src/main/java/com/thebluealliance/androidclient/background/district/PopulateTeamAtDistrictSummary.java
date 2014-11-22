@@ -124,7 +124,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         View view = fragment.getView();
         if (view != null && activity != null) {
-            if (activity.getActionBar() != null) {
+            if (activity.getSupportActionBar() != null) {
                 activity.setActionBarTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
                 activity.setActionBarSubtitle("@ " + districtKey.substring(0, 4) + " " + districtKey.substring(4).toUpperCase());
             }

@@ -1,121 +1,180 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
+import android.preference.PreferenceScreen;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
 
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AddRemoveUserFavorite;
-import com.thebluealliance.androidclient.accounts.AddUpdateUserSubscription;
-import com.thebluealliance.androidclient.accounts.RemoveUserSubscription;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.listitems.NotificationTypeListElement;
-import com.thebluealliance.androidclient.views.FloatingActionButton;
+import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * File created by phil on 8/18/14.
  */
-public class NotificationSettingsFragment extends Fragment {
+public class NotificationSettingsFragment extends PreferenceFragment {
 
     public static final String MODEL_KEY = "model_key";
+    public static final String MODEL_TYPE = "model_type";
+    public static final String SAVED_STATE_BUNDLE = "saved_state_bundle";
+    private Bundle savedStateBundle;
+    private Bundle initialStateBundle;
     private String modelKey;
     private ModelHelper.MODELS modelType;
-    private SlidingUpPanelLayout panel;
-    private ListView list;
 
-    public static NotificationSettingsFragment newInstance(String modelKey){
+    private boolean preferencesLoaded = false;
+
+    public static NotificationSettingsFragment newInstance(String modelKey, ModelHelper.MODELS modelType, Bundle savedStateBundle) {
         NotificationSettingsFragment fragment = new NotificationSettingsFragment();
         Bundle args = new Bundle();
         args.putString(MODEL_KEY, modelKey);
+        args.putInt(MODEL_TYPE, modelType.getEnum());
+        args.putBundle(SAVED_STATE_BUNDLE, savedStateBundle);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if(getArguments() == null || !getArguments().containsKey(MODEL_KEY)){
-            throw new IllegalArgumentException("NotificationSettingsFragment must be constructed with a model key");
-        }
-        modelKey = getArguments().getString(MODEL_KEY);
-        modelType = ModelHelper.getModelFromKey(modelKey);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.notification_panel, container, false);
-        panel = (SlidingUpPanelLayout) getActivity().findViewById(R.id.sliding_panel);
-        panel.setPanelSlideListener(new PanelListener());
-        final FloatingActionButton fab = (FloatingActionButton)v.findViewById(R.id.favorite_button);
-        list = (ListView)v.findViewById(R.id.notification_list);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AddRemoveUserFavorite(getActivity(), fab).execute(modelKey);
-            }
-        });
-        new CreateSubscriptionPanel(getActivity(), fab, list).execute(modelKey);
-        return v;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() == null || !getArguments().containsKey(MODEL_KEY)) {
+            throw new IllegalArgumentException("NotificationSettingsFragment must be constructed with a model key");
+        }
+        modelKey = getArguments().getString(MODEL_KEY);
+        modelType = ModelHelper.getModelFromEnum(getArguments().getInt(MODEL_TYPE));
+        savedStateBundle = getArguments().getBundle(SAVED_STATE_BUNDLE);
     }
 
-    class PanelListener implements SlidingUpPanelLayout.PanelSlideListener {
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        @Override
-        public void onPanelSlide(View view, float v) {
+        // Create the preference screen that will hold all the preferences
+        PreferenceScreen p = getPreferenceManager().createPreferenceScreen(getActivity());
+        this.setPreferenceScreen(p);
 
-        }
+        // Create the list of preferences
+        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
+    }
 
-        @Override
-        public void onPanelCollapsed(View view) {
-            //save subscription settings
-            Log.d(Constants.LOG_TAG, "Panel Collapsed.");
 
-            ArrayList<String> subscribed = new ArrayList<>();
-            subscribed.add(modelKey);
-            String[] modelNotifications = ModelHelper.getNotificationTypes(modelType);
-            ListViewAdapter adapter = ((ListViewAdapter)list.getAdapter());
-            if(adapter != null) {
-                for (int i = 0; i < adapter.values.size(); i++) {
-                    NotificationTypeListElement element = ((NotificationTypeListElement) adapter.values.get(i));
-                    Log.d(Constants.LOG_TAG, "Pos: " + i + ": " + element.isEnabled());
-                    if (element.isEnabled()) {
-                        subscribed.add(modelNotifications[element.getPosition()]);
-                    }
+    public ModelNotificationFavoriteSettings getSettings() {
+        ArrayList<String> subscribed = new ArrayList<>();
+
+        PreferenceScreen preferences = getPreferenceScreen();
+        // Use recursion to make sure we catch any preferences nested in groups
+        writeSettingsFromPreferenceGroupToStringArray(preferences, subscribed);
+
+        // Don't pass the favorite preference to the updater.
+        subscribed.remove(MyTBAHelper.getFavoritePreferenceKey());
+        Log.d(Constants.LOG_TAG, "notifications: " + subscribed);
+
+        ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
+        settings.isFavorite = ((CheckBoxPreference) findPreference(MyTBAHelper.getFavoritePreferenceKey())).isChecked();
+        settings.enabledNotifications = subscribed;
+        settings.modelKey = modelKey;
+        settings.modelType = modelType;
+
+        return settings;
+    }
+
+    public void saveSettings() {
+        ArrayList<String> subscribed = new ArrayList<>();
+
+        PreferenceScreen preferences = getPreferenceScreen();
+        // Use recursion to make sure we catch any preferences nested in groups
+        writeSettingsFromPreferenceGroupToStringArray(preferences, subscribed);
+
+        // Don't pass the favorite preference to the updater.
+        subscribed.remove(MyTBAHelper.getFavoritePreferenceKey());
+        Log.d(Constants.LOG_TAG, "notifications: " + subscribed);
+
+        ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
+        settings.isFavorite = ((CheckBoxPreference) findPreference(MyTBAHelper.getFavoritePreferenceKey())).isChecked();
+        settings.enabledNotifications = subscribed;
+        settings.modelKey = modelKey;
+
+        new UpdateUserModelSettings(getActivity(), settings).execute();
+    }
+
+    private void writeSettingsFromPreferenceGroupToStringArray(PreferenceGroup pg, ArrayList<String> strings) {
+        for (int i = 0; i < pg.getPreferenceCount(); i++) {
+            Preference currentPreference = pg.getPreference(i);
+            if (currentPreference instanceof CheckBoxPreference) {
+                if (((CheckBoxPreference) currentPreference).isChecked()) {
+                    strings.add(currentPreference.getKey());
                 }
-            }
-            Log.d(Constants.LOG_TAG, "notifications: "+ subscribed);
-
-            if(subscribed.size() == 1){
-                new RemoveUserSubscription(getActivity()).execute(modelKey);
-            }else {
-                new AddUpdateUserSubscription(getActivity()).execute(subscribed.toArray(new String[subscribed.size()]));
+            } else if (currentPreference instanceof PreferenceGroup) {
+                writeSettingsFromPreferenceGroupToStringArray((PreferenceGroup) currentPreference, strings);
             }
         }
+    }
 
-        @Override
-        public void onPanelExpanded(View view) {
+    public void writeStateToBundle(Bundle b) {
+        PreferenceGroup pg = getPreferenceScreen();
+        for (int i = 0; i < pg.getPreferenceCount(); i++) {
+            Preference currentPreference = pg.getPreference(i);
+            if (currentPreference instanceof CheckBoxPreference) {
+                b.putBoolean(currentPreference.getKey(), ((CheckBoxPreference) currentPreference).isChecked());
+            } else if (currentPreference instanceof PreferenceGroup) {
+                writeStateToBundle(b, (PreferenceGroup) currentPreference);
+            }
+        }
+    }
 
+    private void writeStateToBundle(Bundle b, PreferenceGroup pg) {
+        for (int i = 0; i < pg.getPreferenceCount(); i++) {
+            Preference currentPreference = pg.getPreference(i);
+            if (currentPreference instanceof CheckBoxPreference) {
+                b.putBoolean(currentPreference.getKey(), ((CheckBoxPreference) currentPreference).isChecked());
+            } else if (currentPreference instanceof PreferenceGroup) {
+                writeStateToBundle(b, (PreferenceGroup) currentPreference);
+            }
+        }
+    }
+
+    // Call when preferences have been loaded into the fragment
+    public void setPreferencesLoaded() {
+        preferencesLoaded = true;
+    }
+
+    public boolean arePreferencesLoaded() {
+        return preferencesLoaded;
+    }
+
+    public void setInitialStateBundle(Bundle b) {
+        initialStateBundle = b;
+    }
+
+    // Call to restore the preference fragment to its initial state, before the user unchecked or checked anything.
+    public void restoreInitialState() {
+        if (initialStateBundle == null) {
+            return;
         }
 
-        @Override
-        public void onPanelAnchored(View view) {
-
+        Set<String> keys = initialStateBundle.keySet();
+        for (String key : keys) {
+            ((CheckBoxPreference) findPreference(key)).setChecked(initialStateBundle.getBoolean(key));
         }
+    }
 
-        @Override
-        public void onPanelHidden(View view) {
-
-        }
+    public void refreshSettingsFromDatabase() {
+        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
     }
 }

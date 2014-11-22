@@ -42,6 +42,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     private PopulateTeamInfo task;
 
+
+
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
         Bundle args = new Bundle();
@@ -75,6 +77,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         v.findViewById(R.id.team_cd_button).setOnClickListener(this);
         v.findViewById(R.id.team_youtube_button).setOnClickListener(this);
         v.findViewById(R.id.team_website_button).setOnClickListener(this);
+
         return v;
     }
 
@@ -126,6 +129,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
+
+
     @Override
     public void onRefreshStart() {
         Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " info");
@@ -150,9 +155,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         parent.unregisterRefreshListener(this);
     }
 
-    public void showCurrentEvent(final EventListElement event){
+    public void showCurrentEvent(final EventListElement event) {
 
-        final LinearLayout eventLayout = (LinearLayout)getView().findViewById(R.id.team_current_event);
+        final LinearLayout eventLayout = (LinearLayout) getView().findViewById(R.id.team_current_event);
         final RelativeLayout container = (RelativeLayout) getView().findViewById(R.id.team_current_event_container);
 
         getActivity().runOnUiThread(new Runnable() {
@@ -162,7 +167,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
                 eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
 
                 container.setVisibility(View.VISIBLE);
-                container.setTag(mTeamKey+"@"+event.getEventKey());
+                container.setTag(mTeamKey + "@" + event.getEventKey());
                 container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
             }
         });
@@ -173,7 +178,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     public void onEvent(LiveEventEventUpdateEvent event) {
-        if(event.getEvent() != null) {
+        if (event.getEvent() != null) {
             showCurrentEvent(event.getEvent().render());
         }
     }

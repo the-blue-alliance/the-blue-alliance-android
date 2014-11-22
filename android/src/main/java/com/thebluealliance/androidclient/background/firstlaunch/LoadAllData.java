@@ -139,7 +139,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                             continue;
                         }
                     }
-                    ArrayList<District> yearDistricts = TBAv2.getDistrictList(districtListResponse.getData(), url);
+                    ArrayList<District> yearDistricts = TBAv2.getDistrictList(districtListResponse.getData(), url, districtListResponse.getVersion());
                     districts.addAll(yearDistricts);
                 }
             }

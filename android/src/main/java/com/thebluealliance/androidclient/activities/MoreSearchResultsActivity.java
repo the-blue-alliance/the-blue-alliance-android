@@ -4,9 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,7 +28,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 /**
  * Created by Nathan on 6/15/2014.
  */
-public class MoreSearchResultsActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MoreSearchResultsActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int TEAM_RESULTS = 1;
     public static final int EVENT_RESULTS = 2;
@@ -52,14 +53,16 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
         /* Report the activity start to GAnalytics */
         Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
         resultsList = (ListView) findViewById(R.id.results);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         String query = getIntent().getStringExtra(QUERY);
         resultsType = getIntent().getIntExtra(RESULTS_TYPE, -1);
@@ -75,10 +78,10 @@ public class MoreSearchResultsActivity extends FragmentActivity implements Loade
         getSupportLoaderManager().restartLoader(resultsType, loaderBundle, this);
         switch (resultsType) {
             case TEAM_RESULTS:
-                getActionBar().setTitle(String.format(getString(R.string.teams_matching), query));
+                getSupportActionBar().setTitle(String.format(getString(R.string.teams_matching), query));
                 break;
             case EVENT_RESULTS:
-                getActionBar().setTitle(String.format(getString(R.string.events_matching), query));
+                getSupportActionBar().setTitle(String.format(getString(R.string.events_matching), query));
                 break;
         }
 

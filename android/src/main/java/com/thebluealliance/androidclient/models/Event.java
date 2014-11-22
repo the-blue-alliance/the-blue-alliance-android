@@ -34,20 +34,18 @@ public class Event extends BasicModel<Event> {
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
             NotificationTypes.MATCH_SCORE,
-            NotificationTypes.LEVEL_STARTING
-            //NotificationTypes.ALLIANCE_SELECTION,
-            //NotificationTypes.AWARDS,
-            //NotificationTypes.SCHEDULE_POSTED,
-            //NotificationTypes.FINAL_RESULTS
+            NotificationTypes.LEVEL_STARTING,
+            NotificationTypes.ALLIANCE_SELECTION,
+            NotificationTypes.AWARDS,
+            NotificationTypes.SCHEDULE_POSTED,
+            NotificationTypes.FINAL_RESULTS
     };
 
-    private String shortName;
     private JsonArray matches, alliances, rankings, webcasts, teams;
     private JsonObject stats, districtPoints;
 
     public Event() {
         super(Database.TABLE_EVENTS);
-        shortName = "";
         alliances = null;
         rankings = null;
         webcasts = null;
@@ -192,6 +190,18 @@ public class Event extends BasicModel<Event> {
     public void setEventName(String eventName) {
         fields.put(Database.Events.NAME, eventName);
     }
+
+    public String getEventShortName() throws FieldNotDefinedException {
+        if (fields.containsKey(Database.Events.SHORTNAME) && fields.get(Database.Events.SHORTNAME) instanceof String) {
+            String shortName = (String) fields.get(Database.Events.SHORTNAME);
+            if (shortName != null && !shortName.isEmpty()) {
+                return shortName;
+            }
+        }
+        return getEventName();
+    }
+
+    public void setEventShortName(String eventShortName) { fields.put(Database.Events.SHORTNAME, eventShortName); }
 
     public String getLocation() throws FieldNotDefinedException {
         if (fields.containsKey(Database.Events.LOCATION) && fields.get(Database.Events.LOCATION) instanceof String) {
@@ -394,22 +404,6 @@ public class Event extends BasicModel<Event> {
         fields.put(Database.Events.OFFICIAL, official ? 1 : 0);
     }
 
-    public String getShortName() {
-        try {
-            if (shortName == null || shortName.isEmpty()) {
-                setShortName(EventHelper.getShortNameForEvent(getEventName(), getEventType()));
-            }
-            return shortName;
-        } catch (FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Missing fields for short name.");
-            return "";
-        }
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
     public void setTeams(JsonArray teams) {
         fields.put(Database.Events.TEAMS, teams.toString());
         this.teams = teams;
@@ -449,14 +443,7 @@ public class Event extends BasicModel<Event> {
     @Override
     public EventListElement render() {
         try {
-            String eventKey = getEventKey(),
-                    eventName = getShortName(),
-                    location = getLocation();
-            if (getShortName() == null || shortName.isEmpty()) {
-                return new EventListElement(eventKey, eventName, getDateString(), location);
-            } else {
-                return new EventListElement(eventKey, getShortName(), getDateString(), location);
-            }
+            return new EventListElement(getEventKey(), getEventShortName(), getDateString(), getLocation());
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
                     "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
@@ -483,7 +470,7 @@ public class Event extends BasicModel<Event> {
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {
-        return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
+        return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
     public static synchronized APIResponse<Event> query(Context c, String eventKey, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {

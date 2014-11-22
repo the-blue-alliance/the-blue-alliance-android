@@ -44,6 +44,8 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     protected APIResponse.CODE doInBackground(String... params) {
         districtKey = params[0];
 
+        rankings = new ArrayList<>();
+
         APIResponse<ArrayList<DistrictTeam>> response;
         try {
             response = DataManager.Districts.getDistrictRankings(activity, districtKey, forceFromCache);
@@ -52,7 +54,6 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
             return APIResponse.CODE.NODATA;
         }
 
-        rankings = new ArrayList<>();
         for (DistrictTeam team : response.getData()) {
             try {
                 Team teamData = DataManager.Teams.getTeamFromDB(activity, team.getTeamKey());

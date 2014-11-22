@@ -4,22 +4,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class ViewEventActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
+public class ViewEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENTKEY = "eventKey";
 
@@ -46,7 +48,7 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
 
-        setModelKey(mEventKey);
+        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
         setContentView(R.layout.activity_view_event);
 
         infoMessage = (TextView) findViewById(R.id.info_container);
@@ -62,10 +64,11 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
@@ -74,6 +77,8 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
 
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
         isDistrict = true;
+
+        setSettingsToolbarTitle("Event Settings");
     }
 
     public void updateDistrict(boolean isDistrict) {
@@ -94,7 +99,7 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // The title is empty now; the EventInfoFragment will set the appropriate title
         // once it is loaded.
         setActionBarTitle("");
@@ -164,6 +169,13 @@ public class ViewEventActivity extends SlidingPageActivity implements ViewPager.
             } else {
                 hideInfoMessage();
             }
+        }
+
+        // hide the FAB if we aren't on the first page
+        if(position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
         }
     }
 

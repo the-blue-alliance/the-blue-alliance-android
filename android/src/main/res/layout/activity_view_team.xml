@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/primary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <Spinner
+            android:id="@+id/toolbar_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:paddingLeft="16dp"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/warning_container"
+        android:layout_below="@id/toolbar"
         android:orientation="vertical">
 
-        <com.astuetz.PagerSlidingTabStrip
+        <com.thebluealliance.androidclient.views.SlidingTabs
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            app:pstsIndicatorColor="@color/pager_indicator_color" />
+            android:background="@color/primary" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
@@ -24,7 +43,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/warning_container"
+        android:id="@id/warning_container"
         style="@style/WarningOverlayStyle"
         android:visibility="gone" />
 </RelativeLayout>

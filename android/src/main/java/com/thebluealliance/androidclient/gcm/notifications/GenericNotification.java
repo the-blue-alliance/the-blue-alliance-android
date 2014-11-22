@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonObject;
@@ -26,7 +27,9 @@ public class GenericNotification extends BaseNotification{
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(jsonData.get("title").getAsString())
                 .setContentText(jsonData.get("desc").getAsString())
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(jsonData.get("desc").getAsString())).build();
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(jsonData.get("desc").getAsString()))
+                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)))
+                .build();
     }
 
     @Override

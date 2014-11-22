@@ -3,10 +3,13 @@ package com.thebluealliance.androidclient.models;
 import android.content.ContentValues;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,17 +19,19 @@ public class Subscription {
     private String userName;
     private String modelKey;
     private String notificationSettings;
+    private List<String> notificationList;
     private int modelEnum;
 
     public Subscription(){
-
+        notificationList = new ArrayList<>();
     }
 
-    public Subscription(String userName, String modelKey, List<String> notificationSettings) {
+    public Subscription(String userName, String modelKey, List<String> notificationSettings, int model_type) {
         this.userName = userName;
         this.modelKey = modelKey;
+        this.notificationList = notificationSettings;
         this.notificationSettings = makeNotificationJSON(notificationSettings);
-        setModelEnum(ModelHelper.getModelFromKey(modelKey).ordinal());
+        setModelEnum(model_type);
     }
 
     public String getKey(){
@@ -55,6 +60,21 @@ public class Subscription {
 
     public void setNotificationSettings(String notificationSettings) {
         this.notificationSettings = notificationSettings;
+        // Update the ArrayList
+        notificationList.clear();
+        for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
+            notificationList.add(element.getAsString());
+        }
+    }
+
+    public List<String> getNotificationList() {
+        if(notificationList == null){
+            notificationList = new ArrayList<>();
+            for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
+                notificationList.add(element.getAsString());
+            }
+        }
+        return notificationList;
     }
 
     public int getModelEnum() {

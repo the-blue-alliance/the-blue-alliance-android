@@ -14,7 +14,8 @@
     <color name="table_cell_gray">#c0c0c0</color>
     <color name="dark_grey">#A4A4A4</color>
     <color name="white">#FFF</color>
-    <color name="nav_text_color">#585858</color>
+    <color name="black">#000000</color>
+    <color name="nav_text_color">#000000</color>
     <color name="action_bar_background">#000056</color>
 
     <color name="pager_indicator_color">#ff0057ff</color>
@@ -33,6 +34,7 @@
     <color name="more_results_pressed">#d7d7d7</color>
 
     <!-- text colors -->
+    <color name="primary_text_color">#000000</color>
     <color name="secondary_text_color">#89000000</color>
 
     <color name="divider_color">#32000000</color>
@@ -50,5 +52,14 @@
     <!-- FAB colors -->
     <color name="fab_yellow">#ffeb3b</color>
     <color name="fab_yellow_pressed">#e6e600</color>
+
+    <!-- MateriYOLO colors -->
+    <color name="primary">#3f51b5</color>
+    <color name="primary_dark">#303f9f</color>
+    <color name="accent">#ffd600</color>
+    <color name="accent_dark">#e6c100</color>
+    <color name="control_highlight">#c5cae9</color>
+
+    <color name="photo_tint">#6000</color>
 
 </resources>

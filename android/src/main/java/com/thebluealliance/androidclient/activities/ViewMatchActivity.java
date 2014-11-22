@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,12 +16,13 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * Created by Nathan on 5/14/2014.
  */
-public class ViewMatchActivity extends SlidingPageActivity implements RefreshListener {
+public class ViewMatchActivity extends FABNotificationSettingsActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
 
@@ -44,9 +46,12 @@ public class ViewMatchActivity extends SlidingPageActivity implements RefreshLis
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setModelKey(mMatchKey);
+        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
         setContentView(R.layout.activity_view_match);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
+
+        setSettingsToolbarTitle("Match settings");
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
@@ -63,7 +68,7 @@ public class ViewMatchActivity extends SlidingPageActivity implements RefreshLis
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle("Match");
     }
 

@@ -7,7 +7,9 @@
     <string name="pref_header_account">Account</string>
 
     <!-- Account -->
-    <string name="is_mytba_eabled">Enable myTBA</string>
+    <string name="is_mytba_eabled">Enable/Disable myTBA</string>
+    <string name="mytba_enabled">myTBA is enabled</string>
+    <string name="mytba_disabled">myTBA is disabled</string>
 
     <!-- Debug Settings Screen -->
     <string name="pref_header_debug">Debug Preferences</string>

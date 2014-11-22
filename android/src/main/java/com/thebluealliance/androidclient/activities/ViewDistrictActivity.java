@@ -1,27 +1,29 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * Created by phil on 7/10/14.
  */
-public class ViewDistrictActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
+public class ViewDistrictActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
@@ -64,7 +66,7 @@ public class ViewDistrictActivity extends SlidingPageActivity implements ViewPag
         }
 
         districtKey = DistrictHelper.generateKey(districtAbbrev, year);
-        setModelKey(districtKey);
+        setModelKey(districtKey, ModelHelper.MODELS.DISTRICT);
         setContentView(R.layout.activity_view_district);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
@@ -78,10 +80,11 @@ public class ViewDistrictActivity extends SlidingPageActivity implements ViewPag
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
@@ -89,6 +92,8 @@ public class ViewDistrictActivity extends SlidingPageActivity implements ViewPag
         }
 
         setBeamUri(String.format(NfcUris.URI_DISTRICT, districtAbbrev));
+
+        setSettingsToolbarTitle("District Settings");
     }
 
     @Override
@@ -98,7 +103,7 @@ public class ViewDistrictActivity extends SlidingPageActivity implements ViewPag
     }
 
     private void setupActionBar() {
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             setActionBarTitle(String.format(getString(R.string.district_title_format), year, DistrictHelper.districtTypeFromKey(districtKey).getName()));
@@ -162,6 +167,13 @@ public class ViewDistrictActivity extends SlidingPageActivity implements ViewPag
             } else {
                 pointsHelp.setVisible(false);
             }
+        }
+
+        // hide the FAB if we aren't on the first page
+        if (position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
         }
     }
 

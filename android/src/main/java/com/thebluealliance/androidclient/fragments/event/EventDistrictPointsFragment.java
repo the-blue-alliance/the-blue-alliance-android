@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventDistrictPoints;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -125,6 +124,10 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
 
     public void updateDistrict(boolean isDistrict) {
         this.isDistrict = isDistrict;
+        if(getView() == null) {
+            return;
+        }
+
         infoContainer = (TextView) getView().findViewById(R.id.info_container);
         if (isDistrict) {
             infoContainer.setVisibility(View.GONE);

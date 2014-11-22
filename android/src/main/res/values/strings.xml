@@ -3,6 +3,8 @@
 
     <string name="app_name">The Blue Alliance</string>
     <string name="app_name_short">TBA</string>
+    <string name="package_name">com.thebluealliance.androidclient</string>
+    <string name="account_type">com.thebluealliance.androidclient.account.TBAACCOUNT</string>
     <string name="web_url_host">thebluealliance.com</string>
     <string name="web_url_host_www">www.thebluealliance.com</string>
     <string name="action_settings">Settings</string>
@@ -14,6 +16,7 @@
     <string name="action_remove_favorite">Remove Favorite</string>
     <string name="action_add_subscription">Add Subscription</string>
     <string name="action_remove_subscription">Remove Subscription</string>
+    <string name="close">Close</string>
 
     <!-- Main Activity -->
     <string-array name="event_list_year_selector">
@@ -114,6 +117,7 @@
     <!-- My TBA -->
     <string name="no_favorite_data">No favorites found.</string>
     <string name="no_subscription_data">No subscriptions found</string>
+    <string name="mytba_error">Error code %1$d: %2$s</string>
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>

@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
         /* Report the activity start to GAnalytics */
         Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
@@ -65,9 +69,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
         resultsList = (ListView) findViewById(R.id.results);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        searchView = new SearchView(getActionBar().getThemedContext());
+        searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setOnQueryTextListener(this);
         searchView.setIconifiedByDefault(false);
         searchView.setIconified(false);
@@ -84,8 +88,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
         searchView.findViewById(closeButtonId).setVisibility(View.GONE);
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
-        getActionBar().setDisplayShowCustomEnabled(true);
-        getActionBar().setCustomView(searchView, layoutParams);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(searchView, layoutParams);
 
         // Hide the magnifying glass icon
         int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
@@ -94,6 +98,26 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         // Change search hint text color
         int searchTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         ((TextView) searchView.findViewById(searchTextId)).setHintTextColor(getResources().getColor(R.color.search_hint));
+
+        // Check if we got a search as the intent
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if(intent.getAction() == null) {
+            return;
+        }
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()) || intent.getAction().equals("com.google.android.gms.actions.SEARCH_ACTION")) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchView.setQuery(query, true);
+        }
     }
 
     @Override

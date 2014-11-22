@@ -1,16 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.thebluealliance.androidclient.fragments.EventsByWeekFragment">
 
-    <com.astuetz.PagerSlidingTabStrip
+    <com.thebluealliance.androidclient.views.SlidingTabs
         android:id="@+id/team_pager_tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        app:pstsIndicatorColor="@color/pager_indicator_color" />
+        android:background="@color/primary" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/team_pager"

@@ -1,17 +1,14 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +24,12 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
+import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
-import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
 
 import java.util.List;
 
@@ -45,6 +44,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     private static final String KEY = "eventKey";
     private PopulateEventInfo task;
     private Activity parent;
+    private Event event;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -77,6 +77,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         info.findViewById(R.id.event_cd_button).setOnClickListener(this);
         info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
         info.findViewById(R.id.event_top_oprs_container).setOnClickListener(this);
+        info.findViewById(R.id.event_date_container).setOnClickListener(this);
         return info;
     }
 
@@ -127,7 +128,37 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         } else if (id == R.id.event_top_oprs_container) {
             ((ViewEventActivity) getActivity()).getPager().setCurrentItem(5);  // Stats
             return;
+        } else if (id == R.id.event_date_container) {
+            if(event == null) {
+                return;
+            }
+
+            // Calendar stuff isn't working propberly, the intent isn't setting the proper date
+            // on the calendar entry. This is disabled for now.
+
+            // Launch the calendar app with the event's info pre-filled
+            /*try {
+                long startTime = event.getStartDate().getTime();
+                long endTime = event.getEndDate().getTime();
+
+                Log.d(Constants.LOG_TAG, "Calendar: " + startTime + " - " + endTime);
+
+                Intent i = new Intent(Intent.ACTION_INSERT);
+                i.setData(CalendarContract.Events.CONTENT_URI);
+                i.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
+                i.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime);
+                i.putExtra(CalendarContract.Events.TITLE, event.getShortName());
+                i.putExtra(CalendarContract.Events.EVENT_LOCATION, event.getVenue());
+                i.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                startActivity(i);
+                return;
+            } catch (BasicModel.FieldNotDefinedException e) {
+                e.printStackTrace();
+                return;
+            }*/
+            return;
         }
+
         if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
             String uri = v.getTag().toString();
 
@@ -186,5 +217,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             Log.d(Constants.LOG_TAG, "showing next match");
             showNextMatch(event.getNextMatch().render());
         }
+    }
+
+    // Called when the event has been loaded. We use this to set up the calendar stuff.
+    public void onEvent(EventInfoLoadedEvent eventEvent) {
+        this.event = eventEvent.getEvent();
     }
 }

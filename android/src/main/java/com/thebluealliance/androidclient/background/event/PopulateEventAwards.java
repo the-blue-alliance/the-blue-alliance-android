@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.AwardListElement;
+import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -76,7 +76,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                             teams.put(teamKey, team);
                         }
                     }
-                    awards.add(new AwardListElement(a.getName(), eventKey, a.getWinners(), teams, teamKey));
+                    awards.add(new CardedAwardListElement(a.getName(), eventKey, a.getWinners(), teams, teamKey));
                 } catch (BasicModel.FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
                 }

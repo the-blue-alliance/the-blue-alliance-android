@@ -54,7 +54,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle(getString(R.string.contributors));
     }
 

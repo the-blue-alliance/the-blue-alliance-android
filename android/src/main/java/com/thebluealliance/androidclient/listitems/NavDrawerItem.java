@@ -3,10 +3,10 @@ package com.thebluealliance.androidclient.listitems;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.views.SelectableImage;
 
 /**
  * File created by phil on 4/20/14.
@@ -39,11 +39,12 @@ public class NavDrawerItem implements ListItem {
         if (convertView == null) {
             convertView = inflater.inflate(layout, null);
         }
+
         if (icon != -1) {
-            ((ImageView) convertView.findViewById(R.id.icon)).setImageResource(icon);
+            ((SelectableImage) convertView.findViewById(R.id.icon)).setImageResource(icon);
         }
-        TextView textView = ((TextView) convertView.findViewById(R.id.title));
-        textView.setText(title);
+
+        ((TextView) convertView.findViewById(R.id.title)).setText(title);
 
         return convertView;
     }

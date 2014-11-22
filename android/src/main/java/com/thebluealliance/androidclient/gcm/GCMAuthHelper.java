@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
@@ -84,6 +86,8 @@ public class GCMAuthHelper {
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();
         request.setMobileId(gcmId);
         request.setOperatingSystem(OS_ANDROID);
+        request.setName(Build.MANUFACTURER + " " + Build.MODEL);
+        request.setDeviceUuid(Settings.Secure.getString(activity.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
 
         try {
             ModelsMobileApiMessagesBaseResponse response = service.register(request).execute();

@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -20,10 +20,12 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Arrays;
 
-public class TeamAtEventActivity extends SlidingPageActivity implements ViewPager.OnPageChangeListener {
+public class TeamAtEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
@@ -56,7 +58,7 @@ public class TeamAtEventActivity extends SlidingPageActivity implements ViewPage
         }
 
         String eventTeamKey = EventTeamHelper.generateKey(eventKey, teamKey);
-        setModelKey(eventTeamKey);
+        setModelKey(eventTeamKey, ModelHelper.MODELS.EVENTTEAM);
         setContentView(R.layout.activity_team_at_event);
 
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -67,11 +69,12 @@ public class TeamAtEventActivity extends SlidingPageActivity implements ViewPage
         pager.setOffscreenPageLimit(6);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -83,6 +86,8 @@ public class TeamAtEventActivity extends SlidingPageActivity implements ViewPage
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
         startRefresh();
+
+        setSettingsToolbarTitle("Team at Event Settings");
     }
 
     @Override
@@ -153,6 +158,13 @@ public class TeamAtEventActivity extends SlidingPageActivity implements ViewPage
             } else {
                 mOptionsMenu.findItem(R.id.stats_help).setVisible(false);
             }
+        }
+
+        // hide the FAB if we aren't on the first page
+        if (position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
         }
     }
 

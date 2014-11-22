@@ -55,12 +55,12 @@
         android:id="@id/team_info"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:padding="20dp"
+        android:padding="24dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:clickable="true"
         android:focusable="false"
         android:background="?android:attr/selectableItemBackground"
-        android:src="@drawable/ic_action_about" />
+        android:src="@drawable/ic_info_outline_black_24dp" />
 
 </RelativeLayout>
