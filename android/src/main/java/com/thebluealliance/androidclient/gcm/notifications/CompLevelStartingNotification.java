@@ -9,9 +9,11 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,21 +25,34 @@ import java.util.TimeZone;
  */
 public class CompLevelStartingNotification extends BaseNotification {
 
-    JsonObject jsonData;
+    private JsonObject jsonData;
+    private String eventName, eventKey, compLevelAbbrev;
 
     public CompLevelStartingNotification(String messageData){
         super(NotificationTypes.LEVEL_STARTING, messageData);
+    }
 
-        jsonData = new JsonParser().parse(messageData).getAsJsonObject();
+    @Override
+    public void parseMessageData() throws JsonParseException{
+        jsonData = JSONManager.getasJsonObject(messageData);
+        if(!jsonData.has("event_name")){
+            throw new JsonParseException("Notification data does not contain 'event_name'");
+        }
+        eventName = jsonData.get("event_name").getAsString();
+        if(!jsonData.has("event_key")){
+            throw new JsonParseException("Notification data does not contain 'event_key'");
+        }
+        eventKey = jsonData.get("event_key").getAsString();
+        if(!jsonData.has("comp_level")){
+            throw new JsonParseException("Notification data does not contain 'comp_level'");
+        }
+        compLevelAbbrev = jsonData.get("comp_level").getAsString();
     }
 
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
 
-        String eventName = jsonData.get("event_name").getAsString();
-        String eventKey = jsonData.get("event_key").getAsString();
-        String compLevelAbbrev = jsonData.get("comp_level").getAsString();
         String compLevel;
         switch (compLevelAbbrev){
             case "qm":  compLevel = r.getString(R.string.quarters_header); break;
@@ -48,7 +63,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             default:    compLevel = ""; break;
         }
         String scheduledStartTimeString;
-        if(jsonData.get("scheduled_time").isJsonNull()){
+        if(!jsonData.has("scheduled_time") || jsonData.get("scheduled_time").isJsonNull()){
             scheduledStartTimeString = "";
         }else{
             long scheduledStartTimeUNIX = jsonData.get("scheduled_time").getAsLong();
@@ -80,6 +95,11 @@ public class CompLevelStartingNotification extends BaseNotification {
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
         return builder.build();
+    }
+
+    @Override
+    public void updateDataLocally(Context c) {
+        /* This notification has no data that we can store locally */
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
@@ -96,9 +97,19 @@ public class GCMMessageHandler extends IntentService {
                     notification = new DistrictPointsUpdatedNotification(messageData);
                     break;
             }
+
+            if(notification == null) return;
+            try {
+                notification.parseMessageData();
+            } catch (JsonParseException e){
+                Log.e(Constants.LOG_TAG, "Error parsing incoming message json");
+                Log.e(Constants.LOG_TAG, e.getMessage());
+                e.printStackTrace();
+            }
+
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
             boolean enabled = prefs.getBoolean("enable_notifications", true);
-            if(enabled && notification != null){
+            if(enabled){
                 Notification built = notification.buildNotification(c);
                 if(prefs.getBoolean("notification_vibrate", true)){
                     built.defaults |= Notification.DEFAULT_VIBRATE;
@@ -122,7 +133,6 @@ public class GCMMessageHandler extends IntentService {
 
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                         String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility","private");
-                        Log.e(Constants.LOG_TAG, "Pref: "+pref);
                         switch (pref){
                             case "public":  built.visibility = Notification.VISIBILITY_PUBLIC; break;
                             default:
@@ -135,6 +145,9 @@ public class GCMMessageHandler extends IntentService {
                 }
 
                 notificationManager.notify(notification.getNotificationId(), built);
+
+                /* Update the data coming from this notification in the local db */
+                notification.updateDataLocally(c);
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...

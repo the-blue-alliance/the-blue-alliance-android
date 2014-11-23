@@ -7,14 +7,20 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 
@@ -23,35 +29,51 @@ import java.util.ArrayList;
  */
 public class ScoreNotification extends BaseNotification {
 
-    JsonObject jsonData;
+    private String eventName, matchKey;
+    private Match match;
 
     public ScoreNotification(String messageData) {
         super("score", messageData);
-
-        jsonData = new JsonParser().parse(messageData).getAsJsonObject();
     }
 
-    public ScoreNotification(JsonObject data){
-        super("score", data.toString());
-        jsonData = data;
+    @Override
+    public void parseMessageData() throws JsonParseException{
+        JsonObject jsonData = jsonData = JSONManager.getasJsonObject(messageData);
+        if(!jsonData.has("match")){
+            throw new JsonParseException("Notification data does not contain 'match");
+        }
+        JsonObject match = jsonData.get("match").getAsJsonObject();
+        this.match = gson.fromJson(match, Match.class);
+        if(!jsonData.has("event_name")){
+            throw new JsonParseException("Notification data does not contain 'event_name");
+        }
+        eventName = jsonData.get("event_name").getAsString();
     }
 
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
 
-        JsonObject match = jsonData.get("match").getAsJsonObject();
+        String matchKey;
+        try {
+            matchKey = match.getKey();
+            this.matchKey = matchKey;
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(getLogTag(), "Incoming Match object does not have a key. Can't post score update");
+            e.printStackTrace();
+            return null;
+        }
+        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
 
-        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(match.get("key").getAsString());
-
-        String matchKey = match.get("key").getAsString();
-
-        String eventName = jsonData.get("event_name").getAsString();
-
-        JsonObject alliances = match.get("alliances").getAsJsonObject();
-
+        JsonObject alliances;
+        try {
+            alliances = match.getAlliances();
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.e(getLogTag(), "Inciming match object does not contain alliance data. Can't post score update");
+            e.printStackTrace();
+            return null;
+        }
         JsonObject redAlliance = alliances.get("red").getAsJsonObject();
-
         int redScore = redAlliance.get("score").getAsInt();
 
         ArrayList<String> redTeamKeys = new ArrayList<>();
@@ -61,7 +83,6 @@ public class ScoreNotification extends BaseNotification {
         }
 
         JsonObject blueAlliance = alliances.get("blue").getAsJsonObject();
-
         int blueScore = blueAlliance.get("score").getAsInt();
 
         ArrayList<String> blueTeamKeys = new ArrayList<>();
@@ -159,7 +180,14 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
+    public void updateDataLocally(Context c) {
+        if(match != null){
+            match.write(c);
+        }
+    }
+
+    @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + jsonData.get("match").getAsJsonObject().get("key").getAsString()).hashCode();
+        return (getNotificationType() + ":" + matchKey).hashCode();
     }
 }

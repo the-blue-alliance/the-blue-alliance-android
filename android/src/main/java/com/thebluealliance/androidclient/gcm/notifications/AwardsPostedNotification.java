@@ -8,28 +8,55 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.models.Award;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by phil on 11/21/14.
  */
 public class AwardsPostedNotification extends BaseNotification {
 
-    private JsonObject jsonData;
+    private String eventName, eventKey;
+    private List<Award> awards;
 
     public AwardsPostedNotification(String messageData){
         super(NotificationTypes.AWARDS, messageData);
-        jsonData = JSONManager.getasJsonObject(messageData);
+        awards = new ArrayList<>();
+    }
+
+    @Override
+    public void parseMessageData() throws JsonParseException{
+        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        if(!jsonData.has("event_key")){
+            throw new JsonParseException("Notification data does not contain 'event_key'");
+        }
+        eventKey = jsonData.get("event_key").getAsString();
+        if(!jsonData.has("event_name")){
+            throw new JsonParseException("Notification data does not contain 'event_name'");
+        }
+        eventName = jsonData.get("event_name").getAsString();
+        if(!jsonData.has("awards") || jsonData.get("awards").isJsonArray()){
+            throw new JsonParseException("Notification data does not contain 'awards' list");
+        }
+        JsonArray awardArray = jsonData.get("awards").getAsJsonArray();
+        for(JsonElement element: awardArray){
+            awards.add(gson.fromJson(element, Award.class));
+        }
     }
 
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
-        String eventName = jsonData.get("event_name").getAsString();
-        String eventKey = jsonData.get("event_key").getAsString();
 
         String contentText = String.format(r.getString(R.string.notification_awards_updated), eventName);
 
@@ -50,7 +77,16 @@ public class AwardsPostedNotification extends BaseNotification {
     }
 
     @Override
+    public void updateDataLocally(Context c) {
+        for(Award award:awards){
+            if(award != null) {
+                award.write(c);
+            }
+        }
+    }
+
+    @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + jsonData.get("event_key").getAsString()).hashCode();
+        return (getNotificationType() + ":" + eventKey).hashCode();
     }
 }

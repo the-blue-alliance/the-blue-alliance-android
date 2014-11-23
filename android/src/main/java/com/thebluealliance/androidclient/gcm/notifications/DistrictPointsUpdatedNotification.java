@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -19,18 +20,23 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
  */
 public class DistrictPointsUpdatedNotification extends BaseNotification {
 
-    private JsonObject jsonData;
+    private String districtName, districtKey;
 
     public DistrictPointsUpdatedNotification(String messageData){
         super(NotificationTypes.DISTRICT_POINTS_UPDATED, messageData);
-        jsonData = JSONManager.getasJsonObject(messageData);
+
+    }
+
+    @Override
+    public void parseMessageData() throws JsonParseException{
+        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        districtName = jsonData.get("district_name").getAsString();
+        districtKey = jsonData.get("district_key").getAsString();
     }
 
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
-        String districtName = jsonData.get("district_name").getAsString();
-        String districtKey = jsonData.get("district_key").getAsString();
 
         String contentText = String.format(r.getString(R.string.notification_district_points_updated), districtName);
 
@@ -51,8 +57,13 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
     }
 
     @Override
+    public void updateDataLocally(Context c) {
+        /* This notification has no data that we can store locally */
+    }
+
+    @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + jsonData.get("district_key").getAsString()).hashCode();
+        return (getNotificationType() + ":" + districtKey).hashCode();
     }
 
 }

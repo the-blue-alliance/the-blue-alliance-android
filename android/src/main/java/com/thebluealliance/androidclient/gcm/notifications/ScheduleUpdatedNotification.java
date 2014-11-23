@@ -9,7 +9,9 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
@@ -21,22 +23,38 @@ import java.util.Date;
  */
 public class ScheduleUpdatedNotification extends BaseNotification {
 
-    JsonObject jsonData;
+    private String eventName, eventKey;
+    private JsonElement matchTime;
 
     public ScheduleUpdatedNotification(String messageData){
         super(NotificationTypes.SCHEDULE_UPDATED, messageData);
-        jsonData = JSONManager.getasJsonObject(messageData);
+    }
+
+    @Override
+    public void parseMessageData() throws JsonParseException{
+        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        if(!jsonData.has("event_name")){
+            throw new JsonParseException("Notification data does not contain 'event_name");
+        }
+        eventName = jsonData.get("event_name").getAsString();
+        if(!jsonData.has("event_key")){
+            throw new JsonParseException("Notification data does not contain 'event_key");
+        }
+        eventKey = jsonData.get("event_key").getAsString();
+
+        if(!jsonData.has("first_match_time")){
+            throw new JsonParseException("Notification data does not contain 'first_match_time");
+        }
+        matchTime = jsonData.get("first_match_time");
     }
 
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
 
-        String eventName = jsonData.get("event_name").getAsString();
-        String eventKey = jsonData.get("event_key").getAsString();
         String firstMatchTime = null;
-        if(!jsonData.get("first_match_time").isJsonNull()){
-            Date date = new Date(jsonData.get("first_match_time").getAsLong() * 1000L);
+        if(!matchTime.isJsonNull()){
+            Date date = new Date(matchTime.getAsLong() * 1000L);
             java.text.DateFormat format = DateFormat.getTimeFormat(context);
             firstMatchTime = format.format(date);
         }
@@ -65,7 +83,12 @@ public class ScheduleUpdatedNotification extends BaseNotification {
     }
 
     @Override
+    public void updateDataLocally(Context c) {
+        /* This notification has no data that we can store locally */
+    }
+
+    @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + jsonData.get("event_key").getAsString()).hashCode();
+        return (getNotificationType() + ":" + eventKey).hashCode();
     }
 }
