@@ -26,7 +26,7 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
         super.onAttach(activity);
         callbacks = (ModelSettingsCallbacks) activity;
         this.setRetainInstance(true);
-        // If our task does not exist, create it
+        // If the task does not exist, create it
         if (task != null) {
             task.setCallbacks(callbacks);
         } else {

@@ -7,6 +7,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +70,9 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         } else {
             throw new IllegalArgumentException("TeamAtDistrictActivity must be constructed with a team key");
         }
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();

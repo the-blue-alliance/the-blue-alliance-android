@@ -73,7 +73,6 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
     }
 
-
     public ModelNotificationFavoriteSettings getSettings() {
         ArrayList<String> subscribed = new ArrayList<>();
 

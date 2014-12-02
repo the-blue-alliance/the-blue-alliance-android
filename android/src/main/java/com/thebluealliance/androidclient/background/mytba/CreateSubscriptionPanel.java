@@ -117,6 +117,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
         for(String notificationKey : notificationTypes) {
             initialStateBundle.putBoolean(notificationKey, currentSettings.contains(notificationKey));
         }
+        initialStateBundle.putBoolean(MyTBAHelper.getFavoritePreferenceKey(), favorite.isChecked());
         fragment.setInitialStateBundle(initialStateBundle);
     }
 }
