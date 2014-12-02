@@ -1,15 +1,22 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionCollection;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -20,11 +27,15 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
+import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -468,6 +479,105 @@ public class DataManager {
             } else {
                 return cursor.getCount();
             }
+        }
+    }
+
+    public static class MyTBA {
+
+        /**
+         * These methods will fetch the current user's myTBA data from the web and store it in the local db
+         * They also return an ArrayList of the favorite/subscription models and a convienence
+         */
+
+        public static final String LAST_FAVORITES_UPDATE = "last_mytba_favorites_update_%s";
+        public static final String LAST_SUBSCRIPTIONS_UPDATE = "last_mytba_subscriptions_update_%s";
+
+        public static APIResponse<ArrayList<Favorite>> updateUserFavorites(Context context, RequestParams requestParams){
+            String currentUser = AccountHelper.getSelectedAccount(context);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String prefString = String.format(LAST_FAVORITES_UPDATE, currentUser);
+
+            ArrayList<Favorite> favoriteModels = new ArrayList<>();
+            Date now = new Date();
+            Date futureTime = new Date(prefs.getLong(prefString, 0) + Constants.MY_TBA_UPDATE_TIMEOUT);
+            // TODO this endpoint needs some caching so we keep load off the server
+            if (!requestParams.forceFromWeb && now.before(futureTime)) {
+                //don't hit the API too often.
+                Log.d(Constants.LOG_TAG, "Not updating myTBA favorites. Too soon since last update");
+                return new APIResponse<>(null, APIResponse.CODE.CACHED304);
+            }
+
+            if(!ConnectionDetector.isConnectedToInternet(context)){
+                return new APIResponse<>(null, APIResponse.CODE.OFFLINECACHE);
+            }
+
+            Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
+            TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
+            ModelsMobileApiMessagesFavoriteCollection favoriteCollection = null;
+            try {
+                favoriteCollection = service.favorites().list().execute();
+            } catch (IOException e) {
+                Log.w(Constants.LOG_TAG, "Unable to update myTBA favorites");
+                e.printStackTrace();
+                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+            }
+
+            Database.Favorites favorites = Database.getInstance(context).getFavoritesTable();
+            favorites.recreate(currentUser);
+            if (favoriteCollection.getFavorites() != null) {
+                for (ModelsMobileApiMessagesFavoriteMessage f : favoriteCollection.getFavorites()) {
+                    favoriteModels.add(new Favorite(currentUser, f.getModelKey(), f.getModelType().intValue()));
+                }
+                favorites.add(favoriteModels);
+                Log.d(Constants.LOG_TAG, "Added "+favoriteModels.size()+" favorites");
+            }
+
+            prefs.edit().putLong(prefString, new Date().getTime()).apply();
+            return new APIResponse<>(favoriteModels, APIResponse.CODE.WEBLOAD);
+        }
+
+        public static APIResponse<ArrayList<Subscription>> updateUserSubscriptions(Context context, RequestParams requestParams){
+            String currentUser = AccountHelper.getSelectedAccount(context);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String prefString = String.format(LAST_SUBSCRIPTIONS_UPDATE, currentUser);
+
+            ArrayList<Subscription> subscriptionModels = new ArrayList<>();
+            Date now = new Date();
+            Date futureTime = new Date(prefs.getLong(prefString, 0) + Constants.MY_TBA_UPDATE_TIMEOUT);
+            // TODO this endpoint needs some caching so we keep load off the server
+            if (!requestParams.forceFromWeb && now.before(futureTime)) {
+                //don't hit the API too often.
+                Log.d(Constants.LOG_TAG, "Not updating myTBA subscriptions. Too soon since last update");
+                return new APIResponse<>(null, APIResponse.CODE.CACHED304);
+            }
+
+            if(!ConnectionDetector.isConnectedToInternet(context)){
+                return new APIResponse<>(null, APIResponse.CODE.OFFLINECACHE);
+            }
+
+            Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
+            TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
+            ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = null;
+            try {
+                subscriptionCollection = service.subscriptions().list().execute();
+            } catch (IOException e) {
+                Log.w(Constants.LOG_TAG, "Unable to update myTBA subscriptions");
+                e.printStackTrace();
+                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+            }
+
+            Database.Subscriptions subscriptions = Database.getInstance(context).getSubscriptionsTable();
+            subscriptions.recreate(currentUser);
+            if (subscriptionCollection.getSubscriptions() != null) {
+                for (ModelsMobileApiMessagesSubscriptionMessage s : subscriptionCollection.getSubscriptions()) {
+                    subscriptionModels.add(new Subscription(currentUser, s.getModelKey(), s.getNotifications(), s.getModelType().intValue()));
+                }
+                subscriptions.add(subscriptionModels);
+            }
+
+            Log.d(Constants.LOG_TAG, "Added "+subscriptionCollection.size()+" subscriptions");
+            prefs.edit().putLong(prefString, new Date().getTime()).apply();
+            return new APIResponse<>(subscriptionModels, APIResponse.CODE.WEBLOAD);
         }
     }
 }

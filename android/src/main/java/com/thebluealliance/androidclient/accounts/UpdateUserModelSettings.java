@@ -8,7 +8,6 @@ import android.widget.Toast;
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
