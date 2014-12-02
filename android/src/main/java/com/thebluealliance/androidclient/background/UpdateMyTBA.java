@@ -14,6 +14,7 @@ import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscri
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
 
@@ -32,11 +33,11 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
     public static final short UPDATE_FAVORITES = 0, UPDATE_SUBSCRIPTION = 1;
 
     private Context context;
-    private boolean force;
+    private RequestParams requestParams;
 
-    public UpdateMyTBA(Context context, boolean force) {
+    public UpdateMyTBA(Context context, RequestParams requestParams) {
         this.context = context;
-        this.force = force;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
         Date now = new Date();
         Date futureTime = new Date(prefs.getLong(prefString, 0) + Constants.MY_TBA_UPDATE_TIMEOUT);
         // TODO this endpoint needs some caching so we keep load off the server
-        if (!force && now.before(futureTime)) {
+        if (!requestParams.forceFromCache && now.before(futureTime)) {
             //don't hit the API too often.
             Log.d(Constants.LOG_TAG, "Not updating myTBA. Too soon since last update");
             return null;

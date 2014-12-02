@@ -13,6 +13,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -59,10 +60,10 @@ public class GCMMessageHandler extends IntentService {
             BaseNotification notification = null;
             switch (messageType) {
                 case NotificationTypes.UPDATE_FAVORITES:
-                    new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_FAVORITES);
+                    new UpdateMyTBA(c, new RequestParams(true)).execute(UpdateMyTBA.UPDATE_FAVORITES);
                     break;
                 case NotificationTypes.UPDATE_SUBSCRIPTIONS:
-                    new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
+                    new UpdateMyTBA(c, new RequestParams(true)).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
                     break;
                 case NotificationTypes.PING:
                     notification = new GenericNotification(messageData);

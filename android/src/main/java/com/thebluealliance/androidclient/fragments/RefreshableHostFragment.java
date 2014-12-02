@@ -82,7 +82,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         ((RefreshableHostActivity) parent).notifyRefreshComplete(this);
     }
 
-    public void startRefresh() {
+    public void startRefresh(boolean actionIconPressed) {
         if (mRefreshInProgress) {
             //if a refresh is already happening, don't start another
             return;
@@ -92,7 +92,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
             return;
         }
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
     }
 
@@ -103,12 +103,12 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         mRefreshInProgress = false;
     }
 
-    public void restartRefresh() {
+    public void restartRefresh(boolean actionIconPressed) {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
         mRefreshInProgress = true;
     }
@@ -117,6 +117,6 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         if (!mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
-        listener.onRefreshStart();
+        listener.onRefreshStart(false);
     }
 }

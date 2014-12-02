@@ -51,10 +51,10 @@ public class DataManager {
             }
         }
 
-        public static APIResponse<Team> getTeam(Context c, String teamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<Team> getTeam(Context c, String teamKey, RequestParams requestParams) throws NoDataException {
             final String URL = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM), teamKey);
             final String sqlWhere = Database.Teams.KEY + " = ?";
-            return Team.query(c, loadFromCache, null, sqlWhere, new String[]{teamKey}, new String[]{URL});
+            return Team.query(c, requestParams, null, sqlWhere, new String[]{teamKey}, new String[]{URL});
         }
 
         public static APIResponse<Cursor> getCursorForTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
@@ -76,7 +76,7 @@ public class DataManager {
                 } else {
                     // We need to load teams from the API
                     final String URL = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_LIST), pageNum);
-                    APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, false);
+                    APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, new RequestParams());
                     teamListResponseCodes.add(teamListResponse.getCode());
 
                     ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
@@ -93,11 +93,11 @@ public class DataManager {
             return new APIResponse<>(cursor, APIResponse.mergeCodes(teamListResponseCodes.toArray(a)));
         }
 
-        public static APIResponse<ArrayList<Integer>> getYearsParticipated(Context c, String teamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Integer>> getYearsParticipated(Context c, String teamKey, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_YEARS_PARTICIPATED), teamKey);
             String sqlWhere = Database.Teams.KEY + " = ?";
             String[] teamFields = new String[]{Database.Teams.KEY, Database.Teams.YEARS_PARTICIPATED, Database.Teams.SHORTNAME, Database.Teams.NUMBER};
-            APIResponse<Team> teamResponse = Team.query(c, loadFromCache, teamFields, sqlWhere, new String[]{teamKey}, new String[]{apiUrl});
+            APIResponse<Team> teamResponse = Team.query(c, requestParams, teamFields, sqlWhere, new String[]{teamKey}, new String[]{apiUrl});
             ArrayList<Integer> years = new ArrayList<>();
             try {
                 for (JsonElement year : teamResponse.getData().getYearsParticipated()) {
@@ -109,15 +109,15 @@ public class DataManager {
             return new APIResponse<>(years, teamResponse.getCode());
         }
 
-        public static APIResponse<ArrayList<Event>> getEventsForTeam(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Event>> getEventsForTeam(Context c, String teamKey, int year, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_EVENTS), teamKey, year);
             String sqlWhere = Database.EventTeams.TEAMKEY + " = ? AND " + Database.EventTeams.YEAR + " = ?";
-            APIResponse<ArrayList<EventTeam>> eventTeams = EventTeam.queryList(c, loadFromCache, teamKey, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
+            APIResponse<ArrayList<EventTeam>> eventTeams = EventTeam.queryList(c, requestParams, teamKey, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
             ArrayList<Event> events = new ArrayList<>();
             APIResponse.CODE code = eventTeams.getCode();
             for (EventTeam e : eventTeams.getData()) {
                 try {
-                    APIResponse<Event> event = Events.getEvent(c, e.getEventKey(), loadFromCache);
+                    APIResponse<Event> event = Events.getEvent(c, e.getEventKey(), requestParams);
                     events.add(event.getData());
                     code = APIResponse.mergeCodes(code, event.getCode());
                 } catch (BasicModel.FieldNotDefinedException e1) {
@@ -127,16 +127,16 @@ public class DataManager {
             return new APIResponse<>(events, code);
         }
 
-        public static APIResponse<ArrayList<Event>> getDistrictEventsForTeam(Context c, String teamKey, String districtKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Event>> getDistrictEventsForTeam(Context c, String teamKey, String districtKey, RequestParams requestParams) throws NoDataException {
             int year = Integer.parseInt(districtKey.substring(0, 4));
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_EVENTS), teamKey, year);
             String sqlWhere = Database.EventTeams.TEAMKEY + " = ? AND " + Database.EventTeams.YEAR + " = ?";
-            APIResponse<ArrayList<EventTeam>> eventTeams = EventTeam.queryList(c, loadFromCache, teamKey, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
+            APIResponse<ArrayList<EventTeam>> eventTeams = EventTeam.queryList(c, requestParams, teamKey, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
             ArrayList<Event> events = new ArrayList<>();
             APIResponse.CODE code = eventTeams.getCode();
             for (EventTeam e : eventTeams.getData()) {
                 try {
-                    APIResponse<Event> event = Events.getEventBasic(c, e.getEventKey(), loadFromCache);
+                    APIResponse<Event> event = Events.getEventBasic(c, e.getEventKey(), requestParams);
                     events.add(event.getData());
                     code = APIResponse.mergeCodes(code, event.getCode());
                 } catch (BasicModel.FieldNotDefinedException e1) {
@@ -146,14 +146,14 @@ public class DataManager {
             return new APIResponse<>(events, code);
         }
 
-        public static APIResponse<ArrayList<Media>> getTeamMedia(Context c, String teamKey, int year, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Media>> getTeamMedia(Context c, String teamKey, int year, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_MEDIA), teamKey, year);
             String sqlWhere = Database.Medias.TEAMKEY + " = ? AND " + Database.Medias.YEAR + " = ?";
-            return Media.queryList(c, teamKey, year, loadFromCache, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
+            return Media.queryList(c, teamKey, year, requestParams, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
         }
 
-        public static APIResponse<Integer> getRankForTeamAtEvent(Context c, String teamKey, String eventKey, boolean loadFromCache) throws NoDataException {
-            APIResponse<ArrayList<JsonArray>> allRankings = Events.getEventRankings(c, eventKey, loadFromCache);
+        public static APIResponse<Integer> getRankForTeamAtEvent(Context c, String teamKey, String eventKey, RequestParams requestParams) throws NoDataException {
+            APIResponse<ArrayList<JsonArray>> allRankings = Events.getEventRankings(c, eventKey, requestParams);
             String teamNumber = teamKey.substring(3);
 
             ArrayList<JsonArray> data = allRankings.getData();
@@ -169,20 +169,20 @@ public class DataManager {
     public static class Events {
         public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
 
-        public static APIResponse<Event> getEvent(Context c, String key, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<Event> getEvent(Context c, String key, RequestParams requestParams) throws NoDataException {
             final String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_INFO), key);
             String sqlWhere = Database.Events.KEY + " = ?";
-            return Event.query(c, key, loadFromCache, null, sqlWhere, new String[]{key}, new String[]{apiUrl});
+            return Event.query(c, key, requestParams, null, sqlWhere, new String[]{key}, new String[]{apiUrl});
         }
 
-        public static APIResponse<Event> getEventBasic(Context c, String key, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<Event> getEventBasic(Context c, String key, RequestParams requestParams) throws NoDataException {
             final String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_INFO), key);
             String[] fields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.DISTRICT};
             String sqlWhere = Database.Events.KEY + " = ?";
-            return Event.query(c, key, loadFromCache, fields, sqlWhere, new String[]{key}, new String[]{apiUrl});
+            return Event.query(c, key, requestParams, fields, sqlWhere, new String[]{key}, new String[]{apiUrl});
         }
 
-        public static APIResponse<ArrayList<Event>> getSimpleEventsInWeek(Context c, int year, int week, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Event>> getSimpleEventsInWeek(Context c, int year, int week, RequestParams requestParams) throws NoDataException {
             Log.d("get events for week", "getting for week: " + week);
 
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_LIST), year);
@@ -196,15 +196,15 @@ public class DataManager {
                 whereArgs = new String[]{Integer.toString(year), Integer.toString(week)};
             }
 
-            return Event.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
+            return Event.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
-        public static APIResponse<HashMap<String, ArrayList<Event>>> getEventsByYear(Context c, int year, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<HashMap<String, ArrayList<Event>>> getEventsByYear(Context c, int year, RequestParams requestParams) throws NoDataException {
             HashMap<String, ArrayList<Event>> groupedEvents;
             APIResponse<ArrayList<Event>> eventListResponse;
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_LIST), year);
             String sqlWhere = Database.Events.YEAR + " =?";
-            eventListResponse = Event.queryList(c, loadFromCache, null, sqlWhere, new String[]{Integer.toString(year)}, new String[]{apiUrl});
+            eventListResponse = Event.queryList(c, requestParams, null, sqlWhere, new String[]{Integer.toString(year)}, new String[]{apiUrl});
 
             if (eventListResponse.getCode() != APIResponse.CODE.NODATA) {
                 PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true).commit();
@@ -213,13 +213,13 @@ public class DataManager {
             return new APIResponse<>(groupedEvents, eventListResponse.getCode());
         }
 
-        public static APIResponse<ArrayList<Team>> getEventTeams(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Team>> getEventTeams(Context c, String eventKey, RequestParams requestParams) throws NoDataException {
             ArrayList<Team> teams = new ArrayList<>();
             Log.d("event teams", "Fetching teams for " + eventKey);
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_TEAMS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
             String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.TEAMS};
-            APIResponse<Event> eventResponse = Event.query(c, eventKey, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray teamList = eventResponse.getData().getTeams();
                 Log.d(Constants.LOG_TAG, "Found " + teamList.size() + " teams");
@@ -232,13 +232,13 @@ public class DataManager {
             }
         }
 
-        public static APIResponse<ArrayList<JsonArray>> getEventRankings(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<JsonArray>> getEventRankings(Context c, String eventKey, RequestParams requestParams) throws NoDataException {
             ArrayList<JsonArray> rankings = new ArrayList<>();
             Log.d("event ranks", "Fetching rankings for " + eventKey);
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_RANKS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
             String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.RANKINGS};
-            APIResponse<Event> eventResponse = Event.query(c, eventKey, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray rankArray = eventResponse.getData().getRankings();
                 for (JsonElement r : rankArray) {
@@ -250,7 +250,7 @@ public class DataManager {
             }
         }
 
-        public static APIResponse<ArrayList<Event>> getEventsInDistrict(Context c, String districtKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Event>> getEventsInDistrict(Context c, String districtKey, RequestParams requestParams) throws NoDataException {
             Log.d(Constants.LOG_TAG, "getting for district: " + districtKey);
 
             int year = Integer.parseInt(districtKey.substring(0, 4));
@@ -260,20 +260,20 @@ public class DataManager {
             String sqlWhere = Database.Events.DISTRICT + " = ? AND " + Database.Events.YEAR + " = ? ";
             String[] whereArgs = new String[]{Integer.toString(districtType.ordinal()), Integer.toString(year)};
 
-            return Event.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
+            return Event.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
-        public static APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
-            return getMatchList(c, eventKey, "", loadFromCache);
+        public static APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey, RequestParams requestParams) throws NoDataException {
+            return getMatchList(c, eventKey, "", requestParams);
         }
 
-        public static APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Match>> getMatchList(Context c, String eventKey, String teamKey, RequestParams requestParams) throws NoDataException {
             ArrayList<Match> results = new ArrayList<>();
             Log.d("match list", "fetching matches for " + eventKey);
 
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.EVENT + " = ?";
-            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, loadFromCache, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, requestParams, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             Log.d(Constants.LOG_TAG, "Found " + matchResponse.getData().size() + " matches");
             for (Match match : matchResponse.getData()) {
                 try {
@@ -288,15 +288,15 @@ public class DataManager {
             return new APIResponse<>(results, matchResponse.getCode());
         }
 
-        public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
-            return getEventStats(c, eventKey, "", loadFromCache);
+        public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, RequestParams requestParams) throws NoDataException {
+            return getEventStats(c, eventKey, "", requestParams);
         }
 
-        public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_STATS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
             String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.STATS};
-            APIResponse<Event> eventResponse = Event.query(c, eventKey, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonObject allStats = eventResponse.getData().getStats();
                 if (teamKey.isEmpty()) {
@@ -330,12 +330,12 @@ public class DataManager {
             }
         }
 
-        public static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<Award>> getEventAwards(Context c, String eventKey, String teamKey, RequestParams requestParams) throws NoDataException {
             ArrayList<Award> awards = new ArrayList<>();
             Log.d("event awards", "Fetching awards for " + eventKey + " " + teamKey);
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_AWARDS), eventKey);
             String sqlWhere = Database.Awards.EVENTKEY + " = ?";
-            APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, loadFromCache, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, requestParams, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Award award : awardResponse.getData()) {
                 try {
                     if (teamKey.isEmpty()) {
@@ -357,16 +357,16 @@ public class DataManager {
             return new APIResponse<>(awards, awardResponse.getCode());
         }
 
-        public static APIResponse<JsonObject> getDistrictPointsForEvent(Context c, String eventKey, boolean loadFromCache) throws NoDataException {
-            return getDistrictPointsForEvent(c, eventKey, "", loadFromCache);
+        public static APIResponse<JsonObject> getDistrictPointsForEvent(Context c, String eventKey, RequestParams requestParams) throws NoDataException {
+            return getDistrictPointsForEvent(c, eventKey, "", requestParams);
         }
 
-        public static APIResponse<JsonObject> getDistrictPointsForEvent(Context c, String eventKey, String teamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<JsonObject> getDistrictPointsForEvent(Context c, String eventKey, String teamKey, RequestParams requestParams) throws NoDataException {
             Log.d(Constants.DATAMANAGER_LOG, "Fetching district points for " + eventKey + " " + teamKey);
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_DISTRICT_POINTS), eventKey);
             String sqlWhere = Database.Events.KEY + " = ?";
             String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.DISTRICT_POINTS};
-            APIResponse<Event> eventResponse = Event.query(c, eventKey, loadFromCache, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 if (teamKey.isEmpty()) {
                     //we want all the event's points
@@ -391,14 +391,14 @@ public class DataManager {
 
     public static class Matches {
 
-        public static APIResponse<Match> getMatch(Context c, String matchKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<Match> getMatch(Context c, String matchKey, RequestParams requestParams) throws NoDataException {
             if (!MatchHelper.validateMatchKey(matchKey)) {
                 throw new NoDataException("Invalid match key");
             }
             String eventKey = matchKey.substring(0, matchKey.indexOf("_"));
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.KEY + " = ?";
-            return Match.query(c, matchKey, loadFromCache, null, sqlWhere, new String[]{matchKey}, new String[]{apiUrl});
+            return Match.query(c, matchKey, requestParams, null, sqlWhere, new String[]{matchKey}, new String[]{apiUrl});
         }
 
     }
@@ -410,20 +410,20 @@ public class DataManager {
         public static APIResponse<District> getDistrict(Context c, String districtKey) throws NoDataException {
             String sqlWhere = Database.Districts.KEY + " = ?";
             String[] whereArgs = new String[]{districtKey};
-            return District.query(c, true, null, sqlWhere, whereArgs, new String[]{});
+            return District.query(c, new RequestParams(true, false), null, sqlWhere, whereArgs, new String[]{});
         }
 
-        public static APIResponse<ArrayList<District>> getDistrictsInYear(Context c, int year, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<District>> getDistrictsInYear(Context c, int year, RequestParams requestParams) throws NoDataException {
             Log.d(Constants.DATAMANAGER_LOG, "getting districts in : " + year);
 
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_LIST), year);
             String sqlWhere = Database.Districts.YEAR + " = ?";
             String[] whereArgs = new String[]{Integer.toString(year)};
 
-            return District.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
+            return District.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
-        public static APIResponse<DistrictTeam> getDistrictTeam(Context c, String districtTeamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<DistrictTeam> getDistrictTeam(Context c, String districtTeamKey, RequestParams requestParams) throws NoDataException {
             Log.d(Constants.DATAMANAGER_LOG, "getting district team: " + districtTeamKey);
 
             String districtKey = DistrictTeamHelper.getDistrictKey(districtTeamKey);
@@ -431,10 +431,10 @@ public class DataManager {
             String sqlWhere = Database.DistrictTeams.KEY + " = ?";
             String[] whereArgs = new String[]{districtTeamKey};
 
-            return DistrictTeam.query(c, districtTeamKey, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
+            return DistrictTeam.query(c, districtTeamKey, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
-        public static APIResponse<DistrictTeam> getDistrictTeamEvents(Context c, String districtTeamKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<DistrictTeam> getDistrictTeamEvents(Context c, String districtTeamKey, RequestParams requestParams) throws NoDataException {
             Log.d(Constants.DATAMANAGER_LOG, "getting district team: " + districtTeamKey);
 
             String districtKey = DistrictTeamHelper.getDistrictKey(districtTeamKey);
@@ -443,17 +443,17 @@ public class DataManager {
             String[] whereArgs = new String[]{districtTeamKey};
             String[] fields = new String[]{Database.DistrictTeams.KEY, Database.DistrictTeams.EVENT1_KEY, Database.DistrictTeams.EVENT2_KEY, Database.DistrictTeams.CMP_KEY};
 
-            return DistrictTeam.query(c, districtTeamKey, loadFromCache, fields, sqlWhere, whereArgs, new String[]{apiUrl});
+            return DistrictTeam.query(c, districtTeamKey, requestParams, fields, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
-        public static APIResponse<ArrayList<DistrictTeam>> getDistrictRankings(Context c, String districtKey, boolean loadFromCache) throws NoDataException {
+        public static APIResponse<ArrayList<DistrictTeam>> getDistrictRankings(Context c, String districtKey, RequestParams requestParams) throws NoDataException {
             Log.d(Constants.DATAMANAGER_LOG, "getting district rankings for: " + districtKey);
 
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
             String sqlWhere = Database.DistrictTeams.DISTRICT_KEY + " = ?";
             String[] whereArgs = new String[]{districtKey};
 
-            return DistrictTeam.queryList(c, loadFromCache, null, sqlWhere, whereArgs, new String[]{apiUrl});
+            return DistrictTeam.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
         public static int getNumEventsForDistrict(Context c, String districtKey) {

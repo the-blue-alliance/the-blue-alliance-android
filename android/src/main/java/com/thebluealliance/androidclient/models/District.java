@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
@@ -120,7 +121,7 @@ public class District extends BasicModel<District> {
     }
 
     // This method will only return a locally stored district
-    public static synchronized APIResponse<District> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<District> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districts table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
         District district;
@@ -142,10 +143,10 @@ public class District extends BasicModel<District> {
             district.write(c);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(district, forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
+        return new APIResponse<>(district, requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
     }
 
-    public static synchronized APIResponse<ArrayList<District>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<District>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districts table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<District> districts = new ArrayList<>();
@@ -156,10 +157,10 @@ public class District extends BasicModel<District> {
             cursor.close();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray districtList = JSONManager.getasJsonArray(response.getData());
                 districts = DistrictHelper.buildVersionedDistrictList(districtList, url, response.getVersion());

@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventStats;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -204,9 +205,9 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
-        mTask = new PopulateEventStats(this, true, statSortCategory);
+        mTask = new PopulateEventStats(this, new RequestParams(true, actionIconPressed), statSortCategory);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 

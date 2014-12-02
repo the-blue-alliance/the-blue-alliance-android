@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFragment;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -28,14 +29,14 @@ import java.util.ArrayList;
  */
 public class PopulateDistrictRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private DistrictRankingsFragment fragment;
     private RefreshableHostActivity activity;
     private String districtKey;
     private ArrayList<ListItem> rankings;
 
-    public PopulateDistrictRankings(DistrictRankingsFragment fragment, boolean forceFromCache) {
-        this.forceFromCache = forceFromCache;
+    public PopulateDistrictRankings(DistrictRankingsFragment fragment, RequestParams params) {
+        this.requestParams = requestParams;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
     }
@@ -48,7 +49,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
 
         APIResponse<ArrayList<DistrictTeam>> response;
         try {
-            response = DataManager.Districts.getDistrictRankings(activity, districtKey, forceFromCache);
+            response = DataManager.Districts.getDistrictRankings(activity, districtKey, requestParams);
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to get district rankings for " + districtKey);
             return APIResponse.CODE.NODATA;
@@ -107,7 +108,8 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(districtKey);
             } else {

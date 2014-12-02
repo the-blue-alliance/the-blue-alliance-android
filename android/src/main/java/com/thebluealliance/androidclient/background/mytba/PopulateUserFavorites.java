@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.mytba.MyFavoritesFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
@@ -27,14 +28,14 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, Void> {
 
     private MyFavoritesFragment fragment;
     private RefreshableHostActivity activity;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private ArrayList<ListItem> favorites;
 
-    public PopulateUserFavorites(MyFavoritesFragment fragment, boolean forceFromCache) {
+    public PopulateUserFavorites(MyFavoritesFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override

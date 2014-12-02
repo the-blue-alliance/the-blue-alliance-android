@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateTeamAtDistrictBreakdown;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
@@ -96,9 +97,9 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.d(Constants.REFRESH_LOG, "Loading breakdown for " + teamKey + " at " + districtKey);
-        mTask = new PopulateTeamAtDistrictBreakdown(this, true);
+        mTask = new PopulateTeamAtDistrictBreakdown(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, districtKey);
     }
 

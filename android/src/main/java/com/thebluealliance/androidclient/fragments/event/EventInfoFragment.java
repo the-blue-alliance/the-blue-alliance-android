@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -102,9 +103,9 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " info");
-        task = new PopulateEventInfo(this, true);
+        task = new PopulateEventInfo(this, new RequestParams(true, actionIconPressed));
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
     }
 

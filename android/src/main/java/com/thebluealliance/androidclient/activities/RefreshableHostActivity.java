@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
@@ -54,9 +55,9 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
                 if (shouldRefresh()) {
                     // If a refresh is already in progress, restart it. Otherwise, begin a refresh.
                     if (!mRefreshInProgress) {
-                        startRefresh();
+                        startRefresh(true);
                     } else {
-                        restartRefresh();
+                        restartRefresh(true);
                     }
                 }
                 break;
@@ -139,14 +140,19 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
 
         //update myTBA after content loads
         if(AccountHelper.isAccountSelected(this)){
-            new UpdateMyTBA(this, false).execute();
+            new UpdateMyTBA(this, new RequestParams()).execute();
         }
     }
 
     /*
-    Notifies all registered listeners that they should start their refresh.
+     * Notifies all registered listeners that they should start their refresh.
+     * Passes parameter if toolbar icon initiated refresh (defaults to false)
      */
-    public void startRefresh() {
+    public void startRefresh(){
+        startRefresh(false);
+    }
+
+    public void startRefresh(boolean actionIconPressed) {
         if (mRefreshInProgress) {
             //if a refresh is already happening, don't start another
             return;
@@ -156,7 +162,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         }
         mRefreshInProgress = true;
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
         setMenuProgressBarVisible(true);
     }
@@ -168,7 +174,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         if (!mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
-        listener.onRefreshStart();
+        listener.onRefreshStart(false);
         setMenuProgressBarVisible(true);
     }
 
@@ -186,12 +192,12 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     /*
     Notifies all refresh listeners that they should stop, and immediately notifies them that they should start again.
      */
-    public void restartRefresh() {
+    public void restartRefresh(boolean actionIconPressed) {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
         mRefreshInProgress = true;
         setMenuProgressBarVisible(true);

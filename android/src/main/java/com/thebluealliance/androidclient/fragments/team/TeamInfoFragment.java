@@ -22,6 +22,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -132,9 +133,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " info");
-        task = new PopulateTeamInfo(this, true);
+        task = new PopulateTeamInfo(this, new RequestParams(true, actionIconPressed));
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamKey);
     }
 

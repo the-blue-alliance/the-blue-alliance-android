@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
@@ -225,7 +226,7 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         }
     }
 
-    public static synchronized APIResponse<DistrictTeam> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<DistrictTeam> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
         DistrictTeam team;
@@ -236,12 +237,12 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
             team = new DistrictTeam();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         ArrayList<DistrictTeam> allTeams = null;
         boolean changed = false;
         allTeams = new ArrayList<>();
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 DistrictTeam updatedTeam = new DistrictTeam();
                 if (url.contains("district") && url.contains("rankings")) {
@@ -278,10 +279,10 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
             team.write(c);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(team, forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
+        return new APIResponse<>(team, requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
     }
 
-    public static synchronized APIResponse<ArrayList<DistrictTeam>> queryList(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<DistrictTeam>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<DistrictTeam> districtTeams = new ArrayList<>();
@@ -292,10 +293,10 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
             cursor.close();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray districtList = JSONManager.getasJsonArray(response.getData());
                 districtTeams = new ArrayList<>();

@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -88,9 +89,9 @@ public class TeamListFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionItemPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading teams between " + mTeamNumberStart + " and " + mTeamNumberEnd);
-        mTask = new PopulateTeamList(this, true);
+        mTask = new PopulateTeamList(this, new RequestParams(true, actionItemPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamNumberStart, mTeamNumberEnd);
     }
 

@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictSummaryFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
@@ -35,14 +36,14 @@ import java.util.ArrayList;
  */
 public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private TeamAtDistrictSummaryFragment fragment;
     private RefreshableHostActivity activity;
     private String teamKey, districtKey;
     private ArrayList<ListItem> summaryItems;
 
-    public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, boolean forceFromCache) {
-        this.forceFromCache = forceFromCache;
+    public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, RequestParams requestParams) {
+        this.requestParams = requestParams;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
     }
@@ -65,7 +66,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
         String districtTeamKey = DistrictTeamHelper.generateKey(teamKey, districtKey);
 
         try {
-            APIResponse<DistrictTeam> response = DataManager.Districts.getDistrictTeam(activity, districtTeamKey, forceFromCache);
+            APIResponse<DistrictTeam> response = DataManager.Districts.getDistrictTeam(activity, districtTeamKey, requestParams);
             summaryItems = new ArrayList<>();
             DistrictTeam team = response.getData();
 
@@ -77,7 +78,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             }
 
             try {
-                APIResponse<Event> event1Name = DataManager.Events.getEventBasic(activity, team.getEvent1Key(), forceFromCache);
+                APIResponse<Event> event1Name = DataManager.Events.getEventBasic(activity, team.getEvent1Key(), requestParams);
                 summaryItems.add(new LabelValueDetailListItem(event1Name.getData().getEventName(),
                         String.format(activity.getString(R.string.district_points_format), team.getEvent1Points()),
                         EventTeamHelper.generateKey(team.getEvent1Key(), team.getTeamKey())));
@@ -86,7 +87,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             }
 
             try {
-                APIResponse<Event> event2Name = DataManager.Events.getEventBasic(activity, team.getEvent2Key(), forceFromCache);
+                APIResponse<Event> event2Name = DataManager.Events.getEventBasic(activity, team.getEvent2Key(), requestParams);
                 summaryItems.add(new LabelValueDetailListItem(event2Name.getData().getEventName(),
                         String.format(activity.getString(R.string.district_points_format), team.getEvent2Points()),
                         EventTeamHelper.generateKey(team.getEvent2Key(), team.getTeamKey())));
@@ -95,7 +96,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
             }
 
             try {
-                APIResponse<Event> cmpName = DataManager.Events.getEventBasic(activity, team.getCmpKey(), forceFromCache);
+                APIResponse<Event> cmpName = DataManager.Events.getEventBasic(activity, team.getCmpKey(), requestParams);
                 summaryItems.add(new LabelValueDetailListItem(cmpName.getData().getEventName(),
                         String.format(activity.getString(R.string.district_points_format), team.getCmpPoints()),
                         EventTeamHelper.generateKey(team.getCmpKey(), team.getTeamKey())));
@@ -133,7 +134,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
 
             // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
-            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!forceFromCache && adapter.values.isEmpty())) {
+            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!requestParams.forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(R.string.no_district_summary);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
@@ -157,7 +158,8 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateTeamAtDistrictSummary second = new PopulateTeamAtDistrictSummary(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateTeamAtDistrictSummary second = new PopulateTeamAtDistrictSummary(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(teamKey, districtKey);
             } else {

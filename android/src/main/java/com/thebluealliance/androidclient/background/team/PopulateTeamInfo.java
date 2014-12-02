@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -32,12 +33,12 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private String mFullName;
     private String mTeamKey;
     private String mTeamWebsite;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
 
-    public PopulateTeamInfo(TeamInfoFragment fragment, boolean forceFromCache) {
+    public PopulateTeamInfo(TeamInfoFragment fragment, RequestParams requestParams) {
         mFragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -45,7 +46,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         mTeamKey = params[0];
         try {
             Long start = System.nanoTime();
-            APIResponse<Team> teamResponse = DataManager.Teams.getTeam(activity, mTeamKey, forceFromCache);
+            APIResponse<Team> teamResponse = DataManager.Teams.getTeam(activity, mTeamKey, requestParams);
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -140,7 +141,8 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateTeamInfo secondLoad = new PopulateTeamInfo(mFragment, false);
+            requestParams.forceFromCache = false;
+            PopulateTeamInfo secondLoad = new PopulateTeamInfo(mFragment, requestParams);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(mTeamKey);
         } else {

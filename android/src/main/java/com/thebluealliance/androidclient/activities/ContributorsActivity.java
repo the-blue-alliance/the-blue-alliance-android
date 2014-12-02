@@ -83,7 +83,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionItemPressed) {
         if (ConnectionDetector.isConnectedToInternet(this)) {
             new PopulateContributors(this).execute();
         } else {

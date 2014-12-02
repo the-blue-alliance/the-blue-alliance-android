@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
@@ -140,7 +141,7 @@ public class Award extends BasicModel<Award> {
         return out;
     }
 
-    public static synchronized APIResponse<Award> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Award> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         Award award;
@@ -151,10 +152,10 @@ public class Award extends BasicModel<Award> {
             award = new Award();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Award updatedAward = JSONManager.getGson().fromJson(response.getData(), Award.class);
                 award.merge(updatedAward);
@@ -170,7 +171,7 @@ public class Award extends BasicModel<Award> {
         return new APIResponse<>(award, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Award>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Award>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Award> awards = new ArrayList<>(), allAwards = new ArrayList<>();
@@ -181,14 +182,14 @@ public class Award extends BasicModel<Award> {
             cursor.close();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false, teamSet = teamKey != null && !teamKey.isEmpty();
         String teamNumber = "";
         if (teamSet) {
             teamNumber = teamKey.substring(3);
         }
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray awardList = JSONManager.getasJsonArray(response.getData());
                 awards = new ArrayList<>();

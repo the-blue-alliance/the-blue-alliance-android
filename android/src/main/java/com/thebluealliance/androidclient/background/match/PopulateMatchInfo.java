@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -32,11 +33,11 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private RefreshableHostActivity mActivity;
     private String mMatchKey, mEventShortName, mMatchTitle;
     private ArrayList<ListItem> mMatchDetails;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
 
-    public PopulateMatchInfo(RefreshableHostActivity activity, boolean forceFromCache) {
+    public PopulateMatchInfo(RefreshableHostActivity activity, RequestParams requestParams) {
         mActivity = activity;
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         }
         String mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
         try {
-            APIResponse<Match> response = DataManager.Matches.getMatch(mActivity, mMatchKey, forceFromCache);
+            APIResponse<Match> response = DataManager.Matches.getMatch(mActivity, mMatchKey, requestParams);
             Match match = response.getData();
 
             if (isCancelled()) {
@@ -70,7 +71,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 return APIResponse.CODE.NODATA;
             }
 
-            APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, forceFromCache);
+            APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, requestParams);
             Event event = eventResponse.getData();
             if (event != null) {
                 try {
@@ -119,7 +120,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            new PopulateMatchInfo(mActivity, false).execute(mMatchKey);
+            requestParams.forceFromCache = false;
+            new PopulateMatchInfo(mActivity, requestParams).execute(mMatchKey);
         } else {
             // Show notification if we've refreshed data.
             Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
