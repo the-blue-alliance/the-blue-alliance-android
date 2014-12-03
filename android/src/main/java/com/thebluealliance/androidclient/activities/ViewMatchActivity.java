@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -73,9 +74,9 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionItemPressed) {
         Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh started");
-        task = new PopulateMatchInfo(this, true);
+        task = new PopulateMatchInfo(this, new RequestParams(true, actionItemPressed));
         task.execute(mMatchKey);
         // Indicate loading; the task will hide the progressbar and show the content when loading is complete
         findViewById(R.id.progress).setVisibility(View.VISIBLE);

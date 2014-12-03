@@ -51,10 +51,8 @@ public class SearchResultsHeaderListElement extends ListElement {
         if (showMoreButton) {
             holder.moreButton.setVisibility(View.VISIBLE);
             holder.moreButton.setText(String.format(context.getString(R.string.more_results), moreCount));
-            convertView.setBackgroundResource(R.drawable.search_results_header_background);
         } else {
             holder.moreButton.setVisibility(View.GONE);
-            convertView.setBackgroundColor(context.getResources().getColor(R.color.more_results_default));
         }
 
         return convertView;

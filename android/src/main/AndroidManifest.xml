@@ -22,7 +22,7 @@
     <application
         android:name="com.thebluealliance.androidclient.TBAAndroid"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/thebluealliance"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <meta-data
@@ -105,7 +105,8 @@
         </activity>
         <activity
             android:name="com.thebluealliance.androidclient.activities.TeamAtDistrictActivity"
-            android:parentActivityName="com.thebluealliance.androidclient.activities.ViewDistrictActivity" >
+            android:parentActivityName="com.thebluealliance.androidclient.activities.ViewDistrictActivity"
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewDistrictActivity" />

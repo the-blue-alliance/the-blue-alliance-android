@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -26,17 +27,17 @@ import java.util.ArrayList;
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private TeamListFragment fragment;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private int start, end;
 
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
     private Cursor teams;
 
-    public PopulateTeamList(TeamListFragment fragment, boolean forceFromCache) {
+    public PopulateTeamList(TeamListFragment fragment, RequestParams requestParams) {
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -90,7 +91,8 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateTeamList secondLoad = new PopulateTeamList(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateTeamList secondLoad = new PopulateTeamList(fragment, requestParams);
                 fragment.updateTask(secondLoad);
                 secondLoad.execute(start, end);
             } else {

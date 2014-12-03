@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -122,9 +123,9 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " events in " + mYear);
-        mTask = new PopulateEventList(this, mYear, "", mTeamKey, true);
+        mTask = new PopulateEventList(this, mYear, "", mTeamKey, new RequestParams(true, actionIconPressed));
         mTask.execute();
     }
 
@@ -143,6 +144,6 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-        onRefreshStart();
+        onRefreshStart(false);
     }
 }

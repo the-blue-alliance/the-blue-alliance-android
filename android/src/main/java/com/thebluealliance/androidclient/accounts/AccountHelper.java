@@ -21,7 +21,6 @@ import com.google.api.client.json.JsonFactory;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
 
 import java.io.IOException;
@@ -59,16 +58,6 @@ public class AccountHelper {
     public static boolean isMyTBAEnabled(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(PREF_MYTBA_ENABLED, false);
-    }
-
-    public static boolean hasMyTBAData(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String account = getSelectedAccount(context);
-        if (account.isEmpty()) {
-            return false;
-        }
-        String prefString = String.format(UpdateMyTBA.LAST_MY_TBA_UPDATE, account);
-        return prefs.getLong(prefString, -1) != -1;
     }
 
     public static void setSelectedAccount(Context context, String accoutName) {

@@ -34,6 +34,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     private View openNotificationSettingsButtonContainer;
     private FloatingActionButton closeNotificationSettingsButton;
     private View closeNotificationSettingsButtonContainer;
+    private View foregroundDim;
 
     private Toolbar notificationSettingsToolbar;
 
@@ -48,6 +49,13 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
 
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
+
+    // In milliseconds
+    private static final int ANIAMTION_DURATION = 500;
+
+    private static final float UNDIMMED_ALPHA = 0.0f;
+
+    private static final float DIMMED_ALPHA = 0.7f;
 
     private Bundle savedPreferenceState;
 
@@ -80,6 +88,8 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             }
         });
         notificationSettingsToolbar.setNavigationContentDescription(R.string.close);
+
+        foregroundDim = findViewById(R.id.activity_foreground_dim);
 
         // Setup the settings menu
 
@@ -135,7 +145,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.open_notification_settings_button) {
-            if(!saveInProgress) {
+            if (!saveInProgress) {
                 openNotificationSettingsView();
             }
         } else if (v.getId() == R.id.close_notification_settings_button) {
@@ -174,17 +184,17 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
             // Only create the circular reveal on L or greater. Otherwise, default to some other transition.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
-                Animator anim = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
-                anim.setDuration(500);
+                Animator circularReveal = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
+                circularReveal.setDuration(ANIAMTION_DURATION);
 
                 // We create the circular reveals on the buttons container, because we can't create a clipping circle on the button itself
                 openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
 
                 closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
                 final Animator closeButtonAnimator = ViewAnimationUtils.createCircularReveal(closeNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, 0, (closeNotificationSettingsButton.getWidth() / 2));
-                closeButtonAnimator.setDuration(anim.getDuration());
+                closeButtonAnimator.setDuration(ANIAMTION_DURATION);
 
-                anim.start();
+                circularReveal.start();
                 closeButtonAnimator.start();
 
                 // Animate the status bar color change
@@ -200,8 +210,18 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                     }
 
                 });
-                colorAnimation.setDuration(anim.getDuration());
+                colorAnimation.setDuration(ANIAMTION_DURATION);
                 colorAnimation.start();
+
+                ValueAnimator dimAnimation = ValueAnimator.ofFloat(UNDIMMED_ALPHA, DIMMED_ALPHA);
+                dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        foregroundDim.setAlpha((float) animation.getAnimatedValue());
+                    }
+                });
+                dimAnimation.setDuration(ANIAMTION_DURATION);
+                dimAnimation.start();
             } else {
                 openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
                 closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
@@ -222,20 +242,20 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         if (notificationSettings.getVisibility() == View.VISIBLE) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
-                Animator anim =
-                        ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
-                anim.addListener(new AnimatorListenerAdapter() {
+                Animator circularReveal = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
+                circularReveal.addListener(new AnimatorListenerAdapter() {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         notificationSettings.setVisibility(View.INVISIBLE);
                     }
                 });
-                anim.setDuration(500);
+                circularReveal.setDuration(ANIAMTION_DURATION);
+
                 final Animator openButtonAnimator = ViewAnimationUtils.createCircularReveal(openNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, 0, (openNotificationSettingsButton.getWidth() / 2));
-                openButtonAnimator.setDuration(anim.getDuration());
+                openButtonAnimator.setDuration(circularReveal.getDuration());
                 Animator closeButtonAnimator = ViewAnimationUtils.createCircularReveal(closeNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, (closeNotificationSettingsButton.getWidth() / 2), 0);
-                closeButtonAnimator.setDuration(anim.getDuration() / 2);
+                closeButtonAnimator.setDuration(ANIAMTION_DURATION / 2);
                 closeButtonAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -245,7 +265,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                     }
                 });
                 closeButtonAnimator.start();
-                anim.start();
+                circularReveal.start();
 
                 // Animate the status bar color change
 
@@ -260,8 +280,19 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                     }
 
                 });
-                colorAnimation.setDuration(anim.getDuration());
+                colorAnimation.setDuration(ANIAMTION_DURATION);
                 colorAnimation.start();
+
+                // Undim the foreground
+                ValueAnimator dimAnimation = ValueAnimator.ofFloat(DIMMED_ALPHA, UNDIMMED_ALPHA);
+                dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        foregroundDim.setAlpha((float) animation.getAnimatedValue());
+                    }
+                });
+                dimAnimation.setDuration(ANIAMTION_DURATION);
+                dimAnimation.start();
             } else {
                 openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
                 closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);

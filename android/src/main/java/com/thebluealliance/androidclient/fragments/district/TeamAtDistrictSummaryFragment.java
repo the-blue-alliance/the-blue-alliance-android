@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateTeamAtDistrictSummary;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -97,9 +98,9 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.d(Constants.REFRESH_LOG, "Loading summary for " + teamKey + " at " + districtKey);
-        mTask = new PopulateTeamAtDistrictSummary(this, true);
+        mTask = new PopulateTeamAtDistrictSummary(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, districtKey);
     }
 

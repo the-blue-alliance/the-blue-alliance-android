@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -38,12 +39,12 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
     private String team;
     private int year;
     ArrayList<ListGroup> groups;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
 
-    public PopulateTeamMedia(TeamMediaFragment f, boolean forceFromCache) {
+    public PopulateTeamMedia(TeamMediaFragment f, RequestParams requestParams) {
         fragment = f;
         activity = (RefreshableHostActivity) f.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
         APIResponse<ArrayList<Media>> response = null;
         try {
-            response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
+            response = DataManager.Teams.getTeamMedia(activity, team, year, requestParams);
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -151,7 +152,8 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateTeamMedia secondLoad = new PopulateTeamMedia(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateTeamMedia secondLoad = new PopulateTeamMedia(fragment, requestParams);
                 fragment.updateTask(secondLoad);
                 secondLoad.execute(team, year);
             } else {

@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -35,6 +36,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.plus.model.people.Person;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -153,11 +155,11 @@ public class NavigationDrawerFragment extends Fragment {
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
-        if(AccountHelper.isMyTBAEnabled(getActivity())) {
+        if (AccountHelper.isMyTBAEnabled(getActivity())) {
             profilePicture.setVisibility(View.VISIBLE);
             profileName.setVisibility(View.VISIBLE);
             setDrawerProfileInfo();
-        }else{
+        } else {
             profilePicture.setVisibility(View.GONE);
             profileName.setVisibility(View.GONE);
         }
@@ -166,7 +168,8 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public void setDrawerProfileInfo() {
-        if(PlusHelper.isConnected()) {
+        Picasso picasso = Picasso.with(getActivity());
+        if (PlusHelper.isConnected()) {
             Person person = PlusHelper.getCurrentPerson();
             if (person != null) {
                 profileName.setText(person.getDisplayName());
@@ -177,9 +180,26 @@ public class NavigationDrawerFragment extends Fragment {
 
                 Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
 
-                Picasso picasso = Picasso.with(getActivity());
                 if (person.hasImage()) {
-                    picasso.load(personPhotoUrl).into(profilePicture);
+                    //picasso.load(personPhotoUrl).into(profilePicture);
+                    picasso.load(personPhotoUrl).into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            Log.d(Constants.LOG_TAG, "Picasso onBitmapLoaded");
+                            profilePicture.setImageBitmap(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.d(Constants.LOG_TAG, "Picasso onBitmapFailed");
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            Log.d(Constants.LOG_TAG, "Picasso onPrepareLoad");
+                        }
+                    });
+                    Log.d(Constants.LOG_TAG, "Picasso loading profile photo");
                 }
                 if (person.hasCover()) {
                     picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);
@@ -187,6 +207,10 @@ public class NavigationDrawerFragment extends Fragment {
                     picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
                 }
             }
+        } else {
+            // This is bad. Show some default info.
+            picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
+            profileName.setText(R.string.default_user_name);
         }
     }
 
@@ -410,7 +434,7 @@ public class NavigationDrawerFragment extends Fragment {
 
             // Create shaders
             Shader bitmapShader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-            Shader linearGradient = new LinearGradient(0, 0, 0, source.getHeight(), Color.TRANSPARENT, 0xB4000000, Shader.TileMode.MIRROR);
+            Shader linearGradient = new LinearGradient(0, source.getHeight()/2, 0, source.getHeight(), Color.TRANSPARENT, 0xB4000000, Shader.TileMode.CLAMP);
 
             // create a shader that combines both effects
             ComposeShader shader = new ComposeShader(bitmapShader, linearGradient, PorterDuff.Mode.DST_OUT);
@@ -426,19 +450,19 @@ public class NavigationDrawerFragment extends Fragment {
             c.drawRect(0, 0, source.getWidth(), source.getHeight(), black);
             c.drawPaint(p);
             source.recycle();
+            Log.d(Constants.LOG_TAG, "Gradient applied!");
             return outBitmap;
         }
 
         @Override
         public String key() {
-            return null;
+            return "linear_gradient";
         }
     }
 
     /**
      * Called when the insets of the nav drawer are changed. This allows us to properly place the contents so
      * that they don't flow under the status bar.
-     *
      */
     public void onInsetsChanged(Rect insets) {
         RelativeLayout accountDetailsContainer = (RelativeLayout) getView().findViewById(R.id.account_details_container);

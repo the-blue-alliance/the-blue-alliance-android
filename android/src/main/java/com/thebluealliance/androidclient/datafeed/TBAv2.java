@@ -117,14 +117,6 @@ public class TBAv2 {
         return DistrictHelper.buildVersionedDistrictList(data, url, version);
     }
 
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {
-        return getResponseFromURLOrThrow(c, URL, true, forceFromCache);
-    }
-
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheLocally, boolean forceFromCache) throws DataManager.NoDataException {
-        return getResponseFromURLOrThrow(c, URL, cacheLocally, forceFromCache, false);
-    }
-
     /**
      * This is the method that, when given an API url, checks the database to see when it was last updated (if event), and tells its calling query
      * what action to take. If the url has not yet been queried or is in need of update, then download (or update) the data from the internet and
@@ -137,13 +129,14 @@ public class TBAv2 {
      *
      * @param c              Calling context - used to query the database for the Last-Update time for a URL
      * @param URL            API URL to check and see if an update is required
-     * @param cacheLocally   Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
-     * @param forceFromCache When this parameter is true, we won't make any web requests and just return Code.LOCAL, telling the caller to use whatever it has cached locally
-     * @param forceFromWeb When this parameter is true, it doesn't check
+     * @param params Parameters associated with this request
+       * cacheLocally: Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
+       * forceFromCache: When this parameter is true, we won't make any web requests and just return Code.LOCAL, telling the caller to use whatever it has cached locally
+       * forceFromWeb: When this parameter is true, the API timeout is greatly reduced so we can force (not exactly, but close enough) a web refresh. The timeout still exists for the poor server's sake
      * @return APIResponse containing the data we fetched (if necessary) and the response code for how we obtained that data.
      * @throws DataManager.NoDataException
      */
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheLocally, boolean forceFromCache, boolean forceFromWeb) throws DataManager.NoDataException {
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, RequestParams params) throws DataManager.NoDataException {
         if (c == null) {
             Log.d(Constants.DATAMANAGER_LOG, "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
@@ -174,8 +167,9 @@ public class TBAv2 {
 
                 /* First, check if we're within the API timeout. If so, just tell the caller to return what data we have */
                 Date now = new Date();
-                Date futureTime = new Date(cachedData.lastHit.getTime() + Constants.API_HIT_TIMEOUT);
-                if (now.before(futureTime) && !forceFromWeb) {
+                long timeout = params.forceFromWeb?Constants.API_HIT_TIMEOUT_LONG:Constants.API_HIT_TIMEOUT_SHORT;
+                Date futureTime = new Date(cachedData.lastHit.getTime() + timeout);
+                if (now.before(futureTime) && !params.forceFromWeb) {
                     //if isn't hasn't been longer than the timeout (1 minute now)
                     //just return what we have in cache
                     return cachedData.updateCode(APIResponse.CODE.CACHED304); /* Send Code.CACHED304 to tell the caller
@@ -185,12 +179,12 @@ public class TBAv2 {
                 }
 
                 /* If we don't want to query the API at all, then tell the caller to return from cache */
-                if (forceFromCache) {
+                if (params.forceFromCache) {
                     return cachedData; /* This will have Code.LOCAL and null data */
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
-                HttpResponse cachedResponse = HTTP.getRequest(URL, forceFromWeb?null:cachedData.getLastUpdate());
+                HttpResponse cachedResponse = HTTP.getRequest(URL, params.forceFromWeb?null:cachedData.getLastUpdate());
 
                 if (cachedResponse != null) {
 
@@ -279,7 +273,7 @@ public class TBAv2 {
                         lastUpdate = lastModified.getValue();
                     }
 
-                    if (cacheLocally) {
+                    if (params.cacheLocally) {
                         Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
                     }
 

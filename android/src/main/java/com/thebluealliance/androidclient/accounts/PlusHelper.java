@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.accounts;
 
 import android.content.Context;
-import android.os.Bundle;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.plus.PlusClient;

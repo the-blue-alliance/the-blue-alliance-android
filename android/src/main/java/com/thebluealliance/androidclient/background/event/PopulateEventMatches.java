@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComp
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -45,16 +46,16 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
     private RefreshableHostActivity activity;
     private String eventKey;
     private String teamKey;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     ArrayList<ListGroup> groups;
     Match nextMatch, lastMatch;
     Event event;
     MatchListAdapter adapter;
 
-    public PopulateEventMatches(EventMatchesFragment f, boolean forceFromCache) {
+    public PopulateEventMatches(EventMatchesFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);
             event = eventResponse.getData();
 
             if (isCancelled()) {
@@ -88,7 +89,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         APIResponse<ArrayList<Match>> response;
         int[] record = {0, 0, 0}; //wins, losses, ties
         try {
-            response = DataManager.Events.getMatchList(activity, eventKey, teamKey, forceFromCache);
+            response = DataManager.Events.getMatchList(activity, eventKey, teamKey, requestParams);
             ArrayList<Match> results = response.getData();
 
             if(event != null && event.isHappeningNow()){
@@ -189,7 +190,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
             // only show the message when try try and actually load data from the web
-            if (code == APIResponse.CODE.NODATA || (!forceFromCache && (groups == null || adapter.groups.isEmpty()))) {
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && (groups == null || adapter.groups.isEmpty()))) {
                 noDataText.setVisibility(View.VISIBLE);
                 noDataText.setText(teamKey.isEmpty() ? R.string.no_match_data : R.string.no_team_match_data);
             } else {
@@ -233,7 +234,8 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, false);
+            requestParams.forceFromCache = false;
+            PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, requestParams);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey, teamKey);
         } else {

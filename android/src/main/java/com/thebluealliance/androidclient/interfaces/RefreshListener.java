@@ -8,7 +8,7 @@ public interface RefreshListener {
     /*
     Called by the hosting activity to indicate that a refresh has been requested
      */
-    public void onRefreshStart();
+    public void onRefreshStart(boolean actionIconPressed);
 
     /*
     Called by the hosting activity to indicate that the current refresh should be stopped for some reason.

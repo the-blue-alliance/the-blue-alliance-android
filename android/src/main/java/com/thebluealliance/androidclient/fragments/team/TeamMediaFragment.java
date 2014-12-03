@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
@@ -84,13 +85,13 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         // Reset the view
         ((ViewGroup) getView()).removeAllViews();
         ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_team_media, (ViewGroup) getView(), true);
 
         Log.i(Constants.REFRESH_LOG, "Loading " + teamKey + " media in " + year);
-        task = new PopulateTeamMedia(this, true);
+        task = new PopulateTeamMedia(this, new RequestParams(true, actionIconPressed));
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, year);
     }
 
