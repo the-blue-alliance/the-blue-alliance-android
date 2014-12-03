@@ -25,3 +25,4 @@ script: ./gradlew connectedAndroidTest
 
 notifications:
   slack: tba-android:g0OFNqSnj71KnQC8IHGXnzhj
+  email: false
