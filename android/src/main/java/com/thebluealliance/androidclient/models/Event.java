@@ -38,7 +38,7 @@ public class Event extends BasicModel<Event> {
             NotificationTypes.LEVEL_STARTING,
             NotificationTypes.ALLIANCE_SELECTION,
             NotificationTypes.AWARDS,
-            NotificationTypes.SCHEDULE_POSTED,
+            NotificationTypes.SCHEDULE_UPDATED,
             NotificationTypes.FINAL_RESULTS
     };
 

@@ -3,6 +3,7 @@
     <string name="title_activity_dev_settings">Debug Settings</string>
     <string name="pref_header_appinfo">Info</string>
     <string name="pref_header_general">General</string>
+    <string name="pref_header_privacy">Privacy</string>
     <string name="pref_header_account">Account</string>
 
     <!-- Account -->
@@ -42,8 +43,17 @@
     <string name="dev_settings">Debug Settings</string>
     <string name="notification_settings">Notification Settings</string>
 
-    <!-- Notificatino Settings-->
+    <!-- Notification Settings-->
     <string name="pref_enable_notifications">Enable Notifications</string>
     <string name="pref_notification_tone">Play Sound</string>
     <string name="pref_notification_vibrate">Vibrate</string>
+    <string name="pref_system_notification_settings">System Notification Preferences</string>
+    <string name="pref_system_notification_settings_summary">These can affect how your notifications are shown</string>
+    <string name="pref_notification_lockscreen">Lock Screen Notifications</string>
+
+    <string name="pref_notification_visibility_private">When Device is Unlocked</string>
+    <string name="pref_notification_visibility_secret">Never</string>
+    <string name="pref_notification_visibility_public">Always</string>
+
+    <string name="pref_notification_headsup">Heads Up Notifications</string>
 </resources>

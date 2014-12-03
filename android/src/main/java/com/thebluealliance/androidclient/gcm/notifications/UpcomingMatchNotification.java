@@ -9,7 +9,9 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -27,39 +29,58 @@ import java.util.TimeZone;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    JsonObject jsonData;
+    private String eventName, matchTitle, matchKey;
+    private JsonElement matchTime;
+    private JsonArray teamKeys;
 
     public UpcomingMatchNotification(String messageData) {
         super("upcoming_match", messageData);
+    }
 
-        jsonData = new JsonParser().parse(messageData).getAsJsonObject();
+    @Override
+    public void parseMessageData() throws JsonParseException{
+        JsonObject jsonData = new JsonParser().parse(messageData).getAsJsonObject();
+        if(!jsonData.has("match_key")){
+            throw new JsonParseException("Notification data does not contain 'match_key'");
+        }
+        matchKey = jsonData.get("match_key").getAsString();
+        matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
+        if(!jsonData.has("event_name")){
+            throw new JsonParseException("Notification data does not contain 'event_name'");
+        }
+        eventName = jsonData.get("event_name").getAsString();
+        if(!jsonData.has("team_keys")){
+            throw new JsonParseException("Notification data does not contain 'team_keys");
+        }
+        teamKeys = jsonData.get("team_keys").getAsJsonArray();
+        if(!jsonData.has("scheduled_time")){
+            throw new JsonParseException("Notification data does not contain 'scheduled_time'");
+        }
+        matchTime = jsonData.get("scheduled_time");
     }
 
     /**
      * @param context a Context object for use by the notificatoin builder
      * @return A constructed notification
      */
-
     @Override
     public Notification buildNotification(Context context) {
 
         Resources r = context.getResources();
 
-        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(jsonData.get("match_key").getAsString());
-
-        String matchKey = jsonData.get("match_key").getAsString();
-
-        String eventName = jsonData.get("event_name").getAsString();
-
-        long scheduledStartTimeUNIX = jsonData.get("scheduled_time").getAsLong();
-        // We multiply by 1000 because the Date constructor expects
-        Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
-        DateFormat format = new SimpleDateFormat("HH:mm");
-        format.setTimeZone(TimeZone.getDefault());
-        String scheduledStartTimeString = format.format(scheduledStartTime);
+        String scheduledStartTimeString;
+        if(matchTime.isJsonNull()){
+           scheduledStartTimeString = "";
+        }else{
+            long scheduledStartTimeUNIX = matchTime.getAsLong();
+            // We multiply by 1000 because the Date constructor expects
+            Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
+            DateFormat format = new SimpleDateFormat("HH:mm");
+            format.setTimeZone(TimeZone.getDefault());
+            scheduledStartTimeString = format.format(scheduledStartTime);
+        }
 
         ArrayList<String> favoritedTeamsFromMatch = new ArrayList<>();
-        JsonArray teamKeys = jsonData.get("team_keys").getAsJsonArray();
         for (int i = 0; i < teamKeys.size(); i++) {
             // TODO determine if team is favorited by checking local database
 
@@ -76,10 +97,18 @@ public class UpcomingMatchNotification extends BaseNotification {
             // Looks like we got this GCM notification by mistake
             return null;
         }
-        if (numFavoritedTeams == 1) {
-            contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
-        } else {
-            contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams), eventName, teamsString, matchTitle, scheduledStartTimeString);
+        if(scheduledStartTimeString.isEmpty()){
+            if (numFavoritedTeams == 1) {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team_no_time), eventName, teamsString, matchTitle);
+            } else {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time), eventName, teamsString, matchTitle);
+            }
+        }else{
+            if (numFavoritedTeams == 1) {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
+            } else {
+                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams), eventName, teamsString, matchTitle, scheduledStartTimeString);
+            }
         }
 
         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_time_light);
@@ -101,7 +130,12 @@ public class UpcomingMatchNotification extends BaseNotification {
     }
 
     @Override
+    public void updateDataLocally(Context c) {
+        /* This notification has no data that we can store locally */
+    }
+
+    @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + jsonData.get("match_key").getAsString()).hashCode();
+        return (getNotificationType() + ":" + matchKey).hashCode();
     }
 }

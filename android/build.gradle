@@ -4,7 +4,7 @@ def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.1'
+    buildToolsVersion '21.0.2'
 
     defaultConfig {
         minSdkVersion 14
@@ -109,7 +109,7 @@ dependencies {
     // compile fileTree(dir: 'libs', include: ['*.jar'])
     compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
     compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
-    compile files('libs/tbaMobile-v9-1.19.0-SNAPSHOT.jar')
+    compile files('libs/tbaMobile-v9-1.19.0-SNAPSHOT-debug.jar')
     compile 'com.android.support:support-v13:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.0'
     compile 'com.android.support:support-v4:21.0.2'

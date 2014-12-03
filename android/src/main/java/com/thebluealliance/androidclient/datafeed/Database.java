@@ -736,7 +736,16 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public long add(Award in) {
-            return safeInsert(TABLE_AWARDS, null, in.getParams());
+            try {
+                if (!exists(in.getKey())) {
+                    return safeInsert(TABLE_AWARDS, null, in.getParams());
+                } else {
+                    return update(in);
+                }
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't add award without Database.Awards.KEY");
+                return -1;
+            }
         }
 
         public void add(ArrayList<Award> awards) {

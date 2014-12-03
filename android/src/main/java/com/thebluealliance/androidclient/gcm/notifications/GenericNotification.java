@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 
@@ -18,7 +19,6 @@ public class GenericNotification extends BaseNotification{
 
     public GenericNotification(String messageData){
         super("generic", messageData);
-        jsonData = new JsonParser().parse(messageData).getAsJsonObject();
     }
 
     @Override
@@ -30,6 +30,16 @@ public class GenericNotification extends BaseNotification{
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(jsonData.get("desc").getAsString()))
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)))
                 .build();
+    }
+
+    @Override
+    public void parseMessageData() throws JsonParseException{
+        jsonData = new JsonParser().parse(messageData).getAsJsonObject();
+    }
+
+    @Override
+    public void updateDataLocally(Context c) {
+        /* No data to be stored locally */
     }
 
     @Override
