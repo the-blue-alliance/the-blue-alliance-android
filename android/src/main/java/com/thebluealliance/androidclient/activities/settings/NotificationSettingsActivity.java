@@ -8,6 +8,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+
 import com.thebluealliance.androidclient.R;
 
 /**
@@ -53,6 +55,17 @@ public class NotificationSettingsActivity extends ActionBarActivity {
                     return true;
                 }
             });
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+            // Remove padding from the list view
+            View listView = getView().findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setPadding(0, 0, 0, 0);
+            }
         }
     }
 

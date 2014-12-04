@@ -71,6 +71,12 @@ public class NotificationSettingsFragment extends PreferenceFragment {
 
         // Create the list of preferences
         new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
+
+        // Remove padding from the list view
+        View listView = getView().findViewById(android.R.id.list);
+        if (listView != null) {
+            listView.setPadding(0, 0, 0, 0);
+        }
     }
 
     public ModelNotificationFavoriteSettings getSettings() {

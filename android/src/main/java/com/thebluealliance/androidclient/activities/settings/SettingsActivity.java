@@ -8,6 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
@@ -17,8 +18,7 @@ import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
-public class SettingsActivity extends ActionBarActivity
-{
+public class SettingsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +66,9 @@ public class SettingsActivity extends ActionBarActivity
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
             final Preference enable_mytba = findPreference("mytba_enabled");
-            if(AccountHelper.isMyTBAEnabled(getActivity())){
+            if (AccountHelper.isMyTBAEnabled(getActivity())) {
                 enable_mytba.setSummary(getString(R.string.mytba_enabled));
-            }else{
+            } else {
                 enable_mytba.setSummary(getString(R.string.mytba_disabled));
             }
             final Activity activity = getActivity();
@@ -87,6 +87,18 @@ public class SettingsActivity extends ActionBarActivity
                 addPreferencesFromResource(R.xml.dev_preference_link);
                 Preference devSettings = findPreference("dev_settings");
                 devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
+            }
+        }
+
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+            // Remove padding from the list view
+            View listView = getView().findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setPadding(0, 0, 0, 0);
             }
         }
     }

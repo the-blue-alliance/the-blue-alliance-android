@@ -6,6 +6,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -109,6 +110,17 @@ public class DevSettingsActivity extends ActionBarActivity {
             redownloadIntent.putExtra(LaunchActivity.REDOWNLOAD, true);
             redownload.setIntent(redownloadIntent);
 
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+            // Remove padding from the list view
+            View listView = getView().findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setPadding(0, 0, 0, 0);
+            }
         }
     }
 

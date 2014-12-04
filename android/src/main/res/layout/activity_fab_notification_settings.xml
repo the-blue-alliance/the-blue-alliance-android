@@ -8,15 +8,14 @@
     <FrameLayout
         android:id="@+id/activity_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent"></FrameLayout>
 
     <FrameLayout
         android:id="@+id/activity_foreground_dim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black"
-        android:alpha="0.0"/>
+        android:alpha="0.0" />
 
     <RelativeLayout
         android:id="@+id/notification_settings"
@@ -28,15 +27,15 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/notification_settings_toolbar"
-            style="@style/DefaultToolbarStyle"
-            android:background="@color/accent"/>
+            style="@style/DefaultLightToolbarStyle"
+            android:background="@color/accent" />
 
         <FrameLayout
             android:id="@+id/settings_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_below="@id/notification_settings_toolbar"/>
+            android:layout_below="@id/notification_settings_toolbar" />
 
     </RelativeLayout>
 
@@ -76,6 +75,6 @@
             app:fab_colorNormal="@color/accent"
             app:fab_colorPressed="@color/accent_dark"
             app:fab_colorRipple="@color/accent_dark_ripple"
-            android:layout_margin="16dp"/>
+            android:layout_margin="16dp" />
     </FrameLayout>
 </RelativeLayout>

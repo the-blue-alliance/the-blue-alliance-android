@@ -2,15 +2,19 @@ package com.thebluealliance.androidclient.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -100,7 +104,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
                 closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
                 notificationSettings.setVisibility(View.VISIBLE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
+                if (hasLApis()) {
                     getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
                 }
             } else {
@@ -168,138 +172,187 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     }
 
     private void openNotificationSettingsView() {
-        // get the centers for the clipping circles
-        // this is the center of the button itself, relative to its container. We need to use these coordinates to clip the button.
-        int centerOfButtonInsideX = (openNotificationSettingsButton.getLeft() + openNotificationSettingsButton.getRight()) / 2;
-        int centerOfButtonInsideY = (openNotificationSettingsButton.getTop() + openNotificationSettingsButton.getBottom()) / 2;
-
         // this is the center of the button in relation to the main view. This provides the center of the clipping circle for the notification settings view.
         int centerOfButtonOutsideX = (openNotificationSettingsButtonContainer.getLeft() + openNotificationSettingsButtonContainer.getRight()) / 2;
         int centerOfButtonOutsideY = (openNotificationSettingsButtonContainer.getTop() + openNotificationSettingsButtonContainer.getBottom()) / 2;
 
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
 
-        if (notificationSettings.getVisibility() == View.INVISIBLE) {
-            notificationSettings.setVisibility(View.VISIBLE);
-
-            // Only create the circular reveal on L or greater. Otherwise, default to some other transition.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
-                Animator circularReveal = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
-                circularReveal.setDuration(ANIAMTION_DURATION);
-
-                // We create the circular reveals on the buttons container, because we can't create a clipping circle on the button itself
-                openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-
-                closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                final Animator closeButtonAnimator = ViewAnimationUtils.createCircularReveal(closeNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, 0, (closeNotificationSettingsButton.getWidth() / 2));
-                closeButtonAnimator.setDuration(ANIAMTION_DURATION);
-
-                circularReveal.start();
-                closeButtonAnimator.start();
-
-                // Animate the status bar color change
-
-                Integer colorFrom = getResources().getColor(R.color.primary_dark);
-                Integer colorTo = getResources().getColor(R.color.accent_dark);
-                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
-                    }
-
-                });
-                colorAnimation.setDuration(ANIAMTION_DURATION);
-                colorAnimation.start();
-
-                ValueAnimator dimAnimation = ValueAnimator.ofFloat(UNDIMMED_ALPHA, DIMMED_ALPHA);
-                dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        foregroundDim.setAlpha((float) animation.getAnimatedValue());
-                    }
-                });
-                dimAnimation.setDuration(ANIAMTION_DURATION);
-                dimAnimation.start();
-            } else {
-                openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                notificationSettings.setVisibility(View.VISIBLE);
-            }
-            isSettingsPanelOpen = true;
+        Animator settingsPanelAnimator;
+        // Only show the circular reveal on API >= 5.0
+        notificationSettings.setVisibility(View.VISIBLE);
+        if (hasLApis()) {
+            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
+            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
+        } else {
+            settingsPanelAnimator = ValueAnimator.ofFloat(1, 0);
+            final int notificationSettingsHeight = notificationSettings.getHeight();
+            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue());
+                }
+            });
+            settingsPanelAnimator.setInterpolator(new DecelerateInterpolator());
+            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
         }
+
+        openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
+
+        ValueAnimator closeButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIAMTION_DURATION);
+        closeButtonScaleUp.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+            }
+        });
+        closeButtonScaleUp.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+                ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+            }
+        });
+        closeButtonScaleUp.setDuration(ANIAMTION_DURATION / 2);
+
+        // Animate the status bar color change
+        Integer colorFrom = getResources().getColor(R.color.primary_dark);
+        Integer colorTo = getResources().getColor(R.color.accent_dark);
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                if (hasLApis()) {
+                    getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
+                }
+            }
+
+        });
+        colorAnimation.setDuration(ANIAMTION_DURATION);
+
+        ValueAnimator dimAnimation = ValueAnimator.ofFloat(UNDIMMED_ALPHA, DIMMED_ALPHA);
+        dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                foregroundDim.setAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        dimAnimation.setDuration(ANIAMTION_DURATION);
+
+        AnimatorSet animationSet = new AnimatorSet();
+        animationSet.play(settingsPanelAnimator);
+        animationSet.play(closeButtonScaleUp).after(ANIAMTION_DURATION / 2);
+        animationSet.play(colorAnimation).with(settingsPanelAnimator);
+        animationSet.play(dimAnimation).with(settingsPanelAnimator);
+        animationSet.start();
+
+        isSettingsPanelOpen = true;
     }
 
     private void closeNotificationSettingsWindow() {
-        int centerOfButtonInsideX = (openNotificationSettingsButton.getLeft() + openNotificationSettingsButton.getRight()) / 2;
-        int centerOfButtonInsideY = (openNotificationSettingsButton.getTop() + openNotificationSettingsButton.getBottom()) / 2;
-
         int centerOfButtonOutsideX = (openNotificationSettingsButtonContainer.getLeft() + openNotificationSettingsButtonContainer.getRight()) / 2;
         int centerOfButtonOutsideY = (openNotificationSettingsButtonContainer.getTop() + openNotificationSettingsButtonContainer.getBottom()) / 2;
 
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
-        if (notificationSettings.getVisibility() == View.VISIBLE) {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L) {
-                Animator circularReveal = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
-                circularReveal.addListener(new AnimatorListenerAdapter() {
+        Animator settingsPanelAnimator;
+        if (hasLApis()) {
+            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
+            settingsPanelAnimator.addListener(new AnimatorListenerAdapter() {
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        notificationSettings.setVisibility(View.INVISIBLE);
-                    }
-                });
-                circularReveal.setDuration(ANIAMTION_DURATION);
-
-                final Animator openButtonAnimator = ViewAnimationUtils.createCircularReveal(openNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, 0, (openNotificationSettingsButton.getWidth() / 2));
-                openButtonAnimator.setDuration(circularReveal.getDuration());
-                Animator closeButtonAnimator = ViewAnimationUtils.createCircularReveal(closeNotificationSettingsButtonContainer, centerOfButtonInsideX, centerOfButtonInsideY, (closeNotificationSettingsButton.getWidth() / 2), 0);
-                closeButtonAnimator.setDuration(ANIAMTION_DURATION / 2);
-                closeButtonAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                        openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                        openButtonAnimator.start();
-                    }
-                });
-                closeButtonAnimator.start();
-                circularReveal.start();
-
-                // Animate the status bar color change
-
-                Integer colorFrom = getResources().getColor(R.color.accent_dark);
-                Integer colorTo = getResources().getColor(R.color.primary_dark);
-                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
-                    }
-
-                });
-                colorAnimation.setDuration(ANIAMTION_DURATION);
-                colorAnimation.start();
-
-                // Undim the foreground
-                ValueAnimator dimAnimation = ValueAnimator.ofFloat(DIMMED_ALPHA, UNDIMMED_ALPHA);
-                dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        foregroundDim.setAlpha((float) animation.getAnimatedValue());
-                    }
-                });
-                dimAnimation.setDuration(ANIAMTION_DURATION);
-                dimAnimation.start();
-            } else {
-                openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                notificationSettings.setVisibility(View.INVISIBLE);
-            }
-            isSettingsPanelOpen = false;
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    notificationSettings.setVisibility(View.INVISIBLE);
+                }
+            });
+            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
+        } else {
+            settingsPanelAnimator = ValueAnimator.ofFloat(0, 1);
+            final int notificationSettingsHeight = notificationSettings.getHeight();
+            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue());
+                }
+            });
+            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
+            settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
+            settingsPanelAnimator.start();
         }
+
+        ValueAnimator closeButtonScaleDown = ValueAnimator.ofFloat(1, 0).setDuration(ANIAMTION_DURATION);
+        closeButtonScaleDown.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
+            }
+        });
+        closeButtonScaleDown.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+                ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+            }
+        });
+        closeButtonScaleDown.setDuration(ANIAMTION_DURATION);
+
+        ValueAnimator openButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIAMTION_DURATION);
+        openButtonScaleUp.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+            }
+        });
+        openButtonScaleUp.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+                ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+            }
+        });
+        openButtonScaleUp.setDuration(ANIAMTION_DURATION / 2);
+
+        // Animate the status bar color change
+
+        Integer colorFrom = getResources().getColor(R.color.accent_dark);
+        Integer colorTo = getResources().getColor(R.color.primary_dark);
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                if (hasLApis()) {
+                    getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
+                }
+            }
+
+        });
+        colorAnimation.setDuration(ANIAMTION_DURATION);
+
+        // Undim the foreground
+        ValueAnimator dimAnimation = ValueAnimator.ofFloat(DIMMED_ALPHA, UNDIMMED_ALPHA);
+        dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                foregroundDim.setAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        dimAnimation.setDuration(ANIAMTION_DURATION);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(settingsPanelAnimator);
+        animatorSet.play(closeButtonScaleDown).with(settingsPanelAnimator);
+        animatorSet.play(colorAnimation).with(settingsPanelAnimator);
+        animatorSet.play(dimAnimation).with(settingsPanelAnimator);
+        animatorSet.play(openButtonScaleUp).after(settingsPanelAnimator);
+        animatorSet.start();
+
+        isSettingsPanelOpen = false;
+    }
+
+    private boolean hasLApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.L;
     }
 
     public void showFab(boolean animate) {
