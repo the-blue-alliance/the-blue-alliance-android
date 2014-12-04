@@ -139,7 +139,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         mRefreshed = true;
 
         //update myTBA after content loads
-        if(AccountHelper.isAccountSelected(this)){
+        if (AccountHelper.isAccountSelected(this)) {
             new UpdateMyTBA(this, new RequestParams()).execute();
         }
     }
@@ -148,7 +148,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
      * Notifies all registered listeners that they should start their refresh.
      * Passes parameter if toolbar icon initiated refresh (defaults to false)
      */
-    public void startRefresh(){
+    public void startRefresh() {
         startRefresh(false);
     }
 
@@ -161,10 +161,10 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             return;
         }
         mRefreshInProgress = true;
+        setMenuProgressBarVisible(true);
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart(actionIconPressed);
         }
-        setMenuProgressBarVisible(true);
     }
 
     /*

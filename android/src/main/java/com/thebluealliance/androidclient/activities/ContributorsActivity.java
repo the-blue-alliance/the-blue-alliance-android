@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,8 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_contributors);
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         setupActionBar();
 
@@ -90,6 +93,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
             findViewById(android.R.id.list).setVisibility(View.GONE);
             findViewById(R.id.no_data).setVisibility(View.VISIBLE);
             findViewById(R.id.progress).setVisibility(View.GONE);
+            notifyRefreshComplete(this);
         }
     }
 

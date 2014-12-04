@@ -6,11 +6,11 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionCollection;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
+import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesSubscriptionCollection;
+import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -76,7 +76,7 @@ public class DataManager {
             Log.d("get cursor for simple teams", "getting cursor for teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());
 
             ArrayList<APIResponse.CODE> teamListResponseCodes = new ArrayList<>();
-            Cursor cursor = null;
+            Cursor cursor;
             for (Integer requiredPageNum : requiredPageNums) {
                 int pageNum = requiredPageNum;
 
@@ -513,7 +513,7 @@ public class DataManager {
 
             Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-            ModelsMobileApiMessagesFavoriteCollection favoriteCollection = null;
+            ModelsMobileApiMessagesFavoriteCollection favoriteCollection;
             try {
                 favoriteCollection = service.favorites().list().execute();
             } catch (IOException e) {
@@ -557,7 +557,7 @@ public class DataManager {
 
             Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-            ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = null;
+            ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection;
             try {
                 subscriptionCollection = service.subscriptions().list().execute();
             } catch (IOException e) {

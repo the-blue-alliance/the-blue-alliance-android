@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thebluealliance.androidclient" >
+    package="com.thebluealliance.androidclient">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -24,7 +24,7 @@
         android:allowBackup="true"
         android:icon="@drawable/thebluealliance"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -34,7 +34,7 @@
 
         <activity
             android:name="com.thebluealliance.androidclient.activities.LaunchActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -73,7 +73,7 @@
             android:name="com.thebluealliance.androidclient.activities.ViewEventActivity"
             android:launchMode="singleTop"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus" >
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
@@ -82,7 +82,7 @@
             android:name="com.thebluealliance.androidclient.activities.ViewTeamActivity"
             android:launchMode="singleTop"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus" >
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
@@ -90,7 +90,7 @@
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewMatchActivity"
             android:parentActivityName="com.thebluealliance.androidclient.activities.ViewEventActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus" >
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
@@ -98,7 +98,7 @@
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewDistrictActivity"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus" >
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
@@ -117,11 +117,13 @@
         <activity
             android:name="com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity"
             android:label="@string/license_label" />
-        <activity android:name="com.thebluealliance.androidclient.activities.ContributorsActivity" />
+        <activity
+            android:name="com.thebluealliance.androidclient.activities.ContributorsActivity"
+            android:theme="@style/AppThemeNoActionBar" />
         <activity
             android:name="com.thebluealliance.androidclient.activities.TeamAtEventActivity"
             android:parentActivityName="com.thebluealliance.androidclient.activities.ViewEventActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus" >
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
@@ -129,7 +131,7 @@
         <activity
             android:name="com.thebluealliance.androidclient.activities.SearchResultsActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus" >
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -149,7 +151,7 @@
         <activity
             android:name="com.thebluealliance.androidclient.activities.settings.DevSettingsActivity"
             android:label="@string/title_activity_dev_settings"
-            android:parentActivityName="com.thebluealliance.androidclient.activities.settings.SettingsActivity" >
+            android:parentActivityName="com.thebluealliance.androidclient.activities.settings.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.settings.SettingsActivity" />
@@ -157,7 +159,7 @@
         <activity
             android:name="com.thebluealliance.androidclient.activities.settings.NotificationSettingsActivity"
             android:label="@string/notification_settings"
-            android:parentActivityName="com.thebluealliance.androidclient.activities.settings.SettingsActivity" >
+            android:parentActivityName="com.thebluealliance.androidclient.activities.settings.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.settings.SettingsActivity" />
@@ -171,17 +173,16 @@
         <activity
             android:name=".activities.AuthenticatorActivity"
             android:label="@string/title_activity_authenticator"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
-        <receiver android:name="com.thebluealliance.androidclient.receivers.ConnectivityChangeReceiver" >
+        <receiver android:name="com.thebluealliance.androidclient.receivers.ConnectivityChangeReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.thebluealliance.androidclient.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
@@ -192,7 +193,7 @@
         <service android:name="com.thebluealliance.androidclient.gcm.GCMMessageHandler" />
         <service
             android:name="com.thebluealliance.androidclient.accounts.AccountAuthenticatorService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
