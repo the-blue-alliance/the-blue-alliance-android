@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,10 +21,11 @@
                 style="@style/InfoItemStyle"
                 android:clickable="true">
 
-                <ImageView
+                <com.thebluealliance.androidclient.views.RecoloredImageView
                     android:id="@+id/team_name_icon"
                     style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_action_group" />
+                    android:src="@drawable/ic_group_black_24dp"
+                    app:tintColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/team_name"
@@ -41,10 +43,11 @@
                 android:clickable="true"
                 android:focusable="true">
 
-                <ImageView
+                <com.thebluealliance.androidclient.views.RecoloredImageView
                     android:id="@+id/team_location_icon"
                     style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_action_place" />
+                    android:src="@drawable/ic_location_on_black_24dp"
+                    app:tintColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/team_location"
@@ -71,10 +74,11 @@
                     style="@style/InfoItemStyle"
                     android:clickable="true">
 
-                    <ImageView
+                    <com.thebluealliance.androidclient.views.RecoloredImageView
                         android:id="@+id/team_full_name_icon"
                         style="@style/InfoItemImageStyle"
-                        android:src="@drawable/ic_action_about" />
+                        android:src="@drawable/ic_info_outline_black_24dp"
+                        app:tintColor="@color/primary" />
 
                     <TextView
                         android:id="@+id/team_full_name"

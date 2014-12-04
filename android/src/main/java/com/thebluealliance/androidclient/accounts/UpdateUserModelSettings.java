@@ -66,7 +66,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
         request.setNotifications(notifications);
         request.setFavorite(isFavorite);
-        request.setModelType(new Long(settings.modelType.getEnum()));
+        request.setModelType(Long.valueOf(settings.modelType.getEnum()));
 
         Database.Subscriptions subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
         Database.Favorites favoritesTable = Database.getInstance(context).getFavoritesTable();

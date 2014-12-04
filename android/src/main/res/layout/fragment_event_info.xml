@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -19,10 +20,11 @@
                 style="@style/InfoItemStyle"
                 android:clickable="true">
 
-                <ImageView
+                <com.thebluealliance.androidclient.views.RecoloredImageView
                     android:id="@+id/event_name_icon"
                     style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_action_about" />
+                    android:src="@drawable/ic_info_outline_black_24dp"
+                    app:tintColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/event_name"
@@ -40,10 +42,11 @@
                 android:focusable="true"
                 android:background="?android:attr/selectableItemBackground">
 
-                <ImageView
+                <com.thebluealliance.androidclient.views.RecoloredImageView
                     android:id="@+id/event_date_icon"
                     style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_action_event" />
+                    android:src="@drawable/ic_event_black_24dp"
+                    app:tintColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/event_date"
@@ -66,10 +69,11 @@
 
                 <RelativeLayout style="@style/InfoItemStyle">
 
-                    <ImageView
+                    <com.thebluealliance.androidclient.views.RecoloredImageView
                         android:id="@+id/venue_location_icon"
                         style="@style/InfoItemImageStyle"
-                        android:src="@drawable/ic_action_place" />
+                        android:src="@drawable/ic_location_on_black_24dp"
+                        app:tintColor="@color/primary" />
 
                     <TextView
                         android:id="@+id/event_venue"

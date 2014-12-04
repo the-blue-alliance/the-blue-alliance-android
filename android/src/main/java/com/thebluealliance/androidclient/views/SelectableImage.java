@@ -12,28 +12,23 @@ import com.thebluealliance.androidclient.R;
  * @author Adam Corpstein
  * @since 10/26/2014
  */
-public class SelectableImage extends ImageView
-{
+public class SelectableImage extends ImageView {
     protected int mColorStateListId = R.color.default_image_selected;
 
-    public SelectableImage(Context context)
-    {
+    public SelectableImage(Context context) {
         super(context);
     }
 
-    public SelectableImage(Context context, AttributeSet attrs)
-    {
+    public SelectableImage(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SelectableImage(Context context, AttributeSet attrs, int defStyleAttr)
-    {
+    public SelectableImage(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
-    protected void drawableStateChanged()
-    {
+    protected void drawableStateChanged() {
         super.drawableStateChanged();
         //Get the resource state
         ColorStateList list = getResources().getColorStateList(mColorStateListId);
@@ -44,7 +39,7 @@ public class SelectableImage extends ImageView
     }
 
 
-    public void setColorStateListId(int resId){
+    public void setColorStateListId(int resId) {
         mColorStateListId = resId;
         drawableStateChanged();
     }

@@ -13,8 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -193,7 +193,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                     notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue());
                 }
             });
-            settingsPanelAnimator.setInterpolator(new DecelerateInterpolator());
+            settingsPanelAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
         }
 
