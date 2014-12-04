@@ -36,7 +36,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     private ArrayList<ListItem> rankings;
 
     public PopulateDistrictRankings(DistrictRankingsFragment fragment, RequestParams params) {
-        this.requestParams = requestParams;
+        this.requestParams = params;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
     }
