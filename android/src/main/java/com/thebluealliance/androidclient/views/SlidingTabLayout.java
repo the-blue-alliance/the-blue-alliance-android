@@ -47,7 +47,8 @@ public abstract class SlidingTabLayout extends HorizontalScrollView
 
     }
 
-    private static final int TITLE_OFFSET_DIPS = 48;
+    // This specific value places the tab text directly below the toolbar title (on the 2nd keyline)
+    private static final int TITLE_OFFSET_DIPS = 56;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
 

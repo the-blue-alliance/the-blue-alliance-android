@@ -72,6 +72,7 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Log.d(Constants.LOG_TAG, "Team clicked!");
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
                 startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
             }

@@ -6,11 +6,11 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.appspot.tba_dev_phil.tbaMobile.TbaMobile;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesSubscriptionCollection;
-import com.appspot.tba_dev_phil.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
+import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionCollection;
+import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
