@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 
 /**
- * A login screen that offers login via email/password and via Google+ sign in.
+ * A login screen that offers login via Google+ sign in.
  * <p/>
  * ************ IMPORTANT SETUP NOTES: ************
  * In order for Google+ sign in to work with your app, you must first go to:
