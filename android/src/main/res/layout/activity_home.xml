@@ -7,13 +7,34 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        style="@style/DefaultToolbarStyle">
+        style="@style/DefaultToolbarStyle"
+        app:contentInsetStart="0dp">
 
-        <Spinner
-            android:id="@+id/toolbar_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+        <LinearLayout
+            android:id="@+id/year_selector_container"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_gravity="center_horizontal"
+            android:paddingLeft="16dp">
+
+            <TextView
+                android:id="@+id/year_selector_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="2014 Events"
+                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+                android:textColor="@color/white"
+                android:gravity="center_vertical" />
+
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_drop_down_white_24dp"/>
+        </LinearLayout>
 
     </android.support.v7.widget.Toolbar>
 

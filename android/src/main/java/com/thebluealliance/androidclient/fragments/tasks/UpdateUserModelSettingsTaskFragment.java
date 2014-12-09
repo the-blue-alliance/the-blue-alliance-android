@@ -16,6 +16,10 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     private ModelSettingsCallbacks callbacks;
     private ModelNotificationFavoriteSettings settings;
 
+    public UpdateUserModelSettingsTaskFragment() {
+
+    }
+
     public UpdateUserModelSettingsTaskFragment(ModelNotificationFavoriteSettings settings) {
         this.settings = settings;
     }
