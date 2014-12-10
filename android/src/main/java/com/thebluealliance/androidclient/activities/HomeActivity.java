@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -234,7 +235,7 @@ public class HomeActivity extends RefreshableHostActivity {
 
         yearSelectorContainer.setVisibility(View.VISIBLE);
 
-        final Dialog dialog = makeDialogForYearSelection("Select year", eventsDropdownItems);
+        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, eventsDropdownItems);
 
         yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -263,7 +264,7 @@ public class HomeActivity extends RefreshableHostActivity {
 
         yearSelectorContainer.setVisibility(View.VISIBLE);
 
-        final Dialog dialog = makeDialogForYearSelection("Select year", districtsDropdownItems);
+        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, districtsDropdownItems);
 
         yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,9 +286,10 @@ public class HomeActivity extends RefreshableHostActivity {
         yearSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_districts), districtsDropdownItems[selectedPosition]));
     }
 
-    private Dialog makeDialogForYearSelection(String title, String[] dropdownItems) {
+    private Dialog makeDialogForYearSelection(@StringRes int titleResId, String[] dropdownItems) {
+        Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title);
+        builder.setTitle(res.getString(titleResId));
         builder.setItems(dropdownItems, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
