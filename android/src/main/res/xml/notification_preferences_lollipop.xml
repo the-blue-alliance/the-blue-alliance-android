@@ -3,10 +3,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:title="@string/pref_header_privacy">
-        <Preference
-            android:key="system_notification_settings"
-            android:title="@string/pref_system_notification_settings"
-            android:summary="@string/pref_system_notification_settings_summary"/>
         <ListPreference
             android:key="notification_visibility"
             android:title="@string/pref_notification_lockscreen"

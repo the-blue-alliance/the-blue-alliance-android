@@ -34,8 +34,6 @@ public class NotificationSettingsActivity extends ActionBarActivity {
             addPreferencesFromResource(R.xml.notification_preferences);
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
                 addPreferencesFromResource(R.xml.notification_preferences_lollipop);
-                Preference systemSettings = findPreference("system_notification_settings");
-                systemSettings.setIntent(new Intent(Settings.ACTION_SETTINGS));
             }
 
             CheckBoxPreference enableNotifications = (CheckBoxPreference)findPreference("enable_notifications");

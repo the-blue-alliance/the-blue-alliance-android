@@ -114,12 +114,22 @@ public class HomeActivity extends RefreshableHostActivity {
         if (savedInstanceState != null) {
             fromSavedInstance = true;
             Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
-            if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
-                mCurrentSelectedNavigationItemId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
-            }
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
+            } else {
+                if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
+                    mCurrentSelectedYearPosition = 0;
+                } else {
+                    mCurrentSelectedYearPosition = 1;
+                }
+            }
+
+            if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
+                mCurrentSelectedNavigationItemId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
+                switchToModeForId(mCurrentSelectedNavigationItemId);
+            } else {
+                switchToModeForId(R.id.nav_item_events);
             }
         } else {
             if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
