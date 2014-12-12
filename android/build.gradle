@@ -4,12 +4,13 @@ def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.2'
+    buildToolsVersion '21.1.1'
+
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 21
-        versionName "2.0.5-test"
+        versionName "2.0.7-test"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -38,7 +39,6 @@ android {
             // the apk will be in android/build/outputs/apk and you can install it by running
             // 'adb install -r <file name>'
             debugBlue {
-                debuggable true
                 signingConfig signingConfigs.debug
                 versionNameSuffix "/#" + gitSha
                 applicationIdSuffix ".development"
@@ -62,13 +62,16 @@ android {
             }
         }
     }
+
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+
     lintOptions {
         abortOnError false
     }
+
     buildTypes {
         debugBlue {
             debuggable true

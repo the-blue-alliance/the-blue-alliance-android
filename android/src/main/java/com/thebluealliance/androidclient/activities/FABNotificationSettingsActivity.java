@@ -352,7 +352,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     }
 
     private boolean hasLApis() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.L;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     public void showFab(boolean animate) {
