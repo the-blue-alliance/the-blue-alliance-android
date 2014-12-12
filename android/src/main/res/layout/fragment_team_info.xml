@@ -167,7 +167,7 @@
                 <ImageView
                     android:id="@+id/team_current_match_icon"
                     style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_action_time" />
+                    android:src="@drawable/ic_access_time_black_24dp" />
 
                 <TextView
                     android:id="@+id/team_most_recent_match_label"
@@ -200,7 +200,7 @@
             </RelativeLayout>
 
             <!-- Hacky way to make a list divider appear after the last item. -->
-            <FrameLayout
+            <Space
                 android:layout_width="0dp"
                 android:layout_height="0dp" />
         </LinearLayout>

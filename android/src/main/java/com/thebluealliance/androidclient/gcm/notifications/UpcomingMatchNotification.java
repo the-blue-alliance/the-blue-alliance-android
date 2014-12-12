@@ -38,22 +38,22 @@ public class UpcomingMatchNotification extends BaseNotification {
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
+    public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = new JsonParser().parse(messageData).getAsJsonObject();
-        if(!jsonData.has("match_key")){
+        if (!jsonData.has("match_key")) {
             throw new JsonParseException("Notification data does not contain 'match_key'");
         }
         matchKey = jsonData.get("match_key").getAsString();
         matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
-        if(!jsonData.has("event_name")){
+        if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
         eventName = jsonData.get("event_name").getAsString();
-        if(!jsonData.has("team_keys")){
+        if (!jsonData.has("team_keys")) {
             throw new JsonParseException("Notification data does not contain 'team_keys");
         }
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
-        if(!jsonData.has("scheduled_time")){
+        if (!jsonData.has("scheduled_time")) {
             throw new JsonParseException("Notification data does not contain 'scheduled_time'");
         }
         matchTime = jsonData.get("scheduled_time");
@@ -69,9 +69,9 @@ public class UpcomingMatchNotification extends BaseNotification {
         Resources r = context.getResources();
 
         String scheduledStartTimeString;
-        if(matchTime.isJsonNull()){
-           scheduledStartTimeString = "";
-        }else{
+        if (matchTime.isJsonNull()) {
+            scheduledStartTimeString = "";
+        } else {
             long scheduledStartTimeUNIX = matchTime.getAsLong();
             // We multiply by 1000 because the Date constructor expects
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
@@ -97,13 +97,13 @@ public class UpcomingMatchNotification extends BaseNotification {
             // Looks like we got this GCM notification by mistake
             return null;
         }
-        if(scheduledStartTimeString.isEmpty()){
+        if (scheduledStartTimeString.isEmpty()) {
             if (numFavoritedTeams == 1) {
                 contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team_no_time), eventName, teamsString, matchTitle);
             } else {
                 contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time), eventName, teamsString, matchTitle);
             }
-        }else{
+        } else {
             if (numFavoritedTeams == 1) {
                 contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
             } else {
@@ -111,15 +111,12 @@ public class UpcomingMatchNotification extends BaseNotification {
             }
         }
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_time_light);
-
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewMatchActivity.newInstance(context, matchKey), 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_upcoming_match_title))
                 .setContentText(contentText)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(largeIcon)
+                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
                 .setContentIntent(intent)
                 .setAutoCancel(true)
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));

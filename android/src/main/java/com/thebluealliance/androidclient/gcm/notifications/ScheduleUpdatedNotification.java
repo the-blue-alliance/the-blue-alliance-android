@@ -26,23 +26,23 @@ public class ScheduleUpdatedNotification extends BaseNotification {
     private String eventName, eventKey;
     private JsonElement matchTime;
 
-    public ScheduleUpdatedNotification(String messageData){
+    public ScheduleUpdatedNotification(String messageData) {
         super(NotificationTypes.SCHEDULE_UPDATED, messageData);
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
+    public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONManager.getasJsonObject(messageData);
-        if(!jsonData.has("event_name")){
+        if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name");
         }
         eventName = jsonData.get("event_name").getAsString();
-        if(!jsonData.has("event_key")){
+        if (!jsonData.has("event_key")) {
             throw new JsonParseException("Notification data does not contain 'event_key");
         }
         eventKey = jsonData.get("event_key").getAsString();
 
-        if(!jsonData.has("first_match_time")){
+        if (!jsonData.has("first_match_time")) {
             throw new JsonParseException("Notification data does not contain 'first_match_time");
         }
         matchTime = jsonData.get("first_match_time");
@@ -53,27 +53,26 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         Resources r = context.getResources();
 
         String firstMatchTime = null;
-        if(!matchTime.isJsonNull()){
+        if (!matchTime.isJsonNull()) {
             Date date = new Date(matchTime.getAsLong() * 1000L);
             java.text.DateFormat format = DateFormat.getTimeFormat(context);
             firstMatchTime = format.format(date);
         }
 
         String contentText;
-        if(firstMatchTime== null){
+        if (firstMatchTime == null) {
             contentText = String.format(r.getString(R.string.notification_schedule_updated_without_time), eventName);
-        }else{
+        } else {
             contentText = String.format(r.getString(R.string.notification_schedule_updated_with_time), eventKey, firstMatchTime);
         }
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_time_light);
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewEventActivity.newInstance(context, eventKey), 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_schedule_updated_title))
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(largeIcon)
+                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
                 .setContentIntent(intent)
                 .setAutoCancel(true);
 

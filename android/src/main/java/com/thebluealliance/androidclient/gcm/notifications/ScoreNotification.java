@@ -161,15 +161,12 @@ public class ScoreNotification extends BaseNotification {
         }
 
         // We can finally build the notification!
-        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_about_light);
-
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewMatchActivity.newInstance(context, matchKey), 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_score_title))
                 .setContentText(notificationString)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(largeIcon)
+                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)
                 .setAutoCancel(true)
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));

@@ -60,14 +60,12 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_info_outline_white_24dp);
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewEventActivity.newInstance(context, eventKey), 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_alliances_updated_title))
                 .setContentText(contentText)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(largeIcon)
+                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)
                 .setAutoCancel(true);
 

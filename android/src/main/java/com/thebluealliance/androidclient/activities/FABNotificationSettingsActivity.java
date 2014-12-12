@@ -295,7 +295,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
             }
         });
-        closeButtonScaleDown.setDuration(ANIAMTION_DURATION);
+        closeButtonScaleDown.setDuration(ANIAMTION_DURATION / 2);
 
         ValueAnimator openButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIAMTION_DURATION);
         openButtonScaleUp.addListener(new AnimatorListenerAdapter() {
@@ -342,7 +342,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(settingsPanelAnimator);
-        animatorSet.play(closeButtonScaleDown).with(settingsPanelAnimator);
+        animatorSet.play(closeButtonScaleDown).after(ANIAMTION_DURATION / 2);
         animatorSet.play(colorAnimation).with(settingsPanelAnimator);
         animatorSet.play(dimAnimation).with(settingsPanelAnimator);
         animatorSet.play(openButtonScaleUp).after(settingsPanelAnimator);

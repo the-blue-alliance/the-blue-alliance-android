@@ -13,11 +13,11 @@ import com.thebluealliance.androidclient.R;
 /**
  * File created by phil on 9/7/14.
  */
-public class GenericNotification extends BaseNotification{
+public class GenericNotification extends BaseNotification {
 
     private JsonObject jsonData;
 
-    public GenericNotification(String messageData){
+    public GenericNotification(String messageData) {
         super("generic", messageData);
     }
 
@@ -33,7 +33,7 @@ public class GenericNotification extends BaseNotification{
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
+    public void parseMessageData() throws JsonParseException {
         jsonData = new JsonParser().parse(messageData).getAsJsonObject();
     }
 
