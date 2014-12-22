@@ -81,14 +81,12 @@ public class CompLevelStartingNotification extends BaseNotification {
             contentText = String.format(r.getString(R.string.notification_level_starting_with_time), eventKey, compLevel, scheduledStartTimeString);
         }
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_action_time_light);
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewEventActivity.newInstance(context, eventKey), 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_level_starting_title))
                 .setContentText(contentText)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(largeIcon)
+                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
                 .setContentIntent(intent)
                 .setAutoCancel(true);
 

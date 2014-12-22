@@ -71,6 +71,12 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    buildTypes {
+        debugBlue {
+            debuggable true
+        }
+    }
 }
 
 task loadProperties << {

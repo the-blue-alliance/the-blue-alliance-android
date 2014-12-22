@@ -147,21 +147,16 @@ public class NavigationDrawerFragment extends Fragment {
 
         myTbaProfileInfoContainer = v.findViewById(R.id.mytba_profile_info);
 
-        /*if (!AccountHelper.isMyTBAEnabled(getActivity())) {
-            myTbaProfileInfoContainer.setVisibility(View.GONE);
-        } else {
-            myTbaProfileInfoContainer.setVisibility(View.VISIBLE);
-        }*/
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
         if (AccountHelper.isMyTBAEnabled(getActivity())) {
+            myTbaProfileInfoContainer.setVisibility(View.VISIBLE);
             profilePicture.setVisibility(View.VISIBLE);
             profileName.setVisibility(View.VISIBLE);
             setDrawerProfileInfo();
         } else {
-            profilePicture.setVisibility(View.GONE);
-            profileName.setVisibility(View.GONE);
+            myTbaProfileInfoContainer.setVisibility(View.GONE);
         }
 
         return v;

@@ -19,7 +19,7 @@ import org.json.JSONException;
 /**
  * File created by phil on 9/7/14.
  */
-public class GenericNotification extends BaseNotification{
+public class GenericNotification extends BaseNotification {
 
     private String title, message;
     private PendingIntent intent;

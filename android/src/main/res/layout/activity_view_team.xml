@@ -39,7 +39,7 @@
                     android:id="@+id/year_selector_subtitle_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="invisible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/year_selector_subtitle"
