@@ -6,6 +6,7 @@
         <ListPreference
             android:key="notification_visibility"
             android:title="@string/pref_notification_lockscreen"
+            android:summary="@string/pref_notification_lockscreen_summary"
             android:defaultValue="private"
             android:entries="@array/notification_visibility"
             android:entryValues="@array/notification_visibility_values" />

@@ -334,4 +334,8 @@ public class Utilities {
         return hash;
     }
 
+    public static boolean hasLApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
 }

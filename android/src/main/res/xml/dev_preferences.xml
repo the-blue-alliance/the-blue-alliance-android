@@ -18,6 +18,10 @@
             android:key="analytics_debug_key"
             android:summary="@string/pref_analytics_detail"
             android:title="@string/pref_analytics_key" />
+        <Preference
+            android:key="add_mytba_item"
+            android:selectable="true"
+            android:title="Add sample item to myTBA"/>
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="analytics_dry_run"

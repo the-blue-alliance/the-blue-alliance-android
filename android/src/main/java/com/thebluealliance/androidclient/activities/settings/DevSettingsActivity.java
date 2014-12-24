@@ -16,8 +16,11 @@ import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.models.Favorite;
 
 public class DevSettingsActivity extends ActionBarActivity {
     @Override
@@ -30,7 +33,7 @@ public class DevSettingsActivity extends ActionBarActivity {
                 .commit();
     }
 
-    public static class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,19 @@ public class DevSettingsActivity extends ActionBarActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Analytics.setAnalyticsDryRun(getActivity(), (boolean) newValue);
+                    return true;
+                }
+            });
+
+            Preference addMyTBAItem = findPreference("add_mytba_item");
+            addMyTBAItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Favorite fav = new Favorite();
+                    fav.setUserName(AccountHelper.getSelectedAccount(DevSettingsActivity.this));
+                    fav.setModelKey("frc111");
+                    fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
+                    Database.getInstance(DevSettingsActivity.this).getFavoritesTable().add(fav);
                     return true;
                 }
             });

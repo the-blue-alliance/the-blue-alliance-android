@@ -57,6 +57,26 @@ public class ModelHelper {
             return "";
         }
 
+        public String getSingularTitle() {
+            switch (this) {
+                case EVENT:
+                    return "Event";
+                case TEAM:
+                    return "Team";
+                case MATCH:
+                    return "Match";
+                case EVENTTEAM:
+                    return "Team@Event";
+                case DISTRICT:
+                    return "District";
+                case DISTRICTTEAM:
+                    return "Team@District";
+                case AWARD:
+                    return "Awards";
+            }
+            return "";
+        }
+
         public int getEnum(){
             return this.ordinal();
         }
@@ -106,7 +126,7 @@ public class ModelHelper {
         }
     }
 
-    public static ListItem renderModelFromKey(Context context, String key, MODELS type) {
+    public static ListItem renderModelFromKey(Context context, String key, MODELS type, boolean showSettingsButton) {
         try {
             String text;
             Database db = Database.getInstance(context);

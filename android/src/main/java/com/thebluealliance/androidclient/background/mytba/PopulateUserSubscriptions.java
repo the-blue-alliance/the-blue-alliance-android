@@ -66,7 +66,7 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
         int lastModel = -1;
         if (collection != null) {
             for (Subscription subscription : collection) {
-                ListItem item = ModelHelper.renderModelFromKey(activity, subscription.getModelKey(), subscription.getModelType());
+                ListItem item = ModelHelper.renderModelFromKey(activity, subscription.getModelKey(), subscription.getModelType(), true);
                 if(item != null) {
                     if(lastModel != subscription.getModelEnum()){
                         subscriptions.add(new EventTypeHeader(subscription.getModelType().getTitle()));
