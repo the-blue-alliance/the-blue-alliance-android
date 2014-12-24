@@ -73,7 +73,8 @@ public class GCMMessageHandler extends IntentService {
                     new UpdateMyTBA(c, new RequestParams(true)).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
                     break;
                 case NotificationTypes.PING:
-                    notification = new GenericNotification(messageData);
+                case NotificationTypes.BROADCAST:
+                    notification = new GenericNotification(c, messageType, messageData);
                     break;
                 case NotificationTypes.MATCH_SCORE:
                 case "score":
