@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -32,7 +33,7 @@ import com.thebluealliance.androidclient.helpers.ModelHelper;
  * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
  */
 public abstract class BaseActivity extends NavigationDrawerActivity
-        implements NfcAdapter.CreateNdefMessageCallback, GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener {
+        implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     String beamUri;
     boolean searchEnabled = true;
@@ -152,14 +153,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     }
 
     /**
-     * Successfully disconnected (called by PlusClient)
-     */
-    @Override
-    public void onDisconnected() {
-
-    }
-
-    /**
      * Connection failed for some reason (called by PlusClient)
      * Try and resolve the result.  Failure here is usually not an indication of a serious error,
      * just that the user's input is needed.
@@ -169,5 +162,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
 
+    }
 }

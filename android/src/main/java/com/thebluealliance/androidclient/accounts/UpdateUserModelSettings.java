@@ -96,6 +96,11 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
             try {
                 TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
                 ModelsMobileApiMessagesBaseResponse response = service.model().setPreferences(request).execute();
+                Log.d(Constants.LOG_TAG, "Result: "+response.getCode()+"/"+response.getMessage());
+                if(response.getCode() == 401){
+                    Log.e(Constants.LOG_TAG, response.getMessage());
+                    return Result.ERROR;
+                }
                 JsonObject responseJson = JSONManager.getasJsonObject(response.getMessage());
                 JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
                         sub = responseJson.get("subscription").getAsJsonObject();

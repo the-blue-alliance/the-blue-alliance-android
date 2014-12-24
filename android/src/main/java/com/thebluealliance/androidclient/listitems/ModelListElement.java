@@ -3,9 +3,12 @@ package com.thebluealliance.androidclient.listitems;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listeners.ModelClickListener;
 
@@ -32,12 +35,20 @@ public class ModelListElement extends ListElement {
 
             holder = new ViewHolder();
             holder.text = (TextView) convertView.findViewById(R.id.text);
+            holder.settingsButton = (ImageView) convertView.findViewById(R.id.model_settings);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
         holder.text.setText(text);
+
+        holder.settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(MyTBAModelSettingsActivity.newInstance(context, key, type));
+            }
+        });
 
         if(!key.isEmpty()){
             convertView.setOnClickListener(new ModelClickListener(context, key, type));
@@ -48,5 +59,6 @@ public class ModelListElement extends ListElement {
 
     private static class ViewHolder {
         TextView text;
+        ImageView settingsButton;
     }
 }

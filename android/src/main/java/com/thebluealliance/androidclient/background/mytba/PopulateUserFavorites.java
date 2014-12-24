@@ -66,7 +66,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
         int lastModel = -1;
         if (collection != null) {
             for (Favorite favorite : collection) {
-                ListItem item = ModelHelper.renderModelFromKey(activity, favorite.getModelKey(), favorite.getModelType());
+                ListItem item = ModelHelper.renderModelFromKey(activity, favorite.getModelKey(), favorite.getModelType(), true);
                 if(item != null) {
                     if(lastModel != favorite.getModelEnum()){
                         favorites.add(new EventTypeHeader(favorite.getModelType().getTitle()));

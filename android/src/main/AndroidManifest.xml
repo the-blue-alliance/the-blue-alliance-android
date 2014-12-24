@@ -69,6 +69,11 @@
             android:name="com.thebluealliance.androidclient.activities.HomeActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus" />
+
+        <activity
+            android:name="com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity"
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+        </activity>
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewEventActivity"
             android:launchMode="singleTop"

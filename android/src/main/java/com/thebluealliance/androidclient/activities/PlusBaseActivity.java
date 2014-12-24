@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.PlusClient;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -24,7 +25,7 @@ import com.thebluealliance.androidclient.gcm.GCMHelper;
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
 public abstract class PlusBaseActivity extends Activity
-        implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener{
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private static final String TAG = PlusBaseActivity.class.getSimpleName();
 
@@ -232,13 +233,9 @@ public abstract class PlusBaseActivity extends Activity
         onPlusClientSignIn();
     }
 
-    /**
-     * Successfully disconnected (called by PlusClient)
-     */
     @Override
-    public void onDisconnected() {
-        updateConnectButtonState();
-        onPlusClientSignOut();
+    public void onConnectionSuspended(int i) {
+
     }
 
     /**
