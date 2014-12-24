@@ -79,12 +79,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
         getSupportActionBar().setTitle(this.modelType.getSingularTitle() + " Settings");
 
-        if (Utilities.hasLApis()) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
-        }
-
         toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
-        toolbar.setTitle("Team Settings");
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +87,10 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
             }
         });
         toolbar.setNavigationContentDescription(R.string.close);
+
+        if (Utilities.hasLApis()) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
+        }
 
         closeNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
         closeNotificationSettingsButton.setOnClickListener(this);
@@ -191,7 +190,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         // Save successful, end the activity
         closeNotificationSettingsButton.setEnabled(false);
 
-        Integer colorFrom = getResources().getColor(R.color.primary);
+        Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.green);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -217,11 +216,28 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
     @Override
     public void onNoOp() {
-        Toast.makeText(this, "No-op", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "No changes made.", Toast.LENGTH_SHORT).show();
+        this.finish();
     }
 
     @Override
     public void onError() {
-        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Error. Check your network connection.", Toast.LENGTH_SHORT).show();
+
+        closeNotificationSettingsButton.setEnabled(false);
+
+        Integer colorFrom = getResources().getColor(R.color.accent_dark);
+        Integer colorTo = getResources().getColor(R.color.red);
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                closeNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
+            }
+
+        });
+        colorAnimation.setDuration(500);
+        colorAnimation.start();
     }
 }
