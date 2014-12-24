@@ -1,9 +1,15 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
@@ -32,7 +38,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     Toolbar toolbar;
 
     private Bundle savedPreferenceState;
-    private FloatingActionButton closeNotificationSettingsButton;
+    private FloatingActionButton saveModelPreferencesFab;
 
     private String modelKey;
     private ModelHelper.MODELS modelType;
@@ -41,6 +47,8 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
 
     private Handler handler = new Handler();
+
+    private TransitionDrawable fabDrawable;
 
     private View settingsListContainer;
     private View fabContainer;
@@ -92,8 +100,8 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
             getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
         }
 
-        closeNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
-        closeNotificationSettingsButton.setOnClickListener(this);
+        saveModelPreferencesFab = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
+        saveModelPreferencesFab.setOnClickListener(this);
 
         if (savedInstanceState != null) {
             savedPreferenceState = savedInstanceState.getBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE);
@@ -105,6 +113,13 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         settings = NotificationSettingsFragment.newInstance(this.modelKey, this.modelType, savedPreferenceState);
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
 
+        // Create drawable for the FAB
+        Drawable backgrounds[] = new Drawable[2];
+        Resources res = getResources();
+        backgrounds[0] = res.getDrawable(R.drawable.ic_check_white_24dp);
+        backgrounds[1] = res.getDrawable(R.drawable.ic_error_white_24dp);
+        fabDrawable = new TransitionDrawable(backgrounds);
+        saveModelPreferencesFab.setImageDrawable(fabDrawable);
     }
 
     @Override
@@ -188,7 +203,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     @Override
     public void onSuccess() {
         // Save successful, end the activity
-        closeNotificationSettingsButton.setEnabled(false);
+        saveModelPreferencesFab.setEnabled(false);
 
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.green);
@@ -197,7 +212,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
-                closeNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
+                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
             }
 
         });
@@ -224,7 +239,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     public void onError() {
         Toast.makeText(this, "Error. Check your network connection.", Toast.LENGTH_SHORT).show();
 
-        closeNotificationSettingsButton.setEnabled(false);
+        saveModelPreferencesFab.setEnabled(false);
 
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.red);
@@ -233,11 +248,48 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
-                closeNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
+                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
             }
 
         });
         colorAnimation.setDuration(500);
-        colorAnimation.start();
+
+        Animator drawableAnimator = new ValueAnimator();
+        drawableAnimator.setDuration(500);
+        drawableAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                fabDrawable.startTransition(500);
+            }
+        });
+
+        Integer reverseColorFrom = getResources().getColor(R.color.red);
+        Integer reverseColorTo = getResources().getColor(R.color.accent_dark);
+        ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
+        reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
+            }
+
+        });
+        reverseColorAnimation.setDuration(500);
+
+        Animator reverseDrawableAnimator = new ValueAnimator();
+        reverseDrawableAnimator.setDuration(500);
+        reverseDrawableAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                fabDrawable.reverseTransition(500);
+            }
+        });
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(colorAnimation);
+        animatorSet.play(drawableAnimator);
+        animatorSet.play(reverseColorAnimation).after(2500);
+        animatorSet.play(reverseDrawableAnimator).after(2500);
+        animatorSet.start();
     }
 }
