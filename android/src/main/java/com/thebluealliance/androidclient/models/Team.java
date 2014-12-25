@@ -22,9 +22,9 @@ public class Team extends BasicModel<Team> {
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
-            NotificationTypes.MATCH_SCORE
+            NotificationTypes.MATCH_SCORE,
             //NotificationTypes.ALLIANCE_SELECTION,
-            //NotificationTypes.AWARDS,
+            NotificationTypes.AWARDS,
             //NotificationTypes.MEDIA_POSTED
     };
 
