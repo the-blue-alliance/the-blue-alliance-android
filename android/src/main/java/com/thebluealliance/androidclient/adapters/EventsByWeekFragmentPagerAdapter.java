@@ -21,6 +21,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int mCount;
     private int mYear;
+    private String mCurrent;
     private ArrayList<String> thisYearsWeekLabels;
     private SlidingTabLayout tabs;
     private RefreshableHostFragment parent;
@@ -40,15 +41,23 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         this.tabs = tabs;
         this.parent = fragment;
         mCount = 1;
+
+        Date now = new Date();
+        if (    EventHelper.getYearWeek(now) >= Utilities.getFirstompWeek(now) &&
+                Utilities.getCurrentYear() == mYear) {
+            mCurrent = EventHelper.currentWeekLabel(now);
+        }else{
+            mCurrent = "";
+        }
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Date now = new Date();
-        if (EventHelper.competitionWeek(now) == position && Utilities.getCurrentYear() == mYear) {
+        String label = thisYearsWeekLabels.get(position);
+        if (mCurrent.equals(label)) {
             return "Current Week";
         } else {
-            return thisYearsWeekLabels.get(position);
+            return label;
         }
     }
 

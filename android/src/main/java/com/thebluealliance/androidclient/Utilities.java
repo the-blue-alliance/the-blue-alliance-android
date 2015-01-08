@@ -53,6 +53,12 @@ public class Utilities {
         return sw.toString();
     }
 
+    public static int getFirstompWeek(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return getFirstCompWeek(cal.get(Calendar.YEAR));
+    }
+
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {

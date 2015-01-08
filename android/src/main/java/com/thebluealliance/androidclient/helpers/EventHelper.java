@@ -45,12 +45,17 @@ public class EventHelper {
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
+    public static int getYearWeek(Date date){
+        if (date == null) return -1;
+        return Integer.parseInt(weekFormat.format(date));
+    }
+
     public static int competitionWeek(Date date) {
         if (date == null) return -1;
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        int week = Integer.parseInt(weekFormat.format(date)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+        int week = getYearWeek(date) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         return week < 0 ? 0 : week;
     }
 
@@ -91,6 +96,13 @@ public class EventHelper {
             default:
                 return WEEKLESS_LABEL;
         }
+    }
+
+    public static String currentWeekLabel(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+
+        return weekLabelFromNum(cal.get(Calendar.YEAR), competitionWeek(date));
     }
 
     public static String weekLabelFromNum(int year, int weekNum) {
