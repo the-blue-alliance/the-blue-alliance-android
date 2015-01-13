@@ -146,6 +146,9 @@ public class GCMMessageHandler extends IntentService {
                     }
                 }
 
+                if(!notification.shouldShow()){
+                    return;
+                }
                 notificationManager.notify(notification.getNotificationId(), built);
 
                 /* Update the data coming from this notification in the local db */

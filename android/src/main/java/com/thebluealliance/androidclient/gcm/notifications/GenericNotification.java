@@ -10,11 +10,10 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-
-import org.json.JSONException;
 
 /**
  * File created by phil on 9/7/14.
@@ -49,6 +48,14 @@ public class GenericNotification extends BaseNotification {
             intent = PendingIntent.getActivity(context, 0, launch, 0);
         }else{
             intent = null;
+        }
+
+        if(jsonData.has("app_version")){
+            String version = jsonData.get("app_version").getAsString();
+            if(!version.equals(BuildConfig.VERSION_NAME)){
+                // The broadcast is not targeted at this version, don't show it
+                display = false;
+            }
         }
     }
 

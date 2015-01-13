@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
-import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
 
@@ -27,12 +26,18 @@ public abstract class BaseNotification {
     String messageType;
     Gson gson;
     private String logTag;
+    protected boolean display;
 
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
         this.gson = JSONManager.getGson();
         this.logTag = null;
+        this.display = true;
+    }
+
+    public boolean shouldShow(){
+        return display;
     }
 
     public abstract Notification buildNotification(Context context);
