@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
@@ -14,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -43,13 +41,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final Activity activity = this;
-        new Runnable(){
-            @Override
-            public void run() {
-                GoogleAnalytics.getInstance(activity).reportActivityStart(activity);
-            }
-        }.run();
+        /* Analytics commented out to avoid strange ANRs on startup, see #303 */
+        //new AnalyticsActions.ReportActivityStart(this).run();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -83,13 +76,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     protected void onStop() {
         super.onStop();
         /* Report the activity stop to GAnalytics */
-        final Activity activity = this;
-        new Runnable(){
-            @Override
-            public void run() {
-                GoogleAnalytics.getInstance(activity).reportActivityStop(activity);
-            }
-        }.run();
+        //new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
