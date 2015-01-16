@@ -87,13 +87,15 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
         if(activity != null && fragment != null && fragment.getView() != null) {
             View view = fragment.getView();
             TextView noDataText = (TextView)view.findViewById(R.id.no_data);
+            ListView listView = (ListView) fragment.getView().findViewById(R.id.list);
             if (code == APIResponse.CODE.NODATA || favorites == null || favorites.isEmpty()) {
                 noDataText.setText(activity.getString(R.string.no_favorite_data));
                 noDataText.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
             } else {
                 noDataText.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
                 ListViewAdapter adapter = new ListViewAdapter(activity, favorites);
-                ListView listView = (ListView) fragment.getView().findViewById(R.id.list);
                 listView.setAdapter(adapter);
             }
 
@@ -103,7 +105,6 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
             }
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
                 /**
