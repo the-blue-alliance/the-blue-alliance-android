@@ -7,6 +7,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -371,7 +372,10 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     public void onSuccess() {
         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commitAllowingStateLoss();
+        Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
+        if(settingsFragment != null) {
+            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
+        }
         saveSettingsTaskFragment = null;
 
         // Tell the settings fragment to reload the now-updated
@@ -385,7 +389,10 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     public void onNoOp() {
         Toast.makeText(this, "No change", Toast.LENGTH_SHORT).show();
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commitAllowingStateLoss();
+        Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
+        if(settingsFragment != null) {
+            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
+        }
         saveSettingsTaskFragment = null;
 
         saveInProgress = false;
@@ -395,7 +402,10 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     public void onError() {
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commitAllowingStateLoss();
+        Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
+        if(settingsFragment != null) {
+            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
+        }
         saveSettingsTaskFragment = null;
 
         // Something went wrong, restore the initial state
