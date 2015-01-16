@@ -16,12 +16,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
@@ -62,8 +58,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        // analytics commented out due to #303
+        //Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
+        //GoogleAnalytics.getInstance(this).reportActivityStart(this);
 
         currentQuery = "";
 
@@ -126,12 +123,14 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
         //track the search query the user submitted
         //Track the query
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
+        // analytics commented out due to #303
+        /*Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
         t.send(new HitBuilders.EventBuilder()
                 .setCategory("search")
                 .setAction(currentQuery)
                 .setLabel("search")
                 .build());
+                */
         currentQuery = "";
     }
 

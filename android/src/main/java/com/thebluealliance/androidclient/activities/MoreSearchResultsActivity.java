@@ -15,10 +15,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
@@ -56,8 +53,9 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        // Analytics commented out - see #303
+        /*Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);*/
 
         resultsList = (ListView) findViewById(R.id.results);
 
