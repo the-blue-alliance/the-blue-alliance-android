@@ -371,7 +371,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     public void onSuccess() {
         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
+        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commitAllowingStateLoss();
         saveSettingsTaskFragment = null;
 
         // Tell the settings fragment to reload the now-updated
@@ -383,9 +383,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     @Override
     public void onNoOp() {
-        Toast.makeText(this, "No op", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "No change", Toast.LENGTH_SHORT).show();
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
+        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commitAllowingStateLoss();
         saveSettingsTaskFragment = null;
 
         saveInProgress = false;
@@ -395,7 +395,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     public void onError() {
         Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commit();
+        fm.beginTransaction().remove(fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG)).commitAllowingStateLoss();
         saveSettingsTaskFragment = null;
 
         // Something went wrong, restore the initial state
