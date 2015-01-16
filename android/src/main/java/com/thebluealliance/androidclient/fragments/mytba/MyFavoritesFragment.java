@@ -47,6 +47,14 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).restartRefresh(true);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
@@ -73,14 +81,6 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
     public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading user favorites");
         mTask = new PopulateUserFavorites(this, new RequestParams(true, actionIconPressed));
@@ -103,5 +103,4 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         super.onDestroy();
         ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
-
 }
