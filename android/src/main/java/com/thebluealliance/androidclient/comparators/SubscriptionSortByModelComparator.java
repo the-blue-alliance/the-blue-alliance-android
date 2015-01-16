@@ -10,6 +10,10 @@ import java.util.Comparator;
 public class SubscriptionSortByModelComparator implements Comparator<Subscription>{
     @Override
     public int compare(Subscription lhs, Subscription rhs) {
-        return Integer.compare(lhs.getModelEnum(), rhs.getModelEnum());
+        if(lhs.getModelEnum() == rhs.getModelEnum()){
+            return rhs.getModelKey().compareTo(lhs.getModelKey());
+        }else {
+            return ((Integer) lhs.getModelEnum()).compareTo(rhs.getModelEnum());
+        }
     }
 }

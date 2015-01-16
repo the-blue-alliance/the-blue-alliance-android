@@ -10,6 +10,10 @@ import java.util.Comparator;
 public class FavoriteSortByModelComparator implements Comparator<Favorite> {
     @Override
     public int compare(Favorite lhs, Favorite rhs) {
-        return Integer.compare(lhs.getModelEnum(), rhs.getModelEnum());
+        if(lhs.getModelEnum() == rhs.getModelEnum()){
+            return rhs.getModelKey().compareTo(lhs.getModelKey());
+        }else {
+            return ((Integer) lhs.getModelEnum()).compareTo(rhs.getModelEnum());
+        }
     }
 }
