@@ -74,7 +74,7 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
         tabs.setViewPager(pager);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupActionBar();
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -131,6 +131,11 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setupActionBar() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setActionBarTitle("");
     }
 
     @Override

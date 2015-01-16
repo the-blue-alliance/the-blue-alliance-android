@@ -70,7 +70,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
 
     private void setupActionBar() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("Match");
+        setActionBarTitle("");
     }
 
     @Override
