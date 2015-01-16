@@ -11,8 +11,8 @@ Contributing
 ============
 Want to add features, fix bugs, or just poke around the code? No problem!
 
-### Project Management
- - Keep up to date with the [mailing list](https://groups.google.com/forum/#!forum/thebluealliance-developers)
+### Project Management 
+ - Keep up to date with the [mailing list](https://groups.google.com/forum/#!forum/thebluealliance-developers) 
  - Read through the [planning documents](https://drive.google.com/#folders/0B5RO2Yzh2z01MDBOVXYwM1lXdFk) so you know what's going on.
  - Watch our [Trello board](https://trello.com/b/x42paPe3/tba-android) for updates on our long-term plans
 
