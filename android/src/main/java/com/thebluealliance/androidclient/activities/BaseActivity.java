@@ -8,7 +8,6 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,7 +16,6 @@ import android.view.MenuItem;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.R;
@@ -45,16 +43,13 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         final Activity activity = this;
-        new AsyncTask<Void, Void, Void>(){
+        new Runnable(){
             @Override
-            protected Void doInBackground(Void[] params) {
-                /* Report the activity start to GAnalytics */
+            public void run() {
                 GoogleAnalytics.getInstance(activity).reportActivityStart(activity);
-                return null;
             }
-        }.execute();
+        }.run();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -66,7 +61,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         // Hide the shadow below the Action Bar
         if(getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
@@ -89,7 +83,13 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     protected void onStop() {
         super.onStop();
         /* Report the activity stop to GAnalytics */
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        final Activity activity = this;
+        new Runnable(){
+            @Override
+            public void run() {
+                GoogleAnalytics.getInstance(activity).reportActivityStop(activity);
+            }
+        }.run();
     }
 
     @Override
