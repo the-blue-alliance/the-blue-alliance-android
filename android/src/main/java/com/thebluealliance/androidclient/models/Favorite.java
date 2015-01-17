@@ -18,10 +18,10 @@ public class Favorite {
 
     }
 
-    public Favorite(String userName, String modelKey) {
+    public Favorite(String userName, String modelKey, int model_type) {
         this.userName = userName;
         this.modelKey = modelKey;
-        setModelEnum(ModelHelper.getModelFromKey(modelKey).ordinal());
+        setModelEnum(model_type);
     }
 
     public String getKey(){

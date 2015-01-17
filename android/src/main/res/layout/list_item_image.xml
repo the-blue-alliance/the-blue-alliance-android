@@ -6,15 +6,14 @@
     android:layout_height="fill_parent"
     android:padding="16dp"
     android:clickable="true"
+    android:focusable="true"
     android:background="?android:attr/selectableItemBackground">
 
     <FrameLayout
         android:id="@+id/image_container"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:duplicateParentState="true"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:layout_centerInParent="true">
 
         <ImageView
             android:layout_width="match_parent"

@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
@@ -10,7 +9,6 @@ import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
-import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -24,8 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 
@@ -49,12 +45,17 @@ public class EventHelper {
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
+    public static int getYearWeek(Date date){
+        if (date == null) return -1;
+        return Integer.parseInt(weekFormat.format(date));
+    }
+
     public static int competitionWeek(Date date) {
         if (date == null) return -1;
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        int week = Integer.parseInt(weekFormat.format(date)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+        int week = getYearWeek(date) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         return week < 0 ? 0 : week;
     }
 
@@ -95,6 +96,13 @@ public class EventHelper {
             default:
                 return WEEKLESS_LABEL;
         }
+    }
+
+    public static String currentWeekLabel(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+
+        return weekLabelFromNum(cal.get(Calendar.YEAR), competitionWeek(date));
     }
 
     public static String weekLabelFromNum(int year, int weekNum) {
@@ -357,33 +365,6 @@ public class EventHelper {
             lastHeader = currentHeader;
         }
         return eventListItems;
-    }
-
-    public static String getShortNameForEvent(String eventName, TYPE eventType) {
-        // Preseason and offseason events will probably fail our regex matcher
-        if (eventType == EventHelper.TYPE.PRESEASON || eventType == EventHelper.TYPE.OFFSEASON) {
-            return eventName;
-        }
-        String shortName = "";
-        Pattern regexPattern = Pattern.compile("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)( FIRST Robotics| FRC)?( District| Regional| Region| State| Tournament| FRC| Field| Division)( Competition| Event| Championship)?( sponsored by.*)?");
-        Matcher m = regexPattern.matcher(eventName);
-        if (m.matches()) {
-            String s = m.group(3);
-            regexPattern = Pattern.compile("(.*)(FIRST Robotics|FRC)");
-            m = regexPattern.matcher(s);
-            if (m.matches()) {
-                shortName = m.group(1).trim();
-            } else {
-                shortName = s.trim();
-            }
-        }
-
-        // In case an event has a weird name, return the event name
-        if (shortName.isEmpty()) {
-            return eventName;
-        }
-
-        return shortName;
     }
 
     public static String getDateString(Date startDate, Date endDate) {

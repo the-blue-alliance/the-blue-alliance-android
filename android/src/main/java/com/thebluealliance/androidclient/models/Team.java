@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
@@ -20,10 +21,10 @@ import java.util.Arrays;
 public class Team extends BasicModel<Team> {
 
     public static final String[] NOTIFICATION_TYPES = {
-            //NotificationTypes.UPCOMING_MATCH,
-            NotificationTypes.MATCH_SCORE
+            NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE,
             //NotificationTypes.ALLIANCE_SELECTION,
-            //NotificationTypes.AWARDS,
+            NotificationTypes.AWARDS,
             //NotificationTypes.MEDIA_POSTED
     };
 
@@ -160,7 +161,7 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    public static synchronized APIResponse<Team> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Team> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying teams table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
         Team team;
@@ -171,10 +172,10 @@ public class Team extends BasicModel<Team> {
             team = new Team();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Team updatedTeam;
                 if (url.contains("years_participated")) {

@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -119,9 +120,9 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " rankings");
-        mTask = new PopulateEventRankings(this, true);
+        mTask = new PopulateEventRankings(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
     }
 

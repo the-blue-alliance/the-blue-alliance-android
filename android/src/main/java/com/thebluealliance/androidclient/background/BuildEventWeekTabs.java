@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.Event;
 
@@ -37,7 +38,7 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
         year = params[0];
         try {
             Log.d(Constants.LOG_TAG, "Loading event list...");
-            APIResponse<HashMap<String, ArrayList<Event>>> allEvents = DataManager.Events.getEventsByYear(fragment.getActivity(), year, false);
+            APIResponse<HashMap<String, ArrayList<Event>>> allEvents = DataManager.Events.getEventsByYear(fragment.getActivity(), year, new RequestParams());
             allLabels = new ArrayList<>();
             allLabels.addAll(allEvents.getData().keySet());
             Collections.sort(allLabels, comparator);

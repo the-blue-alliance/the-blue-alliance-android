@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -71,6 +72,7 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Log.d(Constants.LOG_TAG, "Team clicked!");
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
                 startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
             }
@@ -99,9 +101,9 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " teams");
-        mTask = new PopulateEventTeams(this, true);
+        mTask = new PopulateEventTeams(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 

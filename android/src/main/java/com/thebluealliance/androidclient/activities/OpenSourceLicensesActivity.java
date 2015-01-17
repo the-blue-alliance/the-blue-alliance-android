@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 /**
  * Created by Nathan on 5/11/2014.
  */
-public class OpenSourceLicensesActivity extends Activity {
+public class OpenSourceLicensesActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +44,8 @@ public class OpenSourceLicensesActivity extends Activity {
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setTitle(R.string.license_label);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.license_label);
     }
 
     @Override

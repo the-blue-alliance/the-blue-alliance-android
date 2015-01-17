@@ -15,9 +15,10 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.AwardListElement;
+import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -41,14 +42,14 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     private RefreshableHostActivity activity;
     private String eventKey, teamKey;
     private ArrayList<ListItem> awards;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
 
-    public PopulateEventAwards(EventAwardsFragment f, boolean forceFromCache) {
+    public PopulateEventAwards(EventAwardsFragment f, RequestParams requestParams) {
         mFragment = f;
         if(mFragment != null) {
             activity = (RefreshableHostActivity) mFragment.getActivity();
         }
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
         APIResponse<ArrayList<Award>> response;
         try {
-            response = DataManager.Events.getEventAwards(activity, eventKey, teamKey, forceFromCache);
+            response = DataManager.Events.getEventAwards(activity, eventKey, teamKey, requestParams);
             ArrayList<Award> awardList = response.getData();
             HashMap<String, Team> teams = new HashMap<>();
             for (Award a : awardList) {
@@ -76,7 +77,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                             teams.put(teamKey, team);
                         }
                     }
-                    awards.add(new AwardListElement(a.getName(), eventKey, a.getWinners(), teams, teamKey));
+                    awards.add(new CardedAwardListElement(a.getName(), eventKey, a.getWinners(), teams, teamKey));
                 } catch (BasicModel.FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Unable to render awards. Missing stuff");
                 }
@@ -99,7 +100,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || (!forceFromCache && adapter.values.isEmpty())) {
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(teamKey.isEmpty() ? R.string.no_awards_data : R.string.no_team_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
@@ -124,7 +125,8 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, false);
+            requestParams.forceFromCache = false;
+            PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, requestParams);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey, teamKey);
         } else {

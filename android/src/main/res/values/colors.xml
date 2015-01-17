@@ -6,16 +6,16 @@
     <color name="lighter_blue">#eef</color>
     <color name="blue">#00F</color>
     <color name="red">#F00</color>
+    <color name="green">#4CAF50</color>
 
     <color name="nav_divider">#ffc2c2c2</color>
 
     <color name="grey">#F5F5F0</color>
     <color name="column_header_gray">#ddd</color>
     <color name="table_cell_gray">#c0c0c0</color>
-    <color name="dark_grey">#A4A4A4</color>
     <color name="white">#FFF</color>
-    <color name="nav_text_color">#585858</color>
-    <color name="action_bar_background">#000056</color>
+    <color name="black">#000000</color>
+    <color name="nav_text_color">#000000</color>
 
     <color name="pager_indicator_color">#ff0057ff</color>
 
@@ -33,9 +33,8 @@
     <color name="more_results_pressed">#d7d7d7</color>
 
     <!-- text colors -->
+    <color name="primary_text_color">#000000</color>
     <color name="secondary_text_color">#89000000</color>
-
-    <color name="divider_color">#32000000</color>
 
     <!-- branding colors -->
     <color name="youtube_red">#cd201f</color>
@@ -47,8 +46,15 @@
     <color name="internet_blue">#4D4D89</color>
     <color name="internet_blue_darker">#333378</color>
 
-    <!-- FAB colors -->
-    <color name="fab_yellow">#ffeb3b</color>
-    <color name="fab_yellow_pressed">#e6e600</color>
+    <!-- MateriYOLO colors -->
+    <color name="primary">#3f51b5</color>
+    <color name="primary_dark">#303f9f</color>
+    <color name="accent">#ffd600</color>
+    <color name="accent_dark">#e6c100</color>
+    <color name="accent_dark_ripple">#cfad00</color>
+    <color name="control_highlight">#c5cae9</color>
+    <color name="snackbar_background">#323232</color>
+
+    <color name="photo_tint">#6000</color>
 
 </resources>

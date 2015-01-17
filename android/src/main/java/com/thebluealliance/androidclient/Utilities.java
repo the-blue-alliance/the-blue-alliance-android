@@ -53,6 +53,12 @@ public class Utilities {
         return sw.toString();
     }
 
+    public static int getFirstompWeek(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return getFirstCompWeek(cal.get(Calendar.YEAR));
+    }
+
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {
@@ -332,6 +338,10 @@ public class Utilities {
             e.printStackTrace();
         }
         return hash;
+    }
+
+    public static boolean hasLApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
 }

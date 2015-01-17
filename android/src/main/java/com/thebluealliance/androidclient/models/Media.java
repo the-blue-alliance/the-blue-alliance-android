@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
@@ -151,7 +152,7 @@ public class Media extends BasicModel<Media> {
         }
     }
 
-    public static APIResponse<Media> query(Context c, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<Media> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
         Media media;
@@ -162,10 +163,10 @@ public class Media extends BasicModel<Media> {
             media = new Media();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Media updatedMedia = JSONManager.getGson().fromJson(response.getData(), Media.class);
                 media.merge(updatedMedia);
@@ -181,7 +182,7 @@ public class Media extends BasicModel<Media> {
         return new APIResponse<>(media, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Media> medias = new ArrayList<>();
@@ -192,10 +193,10 @@ public class Media extends BasicModel<Media> {
             cursor.close();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray mediaList = JSONManager.getasJsonArray(response.getData());
                 medias = new ArrayList<>();

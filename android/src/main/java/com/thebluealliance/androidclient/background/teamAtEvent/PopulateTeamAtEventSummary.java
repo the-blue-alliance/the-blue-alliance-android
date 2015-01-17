@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
@@ -43,14 +44,15 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
     int rank;
     int allianceNumber = -1, alliancePick = -1;
     Event event;
-    boolean activeEvent, forceFromCache;
+    boolean activeEvent;
     MatchHelper.EventStatus status;
+    RequestParams requestParams;
 
-    public PopulateTeamAtEventSummary(TeamAtEventSummaryFragment fragment, boolean forceFromCache) {
+    public PopulateTeamAtEventSummary(TeamAtEventSummaryFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
         this.activity = (RefreshableHostActivity) fragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -64,7 +66,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         APIResponse<ArrayList<Match>> matchResponse;
         Match nextMatch = null, lastMatch = null;
         try {
-            matchResponse = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
+            matchResponse = DataManager.Events.getMatchList(activity, eventKey, requestParams);
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -84,7 +86,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);
             event = eventResponse.getData();
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -103,7 +105,12 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         }
 
         if (event != null) {
-            eventShort = event.getShortName();
+            try {
+                eventShort = event.getEventShortName();
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't get event short name");
+                return APIResponse.CODE.NODATA;
+            }
             eventYear = eventKey.substring(0, 4);
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
@@ -134,7 +141,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
         APIResponse<Integer> rankResponse;
         try {
-            rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
+            rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, requestParams);
             rank = rankResponse.getData();
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -190,7 +197,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         super.onPostExecute(code);
         View view = fragment.getView();
         if (activity != null && view != null && code != APIResponse.CODE.NODATA) {
-            if (activity.getActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
+            if (activity.getSupportActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
                 activity.setActionBarTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
                 activity.setActionBarSubtitle("@ " + eventYear + " " + eventShort);
             }
@@ -230,7 +237,8 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateTeamAtEventSummary secondTask = new PopulateTeamAtEventSummary(fragment, false);
+            requestParams.forceFromCache = false;
+            PopulateTeamAtEventSummary secondTask = new PopulateTeamAtEventSummary(fragment, requestParams);
             fragment.updateTask(secondTask);
             secondTask.execute(teamKey, eventKey);
         } else {

@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -39,12 +40,13 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
-    private boolean forceFromCache, isDistrict;
+    private boolean isDistrict;
+    private RequestParams requestParams;
 
-    public PopulateEventDistrictPoints(EventDistrictPointsFragment f, boolean forceFromCache) {
+    public PopulateEventDistrictPoints(EventDistrictPointsFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -54,8 +56,8 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
         teams = new ArrayList<>();
 
         try {
-            APIResponse<JsonObject> response = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, forceFromCache);
-            APIResponse<Event> eventResponse = DataManager.Events.getEventBasic(activity, eventKey, forceFromCache);
+            APIResponse<JsonObject> response = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, requestParams);
+            APIResponse<Event> eventResponse = DataManager.Events.getEventBasic(activity, eventKey, requestParams);
             JsonObject points = response.getData();
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -144,7 +146,8 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventDistrictPoints secondLoad = new PopulateEventDistrictPoints(mFragment, false);
+            requestParams.forceFromCache = false;
+            PopulateEventDistrictPoints secondLoad = new PopulateEventDistrictPoints(mFragment, requestParams);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {

@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.comparators.TeamSortByAlphanumComparato
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -45,14 +46,14 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private String statToSortBy;
     private EventStatsFragmentAdapter adapter;
 
-    public PopulateEventStats(EventStatsFragment f, boolean forceFromCache, String statToSortBy) {
+    public PopulateEventStats(EventStatsFragment f, RequestParams requestParams, String statToSortBy) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
         this.statToSortBy = statToSortBy;
     }
 
@@ -64,7 +65,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
         try {
             // Retrieve the data
-            APIResponse<JsonObject> response = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
+            APIResponse<JsonObject> response = DataManager.Events.getEventStats(activity, eventKey, requestParams);
             JsonObject stats = response.getData();
 
             if (isCancelled()) {
@@ -228,7 +229,8 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, false, statToSortBy);
+            requestParams.forceFromCache = false;
+            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, requestParams, statToSortBy);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {

@@ -3,9 +3,10 @@ package com.thebluealliance.androidclient.activities.settings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -15,21 +16,24 @@ import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.models.Favorite;
 
-public class DevSettingsActivity extends PreferenceActivity {
+public class DevSettingsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new DevSettingsFragment())
                 .commit();
     }
 
-    public static class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,19 @@ public class DevSettingsActivity extends PreferenceActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Analytics.setAnalyticsDryRun(getActivity(), (boolean) newValue);
+                    return true;
+                }
+            });
+
+            Preference addMyTBAItem = findPreference("add_mytba_item");
+            addMyTBAItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Favorite fav = new Favorite();
+                    fav.setUserName(AccountHelper.getSelectedAccount(DevSettingsActivity.this));
+                    fav.setModelKey("frc111");
+                    fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
+                    Database.getInstance(DevSettingsActivity.this).getFavoritesTable().add(fav);
                     return true;
                 }
             });
@@ -109,6 +126,17 @@ public class DevSettingsActivity extends PreferenceActivity {
             redownloadIntent.putExtra(LaunchActivity.REDOWNLOAD, true);
             redownload.setIntent(redownloadIntent);
 
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+            // Remove padding from the list view
+            View listView = getView().findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setPadding(0, 0, 0, 0);
+            }
         }
     }
 

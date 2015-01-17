@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventAlliances;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -98,9 +99,9 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " teams");
-        mTask = new PopulateEventAlliances(this, true);
+        mTask = new PopulateEventAlliances(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 

@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.mytba.PopulateUserFavorites;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -42,6 +43,14 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).registerRefreshListener(this);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).restartRefresh(true);
         }
     }
 
@@ -72,17 +81,9 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading user favorites");
-        mTask = new PopulateUserFavorites(this, true);
+        mTask = new PopulateUserFavorites(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -102,5 +103,4 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         super.onDestroy();
         ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
-
 }

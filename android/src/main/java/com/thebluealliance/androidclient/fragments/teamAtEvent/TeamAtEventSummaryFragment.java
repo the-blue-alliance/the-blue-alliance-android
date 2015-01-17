@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventSummary;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -104,9 +105,9 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + teamKey + "@" + eventKey + " summary");
-        task = new PopulateTeamAtEventSummary(this, true);
+        task = new PopulateTeamAtEventSummary(this, new RequestParams(true, actionIconPressed));
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, eventKey);
     }
 

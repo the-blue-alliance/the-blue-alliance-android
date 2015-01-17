@@ -1,30 +1,31 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
-        <item name="android:actionOverflowButtonStyle">@style/ActionOverflowButtonStyle</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_ab_back_holo_dark_am</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNavStyle</item>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorControlHighlight">@color/control_highlight</item>
+        <!-- Hides the shadow below the actionbar -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="ActionBarStyle" parent="android:Widget.Holo.ActionBar">
-        <item name="android:background">@color/action_bar_background</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:titleTextStyle">@style/ActionBarTitleStyle</item>
-        <item name="android:subtitleTextStyle">@style/ActionBarSubtitleStyle</item>
+    <!-- on v21 or later, this lets us draw the status bar background. on < v21,
+    this is the same as simply not showing the action bar. -->
+    <style name="AppThemeNoActionBarTranslucentStatus" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="ActionBarTitleStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">#FFFFFF</item>
+    <style name="AppThemeNoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="ActionBarSubtitleStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">#FFFFFF</item>
-    </style>
-
-    <style name="ActionOverflowButtonStyle" parent="@android:style/Widget.Holo.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_action_overflow</item>
+    <style name="InvertedPrimaryAndAccentTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorAccent">@color/primary</item>
     </style>
 
     <style name="InfoItemStyle">
@@ -87,8 +88,8 @@
     </style>
 
     <style name="NavDrawerIconStyle">
-        <item name="android:layout_height">30dp</item>
-        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">24dp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:scaleType">centerCrop</item>
@@ -97,17 +98,19 @@
     <style name="NavDrawerLabelStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/nav_text_color_selected</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_marginLeft">72dp</item>
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingBottom">16dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="NavDrawerSmallLabelStyle" parent="NavDrawerLabelStyle">
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="ContentOverlayStyle">
@@ -147,6 +150,28 @@
         <item name="android:paddingTop">16dp</item>
     </style>
 
-    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner" />
+
+    <style name="ListItemButtonStyle">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <style name="DefaultToolbarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:background">@color/primary</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="contentInsetStart">72dp</item>
+    </style>
+
+    <style name="DefaultLightToolbarStyle" parent="DefaultToolbarStyle">
+        <item name="theme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
 
 </resources>

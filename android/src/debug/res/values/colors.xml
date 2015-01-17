@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="action_bar_background">#b71d24</color>
+
+    <!-- MateriYOLO colors -->
+    <color name="primary">#e51c23</color>
+    <color name="primary_dark">#d01716</color>
+    <color name="control_highlight">#f9bdbb</color>
 </resources>

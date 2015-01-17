@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.mytba.PopulateUserSubscriptions;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -60,6 +61,14 @@ public class MySubscriptionsFragment extends Fragment implements RefreshListener
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (parent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) parent).restartRefresh(true);
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (mTask != null) {
@@ -70,19 +79,11 @@ public class MySubscriptionsFragment extends Fragment implements RefreshListener
             mListState = mListView.onSaveInstanceState();
         }
     }
-
+    
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading user subscriptions");
-        mTask = new PopulateUserSubscriptions(this, true);
+        mTask = new PopulateUserSubscriptions(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

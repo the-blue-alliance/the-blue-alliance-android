@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventAlliancesFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -29,14 +30,14 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teams;
     private String eventKey;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private ListViewAdapter adapter;
     Event event;
 
-    public PopulateEventAlliances(EventAlliancesFragment f, boolean forceFromCache) {
+    public PopulateEventAlliances(EventAlliancesFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);
             event = eventResponse.getData();
 
             if (isCancelled()) {
@@ -102,7 +103,8 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventAlliances secondLoad = new PopulateEventAlliances(mFragment, false);
+            requestParams.forceFromCache = false;
+            PopulateEventAlliances secondLoad = new PopulateEventAlliances(mFragment, requestParams);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {

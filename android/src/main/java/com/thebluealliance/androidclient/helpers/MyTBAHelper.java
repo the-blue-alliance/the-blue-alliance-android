@@ -9,4 +9,8 @@ public class MyTBAHelper {
         return userName+":"+modelKey;
     }
 
+    public static String getFavoritePreferenceKey() {
+        return "favorite";
+    }
+
 }

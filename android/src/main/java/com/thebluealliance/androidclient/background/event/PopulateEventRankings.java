@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -43,14 +44,14 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
 
     private ListViewAdapter adapter;
 
-    public PopulateEventRankings(EventRankingsFragment f, boolean forceFromCache) {
+    public PopulateEventRankings(EventRankingsFragment f, RequestParams params) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = params;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
         teams = new ArrayList<>();
 
         try {
-            APIResponse<ArrayList<JsonArray>> response = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
+            APIResponse<ArrayList<JsonArray>> response = DataManager.Events.getEventRankings(activity, eventKey, requestParams);
             ArrayList<JsonArray> rankList = response.getData();
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -176,7 +177,8 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventRankings secondLoad = new PopulateEventRankings(mFragment, false);
+            requestParams.forceFromCache = false;
+            PopulateEventRankings secondLoad = new PopulateEventRankings(mFragment, requestParams);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {

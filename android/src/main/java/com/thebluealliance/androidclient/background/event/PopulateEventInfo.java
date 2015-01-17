@@ -15,6 +15,8 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Retrieves general information about an FRC event, like name, location, and social media links.
@@ -43,12 +47,13 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     TextView eventName, eventDate, eventLoc, eventVenue, topTeams, topOprs;
     String eventKey, topTeamsString, topOprsString, nameString, titleString, venueString, locationString;
     Event event;
-    private boolean showRanks, showStats, forceFromCache;
+    private boolean showRanks, showStats;
+    private RequestParams requestParams;
 
-    public PopulateEventInfo(EventInfoFragment f, boolean forceFromCache) {
+    public PopulateEventInfo(EventInfoFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -78,7 +83,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
         if (activity != null && eventKey != null) {
             try {
-                eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
+                eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);
                 event = eventResponse.getData();
                 //return response.getCode();
                 if (isCancelled()) {
@@ -94,7 +99,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 //show the ranks and stats
                 showRanks = showStats = true;
                 try {
-                    rankResponse = DataManager.Events.getEventRankings(activity, eventKey, forceFromCache);
+                    rankResponse = DataManager.Events.getEventRankings(activity, eventKey, requestParams);
                     ArrayList<JsonArray> rankList = rankResponse.getData();
                     String rankString = "";
                     if (rankList.isEmpty() || rankList.size() == 1) {
@@ -118,7 +123,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 }
 
                 try {
-                    statsResponse = DataManager.Events.getEventStats(activity, eventKey, forceFromCache);
+                    statsResponse = DataManager.Events.getEventStats(activity, eventKey, requestParams);
                     ArrayList<Map.Entry<String, JsonElement>> opr = new ArrayList<>();
                     if (statsResponse.getData().has("oprs") &&
                             !statsResponse.getData().get("oprs").getAsJsonObject().entrySet().isEmpty()) {
@@ -153,7 +158,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
             try {
                 nameString = event.getEventName();
-                titleString = event.getEventYear() + " " + event.getShortName();
+                titleString = event.getEventYear() + " " + event.getEventShortName();
                 venueString = event.getVenue();
                 locationString = event.getLocation();
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -244,6 +249,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + eventKey);
 
                 infoContainer.setVisibility(View.VISIBLE);
+
+                EventBus.getDefault().post(new EventInfoLoadedEvent(event));
             }
 
             // Display warning if offline.
@@ -260,7 +267,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateEventInfo secondLoad = new PopulateEventInfo(mFragment, false);
+                requestParams.forceFromCache = false;
+                PopulateEventInfo secondLoad = new PopulateEventInfo(mFragment, requestParams);
                 mFragment.updateTask(secondLoad);
                 secondLoad.execute(eventKey);
             } else {

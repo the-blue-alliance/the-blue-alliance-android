@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -26,7 +27,7 @@ import java.util.Date;
 public class Match extends BasicModel<Match> {
 
     public static final String[] NOTIFICATION_TYPES = {
-            //NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.UPCOMING_MATCH,
             NotificationTypes.MATCH_SCORE
     };
 
@@ -376,7 +377,7 @@ public class Match extends BasicModel<Match> {
         }
     }
 
-    public static synchronized APIResponse<Match> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Match> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
         Match match;
@@ -387,11 +388,11 @@ public class Match extends BasicModel<Match> {
             match = new Match();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         ArrayList<Match> allMatches = new ArrayList<>();
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Match updatedMatch = new Match();
                 if (url.contains("event") && url.contains("matches")) {
@@ -424,7 +425,7 @@ public class Match extends BasicModel<Match> {
         return new APIResponse<>(match, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Match> matches = new ArrayList<>(), allMatches = new ArrayList<>();
@@ -435,10 +436,10 @@ public class Match extends BasicModel<Match> {
             cursor.close();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false, teamSet = teamKey != null && !teamKey.isEmpty();
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
                 matches = new ArrayList<>();

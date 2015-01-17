@@ -13,14 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventDistrictPoints;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -37,7 +36,7 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    private TextView infoContainer;
+    private View moreInfoContainer;
 
     private PopulateEventDistrictPoints mTask;
 
@@ -72,7 +71,7 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View view = inflater.inflate(R.layout.fragment_event_district_points, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (mAdapter != null) {
@@ -106,9 +105,9 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " teams");
-        mTask = new PopulateEventDistrictPoints(this, true);
+        mTask = new PopulateEventDistrictPoints(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 
@@ -125,12 +124,15 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
 
     public void updateDistrict(boolean isDistrict) {
         this.isDistrict = isDistrict;
-        infoContainer = (TextView) getView().findViewById(R.id.info_container);
+        if(getView() == null) {
+            return;
+        }
+
+        moreInfoContainer = getView().findViewById(R.id.more_info_container);
         if (isDistrict) {
-            infoContainer.setVisibility(View.GONE);
+            moreInfoContainer.setVisibility(View.GONE);
         } else {
-            infoContainer.setVisibility(View.VISIBLE);
-            infoContainer.setText(getActivity().getText(R.string.warning_not_real_district));
+            moreInfoContainer.setVisibility(View.VISIBLE);
         }
     }
 

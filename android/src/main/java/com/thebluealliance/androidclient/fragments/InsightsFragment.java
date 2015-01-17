@@ -41,7 +41,7 @@ public class InsightsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionItemPressed) {
 
     }
 

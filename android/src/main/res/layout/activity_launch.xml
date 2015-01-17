@@ -36,7 +36,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/textView"
-                    android:src="@drawable/logo_highres" />
+                    android:src="@drawable/ic_launcher_ultrahires_noshadow" />
 
                 <TextView
                     android:id="@+id/welcome_message"
@@ -94,58 +94,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/mytba_enable_page"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/submit_mytba">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/mytba_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mytba_title"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:layout_below="@id/mytba_title"
-                    android:padding="6dp"
-                    android:id="@+id/mytba_description"
-                    android:text="@string/mytba_description" />
-
-                <Switch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/mytba_description"
-                    android:text="@string/enable_mytba"
-                    android:id="@+id/enable_mytba"
-                    android:checked="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="24dp" />
-
-            </RelativeLayout>
-        </ScrollView>
-        <Button
-            android:id="@+id/submit_mytba"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/next" />
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/load_finished_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -166,7 +114,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentTop="true"
-                    android:src="@drawable/logo_highres" />
+                    android:src="@drawable/ic_launcher_ultrahires_noshadow" />
 
                 <TextView
                     android:layout_width="match_parent"

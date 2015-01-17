@@ -22,7 +22,7 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
                 if (districtSort == 0) {
                     int eventSort = event.getStartDate().compareTo(event2.getStartDate());
                     if (eventSort == 0) {
-                        return event.getShortName().compareTo(event2.getShortName());
+                        return event.getEventShortName().compareTo(event2.getEventShortName());
                     } else {
                         return eventSort;
                     }

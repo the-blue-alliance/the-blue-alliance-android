@@ -22,6 +22,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -41,6 +42,8 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     private String mTeamKey;
 
     private PopulateTeamInfo task;
+
+
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -75,6 +78,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         v.findViewById(R.id.team_cd_button).setOnClickListener(this);
         v.findViewById(R.id.team_youtube_button).setOnClickListener(this);
         v.findViewById(R.id.team_website_button).setOnClickListener(this);
+
         return v;
     }
 
@@ -126,10 +130,12 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
+
+
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " info");
-        task = new PopulateTeamInfo(this, true);
+        task = new PopulateTeamInfo(this, new RequestParams(true, actionIconPressed));
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamKey);
     }
 
@@ -150,9 +156,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         parent.unregisterRefreshListener(this);
     }
 
-    public void showCurrentEvent(final EventListElement event){
+    public void showCurrentEvent(final EventListElement event) {
 
-        final LinearLayout eventLayout = (LinearLayout)getView().findViewById(R.id.team_current_event);
+        final LinearLayout eventLayout = (LinearLayout) getView().findViewById(R.id.team_current_event);
         final RelativeLayout container = (RelativeLayout) getView().findViewById(R.id.team_current_event_container);
 
         getActivity().runOnUiThread(new Runnable() {
@@ -162,7 +168,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
                 eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
 
                 container.setVisibility(View.VISIBLE);
-                container.setTag(mTeamKey+"@"+event.getEventKey());
+                container.setTag(mTeamKey + "@" + event.getEventKey());
                 container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
             }
         });
@@ -173,7 +179,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     public void onEvent(LiveEventEventUpdateEvent event) {
-        if(event.getEvent() != null) {
+        if (event.getEvent() != null) {
             showCurrentEvent(event.getEvent().render());
         }
     }

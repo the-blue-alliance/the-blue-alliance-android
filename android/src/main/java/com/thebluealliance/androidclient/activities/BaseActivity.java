@@ -1,49 +1,48 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
  * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
  */
-public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback {
+public abstract class BaseActivity extends NavigationDrawerActivity
+        implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     String beamUri;
     boolean searchEnabled = true;
     String modelKey = "";
+    ModelHelper.MODELS modelType;
 
     GoogleAccountCredential credential;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final Activity activity = this;
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void[] params) {
-                /* Report the activity start to GAnalytics */
-                GoogleAnalytics.getInstance(activity).reportActivityStart(activity);
-                return null;
-            }
-        }.execute();
+        /* Analytics commented out to avoid strange ANRs on startup, see #303 */
+        //new AnalyticsActions.ReportActivityStart(this).run();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -53,13 +52,23 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Hide the shadow below the Action Bar
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setElevation(0);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         boolean mytba = AccountHelper.isMyTBAEnabled(this);
         if (!AccountHelper.isAccountSelected(this) && mytba) {
-            AccountHelper.signIn(this);
-        } else if(mytba){
-            GCMHelper.registerGCMIfNeeded(this);
+            startActivity(new Intent(this, AuthenticatorActivity.class));
+            finish();
+        } else if(mytba && !PlusHelper.isConnected() && !PlusHelper.isConnecting()){
+            PlusHelper.connect(this, this, this);
         }
     }
 
@@ -67,7 +76,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     protected void onStop() {
         super.onStop();
         /* Report the activity stop to GAnalytics */
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        //new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
@@ -111,15 +120,37 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         invalidateOptionsMenu();
     }
 
-    protected void setModelKey(String key){
+    protected void setModelKey(String key, ModelHelper.MODELS type){
         modelKey = key;
+        modelType = type;
+    }
+
+    /**
+     * Successfully connected (called by PlusClient)
+     */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        String accountName = PlusHelper.getAccountName();
+        AccountHelper.setSelectedAccount(this, accountName);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
+        GCMHelper.registerGCMIfNeeded(this);
+        new UpdateMyTBA(this, new RequestParams(true, false)).execute();
+        setDrawerProfileInfo();
+    }
+
+    /**
+     * Connection failed for some reason (called by PlusClient)
+     * Try and resolve the result.  Failure here is usually not an indication of a serious error,
+     * just that the user's input is needed.
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onConnectionSuspended(int i) {
 
-        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
     }
-
 }

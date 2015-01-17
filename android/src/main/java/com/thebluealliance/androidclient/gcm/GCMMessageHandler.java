@@ -6,16 +6,24 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
+import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
+import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
+import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 
@@ -59,31 +67,51 @@ public class GCMMessageHandler extends IntentService {
             BaseNotification notification = null;
             switch (messageType) {
                 case NotificationTypes.UPDATE_FAVORITES:
-                    new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_FAVORITES);
+                    new UpdateMyTBA(c, new RequestParams(true)).execute(UpdateMyTBA.UPDATE_FAVORITES);
                     break;
                 case NotificationTypes.UPDATE_SUBSCRIPTIONS:
-                    new UpdateMyTBA(c, true).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
+                    new UpdateMyTBA(c, new RequestParams(true)).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
                     break;
                 case NotificationTypes.PING:
-                    notification = new GenericNotification(messageData);
+                case NotificationTypes.BROADCAST:
+                    notification = new GenericNotification(c, messageType, messageData);
                     break;
                 case NotificationTypes.MATCH_SCORE:
+                case "score":
                     notification = new ScoreNotification(messageData);
                     break;
                 case NotificationTypes.UPCOMING_MATCH:
                     notification = new UpcomingMatchNotification(messageData);
                     break;
-                case "score":
-                    notification = new ScoreNotification(messageData);
-                    break;
                 case NotificationTypes.ALLIANCE_SELECTION:
+                    notification = new AllianceSelectionNotification(messageData);
+                    break;
                 case NotificationTypes.LEVEL_STARTING:
-                    // TODO implement notifications for these message types
+                    notification = new CompLevelStartingNotification(messageData);
+                    break;
+                case NotificationTypes.SCHEDULE_UPDATED:
+                    notification = new ScheduleUpdatedNotification(messageData);
+                    break;
+                case NotificationTypes.AWARDS:
+                    notification = new AwardsPostedNotification(messageData);
+                    break;
+                case NotificationTypes.DISTRICT_POINTS_UPDATED:
+                    notification = new DistrictPointsUpdatedNotification(messageData);
                     break;
             }
+
+            if(notification == null) return;
+            try {
+                notification.parseMessageData();
+            } catch (JsonParseException e){
+                Log.e(Constants.LOG_TAG, "Error parsing incoming message json");
+                Log.e(Constants.LOG_TAG, e.getMessage());
+                e.printStackTrace();
+            }
+
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
             boolean enabled = prefs.getBoolean("enable_notifications", true);
-            if(enabled && notification != null){
+            if(enabled){
                 Notification built = notification.buildNotification(c);
                 if(prefs.getBoolean("notification_vibrate", true)){
                     built.defaults |= Notification.DEFAULT_VIBRATE;
@@ -92,7 +120,39 @@ public class GCMMessageHandler extends IntentService {
                     built.defaults |= Notification.DEFAULT_SOUND;
                 }
 
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    int priority = Notification.PRIORITY_HIGH;
+                    switch (messageType){
+                        case NotificationTypes.PING: priority = Notification.PRIORITY_LOW;
+                    }
+
+                    boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
+                    if(headsUpPref) {
+                        built.priority = priority;
+                    }else{
+                        built.priority = Notification.PRIORITY_DEFAULT;
+                    }
+
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                        String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility","private");
+                        switch (pref){
+                            case "public":  built.visibility = Notification.VISIBILITY_PUBLIC; break;
+                            default:
+                            case "private": built.visibility = Notification.VISIBILITY_PRIVATE; break;
+                            case "secret":  built.visibility = Notification.VISIBILITY_SECRET; break;
+                        }
+
+                        built.category = Notification.CATEGORY_SOCIAL;
+                    }
+                }
+
+                if(!notification.shouldShow()){
+                    return;
+                }
                 notificationManager.notify(notification.getNotificationId(), built);
+
+                /* Update the data coming from this notification in the local db */
+                notification.updateDataLocally(c);
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...

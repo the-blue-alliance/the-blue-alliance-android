@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,12 +16,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * Created by Nathan on 5/14/2014.
  */
-public class ViewMatchActivity extends RefreshableHostActivity implements RefreshListener {
+public class ViewMatchActivity extends FABNotificationSettingsActivity implements RefreshListener {
 
     public static final String MATCH_KEY = "match_key";
 
@@ -44,9 +47,12 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setModelKey(mMatchKey);
+        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
         setContentView(R.layout.activity_view_match);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
+
+        setSettingsToolbarTitle("Match settings");
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
@@ -63,14 +69,14 @@ public class ViewMatchActivity extends RefreshableHostActivity implements Refres
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("Match");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setActionBarTitle("");
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionItemPressed) {
         Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh started");
-        task = new PopulateMatchInfo(this, true);
+        task = new PopulateMatchInfo(this, new RequestParams(true, actionItemPressed));
         task.execute(mMatchKey);
         // Indicate loading; the task will hide the progressbar and show the content when loading is complete
         findViewById(R.id.progress).setVisibility(View.VISIBLE);

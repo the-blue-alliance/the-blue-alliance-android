@@ -63,6 +63,7 @@ public class Constants {
 
     public static final int API_TEAM_LIST_PAGE_SIZE = 500;
 
-    public static final long API_HIT_TIMEOUT = 60000;           // one minute in milliseconds
+    public static final long API_HIT_TIMEOUT_LONG = 60000;      // one minute in milliseconds
+    public static final long API_HIT_TIMEOUT_SHORT= 500;        // five seconds in milliseconds
     public static final long MY_TBA_UPDATE_TIMEOUT = 600000;    // ten minutes in milliseconds
 }

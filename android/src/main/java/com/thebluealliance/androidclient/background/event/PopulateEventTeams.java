@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -37,13 +38,13 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teams;
     private String eventKey;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private ListViewAdapter adapter;
 
-    public PopulateEventTeams(EventTeamsFragment f, boolean forceFromCache) {
+    public PopulateEventTeams(EventTeamsFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
         teams = new ArrayList<>();
 
         try {
-            APIResponse<ArrayList<Team>> response = DataManager.Events.getEventTeams(activity, eventKey, forceFromCache);
+            APIResponse<ArrayList<Team>> response = DataManager.Events.getEventTeams(activity, eventKey, requestParams);
             ArrayList<Team> teamList = response.getData();
 
             if (isCancelled()) {
@@ -110,7 +111,8 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
              * what we have cached locally for performance reasons.
              * Thus, fire off this task again with a flag saying to actually load from the web
              */
-            PopulateEventTeams secondLoad = new PopulateEventTeams(mFragment, false);
+            requestParams.forceFromCache = false;
+            PopulateEventTeams secondLoad = new PopulateEventTeams(mFragment, requestParams);
             mFragment.updateTask(secondLoad);
             secondLoad.execute(eventKey);
         } else {

@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
@@ -110,9 +111,9 @@ public class EventListFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading events for week " + mHeader + " in " + mYear + " for " + mTeamKey);
-        mTask = new PopulateEventList(this, mHost, mYear, mHeader, mTeamKey, true);
+        mTask = new PopulateEventList(this, mHost, mYear, mHeader, mTeamKey, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

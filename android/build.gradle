@@ -1,16 +1,16 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 19
-        versionCode 19
-        versionName "1.4"
+        targetSdkVersion 21
+        versionCode 22
+        versionName "2.0.13"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -29,32 +29,35 @@ android {
                 versionNameSuffix "/#" + gitSha
                 applicationIdSuffix ".development"
                 applicationVariants.all { variant ->
-                    def file = variant.outputFile
-                    variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
+                    variant.outputs.each { output ->
+                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
+                    }
                 }
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
             // the apk will be in android/build/outputs/apk and you can install it by running
             // 'adb install -r <file name>'
-            debugBlue{
+            debugBlue {
                 signingConfig signingConfigs.debug
                 versionNameSuffix "/#" + gitSha
                 applicationIdSuffix ".development"
                 applicationVariants.all { variant ->
-                    def file = variant.outputFile
-                    variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
+                    variant.outputs.each { output ->
+                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
+                    }
                 }
             }
 
             release {
                 signingConfig signingConfigs.release
-                runProguard true
-                zipAlign true
+                minifyEnabled true
+                zipAlignEnabled true
                 proguardFiles 'proguard-rules.txt'
                 applicationVariants.all { variant ->
-                    def file = variant.outputFile
-                    variant.outputFile = new File(file.parent, "tba-android-v" + defaultConfig.versionName + ".apk")
+                    variant.outputs.each { output ->
+                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + defaultConfig.versionName + ".apk")
+                    }
                 }
             }
         }
@@ -63,6 +66,16 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        debugBlue {
+            debuggable true
+        }
     }
 }
 
@@ -83,10 +96,10 @@ task loadProperties << {
     def tba_config = new Properties();
     def tba_propFile = file("src/main/assets/tba.properties")
     tba_config.load(new FileInputStream(tba_propFile));
-    if(!tba_config.containsKey("analytics.id")){
+    if (!tba_config.containsKey("analytics.id")) {
         throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
     }
-    System.out.println("Building with analytics key: "+tba_config["analytics.id"]);
+    System.out.println("Building with analytics key: " + tba_config["analytics.id"]);
 }
 
 tasks.whenTaskAdded { theTask ->
@@ -102,19 +115,22 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // compile fileTree(dir: 'libs', include: ['*.jar'])
     compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
     compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
-    compile 'com.android.support:support-v13:19.+'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1dev@aar'
-    compile 'com.android.support:support-v4:19.+'
-    compile 'com.google.code.gson:gson:2.2.4'
+    compile files('libs/tbaMobile-v9-1.19.0-SNAPSHOT.jar')
+    compile 'com.android.support:support-v13:21.0.0'
+    compile 'com.android.support:cardview-v7:21.0.0'
+    compile 'com.android.support:support-v4:21.0.2'
+    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.google.code.gson:gson:2.3'
     compile 'org.apache.commons:commons-lang3:3.0'
     compile 'org.apache.commons:commons-io:1.3.2'
-    compile 'com.squareup.picasso:picasso:2.2.0'
-    compile 'me.xuender:unidecode:0.0.+'
-    compile 'com.google.android.gms:play-services:5.0.+'
-    compile 'com.sothree.slidinguppanel:library:+'
-    compile 'de.greenrobot:eventbus:2.2.+'
-    compile files('libs/tbaMobile-v8-1.19.0-SNAPSHOT.jar')
+    compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'me.xuender:unidecode:0.0.7'
+    compile 'com.google.android.gms:play-services-base:6.5.87'
+    compile 'com.google.android.gms:play-services-plus:6.5.87'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'com.melnykov:floatingactionbutton:1.0.7'
+    compile 'de.hdodenhof:circleimageview:1.2.0'
 }

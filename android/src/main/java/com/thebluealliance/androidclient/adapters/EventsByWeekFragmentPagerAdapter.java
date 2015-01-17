@@ -5,11 +5,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.RefreshableHostFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.views.SlidingTabLayout;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,18 +21,19 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int mCount;
     private int mYear;
+    private String mCurrent;
     private ArrayList<String> thisYearsWeekLabels;
-    private PagerSlidingTabStrip tabs;
+    private SlidingTabLayout tabs;
     private RefreshableHostFragment parent;
 
 
-    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, PagerSlidingTabStrip tabs, ViewPager pager, ArrayList<String> labels) {
+    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, SlidingTabLayout tabs, ViewPager pager, ArrayList<String> labels) {
         this(fragment, fm, year, tabs, pager);
         thisYearsWeekLabels = labels;
         mCount = labels.size();
     }
 
-    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, PagerSlidingTabStrip tabs, ViewPager pager) {
+    public EventsByWeekFragmentPagerAdapter(RefreshableHostFragment fragment, FragmentManager fm, int year, SlidingTabLayout tabs, ViewPager pager) {
         super(fm);
         mYear = year;
         thisYearsWeekLabels = new ArrayList<>();
@@ -40,15 +41,23 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         this.tabs = tabs;
         this.parent = fragment;
         mCount = 1;
+
+        Date now = new Date();
+        if (    EventHelper.getYearWeek(now) >= Utilities.getFirstompWeek(now) &&
+                Utilities.getCurrentYear() == mYear) {
+            mCurrent = EventHelper.currentWeekLabel(now);
+        }else{
+            mCurrent = "";
+        }
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Date now = new Date();
-        if (EventHelper.competitionWeek(now) == position && Utilities.getCurrentYear() == mYear) {
+        String label = thisYearsWeekLabels.get(position);
+        if (mCurrent.equals(label)) {
             return "Current Week";
         } else {
-            return thisYearsWeekLabels.get(position);
+            return label;
         }
     }
 
@@ -70,6 +79,6 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        tabs.notifyDataSetChanged();
+        //tabs.notifyDataSetChanged();
     }
 }

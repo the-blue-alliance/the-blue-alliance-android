@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingBottom="88dp"
             android:visibility="gone">
 
             <RelativeLayout
@@ -19,10 +21,11 @@
                 style="@style/InfoItemStyle"
                 android:clickable="true">
 
-                <ImageView
+                <com.thebluealliance.androidclient.views.RecoloredImageView
                     android:id="@+id/event_name_icon"
                     style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_action_about" />
+                    android:src="@drawable/ic_info_outline_black_24dp"
+                    app:tintColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/event_name"
@@ -36,12 +39,15 @@
             <RelativeLayout
                 android:id="@+id/event_date_container"
                 style="@style/InfoItemStyle"
-                android:clickable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
 
-                <ImageView
+                <com.thebluealliance.androidclient.views.RecoloredImageView
                     android:id="@+id/event_date_icon"
                     style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_action_event" />
+                    android:src="@drawable/ic_event_black_24dp"
+                    app:tintColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/event_date"
@@ -57,18 +63,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
 
                 <View style="@style/InfoItemDividerStyle" />
 
-                <RelativeLayout
-                    style="@style/InfoItemStyle"
-                    android:background="?android:attr/selectableItemBackground">
+                <RelativeLayout style="@style/InfoItemStyle">
 
-                    <ImageView
+                    <com.thebluealliance.androidclient.views.RecoloredImageView
                         android:id="@+id/venue_location_icon"
                         style="@style/InfoItemImageStyle"
-                        android:src="@drawable/ic_action_place" />
+                        android:src="@drawable/ic_location_on_black_24dp"
+                        app:tintColor="@color/primary" />
 
                     <TextView
                         android:id="@+id/event_venue"
@@ -182,13 +188,12 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
 
                 <View style="@style/InfoItemDividerStyle" />
 
-                <RelativeLayout
-                    style="@style/InfoItemStyle"
-                    android:background="?android:attr/selectableItemBackground">
+                <RelativeLayout style="@style/InfoItemStyle">
 
                     <TextView
                         android:layout_width="wrap_content"

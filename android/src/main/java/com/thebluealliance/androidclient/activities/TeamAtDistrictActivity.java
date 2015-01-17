@@ -1,19 +1,19 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * File created by phil on 7/26/14.
@@ -70,6 +71,9 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
             throw new IllegalArgumentException("TeamAtDistrictActivity must be constructed with a team key");
         }
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
@@ -81,7 +85,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
 
         setupActionBar();
@@ -100,7 +104,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
     }
 
     private void setupActionBar() {
-        ActionBar bar = getActionBar();
+        ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             setActionBarTitle("");

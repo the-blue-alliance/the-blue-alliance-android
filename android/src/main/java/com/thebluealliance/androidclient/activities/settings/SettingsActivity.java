@@ -5,30 +5,27 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
-import android.util.Log;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
     public static class SettingsFragment extends PreferenceFragment {
@@ -49,8 +46,8 @@ public class SettingsActivity extends PreferenceActivity {
             Preference contributors = findPreference("contributors");
             contributors.setIntent(new Intent(getActivity(), ContributorsActivity.class));
 
-            //Preference notifications = findPreference("notifications");
-            //notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
+            Preference notifications = findPreference("notifications");
+            notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
 
             Preference changelog = findPreference("changelog");
             String version = BuildConfig.VERSION_NAME;
@@ -68,26 +65,40 @@ public class SettingsActivity extends PreferenceActivity {
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            /*final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
+            final Preference enable_mytba = findPreference("mytba_enabled");
+            if (AccountHelper.isMyTBAEnabled(getActivity())) {
+                enable_mytba.setSummary(getString(R.string.mytba_enabled));
+            } else {
+                enable_mytba.setSummary(getString(R.string.mytba_disabled));
+            }
             final Activity activity = getActivity();
-            enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            final Intent authIntent = new Intent(getActivity(), AuthenticatorActivity.class);
+            enable_mytba.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Log.d(Constants.LOG_TAG, "Change");
-                    boolean newState = !enable_mytba.isChecked(); //it was reversed, for some reason...
-                    Log.d(Constants.LOG_TAG, "Checked: "+newState);
-                    if(newState != AccountHelper.isMyTBAEnabled(activity)){
-                        AccountHelper.enableMyTBA(activity, newState);
-                    }
+                public boolean onPreferenceClick(Preference preference) {
+                    activity.startActivity(authIntent);
+                    activity.finish();
                     return true;
                 }
-            });*/
+            });
 
 
             if (Utilities.isDebuggable()) {
                 addPreferencesFromResource(R.xml.dev_preference_link);
                 Preference devSettings = findPreference("dev_settings");
                 devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
+            }
+        }
+
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+            // Remove padding from the list view
+            View listView = getView().findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setPadding(0, 0, 0, 0);
             }
         }
     }
@@ -100,11 +111,5 @@ public class SettingsActivity extends PreferenceActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        AccountHelper.onSignInResult(this, requestCode, resultCode, data);
     }
 }
