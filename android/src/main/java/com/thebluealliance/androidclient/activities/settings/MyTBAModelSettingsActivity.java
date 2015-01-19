@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
@@ -266,32 +265,20 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
             }
 
         });
-        reverseColorAnimation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                activity.finish();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
         reverseColorAnimation.setDuration(500);
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(colorAnimation);
         animatorSet.play(reverseColorAnimation).after(2500);
         animatorSet.start();
+
+        // Close the activity in the future
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                MyTBAModelSettingsActivity.this.finish();
+            }
+        }, 3000);
     }
 }
