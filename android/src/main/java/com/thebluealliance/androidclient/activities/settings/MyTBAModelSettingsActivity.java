@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.activities.settings;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -114,11 +114,10 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
 
         // Create drawable for the FAB
-        Drawable backgrounds[] = new Drawable[2];
         Resources res = getResources();
-        backgrounds[0] = res.getDrawable(R.drawable.ic_check_white_24dp);
-        backgrounds[1] = res.getDrawable(R.drawable.ic_error_white_24dp);
+        Drawable backgrounds[] = new Drawable[] {res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
         fabDrawable = new TransitionDrawable(backgrounds);
+        fabDrawable.setCrossFadeEnabled(true);
         saveModelPreferencesFab.setImageDrawable(fabDrawable);
     }
 
@@ -237,7 +236,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
     @Override
     public void onError() {
-        Toast.makeText(this, "Error. Check your network connection.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Error.", Toast.LENGTH_SHORT).show();
 
         saveModelPreferencesFab.setEnabled(false);
 
@@ -248,48 +247,51 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
+                fabDrawable.startTransition(500);
                 saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
             }
 
         });
         colorAnimation.setDuration(500);
 
-        Animator drawableAnimator = new ValueAnimator();
-        drawableAnimator.setDuration(500);
-        drawableAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                fabDrawable.startTransition(500);
-            }
-        });
-
         Integer reverseColorFrom = getResources().getColor(R.color.red);
         Integer reverseColorTo = getResources().getColor(R.color.accent_dark);
+        final Activity activity = this;
         ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
         reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
-                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
+                //saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
             }
 
+        });
+        reverseColorAnimation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                activity.finish();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
         });
         reverseColorAnimation.setDuration(500);
 
-        Animator reverseDrawableAnimator = new ValueAnimator();
-        reverseDrawableAnimator.setDuration(500);
-        reverseDrawableAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                fabDrawable.reverseTransition(500);
-            }
-        });
-
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(colorAnimation);
-        animatorSet.play(drawableAnimator);
         animatorSet.play(reverseColorAnimation).after(2500);
-        animatorSet.play(reverseDrawableAnimator).after(2500);
         animatorSet.start();
     }
 }
