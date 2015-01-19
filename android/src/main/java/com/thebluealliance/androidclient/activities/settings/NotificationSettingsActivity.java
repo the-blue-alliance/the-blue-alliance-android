@@ -1,12 +1,10 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
@@ -28,6 +26,12 @@ public class NotificationSettingsActivity extends ActionBarActivity {
     }
 
     public static class NotificationSettingsFragment extends PreferenceFragment{
+        
+        private static Preference   notificationTone, 
+                                    notificationVibrate, 
+                                    notificationVisibility, 
+                                    notificationHeadsup;
+        
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -37,9 +41,15 @@ public class NotificationSettingsActivity extends ActionBarActivity {
             }
 
             CheckBoxPreference enableNotifications = (CheckBoxPreference)findPreference("enable_notifications");
-            final Preference notificationTone = findPreference("notification_tone");
-            final Preference notificationVibrate = findPreference("notification_vibrate");
-
+            notificationTone = findPreference("notification_tone");
+            notificationVibrate = findPreference("notification_vibrate");
+            notificationVisibility = null;
+            notificationHeadsup = null;
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+                notificationVisibility = findPreference("notification_visibility");
+                notificationHeadsup = findPreference("notification_headsup");
+            }
+            
             boolean currentlyEnabled = enableNotifications.isChecked();
             notificationTone.setEnabled(currentlyEnabled);
             notificationVibrate.setEnabled(currentlyEnabled);
@@ -50,6 +60,10 @@ public class NotificationSettingsActivity extends ActionBarActivity {
                     boolean value = (Boolean)newValue;
                     notificationTone.setEnabled(value);
                     notificationVibrate.setEnabled(value);
+                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                        notificationVisibility.setEnabled(value);
+                        notificationHeadsup.setEnabled(value);
+                    }
                     return true;
                 }
             });

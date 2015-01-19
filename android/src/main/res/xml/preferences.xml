@@ -2,42 +2,43 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_header_account" >
+    <PreferenceCategory android:title="@string/pref_header_account">
 
         <Preference
             android:key="mytba_enabled"
             android:persistent="false"
             android:title="@string/is_mytba_eabled" />
-        <Preference
-            android:key="notifications"
-            android:persistent="false"
-            android:title="@string/notification_settings"/>
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_general" />
+    <PreferenceCategory android:title="@string/pref_header_general">
+        <Preference
+            android:key="notifications"
+            android:persistent="false"
+            android:title="@string/notification_settings" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_appinfo">
         <Preference
             android:key="tba_link"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/tbasite_label"
-            android:summary="@string/tbasite_summary" />
+            android:summary="@string/tbasite_summary"
+            android:title="@string/tbasite_label" />
 
         <Preference
             android:key="github_link"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/github_label"
-            android:summary="@string/github_summary" />
+            android:summary="@string/github_summary"
+            android:title="@string/github_label" />
 
         <Preference
             android:key="contributors"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/contributors"
-            android:summary="@string/contributors_summary" />
+            android:summary="@string/contributors_summary"
+            android:title="@string/contributors" />
 
         <Preference
             android:key="changelog"
