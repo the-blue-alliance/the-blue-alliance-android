@@ -66,6 +66,7 @@ public class AccountHelper {
     }
 
     public static String getSelectedAccount(Context context) {
+        if(context == null) return "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(PREF_SELECTED_ACCOUNT, "");
     }
