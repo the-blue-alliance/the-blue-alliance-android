@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -138,7 +137,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     protected void onStop() {
         super.onStop();
         /* Report the activity stop to GAnalytics */
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        //GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override

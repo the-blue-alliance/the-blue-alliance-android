@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
@@ -108,7 +107,7 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
     protected void onStop() {
         super.onStop();
         /* Report the activity stop to GAnalytics */
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        //GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override
