@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 24
-        versionName "2.0.15"
+        versionCode 25
+        versionName "2.0.16"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -30,7 +30,7 @@ android {
                 applicationIdSuffix ".development"
                 applicationVariants.all { variant ->
                     variant.outputs.each { output ->
-                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
+                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + gitSha + ".apk")
                     }
                 }
             }
