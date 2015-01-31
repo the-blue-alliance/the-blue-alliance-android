@@ -143,4 +143,9 @@
     <string name="teams_matching">Teams matching \"%1$s\"</string>
     <string name="events_matching">Events matching \"%1$s\"</string>
 
+    <!-- myTBA -->
+    <string name="mytba_favorite_title">Favorite</string>
+    <string name="mytba_favorite_summary">You can save teams, events, and more for easy access by marking them as "favorites".</string>
+    <string name="mytba_subscription_header">Notification Settings</string>
+    <string name="mytba_subscriptions_summary">Subscribing to something lets you get a push notification whenever there is an update.</string>
 </resources>

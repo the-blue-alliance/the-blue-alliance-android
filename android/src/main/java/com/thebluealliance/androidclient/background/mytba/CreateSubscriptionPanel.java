@@ -64,8 +64,8 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
         PreferenceScreen preferenceScreen = fragment.getPreferenceScreen();
         preferenceScreen.removeAll();
         CheckBoxPreference favorite = new CheckBoxPreference(context);
-        favorite.setTitle("Favorite");
-        favorite.setSummary("You can save teams, events, and more for easy access by marking them as \"favorites\".");
+        favorite.setTitle(context.getString(R.string.mytba_favorite_title));
+        favorite.setSummary(context.getString(R.string.mytba_favorite_summary));
         favorite.setKey(MyTBAHelper.getFavoritePreferenceKey());
         if (savedState != null) {
             if (savedState.containsKey(MyTBAHelper.getFavoritePreferenceKey())) {
@@ -83,11 +83,11 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
         String[] notificationTypes = ModelHelper.getNotificationTypes(type);
         if (notificationTypes.length > 0) {
             PreferenceCategory notificationSettingsCategory = new PreferenceCategory(context);
-            notificationSettingsCategory.setTitle("Notification settings");
+            notificationSettingsCategory.setTitle(context.getString(R.string.mytba_subscription_header));
             preferenceScreen.addPreference(notificationSettingsCategory);
 
             Preference summary = new Preference(context);
-            summary.setSummary("Subscribing to something lets you get a push notification whenever there is an update.");
+            summary.setSummary(context.getString(R.string.mytba_subscriptions_summary));
             summary.setSelectable(false);
             notificationSettingsCategory.addPreference(summary);
             for (String notificationKey : notificationTypes) {

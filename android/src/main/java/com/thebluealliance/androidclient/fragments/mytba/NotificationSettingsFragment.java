@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
@@ -73,9 +72,11 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
 
         // Remove padding from the list view
-        View listView = getView().findViewById(android.R.id.list);
-        if (listView != null) {
-            listView.setPadding(0, 0, 0, 0);
+        if(getView() != null) {
+            View listView = getView().findViewById(android.R.id.list);
+            if (listView != null) {
+                listView.setPadding(0, 0, 0, 0);
+            }
         }
     }
 
@@ -97,25 +98,6 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         settings.modelType = modelType;
 
         return settings;
-    }
-
-    public void saveSettings() {
-        ArrayList<String> subscribed = new ArrayList<>();
-
-        PreferenceScreen preferences = getPreferenceScreen();
-        // Use recursion to make sure we catch any preferences nested in groups
-        writeSettingsFromPreferenceGroupToStringArray(preferences, subscribed);
-
-        // Don't pass the favorite preference to the updater.
-        subscribed.remove(MyTBAHelper.getFavoritePreferenceKey());
-        Log.d(Constants.LOG_TAG, "notifications: " + subscribed);
-
-        ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
-        settings.isFavorite = ((CheckBoxPreference) findPreference(MyTBAHelper.getFavoritePreferenceKey())).isChecked();
-        settings.enabledNotifications = subscribed;
-        settings.modelKey = modelKey;
-
-        new UpdateUserModelSettings(getActivity(), settings).execute();
     }
 
     private void writeSettingsFromPreferenceGroupToStringArray(PreferenceGroup pg, ArrayList<String> strings) {
