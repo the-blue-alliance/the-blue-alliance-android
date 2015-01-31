@@ -47,6 +47,9 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
     protected APIResponse.CODE doInBackground(Void... params) {
 
         subscriptions = new ArrayList<>();
+        if(!AccountHelper.isMyTBAEnabled(activity)){
+            return APIResponse.CODE.NODATA;
+        }
         APIResponse<ArrayList<Subscription>> response = DataManager.MyTBA.updateUserSubscriptions(activity, requestParams);
         ArrayList<Subscription> collection;
         if(!requestParams.forceFromCache && response.getCode() == APIResponse.CODE.WEBLOAD){

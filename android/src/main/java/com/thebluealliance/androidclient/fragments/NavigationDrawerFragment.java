@@ -98,7 +98,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ImageView coverPhoto;
     private TextView profileName;
     private View mFragmentContainerView;
-    private View myTbaProfileInfoContainer;
+    private View accountDetailsContainer;
     private NavigationDrawerAdapter mNavigationAdapter;
     private NavigationDrawerListener mListener;
 
@@ -145,18 +145,18 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView.setAdapter(mNavigationAdapter);
 
-        myTbaProfileInfoContainer = v.findViewById(R.id.mytba_profile_info);
+        accountDetailsContainer = v.findViewById(R.id.account_details_container);
 
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
         if (AccountHelper.isMyTBAEnabled(getActivity())) {
-            myTbaProfileInfoContainer.setVisibility(View.VISIBLE);
+            accountDetailsContainer.setVisibility(View.VISIBLE);
             profilePicture.setVisibility(View.VISIBLE);
             profileName.setVisibility(View.VISIBLE);
             setDrawerProfileInfo();
         } else {
-            myTbaProfileInfoContainer.setVisibility(View.GONE);
+            accountDetailsContainer.setVisibility(View.GONE);
         }
 
         return v;

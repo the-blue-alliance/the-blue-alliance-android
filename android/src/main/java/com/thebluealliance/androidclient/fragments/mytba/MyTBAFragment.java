@@ -37,8 +37,8 @@ public class MyTBAFragment extends Fragment {
                     setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //getActivity().startActivity(authIntent);
-                            //getActivity().finish();
+                            getActivity().startActivity(authIntent);
+                            getActivity().finish();
                             dialog.cancel();
                         }
                     }).

@@ -47,6 +47,9 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
     protected APIResponse.CODE doInBackground(Void... params) {
 
         favorites = new ArrayList<>();
+        if(!AccountHelper.isMyTBAEnabled(activity)){
+            return APIResponse.CODE.NODATA;
+        }
         APIResponse<ArrayList<Favorite>> response = DataManager.MyTBA.updateUserFavorites(activity, requestParams);
         ArrayList<Favorite> collection;
         if(!requestParams.forceFromCache && response.getCode() == APIResponse.CODE.WEBLOAD){
