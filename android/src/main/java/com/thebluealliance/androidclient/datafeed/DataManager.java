@@ -513,6 +513,10 @@ public class DataManager {
 
             Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
+            if(service == null){
+                Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+            }
             ModelsMobileApiMessagesFavoriteCollection favoriteCollection;
             try {
                 favoriteCollection = service.favorites().list().execute();
@@ -557,6 +561,10 @@ public class DataManager {
 
             Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
+            if(service == null){
+                Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+            }
             ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection;
             try {
                 subscriptionCollection = service.subscriptions().list().execute();

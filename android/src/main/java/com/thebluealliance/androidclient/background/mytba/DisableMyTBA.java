@@ -40,6 +40,10 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
         request.setOperatingSystem(GCMAuthHelper.OS_ANDROID);
 
         TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
+        if(service == null){
+            Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+            return null;
+        }
         try {
             ModelsMobileApiMessagesBaseResponse response = service.unregister(request).execute();
             if(response.getCode() == 200){

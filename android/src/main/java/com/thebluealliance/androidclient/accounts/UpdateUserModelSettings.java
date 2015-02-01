@@ -95,6 +95,10 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         } else {
             try {
                 TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
+                if(service == null){
+                    Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+                    return Result.ERROR;
+                }
                 ModelsMobileApiMessagesBaseResponse response = service.model().setPreferences(request).execute();
                 Log.d(Constants.LOG_TAG, "Result: "+response.getCode()+"/"+response.getMessage());
                 if(response.getCode() == 401){
