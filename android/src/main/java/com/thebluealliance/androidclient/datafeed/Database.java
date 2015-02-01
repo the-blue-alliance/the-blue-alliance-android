@@ -328,11 +328,17 @@ public class Database extends SQLiteOpenHelper {
                     break;
                 case 17:
                     // add column for district name
-                    db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + Districts.NAME + " TEXT DEFAULT '' ");
+                    Cursor dist = db.rawQuery("SELECT * FROM " + TABLE_DISTRICTS + " LIMIT 0,1", null);
+                    if(dist.getColumnIndex(Districts.NAME) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + Districts.NAME + " TEXT DEFAULT '' ");
+                    }
                     break;
                 case 18:
                     // add column for event short name
-                    db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
+                    Cursor event = db.rawQuery("SELECT * FROM " + TABLE_EVENTS + " LIMIT 0,1", null);
+                    if(event.getColumnIndex(Events.SHORTNAME) == -1) {
+                        db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
+                    }
                     break;
             }
             upgradeTo++;
