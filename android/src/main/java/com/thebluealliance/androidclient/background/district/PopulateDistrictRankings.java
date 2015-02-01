@@ -77,6 +77,9 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
+        if(fragment == null){
+            return;
+        }
         View view = fragment.getView();
         if (view != null && activity != null) {
             ListViewAdapter adapter = new ListViewAdapter(activity, rankings);
