@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -177,8 +177,8 @@ public class Database extends SQLiteOpenHelper {
             SearchEvent.TITLES + " TEXT, " +
             SearchEvent.YEAR + " TEXT )";
     
-    String CREATE_NOTIFICATIONS = "CREATE TABLE IS NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
-            Notifications.ID + " INTEGER PRIMARY KEY, " +
+    String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
+            Notifications.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             Notifications.TYPE + " TEXT NOT NULL, " +
             Notifications.TITLE + " TEXT DEFAULT '', " +
             Notifications.BODY + " TEXT DEFAULT '', " +
@@ -218,6 +218,7 @@ public class Database extends SQLiteOpenHelper {
         favoritesTable = new Favorites();
         subscriptionsTable = new Subscriptions();
         responseTable = new Response();
+        notificationsTable = new Notifications();
         mSemaphore = new Semaphore(1);
         mMyTBASemaphore = new Semaphore(1);
     }
@@ -356,7 +357,7 @@ public class Database extends SQLiteOpenHelper {
                         db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
                     }
                     break;
-                case 19:
+                case 20:
                     // Create table for notification dashboard
                     db.execSQL(CREATE_NOTIFICATIONS);
                     break;
@@ -1651,7 +1652,7 @@ public class Database extends SQLiteOpenHelper {
         
         public ArrayList<StoredNotification> get(){
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeRawQuery("SELECT * FROM ?", new String[]{TABLE_NOTIFICATIONS});
+            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_NOTIFICATIONS+" ORDER BY "+ID+" DESC", null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));

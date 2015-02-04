@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
+import com.thebluealliance.androidclient.activities.NotificationDashboardActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
 public class SettingsActivity extends ActionBarActivity {
@@ -51,6 +52,9 @@ public class SettingsActivity extends ActionBarActivity {
 
             Preference notifications = findPreference("notifications");
             notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
+            
+            Preference notificationDash = findPreference("notification_dashboard");
+            notificationDash.setIntent(new Intent(getActivity(), NotificationDashboardActivity.class));
 
             Preference changelog = findPreference("changelog");
             String version = BuildConfig.VERSION_NAME;

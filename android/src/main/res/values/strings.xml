@@ -151,4 +151,5 @@
     <string name="mytba_error_no_account">Unable to get account. Is myTBA enabled?</string>
     <string name="mytba_error_io_token">IO Exception while fetching account token</string>
     <string name="mytba_error_auth">Unable to authenticate Google Account</string>
+    <string name="title_activity_notification_dashboard">Notification Dashboard</string>
 </resources>

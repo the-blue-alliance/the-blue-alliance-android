@@ -176,6 +176,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.thebluealliance.androidclient.activities.NotificationDashboardActivity"
+            android:label="@string/title_activity_notification_dashboard"
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus"
+            android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
+        </activity>
+        <activity
             android:name=".activities.AuthenticatorActivity"
             android:label="@string/title_activity_authenticator"
             android:windowSoftInputMode="adjustResize|stateHidden" />

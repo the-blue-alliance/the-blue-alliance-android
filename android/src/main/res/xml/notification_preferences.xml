@@ -6,7 +6,7 @@
         android:title="@string/pref_enable_notifications"
         android:defaultValue="true" />
     <PreferenceCategory
-        android:title="@string/pref_header_general">
+        android:title="@string/pref_header_notifications">
         <CheckBoxPreference
             android:key="notification_tone"
             android:title="@string/pref_notification_tone"
