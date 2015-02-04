@@ -1665,15 +1665,29 @@ public class Database extends SQLiteOpenHelper {
             safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
         }
         
-        // Only allow 100 notifications to be stored
+        // Only allow 100 notificanulltions to be stored
         public void prune(){
-            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
-            if(cursor != null && cursor.moveToFirst()){
-                for(int i=cursor.getCount(); i>100; i--){
-                    delete(cursor.getInt(cursor.getColumnIndex(ID)));
-                    if(!cursor.moveToNext()){
-                        break;
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                Cursor cursor = db.query(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
+                if(cursor != null && cursor.moveToFirst()){
+                    for(int i=cursor.getCount(); i>100; i--){
+                        db.delete(TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
+                        if(!cursor.moveToNext()){
+                            break;
+                        }
                     }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
                 }
             }
         }
