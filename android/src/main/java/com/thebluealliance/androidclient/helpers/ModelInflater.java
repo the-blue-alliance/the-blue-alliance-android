@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -380,5 +381,31 @@ public class ModelInflater {
             }
         }
         return subscription;
+    }
+    
+    public static StoredNotification inflateStoredNotification(Cursor data){
+        StoredNotification storedNotification = new StoredNotification();
+        for(int i=0; i<data.getColumnCount(); i++){
+            switch(data.getColumnName(i)){
+                case Database.Notifications.ID:
+                    storedNotification.setId(data.getInt(i));
+                    break;
+                case Database.Notifications.TYPE:
+                    storedNotification.setType(data.getString(i));
+                    break;
+                case Database.Notifications.TITLE:
+                    storedNotification.setTitle(data.getString(i));
+                    break;
+                case Database.Notifications.BODY:
+                    storedNotification.setBody(data.getString(i));
+                    break;
+                case Database.Notifications.INTENT:
+                    storedNotification.setIntent(data.getString(i));
+                    break;
+                case Database.Notifications.TIME:
+                    storedNotification.setTime(new Date(data.getLong(i)));
+            }
+        }
+        return storedNotification;
     }
 }

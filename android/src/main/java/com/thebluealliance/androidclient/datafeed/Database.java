@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -40,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -56,7 +57,8 @@ public class Database extends SQLiteOpenHelper {
             TABLE_SUBSCRIPTIONS = "subscriptions",
             TABLE_SEARCH = "search",
             TABLE_SEARCH_TEAMS = "search_teams",
-            TABLE_SEARCH_EVENTS = "search_events";
+            TABLE_SEARCH_EVENTS = "search_events",
+            TABLE_NOTIFICATIONS = "notifications";
 
     String CREATE_API = "CREATE TABLE IF NOT EXISTS " + TABLE_API + "("
             + Response.URL + " TEXT PRIMARY KEY NOT NULL, "
@@ -174,6 +176,14 @@ public class Database extends SQLiteOpenHelper {
             SearchEvent.KEY + " TEXT PRIMARY KEY, " +
             SearchEvent.TITLES + " TEXT, " +
             SearchEvent.YEAR + " TEXT )";
+    
+    String CREATE_NOTIFICATIONS = "CREATE TABLE IS NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
+            Notifications.ID + " INTEGER PRIMARY KEY, " +
+            Notifications.TYPE + " TEXT NOT NULL, " +
+            Notifications.TITLE + " TEXT DEFAULT '', " +
+            Notifications.BODY + " TEXT DEFAULT '', " +
+            Notifications.INTENT + " TEXT DEFAULT '', " +
+            Notifications.TIME + " TIMESTAMP )";
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
@@ -191,6 +201,7 @@ public class Database extends SQLiteOpenHelper {
     private DistrictTeams districtTeamsTable;
     private Favorites favoritesTable;
     private Subscriptions subscriptionsTable;
+    private Notifications notificationsTable;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -269,6 +280,10 @@ public class Database extends SQLiteOpenHelper {
     public Subscriptions getSubscriptionsTable() {
         return subscriptionsTable;
     }
+    
+    public Notifications getNotificationsTable(){
+        return notificationsTable;
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -283,6 +298,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_DISTRICTTEAMS);
         db.execSQL(CREATE_FAVORITES);
         db.execSQL(CREATE_SUBSCRIPTIONS);
+        db.execSQL(CREATE_NOTIFICATIONS);
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
@@ -340,6 +356,10 @@ public class Database extends SQLiteOpenHelper {
                         db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
                     }
                     break;
+                case 19:
+                    // Create table for notification dashboard
+                    db.execSQL(CREATE_NOTIFICATIONS);
+                    break;
             }
             upgradeTo++;
         }
@@ -360,6 +380,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
 
         // Clear the data-related shared prefs
         Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
@@ -1597,6 +1618,65 @@ public class Database extends SQLiteOpenHelper {
                 KEY = "key",
                 TITLES = "titles",
                 YEAR = "year";
+    }
+    
+    public class Notifications{
+        public static final String
+                ID = "id",
+                TYPE = "type",
+                TITLE = "title",
+                BODY = "body",
+                INTENT = "intent",
+                TIME = "time";
+        
+        public void add(StoredNotification... in){
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                for (StoredNotification notification : in) {
+                    db.insert(TABLE_NOTIFICATIONS, null, notification.getParams());
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+        
+        public ArrayList<StoredNotification> get(){
+            ArrayList<StoredNotification> out = new ArrayList<>();
+            Cursor cursor = safeRawQuery("SELECT * FROM ?", new String[]{TABLE_NOTIFICATIONS});
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    out.add(ModelInflater.inflateStoredNotification(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            return out;
+        }
+        
+        private void delete(int id){
+            safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
+        }
+        
+        // Only allow 100 notifications to be stored
+        public void prune(){
+            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
+            if(cursor != null && cursor.moveToFirst()){
+                for(int i=cursor.getCount(); i>100; i--){
+                    delete(cursor.getInt(cursor.getColumnIndex(ID)));
+                    if(!cursor.moveToNext()){
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
