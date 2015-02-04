@@ -92,7 +92,8 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         Log.d(Constants.LOG_TAG, "notifications: " + subscribed);
 
         ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
-        settings.isFavorite = ((CheckBoxPreference) findPreference(MyTBAHelper.getFavoritePreferenceKey())).isChecked();
+        Preference fav = findPreference(MyTBAHelper.getFavoritePreferenceKey());
+        settings.isFavorite = (fav != null && ((CheckBoxPreference) fav).isChecked());
         settings.enabledNotifications = subscribed;
         settings.modelKey = modelKey;
         settings.modelType = modelType;
