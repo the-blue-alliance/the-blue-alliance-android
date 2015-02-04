@@ -15,9 +15,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
@@ -26,6 +27,7 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+import com.thebluealliance.androidclient.models.StoredNotification;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -145,14 +147,23 @@ public class GCMMessageHandler extends IntentService {
                         built.category = Notification.CATEGORY_SOCIAL;
                     }
                 }
+                
+                
 
-                if(!notification.shouldShow()){
-                    return;
+                if(notification.shouldShow()){
+                    notificationManager.notify(notification.getNotificationId(), built); 
                 }
-                notificationManager.notify(notification.getNotificationId(), built);
 
                 /* Update the data coming from this notification in the local db */
                 notification.updateDataLocally(c);
+                
+                /* Store this notification for future access */
+                StoredNotification stored = notification.getStoredNotification();
+                if(stored != null){
+                    Database.Notifications table = Database.getInstance(c).getNotificationsTable();
+                    table.add(stored);
+                    table.prune();
+                }
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...

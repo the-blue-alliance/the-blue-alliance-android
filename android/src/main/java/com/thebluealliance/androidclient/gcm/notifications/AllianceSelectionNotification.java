@@ -4,19 +4,19 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.StoredNotification;
+
+import java.util.Calendar;
 
 /**
  * Created by phil on 11/21/14.
@@ -62,6 +62,13 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewEventActivity.newInstance(context, eventKey), 0);
 
+        stored = new StoredNotification();
+        stored.setType(getNotificationType());
+        stored.setTitle(r.getString(R.string.notification_alliances_updated_title));
+        stored.setBody(contentText);
+        stored.setIntent(ViewEventActivity.newInstance(context, eventKey).toString());
+        stored.setTime(Calendar.getInstance().getTime());
+        
         NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_alliances_updated_title))
                 .setContentText(contentText)

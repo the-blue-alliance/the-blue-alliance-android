@@ -11,6 +11,9 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.models.StoredNotification;
+
+import java.util.Calendar;
 
 /**
  * Created by phil on 11/21/14.
@@ -39,6 +42,13 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
 
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewDistrictActivity.newInstance(context, districtKey), 0);
 
+        stored = new StoredNotification();
+        stored.setType(getNotificationType());
+        stored.setTitle(r.getString(R.string.notification_district_points_title));
+        stored.setBody(contentText);
+        stored.setIntent(ViewDistrictActivity.newInstance(context, districtKey).toString());
+        stored.setTime(Calendar.getInstance().getTime());
+        
         NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_district_points_title))
                 .setContentText(contentText)

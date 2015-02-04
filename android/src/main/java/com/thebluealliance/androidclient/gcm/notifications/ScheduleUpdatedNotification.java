@@ -4,8 +4,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
@@ -15,7 +13,9 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.models.StoredNotification;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -68,6 +68,13 @@ public class ScheduleUpdatedNotification extends BaseNotification {
 
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewEventActivity.newInstance(context, eventKey), 0);
 
+        stored = new StoredNotification();
+        stored.setType(getNotificationType());
+        stored.setTitle(r.getString(R.string.notification_district_points_title));
+        stored.setBody(contentText);
+        stored.setIntent(ViewEventActivity.newInstance(context, eventKey).toString());
+        stored.setTime(Calendar.getInstance().getTime());
+        
         NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_schedule_updated_title))
                 .setContentText(contentText)

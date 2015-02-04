@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.models.StoredNotification;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -27,6 +28,7 @@ public abstract class BaseNotification {
     Gson gson;
     private String logTag;
     protected boolean display;
+    StoredNotification stored;
 
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
@@ -34,6 +36,7 @@ public abstract class BaseNotification {
         this.gson = JSONManager.getGson();
         this.logTag = null;
         this.display = true;
+        this.stored = null;
     }
 
     public boolean shouldShow(){
@@ -51,6 +54,10 @@ public abstract class BaseNotification {
     public abstract void updateDataLocally(Context c);
 
     public abstract int getNotificationId();
+
+    public StoredNotification getStoredNotification(){
+        return stored;
+    }
 
     protected String getLogTag() {
         if (logTag == null) {

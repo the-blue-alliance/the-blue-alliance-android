@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -12,8 +11,6 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -21,8 +18,10 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -163,6 +162,13 @@ public class ScoreNotification extends BaseNotification {
         // We can finally build the notification!
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewMatchActivity.newInstance(context, matchKey), 0);
 
+        stored = new StoredNotification();
+        stored.setType(getNotificationType());
+        stored.setTitle(r.getString(R.string.notification_score_title));
+        stored.setBody(notificationString);
+        stored.setIntent(ViewMatchActivity.newInstance(context, matchKey).toString());
+        stored.setTime(Calendar.getInstance().getTime());
+        
         NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_score_title))
                 .setContentText(notificationString)

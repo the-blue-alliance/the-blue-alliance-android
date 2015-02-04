@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
@@ -17,10 +16,12 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -113,6 +114,13 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         PendingIntent intent = PendingIntent.getActivity(context, 0, ViewMatchActivity.newInstance(context, matchKey), 0);
 
+        stored = new StoredNotification();
+        stored.setType(getNotificationType());
+        stored.setTitle(r.getString(R.string.notification_score_title));
+        stored.setBody(contentText);
+        stored.setIntent(ViewMatchActivity.newInstance(context, matchKey).toString());
+        stored.setTime(Calendar.getInstance().getTime());
+        
         NotificationCompat.Builder builder = getBaseBuilder(context)
                 .setContentTitle(r.getString(R.string.notification_upcoming_match_title))
                 .setContentText(contentText)
