@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -66,6 +67,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         Intent instance = ViewEventActivity.newInstance(context, eventKey);
         PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -79,6 +81,7 @@ public class AllianceSelectionNotification extends BaseNotification{
                 .setContentText(contentText)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)
+                .setDeleteIntent(onDismiss)
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setAutoCancel(true)
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));

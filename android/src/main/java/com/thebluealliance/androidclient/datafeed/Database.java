@@ -176,7 +176,7 @@ public class Database extends SQLiteOpenHelper {
             SearchEvent.KEY + " TEXT PRIMARY KEY, " +
             SearchEvent.TITLES + " TEXT, " +
             SearchEvent.YEAR + " TEXT )";
-    
+
     String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
             Notifications.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             Notifications.TYPE + " TEXT NOT NULL, " +
@@ -184,7 +184,7 @@ public class Database extends SQLiteOpenHelper {
             Notifications.BODY + " TEXT DEFAULT '', " +
             Notifications.INTENT + " TEXT DEFAULT '', " +
             Notifications.TIME + " TIMESTAMP, " +
-            Notifications.SYSTEM_ID + " TEXT NOT NULL, " + 
+            Notifications.SYSTEM_ID + " INTEGER NOT NULL, " +
             Notifications.ACTIVE + " INTEGER DEFAULT 1 )";
 
     protected SQLiteDatabase db;
@@ -283,8 +283,8 @@ public class Database extends SQLiteOpenHelper {
     public Subscriptions getSubscriptionsTable() {
         return subscriptionsTable;
     }
-    
-    public Notifications getNotificationsTable(){
+
+    public Notifications getNotificationsTable() {
         return notificationsTable;
     }
 
@@ -348,14 +348,14 @@ public class Database extends SQLiteOpenHelper {
                 case 17:
                     // add column for district name
                     Cursor dist = db.rawQuery("SELECT * FROM " + TABLE_DISTRICTS + " LIMIT 0,1", null);
-                    if(dist.getColumnIndex(Districts.NAME) == -1) {
+                    if (dist.getColumnIndex(Districts.NAME) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + Districts.NAME + " TEXT DEFAULT '' ");
                     }
                     break;
                 case 18:
                     // add column for event short name
                     Cursor event = db.rawQuery("SELECT * FROM " + TABLE_EVENTS + " LIMIT 0,1", null);
-                    if(event.getColumnIndex(Events.SHORTNAME) == -1) {
+                    if (event.getColumnIndex(Events.SHORTNAME) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
                     }
                     break;
@@ -881,7 +881,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public long add(Match in) {
             try {
-                if (!exists(in.getEventKey())) {
+                if (!exists(in.getKey())) {
                     return safeInsert(TABLE_MATCHES, null, in.getParams());
                 } else {
                     return update(in);
@@ -1622,8 +1622,8 @@ public class Database extends SQLiteOpenHelper {
                 TITLES = "titles",
                 YEAR = "year";
     }
-    
-    public class Notifications{
+
+    public class Notifications {
         public static final String
                 ID = "_id",
                 TYPE = "type",
@@ -1632,9 +1632,9 @@ public class Database extends SQLiteOpenHelper {
                 INTENT = "intent",
                 TIME = "time",
                 SYSTEM_ID = "system_id",
-                ACTIVE = "dismissed";
-        
-        public void add(StoredNotification... in){
+                ACTIVE = "active";
+
+        public void add(StoredNotification... in) {
             Semaphore dbSemaphore = null;
             try {
                 dbSemaphore = getSemaphore();
@@ -1653,10 +1653,10 @@ public class Database extends SQLiteOpenHelper {
                 }
             }
         }
-        
-        public ArrayList<StoredNotification> get(){
+
+        public ArrayList<StoredNotification> get() {
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeRawQuery("SELECT * FROM "+TABLE_NOTIFICATIONS+" ORDER BY "+ID+" DESC", null);
+            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));
@@ -1665,23 +1665,41 @@ public class Database extends SQLiteOpenHelper {
             }
             return out;
         }
-        
-        private void delete(int id){
+
+        public ArrayList<StoredNotification> getActive() {
+            ArrayList<StoredNotification> out = new ArrayList<>();
+            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    out.add(ModelInflater.inflateStoredNotification(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            return out;
+        }
+
+        public void dismissAll() {
+            ContentValues cv = new ContentValues();
+            cv.put(ACTIVE, 0);
+            safeUpdate(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null);
+        }
+
+        private void delete(int id) {
             safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
         }
-        
+
         // Only allow 100 notifications to be stored
-        public void prune(){
+        public void prune() {
             Semaphore dbSemaphore = null;
             try {
                 dbSemaphore = getSemaphore();
                 dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 Cursor cursor = db.query(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
-                if(cursor != null && cursor.moveToFirst()){
-                    for(int i=cursor.getCount(); i>100; i--){
+                if (cursor != null && cursor.moveToFirst()) {
+                    for (int i = cursor.getCount(); i > 100; i--) {
                         db.delete(TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
-                        if(!cursor.moveToNext()){
+                        if (!cursor.moveToNext()) {
                             break;
                         }
                     }
@@ -1782,7 +1800,7 @@ public class Database extends SQLiteOpenHelper {
         return response;
     }
 
-    public int safeDelete(String table, String whereClause, String[] whereArgs){
+    public int safeDelete(String table, String whereClause, String[] whereArgs) {
         return safeDelete(table, whereClause, whereArgs, null);
     }
 

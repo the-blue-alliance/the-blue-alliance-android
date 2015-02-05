@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +17,10 @@ import com.thebluealliance.androidclient.fragments.NotificationDashboardFragment
 public class NotificationDashboardActivity extends RefreshableHostActivity {
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
+
+    public static Intent newInstance(Context c) {
+        return new Intent(c, NotificationDashboardActivity.class);
+    }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {

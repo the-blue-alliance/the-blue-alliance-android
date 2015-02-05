@@ -404,6 +404,13 @@ public class ModelInflater {
                     break;
                 case Database.Notifications.TIME:
                     storedNotification.setTime(new Date(data.getLong(i)));
+                    break;
+                case Database.Notifications.SYSTEM_ID:
+                    storedNotification.setSystemId(data.getInt(i));
+                    break;
+                case Database.Notifications.ACTIVE:
+                    storedNotification.setActive(data.getInt(i));
+                    break;
             }
         }
         return storedNotification;

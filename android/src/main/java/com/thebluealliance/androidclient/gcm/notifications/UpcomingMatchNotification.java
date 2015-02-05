@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.text.DateFormat;
@@ -117,6 +118,7 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         Intent instance = ViewMatchActivity.newInstance(context, matchKey);
         PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -130,6 +132,7 @@ public class UpcomingMatchNotification extends BaseNotification {
                 .setContentText(contentText)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
                 .setContentIntent(intent)
+                .setDeleteIntent(onDismiss)
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setAutoCancel(true)
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));

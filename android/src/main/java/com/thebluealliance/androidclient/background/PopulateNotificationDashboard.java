@@ -39,7 +39,9 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         Log.d(Constants.LOG_TAG, "Starting to fetch notifications");
-        ArrayList<StoredNotification> notifications = Database.getInstance(activity).getNotificationsTable().get();
+        Database.Notifications table = Database.getInstance(activity).getNotificationsTable();
+        table.dismissAll();
+        ArrayList<StoredNotification> notifications = table.get();
         items = new ArrayList<>();
         for(StoredNotification notification: notifications){
             items.add(new LabelValueListItem(notification.getTitle(), notification.getBody(), notification.getIntent()));

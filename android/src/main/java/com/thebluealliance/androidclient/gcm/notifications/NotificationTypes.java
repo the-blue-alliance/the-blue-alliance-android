@@ -18,7 +18,8 @@ public class NotificationTypes {
             BROADCAST = "broadcast",
 
             UPDATE_FAVORITES = "update_favorites",
-            UPDATE_SUBSCRIPTIONS = "update_subscriptions";
+            UPDATE_SUBSCRIPTIONS = "update_subscriptions",
+            SUMMARY = "summary";
 
     public static String getDisplayName(String notificationType){
         switch (notificationType){

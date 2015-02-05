@@ -203,6 +203,9 @@
                 <category android:name="com.thebluealliance.androidclient" />
             </intent-filter>
         </receiver>
+        <receiver 
+            android:name="com.thebluealliance.androidclient.listeners.NotificationDismissedListener"
+            android:exported="false" />
 
         <service android:name="com.thebluealliance.androidclient.gcm.GCMMessageHandler" />
         <service
