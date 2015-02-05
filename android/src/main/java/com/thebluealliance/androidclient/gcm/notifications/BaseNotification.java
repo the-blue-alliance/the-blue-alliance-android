@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 /**
@@ -74,7 +75,9 @@ public abstract class BaseNotification {
     public static NotificationCompat.Builder getBaseBuilder(Context context) {
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setColor(context.getResources().getColor(R.color.accent_dark));
+                .setGroup(GCMMessageHandler.GROUP_KEY)
+                .setColor(context.getResources().getColor(R.color.accent_dark))
+                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
 
     }
 

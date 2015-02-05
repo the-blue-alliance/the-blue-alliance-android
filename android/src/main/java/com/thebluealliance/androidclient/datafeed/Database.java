@@ -183,7 +183,9 @@ public class Database extends SQLiteOpenHelper {
             Notifications.TITLE + " TEXT DEFAULT '', " +
             Notifications.BODY + " TEXT DEFAULT '', " +
             Notifications.INTENT + " TEXT DEFAULT '', " +
-            Notifications.TIME + " TIMESTAMP )";
+            Notifications.TIME + " TIMESTAMP, " +
+            Notifications.SYSTEM_ID + " TEXT NOT NULL, " + 
+            Notifications.ACTIVE + " INTEGER DEFAULT 1 )";
 
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
@@ -1628,7 +1630,9 @@ public class Database extends SQLiteOpenHelper {
                 TITLE = "title",
                 BODY = "body",
                 INTENT = "intent",
-                TIME = "time";
+                TIME = "time",
+                SYSTEM_ID = "system_id",
+                ACTIVE = "dismissed";
         
         public void add(StoredNotification... in){
             Semaphore dbSemaphore = null;
@@ -1666,7 +1670,7 @@ public class Database extends SQLiteOpenHelper {
             safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
         }
         
-        // Only allow 100 notificanulltions to be stored
+        // Only allow 100 notifications to be stored
         public void prune(){
             Semaphore dbSemaphore = null;
             try {

@@ -33,6 +33,8 @@ import com.thebluealliance.androidclient.models.StoredNotification;
  * Created by Nathan on 7/24/2014.
  */
 public class GCMMessageHandler extends IntentService {
+    
+    public static final String GROUP_KEY = "tba-android";
 
     public GCMMessageHandler() {
         super("GCMMessageHandler");

@@ -16,6 +16,8 @@ public class StoredNotification {
     private String body;
     private String intent;
     private Date time;
+    private String systemId;
+    private boolean active;
     
     public StoredNotification(){
     }
@@ -67,7 +69,23 @@ public class StoredNotification {
     public void setTime(Date time) {
         this.time = time;
     }
-    
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = (active == 1);
+    }
+
+    public String getSystemId() {
+        return systemId;
+    }
+
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
+
     public ContentValues getParams(){
         ContentValues params = new ContentValues();
         params.put(Database.Notifications.TYPE, type);
@@ -75,6 +93,8 @@ public class StoredNotification {
         params.put(Database.Notifications.BODY, body);
         params.put(Database.Notifications.INTENT, intent);
         params.put(Database.Notifications.TIME, time.getTime());
+        params.put(Database.Notifications.SYSTEM_ID, systemId);
+        params.put(Database.Notifications.ACTIVE, active?1:0);
         return params;
     }
 }
