@@ -62,7 +62,7 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             if (adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_team_data); //TODO proper string
+                noDataText.setText(R.string.notification_dashboard_no_notifications);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);

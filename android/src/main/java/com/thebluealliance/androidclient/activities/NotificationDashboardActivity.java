@@ -36,7 +36,7 @@ public class NotificationDashboardActivity extends RefreshableHostActivity {
 
     private void setupActionBar(){
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("Recent Notifications"); //TODO make string resource
+        setActionBarTitle(getString(R.string.notification_dashboard_title)); 
     }
     
     @Override
