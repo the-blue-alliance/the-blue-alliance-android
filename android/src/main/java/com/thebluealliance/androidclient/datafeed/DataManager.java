@@ -3,8 +3,10 @@ package com.thebluealliance.androidclient.datafeed;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
@@ -15,6 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
@@ -492,7 +495,7 @@ public class DataManager {
         public static final String LAST_FAVORITES_UPDATE = "last_mytba_favorites_update_%s";
         public static final String LAST_SUBSCRIPTIONS_UPDATE = "last_mytba_subscriptions_update_%s";
 
-        public static APIResponse<ArrayList<Favorite>> updateUserFavorites(Context context, RequestParams requestParams){
+        public static APIResponse<ArrayList<Favorite>> updateUserFavorites(final Context context, RequestParams requestParams){
             String currentUser = AccountHelper.getSelectedAccount(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String prefString = String.format(LAST_FAVORITES_UPDATE, currentUser);
@@ -515,6 +518,13 @@ public class DataManager {
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
             if(service == null){
                 Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+                Handler mainHandler = new Handler(context.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return new APIResponse<>(null, APIResponse.CODE.NODATA);
             }
             ModelsMobileApiMessagesFavoriteCollection favoriteCollection;
@@ -540,7 +550,7 @@ public class DataManager {
             return new APIResponse<>(favoriteModels, APIResponse.CODE.WEBLOAD);
         }
 
-        public static APIResponse<ArrayList<Subscription>> updateUserSubscriptions(Context context, RequestParams requestParams){
+        public static APIResponse<ArrayList<Subscription>> updateUserSubscriptions(final Context context, RequestParams requestParams){
             String currentUser = AccountHelper.getSelectedAccount(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String prefString = String.format(LAST_SUBSCRIPTIONS_UPDATE, currentUser);
@@ -563,6 +573,13 @@ public class DataManager {
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
             if(service == null){
                 Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+                Handler mainHandler = new Handler(context.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return new APIResponse<>(null, APIResponse.CODE.NODATA);
             }
             ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection;

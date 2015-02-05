@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -111,7 +110,6 @@ public class AccountHelper {
         GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
         if(currentCredential == null){
             Log.w(Constants.LOG_TAG, "Unable to get account.");
-            Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
             return null;
         }
         try {
@@ -120,11 +118,9 @@ public class AccountHelper {
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "IO Exception while fetching account token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
-            Toast.makeText(context, context.getString(R.string.mytba_error_io_token), Toast.LENGTH_SHORT).show();
         } catch (GoogleAuthException e) {
             Log.e(Constants.LOG_TAG, "Auth exception while fetching token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
-            Toast.makeText(context, context.getString(R.string.mytba_error_auth), Toast.LENGTH_SHORT).show();
         }
         return AccountHelper.getTbaMobile(currentCredential);
     }

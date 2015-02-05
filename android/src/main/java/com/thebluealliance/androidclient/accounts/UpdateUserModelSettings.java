@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.accounts;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -97,6 +98,13 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                 TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
                 if(service == null){
                     Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+                    Handler mainHandler = new Handler(context.getMainLooper());
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     return Result.ERROR;
                 }
                 ModelsMobileApiMessagesBaseResponse response = service.model().setPreferences(request).execute();

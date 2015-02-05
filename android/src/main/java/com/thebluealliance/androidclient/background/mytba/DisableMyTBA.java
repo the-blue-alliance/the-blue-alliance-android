@@ -2,13 +2,16 @@ package com.thebluealliance.androidclient.background.mytba;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesRegistrationRequest;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.datafeed.Database;
@@ -45,6 +48,13 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
         TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
         if(service == null){
             Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
+            Handler mainHandler = new Handler(context.getMainLooper());
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
+                }
+            });
             return null;
         }
         try {
