@@ -34,15 +34,15 @@ public class SummaryNotification extends BaseNotification {
         for(StoredNotification n: active){
             style.addLine(n.getTitle());
         }
-        style.setBigContentTitle("All Notifications"); //TODO to resource
+        style.setBigContentTitle(context.getString(R.string.notification_summary_title));
         style.setSummaryText(context.getString(R.string.app_name));
         
         PendingIntent intent = PendingIntent.getActivity(context, 0, NotificationDashboardActivity.newInstance(context), 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
         
         Notification summary = new NotificationCompat.Builder(context)
-                .setContentTitle("All Notifications") //TODO move to resource
-                .setContentText(String.format("%d new notifications", active.size()))
+                .setContentTitle(context.getString(R.string.notification_summary_title))
+                .setContentText(String.format(context.getString(R.string.notification_summary), active.size()))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)

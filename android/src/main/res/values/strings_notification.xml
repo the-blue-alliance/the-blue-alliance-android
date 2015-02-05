@@ -62,4 +62,10 @@
     <string name="notification_district_points_title">District Points Updated</string>
     <string name="notification_district_points_updated">District point calculations have been updated for %1$s.</string>
 
+    <!-- *********************
+        Summary Notification
+        ********************* -->
+    <string name="notification_summary_title">All Notifications</string>
+    <string name="notification_summary">%1$d new notifications</string>
+    
 </resources>
