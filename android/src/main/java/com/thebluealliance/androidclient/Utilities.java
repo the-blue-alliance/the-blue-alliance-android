@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -342,6 +343,10 @@ public class Utilities {
 
     public static boolean hasLApis() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+    
+    public static String getDeviceUUID(Context context){
+        return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
 }

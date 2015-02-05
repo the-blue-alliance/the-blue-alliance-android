@@ -2,12 +2,14 @@ package com.thebluealliance.androidclient.background.mytba;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesRegistrationRequest;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
@@ -38,6 +40,7 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();
         request.setMobileId(GCMAuthHelper.getRegistrationId(context));
         request.setOperatingSystem(GCMAuthHelper.OS_ANDROID);
+        request.setDeviceUuid(Utilities.getDeviceUUID(context));
 
         TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
         if(service == null){
@@ -48,6 +51,8 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
             ModelsMobileApiMessagesBaseResponse response = service.unregister(request).execute();
             if(response.getCode() == 200){
                 Log.i(Constants.LOG_TAG, "Unregistered from GCM");
+                //  Remove the GCM ID so it'll be fetched anew if myTBA is re-enabled
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(GCMAuthHelper.PROPERTY_GCM_REG_ID, "").apply();
             }else{
                 Log.e(Constants.LOG_TAG, "error unregistering from gcm: "+response.getMessage());
             }
