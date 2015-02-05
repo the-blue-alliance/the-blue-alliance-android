@@ -191,6 +191,7 @@ public class Database extends SQLiteOpenHelper {
     private static Database sDatabaseInstance;
     private Semaphore mSemaphore;
     private Semaphore mMyTBASemaphore;
+    private Semaphore mNotificationSemaphore;
 
     private Teams teamsTable;
     private Events eventsTable;
@@ -223,6 +224,7 @@ public class Database extends SQLiteOpenHelper {
         notificationsTable = new Notifications();
         mSemaphore = new Semaphore(1);
         mMyTBASemaphore = new Semaphore(1);
+        mNotificationSemaphore = new Semaphore(1);
     }
 
     public Semaphore getSemaphore() {
@@ -231,6 +233,10 @@ public class Database extends SQLiteOpenHelper {
 
     public Semaphore getMyTBASemaphore() {
         return mMyTBASemaphore;
+    }
+    
+    public Semaphore getNotificationSemaphore(){
+        return mNotificationSemaphore;
     }
 
     public static synchronized Database getInstance(Context context) {
@@ -1637,7 +1643,7 @@ public class Database extends SQLiteOpenHelper {
         public void add(StoredNotification... in) {
             Semaphore dbSemaphore = null;
             try {
-                dbSemaphore = getSemaphore();
+                dbSemaphore = getNotificationSemaphore();
                 dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 for (StoredNotification notification : in) {
@@ -1656,7 +1662,7 @@ public class Database extends SQLiteOpenHelper {
 
         public ArrayList<StoredNotification> get() {
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null);
+            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null, getNotificationSemaphore());
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));
@@ -1668,7 +1674,7 @@ public class Database extends SQLiteOpenHelper {
 
         public ArrayList<StoredNotification> getActive() {
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null);
+            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null, getNotificationSemaphore());
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));
@@ -1681,23 +1687,23 @@ public class Database extends SQLiteOpenHelper {
         public void dismissAll() {
             ContentValues cv = new ContentValues();
             cv.put(ACTIVE, 0);
-            safeUpdate(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null);
+            safeUpdate(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null, getNotificationSemaphore());
         }
 
         private void delete(int id) {
-            safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
+            safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)}, getNotificationSemaphore());
         }
 
-        // Only allow 100 notifications to be stored
+        // Only allow 50 notifications to be stored
         public void prune() {
             Semaphore dbSemaphore = null;
             try {
-                dbSemaphore = getSemaphore();
+                dbSemaphore = getNotificationSemaphore();
                 dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 db.beginTransaction();
                 Cursor cursor = db.query(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
                 if (cursor != null && cursor.moveToFirst()) {
-                    for (int i = cursor.getCount(); i > 100; i--) {
+                    for (int i = cursor.getCount(); i > 50; i--) {
                         db.delete(TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
                         if (!cursor.moveToNext()) {
                             break;
@@ -1753,6 +1759,22 @@ public class Database extends SQLiteOpenHelper {
             }
         }
         return cursor;
+    }
+    
+    public Cursor safeRawQuery(String query, String[] args, Semaphore semaphore){
+        Cursor cursor = null;
+        try {
+            semaphore.tryAcquire(10, TimeUnit.SECONDS);
+            cursor = db.rawQuery(query, args);
+        } catch (InterruptedException e) {
+            Log.w("database", "Unable to acquire database semaphore");
+        } finally {
+            if (semaphore != null) {
+                semaphore.release();
+            }
+        }
+        return cursor;
+        
     }
 
     public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
