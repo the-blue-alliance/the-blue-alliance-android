@@ -178,7 +178,7 @@ public class Database extends SQLiteOpenHelper {
             SearchEvent.YEAR + " TEXT )";
     
     String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
-            Notifications.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            Notifications.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             Notifications.TYPE + " TEXT NOT NULL, " +
             Notifications.TITLE + " TEXT DEFAULT '', " +
             Notifications.BODY + " TEXT DEFAULT '', " +
@@ -880,7 +880,7 @@ public class Database extends SQLiteOpenHelper {
         public long add(Match in) {
             try {
                 if (!exists(in.getEventKey())) {
-                    return safeInsert(TABLE_EVENTS, null, in.getParams());
+                    return safeInsert(TABLE_MATCHES, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -1623,7 +1623,7 @@ public class Database extends SQLiteOpenHelper {
     
     public class Notifications{
         public static final String
-                ID = "id",
+                ID = "_id",
                 TYPE = "type",
                 TITLE = "title",
                 BODY = "body",

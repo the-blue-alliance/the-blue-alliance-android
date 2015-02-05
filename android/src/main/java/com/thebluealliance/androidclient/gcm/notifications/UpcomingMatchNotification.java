@@ -116,7 +116,7 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_score_title));
+        stored.setTitle(r.getString(R.string.notification_upcoming_match_title));
         stored.setBody(contentText);
         stored.setIntent(ViewMatchActivity.newInstance(context, matchKey).toString());
         stored.setTime(Calendar.getInstance().getTime());

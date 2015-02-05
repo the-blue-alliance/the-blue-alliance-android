@@ -70,7 +70,6 @@ public class StoredNotification {
     
     public ContentValues getParams(){
         ContentValues params = new ContentValues();
-        params.put(Database.Notifications.ID, id);
         params.put(Database.Notifications.TYPE, type);
         params.put(Database.Notifications.TITLE, title);
         params.put(Database.Notifications.BODY, body);
