@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
@@ -16,6 +17,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -160,13 +162,14 @@ public class ScoreNotification extends BaseNotification {
         }
 
         // We can finally build the notification!
-        PendingIntent intent = PendingIntent.getActivity(context, 0, ViewMatchActivity.newInstance(context, matchKey), 0);
+        Intent instance = ViewMatchActivity.newInstance(context, matchKey);
+        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
         stored.setTitle(r.getString(R.string.notification_score_title));
         stored.setBody(notificationString);
-        stored.setIntent(ViewMatchActivity.newInstance(context, matchKey).toString());
+        stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)

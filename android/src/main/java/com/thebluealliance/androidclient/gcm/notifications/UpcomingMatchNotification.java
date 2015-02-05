@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
@@ -16,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.text.DateFormat;
@@ -112,13 +114,14 @@ public class UpcomingMatchNotification extends BaseNotification {
             }
         }
 
-        PendingIntent intent = PendingIntent.getActivity(context, 0, ViewMatchActivity.newInstance(context, matchKey), 0);
+        Intent instance = ViewMatchActivity.newInstance(context, matchKey);
+        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
         stored.setTitle(r.getString(R.string.notification_upcoming_match_title));
         stored.setBody(contentText);
-        stored.setIntent(ViewMatchActivity.newInstance(context, matchKey).toString());
+        stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)

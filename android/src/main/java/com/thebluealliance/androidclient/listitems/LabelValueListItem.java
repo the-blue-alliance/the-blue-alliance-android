@@ -13,19 +13,28 @@ import com.thebluealliance.androidclient.R;
  */
 public class LabelValueListItem extends ListElement {
 
-    String label, value;
+    String label, value, intent;
     ListItem listItem;
 
+    public LabelValueListItem(String label, String value, String intent) {
+        this.label = label;
+        this.value = value;
+        this.listItem = null;
+        this.intent = intent;
+    }
+    
     public LabelValueListItem(String label, String value) {
         this.label = label;
         this.value = value;
         this.listItem = null;
+        this.intent = "";
     }
 
     public LabelValueListItem(String label, ListItem value) {
         this.label = label;
         this.listItem = value;
         this.value = null;
+        this.intent = "";
     }
 
     @Override
@@ -63,5 +72,9 @@ public class LabelValueListItem extends ListElement {
         TextView label;
         TextView value;
         LinearLayout container;
+    }
+    
+    public String getIntent(){
+        return intent;
     }
 }

@@ -18,7 +18,10 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateNotificationDashboard;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.LabelValueListItem;
+import com.thebluealliance.androidclient.listitems.ListItem;
 
 /**
  * Created by phil on 2/3/15.
@@ -55,7 +58,16 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                //TODO click from data
+                if(mAdapter != null) {
+                    ListItem item = mAdapter.values.get(position);
+                    if (item instanceof LabelValueListItem && getActivity() != null) {
+                        String intent = ((LabelValueListItem) item).getIntent();
+                        Log.d(Constants.LOG_TAG, "Intent: "+intent);
+                        if (!intent.isEmpty()) {
+                            getActivity().startActivity(MyTBAHelper.deserializeIntent(intent));
+                        }
+                    }
+                }
             }
         });
         return view;
@@ -99,6 +111,10 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
         if (task != null) {
             task.cancel(false);
         }
+    }
+    
+    public void setAdapter(ListViewAdapter adapter){
+        mAdapter = adapter;
     }
     
     public void updateTask(PopulateNotificationDashboard task){

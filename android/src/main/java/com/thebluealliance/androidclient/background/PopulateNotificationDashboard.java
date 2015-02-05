@@ -42,7 +42,7 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
         ArrayList<StoredNotification> notifications = Database.getInstance(activity).getNotificationsTable().get();
         items = new ArrayList<>();
         for(StoredNotification notification: notifications){
-            items.add(new LabelValueListItem(notification.getTitle(), notification.getBody()));
+            items.add(new LabelValueListItem(notification.getTitle(), notification.getBody(), notification.getIntent()));
         }
         adapter = new ListViewAdapter(activity, items);
 
@@ -69,6 +69,9 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
                 noDataText.setVisibility(View.GONE);
                 teamList.onRestoreInstanceState(state);
             }
+            
+            // give the parent a reference to the adapter
+            fragment.setAdapter(adapter);
 
             // Remove progress spinner and show content, since we're done loading the data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
