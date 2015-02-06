@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPane
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -31,6 +32,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     private Bundle initialStateBundle;
     private String modelKey;
     private ModelHelper.MODELS modelType;
+    private LoadModelSettingsCallback loadCallback;
 
     private boolean preferencesLoaded = false;
 
@@ -47,6 +49,9 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if(activity instanceof LoadModelSettingsCallback){
+            loadCallback = (LoadModelSettingsCallback)activity;
+        }
     }
 
     @Override
@@ -140,6 +145,9 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     // Call when preferences have been loaded into the fragment
     public void setPreferencesLoaded() {
         preferencesLoaded = true;
+        if(loadCallback != null){
+            loadCallback.onSettingsLoaded();
+        }
     }
 
     public boolean arePreferencesLoaded() {

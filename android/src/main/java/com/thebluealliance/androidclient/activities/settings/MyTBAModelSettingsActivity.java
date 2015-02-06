@@ -22,12 +22,13 @@ import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 /**
  * Created by Nathan on 12/22/2014.
  */
-public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnClickListener, ModelSettingsCallbacks {
+public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
@@ -109,6 +110,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         saveSettingsTaskFragment = (UpdateUserModelSettingsTaskFragment) getSupportFragmentManager().findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
 
         // Create the settings fragment
+        saveModelPreferencesFab.setEnabled(false);
         settings = NotificationSettingsFragment.newInstance(this.modelKey, this.modelType, savedPreferenceState);
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
 
@@ -135,6 +137,12 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private void onNotificationSettingsCloseButtonClick() {
         // Don't save anything, the user doesn't want to
         this.finish();
+    }
+
+    @Override
+    public void onSettingsLoaded() {
+        // Enable the submit button again
+        saveModelPreferencesFab.setEnabled(true);
     }
 
     @Override

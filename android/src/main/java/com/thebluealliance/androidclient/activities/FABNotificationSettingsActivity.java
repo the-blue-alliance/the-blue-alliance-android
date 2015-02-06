@@ -32,12 +32,13 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 /**
  * Created by Nathan on 11/6/2014.
  */
-public abstract class FABNotificationSettingsActivity extends RefreshableHostActivity implements View.OnClickListener, ModelSettingsCallbacks {
+public abstract class FABNotificationSettingsActivity extends RefreshableHostActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private RelativeLayout notificationSettings;
     private FloatingActionButton openNotificationSettingsButton;
@@ -151,6 +152,10 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
         settings = NotificationSettingsFragment.newInstance(modelKey, modelType, savedPreferenceState);
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
+        
+        // Disable the submit settings button so we can't hit it before the content is loaded
+        // This prevents accidently wiping settings (see #317)
+        closeNotificationSettingsButton.setEnabled(false);
     }
 
     @Override
@@ -506,5 +511,10 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             return;
         }
         super.onBackPressed();
+    }
+
+    public void onSettingsLoaded(){
+        // Re-enable the submit button
+        closeNotificationSettingsButton.setEnabled(true);
     }
 }
