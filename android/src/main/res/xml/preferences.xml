@@ -4,7 +4,7 @@
 
     <PreferenceCategory android:title="@string/pref_header_account">
 
-        <Preference
+        <SwitchPreference
             android:key="mytba_enabled"
             android:persistent="false"
             android:title="@string/is_mytba_eabled" />

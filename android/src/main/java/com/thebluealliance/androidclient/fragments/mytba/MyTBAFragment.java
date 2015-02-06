@@ -31,7 +31,7 @@ public class MyTBAFragment extends Fragment {
         if(!AccountHelper.isMyTBAEnabled(getActivity())){
             //show a dialog to reenable myTBA
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            final Intent authIntent = new Intent(getActivity(), AuthenticatorActivity.class);
+            final Intent authIntent = AuthenticatorActivity.newInstance(getActivity(), false);
             builder.setTitle("myTBA is Disabled");
             builder.setMessage("Do you want to enable myTBA?").
                     setPositiveButton("Yes", new DialogInterface.OnClickListener() {

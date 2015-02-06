@@ -6,11 +6,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -65,19 +68,20 @@ public class SettingsActivity extends ActionBarActivity {
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            final Preference enable_mytba = findPreference("mytba_enabled");
-            if (AccountHelper.isMyTBAEnabled(getActivity())) {
-                enable_mytba.setSummary(getString(R.string.mytba_enabled));
-            } else {
-                enable_mytba.setSummary(getString(R.string.mytba_disabled));
-            }
+            final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
             final Activity activity = getActivity();
-            final Intent authIntent = new Intent(getActivity(), AuthenticatorActivity.class);
-            enable_mytba.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            enable_mytba.setChecked(AccountHelper.isMyTBAEnabled(activity));
+            enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    activity.startActivity(authIntent);
-                    activity.finish();
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean enabled = AccountHelper.isMyTBAEnabled(activity);
+                    Log.d(Constants.LOG_TAG, "myTBA is: "+enabled);
+                    if(!enabled){
+                        Intent authIntent = AuthenticatorActivity.newInstance(activity, false);
+                        activity.startActivity(authIntent);
+                    }else{
+                        AccountHelper.enableMyTBA(activity, false);
+                    }
                     return true;
                 }
             });

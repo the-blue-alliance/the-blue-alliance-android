@@ -174,8 +174,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     }
 
     private void authenticate() {
-        startActivity(new Intent(this, AuthenticatorActivity.class));
-        finish();
+        startActivity(AuthenticatorActivity.newInstance(this, true));
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.background.mytba;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,6 +13,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 
@@ -61,8 +61,12 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
             ModelsMobileApiMessagesBaseResponse response = service.unregister(request).execute();
             if(response.getCode() == 200){
                 Log.i(Constants.LOG_TAG, "Unregistered from GCM");
-                //  Remove the GCM ID so it'll be fetched anew if myTBA is re-enabled
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(GCMAuthHelper.PROPERTY_GCM_REG_ID, "").apply();
+                // Remove the GCM ID so it'll be fetched anew if myTBA is re-enabled
+                AccountHelper.setSelectedAccount(context, "");
+                GCMAuthHelper.storeRegistrationId(context, "");
+                if(PlusHelper.isConnected()){
+                    PlusHelper.disconnect();
+                }
             }else{
                 Log.e(Constants.LOG_TAG, "error unregistering from gcm: "+response.getMessage());
             }
@@ -70,10 +74,6 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
             Log.e(Constants.LOG_TAG, "unable to unregister");
             e.printStackTrace();
         }
-
-        //remove selected account
-        AccountHelper.setSelectedAccount(context, "");
-        GCMAuthHelper.storeRegistrationId(context, "");
 
         return null;
     }

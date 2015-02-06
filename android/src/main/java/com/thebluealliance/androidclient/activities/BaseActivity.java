@@ -61,18 +61,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        boolean mytba = AccountHelper.isMyTBAEnabled(this);
-        if (!AccountHelper.isAccountSelected(this) && mytba) {
-            startActivity(new Intent(this, AuthenticatorActivity.class));
-            finish();
-        } else if(mytba && !PlusHelper.isConnected() && !PlusHelper.isConnecting()){
-            PlusHelper.connect(this, this, this);
-        }
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         /* Report the activity stop to GAnalytics */
