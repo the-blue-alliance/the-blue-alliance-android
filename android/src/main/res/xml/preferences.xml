@@ -7,7 +7,7 @@
         <SwitchPreference
             android:key="mytba_enabled"
             android:persistent="false"
-            android:title="@string/is_mytba_eabled" />
+            android:title="@string/is_mytba_enabled" />
 
     </PreferenceCategory>
 
