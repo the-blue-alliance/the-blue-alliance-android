@@ -33,6 +33,7 @@ Environment Setup
 3. Make sure you read through some [Tips and Tricks](https://developer.android.com/sdk/installing/studio-tips.html) for developing with Android Studio.
 4. Use the [Android SDK Manager](https://developer.android.com/tools/help/sdk-manager.html) to download the correct versions of the Android libraries. You will need to download the Android SDK Tools, Android SDK Platform-Tools, and the SDK Platform for Android version 4.4 (API level 19). If you have already downloaded these, double check and make sure they've been updated to the latest version.
 5. If you have an Android device you want to test on, make sure that you have [enabled USB Debugging](http://stackoverflow.com/questions/16707137/how-to-find-and-turn-on-usb-debugging-mode-on-nexus-4) in your Settings menu. Otherwise, [configure a Virtual Device](https://developer.android.com/tools/devices/managing-avds.html) to debug with (you will have to also download the ARM System image from the SDK manager to use a virtual device).
+6. If you want to run Unit Tests from your IDE, make sure that you install the [Android Studio Unit Test Plugin](https://github.com/evant/android-studio-unit-test-plugin). You can install this throught Android Studio's plugin manager ([instructions](https://github.com/evant/android-studio-unit-test-plugin#install-ide-the-plugin))
 
 ### <a name="mytba"></a>
 myTBA Debug Setup
