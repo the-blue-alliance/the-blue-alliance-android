@@ -45,7 +45,7 @@ public class AwardsPostedNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
         eventName = jsonData.get("event_name").getAsString();
-        if(!jsonData.has("awards") || jsonData.get("awards").isJsonArray()){
+        if(!jsonData.has("awards") || !jsonData.get("awards").isJsonArray()){
             throw new JsonParseException("Notification data does not contain 'awards' list");
         }
         JsonArray awardArray = jsonData.get("awards").getAsJsonArray();
