@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.test.datafeed;
 
-import android.test.suitebuilder.annotation.MediumTest;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -17,17 +16,21 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
-import junit.framework.TestCase;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * File created by phil on 5/8/14.
  */
-public class TestTBAApi extends TestCase {
+@RunWith(RobolectricTestRunner.class)
+public class TBAApiTest {
 
-    @MediumTest
+    @org.junit.Test
     public void testParseEvent() {
         String eventJson = "{\"key\": \"2014ctgro\", \"end_date\": \"2014-03-09\", \"name\": \"Groton District Event\", \"short_name\": \"Groton\", \"facebook_eid\": null, \"official\": true, \"location\": \"Groton, CT, USA\", \"event_code\": \"ctgro\", \"year\": 2014, \"event_type_string\": \"District\", \"start_date\": \"2014-03-08\", \"event_type\": 1}";
         Event event = JSONManager.getGson().fromJson(eventJson, Event.class);
@@ -48,7 +51,7 @@ public class TestTBAApi extends TestCase {
         }
     }
 
-    @MediumTest
+    @org.junit.Test
     public void testParseTeam() {
         String teamJson = "{\n" +
                 "  \"website\": \"http://www.uberbots.org\",\n" +
@@ -77,7 +80,7 @@ public class TestTBAApi extends TestCase {
         }
     }
 
-    @MediumTest
+    @org.junit.Test
     public void testParseMedia() {
         String mediaJson = "[" +
                 "  {" +
@@ -119,7 +122,7 @@ public class TestTBAApi extends TestCase {
         }
     }
 
-    @MediumTest
+    @org.junit.Test
     public void testParseMatch() {
         String matchJson = "{\"comp_level\": \"f\", \"match_number\": 1, \"videos\": [{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}], \"time_string\": \"3:36 PM\", \"set_number\": 1, \"key\": \"2014ctgro_f1m1\", \"time\": \"1394393760\", \"alliances\": {\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}, \"event_key\": \"2014ctgro\"}";
         Match match = JSONManager.getGson().fromJson(matchJson, Match.class);
@@ -140,7 +143,7 @@ public class TestTBAApi extends TestCase {
         }
     }
 
-    @MediumTest
+    @org.junit.Test
     public void testParseAwardNoAwardee() {
         String json = "{\n" +
                 "    \"event_key\": \"2010sc\",\n" +
@@ -180,7 +183,7 @@ public class TestTBAApi extends TestCase {
         }
     }
 
-    @MediumTest
+    @org.junit.Test
     public void testParseAwardNoTeam() {
         String json = "{\n" +
                 "    \"event_key\": \"2010sc\",\n" +
