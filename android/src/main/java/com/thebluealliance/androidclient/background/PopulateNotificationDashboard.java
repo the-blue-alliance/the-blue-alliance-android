@@ -44,7 +44,7 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
         ArrayList<StoredNotification> notifications = table.get();
         items = new ArrayList<>();
         for(StoredNotification notification: notifications){
-            items.add(new LabelValueListItem(notification.getTitle(), notification.getBody(), notification.getIntent()));
+            items.add(new LabelValueListItem(notification.getTitle(), notification.getBody(), notification.getIntent(), R.layout.list_item_carded_summary));
         }
         adapter = new ListViewAdapter(activity, items);
 

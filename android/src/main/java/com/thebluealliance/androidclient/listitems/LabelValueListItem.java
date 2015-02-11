@@ -15,12 +15,14 @@ public class LabelValueListItem extends ListElement {
 
     String label, value, intent;
     ListItem listItem;
+    int layout;
 
-    public LabelValueListItem(String label, String value, String intent) {
+    public LabelValueListItem(String label, String value, String intent, int layout) {
         this.label = label;
         this.value = value;
         this.listItem = null;
         this.intent = intent;
+        this.layout = layout;
     }
     
     public LabelValueListItem(String label, String value) {
@@ -42,7 +44,7 @@ public class LabelValueListItem extends ListElement {
         ViewHolder holder;
 
         if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
-            convertView = inflater.inflate(R.layout.list_item_summary, null);
+            convertView = inflater.inflate(layout, null);
 
             holder = new ViewHolder();
             holder.label = (TextView) convertView.findViewById(R.id.label);
