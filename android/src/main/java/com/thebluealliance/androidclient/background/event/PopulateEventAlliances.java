@@ -109,7 +109,7 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
             secondLoad.execute(eventKey);
         } else {
             // Show notification if we've refreshed data.
-            if (mFragment instanceof RefreshListener) {
+            if (activity != null && mFragment instanceof RefreshListener) {
                 Log.d(Constants.REFRESH_LOG, "Event " + eventKey + " alliances refresh complete");
                 activity.notifyRefreshComplete(mFragment);
             }

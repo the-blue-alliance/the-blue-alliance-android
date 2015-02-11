@@ -244,7 +244,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         } else {
             // Show notification if we've refreshed data.
             Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
-            if (activity instanceof RefreshableHostActivity) {
+            if (activity != null && activity instanceof RefreshableHostActivity) {
                 activity.notifyRefreshComplete(fragment);
             }
         }

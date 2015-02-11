@@ -148,7 +148,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         } else {
             // Show notification if we've refreshed data.
             Log.i(Constants.REFRESH_LOG, "Team " + mTeamKey + " info refresh complete");
-            if (mFragment instanceof RefreshListener) {
+            if (activity != null && mFragment instanceof RefreshListener) {
                 activity.notifyRefreshComplete(mFragment);
             }
         }

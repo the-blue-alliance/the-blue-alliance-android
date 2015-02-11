@@ -152,7 +152,7 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
             secondLoad.execute(eventKey);
         } else {
             // Show notification if we've refreshed data.
-            if (mFragment instanceof RefreshListener) {
+            if (activity != null && mFragment instanceof RefreshListener) {
                 Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Rankings refresh complete");
                 activity.notifyRefreshComplete(mFragment);
             }

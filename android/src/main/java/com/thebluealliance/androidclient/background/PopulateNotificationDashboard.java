@@ -81,7 +81,7 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
 
 
             // Show notification if we've refreshed data.
-            if (fragment instanceof RefreshListener) {
+            if (activity != null && fragment instanceof RefreshListener) {
                 Log.d(Constants.REFRESH_LOG, "Notification dashboard refresh complete");
                 activity.notifyRefreshComplete(fragment);
             }

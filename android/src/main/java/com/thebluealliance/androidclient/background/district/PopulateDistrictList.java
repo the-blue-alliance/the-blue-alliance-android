@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
@@ -102,10 +101,10 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
                 PopulateDistrictList second = new PopulateDistrictList(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(year);
-            } else {
+            } else if(activity != null){
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Event list refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) fragment);
+                activity.notifyRefreshComplete(fragment);
             }
 
         }

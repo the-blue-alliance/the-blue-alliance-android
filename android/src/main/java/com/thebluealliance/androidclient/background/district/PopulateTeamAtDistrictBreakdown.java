@@ -178,7 +178,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
             PopulateTeamAtDistrictBreakdown secondLoad = new PopulateTeamAtDistrictBreakdown(fragment, requestParams);
             fragment.updateTask(secondLoad);
             secondLoad.execute(teamKey, districtKey);
-        } else {
+        } else if(activity != null){
             // Show notification if we've refreshed data.
             if (fragment instanceof RefreshListener) {
                 Log.d(Constants.REFRESH_LOG, teamKey + " at " + districtKey + " refresh complete");
