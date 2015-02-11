@@ -119,7 +119,7 @@ public class CardedAwardListElement extends ListElement {
             winnerLine1.setText(awardLine1);
 
             TextView winnerLine2 = (TextView) winnerView.findViewById(R.id.winner_line_2);
-            if (awardLine2 == "") {
+            if (awardLine2.isEmpty()) {
                 winnerLine2.setVisibility(View.GONE);
             } else {
                 winnerLine2.setText(awardLine2);

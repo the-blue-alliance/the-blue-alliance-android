@@ -121,7 +121,7 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
                 secondLoad.execute();
             } else {
                 // Show notification if we've refreshed data.
-                if (fragment instanceof RefreshListener) {
+                if (activity != null && fragment instanceof RefreshListener) {
                     Log.d(Constants.REFRESH_LOG, "User subscriptions refresh complete");
                     activity.notifyRefreshComplete(fragment);
                 }

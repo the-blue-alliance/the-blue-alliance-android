@@ -16,6 +16,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.models.StoredNotification;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -27,6 +29,7 @@ public abstract class BaseNotification {
     Gson gson;
     private String logTag;
     protected boolean display;
+    StoredNotification stored;
 
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
@@ -34,6 +37,7 @@ public abstract class BaseNotification {
         this.gson = JSONManager.getGson();
         this.logTag = null;
         this.display = true;
+        this.stored = null;
     }
 
     public boolean shouldShow(){
@@ -52,6 +56,10 @@ public abstract class BaseNotification {
 
     public abstract int getNotificationId();
 
+    public StoredNotification getStoredNotification(){
+        return stored;
+    }
+
     protected String getLogTag() {
         if (logTag == null) {
             logTag = Constants.LOG_TAG + "/" + messageType;
@@ -67,7 +75,9 @@ public abstract class BaseNotification {
     public static NotificationCompat.Builder getBaseBuilder(Context context) {
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setColor(context.getResources().getColor(R.color.accent_dark));
+                .setGroup(GCMMessageHandler.GROUP_KEY)
+                .setColor(context.getResources().getColor(R.color.accent_dark))
+                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
 
     }
 

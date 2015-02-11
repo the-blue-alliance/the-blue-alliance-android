@@ -240,7 +240,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             secondLoad.execute(eventKey, teamKey);
         } else {
             // Show notification if we've refreshed data.
-            if (mFragment instanceof RefreshListener) {
+            if (activity != null && mFragment instanceof RefreshListener) {
                 Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Results refresh complete");
                 activity.notifyRefreshComplete(mFragment);
             }

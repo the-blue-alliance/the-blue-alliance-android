@@ -115,7 +115,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                 PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(districtKey);
-            } else {
+            } else if(activity != null){
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "District rankings refresh complete");
                 activity.notifyRefreshComplete(fragment);

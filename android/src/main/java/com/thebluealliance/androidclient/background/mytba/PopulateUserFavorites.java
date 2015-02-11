@@ -121,7 +121,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
                 secondLoad.execute();
             } else {
                 // Show notification if we've refreshed data.
-                if (fragment instanceof RefreshListener) {
+                if (activity != null && fragment instanceof RefreshListener) {
                     Log.d(Constants.REFRESH_LOG, "User favorites refresh complete");
                     activity.notifyRefreshComplete(fragment);
                 }

@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -40,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 20;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -56,7 +57,8 @@ public class Database extends SQLiteOpenHelper {
             TABLE_SUBSCRIPTIONS = "subscriptions",
             TABLE_SEARCH = "search",
             TABLE_SEARCH_TEAMS = "search_teams",
-            TABLE_SEARCH_EVENTS = "search_events";
+            TABLE_SEARCH_EVENTS = "search_events",
+            TABLE_NOTIFICATIONS = "notifications";
 
     String CREATE_API = "CREATE TABLE IF NOT EXISTS " + TABLE_API + "("
             + Response.URL + " TEXT PRIMARY KEY NOT NULL, "
@@ -175,10 +177,21 @@ public class Database extends SQLiteOpenHelper {
             SearchEvent.TITLES + " TEXT, " +
             SearchEvent.YEAR + " TEXT )";
 
+    String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
+            Notifications.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            Notifications.TYPE + " TEXT NOT NULL, " +
+            Notifications.TITLE + " TEXT DEFAULT '', " +
+            Notifications.BODY + " TEXT DEFAULT '', " +
+            Notifications.INTENT + " TEXT DEFAULT '', " +
+            Notifications.TIME + " TIMESTAMP, " +
+            Notifications.SYSTEM_ID + " INTEGER NOT NULL, " +
+            Notifications.ACTIVE + " INTEGER DEFAULT 1 )";
+
     protected SQLiteDatabase db;
     private static Database sDatabaseInstance;
     private Semaphore mSemaphore;
     private Semaphore mMyTBASemaphore;
+    private Semaphore mNotificationSemaphore;
 
     private Teams teamsTable;
     private Events eventsTable;
@@ -191,6 +204,7 @@ public class Database extends SQLiteOpenHelper {
     private DistrictTeams districtTeamsTable;
     private Favorites favoritesTable;
     private Subscriptions subscriptionsTable;
+    private Notifications notificationsTable;
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -207,8 +221,10 @@ public class Database extends SQLiteOpenHelper {
         favoritesTable = new Favorites();
         subscriptionsTable = new Subscriptions();
         responseTable = new Response();
+        notificationsTable = new Notifications();
         mSemaphore = new Semaphore(1);
         mMyTBASemaphore = new Semaphore(1);
+        mNotificationSemaphore = new Semaphore(1);
     }
 
     public Semaphore getSemaphore() {
@@ -217,6 +233,10 @@ public class Database extends SQLiteOpenHelper {
 
     public Semaphore getMyTBASemaphore() {
         return mMyTBASemaphore;
+    }
+    
+    public Semaphore getNotificationSemaphore(){
+        return mNotificationSemaphore;
     }
 
     public static synchronized Database getInstance(Context context) {
@@ -270,6 +290,10 @@ public class Database extends SQLiteOpenHelper {
         return subscriptionsTable;
     }
 
+    public Notifications getNotificationsTable() {
+        return notificationsTable;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_API);
@@ -283,6 +307,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_DISTRICTTEAMS);
         db.execSQL(CREATE_FAVORITES);
         db.execSQL(CREATE_SUBSCRIPTIONS);
+        db.execSQL(CREATE_NOTIFICATIONS);
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
@@ -329,16 +354,20 @@ public class Database extends SQLiteOpenHelper {
                 case 17:
                     // add column for district name
                     Cursor dist = db.rawQuery("SELECT * FROM " + TABLE_DISTRICTS + " LIMIT 0,1", null);
-                    if(dist.getColumnIndex(Districts.NAME) == -1) {
+                    if (dist.getColumnIndex(Districts.NAME) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + Districts.NAME + " TEXT DEFAULT '' ");
                     }
                     break;
                 case 18:
                     // add column for event short name
                     Cursor event = db.rawQuery("SELECT * FROM " + TABLE_EVENTS + " LIMIT 0,1", null);
-                    if(event.getColumnIndex(Events.SHORTNAME) == -1) {
+                    if (event.getColumnIndex(Events.SHORTNAME) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
                     }
+                    break;
+                case 20:
+                    // Create table for notification dashboard
+                    db.execSQL(CREATE_NOTIFICATIONS);
                     break;
             }
             upgradeTo++;
@@ -360,6 +389,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
 
         // Clear the data-related shared prefs
         Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
@@ -857,8 +887,8 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public long add(Match in) {
             try {
-                if (!exists(in.getEventKey())) {
-                    return safeInsert(TABLE_EVENTS, null, in.getParams());
+                if (!exists(in.getKey())) {
+                    return safeInsert(TABLE_MATCHES, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -1599,6 +1629,99 @@ public class Database extends SQLiteOpenHelper {
                 YEAR = "year";
     }
 
+    public class Notifications {
+        public static final String
+                ID = "_id",
+                TYPE = "type",
+                TITLE = "title",
+                BODY = "body",
+                INTENT = "intent",
+                TIME = "time",
+                SYSTEM_ID = "system_id",
+                ACTIVE = "active";
+
+        public void add(StoredNotification... in) {
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getNotificationSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                for (StoredNotification notification : in) {
+                    db.insert(TABLE_NOTIFICATIONS, null, notification.getParams());
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+
+        public ArrayList<StoredNotification> get() {
+            ArrayList<StoredNotification> out = new ArrayList<>();
+            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null, getNotificationSemaphore());
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    out.add(ModelInflater.inflateStoredNotification(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            return out;
+        }
+
+        public ArrayList<StoredNotification> getActive() {
+            ArrayList<StoredNotification> out = new ArrayList<>();
+            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null, getNotificationSemaphore());
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    out.add(ModelInflater.inflateStoredNotification(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            return out;
+        }
+
+        public void dismissAll() {
+            ContentValues cv = new ContentValues();
+            cv.put(ACTIVE, 0);
+            safeUpdate(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null, getNotificationSemaphore());
+        }
+
+        private void delete(int id) {
+            safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)}, getNotificationSemaphore());
+        }
+
+        // Only allow 50 notifications to be stored
+        public void prune() {
+            Semaphore dbSemaphore = null;
+            try {
+                dbSemaphore = getNotificationSemaphore();
+                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+                db.beginTransaction();
+                Cursor cursor = db.query(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    for (int i = cursor.getCount(); i > 50; i--) {
+                        db.delete(TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
+                        if (!cursor.moveToNext()) {
+                            break;
+                        }
+                    }
+                }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (InterruptedException e) {
+                Log.w("database", "Unable to acquire database semaphore");
+            } finally {
+                if (dbSemaphore != null) {
+                    dbSemaphore.release();
+                }
+            }
+        }
+    }
+
     public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
         return safeQuery(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, null);
     }
@@ -1636,6 +1759,22 @@ public class Database extends SQLiteOpenHelper {
             }
         }
         return cursor;
+    }
+    
+    public Cursor safeRawQuery(String query, String[] args, Semaphore semaphore){
+        Cursor cursor = null;
+        try {
+            semaphore.tryAcquire(10, TimeUnit.SECONDS);
+            cursor = db.rawQuery(query, args);
+        } catch (InterruptedException e) {
+            Log.w("database", "Unable to acquire database semaphore");
+        } finally {
+            if (semaphore != null) {
+                semaphore.release();
+            }
+        }
+        return cursor;
+        
     }
 
     public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
@@ -1683,7 +1822,7 @@ public class Database extends SQLiteOpenHelper {
         return response;
     }
 
-    public int safeDelete(String table, String whereClause, String[] whereArgs){
+    public int safeDelete(String table, String whereClause, String[] whereArgs) {
         return safeDelete(table, whereClause, whereArgs, null);
     }
 

@@ -15,9 +15,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
@@ -25,12 +26,16 @@ import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
+import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+import com.thebluealliance.androidclient.models.StoredNotification;
 
 /**
  * Created by Nathan on 7/24/2014.
  */
 public class GCMMessageHandler extends IntentService {
+
+    public static final String GROUP_KEY = "tba-android";
 
     public GCMMessageHandler() {
         super("GCMMessageHandler");
@@ -100,10 +105,10 @@ public class GCMMessageHandler extends IntentService {
                     break;
             }
 
-            if(notification == null) return;
+            if (notification == null) return;
             try {
                 notification.parseMessageData();
-            } catch (JsonParseException e){
+            } catch (JsonParseException e) {
                 Log.e(Constants.LOG_TAG, "Error parsing incoming message json");
                 Log.e(Constants.LOG_TAG, e.getMessage());
                 e.printStackTrace();
@@ -111,48 +116,76 @@ public class GCMMessageHandler extends IntentService {
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
             boolean enabled = prefs.getBoolean("enable_notifications", true);
-            if(enabled){
-                Notification built = notification.buildNotification(c);
-                if(prefs.getBoolean("notification_vibrate", true)){
+            if (enabled) {
+                Notification built;
+                int id;
+
+                built = notification.buildNotification(c);
+                id = notification.getNotificationId();
+                
+                
+                /* Set notification parameters */
+                if (prefs.getBoolean("notification_vibrate", true)) {
                     built.defaults |= Notification.DEFAULT_VIBRATE;
                 }
-                if(prefs.getBoolean("notification_tone", true)){
+                if (prefs.getBoolean("notification_tone", true)) {
                     built.defaults |= Notification.DEFAULT_SOUND;
                 }
 
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     int priority = Notification.PRIORITY_HIGH;
-                    switch (messageType){
-                        case NotificationTypes.PING: priority = Notification.PRIORITY_LOW;
+                    switch (messageType) {
+                        case NotificationTypes.PING:
+                            priority = Notification.PRIORITY_LOW;
                     }
 
                     boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
-                    if(headsUpPref) {
+                    if (headsUpPref) {
                         built.priority = priority;
-                    }else{
+                    } else {
                         built.priority = Notification.PRIORITY_DEFAULT;
                     }
 
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                        String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility","private");
-                        switch (pref){
-                            case "public":  built.visibility = Notification.VISIBILITY_PUBLIC; break;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility", "private");
+                        switch (pref) {
+                            case "public":
+                                built.visibility = Notification.VISIBILITY_PUBLIC;
+                                break;
                             default:
-                            case "private": built.visibility = Notification.VISIBILITY_PRIVATE; break;
-                            case "secret":  built.visibility = Notification.VISIBILITY_SECRET; break;
+                            case "private":
+                                built.visibility = Notification.VISIBILITY_PRIVATE;
+                                break;
+                            case "secret":
+                                built.visibility = Notification.VISIBILITY_SECRET;
+                                break;
                         }
 
                         built.category = Notification.CATEGORY_SOCIAL;
                     }
                 }
 
-                if(!notification.shouldShow()){
-                    return;
+                if (notification.shouldShow()) {
+                    notificationManager.notify(id, built);
                 }
-                notificationManager.notify(notification.getNotificationId(), built);
 
                 /* Update the data coming from this notification in the local db */
                 notification.updateDataLocally(c);
+                
+                /* Store this notification for future access */
+                StoredNotification stored = notification.getStoredNotification();
+                if (stored != null) {
+                    Database.Notifications table = Database.getInstance(c).getNotificationsTable();
+                    table.add(stored);
+                    table.prune();
+                }
+
+                if(SummaryNotification.isNotificationActive(c) && notification.shouldShow()) {
+                    SummaryNotification summary = new SummaryNotification();
+                    built = summary.buildNotification(c);
+                    id = summary.getNotificationId();
+                    notificationManager.notify(id, built);
+                }
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
