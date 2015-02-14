@@ -107,6 +107,10 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
                     eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, new RequestParams(false, true, true));
                     if(eventListResponse.getCode() == APIResponse.CODE.WEBLOAD || eventListResponse.getCode() == APIResponse.CODE.UPDATED) {
+                        if(eventListResponse.getData() == null || eventListResponse.getData().isEmpty()){
+                            onConnectionError();
+                            return null;
+                        }
                         JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
                         if (responseObject instanceof JsonObject) {
                             if (((JsonObject) responseObject).has("404")) {
@@ -175,9 +179,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));
         } catch (DataManager.NoDataException e) {
             e.printStackTrace();
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, context.getString(R.string.connection_lost)));
-            // Wipe any partially cached responses
-            Database.getInstance(context).getResponseTable().deleteAllResponses();
+            onConnectionError();
         } catch (Exception e) {
             // This is bad, probably an error in the response from the server
             e.printStackTrace();
@@ -187,6 +189,12 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(e)));
         }
         return null;
+    }
+    
+    private void onConnectionError(){
+        publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, context.getString(R.string.connection_lost)));
+        // Wipe any partially cached responses
+        Database.getInstance(context).getResponseTable().deleteAllResponses();
     }
 
     @Override
