@@ -39,7 +39,14 @@ public class SettingsActivity extends ActionBarActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             Preference appVersion = findPreference("app_version");
-            appVersion.setSummary(BuildConfig.VERSION_NAME);
+            String versionInfo;
+            String[] versionData = BuildConfig.VERSION_NAME.split("/");
+            if(Utilities.isDebuggable()){
+                versionInfo = String.format(getString(R.string.settings_build_info_summary_debug), versionData[0], versionData[1], versionData[2]);
+            }else{
+                versionInfo = String.format(getString(R.string.settings_build_info_summary), versionData[0], versionData[1]);
+            }
+            appVersion.setSummary(versionInfo);
 
             Preference githubLink = findPreference("github_link");
             githubLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/")));
@@ -58,15 +65,15 @@ public class SettingsActivity extends ActionBarActivity {
 
             Preference changelog = findPreference("changelog");
             String version = BuildConfig.VERSION_NAME;
-            if (version.contains("/")) {
+            if (Utilities.isDebuggable()) {
                 // if debug build, the version string will be like v0.1/#<sha hash>
                 // so load the page for the most recent commit
-                String sha = version.split("/")[1];
+                String sha = versionData[2];
                 sha = sha.replace("#", "");
                 changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/commit/" + sha)));
             } else {
                 // this is not a debug build, so link to the GitHub release page tagged with the version name
-                changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v" + version)));
+                changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v" + versionData[0])));
             }
 
             Preference tbaLink = findPreference("tba_link");

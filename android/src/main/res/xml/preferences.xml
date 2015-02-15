@@ -55,7 +55,7 @@
             android:key="app_version"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/settings_version_label" />
+            android:title="@string/settings_build_info_label" />
 
         <Preference
             android:key="licenses"
