@@ -7,10 +7,16 @@ import android.os.Handler;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
@@ -24,7 +30,8 @@ import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
  * Created by Nathan on 5/15/2014.
  */
 
-public abstract class NavigationDrawerActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerListener {
+public abstract class NavigationDrawerActivity extends ActionBarActivity 
+        implements NavigationDrawerFragment.NavigationDrawerListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
@@ -309,6 +316,26 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity impleme
         if (mNavDrawerFragment != null) {
             mNavDrawerFragment.setDrawerProfileInfo();
         }
+    }
+    
+    
+    /* Plus callbacks */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        PlusHelper.onConnectCommon(this);
+        if(mNavDrawerFragment != null){
+            mNavDrawerFragment.setDrawerProfileInfo();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.w(Constants.LOG_TAG, "Failed to connect to G+");
+        Toast.makeText(this, "Failed to connect to G+ API", Toast.LENGTH_SHORT).show();
     }
 
 }

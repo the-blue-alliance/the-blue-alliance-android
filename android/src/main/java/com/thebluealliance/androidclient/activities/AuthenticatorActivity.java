@@ -132,8 +132,6 @@ public class AuthenticatorActivity extends PlusBaseActivity {
 
     @Override
     protected void onPlusClientSignIn() {
-        AccountHelper.enableMyTBA(this, true);
-        AccountHelper.setSelectedAccount(this, PlusHelper.getAccountName());
         startActivity(HomeActivity.newInstance(this, 0));
     }
 

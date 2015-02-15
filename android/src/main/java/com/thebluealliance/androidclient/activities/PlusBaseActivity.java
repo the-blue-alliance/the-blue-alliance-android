@@ -221,14 +221,7 @@ public abstract class PlusBaseActivity extends Activity
         updateConnectButtonState();
         setProgressBarVisible(false);
 
-        String accountName = PlusHelper.getAccountName();
-        AccountHelper.setSelectedAccount(this, accountName);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
-        GCMHelper.registerGCMIfNeeded(this);
-        new UpdateMyTBA(this, new RequestParams(true, false)).execute();
-
-        registerSystemAccount(accountName);
+        PlusHelper.onConnectCommon(this);
 
         onPlusClientSignIn();
     }
@@ -260,17 +253,5 @@ public abstract class PlusBaseActivity extends Activity
                 startResolution();
             }
         }
-    }
-
-    public boolean registerSystemAccount(String accountName){
-        // register the account with the system
-        AccountManager accountManager = AccountManager.get(this);
-        if(accountManager.getAccountsByType(getString(R.string.account_type)).length == 0) {
-            Account account = new Account(accountName, this.getString(R.string.account_type));
-            return accountManager.addAccountExplicitly(account, null, null);
-        }
-
-        //account already exists
-        return true;
     }
 }

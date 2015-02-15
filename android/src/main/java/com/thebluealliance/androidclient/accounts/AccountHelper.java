@@ -147,6 +147,18 @@ public class AccountHelper {
         }
     }
 
+    public static boolean registerSystemAccount(Context context, String accountName){
+        // register the account with the system
+        AccountManager accountManager = AccountManager.get(context);
+        if(accountManager.getAccountsByType(context.getString(R.string.account_type)).length == 0) {
+            Account account = new Account(accountName, context.getString(R.string.account_type));
+            return accountManager.addAccountExplicitly(account, null, null);
+        }
+
+        //account already exists
+        return true;
+    }
+
     public static boolean checkGooglePlayServicesAvailable(Activity activity) {
         final int connectionStatusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
         if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {

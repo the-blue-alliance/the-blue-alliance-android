@@ -42,6 +42,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
@@ -204,8 +205,14 @@ public class NavigationDrawerFragment extends Fragment {
             }
         } else {
             // This is bad. Show some default info.
+            Log.w(Constants.LOG_TAG, "Plus is not connected. Can't show profile info. Attempting to reconnect...");
             picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
-            profileName.setText(R.string.default_user_name);
+            profileName.setText("");
+            
+            Activity activity = getActivity();
+            if(activity != null && activity instanceof NavigationDrawerActivity){
+                PlusHelper.connect(activity, (NavigationDrawerActivity)activity, (NavigationDrawerActivity)activity);
+            }
         }
     }
 
