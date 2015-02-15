@@ -53,12 +53,13 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        String label = thisYearsWeekLabels.get(position);
+        /*String label = thisYearsWeekLabels.get(position);
         if (mCurrent.equals(label)) {
             return "Current Week";
         } else {
             return label;
-        }
+        }*/
+        return thisYearsWeekLabels.get(position);
     }
 
     @Override
