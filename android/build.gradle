@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+def gitBranch = 'git rev-parse --abbrev-ref HEAD'.execute([], project.rootDir).text.trim()
 
 android {
     compileSdkVersion 21
@@ -26,7 +27,7 @@ android {
 
         buildTypes {
             debug {
-                versionNameSuffix "/#" + gitSha
+                versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
                 applicationVariants.all { variant ->
                     variant.outputs.each { output ->
@@ -40,13 +41,8 @@ android {
             // 'adb install -r <file name>'
             debugBlue {
                 signingConfig signingConfigs.debug
-                versionNameSuffix "/#" + gitSha
+                versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
-                applicationVariants.all { variant ->
-                    variant.outputs.each { output ->
-                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + defaultConfig.versionName + "-debug.apk")
-                    }
-                }
             }
 
             release {
@@ -54,12 +50,22 @@ android {
                 minifyEnabled true
                 zipAlignEnabled true
                 proguardFiles 'proguard-rules.txt'
-                applicationVariants.all { variant ->
-                    variant.outputs.each { output ->
-                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + defaultConfig.versionName + ".apk")
-                    }
-                }
             }
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        println "*********" + variant.description + "**********";
+        variant.outputs.each { output ->
+            def apkName = "tba-android-";
+            apkName += "v" + android.defaultConfig.versionName;
+            if (variant.buildType.name == "release") {
+                apkName += "-RELEASE.apk";
+            } else {
+                apkName += "-debug.apk";
+            }
+            println "*********" + "$project.buildDir/apk/" + apkName + "**********";
+            output.outputFile = file("$project.buildDir/apk/" + apkName)
         }
     }
 
