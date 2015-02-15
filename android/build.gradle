@@ -29,11 +29,6 @@ android {
             debug {
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
-                applicationVariants.all { variant ->
-                    variant.outputs.each { output ->
-                        output.outputFile = new File(output.outputFile.parent, "tba-android-v" + gitSha + ".apk")
-                    }
-                }
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -46,6 +41,7 @@ android {
             }
 
             release {
+                versionNameSuffix "/"+gitBranch
                 signingConfig signingConfigs.release
                 minifyEnabled true
                 zipAlignEnabled true
@@ -59,11 +55,7 @@ android {
         variant.outputs.each { output ->
             def apkName = "tba-android-";
             apkName += "v" + android.defaultConfig.versionName;
-            if (variant.buildType.name == "release") {
-                apkName += "-RELEASE.apk";
-            } else {
-                apkName += "-debug.apk";
-            }
+            apkName += "-" + variant.buildType.name;
             println "*********" + "$project.buildDir/apk/" + apkName + "**********";
             output.outputFile = file("$project.buildDir/apk/" + apkName)
         }
