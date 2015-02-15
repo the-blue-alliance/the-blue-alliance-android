@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 30
-        versionName "2.1.2"
+        versionCode 31
+        versionName "2.1.3"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -32,7 +32,7 @@ android {
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
-            // the apk will be in android/build/outputs/apk and you can install it by running
+            // the apk will be in android/build/apk and you can install it by running
             // 'adb install -r <file name>'
             debugBlue {
                 signingConfig signingConfigs.debug
@@ -55,7 +55,7 @@ android {
         variant.outputs.each { output ->
             def apkName = "tba-android-";
             apkName += "v" + android.defaultConfig.versionName;
-            apkName += "-" + variant.buildType.name;
+            apkName += "-" + variant.buildType.name + ".apk";
             println "*********" + "$project.buildDir/apk/" + apkName + "**********";
             output.outputFile = file("$project.buildDir/apk/" + apkName)
         }
