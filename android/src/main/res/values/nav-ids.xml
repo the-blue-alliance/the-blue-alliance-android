@@ -6,4 +6,5 @@
     <item type="id" name="nav_item_insights" />
     <item type="id" name="nav_item_settings" />
     <item type="id" name="nav_item_my_tba" />
+    <item type="id" name="nav_item_notifications" />
 </resources>

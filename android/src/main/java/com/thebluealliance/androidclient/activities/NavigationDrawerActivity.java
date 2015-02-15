@@ -165,6 +165,14 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
                     startActivity(new Intent(NavigationDrawerActivity.this, SettingsActivity.class));
                 }
             }, DRAWER_CLOSE_ANIMATION_DURATION);
+        }else if(id == R.id.nav_item_notifications){
+            // Launch after a short delay to give the drawer time to close.
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(NotificationDashboardActivity.newInstance(NavigationDrawerActivity.this));
+                }
+            }, DRAWER_CLOSE_ANIMATION_DURATION);
         }
 
 

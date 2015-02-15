@@ -191,6 +191,9 @@ public class HomeActivity extends RefreshableHostActivity {
             case R.id.nav_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
+            case R.id.nav_item_notifications:
+                startActivity(NotificationDashboardActivity.newInstance(this));
+                return;
         }
         fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
