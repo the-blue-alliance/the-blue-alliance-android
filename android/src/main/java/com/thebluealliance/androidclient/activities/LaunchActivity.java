@@ -302,7 +302,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
         if (info.state == LoadAllData.LoadProgressInfo.STATE_NO_CONNECTION) {
             connectionLost();
-        } else if (info.state == LoadAllData.LoadProgressInfo.STATE_LOADING) {
+        } else if (info.state == LoadAllData.LoadProgressInfo.STATE_LOADING && loadingMessage != null) {
             currentLoadingMessage = info.message;
             loadingMessage.setText(currentLoadingMessage);
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_FINISHED) {
