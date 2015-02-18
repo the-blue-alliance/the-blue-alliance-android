@@ -4,11 +4,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.Html;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -28,11 +30,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import me.xuender.unidecode.Unidecode;
 
@@ -347,6 +352,26 @@ public class Utilities {
     
     public static String getDeviceUUID(Context context){
         return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    public static String getBuildTimestamp(Context c){
+        /* Check the last modified time of classes.dex,
+         * which was when the app was last built
+         */
+        try{
+            ApplicationInfo ai = c.getPackageManager().getApplicationInfo(c.getPackageName(), 0);
+            ZipFile zf = new ZipFile(ai.sourceDir);
+            ZipEntry ze = zf.getEntry("classes.dex");
+            long time = ze.getTime();
+            Format dateFormat = DateFormat.getDateFormat(c);
+            Format timeFormat = DateFormat.getTimeFormat(c);
+            Date date = new java.util.Date(time);
+            String s = dateFormat.format(date) + " " + timeFormat.format(date);
+            zf.close();
+            return s;
+        }catch(Exception e){
+            return null;
+        }
     }
 
 }
