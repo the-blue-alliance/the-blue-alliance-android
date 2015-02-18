@@ -32,8 +32,8 @@
 
     <!-- Settings -->
     <string name="settings_build_info_label">Build Info</string>
-    <string name="settings_build_info_summary">App Version: %1$s\nBuild Branch: %2$s</string>
-    <string name="settings_build_info_summary_debug">App Version: %1$s\nBuild Branch: %2$s\nCommit: %3$s</string>
+    <string name="settings_build_info_summary">App Version: %1$s\nBuild Branch: %2$s\nBuild Time: %3$s</string>
+    <string name="settings_build_info_summary_debug">App Version: %1$s\nBuild Branch: %2$s\nBuild Time: %3$s\nCommit: %4$s</string>
     <string name="github_label">The Blue Alliance for Android is open source</string>
     <string name="github_summary">View project on GitHub</string>
     <string name="tbasite_label">The Blue Alliance website</string>

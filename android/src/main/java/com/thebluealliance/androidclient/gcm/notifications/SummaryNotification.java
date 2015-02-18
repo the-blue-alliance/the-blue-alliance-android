@@ -74,6 +74,7 @@ public class SummaryNotification extends BaseNotification {
     /* Checks if we've already posted a notification */
     public static boolean isNotificationActive(Context context){
         Database.Notifications table = Database.getInstance(context).getNotificationsTable();
-        return !table.getActive().isEmpty();
+        return table.getActive().size() > 1;
+        // The newest notification has already been added to the table, so we're checking if there are 2+ active
     }
 }

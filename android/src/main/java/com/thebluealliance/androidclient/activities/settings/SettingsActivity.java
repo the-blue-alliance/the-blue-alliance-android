@@ -41,10 +41,11 @@ public class SettingsActivity extends ActionBarActivity {
             Preference appVersion = findPreference("app_version");
             String versionInfo;
             String[] versionData = BuildConfig.VERSION_NAME.split("/");
+            String buildTime = Utilities.getBuildTimestamp(getActivity());
             if(Utilities.isDebuggable()){
-                versionInfo = String.format(getString(R.string.settings_build_info_summary_debug), versionData[0], versionData[1], versionData[2]);
+                versionInfo = String.format(getString(R.string.settings_build_info_summary_debug), versionData[0], versionData[1], buildTime, versionData[2]);
             }else{
-                versionInfo = String.format(getString(R.string.settings_build_info_summary), versionData[0], versionData[1]);
+                versionInfo = String.format(getString(R.string.settings_build_info_summary), versionData[0], versionData[1], buildTime);
             }
             appVersion.setSummary(versionInfo);
 
@@ -64,7 +65,6 @@ public class SettingsActivity extends ActionBarActivity {
             notificationDash.setIntent(new Intent(getActivity(), NotificationDashboardActivity.class));
 
             Preference changelog = findPreference("changelog");
-            String version = BuildConfig.VERSION_NAME;
             if (Utilities.isDebuggable()) {
                 // if debug build, the version string will be like v0.1/#<sha hash>
                 // so load the page for the most recent commit
