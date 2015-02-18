@@ -122,50 +122,9 @@ public class GCMMessageHandler extends IntentService {
 
                 built = notification.buildNotification(c);
                 id = notification.getNotificationId();
-                
-                
-                /* Set notification parameters */
-                if (prefs.getBoolean("notification_vibrate", true)) {
-                    built.defaults |= Notification.DEFAULT_VIBRATE;
-                }
-                if (prefs.getBoolean("notification_tone", true)) {
-                    built.defaults |= Notification.DEFAULT_SOUND;
-                }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    int priority = Notification.PRIORITY_HIGH;
-                    switch (messageType) {
-                        case NotificationTypes.PING:
-                            priority = Notification.PRIORITY_LOW;
-                    }
-
-                    boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
-                    if (headsUpPref) {
-                        built.priority = priority;
-                    } else {
-                        built.priority = Notification.PRIORITY_DEFAULT;
-                    }
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility", "private");
-                        switch (pref) {
-                            case "public":
-                                built.visibility = Notification.VISIBILITY_PUBLIC;
-                                break;
-                            default:
-                            case "private":
-                                built.visibility = Notification.VISIBILITY_PRIVATE;
-                                break;
-                            case "secret":
-                                built.visibility = Notification.VISIBILITY_SECRET;
-                                break;
-                        }
-
-                        built.category = Notification.CATEGORY_SOCIAL;
-                    }
-                }
 
                 if (notification.shouldShow()) {
+                    setNotificationParams(built, c, messageType, prefs);
                     notificationManager.notify(id, built);
                 }
 
@@ -183,6 +142,7 @@ public class GCMMessageHandler extends IntentService {
                 if(SummaryNotification.isNotificationActive(c) && notification.shouldShow()) {
                     SummaryNotification summary = new SummaryNotification();
                     built = summary.buildNotification(c);
+                    setNotificationParams(built, c, messageType, prefs);
                     id = summary.getNotificationId();
                     notificationManager.notify(id, built);
                 }
@@ -190,6 +150,49 @@ public class GCMMessageHandler extends IntentService {
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
             e.printStackTrace();
+        }
+    }
+    
+    private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs){
+        /* Set notification parameters */
+        if (prefs.getBoolean("notification_vibrate", true)) {
+            built.defaults |= Notification.DEFAULT_VIBRATE;
+        }
+        if (prefs.getBoolean("notification_tone", true)) {
+            built.defaults |= Notification.DEFAULT_SOUND;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            int priority = Notification.PRIORITY_HIGH;
+            switch (messageType) {
+                case NotificationTypes.PING:
+                    priority = Notification.PRIORITY_LOW;
+            }
+
+            boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
+            if (headsUpPref) {
+                built.priority = priority;
+            } else {
+                built.priority = Notification.PRIORITY_DEFAULT;
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility", "private");
+                switch (pref) {
+                    case "public":
+                        built.visibility = Notification.VISIBILITY_PUBLIC;
+                        break;
+                    default:
+                    case "private":
+                        built.visibility = Notification.VISIBILITY_PRIVATE;
+                        break;
+                    case "secret":
+                        built.visibility = Notification.VISIBILITY_SECRET;
+                        break;
+                }
+
+                built.category = Notification.CATEGORY_SOCIAL;
+            }
         }
     }
 }
