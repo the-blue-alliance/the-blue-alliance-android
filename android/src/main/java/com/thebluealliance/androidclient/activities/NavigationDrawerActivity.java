@@ -209,10 +209,10 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
     /**
      * Shows the specified item in the navigation drawer with a highlight.
      *
-     * @param position index of the item to be selected
+     * @param itemId ID of the item to be selected
      */
-    public void setNavigationDrawerItemSelected(int position) {
-        mNavDrawerFragment.setItemSelected(position);
+    public void setNavigationDrawerItemSelected(int itemId) {
+        mNavDrawerFragment.setItemSelected(itemId);
     }
 
     /**
