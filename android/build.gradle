@@ -5,13 +5,13 @@ def gitBranch = 'git rev-parse --abbrev-ref HEAD'.execute([], project.rootDir).t
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 34
-        versionName "2.1.6"
+        versionCode 35
+        versionName "2.1.7"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
