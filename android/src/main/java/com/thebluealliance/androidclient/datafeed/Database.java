@@ -1938,7 +1938,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            dbSemaphore.tryAcquire(5, TimeUnit.SECONDS);
             String selection = SearchTeam.TITLES + " MATCH ?";
             String[] selectionArgs = new String[]{query};
 
