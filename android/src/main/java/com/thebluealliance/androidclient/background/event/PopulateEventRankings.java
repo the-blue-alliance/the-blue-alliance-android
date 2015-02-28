@@ -23,6 +23,8 @@ import com.thebluealliance.androidclient.models.Team;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +47,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private String eventKey;
     private ArrayList<ListItem> teams;
     private RequestParams requestParams;
+    private static NumberFormat doubleFormat = new DecimalFormat("###.##");
 
     private ListViewAdapter adapter;
 
@@ -107,9 +110,12 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                         Map.Entry entry = (Map.Entry) it.next();
                         String value = entry.getValue().toString();
                         // If we have a number like 235.00, remove the useless .00 so it looks cleaner
-                        if (value.contains(".00")) {
-                            value = value.replace(".00", "");
+                        try{
+                            value = doubleFormat.format(Double.parseDouble(value));
+                        }catch(NumberFormatException e){
+                            //Item is not a number
                         }
+                        
                         // Capitalization hack
                         String rankingKey = entry.getKey().toString();
                         if (rankingKey.length() <= 3) {
