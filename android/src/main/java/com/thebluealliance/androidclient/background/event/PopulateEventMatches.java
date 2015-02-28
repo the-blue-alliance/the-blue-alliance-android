@@ -51,11 +51,13 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
     Match nextMatch, lastMatch;
     Event event;
     MatchListAdapter adapter;
+    private int matchCount;
 
     public PopulateEventMatches(EventMatchesFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
+        this.matchCount = 0; 
     }
 
     @Override
@@ -91,6 +93,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         try {
             response = DataManager.Events.getMatchList(activity, eventKey, teamKey, requestParams);
             ArrayList<Match> results = response.getData();
+            matchCount = results.size();
 
             if(event != null && event.isHappeningNow()){
                 Collections.sort(results, new MatchSortByPlayOrderComparator());
@@ -179,7 +182,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
 
         adapter = new MatchListAdapter(activity, groups, teamKey);
 
-        return APIResponse.mergeCodes(eventResponse.getCode(), response.getCode());
+        return response.getCode();
     }
 
     protected void onPostExecute(APIResponse.CODE code) {
@@ -190,12 +193,14 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
             // only show the message when try try and actually load data from the web
-            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && (groups == null || adapter.groups.isEmpty()))) {
+            ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && (groups == null || matchCount == 0))) {
+                results.setVisibility(View.GONE);
                 noDataText.setVisibility(View.VISIBLE);
                 noDataText.setText(teamKey.isEmpty() ? R.string.no_match_data : R.string.no_team_match_data);
             } else {
                 noDataText.setVisibility(View.GONE);
-                ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
+                results.setVisibility(View.VISIBLE);
                 Parcelable state = results.onSaveInstanceState();
                 int firstVisiblePosition = results.getFirstVisiblePosition();
                 results.setAdapter(adapter);
@@ -220,7 +225,6 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
 
             // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.match_results).setVisibility(View.VISIBLE);
 
             // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
