@@ -474,7 +474,7 @@ public class Event extends BasicModel<Event> {
         return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    public static synchronized APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls, APIResponse.CODE code1) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
         Event event;
@@ -499,7 +499,7 @@ public class Event extends BasicModel<Event> {
                     updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
                     if(updatedEvent == null){
                         // Error parsing the json
-                        code1 = APIResponse.CODE.NODATA;
+                        code = APIResponse.CODE.NODATA;
                         continue;
                     }
                 } else {

@@ -55,7 +55,8 @@ public class EventHelper {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        int week = getYearWeek(date) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+        cal.add(Calendar.DAY_OF_YEAR,-1);
+        int week = getYearWeek(cal.getTime()) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         return week < 0 ? 0 : week;
     }
 
