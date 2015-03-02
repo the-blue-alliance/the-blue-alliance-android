@@ -1026,10 +1026,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1133,10 +1133,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1253,10 +1253,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1370,10 +1370,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1462,11 +1462,11 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1556,11 +1556,11 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
