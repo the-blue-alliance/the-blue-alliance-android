@@ -981,6 +981,10 @@ public class Database extends SQLiteOpenHelper {
                 Log.e(Constants.LOG_TAG, "Can't delete match without Database.Matches.KEY");
             }
         }
+
+        public void delete(String whereClause, String[] whereArgs){
+            safeDelete(TABLE_MATCHES, whereClause, whereArgs);
+        }
     }
 
     public class Medias implements ModelTable<Media> {
