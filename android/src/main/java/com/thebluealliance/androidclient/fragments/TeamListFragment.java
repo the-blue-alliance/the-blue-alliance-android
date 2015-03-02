@@ -14,6 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -74,6 +77,15 @@ public class TeamListFragment extends Fragment implements RefreshListener {
                 String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
                 Intent i = new Intent(getActivity(), ViewTeamActivity.class);
                 i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+                
+                /* Track the call */
+                Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("team_click")
+                        .setAction(i.getDataString())
+                        .setLabel(teamKey)
+                        .build());
+                
                 startActivity(i);
             }
         });

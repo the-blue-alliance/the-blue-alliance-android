@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -45,6 +48,12 @@ public class EventClickListener implements AdapterView.OnItemClickListener {
                 //team is selected, open up the results for that specific team at the event
                 intent = TeamAtEventActivity.newInstance(context, eventKey, mTeamKey);
             }
+            Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, context);
+            t.send(new HitBuilders.EventBuilder()
+                    .setCategory("event_click")
+                    .setAction(intent.getDataString())
+                    .setLabel(eventKey)
+                    .build());
             context.startActivity(intent);
         } else {
             Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");

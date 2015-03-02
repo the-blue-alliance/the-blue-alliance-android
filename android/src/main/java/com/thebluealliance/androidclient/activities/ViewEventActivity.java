@@ -177,6 +177,14 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         } else {
             showFab(true);
         }
+
+        /* Track the call */
+        /*Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, ViewEventActivity.this);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("view_event-tabs")
+                .setAction("tab_change")
+                .setLabel(mEventKey+ " "+adapter.getPageTitle(position))
+                .build());*/
     }
 
     @Override
