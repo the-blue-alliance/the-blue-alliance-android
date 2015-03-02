@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -75,7 +78,17 @@ public class TeamListElement extends ListElement {
             holder.teamInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = ViewTeamActivity.newInstance(context, "frc" + mTeamNumber);
+                    String teamKey = "frc" + mTeamNumber;
+                    Intent intent = ViewTeamActivity.newInstance(context, teamKey);
+                    
+                    /* Track the call */
+                    Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, context);
+                    t.send(new HitBuilders.EventBuilder()
+                            .setCategory("team_click")
+                            .setAction("TeamListElement")
+                            .setLabel(teamKey)
+                            .build());
+                    
                     context.startActivity(intent);
                 }
             });

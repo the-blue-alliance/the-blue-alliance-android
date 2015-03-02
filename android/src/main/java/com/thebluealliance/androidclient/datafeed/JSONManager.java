@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
@@ -56,7 +57,12 @@ public class JSONManager {
     public static JsonObject getasJsonObject(String input) {
         if (input == null || input.equals(""))
             return new JsonObject();
-        JsonElement e = getParser().parse(input);
+        JsonElement e = null;
+        try {
+            e = getParser().parse(input);
+        }catch(JsonSyntaxException ex){
+            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: "+input);
+        }
         if (e == null || e.isJsonNull()) {
             return new JsonObject();
         }

@@ -497,6 +497,11 @@ public class Event extends BasicModel<Event> {
                      * anybody got a better way to determine this?
                      */
                     updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
+                    if(updatedEvent == null){
+                        // Error parsing the json
+                        code = APIResponse.CODE.NODATA;
+                        continue;
+                    }
                 } else {
                     /* We're getting one of the other endpoints which don't contain event data.
                      * Add them to the model based on which URL we hit

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -111,13 +112,19 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                             onConnectionError();
                             return null;
                         }
-                        JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
-                        if (responseObject instanceof JsonObject) {
-                            if (((JsonObject) responseObject).has("404")) {
-                                // No events found for that year; skip it
-                                continue;
+                        try {
+                            JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
+                            if (responseObject instanceof JsonObject) {
+                                if (((JsonObject) responseObject).has("404")) {
+                                    // No events found for that year; skip it
+                                    continue;
+                                }
                             }
+                        }catch (JsonSyntaxException ex){
+                            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: "+eventListResponse.getData());
+                            continue;
                         }
+                        
                         ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
                         events.addAll(yearEvents);
                     }

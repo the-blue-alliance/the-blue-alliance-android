@@ -1,10 +1,14 @@
 package com.thebluealliance.androidclient.datafeed.deserializers;
 
+import android.util.Log;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.lang.reflect.Type;
@@ -14,7 +18,13 @@ public class EventDeserializer implements JsonDeserializer<Event> {
 
     @Override
     public Event deserialize(final JsonElement json, Type typeOf, JsonDeserializationContext context) throws JsonParseException {
-        final JsonObject object = json.getAsJsonObject();
+        final JsonObject object;
+        try {
+            object= json.getAsJsonObject();   
+        }catch (JsonSyntaxException|IllegalStateException ex){
+            Log.w(Constants.LOG_TAG, "Failed to parse json: "+json.toString());
+            return null;
+        }
         final Event event = new Event();
 
         if (object.has("key")) {

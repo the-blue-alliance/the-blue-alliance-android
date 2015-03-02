@@ -981,6 +981,10 @@ public class Database extends SQLiteOpenHelper {
                 Log.e(Constants.LOG_TAG, "Can't delete match without Database.Matches.KEY");
             }
         }
+
+        public int delete(String whereClause, String[] whereArgs){
+            return safeDelete(TABLE_MATCHES, whereClause, whereArgs);
+        }
     }
 
     public class Medias implements ModelTable<Media> {
@@ -1022,10 +1026,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1129,10 +1133,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1249,10 +1253,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1366,10 +1370,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1458,11 +1462,11 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1552,11 +1556,11 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1823,7 +1827,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        return safeDelete(table, whereClause, whereArgs, null);
+        return safeDelete(table, whereClause, whereArgs, getSemaphore());
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {
@@ -1938,7 +1942,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            dbSemaphore.tryAcquire(5, TimeUnit.SECONDS);
             String selection = SearchTeam.TITLES + " MATCH ?";
             String[] selectionArgs = new String[]{query};
 

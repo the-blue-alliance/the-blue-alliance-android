@@ -196,7 +196,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
         View view = fragment.getView();
-        if (activity != null && view != null && code != APIResponse.CODE.NODATA) {
+        if (activity != null && view != null) {
             if (activity.getSupportActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
                 activity.setActionBarTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
                 activity.setActionBarSubtitle("@ " + eventYear + " " + eventShort);
@@ -206,7 +206,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             // If the adapter has no children, display a generic "no data" message.
             // Otherwise, show the list as normal.
-            if (adapter.isEmpty()) {
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && summary.isEmpty())) {
                 noDataText.setText(R.string.not_available);
                 noDataText.setVisibility(View.VISIBLE);
             } else {

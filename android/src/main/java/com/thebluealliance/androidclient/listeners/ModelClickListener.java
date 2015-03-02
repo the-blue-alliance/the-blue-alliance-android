@@ -2,10 +2,11 @@ package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
-import com.thebluealliance.androidclient.Constants;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 
 /**
@@ -26,7 +27,12 @@ public class ModelClickListener implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         Intent intent = ModelHelper.getIntentFromKey(context, key, type);
-        Log.d(Constants.LOG_TAG, "Conext: "+context);
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, context);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("model_click")
+                .setAction(intent.getDataString())
+                .setLabel(key)
+                .build());
         context.startActivity(intent);
     }
 }

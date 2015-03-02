@@ -287,7 +287,7 @@ public class DataManager {
 
             String apiUrl = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.EVENT_MATCHES), eventKey);
             String sqlWhere = Database.Matches.EVENT + " = ?";
-            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, requestParams, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
+            APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, requestParams, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             Log.d(Constants.LOG_TAG, "Found " + matchResponse.getData().size() + " matches");
             for (Match match : matchResponse.getData()) {
                 try {

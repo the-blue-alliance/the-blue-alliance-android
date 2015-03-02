@@ -55,6 +55,9 @@ public class MatchListElement extends ListElement implements Serializable {
             match.showTime(true);
             match.showScores(false);
         }
+        if(time == -1){
+            match.showTime(false);
+        }
         match.setClickToShowDetails(clickable);
         match.showMatchTitle(showMatchTitle);
         return match;

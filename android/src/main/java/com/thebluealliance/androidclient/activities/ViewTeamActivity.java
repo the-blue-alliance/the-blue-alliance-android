@@ -118,7 +118,8 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         pager.setOffscreenPageLimit(3);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
         // We will notify the fragments of the year later
-        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey));
+        final ViewTeamFragmentPagerAdapter adapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey);
+        pager.setAdapter(adapter);
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
@@ -133,6 +134,29 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         // We can call this even though the years particiapted haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
+        
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                /*Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, ViewTeamActivity.this);
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("event_by_week-tabs")
+                        .setAction("tab_change")
+                        .setLabel(mTeamKey + " " + adapter.getPageTitle(position))
+                        .build());
+                        */
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override

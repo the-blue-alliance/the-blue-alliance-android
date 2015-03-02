@@ -1,11 +1,16 @@
 package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 /**
@@ -49,12 +54,20 @@ public class TeamAtEventClickListener implements View.OnClickListener {
                 // Take out extra letter at end to make team key valid.
                 teamKey = teamKey.substring(0, teamKey.length() - 1);
             }
+            //social button was clicked. Track the call
+            Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
+            Intent intent;
             if (EventHelper.validateEventKey(eventKey)) {
-                c.startActivity(TeamAtEventActivity.newInstance(c, eventKey, teamKey));
+                intent = TeamAtEventActivity.newInstance(c, eventKey, teamKey);
             } else {
-                //if we don't pass a valid event key, just open up the team activity
-                c.startActivity(ViewTeamActivity.newInstance(c, teamKey));
+                intent = ViewTeamActivity.newInstance(c, teamKey);
             }
+            t.send(new HitBuilders.EventBuilder()
+                    .setCategory("team@event_click")
+                    .setAction(intent.getAction())
+                    .setLabel(EventTeamHelper.generateKey(eventKey, teamKey))
+                    .build());
+            c.startActivity(intent);
         }
     }
 }

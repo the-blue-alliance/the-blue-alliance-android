@@ -184,7 +184,7 @@ public class TBAv2 {
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
-                HttpResponse cachedResponse = HTTP.getRequest(URL, params.forceFromWeb?null:cachedData.getLastUpdate());
+                HttpResponse cachedResponse = HTTP.getRequest(URL, cachedData.getLastUpdate());
 
                 if (cachedResponse != null) {
 

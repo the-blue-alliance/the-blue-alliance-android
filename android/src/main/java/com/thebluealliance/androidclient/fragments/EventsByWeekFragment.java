@@ -121,6 +121,29 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         if (selectedTab != -1) {
             mViewPager.setCurrentItem(selectedTab);
         }
+        
+        mTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                /* Track the change */
+               /* Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
+                t.send(new HitBuilders.EventBuilder()
+                        .setCategory("event_by_week-tabs")
+                        .setAction("tab_change")
+                        .setLabel(mYear+ " "+pagerAdapter.getPageTitle(position))
+                        .build());*/
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void setPagerWeek() {

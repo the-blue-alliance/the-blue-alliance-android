@@ -19,6 +19,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
@@ -41,8 +42,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /* Analytics commented out to avoid strange ANRs on startup, see #303 */
-        //new AnalyticsActions.ReportActivityStart(this).run();
+        new AnalyticsActions.ReportActivityStart(this).run();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -63,8 +63,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     @Override
     protected void onStop() {
         super.onStop();
-        /* Report the activity stop to GAnalytics */
-        //new AnalyticsActions.ReportActivityStop(this).run();
+        new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override

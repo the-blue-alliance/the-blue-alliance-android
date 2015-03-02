@@ -59,7 +59,7 @@ public class CompLevelStartingNotification extends BaseNotification {
 
         String compLevel;
         switch (compLevelAbbrev){
-            case "qm":  compLevel = r.getString(R.string.quarters_header); break;
+            case "qm":  compLevel = r.getString(R.string.quals_header); break;
             case "ef":  compLevel = r.getString(R.string.eigths_header); break;
             case "qf":  compLevel = r.getString(R.string.quarters_header); break;
             case "sf":  compLevel = r.getString(R.string.semis_header); break;

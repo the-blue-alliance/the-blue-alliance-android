@@ -28,9 +28,11 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <!-- Don't load analytics from xml. See #303
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/tba_android_tracker" />
+        -->
 
         <activity
             android:name="com.thebluealliance.androidclient.activities.LaunchActivity"
