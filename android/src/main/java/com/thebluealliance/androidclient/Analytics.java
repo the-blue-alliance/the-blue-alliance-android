@@ -36,6 +36,12 @@ public class Analytics {
             Tracker t;
             Log.d("GAV4", "Loaded analytics id: " + id);
             t = analytics.newTracker(id);
+            t.setAppId(BuildConfig.VERSION_NAME);
+            t.setAppName(c.getString(R.string.app_name));
+            t.setAppVersion(Utilities.getVersionNumber());
+            t.setSessionTimeout(300);
+            t.set("ga_logLevel", "verbose");
+            t.setSampleRate(100.0);
             t.enableAutoActivityTracking(true);
             t.enableExceptionReporting(true);
             mTrackers.put(trackerId, t);

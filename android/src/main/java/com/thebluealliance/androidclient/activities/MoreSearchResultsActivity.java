@@ -14,11 +14,15 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.datafeed.Database;
 
 /**
@@ -34,6 +38,7 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
     private static final String PREPARED_QUERY = "preparedQuery";
 
     private ListView resultsList;
+    private String query;
 
     private int resultsType;
 
@@ -51,17 +56,15 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        /* Report the activity start to GAnalytics */
-        // Analytics commented out - see #303
-        /*Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);*/
+        /* Report activity start to Analytics */
+        new AnalyticsActions.ReportActivityStart(this).run();
 
         resultsList = (ListView) findViewById(R.id.results);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        String query = getIntent().getStringExtra(QUERY);
+        query = getIntent().getStringExtra(QUERY);
         resultsType = getIntent().getIntExtra(RESULTS_TYPE, -1);
         if (query == null || resultsType == -1) {
             throw new IllegalArgumentException("MoreSearchResultsActivity most be created with a mode and query string!");
@@ -99,15 +102,25 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
                 }
             }
         });
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, this);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("search")
+                .setAction(query)
+                .setLabel("search")
+                .build());
+        query = "";
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        /* Report the activity stop to GAnalytics */
-        //GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
