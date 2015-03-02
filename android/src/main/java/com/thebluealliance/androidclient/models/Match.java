@@ -479,10 +479,10 @@ public class Match extends BasicModel<Match> {
         if (changed) {
             /* Add the new matches to the local db, after deleting the old ones */
             Database.Matches matchTable = Database.getInstance(c).getMatchesTable();
-            matchTable.delete(whereClause, whereArgs);
+            int deleted = matchTable.delete(whereClause, whereArgs);
             matchTable.add(allMatches);
             
-            Log.d(Constants.DATAMANAGER_LOG, "Found " + allMatches.size() + " matches, updated in db");
+            Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted "+deleted);
             return new APIResponse<>(allMatches, code);
         }else{
             Log.d(Constants.DATAMANAGER_LOG, "No new matches.");

@@ -982,8 +982,8 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public void delete(String whereClause, String[] whereArgs){
-            safeDelete(TABLE_MATCHES, whereClause, whereArgs);
+        public int delete(String whereClause, String[] whereArgs){
+            return safeDelete(TABLE_MATCHES, whereClause, whereArgs);
         }
     }
 
@@ -1827,7 +1827,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        return safeDelete(table, whereClause, whereArgs, null);
+        return safeDelete(table, whereClause, whereArgs, getSemaphore());
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {
