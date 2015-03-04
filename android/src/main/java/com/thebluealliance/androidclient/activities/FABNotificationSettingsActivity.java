@@ -190,7 +190,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     }
 
     private void openNotificationSettingsView() {
+        settings.restoreInitialState();
         fabDrawable.resetTransition();
+        closeNotificationSettingsButton.setColorNormal(getResources().getColor(R.color.accent));
         
         // this is the center of the button in relation to the main view. This provides the center of the clipping circle for the notification settings view.
         int centerOfButtonOutsideX = (openNotificationSettingsButtonContainer.getLeft() + openNotificationSettingsButtonContainer.getRight()) / 2;
