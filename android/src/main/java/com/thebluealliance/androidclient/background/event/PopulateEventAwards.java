@@ -100,11 +100,13 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
-            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && adapter.values.isEmpty())) {
+            ListView rankings = (ListView) view.findViewById(R.id.list);
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && awards.isEmpty())) {
                 noDataText.setText(teamKey.isEmpty() ? R.string.no_awards_data : R.string.no_team_awards_data);
                 noDataText.setVisibility(View.VISIBLE);
+                view.findViewById(R.id.list).setVisibility(View.GONE);
             } else {
-                ListView rankings = (ListView) view.findViewById(R.id.list);
+                view.findViewById(R.id.list).setVisibility(View.VISIBLE);
                 Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
                 rankings.onRestoreInstanceState(state);
@@ -116,7 +118,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
         }
 
         if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
