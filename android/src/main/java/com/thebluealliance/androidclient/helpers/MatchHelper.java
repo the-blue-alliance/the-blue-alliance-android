@@ -345,6 +345,8 @@ public class MatchHelper {
         // Team might be a no-show/drop out last minute at an event,
         // and might not play any matches as a result.
         boolean teamIsHere = false;
+
+        boolean elimMatchPlayed = false;
         for (Match match : teamMatches) {
             match.setSelectedTeam(teamKey);
 
@@ -364,12 +366,15 @@ public class MatchHelper {
                         break;
                     case QUARTER:
                         currentGroup = quarterMatches;
+                        elimMatchPlayed = true;
                         break;
                     case SEMI:
                         currentGroup = semiMatches;
+                        elimMatchPlayed = true;
                         break;
                     case FINAL:
                         currentGroup = finalMatches;
+                        elimMatchPlayed = true;
                         break;
                 }
             }
@@ -399,7 +404,7 @@ public class MatchHelper {
         Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty() ||
                 (allQualMatchesPlayed && !teamIsHere) ||
-                (!allQualMatchesPlayed && !e.isHappeningNow())) {
+                (!(elimMatchPlayed || allQualMatchesPlayed) && !e.isHappeningNow())) {
             return EventStatus.NOT_AVAILABLE;
         } else if ((allQualMatchesPlayed && !inAlliance) ||
                 (!e.isHappeningNow() &&
