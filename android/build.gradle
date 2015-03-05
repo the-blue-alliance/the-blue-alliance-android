@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 37
-        versionName "2.1.9"
+        versionCode 39
+        versionName "2.1.11"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7

@@ -62,7 +62,7 @@ public class Match extends BasicModel<Match> {
         fields.put(Database.Matches.KEY, key);
         fields.put(Database.Matches.EVENT, key.split("_")[0]);
 
-        this.year = Integer.parseInt(key.substring(0, 3));
+        this.year = Integer.parseInt(key.substring(0, 4));
         this.type = MatchHelper.TYPE.fromKey(key);
     }
 

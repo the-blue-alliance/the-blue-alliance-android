@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,8 +36,8 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     private boolean mProgressBarShowing = false;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mRefreshed = false;
         startRefresh();
     }
