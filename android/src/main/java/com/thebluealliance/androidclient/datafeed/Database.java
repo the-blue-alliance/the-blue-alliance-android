@@ -1126,7 +1126,7 @@ public class Database extends SQLiteOpenHelper {
                         if (!unsafeExists(eventTeam.getKey())) {
                             db.insert(TABLE_EVENTTEAMS, null, eventTeam.getParams());
                         } else {
-                            db.update(TABLE_EVENTTEAMS, eventTeam.getParams(), EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{eventTeam.getTeamKey(), eventTeam.getEventKey()});
+                            db.update(TABLE_EVENTTEAMS, eventTeam.getParams(), EventTeams.KEY + " = ?", new String[]{eventTeam.getKey()});
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
                         Log.w(Constants.LOG_TAG, "Can't update eventTeam. Missing fields");
