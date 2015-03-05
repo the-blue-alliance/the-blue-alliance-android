@@ -267,19 +267,33 @@ public class MatchHelper {
                     JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray();
                     Boolean isRed = redTeams.toString().contains(teamKey);
 
-                    switch (match.getSetNumber()) {
-                        case 1:
-                            alliance = isRed ? 1 : 8;
-                            break;
-                        case 2:
-                            alliance = isRed ? 4 : 5;
-                            break;
-                        case 3:
-                            alliance = isRed ? 2 : 7;
-                            break;
-                        case 4:
-                            alliance = isRed ? 3 : 6;
-                            break;
+                    if(match.getYear() != 2015) {
+                        switch (match.getSetNumber()) {
+                            case 1:
+                                alliance = isRed ? 1 : 8;
+                                break;
+                            case 2:
+                                alliance = isRed ? 4 : 5;
+                                break;
+                            case 3:
+                                alliance = isRed ? 2 : 7;
+                                break;
+                            case 4:
+                                alliance = isRed ? 3 : 6;
+                                break;
+                        }
+                    }else{
+                        /* Special format for 2015 */
+                        switch(match.getMatchNumber()){
+                            case 1:
+                                alliance = isRed ? 4 : 5; break;
+                            case 2: 
+                                alliance = isRed ? 3 : 6; break;
+                            case 3: 
+                                alliance = isRed ? 2 : 7; break;
+                            case 4:
+                                alliance = isRed ? 1 : 8; break;
+                        }
                     }
 
                     break;
@@ -319,6 +333,7 @@ public class MatchHelper {
         // There might be match info available,
         // but no alliance selection data (for old events)
         JsonArray alliances = e.getAlliances();
+        int year = 2014;
 
         boolean inAlliance = false;
         if (alliances.size() == 0) {
@@ -347,8 +362,12 @@ public class MatchHelper {
         boolean teamIsHere = false;
 
         boolean elimMatchPlayed = false;
+        int qfPlayed = 0;
+        int sfPlayed = 0;
+        int fPlayed = 0;
         for (Match match : teamMatches) {
             match.setSelectedTeam(teamKey);
+            year = match.getYear();
 
             JsonObject matchAlliances = match.getAlliances();
             JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
@@ -358,6 +377,23 @@ public class MatchHelper {
                     blueTeams.toString().contains(teamKey)) {
                 teamIsHere = true;
             }
+            
+            if(match.hasBeenPlayed()) {
+                switch (match.getType()) {
+                    case QUARTER:
+                        elimMatchPlayed = true;
+                        qfPlayed++;
+                        break;
+                    case SEMI:
+                        elimMatchPlayed = true;
+                        sfPlayed++;
+                        break;
+                    case FINAL:
+                        elimMatchPlayed = true;
+                        fPlayed++;
+                        break;
+                }
+            }
 
             if (lastType != match.getType()) {
                 switch (match.getType()) {
@@ -366,15 +402,12 @@ public class MatchHelper {
                         break;
                     case QUARTER:
                         currentGroup = quarterMatches;
-                        elimMatchPlayed = true;
                         break;
                     case SEMI:
                         currentGroup = semiMatches;
-                        elimMatchPlayed = true;
                         break;
                     case FINAL:
                         currentGroup = finalMatches;
-                        elimMatchPlayed = true;
                         break;
                 }
             }
@@ -414,6 +447,37 @@ public class MatchHelper {
             return EventStatus.NOT_PICKED;
         }
 
+        if(year == 2015){
+            /* Special elim logic for 2015 season */
+            if(!finalMatches.isEmpty() && sfPlayed > 0){
+                int finalsWon = 0;
+                for(Match match: finalMatches){
+                    if(match.didSelectedTeamWin()){
+                        finalsWon++;
+                    }
+                }
+                if(finalsWon >= 2){
+                    return EventStatus.WON_EVENT;
+                } else if((fPlayed == 2  && finalsWon == 0) || (fPlayed == 3 && finalsWon == 1)){
+                    return EventStatus.ELIMINATED_IN_FINALS;
+                }else{
+                    return EventStatus.PLAYING_IN_FINALS;
+                }
+            }else if(!semiMatches.isEmpty() && qfPlayed > 0){
+                if(sfPlayed < 3){
+                    return EventStatus.PLAYING_IN_SEMIS;
+                }else{
+                    return EventStatus.ELIMINATED_IN_SEMIS;
+                }
+            }else{
+                if(qfPlayed < 2){
+                    return EventStatus.PLAYING_IN_QUARTERS;
+                }else{
+                    return EventStatus.ELIMINATED_IN_QUARTERS;
+                }
+            }
+        }
+        
         if (!quarterMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
             for (Match match : quarterMatches) {
