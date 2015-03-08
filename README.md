@@ -1,7 +1,7 @@
 The Blue Alliance - Android App
 ===============================
 
-[![Build Status](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android.png?branch=master)](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android) [![Stories in Ready](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=ready&title=Ready)](https://waffle.io/the-blue-alliance/the-blue-alliance-android)
+[![Build Status](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android.png?branch=master)](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android) [![Coverage Status](https://coveralls.io/repos/the-blue-alliance/the-blue-alliance-android/badge.svg)](https://coveralls.io/r/the-blue-alliance/the-blue-alliance-android) [![Stories in Ready](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=ready&title=Ready)](https://waffle.io/the-blue-alliance/the-blue-alliance-android)
 
 An Android app for accessing information about the FIRST Robotics Competition. This is a native mobile version of [The Blue Alliance](http://www.thebluealliance.com).
 
