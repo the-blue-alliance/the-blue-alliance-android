@@ -149,6 +149,7 @@ dependencies {
 }
 
 apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 jacoco {
     // I have only tried 0.7.x
