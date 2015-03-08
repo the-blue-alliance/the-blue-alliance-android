@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=ready&title=Ready)](https://waffle.io/the-blue-alliance/the-blue-alliance-android)
 The Blue Alliance - Android App
 ===============================
 
