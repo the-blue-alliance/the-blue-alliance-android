@@ -166,6 +166,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
     reports {
         xml.enabled = true // coveralls plugin depends on xml format report
         html.enabled = true
+        
+        xml.destination = "build/reports/jacoco/test/jacocoTestReport.xml";
     }
     // class R is used, but usage will not be covered, so ignore this class from report
     // This differs per plugin version (0.10 -> 0.11)
