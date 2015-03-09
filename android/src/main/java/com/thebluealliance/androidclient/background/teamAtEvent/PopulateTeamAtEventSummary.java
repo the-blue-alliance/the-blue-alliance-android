@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -186,6 +187,8 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             if (nextMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_next_match), nextMatch.render()));
             }
+            
+            summary.add(new EmptyListElement(""));
         }
 
         return APIResponse.mergeCodes(matchResponse.getCode(), eventResponse.getCode(),
