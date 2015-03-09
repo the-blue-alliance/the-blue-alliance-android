@@ -467,6 +467,9 @@ public class Event extends BasicModel<Event> {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
                     "Required field: Database.Events.ALLIANCES");
             return null;
+        } catch (IllegalArgumentException e){
+            Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
+            return null;
         }
     }
 

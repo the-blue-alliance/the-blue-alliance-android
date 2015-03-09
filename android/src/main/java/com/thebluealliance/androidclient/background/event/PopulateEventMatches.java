@@ -160,6 +160,12 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                     lastMatch = last;
                 }
             }
+            if(nextMatch != null && nextMatch.hasBeenPlayed()){
+                // Avoids bug where matches loop over when all played
+                // Because nextMatch is initialized to the first qual match 
+                // So that it displayed before any have been played
+                nextMatch = null;
+            }
 
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");

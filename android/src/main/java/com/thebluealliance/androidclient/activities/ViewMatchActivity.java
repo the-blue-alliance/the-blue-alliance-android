@@ -57,10 +57,35 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
         warningMessage = (TextView) findViewById(R.id.warning_container);
 
         registerRefreshListener(this);
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        mMatchKey = intent.getStringExtra(MATCH_KEY);
+        if (mMatchKey == null) {
+            throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
+        }
+        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
+        Log.i(Constants.LOG_TAG, "New ViewMatch intent with key: " + mMatchKey);
+        setupActionBar();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
 
         startRefresh();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (task != null) {
+            task.cancel(false);
+        }
     }
 
     @Override
