@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -75,10 +77,32 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
         isDistrict = true;
 
         setSettingsToolbarTitle("Event Settings");
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (intent.getExtras() != null && intent.getExtras().containsKey(EVENTKEY)) {
+            mEventKey = intent.getExtras().getString(EVENTKEY, "");
+        } else {
+            throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
+        }
+        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
+        adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
+        pager.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: "+mEventKey);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+        startRefresh();
     }
 
     public void updateDistrict(boolean isDistrict) {

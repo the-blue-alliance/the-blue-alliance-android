@@ -180,7 +180,7 @@ public class ScoreNotification extends BaseNotification {
 
         // We can finally build the notification!
         Intent instance = ViewMatchActivity.newInstance(context, matchKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();

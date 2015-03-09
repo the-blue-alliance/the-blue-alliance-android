@@ -37,6 +37,7 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
         return TITLES.length;
     }
 
+
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;

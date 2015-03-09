@@ -46,7 +46,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         String contentText = String.format(r.getString(R.string.notification_district_points_updated), districtName);
 
         Intent instance = ViewDistrictActivity.newInstance(context, districtKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();

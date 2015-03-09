@@ -114,7 +114,7 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         Intent instance = ViewMatchActivity.newInstance(context, matchKey);
         PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, getNotificationId(), new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());

@@ -65,7 +65,7 @@ public class AwardsPostedNotification extends BaseNotification {
         String contentText = String.format(r.getString(R.string.notification_awards_updated), eventName);
 
         Intent instance = ViewEventActivity.newInstance(context, eventKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
