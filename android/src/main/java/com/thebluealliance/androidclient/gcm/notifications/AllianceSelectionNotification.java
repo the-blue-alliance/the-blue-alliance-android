@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by phil on 11/21/14.
@@ -101,7 +102,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + eventKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
     }
 
 }

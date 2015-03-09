@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.listeners.NotificationDismissedListener
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by phil on 11/21/14.
@@ -78,7 +79,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + districtKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + districtKey).hashCode();
     }
 
 }

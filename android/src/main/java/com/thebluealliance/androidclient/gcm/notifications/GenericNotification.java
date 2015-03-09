@@ -15,6 +15,8 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 
+import java.util.Date;
+
 /**
  * File created by phil on 9/7/14.
  */
@@ -81,6 +83,6 @@ public class GenericNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + messageData).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + messageData).hashCode();
     }
 }

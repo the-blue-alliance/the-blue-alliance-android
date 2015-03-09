@@ -145,6 +145,6 @@ public class UpcomingMatchNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + matchKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
     }
 }

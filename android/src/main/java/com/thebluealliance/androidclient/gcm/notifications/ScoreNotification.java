@@ -27,6 +27,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -214,6 +215,6 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + matchKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
     }
 }

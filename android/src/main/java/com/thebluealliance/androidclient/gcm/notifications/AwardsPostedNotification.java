@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -102,6 +103,6 @@ public class AwardsPostedNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + eventKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
     }
 }
