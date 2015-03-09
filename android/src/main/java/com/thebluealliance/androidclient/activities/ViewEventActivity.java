@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
@@ -58,6 +59,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        MyTBAHelper.serializeIntent(getIntent());
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
             mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
         } else {
