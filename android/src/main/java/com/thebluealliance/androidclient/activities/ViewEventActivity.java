@@ -40,22 +40,18 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
      * Create new intent for ViewEventActivity 
      * @param c context
      * @param eventKey Key of the event to show
-     * @param tab A string representation of the tab number from ViewEventFragmentPagerAdapter. Strings are used to avoid issues serializing incoming notifications :P
-     * @return
+     * @param tab The tab number from ViewEventFragmentPagerAdapter.
+     * @return Intent you can launch
      */
-    public static Intent newInstance(Context c, String eventKey, String tab){
+    public static Intent newInstance(Context c, String eventKey, int tab){
         Intent intent = new Intent(c, ViewEventActivity.class);
         intent.putExtra(EVENTKEY, eventKey);
         intent.putExtra(TAB, tab);
         return intent;
     }
     
-    public static Intent newInstance(Context c, String eventKey, int tab){
-        return newInstance(c, eventKey, Integer.toString(tab));
-    }
-    
     public static Intent newInstance(Context c, String eventKey) {
-        return newInstance(c, eventKey, Integer.toString(ViewEventFragmentPagerAdapter.TAB_INFO));
+        return newInstance(c, eventKey, ViewEventFragmentPagerAdapter.TAB_INFO);
     }
 
     @Override
@@ -69,8 +65,9 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         }
         
         if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)){
-            currentTab = Integer.parseInt(getIntent().getExtras().getString(TAB));
+            currentTab = getIntent().getExtras().getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
         }else{
+            Log.i(Constants.LOG_TAG, "ViewEvent intent doesn't contain TAB. Defaulting to TAB_INFO");
             currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
         }
 
