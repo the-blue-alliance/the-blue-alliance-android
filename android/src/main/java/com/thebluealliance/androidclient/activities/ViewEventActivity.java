@@ -26,18 +26,36 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 public class ViewEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENTKEY = "eventKey";
+    public static final String TAB = "tab";
 
     private String mEventKey;
+    private int currentTab;
     private TextView infoMessage;
     private TextView warningMessage;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
 
-    public static Intent newInstance(Context c, String eventKey) {
+    /**
+     * Create new intent for ViewEventActivity 
+     * @param c context
+     * @param eventKey Key of the event to show
+     * @param tab A string representation of the tab number from ViewEventFragmentPagerAdapter. Strings are used to avoid issues serializing incoming notifications :P
+     * @return
+     */
+    public static Intent newInstance(Context c, String eventKey, String tab){
         Intent intent = new Intent(c, ViewEventActivity.class);
         intent.putExtra(EVENTKEY, eventKey);
+        intent.putExtra(TAB, tab);
         return intent;
+    }
+    
+    public static Intent newInstance(Context c, String eventKey, int tab){
+        return newInstance(c, eventKey, Integer.toString(tab));
+    }
+    
+    public static Intent newInstance(Context c, String eventKey) {
+        return newInstance(c, eventKey, Integer.toString(ViewEventFragmentPagerAdapter.TAB_INFO));
     }
 
     @Override
@@ -48,6 +66,12 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
             mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
         } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
+        }
+        
+        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)){
+            currentTab = Integer.parseInt(getIntent().getExtras().getString(TAB));
+        }else{
+            currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
         }
 
         setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
@@ -65,6 +89,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         // This should be increased if we ever add more pages
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
+        pager.setCurrentItem(currentTab);
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
@@ -187,6 +212,8 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
 
     @Override
     public void onPageSelected(int position) {
+        currentTab = position;
+        
         if (mOptionsMenu != null) {
             if (position == 5 && !isDistrict) {
                 showInfoMessage(getString(R.string.warning_not_real_district));
@@ -195,7 +222,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
             }
         }
 
-        // hide the FAB if we aren't on the first page
+        // hide the FAB if we arenTAB_'t on the first page
         if(position != 0) {
             hideFab(true);
         } else {

@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -65,7 +66,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey);
+        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
         PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, getNotificationId(), new Intent(context, NotificationDismissedListener.class), 0);
 
