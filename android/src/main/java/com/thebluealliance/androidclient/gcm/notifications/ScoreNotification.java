@@ -27,6 +27,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -180,7 +181,7 @@ public class ScoreNotification extends BaseNotification {
 
         // We can finally build the notification!
         Intent instance = ViewMatchActivity.newInstance(context, matchKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
@@ -214,6 +215,6 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + matchKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
     }
 }

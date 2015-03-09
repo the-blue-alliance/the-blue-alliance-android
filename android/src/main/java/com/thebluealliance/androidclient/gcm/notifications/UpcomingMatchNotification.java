@@ -22,12 +22,9 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -80,8 +77,7 @@ public class UpcomingMatchNotification extends BaseNotification {
             long scheduledStartTimeUNIX = matchTime.getAsLong();
             // We multiply by 1000 because the Date constructor expects
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
-            DateFormat format = new SimpleDateFormat("HH:mm");
-            format.setTimeZone(TimeZone.getDefault());
+            java.text.DateFormat format = android.text.format.DateFormat.getTimeFormat(context);
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
@@ -118,7 +114,7 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         Intent instance = ViewMatchActivity.newInstance(context, matchKey);
         PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, getNotificationId(), new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -149,6 +145,6 @@ public class UpcomingMatchNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + matchKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
     }
 }

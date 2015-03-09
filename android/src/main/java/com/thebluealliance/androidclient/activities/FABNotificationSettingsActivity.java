@@ -6,9 +6,6 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,7 +41,6 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     private FloatingActionButton openNotificationSettingsButton;
     private View openNotificationSettingsButtonContainer;
     private FloatingActionButton closeNotificationSettingsButton;
-    private TransitionDrawable fabDrawable;
     private View closeNotificationSettingsButtonContainer;
     private View foregroundDim;
 
@@ -82,14 +78,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         openNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.open_notification_settings_button);
         openNotificationSettingsButton.setOnClickListener(this);
         openNotificationSettingsButtonContainer = findViewById(R.id.open_notification_settings_button_container);
+        
         closeNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
-        // Create drawable for the FAB
-        Resources res = getResources();
-        Drawable backgrounds[] = new Drawable[] {res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
-        fabDrawable = new TransitionDrawable(backgrounds);
-        fabDrawable.setCrossFadeEnabled(true);
         closeNotificationSettingsButton.setOnClickListener(this);
-        closeNotificationSettingsButton.setImageDrawable(fabDrawable);
         closeNotificationSettingsButtonContainer = findViewById(R.id.close_notification_settings_button_container);
         
         // Hide the notification settings button if myTBA isn't enabled
@@ -177,6 +168,19 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 saveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(settings.getSettings());
                 getSupportFragmentManager().beginTransaction().add(saveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
                 saveInProgress = true;
+
+                final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
+                fabHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeNotificationSettingsWindow();
+                        if (settingsFragment != null) {
+                            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
+                        }
+                        saveSettingsTaskFragment = null;
+                    }
+                }, 100);
             }
         } else {
             Log.d(Constants.LOG_TAG, "Clicked id: " + v.getId() + " tag: " + v.getTag() + " view: " + v.toString());
@@ -191,7 +195,6 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     private void openNotificationSettingsView() {
         settings.restoreInitialState();
-        fabDrawable.resetTransition();
         closeNotificationSettingsButton.setColorNormal(getResources().getColor(R.color.accent));
         
         // this is the center of the button in relation to the main view. This provides the center of the clipping circle for the notification settings view.
@@ -391,35 +394,38 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     @Override
     public void onSuccess() {
-        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
-        final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        Toast.makeText(this, "Settings Updated", Toast.LENGTH_SHORT).show();
 
-        Integer colorFrom = getResources().getColor(R.color.accent_dark);
+        Integer colorFrom = getResources().getColor(R.color.accent);
         Integer colorTo = getResources().getColor(R.color.green);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
-                closeNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
+                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
             }
 
         });
         colorAnimation.setDuration(500);
-        colorAnimation.start();
-        
-        final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
 
-        fabHandler.postDelayed(new Runnable() {
+        Integer reverseColorFrom = getResources().getColor(R.color.green);
+        Integer reverseColorTo = getResources().getColor(R.color.accent);
+        ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
+        reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
             @Override
-            public void run() {
-                closeNotificationSettingsWindow();
-                if (settingsFragment != null) {
-                    fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
-                }
-                saveSettingsTaskFragment = null;
+            public void onAnimationUpdate(ValueAnimator animator) {
+                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
             }
-        }, 1000);
+
+        });
+        reverseColorAnimation.setDuration(500);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(colorAnimation);
+        animatorSet.play(reverseColorAnimation).after(2000);
+        animatorSet.start();
         
         // Tell the settings fragment to reload the now-updated
         settings.refreshSettingsFromDatabase();
@@ -431,6 +437,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     @Override
     public void onNoOp() {
         Toast.makeText(this, "No change", Toast.LENGTH_SHORT).show();
+        /*
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
         closeNotificationSettingsWindow();
@@ -438,7 +445,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
         }
         saveSettingsTaskFragment = null;
-
+        */
         
         
         saveInProgress = false;
@@ -446,40 +453,33 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     @Override
     public void onError() {
-        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-        final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
-        if(settingsFragment != null) {
-            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
-        }
-        saveSettingsTaskFragment = null;
+        Toast.makeText(this, "Error updating settings", Toast.LENGTH_SHORT).show();
 
         // Something went wrong, restore the initial state
         settings.restoreInitialState();
+        final Activity activity = this;
 
-        Integer colorFrom = getResources().getColor(R.color.accent_dark);
+        Integer colorFrom = getResources().getColor(R.color.accent);
         Integer colorTo = getResources().getColor(R.color.red);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
-                fabDrawable.startTransition(500);
-                closeNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
+                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
             }
 
         });
         colorAnimation.setDuration(500);
 
         Integer reverseColorFrom = getResources().getColor(R.color.red);
-        Integer reverseColorTo = getResources().getColor(R.color.accent_dark);
-        final Activity activity = this;
+        Integer reverseColorTo = getResources().getColor(R.color.accent);
         ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
         reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
-                //saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
+                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
             }
 
         });
@@ -487,22 +487,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(colorAnimation);
-        animatorSet.play(reverseColorAnimation).after(2500);
+        animatorSet.play(reverseColorAnimation).after(2000);
         animatorSet.start();
 
-        // Close the activity in the future
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                closeNotificationSettingsWindow();
-                if (settingsFragment != null) {
-                    fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
-                }
-                saveSettingsTaskFragment = null;
-            }
-        }, 3000);
-        
         saveInProgress = false;
     }
 
