@@ -19,10 +19,8 @@ import com.thebluealliance.androidclient.listeners.NotificationDismissedListener
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * File created by phil on 10/12/14.
@@ -73,8 +71,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             long scheduledStartTimeUNIX = jsonData.get("scheduled_time").getAsLong();
             // We multiply by 1000 because the Date constructor expects
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
-            DateFormat format = new SimpleDateFormat("HH:mm");
-            format.setTimeZone(TimeZone.getDefault());
+            DateFormat format =  android.text.format.DateFormat.getTimeFormat(context);
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
