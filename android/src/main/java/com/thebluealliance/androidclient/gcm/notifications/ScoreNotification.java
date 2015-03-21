@@ -69,6 +69,7 @@ public class ScoreNotification extends BaseNotification {
             return null;
         }
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
+        String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(matchKey);
 
         JsonObject alliances;
         try {
@@ -186,13 +187,14 @@ public class ScoreNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_score_title));
+        String notificationTitle = r.getString(R.string.notification_score_title, matchAbbrevTitle);
+        stored.setTitle(notificationTitle);
         stored.setBody(notificationString);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)
-                .setContentTitle(r.getString(R.string.notification_score_title))
+                .setContentTitle(notificationTitle)
                 .setContentText(notificationString)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)

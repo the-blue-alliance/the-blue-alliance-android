@@ -86,6 +86,7 @@ public class MatchHelper {
 
     public static final HashMap<TYPE, String> SHORT_TYPES;
     public static final HashMap<TYPE, String> LONG_TYPES;
+    public static final HashMap<TYPE, String> ABBREV_TYPES;
     public static final HashMap<TYPE, Integer> PLAY_ORDER;
 
     static {
@@ -95,7 +96,7 @@ public class MatchHelper {
         SHORT_TYPES.put(MatchHelper.TYPE.SEMI, "sf");
         SHORT_TYPES.put(MatchHelper.TYPE.FINAL, "f");
 
-        LONG_TYPES = new HashMap<>();
+        LONG_TYPES = new HashMap<>(); // TODO: I18N
         LONG_TYPES.put(MatchHelper.TYPE.QUAL, "Quals");
         LONG_TYPES.put(MatchHelper.TYPE.QUARTER, "Quarters");
         LONG_TYPES.put(MatchHelper.TYPE.SEMI, "Semis");
@@ -106,6 +107,12 @@ public class MatchHelper {
         PLAY_ORDER.put(MatchHelper.TYPE.QUARTER, 2);
         PLAY_ORDER.put(MatchHelper.TYPE.SEMI, 3);
         PLAY_ORDER.put(MatchHelper.TYPE.FINAL, 4);
+
+        ABBREV_TYPES = new HashMap<>(); // TODO: I18N
+        ABBREV_TYPES.put(MatchHelper.TYPE.QUAL, "Q");
+        ABBREV_TYPES.put(MatchHelper.TYPE.QUARTER, "QF");
+        ABBREV_TYPES.put(MatchHelper.TYPE.SEMI, "SF");
+        ABBREV_TYPES.put(MatchHelper.TYPE.FINAL, "F");
     }
 
     public static boolean validateMatchKey(String key) {
@@ -569,19 +576,28 @@ public class MatchHelper {
         }
     }
 
-    public static String getMatchTitleFromMatchKey(String matchKey) {
+    /**
+     * Returns a title like "Quals 10" or "Finals 1 Match 2", or abbreviated "Q10" or "F1-2".
+     *
+     * <p/>NOTE: For people following more than one event at a time, the abbreviated form could
+     * include the event code, e.g. "ILCH Q10".
+     */
+    static String getMatchTitleFromMatchKey(String matchKey, boolean abbrev) {
         // match key comes in the form of (EVENTKEY)_(TYPE)(MATCHNUM)m(MATCHNUM)
         // e.g. "2014ilch_f1m1"
 
         // Strip out the event key
         String keyWithoutEvent = matchKey.replaceAll(".*_", "");
 
-        Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)?");
+        Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
 
             String set = null, number = null;
-            String type = m.group(1);
+            String typeCode = m.group(1);
+            TYPE type = TYPE.fromShortType(typeCode);
+            String typeName = (abbrev ? ABBREV_TYPES : LONG_TYPES).get(type);
+
             // If the match key looks like AA##, then the numbers correspond to the match number.
             // Otherwise, if it looks like AA##m##, then the first group of numbers corresponds
             // to the set number and the second group of numbers corresponds to the match number.
@@ -593,14 +609,24 @@ public class MatchHelper {
             }
 
             if(set == null) {
-                // No set specified; this is a quals match
-                return LONG_TYPES.get(TYPE.fromShortType(type)) + " " + number;
+                // No set specified; this is a match like "Quals 10" (abbrev "Q10")
+                String format = abbrev ? "%1$s%2$s" : "%1$s %2$s";
+                return String.format(format, typeName, number);
             } else {
-                // This is an elims match
-                return LONG_TYPES.get(TYPE.fromShortType(type)) + " " + set + " Match " + number;
+                // This is a match like "Semis 1 Match 2" (abbrev "SF1-2")
+                String format = abbrev ? "%1$s%2$s-%3$s" : "%1$s %2$s Match %3$s";
+                return String.format(format, typeName, set, number);
             }
         } else {
             return "Could not find match title";
         }
+    }
+
+    public static String getMatchTitleFromMatchKey(String matchKey) {
+        return getMatchTitleFromMatchKey(matchKey, false);
+    }
+
+    public static String getAbbrevMatchTitleFromMatchKey(String matchKey) {
+        return getMatchTitleFromMatchKey(matchKey, true);
     }
 }

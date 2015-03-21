@@ -31,7 +31,7 @@ import java.util.Date;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    private String eventName, matchTitle, matchKey;
+    private String eventName, matchTitle, matchAbbrevTitle, matchKey;
     private JsonElement matchTime;
     private JsonArray teamKeys;
 
@@ -47,6 +47,8 @@ public class UpcomingMatchNotification extends BaseNotification {
         }
         matchKey = jsonData.get("match_key").getAsString();
         matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
+        matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(matchKey);
+
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
@@ -54,15 +56,17 @@ public class UpcomingMatchNotification extends BaseNotification {
         if (!jsonData.has("team_keys")) {
             throw new JsonParseException("Notification data does not contain 'team_keys");
         }
+
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
         if (!jsonData.has("scheduled_time")) {
             throw new JsonParseException("Notification data does not contain 'scheduled_time'");
         }
+
         matchTime = jsonData.get("scheduled_time");
     }
 
     /**
-     * @param context a Context object for use by the notificatoin builder
+     * @param context a Context object for use by the notification builder
      * @return A constructed notification
      */
     @Override
@@ -75,7 +79,7 @@ public class UpcomingMatchNotification extends BaseNotification {
             scheduledStartTimeString = "";
         } else {
             long scheduledStartTimeUNIX = matchTime.getAsLong();
-            // We multiply by 1000 because the Date constructor expects
+            // We multiply by 1000 because the Date constructor expects ms
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
             java.text.DateFormat format = android.text.format.DateFormat.getTimeFormat(context);
             scheduledStartTimeString = format.format(scheduledStartTime);
@@ -118,13 +122,14 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_upcoming_match_title));
+        String notificationTitle = r.getString(R.string.notification_upcoming_match_title, matchAbbrevTitle);
+        stored.setTitle(notificationTitle);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)
-                .setContentTitle(r.getString(R.string.notification_upcoming_match_title))
+                .setContentTitle(notificationTitle)
                 .setContentText(contentText)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
                 .setContentIntent(intent)
