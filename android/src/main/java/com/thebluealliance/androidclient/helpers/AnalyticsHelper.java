@@ -15,7 +15,7 @@ public class AnalyticsHelper {
 
     public static void sendTimingUpdate(Context c, long time, String name, String label){
         if(!ANALYTICS_ENABLED) return;
-        
+
         Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
 
         t.send(new HitBuilders.TimingBuilder()
@@ -26,4 +26,47 @@ public class AnalyticsHelper {
             .build());
     }
 
+    public static void sendSearchUpdate(Context c, String query){
+        if(!ANALYTICS_ENABLED) return;
+
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("search")
+                .setAction(query)
+                .setLabel("search")
+                .build());
+    }
+
+    public static void sendRefreshUpdate(Context c, String key){
+        if(!ANALYTICS_ENABLED) return;
+
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("refresh")
+                .setAction("toolbar-button")
+                .setLabel(key)
+                .build());
+    }
+
+    public static void sendClickUpdate(Context c, String category, String action, String key){
+        if(!ANALYTICS_ENABLED) return;
+
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .setLabel(key)
+                .build());
+    }
+
+    public static void sendSocialUpdate(Context c, String network, String key){
+        if(!ANALYTICS_ENABLED) return;
+
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
+        t.send(new HitBuilders.SocialBuilder()
+                .setNetwork(network)
+                .setAction("social-click")
+                .setTarget(key)
+                .build());
+    }
 }

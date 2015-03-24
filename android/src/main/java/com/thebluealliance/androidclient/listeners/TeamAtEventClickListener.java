@@ -9,6 +9,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
@@ -55,18 +56,13 @@ public class TeamAtEventClickListener implements View.OnClickListener {
                 teamKey = teamKey.substring(0, teamKey.length() - 1);
             }
             //social button was clicked. Track the call
-            Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
             Intent intent;
             if (EventHelper.validateEventKey(eventKey)) {
                 intent = TeamAtEventActivity.newInstance(c, eventKey, teamKey);
             } else {
                 intent = ViewTeamActivity.newInstance(c, teamKey);
             }
-            t.send(new HitBuilders.EventBuilder()
-                    .setCategory("team@event_click")
-                    .setAction(intent.getAction())
-                    .setLabel(EventTeamHelper.generateKey(eventKey, teamKey))
-                    .build());
+            AnalyticsHelper.sendClickUpdate(c, "team@event_click", key, "");
             c.startActivity(intent);
         }
     }

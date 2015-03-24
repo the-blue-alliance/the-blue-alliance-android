@@ -12,6 +12,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -82,13 +83,8 @@ public class TeamListElement extends ListElement {
                     Intent intent = ViewTeamActivity.newInstance(context, teamKey);
                     
                     /* Track the call */
-                    Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, context);
-                    t.send(new HitBuilders.EventBuilder()
-                            .setCategory("team_click")
-                            .setAction("TeamListElement")
-                            .setLabel(teamKey)
-                            .build());
-                    
+                    AnalyticsHelper.sendClickUpdate(c, "team_click", "TeamListElement", "");
+
                     context.startActivity(intent);
                 }
             });
