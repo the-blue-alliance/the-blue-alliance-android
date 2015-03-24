@@ -7,9 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
@@ -83,7 +80,7 @@ public class TeamListElement extends ListElement {
                     Intent intent = ViewTeamActivity.newInstance(context, teamKey);
                     
                     /* Track the call */
-                    AnalyticsHelper.sendClickUpdate(c, "team_click", "TeamListElement", "");
+                    AnalyticsHelper.sendClickUpdate(context, "team_click", "TeamListElement", "");
 
                     context.startActivity(intent);
                 }
