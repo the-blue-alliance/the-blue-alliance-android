@@ -15,7 +15,6 @@ import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscri
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -72,34 +71,24 @@ public class DataManager {
             return Team.query(c, requestParams, null, sqlWhere, new String[]{teamKey}, new String[]{URL});
         }
 
-        public static APIResponse<Cursor> getCursorForTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
+        public static APIResponse<Cursor> getCursorForTeamsInRange(Context c, int lowerBound, int upperBound, RequestParams requestParams) throws NoDataException {
             ArrayList<Integer> requiredPageNums = new ArrayList<>();
             for (int pageNum = lowerBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum <= upperBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum++) {
                 requiredPageNums.add(pageNum);
             }
-            Log.d("get cursor for simple teams", "getting cursor for teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());
+            Log.d(Constants.DATAMANAGER_LOG, "getting cursor for teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());
 
             ArrayList<APIResponse.CODE> teamListResponseCodes = new ArrayList<>();
             Cursor cursor;
             for (Integer requiredPageNum : requiredPageNums) {
-                int pageNum = requiredPageNum;
 
-                //TODO move to PreferenceHandler class
-                boolean allTeamsLoadedForPage = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, false);
-                if (allTeamsLoadedForPage) {
-                    teamListResponseCodes.add(ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
-                } else {
-                    // We need to load teams from the API
-                    final String URL = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_LIST), pageNum);
-                    APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, new RequestParams());
-                    teamListResponseCodes.add(teamListResponse.getCode());
+                final String URL = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_LIST), requiredPageNum);
+                APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, requestParams);
+                teamListResponseCodes.add(teamListResponse.getCode());
 
-                    ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
+                ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
+                if(teamListResponse.getCode() == APIResponse.CODE.WEBLOAD || teamListResponse.getCode() == APIResponse.CODE.UPDATED && teams.size() > 0) {
                     Database.getInstance(c).getTeamsTable().storeTeams(teams);
-                    if (teamListResponse.getCode() != APIResponse.CODE.NODATA) {
-                        //only update preference if actual data was loaded
-                        PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true).commit();
-                    }
                 }
             }
             cursor = Database.getInstance(c).getTeamsTable().getCursorForTeamsInRange(lowerBound, upperBound);
