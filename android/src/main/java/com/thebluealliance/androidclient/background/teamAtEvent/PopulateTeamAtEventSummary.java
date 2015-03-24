@@ -42,6 +42,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
     ArrayList<Match> eventMatches;
     ArrayList<Match> teamMatches;
     ArrayList<ListItem> summary;
+    int year;
     int rank;
     int allianceNumber = -1, alliancePick = -1;
     Event event;
@@ -92,6 +93,8 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
+
+            year = event.getEventYear();
 
             if (event.isHappeningNow() && teamMatches != null) {
                 nextMatch = MatchHelper.getNextMatchPlayed(teamMatches);
@@ -168,7 +171,8 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_rank), rank + Utilities.getOrdinalFor(rank)));
             }
             // Record
-            if (!recordString.equals("0-0-0")) {
+            /* Don't show for 2015 events, because no wins and such */
+            if (year != 2015 && !recordString.equals("0-0-0")) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_record), recordString));
             }
 
