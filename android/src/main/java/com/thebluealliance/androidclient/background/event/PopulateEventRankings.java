@@ -16,17 +16,13 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.Team;
 
-import org.apache.commons.lang3.text.WordUtils;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +43,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private String eventKey;
     private ArrayList<ListItem> teams;
     private RequestParams requestParams;
-    private static NumberFormat doubleFormat = new DecimalFormat("###.##");
 
     private ListViewAdapter adapter;
 
@@ -77,7 +72,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                  */
                     String teamKey = "frc" + row.get(1).getAsString();
                     String rankingString = "";
-                    CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();  // use a CaseInsensitiveMap in order to find wins, losses, and ties below
+                    EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();  // use a CaseInsensitiveMap in order to find wins, losses, and ties below
                     for (int i = 2; i < row.size(); i++) {
                         rankingElements.put(headerRow.get(i).getAsString(), row.get(i).getAsString());
                     }
@@ -104,30 +99,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                     if (record == null) {
                         record = "";
                     }
-                    // Construct rankings string
-                    it = rankingElements.entrySet().iterator();
-                    while (it.hasNext()) {
-                        Map.Entry entry = (Map.Entry) it.next();
-                        String value = entry.getValue().toString();
-                        // If we have a number like 235.00, remove the useless .00 so it looks cleaner
-                        try{
-                            value = doubleFormat.format(Double.parseDouble(value));
-                        }catch(NumberFormatException e){
-                            //Item is not a number
-                        }
-                        
-                        // Capitalization hack
-                        String rankingKey = entry.getKey().toString();
-                        if (rankingKey.length() <= 3) {
-                            rankingKey = rankingKey.toUpperCase();
-                        } else {
-                            rankingKey = WordUtils.capitalize(rankingKey);
-                        }
-                        rankingString += rankingKey + ": " + value;
-                        if (it.hasNext()) {
-                            rankingString += ", ";
-                        }
-                    }
+
+                    rankingString = EventHelper.createRankingBreakdown(rankingElements);
+
                     Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
                     String nickname;
                     if(team != null){
@@ -193,22 +167,6 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                 Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Rankings refresh complete");
                 activity.notifyRefreshComplete(mFragment);
             }
-        }
-    }
-
-    private class CaseInsensitiveMap<K> extends HashMap<String, K> {
-
-        @Override
-        public K put(String key, K value) {
-            return super.put(key.toLowerCase(), value);
-        }
-
-        public K get(String key) {
-            return super.get(key.toLowerCase());
-        }
-
-        public boolean contains(String key) {
-            return get(key) != null;
         }
     }
 }

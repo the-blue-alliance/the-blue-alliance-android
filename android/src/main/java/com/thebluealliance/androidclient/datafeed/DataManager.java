@@ -15,6 +15,7 @@ import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscri
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -166,17 +167,20 @@ public class DataManager {
             return Media.queryList(c, teamKey, year, requestParams, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
         }
 
-        public static APIResponse<Integer> getRankForTeamAtEvent(Context c, String teamKey, String eventKey, RequestParams requestParams) throws NoDataException {
+        public static APIResponse<JsonArray> getRankForTeamAtEvent(Context c, String teamKey, String eventKey, RequestParams requestParams) throws NoDataException {
             APIResponse<ArrayList<JsonArray>> allRankings = Events.getEventRankings(c, eventKey, requestParams);
             String teamNumber = teamKey.substring(3);
 
             ArrayList<JsonArray> data = allRankings.getData();
-            for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).get(1).getAsString().equals(teamNumber)) {
-                    return new APIResponse<>(i, allRankings.getCode());
+            JsonArray ret = new JsonArray();
+            for (JsonArray i: data) {
+                if (i.get(1).getAsString().equals(teamNumber)) {
+                    ret.add(data.get(0)); // Add the header row
+                    ret.add(i);
+                    return new APIResponse<>(ret, allRankings.getCode());
                 }
             }
-            return new APIResponse<>(-1, allRankings.getCode());
+            return new APIResponse<>(ret, allRankings.getCode());
         }
     }
 

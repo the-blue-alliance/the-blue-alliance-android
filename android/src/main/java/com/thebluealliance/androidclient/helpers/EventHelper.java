@@ -14,7 +14,11 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -34,6 +40,7 @@ public class EventHelper {
     public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy");
     public static final SimpleDateFormat shortRenderDateFormat = new SimpleDateFormat("MMM d");
     public static final SimpleDateFormat weekFormat = new SimpleDateFormat("w");
+    public static NumberFormat doubleFormat = new DecimalFormat("###.##");
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
     public static final String REGIONAL_LABEL = "Week %d";
     public static final String WEEKLESS_LABEL = "Other Official Events";
@@ -387,6 +394,52 @@ public class EventHelper {
             event.setStats(data);
         } else if (url.contains("district_points")) {
             event.setDistrictPoints(data);
+        }
+    }
+
+    public static String createRankingBreakdown(CaseInsensitiveMap rankingElements){
+        String rankingString = "";
+        // Construct rankings string
+        Iterator it = rankingElements.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String value = entry.getValue().toString();
+            // If we have a number like 235.00, remove the useless .00 so it looks cleaner
+            try{
+                value = doubleFormat.format(Double.parseDouble(value));
+            }catch(NumberFormatException e){
+                //Item is not a number
+            }
+
+            // Capitalization hack
+            String rankingKey = entry.getKey().toString();
+            if (rankingKey.length() <= 3) {
+                rankingKey = rankingKey.toUpperCase();
+            } else {
+                rankingKey = WordUtils.capitalize(rankingKey);
+            }
+            rankingString += rankingKey + ": " + value;
+            if (it.hasNext()) {
+                rankingString += ", ";
+            }
+        }
+        Log.d(Constants.LOG_TAG, "String: "+rankingString);
+        return rankingString;
+    }
+
+    public static class CaseInsensitiveMap<K> extends HashMap<String, K> {
+
+        @Override
+        public K put(String key, K value) {
+            return super.put(key.toLowerCase(), value);
+        }
+
+        public K get(String key) {
+            return super.get(key.toLowerCase());
+        }
+
+        public boolean contains(String key) {
+            return get(key) != null;
         }
     }
 }

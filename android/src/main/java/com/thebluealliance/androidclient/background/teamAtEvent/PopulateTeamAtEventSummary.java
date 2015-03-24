@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
@@ -36,7 +37,7 @@ import java.util.Collections;
  */
 public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    String teamKey, eventKey, eventYear, recordString, eventShort;
+    String teamKey, eventKey, rankingString, recordString, eventShort;
     RefreshableHostActivity activity;
     TeamAtEventSummaryFragment fragment;
     ArrayList<Match> eventMatches;
@@ -115,7 +116,6 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                 Log.e(Constants.LOG_TAG, "Can't get event short name");
                 return APIResponse.CODE.NODATA;
             }
-            eventYear = eventKey.substring(0, 4);
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
             JsonArray alliances;
@@ -143,10 +143,21 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             return APIResponse.CODE.NODATA;
         }
 
-        APIResponse<Integer> rankResponse;
+        APIResponse<JsonArray> rankResponse;
         try {
             rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, requestParams);
-            rank = rankResponse.getData();
+            JsonArray rankData = rankResponse.getData();
+            if(rankData.size() > 0){
+                rank = rankData.get(1).getAsJsonArray().get(0).getAsInt(); // fist index of second child is the rank
+                JsonArray headerRow = rankData.get(0).getAsJsonArray();
+                JsonArray teamRank = rankData.get(1).getAsJsonArray();
+                rankingString = "";
+                EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();  // use a CaseInsensitiveMap in order to find wins, losses, and ties below
+                for (int i = 2; i < teamRank.size(); i++) {
+                    rankingElements.put(headerRow.get(i).getAsString(), teamRank.get(i).getAsString());
+                }
+                rankingString = EventHelper.createRankingBreakdown(rankingElements);
+            }
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
@@ -185,6 +196,11 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             // Status
             summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
 
+            // Ranking Breakdown
+            if(!rankingString.isEmpty()){
+                summary.add(new LabelValueListItem("Ranking Breakdown", rankingString));
+            }
+
             if (lastMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_last_match), lastMatch.render()));
             }
@@ -206,7 +222,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         if (activity != null && view != null) {
             if (activity.getSupportActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
                 activity.setActionBarTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
-                activity.setActionBarSubtitle("@ " + eventYear + " " + eventShort);
+                activity.setActionBarSubtitle("@ " + year + " " + eventShort);
             }
 
             ListViewAdapter adapter = new ListViewAdapter(activity, summary);
