@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -35,10 +36,12 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
 
     private LoadAllDataCallbacks callbacks;
     private Context context;
+    private long startTime;
 
     public LoadAllData(LoadAllDataCallbacks callbacks, Context c) {
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -197,7 +200,15 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
         }
         return null;
     }
-    
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        if(context != null){
+            AnalyticsHelper.sendTimingUpdate(context, System.currentTimeMillis() - startTime, "load all data", "");
+        }
+    }
+
     private void onConnectionError(){
         publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, context.getString(R.string.connection_lost)));
         // Wipe any partially cached responses

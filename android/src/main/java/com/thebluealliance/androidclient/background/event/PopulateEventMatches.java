@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -52,12 +53,19 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
     Event event;
     MatchListAdapter adapter;
     private int matchCount;
+    private long startTime;
 
     public PopulateEventMatches(EventMatchesFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
         this.matchCount = 0; 
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -219,12 +227,12 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             }
 
             // Alert any interested parties of matches that are being played if this is a live event
-            if(code != APIResponse.CODE.NODATA) {
+            if (code != APIResponse.CODE.NODATA) {
                 if (event.isHappeningNow()) {
                     // Send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
                     EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
-                } else{
+                } else {
                     Log.d(Constants.LOG_TAG, "Not sending live event broadcast");
                 }
             }
@@ -236,24 +244,26 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, requestParams);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey, teamKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (activity != null && mFragment instanceof RefreshListener) {
-                Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Results refresh complete");
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, requestParams);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey, teamKey);
+            } else {
+                // Show notification if we've refreshed data.
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Results refresh complete");
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event matches", eventKey);
         }
     }
 }

@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictSummaryFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
@@ -41,11 +42,18 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
     private RefreshableHostActivity activity;
     private String teamKey, districtKey;
     private ArrayList<ListItem> summaryItems;
+    private long startTime;
 
     public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, RequestParams requestParams) {
         this.requestParams = requestParams;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -162,12 +170,13 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
                 PopulateTeamAtDistrictSummary second = new PopulateTeamAtDistrictSummary(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(teamKey, districtKey);
-            } else if(activity != null){
+            }else{
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Team@District summary refresh complete");
                 activity.notifyRefreshComplete((RefreshListener) fragment);
             }
 
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@district summary", teamKey + "@" + districtKey);
         }
     }
 }

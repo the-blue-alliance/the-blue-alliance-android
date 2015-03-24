@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Stat;
@@ -32,12 +33,19 @@ public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIRespons
     ArrayList<ListItem> statsList;
     String teamKey, eventKey;
     RequestParams requestParams;
+    private long startTime;
 
     public PopulateTeamAtEventStats(TeamAtEventStatsFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
         this.activity = (RefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -107,24 +115,25 @@ public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIRespons
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateTeamAtEventStats secondTask = new PopulateTeamAtEventStats(fragment, requestParams);
-            fragment.updateTask(secondTask);
-            secondTask.execute(teamKey, eventKey);
-        } else {
-            // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
-            if (activity != null && activity instanceof RefreshableHostActivity) {
-                activity.notifyRefreshComplete(fragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateTeamAtEventStats secondTask = new PopulateTeamAtEventStats(fragment, requestParams);
+                fragment.updateTask(secondTask);
+                secondTask.execute(teamKey, eventKey);
+            } else {
+                // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
+                if (activity != null && activity instanceof RefreshableHostActivity) {
+                    activity.notifyRefreshComplete(fragment);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@event stats", teamKey + "@" + eventKey);
         }
     }
 }

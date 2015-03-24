@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
@@ -33,11 +34,18 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
     private Cursor teams;
+    private long startTime;
 
     public PopulateTeamList(TeamListFragment fragment, RequestParams requestParams) {
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -102,6 +110,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                     activity.notifyRefreshComplete(fragment);
                 }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team list", "");
         }
     }
 }

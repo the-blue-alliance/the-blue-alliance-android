@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -43,13 +44,19 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     private String eventKey;
     private ArrayList<ListItem> teams;
     private RequestParams requestParams;
-
     private ListViewAdapter adapter;
+    private long startTime;
 
     public PopulateEventRankings(EventRankingsFragment f, RequestParams params) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.requestParams = params;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -149,24 +156,25 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
             // Remove progress indicator and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateEventRankings secondLoad = new PopulateEventRankings(mFragment, requestParams);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (activity != null && mFragment instanceof RefreshListener) {
-                Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Rankings refresh complete");
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateEventRankings secondLoad = new PopulateEventRankings(mFragment, requestParams);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey);
+            } else {
+                // Show notification if we've refreshed data.
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Rankings refresh complete");
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event ranking", eventKey);
         }
     }
 }
