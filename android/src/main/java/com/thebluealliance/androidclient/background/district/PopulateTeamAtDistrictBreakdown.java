@@ -133,10 +133,9 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
     protected void onPostExecute(APIResponse.CODE code) {
         View view = fragment.getView();
 
-        ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
-
         if (view != null && activity != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
