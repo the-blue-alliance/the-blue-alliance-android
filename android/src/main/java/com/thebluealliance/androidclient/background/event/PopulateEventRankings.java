@@ -83,17 +83,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
                     for (int i = 2; i < row.size(); i++) {
                         rankingElements.put(headerRow.get(i).getAsString(), row.get(i).getAsString());
                     }
-                    String record = null;
-                    // Find if the rankings contain a record; remove it if it does
-                    Iterator it = rankingElements.entrySet().iterator();
-                    while (it.hasNext()) {
-                        Map.Entry<String, Object> entry = (Map.Entry) it.next();
-                        if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
-                            record = "(" + rankingElements.get(entry.getKey()) + ")";
-                            it.remove();
-                            break;
-                        }
-                    }
+
+                    String record = EventHelper.extractRankingString(rankingElements);
+
                     if (record == null) {
                         Set<String> keys = rankingElements.keySet();
                         if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {

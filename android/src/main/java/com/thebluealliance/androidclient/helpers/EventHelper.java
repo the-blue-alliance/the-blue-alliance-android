@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 
@@ -395,6 +396,32 @@ public class EventHelper {
         } else if (url.contains("district_points")) {
             event.setDistrictPoints(data);
         }
+    }
+
+    public static String extractRankingString(CaseInsensitiveMap rankingElements){
+        // Find if the rankings contain a record; remove it if it does
+        Iterator it = rankingElements.entrySet().iterator();
+        String record = null;
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry) it.next();
+            if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
+                record = "(" + rankingElements.get(entry.getKey()) + ")";
+                it.remove();
+                break;
+            }
+        }
+
+        if (record == null) {
+            Set<String> keys = rankingElements.keySet();
+            if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
+                record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
+                rankingElements.remove("wins");
+                rankingElements.remove("losses");
+                rankingElements.remove("ties");
+            }
+        }
+
+        return record;
     }
 
     public static String createRankingBreakdown(CaseInsensitiveMap rankingElements){

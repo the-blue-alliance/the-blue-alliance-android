@@ -164,6 +164,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                 for (int i = 2; i < teamRank.size(); i++) {
                     rankingElements.put(headerRow.get(i).getAsString(), teamRank.get(i).getAsString());
                 }
+                EventHelper.extractRankingString(rankingElements);
                 rankingString = EventHelper.createRankingBreakdown(rankingElements);
             }
             if (isCancelled()) {
@@ -186,7 +187,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         summary = new ArrayList<>();
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
             // Rank
-            if (rank != -1) {
+            if (rank > 0) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_rank), rank + Utilities.getOrdinalFor(rank)));
             }
             // Record
@@ -202,10 +203,12 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             }
 
             // Status
-            summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
+            if(status != MatchHelper.EventStatus.NOT_PICKED) {
+                summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
+            }
 
             // Ranking Breakdown
-            if(!rankingString.isEmpty()){
+            if(rankingString != null && !rankingString.isEmpty()){
                 summary.add(new LabelValueListItem("Ranking Breakdown", rankingString));
             }
 
