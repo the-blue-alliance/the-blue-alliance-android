@@ -5,14 +5,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
@@ -177,12 +175,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             listener.onRefreshStart(actionIconPressed);
         }
 
-        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, this);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("refresh")
-                .setAction("toolbar-button")
-                .setLabel(modelKey)
-                .build());
+        AnalyticsHelper.sendRefreshUpdate(this, modelKey);
     }
 
     /*

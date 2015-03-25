@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.mytba.MyFavoritesFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
@@ -35,12 +36,19 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
     private RefreshableHostActivity activity;
     private RequestParams requestParams;
     private ArrayList<ListItem> favorites;
+    private long startTime;
 
     public PopulateUserFavorites(MyFavoritesFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
-        activity = (RefreshableHostActivity) fragment.getActivity();
+        this.activity = (RefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -126,6 +134,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
                     activity.notifyRefreshComplete(fragment);
                 }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "populate user favorites", "");
         }
     }
 }

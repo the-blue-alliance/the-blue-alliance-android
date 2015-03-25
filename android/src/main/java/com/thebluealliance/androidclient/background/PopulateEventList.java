@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
@@ -35,10 +36,17 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private RefreshableHostActivity activity;
     private RefreshableHost host;
     private RequestParams requestParams;
+    private long startTime;
 
     private PopulateEventList(Fragment fragment, RequestParams requestParams) {
         mFragment = fragment;
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     public PopulateEventList(Fragment fragment, String districtKey, RequestParams requestParams) {
@@ -207,6 +215,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 host.notifyRefreshComplete((RefreshListener) mFragment);
             }
 
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event list", requestParams.toString());
         }
     }
 }

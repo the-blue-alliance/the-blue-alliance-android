@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
     private int year;
     private ArrayList<String> allLabels;
     private static EventWeekLabelSortComparator comparator;
+    private long startTime;
 
     public BuildEventWeekTabs(EventsByWeekFragment fragment) {
         this.fragment = fragment;
@@ -31,6 +33,12 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
         if (comparator == null) {
             comparator = new EventWeekLabelSortComparator();
         }
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -59,6 +67,7 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
                 fragment.updateLabels(allLabels);
                 fragment.notifyRefreshComplete(fragment);
             }
+            AnalyticsHelper.sendTimingUpdate(fragment.getActivity(), System.currentTimeMillis() - startTime,"build week tabs", "");
         }
     }
 

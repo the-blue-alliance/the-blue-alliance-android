@@ -15,15 +15,13 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -122,13 +120,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     protected void onPause() {
         super.onPause();
 
-        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, this);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("search")
-                .setAction(currentQuery)
-                .setLabel("search")
-                .build());
-        currentQuery = "";
+        AnalyticsHelper.sendSearchUpdate(this, currentQuery);
     }
 
     @Override

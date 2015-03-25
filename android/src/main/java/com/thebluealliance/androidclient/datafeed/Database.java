@@ -528,6 +528,9 @@ public class Database extends SQLiteOpenHelper {
 
                             //add search team item
                             insertSearchItemTeam(team, false);
+                        }else{
+                            db.update(TABLE_TEAMS, team.getParams(), KEY + " =?", new String[]{team.getTeamKey()});
+                            updateSearchItemTeam(team);
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
                         Log.w(Constants.LOG_TAG, "Unable to add team - missing key.");

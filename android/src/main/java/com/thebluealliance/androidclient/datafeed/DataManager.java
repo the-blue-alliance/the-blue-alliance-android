@@ -71,34 +71,24 @@ public class DataManager {
             return Team.query(c, requestParams, null, sqlWhere, new String[]{teamKey}, new String[]{URL});
         }
 
-        public static APIResponse<Cursor> getCursorForTeamsInRange(Context c, int lowerBound, int upperBound) throws NoDataException {
+        public static APIResponse<Cursor> getCursorForTeamsInRange(Context c, int lowerBound, int upperBound, RequestParams requestParams) throws NoDataException {
             ArrayList<Integer> requiredPageNums = new ArrayList<>();
             for (int pageNum = lowerBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum <= upperBound / Constants.API_TEAM_LIST_PAGE_SIZE; pageNum++) {
                 requiredPageNums.add(pageNum);
             }
-            Log.d("get cursor for simple teams", "getting cursor for teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());
+            Log.d(Constants.DATAMANAGER_LOG, "getting cursor for teams in range: " + lowerBound + " - " + upperBound + ". requires pages: " + requiredPageNums.toString());
 
             ArrayList<APIResponse.CODE> teamListResponseCodes = new ArrayList<>();
             Cursor cursor;
             for (Integer requiredPageNum : requiredPageNums) {
-                int pageNum = requiredPageNum;
 
-                //TODO move to PreferenceHandler class
-                boolean allTeamsLoadedForPage = PreferenceManager.getDefaultSharedPreferences(c).getBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, false);
-                if (allTeamsLoadedForPage) {
-                    teamListResponseCodes.add(ConnectionDetector.isConnectedToInternet(c) ? APIResponse.CODE.CACHED304 : APIResponse.CODE.OFFLINECACHE);
-                } else {
-                    // We need to load teams from the API
-                    final String URL = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_LIST), pageNum);
-                    APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, new RequestParams());
-                    teamListResponseCodes.add(teamListResponse.getCode());
+                final String URL = String.format(TBAv2.getTBAApiUrl(c, TBAv2.QUERY.TEAM_LIST), requiredPageNum);
+                APIResponse<String> teamListResponse = TBAv2.getResponseFromURLOrThrow(c, URL, requestParams);
+                teamListResponseCodes.add(teamListResponse.getCode());
 
-                    ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
+                ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
+                if(teamListResponse.getCode() == APIResponse.CODE.WEBLOAD || teamListResponse.getCode() == APIResponse.CODE.UPDATED && teams.size() > 0) {
                     Database.getInstance(c).getTeamsTable().storeTeams(teams);
-                    if (teamListResponse.getCode() != APIResponse.CODE.NODATA) {
-                        //only update preference if actual data was loaded
-                        PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true).commit();
-                    }
                 }
             }
             cursor = Database.getInstance(c).getTeamsTable().getCursorForTeamsInRange(lowerBound, upperBound);
@@ -166,17 +156,20 @@ public class DataManager {
             return Media.queryList(c, teamKey, year, requestParams, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
         }
 
-        public static APIResponse<Integer> getRankForTeamAtEvent(Context c, String teamKey, String eventKey, RequestParams requestParams) throws NoDataException {
+        public static APIResponse<JsonArray> getRankForTeamAtEvent(Context c, String teamKey, String eventKey, RequestParams requestParams) throws NoDataException {
             APIResponse<ArrayList<JsonArray>> allRankings = Events.getEventRankings(c, eventKey, requestParams);
             String teamNumber = teamKey.substring(3);
 
             ArrayList<JsonArray> data = allRankings.getData();
-            for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).get(1).getAsString().equals(teamNumber)) {
-                    return new APIResponse<>(i, allRankings.getCode());
+            JsonArray ret = new JsonArray();
+            for (JsonArray i: data) {
+                if (i.get(1).getAsString().equals(teamNumber)) {
+                    ret.add(data.get(0)); // Add the header row
+                    ret.add(i);
+                    return new APIResponse<>(ret, allRankings.getCode());
                 }
             }
-            return new APIResponse<>(-1, allRankings.getCode());
+            return new APIResponse<>(ret, allRankings.getCode());
         }
     }
 

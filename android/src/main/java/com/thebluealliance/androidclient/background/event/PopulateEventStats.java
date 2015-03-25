@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -49,6 +50,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     private RequestParams requestParams;
     private String statToSortBy;
     private EventStatsFragmentAdapter adapter;
+    private long startTime;
 
     public PopulateEventStats(EventStatsFragment f, RequestParams requestParams, String statToSortBy) {
         mFragment = f;
@@ -221,24 +223,24 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
-        }
-
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateEventStats secondLoad = new PopulateEventStats(mFragment, requestParams, statToSortBy);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (activity != null && mFragment instanceof RefreshListener) {
-                Log.d(Constants.REFRESH_LOG, "Event  " + eventKey + " Stats refresh complete");
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateEventStats secondLoad = new PopulateEventStats(mFragment, requestParams, statToSortBy);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey);
+            } else {
+                // Show notification if we've refreshed data.
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    Log.d(Constants.REFRESH_LOG, "Event  " + eventKey + " Stats refresh complete");
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event stats", eventKey);
         }
     }
 
