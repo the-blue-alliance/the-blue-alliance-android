@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -40,11 +41,18 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
     private int year;
     ArrayList<ListGroup> groups;
     private RequestParams requestParams;
+    private long startTime;
 
     public PopulateTeamMedia(TeamMediaFragment f, RequestParams requestParams) {
         fragment = f;
         activity = (RefreshableHostActivity) f.getActivity();
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -163,6 +171,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                     activity.notifyRefreshComplete(fragment);
                 }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team media", team);
         }
     }
 }

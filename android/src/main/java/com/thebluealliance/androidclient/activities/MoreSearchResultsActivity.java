@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 /**
  * Created by Nathan on 6/15/2014.
@@ -108,12 +109,7 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
     protected void onPause() {
         super.onPause();
 
-        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, this);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("search")
-                .setAction(query)
-                .setLabel("search")
-                .build());
+        AnalyticsHelper.sendSearchUpdate(this, query);
         query = "";
     }
 

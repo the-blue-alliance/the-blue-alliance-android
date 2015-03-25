@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -35,10 +36,12 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
 
     private LoadAllDataCallbacks callbacks;
     private Context context;
+    private long startTime;
 
     public LoadAllData(LoadAllDataCallbacks callbacks, Context c) {
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -83,7 +86,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     start = start == 0 ? 1 : start;
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
                     APIResponse<String> teamListResponse;
-                    teamListResponse = TBAv2.getResponseFromURLOrThrow(context, String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.TEAM_LIST), pageNum), new RequestParams(false, true, true));
+                    teamListResponse = TBAv2.getResponseFromURLOrThrow(context, String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.TEAM_LIST), pageNum), new RequestParams());
                     JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
                     if (responseObject != null) {
                         if (responseObject.size() == 0) {
@@ -106,7 +109,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
                     APIResponse<String> eventListResponse;
                     String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
-                    eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, new RequestParams(false, true, true));
+                    eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, new RequestParams());
                     if(eventListResponse.getCode() == APIResponse.CODE.WEBLOAD || eventListResponse.getCode() == APIResponse.CODE.UPDATED) {
                         if(eventListResponse.getData() == null || eventListResponse.getData().isEmpty()){
                             onConnectionError();
@@ -140,7 +143,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
                     APIResponse<String> districtListResponse;
                     String url = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.DISTRICT_LIST), year);
-                    districtListResponse = TBAv2.getResponseFromURLOrThrow(context, url, new RequestParams(false, true, true));
+                    districtListResponse = TBAv2.getResponseFromURLOrThrow(context, url, new RequestParams());
                     if (districtListResponse.getData() == null) {
                         continue;
                     }
@@ -197,7 +200,15 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
         }
         return null;
     }
-    
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        if(context != null){
+            AnalyticsHelper.sendTimingUpdate(context, System.currentTimeMillis() - startTime, "load all data", "");
+        }
+    }
+
     private void onConnectionError(){
         publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, context.getString(R.string.connection_lost)));
         // Wipe any partially cached responses

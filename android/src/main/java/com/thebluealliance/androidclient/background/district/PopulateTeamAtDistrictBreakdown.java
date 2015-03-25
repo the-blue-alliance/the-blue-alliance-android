@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictBreakdownFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
@@ -38,12 +39,19 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
     private RefreshableHostActivity activity;
     private String teamKey, districtKey;
     private ArrayList<ListGroup> groups;
+    private long startTime;
 
     public PopulateTeamAtDistrictBreakdown(TeamAtDistrictBreakdownFragment fragment, RequestParams requestParams) {
         super();
         this.requestParams = requestParams;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -133,10 +141,9 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
     protected void onPostExecute(APIResponse.CODE code) {
         View view = fragment.getView();
 
-        ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
-
         if (view != null && activity != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
@@ -166,24 +173,26 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateTeamAtDistrictBreakdown secondLoad = new PopulateTeamAtDistrictBreakdown(fragment, requestParams);
-            fragment.updateTask(secondLoad);
-            secondLoad.execute(teamKey, districtKey);
-        } else if(activity != null){
-            // Show notification if we've refreshed data.
-            if (fragment instanceof RefreshListener) {
-                Log.d(Constants.REFRESH_LOG, teamKey + " at " + districtKey + " refresh complete");
-                activity.notifyRefreshComplete(fragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateTeamAtDistrictBreakdown secondLoad = new PopulateTeamAtDistrictBreakdown(fragment, requestParams);
+                fragment.updateTask(secondLoad);
+                secondLoad.execute(teamKey, districtKey);
+            }{
+                // Show notification if we've refreshed data.
+                if (fragment instanceof RefreshListener) {
+                    Log.d(Constants.REFRESH_LOG, teamKey + " at " + districtKey + " refresh complete");
+                    activity.notifyRefreshComplete(fragment);
+                }
             }
+
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@district breakdown", teamKey + "@" + districtKey);
         }
     }
 }

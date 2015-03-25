@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -49,6 +50,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     Event event;
     private boolean showRanks, showStats;
     private RequestParams requestParams;
+    private long startTime;
 
     public PopulateEventInfo(EventInfoFragment f, RequestParams requestParams) {
         mFragment = f;
@@ -59,6 +61,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     @Override
     protected void onPreExecute() {
         super.onPreExecute(); // reset event settings
+        startTime = System.currentTimeMillis();
         showRanks = showStats = false;
 
         View view = mFragment.getView();
@@ -286,6 +289,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     activity.notifyRefreshComplete(mFragment);
                 }
             }
+
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event info", eventKey);
         }
     }
 }

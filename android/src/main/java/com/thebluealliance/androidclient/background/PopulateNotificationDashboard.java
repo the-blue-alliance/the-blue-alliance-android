@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.fragments.NotificationDashboardFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -29,11 +30,18 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> items;
     private ListViewAdapter adapter;
+    private long startTime;
     
     public PopulateNotificationDashboard(NotificationDashboardFragment fragment){
         super();
         this.fragment = fragment;
         this.activity = (RefreshableHostActivity) fragment.getActivity();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -86,5 +94,6 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
                 activity.notifyRefreshComplete(fragment);
             }
         }
+        AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "notification dash", "");
     }
 }
