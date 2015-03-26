@@ -453,24 +453,22 @@ public class Event extends BasicModel<Event> {
     }
 
     public ArrayList<AllianceListElement> renderAlliances() {
+        ArrayList<AllianceListElement> output = new ArrayList<>();
         try {
             JsonArray alliances = getAlliances();
-            ArrayList<AllianceListElement> output = new ArrayList<>();
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
                 output.add(new AllianceListElement(getEventKey(), counter, teams));
                 counter++;
             }
-            return output;
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
                     "Required field: Database.Events.ALLIANCES");
-            return null;
         } catch (IllegalArgumentException e){
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
-            return null;
         }
+        return output;
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {

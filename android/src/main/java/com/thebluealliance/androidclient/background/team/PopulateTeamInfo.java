@@ -5,7 +5,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,6 +15,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
@@ -34,11 +34,18 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
     private String mTeamKey;
     private String mTeamWebsite;
     private RequestParams requestParams;
+    private long startTime;
 
     public PopulateTeamInfo(TeamInfoFragment fragment, RequestParams requestParams) {
         mFragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -81,8 +88,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         super.onPostExecute(code);
 
         View view = mFragment.getView();
-        LayoutInflater inflater = activity.getLayoutInflater();
-        if (view != null) {
+        if (view != null && activity != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             View infoContainer = view.findViewById(R.id.team_info_container);
             if (code == APIResponse.CODE.NODATA) {
@@ -133,24 +139,25 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
             }
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateTeamInfo secondLoad = new PopulateTeamInfo(mFragment, requestParams);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(mTeamKey);
-        } else {
-            // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, "Team " + mTeamKey + " info refresh complete");
-            if (activity != null && mFragment instanceof RefreshListener) {
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateTeamInfo secondLoad = new PopulateTeamInfo(mFragment, requestParams);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(mTeamKey);
+            } else {
+                // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, "Team " + mTeamKey + " info refresh complete");
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team info", mTeamKey);
         }
     }
 

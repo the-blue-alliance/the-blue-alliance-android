@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -34,10 +35,17 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private String mMatchKey, mEventShortName, mMatchTitle;
     private ArrayList<ListItem> mMatchDetails;
     private RequestParams requestParams;
+    private long startTime;
 
     public PopulateMatchInfo(RefreshableHostActivity activity, RequestParams requestParams) {
         mActivity = activity;
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -92,43 +100,45 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if (code != APIResponse.CODE.NODATA) {
+        if(mActivity != null) {
+            if (code != APIResponse.CODE.NODATA) {
 
-            mActivity.setActionBarTitle(mMatchTitle);
-            mActivity.setActionBarSubtitle("@ " + mMatchKey.substring(0, 4) + " " + mEventShortName);
+                mActivity.setActionBarTitle(mMatchTitle);
+                mActivity.setActionBarSubtitle("@ " + mMatchKey.substring(0, 4) + " " + mEventShortName);
 
-            ListViewAdapter adapter = new ListViewAdapter(mActivity, mMatchDetails);
-            ListView list = (ListView) mActivity.findViewById(R.id.match_details);
+                ListViewAdapter adapter = new ListViewAdapter(mActivity, mMatchDetails);
+                ListView list = (ListView) mActivity.findViewById(R.id.match_details);
 
-            //disable touch feedback (you can't click the elements here...)
-            list.setCacheColorHint(android.R.color.transparent);
-            list.setSelector(R.drawable.transparent);
+                //disable touch feedback (you can't click the elements here...)
+                list.setCacheColorHint(android.R.color.transparent);
+                list.setSelector(R.drawable.transparent);
 
-            list.setAdapter(adapter);
+                list.setAdapter(adapter);
 
-            if (code == APIResponse.CODE.OFFLINECACHE) {
-                mActivity.showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
+                if (code == APIResponse.CODE.OFFLINECACHE) {
+                    mActivity.showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
+                }
+
+                mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
+
             }
 
-            mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
-
-        }
-
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            new PopulateMatchInfo(mActivity, requestParams).execute(mMatchKey);
-        } else {
-            // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
-            if (mActivity != null && mActivity instanceof RefreshableHostActivity) {
-                mActivity.notifyRefreshComplete((RefreshListener) mActivity);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                new PopulateMatchInfo(mActivity, requestParams).execute(mMatchKey);
+            } else {
+                // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
+                if (mActivity != null && mActivity instanceof RefreshableHostActivity) {
+                    mActivity.notifyRefreshComplete((RefreshListener) mActivity);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(mActivity, System.currentTimeMillis() - startTime, "match info", mMatchKey);
         }
-
     }
 }
