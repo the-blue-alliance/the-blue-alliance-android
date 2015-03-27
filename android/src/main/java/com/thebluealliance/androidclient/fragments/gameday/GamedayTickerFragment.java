@@ -15,11 +15,12 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.FirebaseNotification;
 
 import java.util.ArrayList;
 
@@ -76,8 +77,8 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
 
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        Log.d(Constants.LOG_TAG, "Got data: "+dataSnapshot.toString());
-        adapter.values.add(new LabelValueListItem("", dataSnapshot.toString()));
+        FirebaseNotification notification = dataSnapshot.getValue(FirebaseNotification.class);
+        adapter.values.add(0, new LabelValueListItem(NotificationTypes.getDisplayName(notification.getPayload().get("message_type").toString()), notification.getPayload().get("message_data").toString()));
         adapter.updateListData();
         progressBar.setVisibility(View.GONE);
     }
