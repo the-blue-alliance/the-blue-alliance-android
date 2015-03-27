@@ -452,6 +452,8 @@ public class Event extends BasicModel<Event> {
         }
     }
 
+
+
     public ArrayList<AllianceListElement> renderAlliances() {
         ArrayList<AllianceListElement> output = new ArrayList<>();
         try {
