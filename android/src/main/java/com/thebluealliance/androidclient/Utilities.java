@@ -14,6 +14,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -162,6 +163,7 @@ public class Utilities {
                     intent = HomeActivity.newInstance(c, R.id.nav_item_insights);
                     break;
                 case "gameday":
+                    intent = GamedayActivity.newInstance(c);
                     break;
                 default:
                     intent = null;

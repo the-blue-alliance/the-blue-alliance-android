@@ -64,6 +64,9 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
+        exclude 'META-INF/NOTICE'
     }
 
     lintOptions {
@@ -141,6 +144,7 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.melnykov:floatingactionbutton:1.0.7'
     compile 'de.hdodenhof:circleimageview:1.2.0'
+    compile 'com.firebase:firebase-client-android:2.2.3'
 
     // testing
     testCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'

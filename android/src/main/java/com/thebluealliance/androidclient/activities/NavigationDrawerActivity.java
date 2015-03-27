@@ -156,25 +156,30 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
     public void onNavDrawerItemClicked(NavDrawerItem item) {
         final int id = item.getId();
 
-        // Open settings in the foreground
-        if (id == R.id.nav_item_settings) {
-            // Launch after a short delay to give the drawer time to close.
+        final Intent intent;
+        switch(id){
+            case R.id.nav_item_settings:
+                intent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
+                break;
+            case R.id.nav_item_notifications:
+                intent = NotificationDashboardActivity.newInstance(NavigationDrawerActivity.this);
+                break;
+            case R.id.nav_item_gameday:
+                intent = GamedayActivity.newInstance(NavigationDrawerActivity.this);
+                break;
+            default:
+                intent = null;
+                break;
+        }
+        // Launch after a short delay to give the drawer time to close.
+        if(intent != null) {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startActivity(new Intent(NavigationDrawerActivity.this, SettingsActivity.class));
-                }
-            }, DRAWER_CLOSE_ANIMATION_DURATION);
-        }else if(id == R.id.nav_item_notifications){
-            // Launch after a short delay to give the drawer time to close.
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(NotificationDashboardActivity.newInstance(NavigationDrawerActivity.this));
+                    startActivity(intent);
                 }
             }, DRAWER_CLOSE_ANIMATION_DURATION);
         }
-
 
         /*
          * We manually add the start activity to the back stack so that we maintain proper
