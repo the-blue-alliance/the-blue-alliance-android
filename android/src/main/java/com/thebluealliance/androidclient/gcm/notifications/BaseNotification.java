@@ -9,6 +9,9 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -17,12 +20,13 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 /**
  * Created by Nathan on 7/24/2014.
  */
-public abstract class BaseNotification {
+public abstract class BaseNotification extends ListElement {
 
     String messageData;
     String messageType;
@@ -55,6 +59,16 @@ public abstract class BaseNotification {
     public abstract void updateDataLocally(Context c);
 
     public abstract int getNotificationId();
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        convertView = inflater.inflate(R.layout.list_item_carded_summary, null);
+        TextView label = (TextView)convertView.findViewById(R.id.label);
+        TextView value = (TextView)convertView.findViewById(R.id.value);
+        label.setText(messageType);
+        value.setText(messageData);
+        return convertView;
+    }
 
     public StoredNotification getStoredNotification(){
         return stored;

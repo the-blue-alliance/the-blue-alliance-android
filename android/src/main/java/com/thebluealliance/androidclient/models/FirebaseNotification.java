@@ -1,5 +1,18 @@
 package com.thebluealliance.androidclient.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
+import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
+import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
+import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
+import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
+import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
+import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+
 import java.util.Map;
 
 /**
@@ -10,8 +23,14 @@ public class FirebaseNotification {
     private String time;
     private Map<String, Object> payload;
 
-    public FirebaseNotification(){
+    @JsonIgnore
+    private String jsonString;
+    @JsonIgnore
+    private BaseNotification notification;
 
+    public FirebaseNotification(){
+        jsonString = "";
+        notification = null;
     }
 
     public Map<String, Object> getPayload(){
@@ -22,4 +41,44 @@ public class FirebaseNotification {
         return time;
     }
 
+    public String convertToJson(){
+        if(jsonString.isEmpty()){
+            jsonString = JSONManager.getGson().toJson(payload);
+        }
+        return jsonString;
+    }
+
+    public BaseNotification getNotification(){
+        if(notification != null){
+            return notification;
+        }
+        JsonObject message = JSONManager.getasJsonObject(convertToJson());
+        String messageType = message.get("message_type").getAsString();
+        String messageData = message.get("message_data").toString();
+        switch(messageType){
+            case NotificationTypes.MATCH_SCORE:
+                notification = new ScoreNotification(messageData);
+                break;
+            case NotificationTypes.UPCOMING_MATCH:
+                notification = new UpcomingMatchNotification(messageData);
+                break;
+            case NotificationTypes.ALLIANCE_SELECTION:
+                notification = new AllianceSelectionNotification(messageData);
+                break;
+            case NotificationTypes.LEVEL_STARTING:
+                notification = new CompLevelStartingNotification(messageData);
+                break;
+            case NotificationTypes.SCHEDULE_UPDATED:
+                notification = new ScheduleUpdatedNotification(messageData);
+                break;
+            case NotificationTypes.AWARDS:
+                notification = new AwardsPostedNotification(messageData);
+                break;
+            case NotificationTypes.DISTRICT_POINTS_UPDATED:
+                notification = new DistrictPointsUpdatedNotification(messageData);
+                break;
+        }
+
+        return notification;
+    }
 }

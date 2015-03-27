@@ -104,7 +104,7 @@ public class GamedayActivity extends BaseActivity {
 
     private void setupActionBar() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("Gameday"); //TODO move to string resource
+        setActionBarTitle("TBA GameDay"); //TODO move to string resource
     }
 
     @Override
