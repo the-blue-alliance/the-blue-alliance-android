@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.background.gameday.PopulateGameDayWebcasts;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
@@ -64,6 +65,6 @@ public class GamedayWebcastsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new RequestParams(true, false);
+        new PopulateGameDayWebcasts(this, new RequestParams(true, false)).execute();
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- YouTube format (with channel ID)-->
+    <string name="webcast_youtube_embed_pattern">http://www.youtube.com/embed/%1$s</string>
+
+    <!-- UStream format (with channel ID) -->
+    <string name="webcast_ustream_embed_pattern">http://www.ustream.tv/channel/%1$s</string>
+
+    <!-- Twitch format (with channel ID) -->
+    <string name="webcast_twitch_embed_pattern">http://www.twitch.tv/%1$s</string>
+
+    <!-- Livestream format (with channel ID, event ID) -->
+    <string name="webcast_livestream_embed_pattern">http://new.livestream.com/accounts/%1$s/events/%2$s</string>
+
+    <string name="no_webcast_data_found">No webcasts found this week</string>
+</resources>
