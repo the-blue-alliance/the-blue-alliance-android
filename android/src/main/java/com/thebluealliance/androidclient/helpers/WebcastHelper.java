@@ -15,7 +15,17 @@ public class WebcastHelper {
         TWITCH,
         USTREAM,
         LIVESTREAM,
-        NONE
+        NONE;
+
+        public String render(Context context){
+            switch(this){
+                case YOUTUBE: return context.getString(R.string.webcast_type_youtube);
+                case TWITCH: return context.getString(R.string.webcast_type_twitch);
+                case USTREAM: return context.getString(R.string.webcast_type_ustream);
+                case LIVESTREAM: return context.getString(R.string.webcast_type_livestream);
+                default: return "";
+            }
+        }
     }
 
     public static TYPE getType(String typeString){

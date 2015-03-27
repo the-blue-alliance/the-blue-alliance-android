@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.EventSortByTypeAndNameComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -20,6 +21,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by phil on 3/27/15.
@@ -54,6 +56,8 @@ public class PopulateGameDayWebcasts extends AsyncTask<String, Void, APIResponse
             Log.w(Constants.LOG_TAG, "Unable to fetch current events");
             return APIResponse.CODE.NODATA;
         }
+
+        Collections.sort(response.getData(), new EventSortByTypeAndNameComparator());
 
         for(Event event: response.getData()){
             webcasts.addAll(event.renderWebcasts());

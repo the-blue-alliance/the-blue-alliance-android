@@ -45,19 +45,20 @@ public class WebcastListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.label.setText(eventName + " - " + number);
+        holder.label.setText(String.format(c.getString(R.string.webcast_event_format), eventName, number));
         final String service = webcast.get("type").getAsString();
+        final WebcastHelper.TYPE type = WebcastHelper.getType(service);
         if (holder.container.getChildCount() > 2) {
             holder.container.removeViewAt(2);
         }
         if (service != null) {
             holder.value.setVisibility(View.VISIBLE);
-            holder.value.setText(service);
+            holder.value.setText(String.format(c.getString(R.string.webcast_watch_on), type.render(c)));
             holder.value.setTypeface(null, Typeface.NORMAL);
-            holder.value.setOnClickListener(new View.OnClickListener() {
+            holder.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String url = WebcastHelper.getUrlForWebcast(c, WebcastHelper.getType(service), webcast);
+                    String url = WebcastHelper.getUrlForWebcast(c, type, webcast);
                     Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
                     c.startActivity(intent);
                 }
