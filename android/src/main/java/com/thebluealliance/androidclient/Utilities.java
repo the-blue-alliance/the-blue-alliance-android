@@ -373,5 +373,14 @@ public class Utilities {
             return null;
         }
     }
+    
+    public static String getVersionNumber(){
+        /* If this changes, make sure to also change it in SettingsActivity */
+        if(BuildConfig.VERSION_NAME.contains("/")){
+            return BuildConfig.VERSION_NAME.split("/")[0];
+        }else{
+            return BuildConfig.VERSION_NAME;
+        }
+    }
 
 }

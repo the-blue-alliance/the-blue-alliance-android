@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -19,10 +20,8 @@ import com.thebluealliance.androidclient.listeners.NotificationDismissedListener
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * File created by phil on 10/12/14.
@@ -59,7 +58,7 @@ public class CompLevelStartingNotification extends BaseNotification {
 
         String compLevel;
         switch (compLevelAbbrev){
-            case "qm":  compLevel = r.getString(R.string.quarters_header); break;
+            case "qm":  compLevel = r.getString(R.string.quals_header); break;
             case "ef":  compLevel = r.getString(R.string.eigths_header); break;
             case "qf":  compLevel = r.getString(R.string.quarters_header); break;
             case "sf":  compLevel = r.getString(R.string.semis_header); break;
@@ -73,8 +72,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             long scheduledStartTimeUNIX = jsonData.get("scheduled_time").getAsLong();
             // We multiply by 1000 because the Date constructor expects
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
-            DateFormat format = new SimpleDateFormat("HH:mm");
-            format.setTimeZone(TimeZone.getDefault());
+            DateFormat format =  android.text.format.DateFormat.getTimeFormat(context);
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
@@ -85,9 +83,9 @@ public class CompLevelStartingNotification extends BaseNotification {
             contentText = String.format(r.getString(R.string.notification_level_starting_with_time), eventKey, compLevel, scheduledStartTimeString);
         }
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey);
+        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
         PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, getNotificationId(), new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -118,6 +116,6 @@ public class CompLevelStartingNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + jsonData.get("event_key").getAsString()).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + jsonData.get("event_key").getAsString()).hashCode();
     }
 }

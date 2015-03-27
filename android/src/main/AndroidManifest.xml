@@ -28,9 +28,11 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <!-- Don't load analytics from xml. See #303
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/tba_android_tracker" />
+        -->
 
         <activity
             android:name="com.thebluealliance.androidclient.activities.LaunchActivity"
@@ -76,7 +78,7 @@
         </activity>
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewEventActivity"
-            android:launchMode="singleTop"
+            android:launchMode="standard"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
@@ -85,7 +87,7 @@
         </activity>
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewTeamActivity"
-            android:launchMode="singleTop"
+            android:launchMode="standard"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
@@ -95,7 +97,8 @@
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewMatchActivity"
             android:parentActivityName="com.thebluealliance.androidclient.activities.ViewEventActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus"
+            android:launchMode="standard">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />

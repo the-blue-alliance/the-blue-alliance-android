@@ -15,9 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
@@ -25,6 +22,7 @@ import com.thebluealliance.androidclient.background.team.PopulateTeamInfo;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -111,12 +109,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
             String uri = view.getTag().toString();
 
             //social button was clicked. Track the call
-            Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
-            t.send(new HitBuilders.EventBuilder()
-                    .setCategory("social_click")
-                    .setAction(uri)
-                    .setLabel(mTeamKey)
-                    .build());
+            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, mTeamKey);
 
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 
@@ -35,7 +36,12 @@ public class MyTBAHelper {
         Bundle bundle = intent.getExtras();
         if(bundle != null){
             for (String key : bundle.keySet()) {
-                extras.addProperty(key, bundle.getString(key));
+                Object val = bundle.get(key);
+                if(val instanceof String){
+                    extras.addProperty(key, bundle.getString(key));
+                }else if(val instanceof Integer){
+                    extras.addProperty(key, bundle.getInt(key));    
+                }
             }
         }
         data.add(INTENT_EXTRAS, extras);
@@ -52,7 +58,12 @@ public class MyTBAHelper {
         intent.setClassName(pack, cls);
         JsonObject extras = data.get(INTENT_EXTRAS).getAsJsonObject();
         for(Map.Entry<String, JsonElement> extra: extras.entrySet()){
-            intent.putExtra(extra.getKey(), extra.getValue().getAsString());
+            JsonPrimitive primitive = extra.getValue().getAsJsonPrimitive();
+            if(primitive.isString()){
+                intent.putExtra(extra.getKey(), primitive.getAsString());    
+            }else if(primitive.isNumber()){
+                intent.putExtra(extra.getKey(), primitive.getAsInt());
+            }
         }
         return intent;
     }

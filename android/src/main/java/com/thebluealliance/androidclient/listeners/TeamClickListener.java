@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 /**
@@ -26,7 +28,10 @@ public class TeamClickListener implements View.OnClickListener {
                 // Take out extra letter at end to make team key valid.
                 teamKey = teamKey.substring(0, teamKey.length() - 1);
             }
-            c.startActivity(ViewTeamActivity.newInstance(c, teamKey));
+            /* Track the call */
+            Intent intent = ViewTeamActivity.newInstance(c, teamKey);
+            AnalyticsHelper.sendClickUpdate(c, "team_click", teamKey, "");
+            c.startActivity(intent);
         }
     }
 }

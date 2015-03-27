@@ -307,7 +307,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             loadingMessage.setText(currentLoadingMessage);
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_FINISHED) {
             loadingFinished();
-            viewPager.advanceToNextPage();
+            if(viewPager != null) {
+                viewPager.advanceToNextPage();
+            }else{
+                // Pager is null, skipping to HomeActivity
+                startActivity(HomeActivity.newInstance(this, R.id.nav_item_events));
+            }
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_ERROR) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, false).commit();
             errorLoadingData(info.message);

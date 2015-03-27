@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 
 /**
@@ -25,6 +27,8 @@ public class DistrictClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        context.startActivity(ViewDistrictActivity.newInstance(context, key));
+        Intent intent = ViewDistrictActivity.newInstance(context, key);
+        AnalyticsHelper.sendClickUpdate(context, "district_click", key, "");
+        context.startActivity(intent);
     }
 }

@@ -15,9 +15,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -26,6 +23,7 @@ import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
@@ -162,13 +160,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             String uri = v.getTag().toString();
 
             //social button was clicked. Track the call
-            Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
-            t.send(new HitBuilders.EventBuilder()
-                    .setCategory("social_click")
-                    .setAction(uri)
-                    .setLabel(eventKey)
-                    .build());
-
+            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, eventKey);
 
             PackageManager manager = getActivity().getPackageManager();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));

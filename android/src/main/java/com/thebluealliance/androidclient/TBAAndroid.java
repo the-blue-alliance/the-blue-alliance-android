@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.stetho.Stetho;
-import com.google.android.gms.analytics.Tracker;
 
 /**
  * File created by phil on 7/21/14.
@@ -23,10 +22,4 @@ public class TBAAndroid extends Application {
                             .build());
         }
     }
-
-    public Tracker getTracker(Analytics.GAnalyticsTracker tracker) {
-        return Analytics.getTracker(tracker, this);
-    }
-
-
 }

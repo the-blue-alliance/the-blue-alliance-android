@@ -13,9 +13,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
@@ -36,10 +36,17 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private RefreshableHostActivity activity;
     private RefreshableHost host;
     private RequestParams requestParams;
+    private long startTime;
 
     private PopulateEventList(Fragment fragment, RequestParams requestParams) {
         mFragment = fragment;
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     public PopulateEventList(Fragment fragment, String districtKey, RequestParams requestParams) {
@@ -169,17 +176,19 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         View view = mFragment.getView();
         if (view != null && activity != null) {
             ListViewAdapter adapter = new ListViewAdapter(activity, events);
+            ListView eventList = (ListView) view.findViewById(R.id.list);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
 
             // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
-            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!requestParams.forceFromCache && adapter.values.isEmpty())) {
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(R.string.no_event_data);
                 noDataText.setVisibility(View.VISIBLE);
+                eventList.setVisibility(View.GONE);
             } else {
-                ListView eventList = (ListView) view.findViewById(R.id.list);
                 Parcelable state = eventList.onSaveInstanceState();
                 eventList.setAdapter(adapter);
+                eventList.setVisibility(View.VISIBLE);
                 noDataText.setVisibility(View.GONE);
                 eventList.onRestoreInstanceState(state);
             }
@@ -190,7 +199,6 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
             if (mHeader != null && !mHeader.equals("") || mTeamKey != null || mDistrictKey != null) {
                 view.findViewById(R.id.progress).setVisibility(View.GONE);
-                view.findViewById(R.id.list).setVisibility(View.VISIBLE);
             }
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
@@ -207,6 +215,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 host.notifyRefreshComplete((RefreshListener) mFragment);
             }
 
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event list", requestParams.toString());
         }
     }
 }

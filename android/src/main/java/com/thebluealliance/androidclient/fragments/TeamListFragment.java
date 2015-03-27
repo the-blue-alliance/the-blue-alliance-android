@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -74,6 +75,9 @@ public class TeamListFragment extends Fragment implements RefreshListener {
                 String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
                 Intent i = new Intent(getActivity(), ViewTeamActivity.class);
                 i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team_click", i.getDataString(), teamKey);
+                
                 startActivity(i);
             }
         });

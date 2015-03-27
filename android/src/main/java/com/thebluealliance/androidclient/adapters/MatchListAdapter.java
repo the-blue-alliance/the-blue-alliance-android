@@ -5,7 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
+import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
@@ -28,6 +30,11 @@ public class MatchListAdapter extends ExpandableListAdapter {
         if (child instanceof Match) {
             ((Match) child).setSelectedTeam(teamKey);
         }
-        return child.render().getView(activity, inflater, convertView);
+        ListItem renderedChild = child.render();
+        if(renderedChild != null){
+            return renderedChild.getView(activity, inflater, convertView);
+        }else{
+            return new LabelValueListItem("Match", "Unable to render").getView(activity, inflater, convertView);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -20,6 +21,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -92,7 +94,12 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey));
+                Intent intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey);
+                
+                 /* Track the call */
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventRankingsFragment", eventKey);
+
+                startActivity(intent);
             }
         });
         return v;

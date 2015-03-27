@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -51,11 +52,20 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
     Match nextMatch, lastMatch;
     Event event;
     MatchListAdapter adapter;
+    private int matchCount;
+    private long startTime;
 
     public PopulateEventMatches(EventMatchesFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
+        this.matchCount = 0; 
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -91,6 +101,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         try {
             response = DataManager.Events.getMatchList(activity, eventKey, teamKey, requestParams);
             ArrayList<Match> results = response.getData();
+            matchCount = results.size();
 
             if(event != null && event.isHappeningNow()){
                 Collections.sort(results, new MatchSortByPlayOrderComparator());
@@ -157,6 +168,12 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                     lastMatch = last;
                 }
             }
+            if(nextMatch != null && nextMatch.hasBeenPlayed()){
+                // Avoids bug where matches loop over when all played
+                // Because nextMatch is initialized to the first qual match 
+                // So that it displayed before any have been played
+                nextMatch = null;
+            }
 
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "unable to load event results");
@@ -179,7 +196,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
 
         adapter = new MatchListAdapter(activity, groups, teamKey);
 
-        return APIResponse.mergeCodes(eventResponse.getCode(), response.getCode());
+        return response.getCode();
     }
 
     protected void onPostExecute(APIResponse.CODE code) {
@@ -190,12 +207,14 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
             // only show the message when try try and actually load data from the web
-            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && (groups == null || adapter.groups.isEmpty()))) {
+            ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && (groups == null || matchCount == 0))) {
+                results.setVisibility(View.GONE);
                 noDataText.setVisibility(View.VISIBLE);
                 noDataText.setText(teamKey.isEmpty() ? R.string.no_match_data : R.string.no_team_match_data);
             } else {
                 noDataText.setVisibility(View.GONE);
-                ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
+                results.setVisibility(View.VISIBLE);
                 Parcelable state = results.onSaveInstanceState();
                 int firstVisiblePosition = results.getFirstVisiblePosition();
                 results.setAdapter(adapter);
@@ -208,42 +227,43 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             }
 
             // Alert any interested parties of matches that are being played if this is a live event
-            if(code != APIResponse.CODE.NODATA) {
+            if (code != APIResponse.CODE.NODATA) {
                 if (event.isHappeningNow()) {
                     // Send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + eventKey);
                     EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
-                } else{
+                } else {
                     Log.d(Constants.LOG_TAG, "Not sending live event broadcast");
                 }
             }
 
             // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.match_results).setVisibility(View.VISIBLE);
 
             // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, requestParams);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey, teamKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (activity != null && mFragment instanceof RefreshListener) {
-                Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Results refresh complete");
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, requestParams);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey, teamKey);
+            } else {
+                // Show notification if we've refreshed data.
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Results refresh complete");
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event matches", eventKey);
         }
     }
 }

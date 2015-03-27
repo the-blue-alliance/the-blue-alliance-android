@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -22,6 +23,7 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by phil on 11/21/14.
@@ -65,8 +67,8 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
@@ -100,7 +102,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + eventKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
     }
 
 }

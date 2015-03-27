@@ -1,10 +1,13 @@
 package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 /**
@@ -24,7 +27,9 @@ public class TeamAtDistrictClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (TeamHelper.validateTeamKey(teamKey) && DistrictHelper.validateDistrictKey(districtKey)) {
-            c.startActivity(TeamAtDistrictActivity.newInstance(c, teamKey, districtKey));
+            Intent intent = TeamAtDistrictActivity.newInstance(c, teamKey, districtKey);
+            AnalyticsHelper.sendClickUpdate(c, "team@district_click", DistrictTeamHelper.generateKey(teamKey, districtKey), "");
+            c.startActivity(intent);
         }
     }
 }

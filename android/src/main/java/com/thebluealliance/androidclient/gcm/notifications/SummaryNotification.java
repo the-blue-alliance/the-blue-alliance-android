@@ -37,7 +37,7 @@ public class SummaryNotification extends BaseNotification {
         style.setBigContentTitle(context.getString(R.string.notification_summary_title));
         style.setSummaryText(context.getString(R.string.app_name));
         
-        PendingIntent intent = PendingIntent.getActivity(context, 0, NotificationDashboardActivity.newInstance(context), 0);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), NotificationDashboardActivity.newInstance(context), 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
         
         Notification summary = new NotificationCompat.Builder(context)

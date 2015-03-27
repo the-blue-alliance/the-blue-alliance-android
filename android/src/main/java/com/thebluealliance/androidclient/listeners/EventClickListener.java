@@ -10,6 +10,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
@@ -41,9 +43,11 @@ public class EventClickListener implements AdapterView.OnItemClickListener {
             if (mTeamKey == null || mTeamKey.isEmpty()) {
                 //no team is selected, go to the event details
                 intent = ViewEventActivity.newInstance(context, eventKey);
+                AnalyticsHelper.sendClickUpdate(context, "event_click", eventKey, "");
             } else {
                 //team is selected, open up the results for that specific team at the event
                 intent = TeamAtEventActivity.newInstance(context, eventKey, mTeamKey);
+                AnalyticsHelper.sendClickUpdate(context, "team@event_click", EventTeamHelper.generateKey(eventKey, mTeamKey), "");
             }
             context.startActivity(intent);
         } else {

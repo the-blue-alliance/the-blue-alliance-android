@@ -2,10 +2,9 @@ package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 
 /**
@@ -26,7 +25,7 @@ public class ModelClickListener implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         Intent intent = ModelHelper.getIntentFromKey(context, key, type);
-        Log.d(Constants.LOG_TAG, "Conext: "+context);
+        AnalyticsHelper.sendClickUpdate(context, "model_click", key, "");
         context.startActivity(intent);
     }
 }

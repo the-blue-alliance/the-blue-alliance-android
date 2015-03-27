@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -75,7 +76,12 @@ public class TeamListElement extends ListElement {
             holder.teamInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = ViewTeamActivity.newInstance(context, "frc" + mTeamNumber);
+                    String teamKey = "frc" + mTeamNumber;
+                    Intent intent = ViewTeamActivity.newInstance(context, teamKey);
+                    
+                    /* Track the call */
+                    AnalyticsHelper.sendClickUpdate(context, "team_click", "TeamListElement", "");
+
                     context.startActivity(intent);
                 }
             });

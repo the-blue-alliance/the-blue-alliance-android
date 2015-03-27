@@ -30,6 +30,7 @@ public class LabelValueListItem extends ListElement {
         this.value = value;
         this.listItem = null;
         this.intent = "";
+        this.layout = R.layout.list_item_summary;
     }
 
     public LabelValueListItem(String label, ListItem value) {
@@ -37,6 +38,7 @@ public class LabelValueListItem extends ListElement {
         this.listItem = value;
         this.value = null;
         this.intent = "";
+        this.layout = R.layout.list_item_summary;
     }
 
     @Override

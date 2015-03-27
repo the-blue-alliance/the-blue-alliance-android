@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +10,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
@@ -30,6 +32,13 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     private boolean mRefreshInProgress = false;
 
     private boolean mProgressBarShowing = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mRefreshed = false;
+        startRefresh();
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -165,6 +174,8 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStart(actionIconPressed);
         }
+
+        AnalyticsHelper.sendRefreshUpdate(this, modelKey);
     }
 
     /*

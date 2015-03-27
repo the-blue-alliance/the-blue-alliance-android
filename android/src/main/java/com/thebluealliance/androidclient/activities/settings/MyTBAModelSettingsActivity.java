@@ -79,7 +79,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
             this.modelKey = modelKey;
             this.modelType = ModelHelper.getModelFromEnum(modelType);
         } else {
-            throw new RuntimeException("MyTBAModelSettingsActivity must be created with a model key!");
+            throw new IllegalArgumentException("MyTBAModelSettingsActivity must be created with a model key!");
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);

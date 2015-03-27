@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -34,11 +35,18 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     private RefreshableHostActivity activity;
     private String districtKey;
     private ArrayList<ListItem> rankings;
+    private long startTime;
 
     public PopulateDistrictRankings(DistrictRankingsFragment fragment, RequestParams params) {
         this.requestParams = params;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -121,6 +129,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                 activity.notifyRefreshComplete(fragment);
             }
 
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "district rankings", districtKey);
         }
     }
 }

@@ -37,6 +37,13 @@ public class NotificationDashboardActivity extends RefreshableHostActivity {
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Highlight this item in the navigation drawer
+        setNavigationDrawerItemSelected(R.id.nav_item_notifications);
+    }
+
     private void setupActionBar(){
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle(getString(R.string.notification_dashboard_title));

@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -49,6 +50,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     Event event;
     private boolean showRanks, showStats;
     private RequestParams requestParams;
+    private long startTime;
 
     public PopulateEventInfo(EventInfoFragment f, RequestParams requestParams) {
         mFragment = f;
@@ -59,9 +61,14 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
     @Override
     protected void onPreExecute() {
         super.onPreExecute(); // reset event settings
+        startTime = System.currentTimeMillis();
         showRanks = showStats = false;
 
         View view = mFragment.getView();
+        if(view == null){
+            cancel(true);
+            return;
+        }
         eventName = (TextView) view.findViewById(R.id.event_name);
         eventDate = (TextView) view.findViewById(R.id.event_date);
         eventLoc = (TextView) view.findViewById(R.id.event_location);
@@ -81,6 +88,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         APIResponse<JsonObject> statsResponse = new APIResponse<>(null, APIResponse.CODE.CACHED304);
         APIResponse<ArrayList<Match>> matchResult = new APIResponse<>(null, APIResponse.CODE.CACHED304);
 
+        if (isCancelled()) {
+            return APIResponse.CODE.NODATA;
+        }
+        
         if (activity != null && eventKey != null) {
             try {
                 eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);
@@ -278,6 +289,8 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     activity.notifyRefreshComplete(mFragment);
                 }
             }
+
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event info", eventKey);
         }
     }
 }

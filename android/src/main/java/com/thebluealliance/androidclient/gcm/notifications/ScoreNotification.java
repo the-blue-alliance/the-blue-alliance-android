@@ -12,6 +12,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -26,6 +27,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -72,7 +74,7 @@ public class ScoreNotification extends BaseNotification {
         try {
             alliances = match.getAlliances();
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Inciming match object does not contain alliance data. Can't post score update");
+            Log.e(getLogTag(), "Incoming match object does not contain alliance data. Can't post score update");
             e.printStackTrace();
             return null;
         }
@@ -117,46 +119,60 @@ public class ScoreNotification extends BaseNotification {
         } else {
             scoreString = redScore + "-" + redScore;
         }
+        
+        String redTeamString = Utilities.stringifyListOfStrings(context, redTeams);
+        String blueTeamString =  Utilities.stringifyListOfStrings(context, blueTeams);
+
+        boolean useSpecial2015Format;
+        try {
+            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchHelper.TYPE.FINAL;
+        } catch (BasicModel.FieldNotDefinedException e) {
+            useSpecial2015Format = false;
+            Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
+        }
 
         String notificationString = "";
         if (redTeams.size() == 0 && blueTeams.size() == 0) {
             // We must have gotten this GCM message by mistake
             return null;
-        } else if ((redTeams.size() > 0 && blueTeams.size() == 0)) {
+        } else if(useSpecial2015Format) {
+            /* Only for 2015 non-finals matches. Ugh */
+            notificationString = String.format(context.getString(R.string.notification_score_2015_no_winner), eventName, matchTitle, redTeamString, redScore, blueTeamString, blueScore);
+        }else if((redTeams.size() > 0 && blueTeams.size() == 0)) {
             // The user only cares about some teams on the red alliance
             if (redScore > blueScore) {
                 // Red won
-                notificationString = String.format(r.getString(R.string.notification_score_teams_won), eventName, Utilities.stringifyListOfStrings(context, redTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_won), eventName, redTeamString, matchTitle, scoreString);
             } else if (redScore < blueScore) {
                 // Red lost
-                notificationString = String.format(r.getString(R.string.notification_score_teams_lost), eventName, Utilities.stringifyListOfStrings(context, redTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_lost), eventName, redTeamString, matchTitle, scoreString);
             } else {
                 // Red tied
-                notificationString = String.format(r.getString(R.string.notification_score_teams_tied), eventName, Utilities.stringifyListOfStrings(context, redTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_tied), eventName, redTeamString, matchTitle, scoreString);
             }
         } else if ((blueTeams.size() > 0 && redTeams.size() == 0)) {
             // The user only cares about some teams on the blue alliance
             if (blueScore > redScore) {
                 // Blue won
-                notificationString = String.format(r.getString(R.string.notification_score_teams_won), eventName, Utilities.stringifyListOfStrings(context, blueTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_won), eventName, blueTeamString, matchTitle, scoreString);
             } else if (blueScore < redScore) {
                 // Blue lost
-                notificationString = String.format(r.getString(R.string.notification_score_teams_lost), eventName, Utilities.stringifyListOfStrings(context, blueTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_lost), eventName, blueTeamString, matchTitle, scoreString);
             } else {
                 // Blue tied
-                notificationString = String.format(r.getString(R.string.notification_score_teams_tied), eventName, Utilities.stringifyListOfStrings(context, blueTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_tied), eventName, blueTeamString, matchTitle, scoreString);
             }
         } else if ((blueTeams.size() > 0 && redTeams.size() > 0)) {
             // The user cares about teams on both alliances
             if (blueScore > redScore) {
                 // Blue won
-                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, Utilities.stringifyListOfStrings(context, blueTeams), Utilities.stringifyListOfStrings(context, redTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, blueTeamString, redTeamString, matchTitle, scoreString);
             } else if (blueScore < redScore) {
                 // Blue lost
-                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, Utilities.stringifyListOfStrings(context, redTeams), Utilities.stringifyListOfStrings(context, blueTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, redTeamString, blueTeamString, matchTitle, scoreString);
             } else {
                 // Blue tied
-                notificationString = String.format(r.getString(R.string.notification_score_teams_tied_with_teams), eventName, Utilities.stringifyListOfStrings(context, redTeams), Utilities.stringifyListOfStrings(context, blueTeams), matchTitle, scoreString);
+                notificationString = String.format(r.getString(R.string.notification_score_teams_tied_with_teams), eventName, redTeamString, blueTeamString, matchTitle, scoreString);
             }
         } else {
             // We should never, ever get here but if we do...
@@ -165,7 +181,7 @@ public class ScoreNotification extends BaseNotification {
 
         // We can finally build the notification!
         Intent instance = ViewMatchActivity.newInstance(context, matchKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
@@ -199,6 +215,6 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + matchKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
     }
 }

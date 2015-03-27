@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -20,6 +21,8 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -60,7 +63,7 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
@@ -74,7 +77,12 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Log.d(Constants.LOG_TAG, "Team clicked!");
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+                Intent intent = TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey);
+                
+                /* Track the call */
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventTeamsFragment", EventTeamHelper.generateKey(mEventKey, teamKey));
+
+                startActivity(intent);
             }
         });
         return view;

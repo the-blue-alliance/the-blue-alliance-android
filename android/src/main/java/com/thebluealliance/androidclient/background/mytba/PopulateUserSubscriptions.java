@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.mytba.MySubscriptionsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
@@ -35,12 +36,19 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
     private RefreshableHostActivity activity;
     private RequestParams requestParams;
     private ArrayList<ListItem> subscriptions;
+    private long startTime;
 
     public PopulateUserSubscriptions(MySubscriptionsFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
-        activity = (RefreshableHostActivity) fragment.getActivity();
+        this.activity = (RefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -126,6 +134,7 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
                     activity.notifyRefreshComplete(fragment);
                 }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime,"populate user subscriptions", "");
         }
     }
 }

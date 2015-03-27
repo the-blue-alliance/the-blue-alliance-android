@@ -528,6 +528,9 @@ public class Database extends SQLiteOpenHelper {
 
                             //add search team item
                             insertSearchItemTeam(team, false);
+                        }else{
+                            db.update(TABLE_TEAMS, team.getParams(), KEY + " =?", new String[]{team.getTeamKey()});
+                            updateSearchItemTeam(team);
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
                         Log.w(Constants.LOG_TAG, "Unable to add team - missing key.");
@@ -981,6 +984,10 @@ public class Database extends SQLiteOpenHelper {
                 Log.e(Constants.LOG_TAG, "Can't delete match without Database.Matches.KEY");
             }
         }
+
+        public int delete(String whereClause, String[] whereArgs){
+            return safeDelete(TABLE_MATCHES, whereClause, whereArgs);
+        }
     }
 
     public class Medias implements ModelTable<Media> {
@@ -1022,10 +1029,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1122,17 +1129,17 @@ public class Database extends SQLiteOpenHelper {
                         if (!unsafeExists(eventTeam.getKey())) {
                             db.insert(TABLE_EVENTTEAMS, null, eventTeam.getParams());
                         } else {
-                            db.update(TABLE_EVENTTEAMS, eventTeam.getParams(), EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{eventTeam.getTeamKey(), eventTeam.getEventKey()});
+                            db.update(TABLE_EVENTTEAMS, eventTeam.getParams(), EventTeams.KEY + " = ?", new String[]{eventTeam.getKey()});
                         }
                     } catch (BasicModel.FieldNotDefinedException e) {
                         Log.w(Constants.LOG_TAG, "Can't update eventTeam. Missing fields");
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1249,10 +1256,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1366,10 +1373,10 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1458,11 +1465,11 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1552,11 +1559,11 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 db.setTransactionSuccessful();
-                db.endTransaction();
             } catch (InterruptedException e) {
                 Log.w("database", "Unable to acquire database semaphore");
                 e.printStackTrace();
             } finally {
+                db.endTransaction();
                 if (dbSemaphore != null) {
                     dbSemaphore.release();
                 }
@@ -1823,7 +1830,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        return safeDelete(table, whereClause, whereArgs, null);
+        return safeDelete(table, whereClause, whereArgs, getSemaphore());
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {
@@ -1938,7 +1945,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            dbSemaphore.tryAcquire(5, TimeUnit.SECONDS);
             String selection = SearchTeam.TITLES + " MATCH ?";
             String[] selectionArgs = new String[]{query};
 

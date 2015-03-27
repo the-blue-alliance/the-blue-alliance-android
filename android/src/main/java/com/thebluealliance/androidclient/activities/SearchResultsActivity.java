@@ -19,7 +19,9 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -56,10 +58,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        /* Report the activity start to GAnalytics */
-        // analytics commented out due to #303
-        //Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        //GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        /* Report activity start to Analytics */
+        new AnalyticsActions.ReportActivityStart(this).run();
 
         currentQuery = "";
 
@@ -120,24 +120,13 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     protected void onPause() {
         super.onPause();
 
-        //track the search query the user submitted
-        //Track the query
-        // analytics commented out due to #303
-        /*Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("search")
-                .setAction(currentQuery)
-                .setLabel("search")
-                .build());
-                */
-        currentQuery = "";
+        AnalyticsHelper.sendSearchUpdate(this, currentQuery);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        /* Report the activity stop to GAnalytics */
-        //GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
