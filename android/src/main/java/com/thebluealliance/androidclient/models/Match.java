@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.datafeed.APIHelper;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
@@ -411,7 +411,7 @@ public class Match extends BasicModel<Match> {
         ArrayList<Match> allMatches = new ArrayList<>();
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = APIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Match updatedMatch = new Match();
                 if (url.contains("event") && url.contains("matches")) {
@@ -461,7 +461,7 @@ public class Match extends BasicModel<Match> {
         
         for (String url : apiUrls) {
             /* Hit each API URL requested */
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = APIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 /* If we get back data, parse it */

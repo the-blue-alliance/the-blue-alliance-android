@@ -21,11 +21,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import retrofit.RestAdapter;
 
-public class TBAv2 {
+
+public class APIHelper {
+
+    public static final String TBA_APIv2_URL = "http://www.thebluealliance.com/api/v2";
 
     private static final String TBA_HOST_PREF = "tba_host";
     private static final String tbaHostDefault = "http://www.thebluealliance.com";
+
+    private static APIv2 tbaAPI;
 
     public static enum QUERY {
         CSV_TEAMS,
@@ -78,6 +84,20 @@ public class TBAv2 {
         API_URL.put(QUERY.DISTRICT_LIST, "/api/v2/districts/%d");
         API_URL.put(QUERY.DISTRICT_EVENTS, "/api/v2/district/%s/%d/events");
         API_URL.put(QUERY.DISTRICT_RANKINGS, "/api/v2/district/%s/%d/rankings");
+    }
+
+    public static APIv2 getAPI(){
+        if(tbaAPI == null){
+            RestAdapter restAdapter = new RestAdapter.Builder()
+                    .setEndpoint(APIHelper.TBA_APIv2_URL)
+                    .setConverter(new RetrofitConverter())
+                    .setRequestInterceptor(new APIv2.APIv2RequestInterceptor())
+                     .setErrorHandler(new APIv2.APIv2ErrorHandler())
+                     //TODO when #369 is merged, set okhttp client
+                    .build();
+            tbaAPI = restAdapter.create(APIv2.class);
+        }
+        return tbaAPI;
     }
 
     public static String getTBAApiUrl(Context c, QUERY query) {

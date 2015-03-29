@@ -141,6 +141,8 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.melnykov:floatingactionbutton:1.0.7'
     compile 'de.hdodenhof:circleimageview:1.2.0'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'io.reactivex:rxandroid:0.24.0'
 
     // testing
     testCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'
