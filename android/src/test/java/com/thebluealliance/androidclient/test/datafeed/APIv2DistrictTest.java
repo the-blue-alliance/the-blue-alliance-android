@@ -21,7 +21,7 @@ public class APIv2DistrictTest extends AbstractAPIv2Test{
     public void testFetchDistrictList() throws BasicModel.FieldNotDefinedException {
         List<District> districts = api.fetchDistrictList(2014, null);
         assertEquals(districts.size(), 4);
-        assertEquals(districts.get(0).getKey(), "2014fim");
+        assertEquals(districts.get(0).getAbbreviation(), "fim");
     }
 
     @Test
