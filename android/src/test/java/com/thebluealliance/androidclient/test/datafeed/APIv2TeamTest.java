@@ -10,12 +10,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 /**
+ * Class that hits TBA endpoints and tests that we can get data back
+ * This class is ignored by default, so we aren't always hitting the server from automated tests
+ * Change the 'shouldRun' variable to true if you'd like to run it.
  * Created by phil on 3/28/15.
  */
 @RunWith(RobolectricTestRunner.class)
@@ -25,8 +29,17 @@ public class APIv2TeamTest {
 
     @Before
     public void setupAPIClient(){
+        boolean shouldRun = true;
+
         APIv2.APIv2RequestInterceptor.isFromJunit = true;
         api = APIHelper.getAPI();
+        assumeTrue(shouldRun);
+    }
+
+    @Test
+    public void testFetchTeamPage(){
+        List<Team> teams = api.fetchTeamPage(0, null);
+        assertTrue(teams.size() > 0);
     }
 
     @Test
@@ -35,20 +48,5 @@ public class APIv2TeamTest {
         assertEquals(team.getTeamKey(), "frc1124");
     }
 
-    @Test
-    public void testFetchTeamObservable(){
-        api.fetchTeamObservable("frc1124", null)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Team>() {
-                    @Override
-                    public void call(Team team) {
-                        try {
-                            assertEquals(team.getTeamKey(), "frc1124");
-                        } catch (BasicModel.FieldNotDefinedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-    }
 
 }

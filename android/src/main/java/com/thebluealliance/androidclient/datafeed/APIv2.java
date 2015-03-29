@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.datafeed;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.Team;
 
+import java.util.List;
+
 import retrofit.ErrorHandler;
 import retrofit.RequestInterceptor;
 import retrofit.RetrofitError;
@@ -17,13 +19,30 @@ import rx.Observable;
  */
 public interface APIv2 {
 
-    /* Team Endpoints */
+    /* Team List */
+    @GET("/teams/{pageNum}")
+    public Observable<List<Team>> fetchTeamPageObservable(
+            @Path("pageNum") int pageNum,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/teams/{pageNum}")
+    public List<Team> fetchTeamPage(
+            @Path("pageNum") int pageNum,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
 
-    @GET("/team/{teamKey}")
-    public Observable<Team> fetchTeamObservable(@Path("teamKey") String teamKey, @Header("If-Modified-Since") String ifModifiedSince);
 
+    /* Fetch Team */
     @GET("/team/{teamKey}")
-    public Team fetchTeam(@Path("teamKey") String teamKey, @Header("If-Modified-Since") String ifModifiedSince);
+    public Observable<Team> fetchTeamObservable(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}")
+    public Team fetchTeam(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
 
 
     static class APIv2RequestInterceptor implements RequestInterceptor {
