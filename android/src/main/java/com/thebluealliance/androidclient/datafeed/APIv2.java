@@ -1,6 +1,10 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.List;
@@ -44,6 +48,73 @@ public interface APIv2 {
             @Header("If-Modified-Since") String ifModifiedSince
     );
 
+    /* Fetch Team Events In Year */
+    @GET("/team/{teamKey}/{year}/events")
+    public Observable<List<Event>> fetchTeamEventsObservable(
+            @Path("teamKey") String teamKey,
+            @Path("year") int year,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/{year}/events")
+    public List<Event> fetchTeamEvents(
+            @Path("teamKey") String teamKey,
+            @Path("year") int year,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+
+    /* Fetch Awards for Team at Event */
+    @GET("/team/{teamKey}/event/{eventKey}/awards")
+    public Observable<List<Award>> fetchTeamAtEventAwardsObservable(
+            @Path("teamKey") String teamKey,
+            @Path("eventKey") String eventKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/event/{eventKey}/awards")
+    public List<Award> fetchTeamAtEventAwards(
+            @Path("teamKey") String teamKey,
+            @Path("eventKey") String eventKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+
+    /* Fetch Matches for Team at Event */
+    @GET("/team/{teamKey}/event/{eventKey}/matches")
+    public Observable<List<Match>> fetchTeamAtEventMatchesObservable(
+            @Path("teamKey") String teamKey,
+            @Path("eventKey") String eventKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/event/{eventKey}/matches")
+    public List<Match> fetchTeamAtEventMatches(
+            @Path("teamKey") String teamKey,
+            @Path("eventKey") String eventKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+
+    /* Fetch years participated for a team */
+    @GET("/team/{teamKey}/years_participated")
+    public Observable<List<Integer>> fetchTeamYearsParticipatedObservable(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/years_participated")
+    public List<Integer> fetchTeamYearsParticipated(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+
+    /* Fetch team media in a year */
+    @GET("/team/{teamKey}/{year}/media")
+    public Observable<List<Media>> fetchTeamMediaInYearObservable(
+            @Path("teamKey") String teamKey,
+            @Path("year") int year,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/{year}/media")
+    public List<Media> fetchTeamMediaInYear(
+            @Path("teamKey") String teamKey,
+            @Path("year") int year,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
 
     static class APIv2RequestInterceptor implements RequestInterceptor {
 
