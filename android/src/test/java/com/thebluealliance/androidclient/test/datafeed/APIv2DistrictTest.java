@@ -6,6 +6,8 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Created by phil on 3/29/15.
  */
+@RunWith(RobolectricTestRunner.class)
 public class APIv2DistrictTest extends AbstractAPIv2Test{
 
     @Test

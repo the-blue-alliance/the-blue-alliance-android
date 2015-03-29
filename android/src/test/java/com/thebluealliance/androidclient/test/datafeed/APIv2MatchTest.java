@@ -4,12 +4,15 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by phil on 3/29/15.
  */
+@RunWith(RobolectricTestRunner.class)
 public class APIv2MatchTest extends AbstractAPIv2Test{
 
     @Test

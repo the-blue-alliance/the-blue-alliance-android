@@ -9,6 +9,8 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.List;
 
@@ -18,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by phil on 3/29/15.
  */
+@RunWith(RobolectricTestRunner.class)
 public class APIv2EventTest extends AbstractAPIv2Test {
 
     @Test

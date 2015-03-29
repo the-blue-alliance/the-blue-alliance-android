@@ -8,12 +8,15 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(RobolectricTestRunner.class)
 public class APIv2TeamTest extends AbstractAPIv2Test{
 
     @Test

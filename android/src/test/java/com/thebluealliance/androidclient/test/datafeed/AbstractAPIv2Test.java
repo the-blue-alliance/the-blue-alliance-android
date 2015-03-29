@@ -4,8 +4,7 @@ import com.thebluealliance.androidclient.datafeed.APIHelper;
 import com.thebluealliance.androidclient.datafeed.APIv2;
 
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.junit.Ignore;
 
 import static org.junit.Assume.assumeTrue;
 
@@ -16,7 +15,7 @@ import static org.junit.Assume.assumeTrue;
  * Change the 'shouldRun' variable to true if you'd like to run it.
  * Created by phil on 3/28/15.
  */
-@RunWith(RobolectricTestRunner.class)
+@Ignore
 public abstract class AbstractAPIv2Test {
     APIv2 api;
 
