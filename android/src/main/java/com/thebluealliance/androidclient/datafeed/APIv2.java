@@ -257,6 +257,18 @@ public interface APIv2 {
             @Header("If-Modified-Since") String ifModifiedSince
     );
 
+    /* Fetch Match */
+    @GET("/match/{matchKey}")
+    public Observable<Match> fetchMatchObservable(
+            @Path("matchKey") String matchKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/match/{matchKey}")
+    public Match fetchMatch(
+            @Path("matchKey") String matchKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+
     static class APIv2RequestInterceptor implements RequestInterceptor {
 
         /**
