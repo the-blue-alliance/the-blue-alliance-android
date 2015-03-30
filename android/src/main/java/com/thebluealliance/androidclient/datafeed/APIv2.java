@@ -120,6 +120,28 @@ public interface APIv2 {
             @Header("If-Modified-Since") String ifModifiedSince
     );
 
+    /* Fetch Team History */
+    @GET("/team/{teamKey}/history/events")
+    public Observable<List<Event>> fetchTeamEventHistoryObservable(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/history/events")
+    public List<Event> fetchTeamEventHistory(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/history/awards")
+    public Observable<List<Award>> fetchTeamEventAwardsObservable(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+    @GET("/team/{teamKey}/history/awards")
+    public List<Award> fetchTeamAwardHistory(
+            @Path("teamKey") String teamKey,
+            @Header("If-Modified-Since") String ifModifiedSince
+    );
+
     /* Fetch Event List */
     @GET("/events/{year}")
     public Observable<List<Event>> fetchEventsInYearObservable(
