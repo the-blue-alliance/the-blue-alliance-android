@@ -8,6 +8,9 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -18,6 +21,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
@@ -34,7 +38,7 @@ import java.util.Date;
  */
 public class ScoreNotification extends BaseNotification {
 
-    private String eventName, matchKey;
+    private String eventName, eventKey, matchKey, matchTitle;
     private Match match;
 
     public ScoreNotification(String messageData) {
@@ -43,12 +47,19 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException{
-        JsonObject jsonData = jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
         if(!jsonData.has("match")){
             throw new JsonParseException("Notification data does not contain 'match");
         }
         JsonObject match = jsonData.get("match").getAsJsonObject();
         this.match = gson.fromJson(match, Match.class);
+        try {
+            this.matchKey = this.match.getKey();
+        } catch (BasicModel.FieldNotDefinedException e) {
+            e.printStackTrace();
+        }
+        this.matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
+        this.eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         if(!jsonData.has("event_name")){
             throw new JsonParseException("Notification data does not contain 'event_name");
         }
@@ -216,5 +227,35 @@ public class ScoreNotification extends BaseNotification {
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_score, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.text = (TextView) convertView.findViewById(R.id.text);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        this.parseMessageData();
+
+        holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
+        holder.title.setText("Match Result: " + matchTitle);
+        holder.text.setText(messageData);
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView title;
+        public TextView text;
     }
 }

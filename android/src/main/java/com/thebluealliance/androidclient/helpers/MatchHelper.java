@@ -114,6 +114,14 @@ public class MatchHelper {
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+\\_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 
+    public static String getEventKeyFromMatchKey(String matchKey) {
+        if(validateMatchKey(matchKey)) {
+            return matchKey.replaceAll("_.+", "");
+        } else {
+            return matchKey;
+        }
+    }
+
     /**
      * Returns the match object of the match next to be played
      *

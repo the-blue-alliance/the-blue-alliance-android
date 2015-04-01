@@ -29,11 +29,11 @@ public class GamedayActivity extends BaseActivity {
     private GamedayFragmentPagerAdapter adapter;
     private ViewPager pager;
 
-    public static Intent newInstance(Context context){
+    public static Intent newInstance(Context context) {
         return newInstance(context, GamedayFragmentPagerAdapter.TAB_TICKER);
     }
 
-    public static Intent newInstance(Context context, int tab){
+    public static Intent newInstance(Context context, int tab) {
         Intent intent = new Intent(context, GamedayActivity.class);
         intent.putExtra(TAB, tab);
         return intent;
@@ -44,10 +44,10 @@ public class GamedayActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameday);
 
-        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)){
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)) {
             currentTab = getIntent().getExtras().getInt(TAB, GamedayFragmentPagerAdapter.TAB_TICKER);
-        }else{
-            Log.i(Constants.LOG_TAG, "GameDayActivity intent doesn't contain TAB. Defaulting to TAB_INFO");
+        } else {
+            Log.i(Constants.LOG_TAG, "GameDayActivity intent doesn't contain TAB. Defaulting to TAB_TICLER");
             currentTab = GamedayFragmentPagerAdapter.TAB_TICKER;
         }
 

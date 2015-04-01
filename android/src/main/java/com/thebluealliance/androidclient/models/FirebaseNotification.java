@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -28,34 +29,39 @@ public class FirebaseNotification {
     @JsonIgnore
     private BaseNotification notification;
 
-    public FirebaseNotification(){
+    public FirebaseNotification() {
         jsonString = "";
         notification = null;
     }
 
-    public Map<String, Object> getPayload(){
+    public Map<String, Object> getPayload() {
         return payload;
     }
 
-    public String getTime(){
+    public String getTime() {
         return time;
     }
 
-    public String convertToJson(){
-        if(jsonString.isEmpty()){
+    public String convertToJson() {
+        if (jsonString.isEmpty()) {
             jsonString = JSONManager.getGson().toJson(payload);
         }
         return jsonString;
     }
 
-    public BaseNotification getNotification(){
-        if(notification != null){
+    public String getNotificationType() {
+        JsonObject message = JSONManager.getasJsonObject(convertToJson());
+        return message.get("message_type").getAsString();
+    }
+
+    public BaseNotification getNotification() {
+        if (notification != null) {
             return notification;
         }
         JsonObject message = JSONManager.getasJsonObject(convertToJson());
         String messageType = message.get("message_type").getAsString();
         String messageData = message.get("message_data").toString();
-        switch(messageType){
+        switch (messageType) {
             case NotificationTypes.MATCH_SCORE:
                 notification = new ScoreNotification(messageData);
                 break;
@@ -77,6 +83,13 @@ public class FirebaseNotification {
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(messageData);
                 break;
+        }
+
+        try {
+           notification.parseMessageData();
+        } catch (JsonParseException e) {
+            // There's really no graceful way to recover from this. Let's hope for the best.
+            e.printStackTrace();
         }
 
         return notification;

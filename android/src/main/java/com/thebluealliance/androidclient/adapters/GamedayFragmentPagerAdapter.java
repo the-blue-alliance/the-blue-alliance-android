@@ -36,10 +36,10 @@ public class GamedayFragmentPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment;
         switch (position) {
             default:
-            case TAB_TICKER: //event info
+            case TAB_TICKER:
                 fragment = GamedayTickerFragment.newInstance();
                 break;
-            case TAB_WEBCASTS: //teams
+            case TAB_WEBCASTS:
                 fragment = GamedayWebcastsFragment.newInstance();
                 break;
         }

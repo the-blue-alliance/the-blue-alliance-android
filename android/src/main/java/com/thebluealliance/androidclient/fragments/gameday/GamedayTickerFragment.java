@@ -15,13 +15,20 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.listitems.gameday.CheckboxWithTextListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by phil on 3/26/15.
@@ -29,13 +36,18 @@ import java.util.ArrayList;
 public class GamedayTickerFragment extends Fragment implements ChildEventListener {
 
     private ListView listView;
+    private ListView filterListView;
     private ProgressBar progressBar;
     private ListViewAdapter adapter;
     private Parcelable listState;
+    private FloatingActionButton fab;
     Firebase ticker;
     private int firstVisiblePosition;
+    private List<FirebaseNotification> allNotifications = new ArrayList<>();
 
-    public static GamedayTickerFragment newInstance(){
+    private boolean childHasBeenAdded = false;
+
+    public static GamedayTickerFragment newInstance() {
         return new GamedayTickerFragment();
     }
 
@@ -46,7 +58,11 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_carded, null);
+        View v = inflater.inflate(R.layout.list_view_gameday_ticker, null);
+        filterListView = (ListView) v.findViewById(R.id.filter_list);
+        setUpFilterList();
+        fab = (FloatingActionButton) v.findViewById(R.id.filter_button);
+        fab.setOnClickListener(v1 -> filterListView.setVisibility(View.VISIBLE));
         listView = (ListView) v.findViewById(R.id.list);
         progressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (adapter != null) {
@@ -54,13 +70,31 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
             listView.onRestoreInstanceState(listState);
             listView.setSelection(firstVisiblePosition);
             Log.d("onCreateView", "using existing adapter");
-        }else{
-            adapter = new ListViewAdapter(getActivity(), new ArrayList<ListItem>());
+        } else {
+            adapter = new ListViewAdapter(getActivity(), new ArrayList<>());
             listView.setAdapter(adapter);
         }
+        return v;
+    }
+
+    private void setUpFilterList() {
+        List<ListItem> listItems = new ArrayList<>();
+
+        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_upcoming_match, "Upcoming Matches", true));
+        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_match_results, "Match Results", true));
+        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_schedule_updated, "Schedule Updated", true));
+        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_competition_level_starting, "Competition Level Starting", true));
+        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_alliance_selections, "Alliance Selections", true));
+        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_awards_posted, "Awards Posted", true));
+
+        ListViewAdapter adapter = new ListViewAdapter(getActivity(), listItems);
+        filterListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         ticker = new Firebase("https://thebluealliance.firebaseio.com/notifications/"); //TODO move to config file
         ticker.limitToLast(25).addChildEventListener(this);
-        return v;
     }
 
     @Override
@@ -74,13 +108,44 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         }
     }
 
+    private void updateList() {
+        Observable.from(allNotifications)
+                .filter(notification -> {
+                    if (notification.getNotificationType().equals(NotificationTypes.MATCH_SCORE)) {
+                        return false;
+                    }
+                    return true;
+                })
+                .map(notification -> notification.getNotification())
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(notificationsList -> {
+                    if (!GamedayTickerFragment.this.isResumed()) {
+                        return;
+                    }
+                    if (notificationsList.isEmpty()) {
+                        // Show the "none found" warning
+                        progressBar.setVisibility(View.GONE);
+                        getView().findViewById(R.id.no_notifications_found).setVisibility(View.VISIBLE);
+                        listView.setVisibility(View.GONE);
+                    } else {
+                        adapter.values.clear();
+                        adapter.values.addAll(notificationsList);
+                        adapter.notifyDataSetChanged();
+                        listView.setVisibility(View.VISIBLE);
+                        getView().findViewById(R.id.no_notifications_found).setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+    }
+
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        childHasBeenAdded = true;
         FirebaseNotification notification = dataSnapshot.getValue(FirebaseNotification.class);
-        Log.d(Constants.LOG_TAG, "Json: "+notification.convertToJson());
-        adapter.values.add(0, notification.getNotification());
-        adapter.updateListData();
-        progressBar.setVisibility(View.GONE);
+        allNotifications.add(0, notification);
+        Log.d(Constants.LOG_TAG, "Json: " + notification.convertToJson());
+        updateList();
     }
 
     @Override

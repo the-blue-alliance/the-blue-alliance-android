@@ -57,4 +57,13 @@
 
     <color name="photo_tint">#6000</color>
 
+    <!-- Game day ticker header colors -->
+    <color name="gameday_ticker_alliance_selection_header">#f44336</color>
+    <color name="gameday_ticker_upcoming_match_header">#ff9800</color>
+    <color name="gameday_ticker_match_results_header">#3f51b5</color>
+    <color name="gameday_ticker_schedule_updates_header">#03a9f4</color>
+    <color name="gameday_ticker_level_starting_header">#9c27b0</color>
+    <color name="gameday_ticker_awards_header">#4caf50</color>
+
+
 </resources>

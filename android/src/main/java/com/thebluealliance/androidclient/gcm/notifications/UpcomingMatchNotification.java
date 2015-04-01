@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,6 +20,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
@@ -31,7 +35,7 @@ import java.util.Date;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    private String eventName, matchTitle, matchKey;
+    private String eventName, eventKey, matchTitle, matchKey;
     private JsonElement matchTime;
     private JsonArray teamKeys;
 
@@ -54,6 +58,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         if (!jsonData.has("team_keys")) {
             throw new JsonParseException("Notification data does not contain 'team_keys");
         }
+        eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
         if (!jsonData.has("scheduled_time")) {
             throw new JsonParseException("Notification data does not contain 'scheduled_time'");
@@ -146,5 +151,35 @@ public class UpcomingMatchNotification extends BaseNotification {
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_upcoming_match, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.text = (TextView) convertView.findViewById(R.id.text);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        this.parseMessageData();
+
+        holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
+        holder.title.setText("Upcoming match: " + matchTitle);
+        holder.text.setText(messageData);
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView title;
+        public TextView text;
     }
 }
