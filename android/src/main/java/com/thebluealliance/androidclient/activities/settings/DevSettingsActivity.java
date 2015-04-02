@@ -33,7 +33,7 @@ public class DevSettingsActivity extends ActionBarActivity {
                 .commit();
     }
 
-    public class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public static class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -54,10 +54,10 @@ public class DevSettingsActivity extends ActionBarActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     Favorite fav = new Favorite();
-                    fav.setUserName(AccountHelper.getSelectedAccount(DevSettingsActivity.this));
+                    fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
                     fav.setModelKey("frc111");
                     fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
-                    Database.getInstance(DevSettingsActivity.this).getFavoritesTable().add(fav);
+                    Database.getInstance(getActivity()).getFavoritesTable().add(fav);
                     return true;
                 }
             });

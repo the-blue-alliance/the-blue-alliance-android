@@ -17,11 +17,13 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     private ModelNotificationFavoriteSettings settings;
 
     public UpdateUserModelSettingsTaskFragment() {
-
+        settings = new ModelNotificationFavoriteSettings();
     }
 
     public UpdateUserModelSettingsTaskFragment(ModelNotificationFavoriteSettings settings) {
         this.settings = settings;
+        // TODO(jerry): Call Fragment#setArguments(Bundle) to stash settings so the 0-arg
+        // constructor can call getArguments() to get them?
     }
 
 
