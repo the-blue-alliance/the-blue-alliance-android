@@ -110,8 +110,8 @@ public class GCMMessageHandler extends IntentService {
                 notification.parseMessageData();
             } catch (JsonParseException e) {
                 Log.e(Constants.LOG_TAG, "Error parsing incoming message json");
-                Log.e(Constants.LOG_TAG, e.getMessage());
                 e.printStackTrace();
+                return;
             }
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
