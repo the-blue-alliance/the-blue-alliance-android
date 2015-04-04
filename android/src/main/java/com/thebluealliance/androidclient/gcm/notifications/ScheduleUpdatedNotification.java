@@ -69,7 +69,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         if (firstMatchTime == null) {
             contentText = String.format(r.getString(R.string.notification_schedule_updated_without_time), eventName);
         } else {
-            contentText = String.format(r.getString(R.string.notification_schedule_updated_with_time), eventKey, firstMatchTime);
+            contentText = String.format(r.getString(R.string.notification_schedule_updated_with_time), eventName, firstMatchTime);
         }
 
         Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
