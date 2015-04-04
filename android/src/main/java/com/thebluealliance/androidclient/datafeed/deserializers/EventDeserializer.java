@@ -16,6 +16,14 @@ import java.lang.reflect.Type;
 
 public class EventDeserializer implements JsonDeserializer<Event> {
 
+    /**
+     * Returns true if the given element is null or JsonNull. This is handy for checking the result
+     * of JsonObject#get(), which is null if the requested key is absent.
+     */
+    static boolean isNull(JsonElement element) {
+        return element == null || element.isJsonNull();
+    }
+
     @Override
     public Event deserialize(final JsonElement json, Type typeOf, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object;
@@ -35,13 +43,13 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setEventName(object.get("name").getAsString());
         }
 
-        if (object.get("location").isJsonNull()) {
+        if (isNull(object.get("location"))) {
             event.setLocation("");
         } else {
             event.setLocation(object.get("location").getAsString());
         }
 
-        if (!object.has("venue_address") || object.get("venue_address").isJsonNull()) {
+        if (isNull(object.get("venue_address"))) {
             event.setVenue("");
         } else {
             event.setVenue(object.get("venue_address").getAsString());
@@ -51,19 +59,19 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setEventType(object.get("event_type").getAsInt());
         }
 
-        if (object.get("start_date").isJsonNull()) {
+        if (isNull(object.get("start_date"))) {
             event.setStartDate("");
         } else {
             event.setStartDate(object.get("start_date").getAsString());
         }
 
-        if (object.get("end_date").isJsonNull()) {
+        if (isNull(object.get("end_date"))) {
             event.setEndDate("");
         } else {
             event.setEndDate(object.get("end_date").getAsString());
         }
 
-        if (object.get("official").isJsonNull()) {
+        if (isNull(object.get("official"))) {
             event.setOfficial(false);
         } else {
             event.setOfficial(object.get("official").getAsBoolean());
@@ -71,13 +79,13 @@ public class EventDeserializer implements JsonDeserializer<Event> {
 
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
-        if (object.get("short_name").isJsonNull()) {
+        if (isNull(object.get("short_name"))) {
             event.setEventShortName("");
         } else {
             event.setEventShortName(object.get("short_name").getAsString());
         }
 
-        if (object.has("website") && !object.get("website").isJsonNull()) {
+        if (!isNull(object.get("website"))) {
             event.setWebsite(object.get("website").getAsString());
         }
 
