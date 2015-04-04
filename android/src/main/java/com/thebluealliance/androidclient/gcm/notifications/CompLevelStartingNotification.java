@@ -80,7 +80,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         if(scheduledStartTimeString.isEmpty()){
             contentText = String.format(r.getString(R.string.notification_level_starting), eventName, compLevel);
         }else{
-            contentText = String.format(r.getString(R.string.notification_level_starting_with_time), eventKey, compLevel, scheduledStartTimeString);
+            contentText = String.format(r.getString(R.string.notification_level_starting_with_time), eventName, compLevel, scheduledStartTimeString);
         }
 
         Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
