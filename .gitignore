@@ -17,8 +17,9 @@ android/libs/tbaMobile-v9-1.19.0-SNAPSHOT-debug.jar
 # Files for the Dalvik VM
 *.dex
 
-# Java class files
+# Java and Python object code
 *.class
+*.pyc
 
 # Generated files
 bin/
