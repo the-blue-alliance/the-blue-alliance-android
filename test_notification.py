@@ -36,11 +36,14 @@ def notify(message_type, json_data):
     if type(json_data) != str:
         json_data = json.dumps(json_data)
 
+    # Quoting for "Chairman's".
+    json_text = json_data.replace("'", """'"'"'""")
+
     template = """am broadcast -a com.google.android.c2dm.intent.RECEIVE \
         -c com.thebluealliance.androidclient \
         --es message_type %s \
         --es message_data '%s'"""
-    command = template % (message_type, json_data)
+    command = template % (message_type, json_text)
 
     subprocess.call(["adb", "shell", command])
 
@@ -130,7 +133,7 @@ awards_posted_sample = {
     "awards": [
       {
         "award_type": 0,
-        "name": "Regional Chairmans Award",
+        "name": "Regional Chairman's Award",
         "recipient_list": [
           {"team_number": 2067, "awardee": None},
           {"team_number": 78, "awardee": None},
