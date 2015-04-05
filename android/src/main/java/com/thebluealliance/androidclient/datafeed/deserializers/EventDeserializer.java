@@ -13,16 +13,10 @@ import com.thebluealliance.androidclient.models.Event;
 
 import java.lang.reflect.Type;
 
+import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+
 
 public class EventDeserializer implements JsonDeserializer<Event> {
-
-    /**
-     * Returns true if the given element is null or JsonNull. This is handy for checking the result
-     * of JsonObject#get(), which is null if the requested key is absent.
-     */
-    static boolean isNull(JsonElement element) {
-        return element == null || element.isJsonNull();
-    }
 
     @Override
     public Event deserialize(final JsonElement json, Type typeOf, JsonDeserializationContext context) throws JsonParseException {
@@ -109,27 +103,19 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setAlliances(object.get("alliances").getAsJsonArray());
         }
 
-        if (object.has("event_district")) {
-            JsonElement districtEnum = object.get("event_district");
-            if (districtEnum.isJsonNull()) {
-                event.setDistrictEnum(0);
-            } else {
-                event.setDistrictEnum(districtEnum.getAsInt());
-            }
-        } else {
+        JsonElement districtEnum = object.get("event_district");
+        if (isNull(districtEnum)) {
             event.setDistrictEnum(0);
+        } else {
+            event.setDistrictEnum(districtEnum.getAsInt());
         }
 
-        if (object.has("event_district_string")) {
-            JsonElement districtString = object.get("event_district_string");
-            if (districtString.isJsonNull()) {
-                event.setDistrictTitle("");
-            } else {
-                String title = districtString.getAsString();
-                event.setDistrictTitle(title.equals("null") ? "" : title);
-            }
-        } else {
+        JsonElement districtString = object.get("event_district_string");
+        if (isNull(districtString)) {
             event.setDistrictTitle("");
+        } else {
+            String title = districtString.getAsString();
+            event.setDistrictTitle(title.equals("null") ? "" : title);
         }
 
         return event;

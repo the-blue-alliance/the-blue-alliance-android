@@ -60,7 +60,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         Resources r = context.getResources();
 
         String firstMatchTime = null;
-        if (!matchTime.isJsonNull()) {
+        if (!JSONManager.isNull(matchTime)) {
             Date date = new Date(matchTime.getAsLong() * 1000L);
             java.text.DateFormat format = DateFormat.getTimeFormat(context);
             firstMatchTime = format.format(date);

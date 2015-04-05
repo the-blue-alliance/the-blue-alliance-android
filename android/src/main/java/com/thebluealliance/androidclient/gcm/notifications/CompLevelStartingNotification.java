@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
@@ -67,10 +68,11 @@ public class CompLevelStartingNotification extends BaseNotification {
             default:    compLevel = ""; break;
         }
         String scheduledStartTimeString;
-        if(!jsonData.has("scheduled_time") || jsonData.get("scheduled_time").isJsonNull()){
+        JsonElement scheduledTime = jsonData.get("scheduled_time");
+        if(JSONManager.isNull(scheduledTime)){
             scheduledStartTimeString = "";
         }else{
-            long scheduledStartTimeUNIX = jsonData.get("scheduled_time").getAsLong();
+            long scheduledStartTimeUNIX = scheduledTime.getAsLong();
             // We multiply by 1000 because the Date constructor expects ms
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
             DateFormat format =  android.text.format.DateFormat.getTimeFormat(context);

@@ -16,6 +16,7 @@ import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -74,7 +75,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         Resources r = context.getResources();
 
         String scheduledStartTimeString;
-        if (matchTime.isJsonNull()) {
+        if (JSONManager.isNull(matchTime)) {
             scheduledStartTimeString = "";
         } else {
             long scheduledStartTimeUNIX = matchTime.getAsLong();

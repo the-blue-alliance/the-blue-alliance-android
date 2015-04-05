@@ -121,6 +121,7 @@ public class GCMMessageHandler extends IntentService {
                 int id;
 
                 built = notification.buildNotification(c);
+                if (built == null) return;
                 id = notification.getNotificationId();
 
                 if (notification.shouldShow()) {
