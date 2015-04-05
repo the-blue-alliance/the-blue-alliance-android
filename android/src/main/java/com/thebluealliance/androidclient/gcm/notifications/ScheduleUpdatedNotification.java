@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -78,13 +79,15 @@ public class ScheduleUpdatedNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_schedule_updated_title));
+        String eventCode = EventHelper.getEventCode(eventKey);
+        String title = r.getString(R.string.notification_schedule_updated_title, eventCode);
+        stored.setTitle(title);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)
-                .setContentTitle(r.getString(R.string.notification_schedule_updated_title))
+                .setContentTitle(title)
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))

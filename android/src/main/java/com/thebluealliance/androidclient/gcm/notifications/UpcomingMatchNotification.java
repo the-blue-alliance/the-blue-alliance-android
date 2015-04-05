@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
@@ -122,7 +123,8 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        String notificationTitle = r.getString(R.string.notification_upcoming_match_title, matchAbbrevTitle);
+        String eventCode = EventHelper.getEventCode(matchKey);
+        String notificationTitle = r.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));

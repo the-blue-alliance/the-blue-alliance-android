@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
@@ -187,7 +188,8 @@ public class ScoreNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        String notificationTitle = r.getString(R.string.notification_score_title, matchAbbrevTitle);
+        String eventCode = EventHelper.getEventCode(matchKey);
+        String notificationTitle = r.getString(R.string.notification_score_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
         stored.setBody(notificationString);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));

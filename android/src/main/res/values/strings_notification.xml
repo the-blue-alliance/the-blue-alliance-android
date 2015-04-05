@@ -7,7 +7,7 @@
     <!-- ******************************
          Upcoming match notification
          ****************************** -->
-    <string name="notification_upcoming_match_title">Match %1$s starting soon</string>
+    <string name="notification_upcoming_match_title">Match %1$s %2$s starting soon</string>
     <!-- Example: "Midwest Regional: Team 111 will play in Qualification Match 32, scheduled to begin at 2:35PM" -->
     <string name="notification_upcoming_match_text_single_team">%1$s: Team %2$s will play in %3$s, scheduled to begin at %4$s.</string>
     <string name="notification_upcoming_match_text_single_team_no_time">%1$s: Team %2$s will play in %3$s.</string>
@@ -18,7 +18,7 @@
     <!-- *********************
          Score notification
          ********************* -->
-    <string name="notification_score_title">Match %1$s results</string>
+    <string name="notification_score_title">Match %1$s %2$s results</string>
     <!-- Example: Midwest Regional: 111 and 1114 won in Quals 32 with a score of 523 - 42. -->
     <string name="notification_score_teams_won">%1$s: %2$s won in %3$s with a score of %4$s</string>
     <!-- Example: Midwest Regional: 111 and 1114 lost in Quals 32 with a score of 523 - 42. -->
@@ -37,33 +37,33 @@
     <!-- *********************
         Comp Level Starting Notification
         ********************* -->
-    <string name="notification_level_starting_title">Competition Level Starting</string>
+    <string name="notification_level_starting_title">Competition Level Starting %1$s</string>
     <string name="notification_level_starting">%1$s: %2$s are starting</string>
     <string name="notification_level_starting_with_time">%1$s: %2$s are scheduled to start at %3$s</string>
 
     <!-- *********************
         Event Schedule Updated Notification
         ********************* -->
-    <string name="notification_schedule_updated_title">Event Schedule Updated</string>
+    <string name="notification_schedule_updated_title">Event Schedule Updated %1$s</string>
     <string name="notification_schedule_updated_with_time">The match schedule at %1$s has been updated. The next match starts at %2$s.</string>
     <string name="notification_schedule_updated_without_time">The match schedule at %1$s has been updated.</string>
 
     <!-- *********************
         Awards Updated Notification
         ********************* -->
-    <string name="notification_awards_updated_title">Event Awards Updated</string>
+    <string name="notification_awards_updated_title">Event Awards Updated %1$s</string>
     <string name="notification_awards_updated">Awards have been updated at %1$s.</string>
 
     <!-- *********************
         Alliances Updated Notification
         ********************* -->
-    <string name="notification_alliances_updated_title">Event Alliances Updated</string>
+    <string name="notification_alliances_updated_title">Event Alliances Updated %1$s</string>
     <string name="notification_alliances_updated">Alliances have been updated at %1$s.</string>
 
     <!-- *********************
         DistrictPoints Updated Notification
         ********************* -->
-    <string name="notification_district_points_title">District Points Updated</string>
+    <string name="notification_district_points_title">District Points Updated %1$s</string>
     <string name="notification_district_points_updated">District point calculations have been updated for %1$s.</string>
 
     <!-- *********************
