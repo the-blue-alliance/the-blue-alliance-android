@@ -69,8 +69,9 @@ public class ScoreNotification extends BaseNotification {
             e.printStackTrace();
             return null;
         }
-        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
-        String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(matchKey);
+
+        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
+        String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
 
         JsonObject alliances;
         try {

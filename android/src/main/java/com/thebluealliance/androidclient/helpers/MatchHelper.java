@@ -582,7 +582,7 @@ public class MatchHelper {
      * <p/>NOTE: For people following more than one event at a time, the abbreviated form could
      * include the event code, e.g. "ILCH Q10".
      */
-    static String getMatchTitleFromMatchKey(String matchKey, boolean abbrev) {
+    static String getMatchTitleFromMatchKey(Context context, String matchKey, boolean abbrev) {
         // match key comes in the form of (EVENTKEY)_(TYPE)(MATCHNUM)m(MATCHNUM)
         // e.g. "2014ilch_f1m1"
 
@@ -610,23 +610,25 @@ public class MatchHelper {
 
             if(set == null) {
                 // No set specified; this is a match like "Quals 10" (abbrev "Q10")
-                String format = abbrev ? "%1$s%2$s" : "%1$s %2$s";
+                String format = context.getString(abbrev ? R.string.match_title_abbrev_format
+                        : R.string.match_title_format);
                 return String.format(format, typeName, number);
             } else {
                 // This is a match like "Semis 1 Match 2" (abbrev "SF1-2")
-                String format = abbrev ? "%1$s%2$s-%3$s" : "%1$s %2$s Match %3$s";
+                String format = context.getString(abbrev ? R.string.submatch_title_abbrev_format
+                        : R.string.submatch_title_format);
                 return String.format(format, typeName, set, number);
             }
         } else {
-            return "Could not find match title";
+            return context.getString(R.string.cannot_find_match_title);
         }
     }
 
-    public static String getMatchTitleFromMatchKey(String matchKey) {
-        return getMatchTitleFromMatchKey(matchKey, false);
+    public static String getMatchTitleFromMatchKey(Context context, String matchKey) {
+        return getMatchTitleFromMatchKey(context, matchKey, false);
     }
 
-    public static String getAbbrevMatchTitleFromMatchKey(String matchKey) {
-        return getMatchTitleFromMatchKey(matchKey, true);
+    public static String getAbbrevMatchTitleFromMatchKey(Context context, String matchKey) {
+        return getMatchTitleFromMatchKey(context, matchKey, true);
     }
 }

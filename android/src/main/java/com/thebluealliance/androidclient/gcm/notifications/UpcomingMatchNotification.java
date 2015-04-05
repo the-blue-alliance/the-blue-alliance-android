@@ -32,7 +32,7 @@ import java.util.Date;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    private String eventName, matchTitle, matchAbbrevTitle, matchKey;
+    private String eventName, matchKey;
     private JsonElement matchTime;
     private JsonArray teamKeys;
 
@@ -47,8 +47,6 @@ public class UpcomingMatchNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'match_key'");
         }
         matchKey = jsonData.get("match_key").getAsString();
-        matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
-        matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(matchKey);
 
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
@@ -103,6 +101,10 @@ public class UpcomingMatchNotification extends BaseNotification {
             // Looks like we got this GCM notification by mistake
             return null;
         }
+
+        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
+        String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
+
         if (scheduledStartTimeString.isEmpty()) {
             if (numFavoritedTeams == 1) {
                 contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team_no_time), eventName, teamsString, matchTitle);
