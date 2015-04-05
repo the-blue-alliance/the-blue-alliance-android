@@ -159,6 +159,29 @@ def schedule_updated_command(data=schedule_updated_sample):
     notify('schedule_updated', data)
 
 
+district_points_updated_sample = {
+    "district_name": "Pacific Northwest",
+    "district_key": "2014pnw"
+}
+
+def district_points_updated_command(data=district_points_updated_sample):
+    notify('district_points_updated', data)
+
+
+ping_sample = {
+    "title": "TBA Test Message",
+    "desc": "This is a test message ensuring your device can receive push messages from The Blue Alliance"
+}
+
+def ping_command(data=ping_sample):
+    notify('ping', data)
+
+def broadcast_command(data=ping_sample):
+    notify('broadcast', data)
+
+
+# ====== main ======
+
 if __name__ == '__main__':
     import scriptine
     scriptine.run()
