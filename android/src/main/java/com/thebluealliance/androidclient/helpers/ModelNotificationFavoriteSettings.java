@@ -16,10 +16,12 @@ public class ModelNotificationFavoriteSettings {
     public static ModelNotificationFavoriteSettings readFromBundle(Bundle bundle) {
         ModelNotificationFavoriteSettings model = new ModelNotificationFavoriteSettings();
 
-        model.modelKey = bundle.getString("modelKey");
-        model.modelType = ModelHelper.getModelFromEnum(bundle.getInt("modelType"));
-        model.isFavorite = bundle.getBoolean("isFavorite");
-        model.enabledNotifications = bundle.getStringArrayList("enabledNotifications");
+        if (bundle != null) {
+            model.modelKey = bundle.getString("modelKey");
+            model.modelType = ModelHelper.getModelFromEnum(bundle.getInt("modelType"));
+            model.isFavorite = bundle.getBoolean("isFavorite");
+            model.enabledNotifications = bundle.getStringArrayList("enabledNotifications");
+        }
 
         return model;
     }

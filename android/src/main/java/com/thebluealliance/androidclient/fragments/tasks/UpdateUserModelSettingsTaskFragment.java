@@ -18,8 +18,6 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     private ModelNotificationFavoriteSettings settings;
 
     public UpdateUserModelSettingsTaskFragment() {
-        Bundle bundle = getArguments();
-        settings = ModelNotificationFavoriteSettings.readFromBundle(bundle);
     }
 
     public UpdateUserModelSettingsTaskFragment(ModelNotificationFavoriteSettings settings) {
@@ -35,6 +33,12 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        if (settings == null) {
+            Bundle arguments = getArguments();
+            settings = ModelNotificationFavoriteSettings.readFromBundle(arguments);
+        }
+
         callbacks = (ModelSettingsCallbacks) activity;
         this.setRetainInstance(true);
         // If the task does not exist, create it
