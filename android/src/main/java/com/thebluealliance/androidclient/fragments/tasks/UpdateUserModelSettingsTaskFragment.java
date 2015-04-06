@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.tasks;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
@@ -17,13 +18,17 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     private ModelNotificationFavoriteSettings settings;
 
     public UpdateUserModelSettingsTaskFragment() {
-        settings = new ModelNotificationFavoriteSettings();
+        Bundle bundle = getArguments();
+        settings = ModelNotificationFavoriteSettings.readFromBundle(bundle);
     }
 
     public UpdateUserModelSettingsTaskFragment(ModelNotificationFavoriteSettings settings) {
         this.settings = settings;
-        // TODO(jerry): Call Fragment#setArguments(Bundle) to stash settings so the 0-arg
-        // constructor can call getArguments() to get them?
+
+        // Stash the settings so they'll be retained across Fragment destroy and creation.
+        Bundle bundle = new Bundle();
+        settings.writeToBundle(bundle);
+        setArguments(bundle);
     }
 
 
