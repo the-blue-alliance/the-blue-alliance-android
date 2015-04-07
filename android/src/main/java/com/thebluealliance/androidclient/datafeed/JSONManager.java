@@ -9,15 +9,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.EventListDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.TeamListDeserializer;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
@@ -26,6 +29,8 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
+
+import java.util.List;
 
 /**
  * File created by phil on 4/22/14.
@@ -52,6 +57,8 @@ public class JSONManager {
             builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
             builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
             builder.registerTypeAdapter(District.class, new DistrictDeserializer());
+            builder.registerTypeAdapter(new TypeToken<List<Event>>(){}.getClass(), new EventListDeserializer());
+            builder.registerTypeAdapter(new TypeToken<List<Team>>(){}.getClass(), new TeamListDeserializer());
             gson = builder.create();
         }
         return gson;
