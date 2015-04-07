@@ -139,7 +139,7 @@ public class APIHelper {
                 }
             }
         }
-        return host + TBA_APIv2_SUFFIX;
+        return host;
     }
 
     public static ArrayList<District> getDistrictList(String json, String url, int version) {
