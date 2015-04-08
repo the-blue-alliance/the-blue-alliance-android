@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -29,6 +30,8 @@ import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 import com.thebluealliance.androidclient.models.StoredNotification;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -147,6 +150,8 @@ public class GCMMessageHandler extends IntentService {
                     id = summary.getNotificationId();
                     notificationManager.notify(id, built);
                 }
+
+                EventBus.getDefault().post(new NotificationsUpdatedEvent());
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
