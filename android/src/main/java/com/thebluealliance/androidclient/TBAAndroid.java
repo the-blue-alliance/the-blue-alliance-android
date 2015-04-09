@@ -14,7 +14,7 @@ public class TBAAndroid extends Application {
     public void onCreate() {
         super.onCreate();
         Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
-        if(Utilities.isDebuggable()){
+        if(false && Utilities.isDebuggable()){
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))

@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import retrofit.RestAdapter;
+import retrofit.client.OkClient;
+import rx.Observable;
 
 
 public class APIHelper {
@@ -96,6 +98,11 @@ public class APIHelper {
             tbaAPI = restAdapter.create(APIv2.class);
         }
         return tbaAPI;
+    }
+
+    public static Observable<String> getTBAAPIEndpoint(Context c, QUERY query, String lastModified, Object... args){
+        String url = String.format(getTBAApiUrl(c, query), args);
+        return getAPI().endpoint(url, lastModified);
     }
 
     public static String getTBAApiUrl(Context c, QUERY query) {
