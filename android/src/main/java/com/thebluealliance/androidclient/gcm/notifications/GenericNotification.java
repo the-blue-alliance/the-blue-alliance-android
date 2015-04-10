@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.NotificationDashboardActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 
 import java.util.Date;
 
@@ -71,7 +70,6 @@ public class GenericNotification extends BaseNotification {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setContentIntent(intent)
-                .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)))
