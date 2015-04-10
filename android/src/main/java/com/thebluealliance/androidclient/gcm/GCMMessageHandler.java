@@ -121,20 +121,13 @@ public class GCMMessageHandler extends IntentService {
             boolean enabled = prefs.getBoolean("enable_notifications", true);
             if (enabled) {
                 Notification built;
-                int id;
 
                 built = notification.buildNotification(c);
                 if (built == null) return;
-                id = notification.getNotificationId();
-
-                if (notification.shouldShow()) {
-                    setNotificationParams(built, c, messageType, prefs);
-                    notificationManager.notify(id, built);
-                }
 
                 /* Update the data coming from this notification in the local db */
                 notification.updateDataLocally(c);
-                
+
                 /* Store this notification for future access */
                 StoredNotification stored = notification.getStoredNotification();
                 if (stored != null) {
@@ -143,11 +136,14 @@ public class GCMMessageHandler extends IntentService {
                     table.prune();
                 }
 
-                if(SummaryNotification.isNotificationActive(c) && notification.shouldShow()) {
-                    SummaryNotification summary = new SummaryNotification();
-                    built = summary.buildNotification(c);
+                if (notification.shouldShow()) {
+                    if (SummaryNotification.isNotificationActive(c)) {
+                        notification = new SummaryNotification();
+                        built = notification.buildNotification(c);
+                    }
+
                     setNotificationParams(built, c, messageType, prefs);
-                    id = summary.getNotificationId();
+                    int id = notification.getNotificationId();
                     notificationManager.notify(id, built);
                 }
 
