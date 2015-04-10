@@ -152,7 +152,7 @@ def awards_posted_command(data=awards_posted_sample):
 schedule_updated_sample = {
     "event_name": "Australia Regional",
     "first_match_time": 1397330280,
-    "event_key": "2014ausy"
+    "event_key": "2015ausy"
 }
 
 def schedule_updated_command(data=schedule_updated_sample):
