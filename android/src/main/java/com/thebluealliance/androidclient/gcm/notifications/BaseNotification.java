@@ -71,6 +71,15 @@ public abstract class BaseNotification {
     }
 
     /**
+     * Adds a Category to activityIntent to mark it as "triggered by tapping a system notification",
+     * then builds a PendingIntent with it.
+     */
+    protected PendingIntent makeNotificationIntent(Context context, Intent activityIntent) {
+        activityIntent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        return PendingIntent.getActivity(context, getNotificationId(), activityIntent, 0);
+    }
+
+    /**
      * Creates a builder with the important defaults set.
      */
     public NotificationCompat.Builder getBaseBuilder(Context context) {
@@ -87,10 +96,14 @@ public abstract class BaseNotification {
 
     /**
      * Creates a builder with the important defaults and an Activity content intent.
+     *
+     * <p/>SIDE EFFECTS: Adds a Category to activityIntent so the launched Activity can tell it was
+     * triggered by a notification. (Note: Just adding an Extra won't work because Android will
+     * retrieve the existing intent, ignoring the new Extra.)
      */
     public NotificationCompat.Builder getBaseBuilder(Context context, Intent activityIntent) {
         NotificationCompat.Builder builder = getBaseBuilder(context);
-        PendingIntent onTap = PendingIntent.getActivity(context, getNotificationId(), activityIntent, 0);
+        PendingIntent onTap = makeNotificationIntent(context, activityIntent);
 
         builder.setContentIntent(onTap);
         return builder;
