@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -29,6 +30,8 @@ import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 import com.thebluealliance.androidclient.models.StoredNotification;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Nathan on 7/24/2014.
@@ -118,20 +121,13 @@ public class GCMMessageHandler extends IntentService {
             boolean enabled = prefs.getBoolean("enable_notifications", true);
             if (enabled) {
                 Notification built;
-                int id;
 
                 built = notification.buildNotification(c);
                 if (built == null) return;
-                id = notification.getNotificationId();
-
-                if (notification.shouldShow()) {
-                    setNotificationParams(built, c, messageType, prefs);
-                    notificationManager.notify(id, built);
-                }
 
                 /* Update the data coming from this notification in the local db */
                 notification.updateDataLocally(c);
-                
+
                 /* Store this notification for future access */
                 StoredNotification stored = notification.getStoredNotification();
                 if (stored != null) {
@@ -140,13 +136,18 @@ public class GCMMessageHandler extends IntentService {
                     table.prune();
                 }
 
-                if(SummaryNotification.isNotificationActive(c) && notification.shouldShow()) {
-                    SummaryNotification summary = new SummaryNotification();
-                    built = summary.buildNotification(c);
+                if (notification.shouldShow()) {
+                    if (SummaryNotification.isNotificationActive(c)) {
+                        notification = new SummaryNotification();
+                        built = notification.buildNotification(c);
+                    }
+
                     setNotificationParams(built, c, messageType, prefs);
-                    id = summary.getNotificationId();
+                    int id = notification.getNotificationId();
                     notificationManager.notify(id, built);
                 }
+
+                EventBus.getDefault().post(new NotificationsUpdatedEvent());
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...

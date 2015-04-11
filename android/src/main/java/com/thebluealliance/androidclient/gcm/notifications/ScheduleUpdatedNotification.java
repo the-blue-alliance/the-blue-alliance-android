@@ -1,11 +1,9 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 
@@ -16,10 +14,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
@@ -74,8 +70,6 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         }
 
         Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
-        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -86,16 +80,11 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
-        NotificationCompat.Builder builder = getBaseBuilder(context)
+        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
-                .setContentIntent(intent)
-                .setDeleteIntent(onDismiss)
-                .setGroup(GCMMessageHandler.GROUP_KEY)
-                .setAutoCancel(true)
-                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
+                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp));
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);

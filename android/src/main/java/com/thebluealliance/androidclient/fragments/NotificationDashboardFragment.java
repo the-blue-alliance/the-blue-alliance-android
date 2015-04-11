@@ -18,10 +18,13 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateNotificationDashboard;
+import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by phil on 2/3/15.
@@ -73,17 +76,27 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void startRefresh() {
         if (parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startRefresh();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void onPause() {
-        super.onPause();
+        EventBus.getDefault().unregister(this);
         if (task != null) {
             task.cancel(false);
         }
@@ -91,6 +104,7 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
+        super.onPause();
     }
 
     @Override
@@ -119,5 +133,9 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
     
     public void updateTask(PopulateNotificationDashboard task){
         this.task = task;
+    }
+
+    public void onEventMainThread(NotificationsUpdatedEvent event) {
+        startRefresh();
     }
 }
