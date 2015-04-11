@@ -199,7 +199,7 @@
         </receiver>
         <receiver
             android:name="com.thebluealliance.androidclient.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="@string/gcm_sender_permission">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 

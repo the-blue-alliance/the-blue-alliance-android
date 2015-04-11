@@ -21,6 +21,7 @@
     <string name="year_selector_title_events">%1$s Events</string>
     <string name="year_selector_title_districts">%1$s Districts</string>
     <string name="select_year">Select Year</string>
+    <string name="gcm_sender_permission">com.google.android.c2dm.permission.SEND</string>
 
     <!-- Main Activity -->
     <string-array name="event_list_year_selector">
@@ -113,6 +114,10 @@
     <string name="recent_match_header">Recent Matches</string>
     <string name="title_next_match">Next Match</string>
     <string name="title_last_match">Last Match</string>
+    <string name="match_title_format">%1$s %2$s</string>
+    <string name="match_title_abbrev_format">%1$s%2$s</string>
+    <string name="submatch_title_format">%1$s %2$s Match %3$s</string>
+    <string name="submatch_title_abbrev_format">%1$s%2$s-%3$s</string>
 
     <!-- Team Media -->
     <string name="cd_header">Chief Delphi Photos</string>
@@ -123,6 +128,7 @@
     <string name="no_favorite_data">No favorites found.</string>
     <string name="no_subscription_data">No subscriptions found</string>
     <string name="mytba_error">Error code %1$d: %2$s</string>
+    <string name="cannot_find_match_title">Could not find match title</string>
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>

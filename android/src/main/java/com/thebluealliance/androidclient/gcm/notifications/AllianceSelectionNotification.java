@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -63,6 +64,7 @@ public class AllianceSelectionNotification extends BaseNotification{
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(getLogTag(), "Event data passed in this notification does not contain an event short name. Can't post this notification.");
             e.printStackTrace();
+            return null;
         }
 
         String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
@@ -73,13 +75,15 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_alliances_updated_title));
+        String eventCode = EventHelper.getEventCode(eventKey);
+        String title = r.getString(R.string.notification_alliances_updated_title, eventCode);
+        stored.setTitle(title);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)
-                .setContentTitle(r.getString(R.string.notification_alliances_updated_title))
+                .setContentTitle(title)
                 .setContentText(contentText)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)

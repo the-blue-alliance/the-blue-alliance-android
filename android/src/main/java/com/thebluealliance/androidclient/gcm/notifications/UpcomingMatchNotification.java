@@ -16,7 +16,9 @@ import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
@@ -31,7 +33,7 @@ import java.util.Date;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    private String eventName, matchTitle, matchKey;
+    private String eventName, matchKey;
     private JsonElement matchTime;
     private JsonArray teamKeys;
 
@@ -46,7 +48,7 @@ public class UpcomingMatchNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'match_key'");
         }
         matchKey = jsonData.get("match_key").getAsString();
-        matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
+
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
@@ -54,15 +56,17 @@ public class UpcomingMatchNotification extends BaseNotification {
         if (!jsonData.has("team_keys")) {
             throw new JsonParseException("Notification data does not contain 'team_keys");
         }
+
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
         if (!jsonData.has("scheduled_time")) {
             throw new JsonParseException("Notification data does not contain 'scheduled_time'");
         }
+
         matchTime = jsonData.get("scheduled_time");
     }
 
     /**
-     * @param context a Context object for use by the notificatoin builder
+     * @param context a Context object for use by the notification builder
      * @return A constructed notification
      */
     @Override
@@ -71,11 +75,11 @@ public class UpcomingMatchNotification extends BaseNotification {
         Resources r = context.getResources();
 
         String scheduledStartTimeString;
-        if (matchTime.isJsonNull()) {
+        if (JSONManager.isNull(matchTime)) {
             scheduledStartTimeString = "";
         } else {
             long scheduledStartTimeUNIX = matchTime.getAsLong();
-            // We multiply by 1000 because the Date constructor expects
+            // We multiply by 1000 because the Date constructor expects ms
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
             java.text.DateFormat format = android.text.format.DateFormat.getTimeFormat(context);
             scheduledStartTimeString = format.format(scheduledStartTime);
@@ -98,6 +102,10 @@ public class UpcomingMatchNotification extends BaseNotification {
             // Looks like we got this GCM notification by mistake
             return null;
         }
+
+        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
+        String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
+
         if (scheduledStartTimeString.isEmpty()) {
             if (numFavoritedTeams == 1) {
                 contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team_no_time), eventName, teamsString, matchTitle);
@@ -118,13 +126,15 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_upcoming_match_title));
+        String eventCode = EventHelper.getEventCode(matchKey);
+        String notificationTitle = r.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
+        stored.setTitle(notificationTitle);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)
-                .setContentTitle(r.getString(R.string.notification_upcoming_match_title))
+                .setContentTitle(notificationTitle)
                 .setContentText(contentText)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
                 .setContentIntent(intent)
