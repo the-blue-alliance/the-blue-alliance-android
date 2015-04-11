@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.tasks;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
@@ -17,17 +18,27 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     private ModelNotificationFavoriteSettings settings;
 
     public UpdateUserModelSettingsTaskFragment() {
-
     }
 
     public UpdateUserModelSettingsTaskFragment(ModelNotificationFavoriteSettings settings) {
         this.settings = settings;
+
+        // Stash the settings so they'll be retained across Fragment destroy and creation.
+        Bundle bundle = new Bundle();
+        settings.writeToBundle(bundle);
+        setArguments(bundle);
     }
 
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        if (settings == null) {
+            Bundle arguments = getArguments();
+            settings = ModelNotificationFavoriteSettings.readFromBundle(arguments);
+        }
+
         callbacks = (ModelSettingsCallbacks) activity;
         this.setRetainInstance(true);
         // If the task does not exist, create it

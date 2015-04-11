@@ -182,6 +182,7 @@
             android:name="com.thebluealliance.androidclient.activities.NotificationDashboardActivity"
             android:label="@string/title_activity_notification_dashboard"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus"
+            android:launchMode="singleTop"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -199,7 +200,7 @@
         </receiver>
         <receiver
             android:name="com.thebluealliance.androidclient.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="@string/gcm_sender_permission">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 

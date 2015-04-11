@@ -12,6 +12,11 @@ import com.thebluealliance.androidclient.datafeed.Database;
  * Created by phil on 2/5/15.
  */
 public class NotificationDismissedListener extends BroadcastReceiver{
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, NotificationDismissedListener.class);
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(Constants.LOG_TAG, "Notification Dismiss!");

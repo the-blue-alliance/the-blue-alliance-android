@@ -351,7 +351,8 @@ public class DataManager {
                         JsonArray winners = award.getWinners();
                         for (JsonElement winner : winners) {
                             JsonObject w = winner.getAsJsonObject();
-                            if (w.has("team_number") && !w.get("team_number").isJsonNull() && w.get("team_number").getAsString().equals(teamKey.substring(3))) {
+                            JsonElement team_number = w.get("team_number");
+                            if (!JSONManager.isNull(team_number) && team_number.getAsString().equals(teamKey.substring(3))) {
                                 awards.add(award);
                                 break;
                             }

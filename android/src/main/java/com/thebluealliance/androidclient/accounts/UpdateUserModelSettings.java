@@ -54,9 +54,6 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
 
     @Override
     protected Result doInBackground(String... params) {
-        if(settings == null){
-            return Result.ERROR;
-        }
         String modelKey = settings.modelKey;
         List<String> notifications = settings.enabledNotifications;
         boolean isFavorite = settings.isFavorite;
