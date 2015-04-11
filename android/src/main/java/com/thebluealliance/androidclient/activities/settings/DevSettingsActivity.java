@@ -33,7 +33,7 @@ public class DevSettingsActivity extends ActionBarActivity {
                 .commit();
     }
 
-    public class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public static class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -54,10 +54,10 @@ public class DevSettingsActivity extends ActionBarActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     Favorite fav = new Favorite();
-                    fav.setUserName(AccountHelper.getSelectedAccount(DevSettingsActivity.this));
+                    fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
                     fav.setModelKey("frc111");
                     fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
-                    Database.getInstance(DevSettingsActivity.this).getFavoritesTable().add(fav);
+                    Database.getInstance(getActivity()).getFavoritesTable().add(fav);
                     return true;
                 }
             });
@@ -66,7 +66,7 @@ public class DevSettingsActivity extends ActionBarActivity {
             testUpcomingMatchNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    String data = "{\"match_key\":\"2014ilch_f1m2\",\"event_name\":\"EVENT NAME\",\"team_keys\":[\"frc111\",\"frc118\",\"frc254\",\"frc496\",\"frc1114\",\"frc2056\"],\"scheduled_time\":12345,\"predicted_time\":123456}";
+                    String data = "{\"match_key\":\"2014ilch_f1m2\",\"event_name\":\"Midwest Regional\",\"team_keys\":[\"frc111\",\"frc118\",\"frc254\",\"frc496\",\"frc1114\",\"frc2056\"],\"scheduled_time\":12345,\"predicted_time\":123456}";
                     GCMMessageHandler.handleMessage(getActivity(), "upcoming_match", data);
                     return true;
                 }
@@ -91,7 +91,7 @@ public class DevSettingsActivity extends ActionBarActivity {
                     // 2 teams on tied alliance are favorited
                     // String data = "{\"event_name\":\"EVENT NAME\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010sc_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\"]},\"red\":{\"score\":5,\"teams\":[]}},\"event_key\":\"2010sc\"}}";
                     // 2 teams on each tied alliance are favorited
-                    String data = "{\"event_name\":\"EVENT NAME\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010sc_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\"]},\"red\":{\"score\":5,\"teams\":[\"frc1398\",\"frc343\"]}},\"event_key\":\"2010sc\"}}";
+                    String data = "{\"event_name\":\"San Diego Regional\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010casd_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\"]},\"red\":{\"score\":5,\"teams\":[\"frc1398\",\"frc343\"]}},\"event_key\":\"2010casd\"}}";
                     GCMMessageHandler.handleMessage(getActivity(), "score", data);
                     return true;
                 }

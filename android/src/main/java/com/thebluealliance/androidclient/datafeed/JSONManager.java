@@ -32,6 +32,14 @@ public class JSONManager {
     private static Gson gson;
     private static JsonParser parser;
 
+    /**
+     * Returns true if the given element is null or JsonNull. This is handy for checking the result
+     * of {@link JsonObject#get}, which is null if the requested key is absent.
+     */
+    public static boolean isNull(JsonElement element) {
+        return element == null || element.isJsonNull();
+    }
+
     public static JsonParser getParser() {
         if (parser == null)
             parser = new JsonParser();
@@ -63,7 +71,7 @@ public class JSONManager {
         }catch(JsonSyntaxException ex){
             Log.w(Constants.LOG_TAG, "Couldn't parse bad json: "+input);
         }
-        if (e == null || e.isJsonNull()) {
+        if (isNull(e)) {
             return new JsonObject();
         }
         try {

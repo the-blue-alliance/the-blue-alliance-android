@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -52,13 +53,15 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_district_points_title));
+        String districtCode = EventHelper.getEventCode(districtKey);
+        String title = r.getString(R.string.notification_district_points_title, districtCode);
+        stored.setTitle(title);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
         NotificationCompat.Builder builder = getBaseBuilder(context)
-                .setContentTitle(r.getString(R.string.notification_district_points_title))
+                .setContentTitle(title)
                 .setContentText(contentText)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)
