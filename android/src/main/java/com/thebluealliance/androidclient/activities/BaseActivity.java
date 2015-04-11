@@ -37,6 +37,16 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     String modelKey = "";
     ModelHelper.MODELS modelType;
 
+    /**
+     * If this Activity was triggered by tapping a system notification, dismiss the "active" stored
+     * notifications as having been "read."
+     */
+    private void handleIntent(Intent intent) {
+        if (intent != null && intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
+            sendBroadcast(NotificationDismissedListener.newIntent(this));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +58,13 @@ public abstract class BaseActivity extends NavigationDrawerActivity
             mNfcAdapter.setNdefPushMessageCallback(this, this);
         }
 
-        // If this Activity was launched by tapping a system notification, dismiss the "active"
-        // stored notifications as having been "read."
-        Intent intent = getIntent();
-        if (intent != null && intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
-            sendBroadcast(NotificationDismissedListener.newIntent(this));
-        }
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
     }
 
     @Override
