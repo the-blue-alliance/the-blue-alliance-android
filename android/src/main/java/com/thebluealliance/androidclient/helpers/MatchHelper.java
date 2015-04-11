@@ -36,7 +36,6 @@ public class MatchHelper {
                 return null; // see below for options for this line
             }
         },
-        EIGHTH,
         QUARTER,
         SEMI,
         FINAL {
@@ -65,7 +64,6 @@ public class MatchHelper {
                 case "qm":
                     return QUAL;
                 case "ef":
-                    return EIGHTH;
                 case "qf":
                     return QUARTER;
                 case "sf":
@@ -79,8 +77,7 @@ public class MatchHelper {
 
         public static TYPE fromKey(String key) {
             if (key.contains("_qm")) return QUAL;
-            if (key.contains("_ef")) return EIGHTH;
-            if (key.contains("_qf")) return QUARTER;
+            if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
             if (key.contains("_sf")) return SEMI;
             if (key.contains("_f")) return FINAL;
             return NONE;
@@ -95,28 +92,24 @@ public class MatchHelper {
     static {
         SHORT_TYPES = new HashMap<>();
         SHORT_TYPES.put(MatchHelper.TYPE.QUAL, "qm");
-        SHORT_TYPES.put(MatchHelper.TYPE.EIGHTH, "ef");
         SHORT_TYPES.put(MatchHelper.TYPE.QUARTER, "qf");
         SHORT_TYPES.put(MatchHelper.TYPE.SEMI, "sf");
         SHORT_TYPES.put(MatchHelper.TYPE.FINAL, "f");
 
         LONG_TYPES = new HashMap<>(); // TODO: I18N
         LONG_TYPES.put(MatchHelper.TYPE.QUAL, "Quals");
-        LONG_TYPES.put(MatchHelper.TYPE.EIGHTH, "Eighths");
         LONG_TYPES.put(MatchHelper.TYPE.QUARTER, "Quarters");
         LONG_TYPES.put(MatchHelper.TYPE.SEMI, "Semis");
         LONG_TYPES.put(MatchHelper.TYPE.FINAL, "Finals");
 
         PLAY_ORDER = new HashMap<>();
         PLAY_ORDER.put(MatchHelper.TYPE.QUAL, 1);
-        PLAY_ORDER.put(MatchHelper.TYPE.EIGHTH, 2);
-        PLAY_ORDER.put(MatchHelper.TYPE.QUARTER, 3);
-        PLAY_ORDER.put(MatchHelper.TYPE.SEMI, 4);
-        PLAY_ORDER.put(MatchHelper.TYPE.FINAL, 5);
+        PLAY_ORDER.put(MatchHelper.TYPE.QUARTER, 2);
+        PLAY_ORDER.put(MatchHelper.TYPE.SEMI, 3);
+        PLAY_ORDER.put(MatchHelper.TYPE.FINAL, 4);
 
         ABBREV_TYPES = new HashMap<>(); // TODO: I18N
         ABBREV_TYPES.put(MatchHelper.TYPE.QUAL, "Q");
-        ABBREV_TYPES.put(MatchHelper.TYPE.EIGHTH, "EF");
         ABBREV_TYPES.put(MatchHelper.TYPE.QUARTER, "QF");
         ABBREV_TYPES.put(MatchHelper.TYPE.SEMI, "SF");
         ABBREV_TYPES.put(MatchHelper.TYPE.FINAL, "F");
