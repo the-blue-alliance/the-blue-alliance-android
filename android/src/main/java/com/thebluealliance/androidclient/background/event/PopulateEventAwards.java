@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -43,6 +44,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     private String eventKey, teamKey;
     private ArrayList<ListItem> awards;
     private RequestParams requestParams;
+    private long startTime;
 
     public PopulateEventAwards(EventAwardsFragment f, RequestParams requestParams) {
         mFragment = f;
@@ -50,6 +52,12 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             activity = (RefreshableHostActivity) mFragment.getActivity();
         }
         this.requestParams = requestParams;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -93,7 +101,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
-        if (view != null) {
+        if (view != null && activity != null) {
             ListViewAdapter adapter = new ListViewAdapter(activity, awards);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             noDataText.setVisibility(View.GONE);
@@ -118,24 +126,26 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
             // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            requestParams.forceFromCache = false;
-            PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, requestParams);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey, teamKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (activity != null && mFragment instanceof RefreshListener) {
-                Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Awards refresh complete");
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, requestParams);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey, teamKey);
+            } else {
+                // Show notification if we've refreshed data.
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Awards refresh complete");
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event awards", eventKey);
         }
     }
 }

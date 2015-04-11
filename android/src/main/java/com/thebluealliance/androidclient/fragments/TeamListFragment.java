@@ -14,9 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -24,6 +21,7 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.PopulateTeamList;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -77,14 +75,8 @@ public class TeamListFragment extends Fragment implements RefreshListener {
                 String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
                 Intent i = new Intent(getActivity(), ViewTeamActivity.class);
                 i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
-                
-                /* Track the call */
-                Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
-                t.send(new HitBuilders.EventBuilder()
-                        .setCategory("team_click")
-                        .setAction(i.getDataString())
-                        .setLabel(teamKey)
-                        .build());
+
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team_click", i.getDataString(), teamKey);
                 
                 startActivity(i);
             }

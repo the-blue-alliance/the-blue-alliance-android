@@ -31,4 +31,9 @@ public class RequestParams {
         this.forceFromCache = forceFromCache;
         this.forceFromWeb = forceFromWeb;
     }
+
+    @Override
+    public String toString() {
+        return "forceFromCache:"+forceFromCache+" cacheLocally:"+cacheLocally+" forceFromWeb:"+forceFromWeb;
+    }
 }

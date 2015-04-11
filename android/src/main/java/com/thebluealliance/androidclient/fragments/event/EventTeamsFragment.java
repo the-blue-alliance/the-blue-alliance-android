@@ -14,9 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -24,6 +21,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventTeams;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -82,12 +80,8 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
                 Intent intent = TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey);
                 
                 /* Track the call */
-                Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
-                t.send(new HitBuilders.EventBuilder()
-                        .setCategory("team@event_click")
-                        .setAction("EventTeamsFragment")
-                        .setLabel(EventTeamHelper.generateKey(mEventKey, teamKey))
-                        .build());
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventTeamsFragment", EventTeamHelper.generateKey(mEventKey, teamKey));
+
                 startActivity(intent);
             }
         });

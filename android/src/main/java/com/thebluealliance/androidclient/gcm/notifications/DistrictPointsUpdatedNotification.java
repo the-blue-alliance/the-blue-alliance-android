@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.listeners.NotificationDismissedListener
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by phil on 11/21/14.
@@ -46,7 +47,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         String contentText = String.format(r.getString(R.string.notification_district_points_updated), districtName);
 
         Intent instance = ViewDistrictActivity.newInstance(context, districtKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
+        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), instance, 0);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
         stored = new StoredNotification();
@@ -78,7 +79,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (getNotificationType() + ":" + districtKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + districtKey).hashCode();
     }
 
 }
