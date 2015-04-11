@@ -85,12 +85,12 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        startRefresh();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        startRefresh();
         EventBus.getDefault().register(this);
     }
 
