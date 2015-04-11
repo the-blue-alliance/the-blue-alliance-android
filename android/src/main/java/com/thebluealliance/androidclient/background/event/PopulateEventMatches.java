@@ -92,6 +92,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         }
 
         groups = new ArrayList<>();
+        ListGroup eighthMatches = new ListGroup(activity.getString(R.string.eigths_header));
         ListGroup qualMatches = new ListGroup(activity.getString(R.string.quals_header));
         ListGroup quarterMatches = new ListGroup(activity.getString(R.string.quarters_header));
         ListGroup semiMatches = new ListGroup(activity.getString(R.string.semis_header));
@@ -127,6 +128,9 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                         switch (match.getType()) {
                             case QUAL:
                                 currentGroup = qualMatches;
+                                break;
+                            case EIGHTH:
+                                currentGroup = eighthMatches;
                                 break;
                             case QUARTER:
                                 currentGroup = quarterMatches;
@@ -183,7 +187,9 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         if (!qualMatches.children.isEmpty()) {
             groups.add(qualMatches);
         }
-
+        if (!eighthMatches.children.isEmpty()){
+            groups.add(eighthMatches);
+        }
         if (!quarterMatches.children.isEmpty()) {
             groups.add(quarterMatches);
         }
