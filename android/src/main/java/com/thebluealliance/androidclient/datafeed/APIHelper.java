@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.squareup.okhttp.Response;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
@@ -14,18 +15,23 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import retrofit.RestAdapter;
+import retrofit.client.OkClient;
+import rx.Observable;
 
-public class TBAv2 {
+
+public class APIHelper {
+
+    public static final String TBA_APIv2_URL = "http://www.thebluealliance.com/api/v2";
 
     private static final String TBA_HOST_PREF = "tba_host";
     private static final String tbaHostDefault = "http://www.thebluealliance.com";
+
+    private static APIv2 tbaAPI;
 
     public static enum QUERY {
         CSV_TEAMS,
@@ -78,6 +84,25 @@ public class TBAv2 {
         API_URL.put(QUERY.DISTRICT_LIST, "/api/v2/districts/%d");
         API_URL.put(QUERY.DISTRICT_EVENTS, "/api/v2/district/%s/%d/events");
         API_URL.put(QUERY.DISTRICT_RANKINGS, "/api/v2/district/%s/%d/rankings");
+    }
+
+    public static APIv2 getAPI(){
+        if(tbaAPI == null){
+            RestAdapter restAdapter = new RestAdapter.Builder()
+                    .setEndpoint(APIHelper.TBA_APIv2_URL)
+                    .setConverter(new RetrofitConverter())
+                    .setRequestInterceptor(new APIv2.APIv2RequestInterceptor())
+                     .setErrorHandler(new APIv2.APIv2ErrorHandler())
+                     //TODO when #369 is merged, set okhttp client
+                    .build();
+            tbaAPI = restAdapter.create(APIv2.class);
+        }
+        return tbaAPI;
+    }
+
+    public static Observable<String> getTBAAPIEndpoint(Context c, QUERY query, String lastModified, Object... args){
+        String url = String.format(getTBAApiUrl(c, query), args);
+        return getAPI().endpoint(url, lastModified);
     }
 
     public static String getTBAApiUrl(Context c, QUERY query) {
@@ -184,11 +209,11 @@ public class TBAv2 {
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
-                HttpResponse cachedResponse = HTTP.getRequest(URL, cachedData.getLastUpdate());
+                Response cachedResponse = HTTP.getRequest(URL, params.forceFromWeb?null:cachedData.getLastUpdate());
 
                 if (cachedResponse != null) {
 
-                    int responseStatus = cachedResponse.getStatusLine().getStatusCode();
+                    int responseStatus = cachedResponse.code();
 
                     /**
                      * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
@@ -212,15 +237,12 @@ public class TBAv2 {
                      * Also, if the server gives a Last-Modified time back, record it and add it to the database for future use
                      */
                         String response = HTTP.dataFromResponse(cachedResponse),
-                                lastUpdate = "";
-                        Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
-                        if (lastModified != null) {
-                            lastUpdate = lastModified.getValue();
-                        }
+                                lastUpdate =  cachedResponse.header("Last-Modified", "");
 
                         int apiVersion;
-                        if(cachedResponse.containsHeader("X-TBA-Version")){
-                            apiVersion = Integer.parseInt(cachedResponse.getFirstHeader("X-TBA-Version").getValue());
+                        String versionHeader = cachedResponse.header("X-TBA-Version", "");
+                        if(!versionHeader.isEmpty()){
+                            apiVersion = Integer.parseInt(versionHeader);
                         }else{
                             apiVersion = 0;
                         }
@@ -250,10 +272,10 @@ public class TBAv2 {
                 /* We haven't hit this response before - it doesn't exist in the database
                  * But we do have the ability to fetch it from the web.
                  */
-                HttpResponse webResponse = HTTP.getRequest(URL);
+                Response webResponse = HTTP.getRequest(URL);
                 if (webResponse != null) {
 
-                    int responseStatus = webResponse.getStatusLine().getStatusCode();
+                    int responseStatus = webResponse.code();
 
                     /**
                      * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
@@ -267,19 +289,16 @@ public class TBAv2 {
                     }
 
                     String response = HTTP.dataFromResponse(webResponse),
-                            lastUpdate = "";
-                    Header lastModified = webResponse.getFirstHeader("Last-Modified");
-                    if (lastModified != null) {
-                        lastUpdate = lastModified.getValue();
-                    }
+                            lastUpdate = webResponse.header("Last-Modified", "");
 
                     if (params.cacheLocally) {
                         Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
                     }
 
                     int apiVersion;
-                    if(webResponse.containsHeader("X-TBA-Version")){
-                       apiVersion = Integer.parseInt(webResponse.getFirstHeader("X-TBA-Version").getValue());
+                    String versionHeader = webResponse.header("X-TBA-Version", "");
+                    if(!versionHeader.isEmpty()){
+                       apiVersion = Integer.parseInt(versionHeader);
                     }else{
                         apiVersion = 0;
                     }

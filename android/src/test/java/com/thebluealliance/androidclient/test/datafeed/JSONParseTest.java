@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
  * File created by phil on 5/8/14.
  */
 @RunWith(RobolectricTestRunner.class)
-public class TBAApiTest {
+public class JSONParseTest {
 
     @org.junit.Test
     public void testParseEvent() {

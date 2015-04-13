@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  * File created by phil on 5/8/14.
  */
 @RunWith(RobolectricTestRunner.class)
-public class TBACSVTest {
+public class CSVParseTest {
 
     @org.junit.Test
     public void testCSVParse(){

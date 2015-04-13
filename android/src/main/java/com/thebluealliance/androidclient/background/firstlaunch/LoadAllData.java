@@ -15,12 +15,12 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.datafeed.APIHelper;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
@@ -86,7 +86,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     start = start == 0 ? 1 : start;
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
                     APIResponse<String> teamListResponse;
-                    teamListResponse = TBAv2.getResponseFromURLOrThrow(context, String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.TEAM_LIST), pageNum), new RequestParams());
+                    teamListResponse = APIHelper.getResponseFromURLOrThrow(context, String.format(APIHelper.getTBAApiUrl(context, APIHelper.QUERY.TEAM_LIST), pageNum), new RequestParams());
                     JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
                     if (responseObject != null) {
                         if (responseObject.size() == 0) {
@@ -95,7 +95,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                         }
                     }
                     maxPageNum = Math.max(maxPageNum, pageNum);
-                    ArrayList<Team> pageTeams = TBAv2.getTeamList(teamListResponse.getData());
+                    ArrayList<Team> pageTeams = APIHelper.getTeamList(teamListResponse.getData());
                     teams.addAll(pageTeams);
                 }
             }
@@ -108,8 +108,8 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
                     APIResponse<String> eventListResponse;
-                    String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
-                    eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, new RequestParams());
+                    String eventsUrl = String.format(APIHelper.getTBAApiUrl(context, APIHelper.QUERY.EVENT_LIST), year);
+                    eventListResponse = APIHelper.getResponseFromURLOrThrow(context, eventsUrl, new RequestParams());
                     if(eventListResponse.getCode() == APIResponse.CODE.WEBLOAD || eventListResponse.getCode() == APIResponse.CODE.UPDATED) {
                         if(eventListResponse.getData() == null || eventListResponse.getData().isEmpty()){
                             onConnectionError();
@@ -128,7 +128,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                             continue;
                         }
                         
-                        ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
+                        ArrayList<Event> yearEvents = APIHelper.getEventList(eventListResponse.getData());
                         events.addAll(yearEvents);
                     }
                 }
@@ -142,8 +142,8 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
                     APIResponse<String> districtListResponse;
-                    String url = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.DISTRICT_LIST), year);
-                    districtListResponse = TBAv2.getResponseFromURLOrThrow(context, url, new RequestParams());
+                    String url = String.format(APIHelper.getTBAApiUrl(context, APIHelper.QUERY.DISTRICT_LIST), year);
+                    districtListResponse = APIHelper.getResponseFromURLOrThrow(context, url, new RequestParams());
                     if (districtListResponse.getData() == null) {
                         continue;
                     }
@@ -154,7 +154,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                             continue;
                         }
                     }
-                    ArrayList<District> yearDistricts = TBAv2.getDistrictList(districtListResponse.getData(), url, districtListResponse.getVersion());
+                    ArrayList<District> yearDistricts = APIHelper.getDistrictList(districtListResponse.getData(), url, districtListResponse.getVersion());
                     districts.addAll(yearDistricts);
                 }
             }
