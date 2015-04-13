@@ -34,7 +34,7 @@ import java.util.Date;
  */
 public class ScoreNotification extends BaseNotification {
 
-    private String eventName, eventKey, matchKey, matchTitle;
+    private String eventName, eventKey, matchKey;
     private Match match;
 
     public ScoreNotification(String messageData) {
@@ -54,7 +54,6 @@ public class ScoreNotification extends BaseNotification {
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
         }
-        this.matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
         this.eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         if(!jsonData.has("event_name")){
             throw new JsonParseException("Notification data does not contain 'event_name");
@@ -240,7 +239,7 @@ public class ScoreNotification extends BaseNotification {
         this.parseMessageData();
 
         holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
-        holder.title.setText("Match Result: " + matchTitle);
+        holder.title.setText("Match Result: " + MatchHelper.getMatchTitleFromMatchKey(c, matchKey));
         holder.text.setText(messageData);
 
         return convertView;

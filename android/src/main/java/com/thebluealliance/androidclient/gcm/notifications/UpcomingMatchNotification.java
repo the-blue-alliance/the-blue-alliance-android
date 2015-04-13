@@ -33,7 +33,7 @@ import java.util.Date;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    private String eventName, eventKey, matchTitle, matchKey;
+    private String eventName, eventKey, matchKey;
     private JsonElement matchTime;
     private JsonArray teamKeys;
 
@@ -48,8 +48,7 @@ public class UpcomingMatchNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'match_key'");
         }
         matchKey = jsonData.get("match_key").getAsString();
-        matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
-        
+
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
@@ -172,7 +171,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         this.parseMessageData();
 
         holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
-        holder.title.setText("Upcoming match: " + matchTitle);
+        holder.title.setText("Upcoming match: " + MatchHelper.getMatchTitleFromMatchKey(c, matchKey));
         holder.text.setText(messageData);
 
         return convertView;
