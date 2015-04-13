@@ -27,8 +27,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 
@@ -47,6 +50,7 @@ public class EventHelper {
     public static final String WEEKLESS_LABEL = "Other Official Events";
     public static final String OFFSEASON_LABEL = "Offseason Events";
     public static final String PRESEASON_LABEL = "Preseason Events";
+    private static final Pattern eventKeyPattern = Pattern.compile("[a-zA-Z]+");
 
     public static boolean validateEventKey(String key) {
         if (key == null || key.isEmpty()) return false;
@@ -476,5 +480,16 @@ public class EventHelper {
         public boolean contains(String key) {
             return get(key) != null;
         }
+    }
+
+    /**
+     * Returns an abbreviated event or district code like "CALB" from a match key like
+     * "2014calb_qm17" or event key like "2014necmp" or district key like "2014pnw".
+     * Returns "" if the argument doesn't parse as containing an event/district code.
+     */
+    public static String getEventCode(String matchOrEventOrDistrictKey) {
+        Matcher m = eventKeyPattern.matcher(matchOrEventOrDistrictKey);
+
+        return m.find() ? m.group().toUpperCase(Locale.US) : "";
     }
 }
