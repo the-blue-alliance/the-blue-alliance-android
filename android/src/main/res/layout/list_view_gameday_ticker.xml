@@ -42,11 +42,17 @@
             android:text="No notifications matching the filter criteria were found."
             android:visibility="gone" />
 
+        <ListView
+            android:id="@+id/filter_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone" />
+
         <FrameLayout
             android:id="@+id/filter_button_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/warning_container"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true">
 
@@ -60,13 +66,6 @@
                 app:fab_colorPressed="@color/accent_dark"
                 app:fab_colorRipple="@color/accent_dark_ripple" />
         </FrameLayout>
-
-        <ListView
-            android:id="@+id/filter_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:visibility="gone" />
     </RelativeLayout>
 
     <TextView

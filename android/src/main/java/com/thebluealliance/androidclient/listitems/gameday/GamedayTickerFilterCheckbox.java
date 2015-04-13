@@ -14,15 +14,17 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 /**
  * Created by Nathan on 3/28/2015.
  */
-public class CheckboxWithTextListItem extends ListElement {
+public class GamedayTickerFilterCheckbox extends ListElement {
 
     private int layout;
     private String text;
     private boolean checked;
+    private String key;
 
-    public CheckboxWithTextListItem(@LayoutRes int layout, String text, boolean checked) {
+    public GamedayTickerFilterCheckbox(@LayoutRes int layout, String text, String key, boolean checked) {
         this.layout = layout;
         this.text = text;
+        this.key = key;
         this.checked = checked;
     }
 
@@ -45,5 +47,13 @@ public class CheckboxWithTextListItem extends ListElement {
         checkbox.setChecked(checked);
 
         return view;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public boolean isChecked() {
+        return checked;
     }
 }

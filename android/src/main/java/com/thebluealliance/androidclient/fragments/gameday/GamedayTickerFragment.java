@@ -20,12 +20,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.listitems.gameday.CheckboxWithTextListItem;
+import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -62,7 +64,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         filterListView = (ListView) v.findViewById(R.id.filter_list);
         setUpFilterList();
         fab = (FloatingActionButton) v.findViewById(R.id.filter_button);
-        fab.setOnClickListener(v1 -> filterListView.setVisibility(View.VISIBLE));
+        fab.setOnClickListener(v1 -> onFabClicked());
         listView = (ListView) v.findViewById(R.id.list);
         progressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (adapter != null) {
@@ -77,15 +79,30 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         return v;
     }
 
+    private void onFabClicked() {
+        if(filterListView.getVisibility() != View.VISIBLE) {
+            // filter list is currently hidden. show it.
+            filterListView.setVisibility(View.VISIBLE);
+            // change the fab to a checkbox
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_white_24dp));
+        } else {
+            // it's visible. hide it and update the filtered things.
+            filterListView.setVisibility(View.GONE);
+            updateList();
+            // change the fab back to the filter icon
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_filter_list_white_24dp));
+        }
+    }
+
     private void setUpFilterList() {
         List<ListItem> listItems = new ArrayList<>();
 
-        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_upcoming_match, "Upcoming Matches", true));
-        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_match_results, "Match Results", true));
-        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_schedule_updated, "Schedule Updated", true));
-        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_competition_level_starting, "Competition Level Starting", true));
-        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_alliance_selections, "Alliance Selections", true));
-        listItems.add(new CheckboxWithTextListItem(R.layout.list_item_checkbox_awards_posted, "Awards Posted", true));
+        listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_upcoming_match, "Upcoming Matches", NotificationTypes.UPCOMING_MATCH, true));
+        listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_match_results, "Match Results", NotificationTypes.MATCH_SCORE, true));
+        listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_schedule_updated, "Schedule Updated", NotificationTypes.SCHEDULE_UPDATED, true));
+        listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_competition_level_starting, "Competition Level Starting", NotificationTypes.LEVEL_STARTING, true));
+        listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_alliance_selections, "Alliance Selections", NotificationTypes.ALLIANCE_SELECTION, true));
+        listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_awards_posted, "Awards Posted", NotificationTypes.AWARDS, true));
 
         ListViewAdapter adapter = new ListViewAdapter(getActivity(), listItems);
         filterListView.setAdapter(adapter);
@@ -109,12 +126,22 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     }
 
     private void updateList() {
+        // Collect a list of all enabled notification keys
+        final Set<String> enabledNotificationKeys = new HashSet<>();
+        int filterItemCount = filterListView.getAdapter().getCount();
+        for(int i = 0; i < filterItemCount; i++) {
+            GamedayTickerFilterCheckbox checkbox = ((GamedayTickerFilterCheckbox) filterListView.getAdapter().getItem(i));
+            if(checkbox.isChecked()) {
+                enabledNotificationKeys.add(checkbox.getKey());
+            }
+        }
+
         Observable.from(allNotifications)
                 .filter(notification -> {
-                    if (notification.getNotificationType().equals(NotificationTypes.MATCH_SCORE)) {
-                        return false;
+                    if (enabledNotificationKeys.contains(notification.getNotificationType())) {
+                        return true;
                     }
-                    return true;
+                    return false;
                 })
                 .map(notification -> notification.getNotification())
                 .toList()
