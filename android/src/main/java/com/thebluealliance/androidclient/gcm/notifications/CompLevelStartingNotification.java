@@ -143,6 +143,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             holder = new ViewHolder();
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -152,6 +153,7 @@ public class CompLevelStartingNotification extends BaseNotification {
 
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_level_starting_gameday_details, getCompLevelNameFromAbbreviation(c, compLevelAbbrev)));
+        holder.time.setText(getNotificationTimeString(c));
 
         return convertView;
     }
@@ -159,5 +161,6 @@ public class CompLevelStartingNotification extends BaseNotification {
     private class ViewHolder {
         public TextView header;
         public TextView title;
+        public TextView time;
     }
 }

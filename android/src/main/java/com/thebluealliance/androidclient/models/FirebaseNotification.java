@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -14,7 +17,12 @@ import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotifi
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by phil on 3/27/15.
@@ -28,6 +36,12 @@ public class FirebaseNotification {
     private String jsonString;
     @JsonIgnore
     private BaseNotification notification;
+    @JsonIgnore
+    private static final DateFormat dateFormat;
+    static{
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     public FirebaseNotification() {
         jsonString = "";
@@ -39,6 +53,7 @@ public class FirebaseNotification {
     }
 
     public String getTime() {
+        Log.d(Constants.LOG_TAG, "Getting time: "+time);
         return time;
     }
 
@@ -61,6 +76,13 @@ public class FirebaseNotification {
         JsonObject message = JSONManager.getasJsonObject(convertToJson());
         String messageType = message.get("message_type").getAsString();
         String messageData = message.get("message_data").toString();
+        Date date = null;
+        try {
+            date = dateFormat.parse(getTime());
+        } catch (ParseException e) {
+            // Improper date format
+            e.printStackTrace();
+        }
         switch (messageType) {
             case NotificationTypes.MATCH_SCORE:
                 notification = new ScoreNotification(messageData);
@@ -85,6 +107,7 @@ public class FirebaseNotification {
                 break;
         }
 
+        notification.setDate(date);
         try {
            notification.parseMessageData();
         } catch (JsonParseException e) {

@@ -64,6 +64,7 @@
     <color name="gameday_ticker_schedule_updates_header">#03a9f4</color>
     <color name="gameday_ticker_level_starting_header">#9c27b0</color>
     <color name="gameday_ticker_awards_header">#4caf50</color>
+    <color name="gameday_ticker_time_footer">#ECECEC</color>
 
 
 </resources>

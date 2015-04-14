@@ -110,6 +110,7 @@ public class AllianceSelectionNotification extends BaseNotification{
             holder = new ViewHolder();
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.details = (TextView) convertView.findViewById(R.id.details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -125,6 +126,7 @@ public class AllianceSelectionNotification extends BaseNotification{
         }
         holder.header.setText(titleString);
         holder.details.setText(c.getString(R.string.notification_alliances_updated_gameday_details));
+        holder.time.setText(getNotificationTimeString(c));
 
         return convertView;
     }
@@ -132,6 +134,7 @@ public class AllianceSelectionNotification extends BaseNotification{
     private class ViewHolder {
         public TextView header;
         public TextView details;
+        public TextView time;
     }
 
 }

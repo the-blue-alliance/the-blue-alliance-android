@@ -26,6 +26,9 @@ import com.thebluealliance.androidclient.listeners.NotificationDismissedListener
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 /**
  * Created by Nathan on 7/24/2014.
  */
@@ -37,6 +40,7 @@ public abstract class BaseNotification extends ListElement {
     private String logTag;
     protected boolean display;
     StoredNotification stored;
+    protected Date notificationTime;
 
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
@@ -45,6 +49,10 @@ public abstract class BaseNotification extends ListElement {
         this.logTag = null;
         this.display = true;
         this.stored = null;
+    }
+
+    public void setDate(Date date){
+        notificationTime = date;
     }
 
     public boolean shouldShow(){
@@ -142,4 +150,10 @@ public abstract class BaseNotification extends ListElement {
         return finalBitmap;
     }
 
+    protected String getNotificationTimeString(Context c){
+        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(c);
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(c);
+        if(notificationTime == null) return "";
+        return dateFormat.format(notificationTime) + " " + timeFormat.format(notificationTime);
+    }
 }

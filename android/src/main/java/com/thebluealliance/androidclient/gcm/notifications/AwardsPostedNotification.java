@@ -110,6 +110,7 @@ public class AwardsPostedNotification extends BaseNotification {
             holder = new ViewHolder();
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.details = (TextView) convertView.findViewById(R.id.details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -119,6 +120,7 @@ public class AwardsPostedNotification extends BaseNotification {
 
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.details.setText(c.getString(R.string.notification_awards_updated_gameday_details));
+        holder.time.setText(getNotificationTimeString(c));
 
         return convertView;
     }
@@ -126,5 +128,6 @@ public class AwardsPostedNotification extends BaseNotification {
     private class ViewHolder {
         public TextView header;
         public TextView details;
+        public TextView time;
     }
 }

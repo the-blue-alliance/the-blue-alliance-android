@@ -114,6 +114,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.details = (TextView) convertView.findViewById(R.id.details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -131,6 +132,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_schedule_updated_gameday_title));
         holder.details.setText(c.getString(R.string.notification_schedule_updated_gameday_details, firstMatchTime));
+        holder.time.setText(getNotificationTimeString(c));
 
         return convertView;
     }
@@ -139,5 +141,6 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         public TextView header;
         public TextView title;
         public TextView details;
+        public TextView time;
     }
 }
