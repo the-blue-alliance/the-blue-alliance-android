@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -99,5 +102,42 @@ public class ScheduleUpdatedNotification extends BaseNotification {
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_schedule_updated, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.details = (TextView) convertView.findViewById(R.id.details);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        this.parseMessageData();
+
+        String firstMatchTime = null;
+        if (!JSONManager.isNull(matchTime)) {
+            Date date = new Date(matchTime.getAsLong() * 1000L);
+            java.text.DateFormat format = DateFormat.getTimeFormat(c);
+            firstMatchTime = format.format(date);
+        }
+
+        holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
+        holder.title.setText("Match Schedule Updated");
+        holder.details.setText("Matches resume at "+firstMatchTime);
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView title;
+        public TextView details;
     }
 }
