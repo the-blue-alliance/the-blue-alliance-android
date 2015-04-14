@@ -52,10 +52,10 @@ public class EventHelper {
     public static final String PRESEASON_LABEL = "Preseason Events";
     private static final Pattern eventKeyPattern = Pattern.compile("[a-zA-Z]+");
 
-    private static final Pattern districtEventNamePattern = Pattern.compile("[A-Z]{2,3} District -(.*)");
+    private static final Pattern districtEventNamePattern = Pattern.compile("[A-Z]{2,3} District -(.+)");
     private static final Pattern eventEventNamePattern = Pattern.compile("(.+)Event");
     private static final Pattern regionalEventNamePattern =
-            Pattern.compile("\\s*(?:MAR |PNW |)(?:FIRST Robotics|FRC|)(.*)(?:(?:District|Regional|Region|State|Tournament|FRC|Field)\\b)");
+            Pattern.compile("\\s*(?:MAR |PNW |)(?:FIRST Robotics|FRC|)(.+)(?:(?:District|Regional|Region|State|Tournament|FRC|Field)\\b)");
     private static final Pattern frcEventNamePattern = Pattern.compile("(.+)(?:FIRST Robotics|FRC)");
 
     public static boolean validateEventKey(String key) {
