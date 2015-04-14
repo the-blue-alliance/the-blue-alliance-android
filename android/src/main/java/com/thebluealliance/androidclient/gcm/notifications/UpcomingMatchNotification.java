@@ -177,8 +177,8 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         this.parseMessageData();
 
-        holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
-        holder.title.setText("Upcoming match: " + MatchHelper.getMatchTitleFromMatchKey(c, matchKey));
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.title.setText(c.getString(R.string.notification_upcoming_match_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
         new MatchListElement(redTeams, blueTeams, matchKey, matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
 
         return convertView;

@@ -119,12 +119,12 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         String titleString;
         try {
-            titleString = event.getEventName() + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]";
+            titleString = c.getString(R.string.gameday_ticker_event_title_format, event.getEventName(), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase());
         } catch (BasicModel.FieldNotDefinedException e) {
             titleString = eventKey;
         }
         holder.header.setText(titleString);
-        holder.details.setText("Alliance selections updated");
+        holder.details.setText(c.getString(R.string.notification_alliances_updated_gameday_details));
 
         return convertView;
     }
