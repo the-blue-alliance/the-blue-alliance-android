@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -96,6 +99,39 @@ public class AllianceSelectionNotification extends BaseNotification{
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_awards_posted, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.details = (TextView) convertView.findViewById(R.id.details);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        this.parseMessageData();
+
+        String titleString;
+        try {
+            titleString = event.getEventName() + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]";
+        } catch (BasicModel.FieldNotDefinedException e) {
+            titleString = eventKey;
+        }
+        holder.header.setText(titleString);
+        holder.details.setText("Alliance selections updated");
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView details;
     }
 
 }
