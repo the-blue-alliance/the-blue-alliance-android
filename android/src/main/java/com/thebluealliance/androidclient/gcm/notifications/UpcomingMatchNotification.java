@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -22,7 +21,9 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,7 +34,7 @@ import java.util.Date;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    private String eventName, eventKey, matchKey;
+    private String eventName, eventKey, matchKey, redTeams[], blueTeams[];
     private JsonElement matchTime;
     private JsonArray teamKeys;
 
@@ -60,6 +61,12 @@ public class UpcomingMatchNotification extends BaseNotification {
         
         eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
+        redTeams = new String[teamKeys.size()/2];
+        blueTeams = new String[teamKeys.size()/2];
+        for(int i=0; i<teamKeys.size()/2; i++){
+            redTeams[i] = teamKeys.get(i).getAsString().substring(3);
+            blueTeams[i] = teamKeys.get(i+teamKeys.size()/2).getAsString().substring(3);
+        }
         if (!jsonData.has("scheduled_time")) {
             throw new JsonParseException("Notification data does not contain 'scheduled_time'");
         }
@@ -162,7 +169,7 @@ public class UpcomingMatchNotification extends BaseNotification {
             holder = new ViewHolder();
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.title = (TextView) convertView.findViewById(R.id.title);
-            holder.text = (TextView) convertView.findViewById(R.id.text);
+            holder.matchView = (MatchView) convertView.findViewById(R.id.match_details);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -172,7 +179,7 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
         holder.title.setText("Upcoming match: " + MatchHelper.getMatchTitleFromMatchKey(c, matchKey));
-        holder.text.setText(messageData);
+        new MatchListElement(redTeams, blueTeams, matchKey, matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
 
         return convertView;
     }
@@ -180,6 +187,6 @@ public class UpcomingMatchNotification extends BaseNotification {
     private class ViewHolder {
         public TextView header;
         public TextView title;
-        public TextView text;
+        public MatchView matchView;
     }
 }
