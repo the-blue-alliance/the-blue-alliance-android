@@ -526,14 +526,7 @@ public class Event extends BasicModel<Event> {
 
     public static synchronized APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<Event> events = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                events.add(ModelInflater.inflateEvent(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
+        ArrayList<Event> events = new ArrayList<>(); 
 
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
@@ -554,6 +547,17 @@ public class Event extends BasicModel<Event> {
             Database.Events eventsTable = Database.getInstance(c).getEventsTable();
             int deleted = eventsTable.delete(whereClause, whereArgs);
             eventsTable.storeEvents(events);
+        }
+
+        // Fetch from db after web, see #372
+        // Allows us to do whereClause filtering again
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            events.clear();
+            do {
+                events.add(ModelInflater.inflateEvent(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events, updated in db? " + changed);
         return new APIResponse<>(events, code);
