@@ -63,6 +63,13 @@ public class EventHelper {
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
+    /**
+     * Extracts a short name like "Silicon Valley" from an event name like
+     * "Silicon Valley Regional sponsored by Google.org".
+     *
+     * <p/>See <a href="https://github.com/the-blue-alliance/the-blue-alliance/blob/master/helpers/event_helper.py"
+     * >the server's event_helper.py</a>.
+     */
     public static String shortName(String eventName) {
         Matcher m1 = districtEventNamePattern.matcher(eventName); // XYZ District - NAME
         if (m1.matches()) {
