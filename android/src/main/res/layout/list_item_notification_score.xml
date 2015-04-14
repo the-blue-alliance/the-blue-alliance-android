@@ -72,6 +72,7 @@
                     android:text="Sample Time"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
+                    android:padding="8dp"
                     />
             </RelativeLayout>
         </LinearLayout>
