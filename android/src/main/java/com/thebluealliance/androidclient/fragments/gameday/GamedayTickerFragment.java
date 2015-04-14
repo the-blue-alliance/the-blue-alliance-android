@@ -137,13 +137,8 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         }
 
         Observable.from(allNotifications)
-                .filter(notification -> {
-                    if (enabledNotificationKeys.contains(notification.getNotificationType())) {
-                        return true;
-                    }
-                    return false;
-                })
-                .map(notification -> notification.getNotification())
+                .filter(notification -> enabledNotificationKeys.contains(notification.getNotificationType()))
+                .map(FirebaseNotification::getNotification)
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notificationsList -> {

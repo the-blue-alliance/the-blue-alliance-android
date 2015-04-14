@@ -55,13 +55,10 @@
                     android:textColor="@color/secondary_text_color"
                     android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Details"
-                    android:textSize="18sp" />
-
+                <com.thebluealliance.androidclient.views.MatchView xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/match_details"/>
             </LinearLayout>
         </LinearLayout>
 

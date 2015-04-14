@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -230,7 +231,7 @@ public class ScoreNotification extends BaseNotification {
             holder = new ViewHolder();
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.title = (TextView) convertView.findViewById(R.id.title);
-            holder.text = (TextView) convertView.findViewById(R.id.text);
+            holder.matchView = (MatchView) convertView.findViewById(R.id.match_details);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -240,7 +241,7 @@ public class ScoreNotification extends BaseNotification {
 
         holder.header.setText(eventName + " [" + EventHelper.getShortCodeForEventKey(eventKey).toUpperCase() + "]");
         holder.title.setText("Match Result: " + MatchHelper.getMatchTitleFromMatchKey(c, matchKey));
-        holder.text.setText(messageData);
+        match.render(false, false, false, true).getView(c, inflater, holder.matchView);
 
         return convertView;
     }
@@ -248,6 +249,6 @@ public class ScoreNotification extends BaseNotification {
     private class ViewHolder {
         public TextView header;
         public TextView title;
-        public TextView text;
+        public MatchView matchView;
     }
 }
