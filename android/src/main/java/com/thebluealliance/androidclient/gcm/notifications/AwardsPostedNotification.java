@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonArray;
@@ -59,16 +58,15 @@ public class AwardsPostedNotification extends BaseNotification {
 
     @Override
     public Notification buildNotification(Context context) {
-        Resources r = context.getResources();
-
-        String contentText = String.format(r.getString(R.string.notification_awards_updated), eventName);
+        String eventShortName = EventHelper.shortName(eventName);
+        String contentText = context.getString(R.string.notification_awards_updated, eventShortName);
 
         Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_AWARDS);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
         String eventCode = EventHelper.getEventCode(eventKey);
-        String title = r.getString(R.string.notification_awards_updated_title, eventCode);
+        String title = context.getString(R.string.notification_awards_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
