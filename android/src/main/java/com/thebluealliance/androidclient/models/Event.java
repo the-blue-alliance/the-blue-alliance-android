@@ -551,7 +551,9 @@ public class Event extends BasicModel<Event> {
         }
 
         if (changed) {
-            Database.getInstance(c).getEventsTable().storeEvents(events);
+            Database.Events eventsTable = Database.getInstance(c).getEventsTable();
+            int deleted = eventsTable.delete(whereClause, whereArgs);
+            eventsTable.storeEvents(events);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events, updated in db? " + changed);
         return new APIResponse<>(events, code);
