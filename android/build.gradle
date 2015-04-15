@@ -39,7 +39,7 @@ android {
                 signingConfig signingConfigs.debug
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
-                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
+                manifestPlaceholders = [gcmPermissionRequired: ""]
             }
 
             release {
