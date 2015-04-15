@@ -159,11 +159,17 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                         getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
                         getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
                         break;
+                    case 42: //bugfix: extra 2015 CMP division. Remove its cached response so it'll get downloaded again
+                        Database.getInstance(this).getResponseTable().deleteResponse("http://www.thebluealliance.com/api/v2/events/2015");
+                        break;
                     default:
                         break;
                 }
                 lastVersion++;
             }
+
+            // Store the current version key
+            prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).apply();
         }
         return redownload;
     }
