@@ -458,11 +458,11 @@ public class Match extends BasicModel<Match> {
 
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
-        
+
         for (String url : apiUrls) {
             /* Hit each API URL requested */
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
-            
+
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 /* If we get back data, parse it */
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
@@ -481,7 +481,7 @@ public class Match extends BasicModel<Match> {
             Database.Matches matchTable = Database.getInstance(c).getMatchesTable();
             int deleted = matchTable.delete(whereClause, whereArgs);
             matchTable.add(allMatches);
-            
+
             Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted "+deleted);
             return new APIResponse<>(allMatches, code);
         }else{
