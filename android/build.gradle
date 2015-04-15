@@ -29,6 +29,7 @@ android {
             debug {
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
+                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -38,10 +39,12 @@ android {
                 signingConfig signingConfigs.debug
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
+                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
             }
 
             release {
                 versionNameSuffix "/"+gitBranch
+                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
                 signingConfig signingConfigs.release
                 minifyEnabled true
                 zipAlignEnabled true
