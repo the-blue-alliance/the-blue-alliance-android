@@ -72,5 +72,6 @@ public class MatchTest {
         assertFalse(Match.hasTeam(blueTeams, "frc1"));
         assertFalse(Match.hasTeam(blueTeams, "frc9"));
         assertFalse(Match.hasTeam(blueTeams, "1"));
+        assertFalse(Match.hasTeam(blueTeams, ""));
     }
 }
