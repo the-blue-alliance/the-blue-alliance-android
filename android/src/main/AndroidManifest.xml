@@ -198,15 +198,20 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <!-- The receiver's android:permission filters Intents by sender permission.
+             ${gcmPermissionRequired} is defined in android/build.gradle so debug builds accept
+             Intents from 'adb shell am broadcast'. See test_notification.py . -->
         <receiver
             android:name="com.thebluealliance.androidclient.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="${gcmPermissionRequired}">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
                 <category android:name="com.thebluealliance.androidclient" />
             </intent-filter>
         </receiver>
+
         <receiver 
             android:name="com.thebluealliance.androidclient.listeners.NotificationDismissedListener"
             android:exported="false" />

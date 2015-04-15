@@ -21,7 +21,6 @@
     <string name="year_selector_title_events">%1$s Events</string>
     <string name="year_selector_title_districts">%1$s Districts</string>
     <string name="select_year">Select Year</string>
-    <string name="gcm_sender_permission">com.google.android.c2dm.permission.SEND</string>
 
     <!-- Main Activity -->
     <string-array name="event_list_year_selector">
