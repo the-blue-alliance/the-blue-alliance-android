@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.models.Match;
 
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
@@ -23,7 +24,12 @@ public class MatchTest {
             "\"red\":  {\"score\": 81, \"teams\": [\"frc68\", \"frc217\", \"frc247\"]}," +
             "\"blue\": {\"score\": 98, \"teams\": [\"frc111\", \"frc971\", \"frc67\"]}" +
             "}";
-    private static final JsonObject ALLIANCES = new JsonParser().parse(ALLIANCES_2009).getAsJsonObject();
+    private JsonObject alliances;
+
+    @Before
+    public void setUp() {
+        alliances = new JsonParser().parse(ALLIANCES_2009).getAsJsonObject();
+    }
 
     private static String[] jsonToStringArray(JsonArray array) {
         String[] result = new String[array.size()];
@@ -38,31 +44,31 @@ public class MatchTest {
 
     @org.junit.Test
     public void testGetAlliance() {
-        JsonObject redAlliance = Match.getRedAlliance(ALLIANCES);
+        JsonObject redAlliance = Match.getRedAlliance(alliances);
         assertEquals(81, redAlliance.get("score").getAsInt());
 
-        JsonObject blueAlliance = Match.getBlueAlliance(ALLIANCES);
+        JsonObject blueAlliance = Match.getBlueAlliance(alliances);
         assertEquals(3, blueAlliance.getAsJsonArray("teams").size());
         assertEquals("frc971", blueAlliance.getAsJsonArray("teams").get(1).getAsString());
     }
 
     @org.junit.Test
     public void testGetScore() {
-        assertEquals(81, Match.getRedScore(ALLIANCES));
-        assertEquals(98, Match.getBlueScore(ALLIANCES));
+        assertEquals(81, Match.getRedScore(alliances));
+        assertEquals(98, Match.getBlueScore(alliances));
     }
 
     @org.junit.Test
     public void testGetTeams() {
         assertArrayEquals(new String[]{"frc68", "frc217", "frc247"},
-                jsonToStringArray(Match.getRedTeams(ALLIANCES)));
+                jsonToStringArray(Match.getRedTeams(alliances)));
         assertArrayEquals(new String[]{"frc111", "frc971", "frc67"},
-                jsonToStringArray(Match.getBlueTeams(ALLIANCES)));
+                jsonToStringArray(Match.getBlueTeams(alliances)));
     }
 
     @org.junit.Test
     public void testHasTeam() {
-        JsonArray blueTeams = Match.getBlueTeams(ALLIANCES);
+        JsonArray blueTeams = Match.getBlueTeams(alliances);
         assertTrue(Match.hasTeam(blueTeams, "frc111"));
         assertTrue(Match.hasTeam(blueTeams, "frc971"));
         assertTrue(Match.hasTeam(blueTeams, "frc67"));
