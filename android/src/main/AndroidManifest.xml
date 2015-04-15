@@ -228,6 +228,9 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+        <service android:name="com.thebluealliance.androidclient.background.RecreateSearchIndexes"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
