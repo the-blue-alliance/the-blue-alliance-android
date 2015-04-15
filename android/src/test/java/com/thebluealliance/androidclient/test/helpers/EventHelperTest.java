@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.test.helpers;
 
 import com.thebluealliance.androidclient.helpers.EventHelper;
 
-import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 

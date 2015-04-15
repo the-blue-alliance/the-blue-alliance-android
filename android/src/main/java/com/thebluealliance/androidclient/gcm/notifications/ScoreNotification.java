@@ -77,20 +77,18 @@ public class ScoreNotification extends BaseNotification {
             e.printStackTrace();
             return null;
         }
-        JsonObject redAlliance = alliances.get("red").getAsJsonObject();
-        int redScore = redAlliance.get("score").getAsInt();
+        int redScore = Match.getRedScore(alliances);
 
         ArrayList<String> redTeamKeys = new ArrayList<>();
-        JsonArray redTeamsJson = redAlliance.getAsJsonArray("teams");
+        JsonArray redTeamsJson = Match.getRedTeams(alliances);
         for (int i = 0; i < redTeamsJson.size(); i++) {
             redTeamKeys.add(redTeamsJson.get(i).getAsString());
         }
 
-        JsonObject blueAlliance = alliances.get("blue").getAsJsonObject();
-        int blueScore = blueAlliance.get("score").getAsInt();
+        int blueScore = Match.getBlueScore(alliances);
 
         ArrayList<String> blueTeamKeys = new ArrayList<>();
-        JsonArray blueTeamsJson = blueAlliance.getAsJsonArray("teams");
+        JsonArray blueTeamsJson = Match.getBlueTeams(alliances);
         for (int i = 0; i < blueTeamsJson.size(); i++) {
             blueTeamKeys.add(blueTeamsJson.get(i).getAsString());
         }
