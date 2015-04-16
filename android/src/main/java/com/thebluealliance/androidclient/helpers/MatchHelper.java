@@ -129,9 +129,7 @@ public class MatchHelper {
      */
     public static Match getNextMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
         for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
-                //match is unplayed
+            if (!m.hasBeenPlayed()) {
                 return m;
             }
         }
@@ -148,8 +146,7 @@ public class MatchHelper {
     public static Match getLastMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
         Match last = null;
         for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
+            if (!m.hasBeenPlayed()) {
                 break;
             } else {
                 last = m;
@@ -271,8 +268,8 @@ public class MatchHelper {
             try {
                 if (match.getType() == TYPE.QUARTER) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray();
-                    Boolean isRed = redTeams.toString().contains(teamKey);
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances);
+                    Boolean isRed = Match.hasTeam(redTeams, teamKey);
 
                     if(match.getYear() != 2015) {
                         switch (match.getSetNumber()) {
@@ -377,11 +374,10 @@ public class MatchHelper {
             year = match.getYear();
 
             JsonObject matchAlliances = match.getAlliances();
-            JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
+            JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                    blueTeams = Match.getBlueTeams(matchAlliances);
 
-            if (redTeams.toString().contains(teamKey) ||
-                    blueTeams.toString().contains(teamKey)) {
+            if (Match.hasTeam(redTeams, teamKey) || Match.hasTeam(blueTeams, teamKey)) {
                 teamIsHere = true;
             }
             
@@ -490,9 +486,9 @@ public class MatchHelper {
             for (Match match : quarterMatches) {
                 if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                            blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                            blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
                         continue;
                     }
                     countPlayed++;
@@ -521,9 +517,9 @@ public class MatchHelper {
             for (Match match : semiMatches) {
                 if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                            blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                            blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
                         continue;
                     }
                     countPlayed++;
@@ -550,9 +546,9 @@ public class MatchHelper {
             for (Match match : finalMatches) {
                 if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                            blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                            blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
                         continue;
                     }
                     countPlayed++;
