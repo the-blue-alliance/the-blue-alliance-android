@@ -20,6 +20,7 @@ public class GamedayTickerFilterCheckbox extends ListElement {
     private String text;
     private boolean checked;
     private String key;
+    private CheckBox checkbox;
 
     public GamedayTickerFilterCheckbox(@LayoutRes int layout, String text, String key, boolean checked) {
         this.layout = layout;
@@ -35,6 +36,9 @@ public class GamedayTickerFilterCheckbox extends ListElement {
         View listRow = view.findViewById(R.id.list_row);
         TextView textView = (TextView) view.findViewById(R.id.text);
         CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+
+        // Keep checkbox in this object so we can manipulate it externally
+        this.checkbox = checkbox;
 
         listRow.setOnClickListener(v -> {
             checked = !checked;
@@ -55,5 +59,12 @@ public class GamedayTickerFilterCheckbox extends ListElement {
 
     public boolean isChecked() {
         return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+        if(checkbox != null) {
+            this.checkbox.setChecked(checked);
+        }
     }
 }

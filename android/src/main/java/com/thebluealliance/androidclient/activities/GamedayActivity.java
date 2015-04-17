@@ -47,7 +47,7 @@ public class GamedayActivity extends BaseActivity {
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)) {
             currentTab = getIntent().getExtras().getInt(TAB, GamedayFragmentPagerAdapter.TAB_TICKER);
         } else {
-            Log.i(Constants.LOG_TAG, "GameDayActivity intent doesn't contain TAB. Defaulting to TAB_TICLER");
+            Log.i(Constants.LOG_TAG, "GameDayActivity intent doesn't contain TAB. Defaulting to TAB_TICKER");
             currentTab = GamedayFragmentPagerAdapter.TAB_TICKER;
         }
 
@@ -77,29 +77,6 @@ public class GamedayActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         setBeamUri(NfcUris.URI_GAMEDAY);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_gameday, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void setupActionBar() {
