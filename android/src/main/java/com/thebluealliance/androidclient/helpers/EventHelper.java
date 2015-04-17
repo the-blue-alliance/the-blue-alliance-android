@@ -52,9 +52,47 @@ public class EventHelper {
     public static final String PRESEASON_LABEL = "Preseason Events";
     private static final Pattern eventKeyPattern = Pattern.compile("[a-zA-Z]+");
 
+    private static final Pattern districtEventNamePattern = Pattern.compile("[A-Z]{2,3} District -(.+)");
+    private static final Pattern eventEventNamePattern = Pattern.compile("(.+)Event");
+    private static final Pattern regionalEventNamePattern =
+            Pattern.compile("\\s*(?:MAR |PNW |)(?:FIRST Robotics|FRC|)(.+)(?:(?:District|Regional|Region|State|Tournament|FRC|Field)\\b)");
+    private static final Pattern frcEventNamePattern = Pattern.compile("(.+)(?:FIRST Robotics|FRC)");
+
     public static boolean validateEventKey(String key) {
         if (key == null || key.isEmpty()) return false;
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
+    }
+
+    /**
+     * Extracts a short name like "Silicon Valley" from an event name like
+     * "Silicon Valley Regional sponsored by Google.org".
+     *
+     * <p/>See <a href="https://github.com/the-blue-alliance/the-blue-alliance/blob/master/helpers/event_helper.py"
+     * >the server's event_helper.py</a>.
+     */
+    public static String shortName(String eventName) {
+        Matcher m1 = districtEventNamePattern.matcher(eventName); // XYZ District - NAME
+        if (m1.matches()) {
+            String partial = m1.group(1).trim();
+            Matcher m2 = eventEventNamePattern.matcher(partial); // NAME Event...
+            if (m2.lookingAt()) {
+                return m2.group(1).trim();
+            }
+            return partial;
+        }
+
+        Matcher m3 = regionalEventNamePattern.matcher(eventName); // ... NAME Regional...
+        if (m3.lookingAt()) {
+            String partial = m3.group(1);
+            Matcher m4 = frcEventNamePattern.matcher(partial); // NAME FIRST Robotics/FRC...
+            if (m4.lookingAt()) {
+                return m4.group(1).trim();
+            } else {
+                return partial.trim();
+            }
+        }
+
+        return eventName.trim();
     }
 
     public static int getYearWeek(Date date){

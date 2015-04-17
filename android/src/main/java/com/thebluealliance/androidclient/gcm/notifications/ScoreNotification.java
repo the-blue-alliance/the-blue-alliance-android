@@ -87,20 +87,18 @@ public class ScoreNotification extends BaseNotification {
             e.printStackTrace();
             return null;
         }
-        JsonObject redAlliance = alliances.get("red").getAsJsonObject();
-        int redScore = redAlliance.get("score").getAsInt();
+        int redScore = Match.getRedScore(alliances);
 
         ArrayList<String> redTeamKeys = new ArrayList<>();
-        JsonArray redTeamsJson = redAlliance.getAsJsonArray("teams");
+        JsonArray redTeamsJson = Match.getRedTeams(alliances);
         for (int i = 0; i < redTeamsJson.size(); i++) {
             redTeamKeys.add(redTeamsJson.get(i).getAsString());
         }
 
-        JsonObject blueAlliance = alliances.get("blue").getAsJsonObject();
-        int blueScore = blueAlliance.get("score").getAsInt();
+        int blueScore = Match.getBlueScore(alliances);
 
         ArrayList<String> blueTeamKeys = new ArrayList<>();
-        JsonArray blueTeamsJson = blueAlliance.getAsJsonArray("teams");
+        JsonArray blueTeamsJson = Match.getBlueTeams(alliances);
         for (int i = 0; i < blueTeamsJson.size(); i++) {
             blueTeamKeys.add(blueTeamsJson.get(i).getAsString());
         }
@@ -140,48 +138,49 @@ public class ScoreNotification extends BaseNotification {
             Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
         }
 
+        String eventShortName = EventHelper.shortName(eventName);
         String notificationString = "";
         if (redTeams.size() == 0 && blueTeams.size() == 0) {
             // We must have gotten this GCM message by mistake
             return null;
         } else if(useSpecial2015Format) {
             /* Only for 2015 non-finals matches. Ugh */
-            notificationString = String.format(context.getString(R.string.notification_score_2015_no_winner), eventName, matchTitle, redTeamString, redScore, blueTeamString, blueScore);
+            notificationString = context.getString(R.string.notification_score_2015_no_winner, eventShortName, matchTitle, redTeamString, redScore, blueTeamString, blueScore);
         }else if((redTeams.size() > 0 && blueTeams.size() == 0)) {
             // The user only cares about some teams on the red alliance
             if (redScore > blueScore) {
                 // Red won
-                notificationString = String.format(r.getString(R.string.notification_score_teams_won), eventName, redTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_won, eventShortName, redTeamString, matchTitle, scoreString);
             } else if (redScore < blueScore) {
                 // Red lost
-                notificationString = String.format(r.getString(R.string.notification_score_teams_lost), eventName, redTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_lost, eventShortName, redTeamString, matchTitle, scoreString);
             } else {
                 // Red tied
-                notificationString = String.format(r.getString(R.string.notification_score_teams_tied), eventName, redTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_tied, eventShortName, redTeamString, matchTitle, scoreString);
             }
         } else if ((blueTeams.size() > 0 && redTeams.size() == 0)) {
             // The user only cares about some teams on the blue alliance
             if (blueScore > redScore) {
                 // Blue won
-                notificationString = String.format(r.getString(R.string.notification_score_teams_won), eventName, blueTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_won, eventShortName, blueTeamString, matchTitle, scoreString);
             } else if (blueScore < redScore) {
                 // Blue lost
-                notificationString = String.format(r.getString(R.string.notification_score_teams_lost), eventName, blueTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_lost, eventShortName, blueTeamString, matchTitle, scoreString);
             } else {
                 // Blue tied
-                notificationString = String.format(r.getString(R.string.notification_score_teams_tied), eventName, blueTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_tied, eventShortName, blueTeamString, matchTitle, scoreString);
             }
         } else if ((blueTeams.size() > 0 && redTeams.size() > 0)) {
             // The user cares about teams on both alliances
             if (blueScore > redScore) {
                 // Blue won
-                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, blueTeamString, redTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_beat_teams, eventShortName, blueTeamString, redTeamString, matchTitle, scoreString);
             } else if (blueScore < redScore) {
                 // Blue lost
-                notificationString = String.format(r.getString(R.string.notification_score_teams_beat_teams), eventName, redTeamString, blueTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_beat_teams, eventShortName, redTeamString, blueTeamString, matchTitle, scoreString);
             } else {
                 // Blue tied
-                notificationString = String.format(r.getString(R.string.notification_score_teams_tied_with_teams), eventName, redTeamString, blueTeamString, matchTitle, scoreString);
+                notificationString = context.getString(R.string.notification_score_teams_tied_with_teams, eventShortName, redTeamString, blueTeamString, matchTitle, scoreString);
             }
         } else {
             // We should never, ever get here but if we do...

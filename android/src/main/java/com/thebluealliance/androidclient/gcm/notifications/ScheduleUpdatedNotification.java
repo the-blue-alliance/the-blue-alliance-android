@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -56,8 +55,6 @@ public class ScheduleUpdatedNotification extends BaseNotification {
 
     @Override
     public Notification buildNotification(Context context) {
-        Resources r = context.getResources();
-
         String firstMatchTime = null;
         if (!JSONManager.isNull(matchTime)) {
             Date date = new Date(matchTime.getAsLong() * 1000L);
@@ -65,11 +62,12 @@ public class ScheduleUpdatedNotification extends BaseNotification {
             firstMatchTime = format.format(date);
         }
 
+        String eventShortName = EventHelper.shortName(eventName);
         String contentText;
         if (firstMatchTime == null) {
-            contentText = String.format(r.getString(R.string.notification_schedule_updated_without_time), eventName);
+            contentText = context.getString(R.string.notification_schedule_updated_without_time, eventShortName);
         } else {
-            contentText = String.format(r.getString(R.string.notification_schedule_updated_with_time), eventName, firstMatchTime);
+            contentText = context.getString(R.string.notification_schedule_updated_with_time, eventShortName, firstMatchTime);
         }
 
         Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
@@ -77,7 +75,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         stored = new StoredNotification();
         stored.setType(getNotificationType());
         String eventCode = EventHelper.getEventCode(eventKey);
-        String title = r.getString(R.string.notification_schedule_updated_title, eventCode);
+        String title = context.getString(R.string.notification_schedule_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));

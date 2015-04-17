@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,9 +79,6 @@ public class UpcomingMatchNotification extends BaseNotification {
      */
     @Override
     public Notification buildNotification(Context context) {
-
-        Resources r = context.getResources();
-
         String scheduledStartTimeString;
         if (JSONManager.isNull(matchTime)) {
             scheduledStartTimeString = "";
@@ -114,18 +110,19 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
+        String eventShortName = EventHelper.shortName(eventName);
 
         if (scheduledStartTimeString.isEmpty()) {
             if (numFavoritedTeams == 1) {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team_no_time), eventName, teamsString, matchTitle);
+                contentText = context.getString(R.string.notification_upcoming_match_text_single_team_no_time, eventShortName, teamsString, matchTitle);
             } else {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time), eventName, teamsString, matchTitle);
+                contentText = context.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time, eventShortName, teamsString, matchTitle);
             }
         } else {
             if (numFavoritedTeams == 1) {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
+                contentText = context.getString(R.string.notification_upcoming_match_text_single_team, eventShortName, teamsString, matchTitle, scheduledStartTimeString);
             } else {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams), eventName, teamsString, matchTitle, scheduledStartTimeString);
+                contentText = context.getString(R.string.notification_upcoming_match_text_multiple_teams, eventShortName, teamsString, matchTitle, scheduledStartTimeString);
             }
         }
 
@@ -134,7 +131,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         stored = new StoredNotification();
         stored.setType(getNotificationType());
         String eventCode = EventHelper.getEventCode(matchKey);
-        String notificationTitle = r.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
+        String notificationTitle = context.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
