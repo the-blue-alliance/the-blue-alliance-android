@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 23;
+    private static final int DATABASE_VERSION = 24;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -170,14 +170,14 @@ public class Database extends SQLiteOpenHelper {
             " USING fts3 (" +
             SearchTeam.KEY + " TEXT PRIMARY KEY, " +
             SearchTeam.TITLES + " TEXT, " +
-            SearchTeam.NUMBER + " TEXT " +
+            SearchTeam.NUMBER + " TEXT, " +
             "FOREIGN KEY ("+SearchTeam.KEY+") REFERENCES "+TABLE_TEAMS+"("+Teams.KEY+") ON DELETE CASCADE)";
 
     String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
             " USING fts3 (" +
             SearchEvent.KEY + " TEXT PRIMARY KEY, " +
             SearchEvent.TITLES + " TEXT, " +
-            SearchEvent.YEAR + " TEXT  " +
+            SearchEvent.YEAR + " TEXT,  " +
             "FOREIGN KEY ("+SearchEvent.KEY+") REFERENCES "+TABLE_EVENTS+"("+Events.KEY+") ON DELETE CASCADE)";
 
     String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
@@ -373,10 +373,12 @@ public class Database extends SQLiteOpenHelper {
                     db.execSQL(CREATE_NOTIFICATIONS);
                     break;
                 case 23:
+                case 24:
                     // remove and recreate search indexes to we can create them with foreign keys
                     db.execSQL("DROP TABLE "+TABLE_SEARCH_TEAMS);
                     db.execSQL("DROP TABLE "+TABLE_SEARCH_EVENTS);
                     onCreate(db);
+                    break;
             }
             upgradeTo++;
         }
