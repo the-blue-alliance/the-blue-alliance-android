@@ -18,10 +18,11 @@ import com.firebase.client.FirebaseError;
 import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
 
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 public class GamedayTickerFragment extends Fragment implements ChildEventListener {
 
+    private static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/notifications/";
+    private static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
+
     private ListView listView;
     private ListView filterListView;
     private ProgressBar progressBar;
@@ -48,6 +52,8 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     private List<FirebaseNotification> allNotifications = new ArrayList<>();
 
     private boolean childHasBeenAdded = false;
+    private String firebaseUrl;
+    private int firebaseLoadDepth;
 
     public static GamedayTickerFragment newInstance() {
         return new GamedayTickerFragment();
@@ -56,6 +62,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadFirebaseParams();
     }
 
     @Override
@@ -108,10 +115,21 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         filterListView.setAdapter(adapter);
     }
 
+    private void loadFirebaseParams(){
+        firebaseUrl = Utilities.readLocalProperty(getActivity(), "firebase.url", FIREBASE_URL_DEFAULT);
+        String loadDepthTemp = Utilities.readLocalProperty(getActivity(), "firebase.depth", Integer.toString(FIREBASE_LOAD_DEPTH_DEFAULT));
+
+        try {
+            firebaseLoadDepth = Integer.parseInt(loadDepthTemp);
+        }catch(NumberFormatException e){
+            firebaseLoadDepth = FIREBASE_LOAD_DEPTH_DEFAULT;
+        }
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        ticker = new Firebase("https://thebluealliance.firebaseio.com/notifications/"); //TODO move to config file
-        ticker.limitToLast(25).addChildEventListener(this);
+        ticker = new Firebase(firebaseUrl);
+        ticker.limitToLast(firebaseLoadDepth).addChildEventListener(this);
     }
 
     @Override
@@ -142,7 +160,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notificationsList -> {
-                    if (!GamedayTickerFragment.this.isResumed()) {
+                    if (!GamedayTickerFragment.this.isResumed() || getView() == null) {
                         return;
                     }
                     if (notificationsList.isEmpty()) {
@@ -151,6 +169,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
                         getView().findViewById(R.id.no_notifications_found).setVisibility(View.VISIBLE);
                         listView.setVisibility(View.GONE);
                     } else {
+                        /* Update the listview adapter */
                         adapter.values.clear();
                         adapter.values.addAll(notificationsList);
                         adapter.notifyDataSetChanged();
@@ -164,9 +183,9 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         childHasBeenAdded = true;
+        Log.d(Constants.LOG_TAG, "Adding ticker item with key "+dataSnapshot.getKey());
         FirebaseNotification notification = dataSnapshot.getValue(FirebaseNotification.class);
         allNotifications.add(0, notification);
-        Log.d(Constants.LOG_TAG, "Json: " + notification.convertToJson());
         updateList();
     }
 

@@ -1,11 +1,8 @@
 package com.thebluealliance.androidclient.models;
 
-import android.util.Log;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -53,7 +50,6 @@ public class FirebaseNotification {
     }
 
     public String getTime() {
-        Log.d(Constants.LOG_TAG, "Getting time: "+time);
         return time;
     }
 
