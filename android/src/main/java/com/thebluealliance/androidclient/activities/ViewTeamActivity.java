@@ -160,12 +160,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        getSupportFragmentManager().getFragments().clear();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SELECTED_YEAR, mYear);

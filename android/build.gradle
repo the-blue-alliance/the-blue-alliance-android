@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 44
-        versionName "2.1.16"
+        versionCode 45
+        versionName "2.1.17"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -30,6 +30,7 @@ android {
             debug {
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
+                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -39,10 +40,12 @@ android {
                 signingConfig signingConfigs.debug
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
+                manifestPlaceholders = [gcmPermissionRequired: ""]
             }
 
             release {
                 versionNameSuffix "/"+gitBranch
+                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
                 signingConfig signingConfigs.release
                 minifyEnabled true
                 zipAlignEnabled true

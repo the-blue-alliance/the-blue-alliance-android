@@ -77,6 +77,12 @@ public class GenericNotification extends BaseNotification {
     }
 
     @Override
+    public Intent getIntent(Context c) {
+        /* Don't open anything */
+        return null;
+    }
+
+    @Override
     public void updateDataLocally(Context c) {
         /* No data to be stored locally */
     }

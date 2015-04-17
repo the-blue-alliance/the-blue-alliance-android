@@ -21,8 +21,10 @@ import com.firebase.client.Query;
 import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
@@ -42,6 +44,9 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
 
     private static final String TICKER_FILTER_ENABLED_NOTIFICATIONS = "gameday_ticker_filter_enabled_notificaitons";
 
+    private static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/notifications/";
+    private static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
+
     private ListView listView;
     private ListView filterListView;
     private ProgressBar progressBar;
@@ -54,6 +59,8 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     private List<FirebaseNotification> allNotifications = new ArrayList<>();
 
     private boolean childHasBeenAdded = false;
+    private String firebaseUrl;
+    private int firebaseLoadDepth;
 
     public static GamedayTickerFragment newInstance() {
         return new GamedayTickerFragment();
@@ -62,6 +69,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadFirebaseParams();
 
         Firebase firebase = new Firebase("https://thebluealliance.firebaseio.com/notifications/"); //TODO move to config file
         tickerQuery = firebase.limitToLast(25);
@@ -81,7 +89,6 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         fab = (FloatingActionButton) v.findViewById(R.id.filter_button);
         fab.setOnClickListener(v1 -> onFabClicked());
         listView = (ListView) v.findViewById(R.id.list);
-
         progressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (childHasBeenAdded) {
             // If view is being recreated and a child has been added, hide the progress bar
@@ -97,7 +104,6 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
             notificationsAdapter = new ListViewAdapter(getActivity(), new ArrayList<>());
             listView.setAdapter(notificationsAdapter);
         }
-
         return v;
     }
 
@@ -144,10 +150,25 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         return new ListViewAdapter(getActivity(), listItems);
     }
 
+    private void loadFirebaseParams(){
+        firebaseUrl = Utilities.readLocalProperty(getActivity(), "firebase.url", FIREBASE_URL_DEFAULT);
+        String loadDepthTemp = Utilities.readLocalProperty(getActivity(), "firebase.depth", Integer.toString(FIREBASE_LOAD_DEPTH_DEFAULT));
+
+        try {
+            firebaseLoadDepth = Integer.parseInt(loadDepthTemp);
+        }catch(NumberFormatException e){
+            firebaseLoadDepth = FIREBASE_LOAD_DEPTH_DEFAULT;
+        }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        ticker = new Firebase(firebaseUrl);
+        ticker.limitToLast(firebaseLoadDepth).addChildEventListener(this);
+    }
     @Override
     public void onResume() {
         super.onResume();
-    }
 
     @Override
     public void onPause() {
@@ -170,7 +191,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notificationsList -> {
-                    if (!GamedayTickerFragment.this.isResumed()) {
+                    if (!GamedayTickerFragment.this.isResumed() || getView() == null) {
                         return;
                     }
                     if (notificationsList.isEmpty()) {
@@ -204,6 +225,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         childHasBeenAdded = true;
+        Log.d(Constants.LOG_TAG, "Adding ticker item with key "+dataSnapshot.getKey());
         progressBar.setVisibility(View.GONE);
         FirebaseNotification notification = dataSnapshot.getValue(FirebaseNotification.class);
         allNotifications.add(0, notification);

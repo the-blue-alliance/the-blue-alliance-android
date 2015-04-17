@@ -8,6 +8,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -21,6 +22,7 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -87,20 +89,18 @@ public class ScoreNotification extends BaseNotification {
             e.printStackTrace();
             return null;
         }
-        JsonObject redAlliance = alliances.get("red").getAsJsonObject();
-        int redScore = redAlliance.get("score").getAsInt();
+        int redScore = Match.getRedScore(alliances);
 
         ArrayList<String> redTeamKeys = new ArrayList<>();
-        JsonArray redTeamsJson = redAlliance.getAsJsonArray("teams");
+        JsonArray redTeamsJson = Match.getRedTeams(alliances);
         for (int i = 0; i < redTeamsJson.size(); i++) {
             redTeamKeys.add(redTeamsJson.get(i).getAsString());
         }
 
-        JsonObject blueAlliance = alliances.get("blue").getAsJsonObject();
-        int blueScore = blueAlliance.get("score").getAsInt();
+        int blueScore = Match.getBlueScore(alliances);
 
         ArrayList<String> blueTeamKeys = new ArrayList<>();
-        JsonArray blueTeamsJson = blueAlliance.getAsJsonArray("teams");
+        JsonArray blueTeamsJson = Match.getBlueTeams(alliances);
         for (int i = 0; i < blueTeamsJson.size(); i++) {
             blueTeamKeys.add(blueTeamsJson.get(i).getAsString());
         }
@@ -190,7 +190,7 @@ public class ScoreNotification extends BaseNotification {
         }
 
         // We can finally build the notification!
-        Intent instance = ViewMatchActivity.newInstance(context, matchKey);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -219,6 +219,11 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
+    public Intent getIntent(Context c) {
+        return ViewMatchActivity.newInstance(c, matchKey);
+    }
+
+    @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
     }
@@ -234,6 +239,7 @@ public class ScoreNotification extends BaseNotification {
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.matchView = (MatchView) convertView.findViewById(R.id.match_details);
             holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = (LinearLayout) convertView.findViewById(R.id.summary_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -244,6 +250,7 @@ public class ScoreNotification extends BaseNotification {
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
         holder.time.setText(getNotificationTimeString(c));
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
         match.render(false, false, false, true).getView(c, inflater, holder.matchView);
 
         return convertView;
@@ -254,5 +261,6 @@ public class ScoreNotification extends BaseNotification {
         public TextView title;
         public MatchView matchView;
         public TextView time;
+        private LinearLayout summaryContainer;
     }
 }

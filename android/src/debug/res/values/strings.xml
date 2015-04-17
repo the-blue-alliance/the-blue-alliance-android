@@ -4,7 +4,4 @@
     <string name="package_name">com.thebluealliance.androidclient.development</string>
     <string name="account_type">com.thebluealliance.androidclient.development.account.TBAACCOUNT</string>
 
-    <!-- An empty string in debug builds lets 'adb shell am broadcast' send intents to GCMBroadcastReceiver. -->
-    <string name="gcm_sender_permission"></string>
-
 </resources>

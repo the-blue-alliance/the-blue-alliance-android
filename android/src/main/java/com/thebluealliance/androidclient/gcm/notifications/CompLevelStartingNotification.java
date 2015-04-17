@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonElement;
@@ -18,6 +19,7 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.text.DateFormat;
@@ -77,7 +79,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             contentText = String.format(r.getString(R.string.notification_level_starting_with_time), eventName, compLevel, scheduledStartTimeString);
         }
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -126,6 +128,11 @@ public class CompLevelStartingNotification extends BaseNotification {
     }
 
     @Override
+    public Intent getIntent(Context c) {
+        return ViewEventActivity.newInstance(c, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
+    }
+
+    @Override
     public void updateDataLocally(Context c) {
         /* This notification has no data that we can store locally */
     }
@@ -145,6 +152,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = (LinearLayout)convertView.findViewById(R.id.summary_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -155,6 +163,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_level_starting_gameday_details, getCompLevelNameFromAbbreviation(c, compLevelAbbrev)));
         holder.time.setText(getNotificationTimeString(c));
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
 
         return convertView;
     }
@@ -163,5 +172,6 @@ public class CompLevelStartingNotification extends BaseNotification {
         public TextView header;
         public TextView title;
         public TextView time;
+        public LinearLayout summaryContainer;
     }
 }
