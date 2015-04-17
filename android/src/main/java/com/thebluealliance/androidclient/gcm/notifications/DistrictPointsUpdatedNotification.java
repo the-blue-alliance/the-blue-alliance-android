@@ -43,7 +43,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
 
         String contentText = String.format(r.getString(R.string.notification_district_points_updated), districtName);
 
-        Intent instance = ViewDistrictActivity.newInstance(context, districtKey);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -62,6 +62,11 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
         return builder.build();
+    }
+
+    @Override
+    public Intent getIntent(Context c) {
+        return ViewDistrictActivity.newInstance(c, districtKey);
     }
 
     @Override

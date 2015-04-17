@@ -71,6 +71,14 @@ public abstract class BaseNotification extends ListElement {
 
     public abstract int getNotificationId();
 
+    /**
+     * Get the intent to open whatever this notification's click action is
+     * Precondition: parseMessageData has been called
+     * @param c Context to use while creating the intent
+     * @return This notification's intent (may be null if none)
+     */
+    public abstract Intent getIntent(Context c);
+
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
         convertView = inflater.inflate(R.layout.list_item_carded_summary, null);

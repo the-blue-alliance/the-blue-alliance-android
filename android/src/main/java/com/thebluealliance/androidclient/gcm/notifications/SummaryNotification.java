@@ -38,7 +38,7 @@ public class SummaryNotification extends BaseNotification {
         style.setBigContentTitle(notificationTitle);
         style.setSummaryText(context.getString(R.string.app_name));
 
-        Intent instance = NotificationDashboardActivity.newInstance(context);
+        Intent instance = getIntent(context);
         PendingIntent intent = makeNotificationIntent(context, instance);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
@@ -59,6 +59,11 @@ public class SummaryNotification extends BaseNotification {
     @Override
     public void parseMessageData() throws JsonParseException {
         /* Nothing to do */
+    }
+
+    @Override
+    public Intent getIntent(Context c) {
+        return NotificationDashboardActivity.newInstance(c);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -87,6 +87,11 @@ public class AllianceSelectionNotification extends BaseNotification{
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
         return builder.build();
+    }
+
+    @Override
+    public Intent getIntent(Context context) {
+        return ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
     }
 
     @Override

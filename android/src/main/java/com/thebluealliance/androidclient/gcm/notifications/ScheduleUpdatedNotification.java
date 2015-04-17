@@ -7,6 +7,7 @@ import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonElement;
@@ -18,6 +19,7 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
@@ -70,7 +72,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
             contentText = context.getString(R.string.notification_schedule_updated_with_time, eventShortName, firstMatchTime);
         }
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -98,6 +100,11 @@ public class ScheduleUpdatedNotification extends BaseNotification {
     }
 
     @Override
+    public Intent getIntent(Context c) {
+        return ViewEventActivity.newInstance(c, eventKey, ViewEventFragmentPagerAdapter.TAB_MATCHES);
+    }
+
+    @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
     }
@@ -113,6 +120,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.details = (TextView) convertView.findViewById(R.id.details);
             holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = (LinearLayout)convertView.findViewById(R.id.summary_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -131,6 +139,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         holder.title.setText(c.getString(R.string.notification_schedule_updated_gameday_title));
         holder.details.setText(c.getString(R.string.notification_schedule_updated_gameday_details, firstMatchTime));
         holder.time.setText(getNotificationTimeString(c));
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
 
         return convertView;
     }
@@ -140,5 +149,6 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         public TextView title;
         public TextView details;
         public TextView time;
+        public LinearLayout summaryContainer;
     }
 }
