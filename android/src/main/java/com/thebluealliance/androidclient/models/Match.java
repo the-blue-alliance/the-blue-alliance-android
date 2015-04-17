@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -138,6 +139,35 @@ public class Match extends BasicModel<Match> {
         fields.put(Database.Matches.ALLIANCES, allianceJson);
     }
 
+    public static JsonObject getRedAlliance(JsonObject alliances) {
+        return alliances.getAsJsonObject("red");
+    }
+
+    public static JsonObject getBlueAlliance(JsonObject alliances) {
+        return alliances.getAsJsonObject("blue");
+    }
+
+    public static int getRedScore(JsonObject alliances) {
+        return getRedAlliance(alliances).get("score").getAsInt();
+    }
+
+    public static int getBlueScore(JsonObject alliances) {
+        return getBlueAlliance(alliances).get("score").getAsInt();
+    }
+
+    public static JsonArray getRedTeams(JsonObject alliances) {
+        return getRedAlliance(alliances).getAsJsonArray("teams");
+    }
+
+    public static JsonArray getBlueTeams(JsonObject alliances) {
+        return getBlueAlliance(alliances).getAsJsonArray("teams");
+    }
+
+    /** @return true if the given team array contains the given team key, e.g. "frc111". */
+    public static boolean hasTeam(JsonArray teams, String teamKey) {
+        return teams.contains(new JsonPrimitive(teamKey));
+    }
+
     public JsonArray getVideos() throws FieldNotDefinedException {
         if (videos != null) {
             return videos;
@@ -243,14 +273,14 @@ public class Match extends BasicModel<Match> {
         if (selectedTeam.isEmpty()) return false;
         try {
             JsonObject alliances = getAlliances();
-            JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-            int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+            JsonArray redTeams = getRedTeams(alliances),
+                    blueTeams = getBlueTeams(alliances);
+            int redScore = getRedScore(alliances),
+                    blueScore = getBlueScore(alliances);
 
-            if (redTeams.toString().contains(selectedTeam + "\"")) {
+            if (Match.hasTeam(redTeams, selectedTeam)) {
                 return redScore > blueScore;
-            } else if (blueTeams.toString().contains(selectedTeam + "\"")) {
+            } else if (Match.hasTeam(blueTeams, selectedTeam)) {
                 return blueScore > redScore;
             } else {
                 // team did not play in match
@@ -269,13 +299,13 @@ public class Match extends BasicModel<Match> {
             if (currentRecord == null || alliances == null || !(alliances.has("red") && alliances.has("blue"))) {
                 return;
             }
-            JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-            int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+            JsonArray redTeams = getRedTeams(alliances),
+                    blueTeams = getBlueTeams(alliances);
+            int redScore = getRedScore(alliances),
+                    blueScore = getBlueScore(alliances);
 
             if (hasBeenPlayed(redScore, blueScore)) {
-                if (redTeams.toString().contains(teamKey + "\"")) {
+                if (Match.hasTeam(redTeams, teamKey)) {
                     if (redScore > blueScore) {
                         currentRecord[0]++;
                     } else if (redScore < blueScore) {
@@ -283,7 +313,7 @@ public class Match extends BasicModel<Match> {
                     } else {
                         currentRecord[2]++;
                     }
-                } else if (blueTeams.toString().contains(teamKey + "\"")) {
+                } else if (Match.hasTeam(blueTeams, teamKey)) {
                     if (blueScore > redScore) {
                         currentRecord[0]++;
                     } else if (blueScore < redScore) {
@@ -306,8 +336,8 @@ public class Match extends BasicModel<Match> {
     public boolean hasBeenPlayed() {
         try {
             JsonObject alliances = getAlliances();
-            int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+            int redScore = getRedScore(alliances),
+                    blueScore = getBlueScore(alliances);
 
             return redScore >= 0 && blueScore >= 0;
         } catch (FieldNotDefinedException e) {
@@ -350,10 +380,10 @@ public class Match extends BasicModel<Match> {
             Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.KEY");
             return null;
         }
-        JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-            String redScore = alliances.get("red").getAsJsonObject().get("score").getAsString(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsString();
+        JsonArray redTeams = getRedTeams(alliances),
+                    blueTeams = getBlueTeams(alliances);
+            String redScore = getRedAlliance(alliances).get("score").getAsString(),
+                    blueScore = getBlueAlliance(alliances).get("score").getAsString();
 
             if (Integer.parseInt(redScore) < 0) redScore = "?";
             if (Integer.parseInt(blueScore) < 0) blueScore = "?";
@@ -458,11 +488,11 @@ public class Match extends BasicModel<Match> {
 
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
-        
+
         for (String url : apiUrls) {
             /* Hit each API URL requested */
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
-            
+
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 /* If we get back data, parse it */
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
@@ -481,7 +511,7 @@ public class Match extends BasicModel<Match> {
             Database.Matches matchTable = Database.getInstance(c).getMatchesTable();
             int deleted = matchTable.delete(whereClause, whereArgs);
             matchTable.add(allMatches);
-            
+
             Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted "+deleted);
             return new APIResponse<>(allMatches, code);
         }else{

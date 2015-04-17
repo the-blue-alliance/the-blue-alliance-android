@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 41
-        versionName "2.1.13"
+        versionCode 45
+        versionName "2.1.17"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -29,6 +29,7 @@ android {
             debug {
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
+                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -38,10 +39,12 @@ android {
                 signingConfig signingConfigs.debug
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
+                manifestPlaceholders = [gcmPermissionRequired: ""]
             }
 
             release {
                 versionNameSuffix "/"+gitBranch
+                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
                 signingConfig signingConfigs.release
                 minifyEnabled true
                 zipAlignEnabled true
@@ -145,6 +148,6 @@ dependencies {
     compile 'com.facebook.stetho:stetho-okhttp:1.0.0'
 
     // testing
-    testCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'
+    testCompile 'org.robolectric:robolectric:3.0-rc2'
     testCompile 'junit:junit:4.12'
 }

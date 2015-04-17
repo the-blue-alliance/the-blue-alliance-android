@@ -1,7 +1,9 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,6 +19,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 /**
@@ -68,17 +71,42 @@ public abstract class BaseNotification {
     }
 
     /**
-     * Creates a builder with the important defaults set; namely, the app icon and the accent color
-     *
-     * @return
+     * Adds a Category to activityIntent to mark it as "triggered by tapping a system notification",
+     * then builds a PendingIntent with it.
      */
-    public static NotificationCompat.Builder getBaseBuilder(Context context) {
+    protected PendingIntent makeNotificationIntent(Context context, Intent activityIntent) {
+        activityIntent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        return PendingIntent.getActivity(context, getNotificationId(), activityIntent, 0);
+    }
+
+    /**
+     * Creates a builder with the important defaults set.
+     */
+    public NotificationCompat.Builder getBaseBuilder(Context context) {
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, NotificationDismissedListener.newIntent(context), 0);
+
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setColor(context.getResources().getColor(R.color.accent_dark))
+                .setDeleteIntent(onDismiss)
+                .setAutoCancel(true)
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
+    }
 
+    /**
+     * Creates a builder with the important defaults and an Activity content intent.
+     *
+     * <p/>SIDE EFFECTS: Adds a Category to activityIntent so the launched Activity can tell it was
+     * triggered by a notification. (Note: Just adding an Extra won't work because Android will
+     * retrieve the existing intent, ignoring the new Extra.)
+     */
+    public NotificationCompat.Builder getBaseBuilder(Context context, Intent activityIntent) {
+        NotificationCompat.Builder builder = getBaseBuilder(context);
+        PendingIntent onTap = makeNotificationIntent(context, activityIntent);
+
+        builder.setContentIntent(onTap);
+        return builder;
     }
 
     protected static Bitmap getLargeIconFormattedForPlatform(Context context, @DrawableRes int drawable) {
