@@ -69,6 +69,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
+        String eventShortName = EventHelper.shortName(eventName);
         String contentText;
         if (scheduledStartTimeString.isEmpty()) {
             contentText = String.format(r.getString(R.string.notification_level_starting), eventName, compLevel);

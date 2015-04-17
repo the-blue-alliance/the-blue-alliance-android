@@ -9,11 +9,11 @@
          Upcoming match notification
          ****************************** -->
     <string name="notification_upcoming_match_title">Match %1$s %2$s starting soon</string>
-    <!-- Example: "Midwest Regional: Team 111 will play in Qualification Match 32, scheduled to begin at 2:35PM" -->
-    <string name="notification_upcoming_match_text_single_team">%1$s: Team %2$s will play in %3$s, scheduled to begin at %4$s.</string>
+    <!-- Example: "Midwest Regional: Team 111 will play in Qualification Match 32, scheduled for 2:35PM" -->
+    <string name="notification_upcoming_match_text_single_team">%1$s: Team %2$s will play in %3$s, scheduled for %4$s.</string>
     <string name="notification_upcoming_match_text_single_team_no_time">%1$s: Team %2$s will play in %3$s.</string>
-    <!-- Example: "Midwest Regional: Teams 111, 254, and 1114 will play in Qualification Match 32, scheduled to begin at 2:35PM" -->
-    <string name="notification_upcoming_match_text_multiple_teams">%1$s: Teams %2$s will play in %3$s, scheduled to begin at %4$s.</string>
+    <!-- Example: "Midwest Regional: Teams 111, 254, and 1114 will play in Qualification Match 32, scheduled for 2:35PM" -->
+    <string name="notification_upcoming_match_text_multiple_teams">%1$s: Teams %2$s will play in %3$s, scheduled for %4$s.</string>
     <string name="notification_upcoming_match_text_multiple_teams_no_time">%1$s: Teams %2$s will play in %3$s.</string>
     <string name="notification_upcoming_match_gameday_title">Upcoming match: %1$s</string>
 

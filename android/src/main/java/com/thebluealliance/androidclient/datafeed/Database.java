@@ -753,6 +753,10 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public int delete(String whereClause, String[] whereArgs){
+            return safeDelete(TABLE_EVENTS, whereClause, whereArgs);
+        }
+
         public int update(Event event) {
             updateSearchItemEvent(event);
             try {

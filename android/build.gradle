@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 41
-        versionName "2.1.13"
+        versionCode 44
+        versionName "2.1.16"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -150,6 +150,6 @@ dependencies {
     compile 'io.reactivex:rxjava-math:1.0.0'
 
     // testing
-    testCompile 'org.robolectric:robolectric:3.0-SNAPSHOT'
+    testCompile 'org.robolectric:robolectric:3.0-rc2'
     testCompile 'junit:junit:4.12'
 }
