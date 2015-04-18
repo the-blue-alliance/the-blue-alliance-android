@@ -175,7 +175,7 @@ public class UpcomingMatchNotification extends BaseNotification {
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.matchView = (MatchView) convertView.findViewById(R.id.match_details);
             holder.time = (TextView) convertView.findViewById(R.id.notification_time);
-            holder.summaryContainer = (LinearLayout)convertView.findViewById(R.id.summary_container);
+            holder.summaryContainer = convertView.findViewById(R.id.summary_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -183,7 +183,7 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         this.parseMessageData();
 
-        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_upcoming_match_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
         holder.time.setText(getNotificationTimeString(c));
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
@@ -197,6 +197,6 @@ public class UpcomingMatchNotification extends BaseNotification {
         public TextView title;
         public MatchView matchView;
         public TextView time;
-        private LinearLayout summaryContainer;
+        private View summaryContainer;
     }
 }

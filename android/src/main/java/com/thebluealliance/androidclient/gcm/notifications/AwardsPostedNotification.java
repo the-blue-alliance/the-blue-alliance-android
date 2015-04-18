@@ -124,7 +124,7 @@ public class AwardsPostedNotification extends BaseNotification {
 
         this.parseMessageData();
 
-        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.details.setText(c.getString(R.string.notification_awards_updated_gameday_details));
         holder.time.setText(getNotificationTimeString(c));
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));

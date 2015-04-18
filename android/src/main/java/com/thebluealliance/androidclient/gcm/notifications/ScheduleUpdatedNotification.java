@@ -135,7 +135,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
             firstMatchTime = format.format(date);
         }
 
-        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, eventName, EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_schedule_updated_gameday_title));
         holder.details.setText(c.getString(R.string.notification_schedule_updated_gameday_details, firstMatchTime));
         holder.time.setText(getNotificationTimeString(c));

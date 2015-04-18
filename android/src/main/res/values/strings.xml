@@ -40,6 +40,7 @@
     <string name="tab_teams">Teams</string>
     <string name="tab_insights">Insights</string>
     <string name="title_activity_view_event">View Event</string>
+    <string name="title_activity_gameday">GameDay</string>
     <string name="events_label">Events</string>
     <string name="districts_label">Districts</string>
 
@@ -159,7 +160,6 @@
     <string name="title_activity_notification_dashboard">Notification Dashboard</string>
     <string name="notification_dashboard_no_notifications">You do not have any recent notifications.</string>
     <string name="notification_dashboard_title">Recent Notifications</string>
-    <string name="title_activity_gameday">GameDay</string>
 
     <string name="hello_world">Hello world!</string>
 </resources>

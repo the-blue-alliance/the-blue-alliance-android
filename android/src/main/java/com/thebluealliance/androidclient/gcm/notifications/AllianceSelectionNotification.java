@@ -125,7 +125,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         String titleString;
         try {
-            titleString = c.getString(R.string.gameday_ticker_event_title_format, event.getEventName(), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase());
+            titleString = c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(event.getEventName()), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase());
         } catch (BasicModel.FieldNotDefinedException e) {
             titleString = eventKey;
         }

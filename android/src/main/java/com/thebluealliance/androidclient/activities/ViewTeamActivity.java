@@ -83,9 +83,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
-        // This isn't automagically handled because we're in a different activity. Set it manually.
-        setNavigationDrawerItemSelected(R.id.nav_item_gameday);
-
         setModelKey(mTeamKey, ModelHelper.MODELS.TEAM);
         setContentView(R.layout.activity_view_team);
 

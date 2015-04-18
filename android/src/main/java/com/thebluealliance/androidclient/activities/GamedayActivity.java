@@ -90,6 +90,16 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
+
+        if(Utilities.hasLApis()) {
+            tabs.setElevation(getResources().getDimension(R.dimen.toolbar_elevation));
+        }
+    }
+
+    @Override
+    public void onNavigationDrawerCreated() {
+        // This isn't automagically handled because we're in a different activity. Set it manually.
+        setNavigationDrawerItemSelected(R.id.nav_item_gameday);
     }
 
     public FloatingActionButton getFab() {
@@ -104,7 +114,7 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
 
     private void setupActionBar() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("TBA GameDay"); //TODO move to string resource
+        setActionBarTitle(R.string.title_activity_gameday);
     }
 
     @Override

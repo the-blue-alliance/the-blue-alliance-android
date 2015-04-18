@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
@@ -110,7 +112,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
                 closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
                 notificationSettings.setVisibility(View.VISIBLE);
-                if (hasLApis()) {
+                if (Utilities.hasLApis()) {
                     getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
                 }
             } else {
@@ -206,18 +208,14 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         Animator settingsPanelAnimator;
         // Only show the circular reveal on API >= 5.0
         notificationSettings.setVisibility(View.VISIBLE);
-        if (hasLApis()) {
+        if (Utilities.hasLApis()) {
             settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
+            settingsPanelAnimator.setInterpolator(new DecelerateInterpolator());
         } else {
             settingsPanelAnimator = ValueAnimator.ofFloat(1, 0);
             final int notificationSettingsHeight = notificationSettings.getHeight();
-            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue());
-                }
-            });
+            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue()));
             settingsPanelAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
         }
@@ -231,12 +229,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 closeNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
             }
         });
-        closeButtonScaleUp.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
-                ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
-            }
+        closeButtonScaleUp.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
         closeButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
 
@@ -244,25 +239,15 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         Integer colorFrom = getResources().getColor(R.color.primary_dark);
         Integer colorTo = getResources().getColor(R.color.accent_dark);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                if (hasLApis()) {
-                    getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
-                }
+        colorAnimation.addUpdateListener(animator -> {
+            if (Utilities.hasLApis()) {
+                getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
             }
-
         });
         colorAnimation.setDuration(ANIMATION_DURATION);
 
         ValueAnimator dimAnimation = ValueAnimator.ofFloat(UNDIMMED_ALPHA, DIMMED_ALPHA);
-        dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                foregroundDim.setAlpha((float) animation.getAnimatedValue());
-            }
-        });
+        dimAnimation.addUpdateListener(animation -> foregroundDim.setAlpha((float) animation.getAnimatedValue()));
         dimAnimation.setDuration(ANIMATION_DURATION);
 
         AnimatorSet animationSet = new AnimatorSet();
@@ -282,7 +267,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
 
         Animator settingsPanelAnimator;
-        if (hasLApis()) {
+        if (Utilities.hasLApis()) {
             settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
             settingsPanelAnimator.addListener(new AnimatorListenerAdapter() {
 
@@ -292,15 +277,11 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 }
             });
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
+            settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
         } else {
             settingsPanelAnimator = ValueAnimator.ofFloat(0, 1);
             final int notificationSettingsHeight = notificationSettings.getHeight();
-            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue());
-                }
-            });
+            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue()));
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
             settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
             settingsPanelAnimator.start();
@@ -313,12 +294,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 closeNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
             }
         });
-        closeButtonScaleDown.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
-                ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
-            }
+        closeButtonScaleDown.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
         closeButtonScaleDown.setDuration(ANIMATION_DURATION / 2);
 
@@ -329,12 +307,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
             }
         });
-        openButtonScaleUp.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
-                ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
-            }
+        openButtonScaleUp.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
         openButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
 
@@ -343,26 +318,16 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.primary_dark);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                if (hasLApis()) {
-                    getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
-                }
+        colorAnimation.addUpdateListener(animator -> {
+            if (Utilities.hasLApis()) {
+                getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
             }
-
         });
         colorAnimation.setDuration(ANIMATION_DURATION);
 
         // Undim the foreground
         ValueAnimator dimAnimation = ValueAnimator.ofFloat(DIMMED_ALPHA, UNDIMMED_ALPHA);
-        dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                foregroundDim.setAlpha((float) animation.getAnimatedValue());
-            }
-        });
+        dimAnimation.addUpdateListener(animation -> foregroundDim.setAlpha((float) animation.getAnimatedValue()));
         dimAnimation.setDuration(ANIMATION_DURATION);
 
         AnimatorSet animatorSet = new AnimatorSet();
@@ -375,11 +340,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
         isSettingsPanelOpen = false;
     }
-
-    private boolean hasLApis() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
+    
     public void showFab(boolean animate) {
         openNotificationSettingsButton.show(animate);
     }

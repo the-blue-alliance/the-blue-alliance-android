@@ -24,14 +24,14 @@ import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
 
 /**
  * Activity that provides a navigation drawer.
- * <p/>
+ * <p>
  * This allows for the easy reuse of a single navigation drawer throughout the app.
- * <p/>
+ * <p>
  * Created by Nathan on 5/15/2014.
  */
 
-public abstract class NavigationDrawerActivity extends ActionBarActivity 
-        implements NavigationDrawerFragment.NavigationDrawerListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public abstract class NavigationDrawerActivity extends ActionBarActivity
+        implements NavigationDrawerFragment.NavigationDrawerListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
@@ -51,8 +51,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
     protected Handler handler;
 
     /**
-     * Tells the activity whether or not to use the action bar toggle for
-     * the navigation drawer.
+     * Tells the activity whether or not to use the action bar toggle for the navigation drawer.
      *
      * @param use True if this activity should use the action bar toggle
      */
@@ -61,8 +60,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
     }
 
     /**
-     * Tells the activity whether or not to use the action bar toggle for
-     * the navigation drawer.
+     * Tells the activity whether or not to use the action bar toggle for the navigation drawer.
      *
      * @param encourage True if this activity should use the action bar toggle
      */
@@ -87,8 +85,8 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
     }
 
     /**
-     * We set up the nav drawer here to give child activities a chance to set the window's Action Bar
-     * if they're using a Toolbar instead of the default Action Bar.
+     * We set up the nav drawer here to give child activities a chance to set the window's Action
+     * Bar if they're using a Toolbar instead of the default Action Bar.
      *
      * @param savedInstanceState
      */
@@ -118,22 +116,31 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
                 }
             }
         }
+
+        onNavigationDrawerCreated();
     }
 
     /**
-     * Called before the navigation drawer is created. Subclasses can override this to perform
-     * setup before the navigation drawer is created, such as enabling or disabling it or disabling
-     * the action bar toggle. Subclasses do not have to call through to super.
+     * Called before the navigation drawer is created. Subclasses can override this to perform setup
+     * before the navigation drawer is created, such as enabling or disabling it or disabling the
+     * action bar toggle. Subclasses do not have to call through to super.
      */
     public void onCreateNavigationDrawer() {
         // Default implementation is empty
     }
 
     /**
-     * Inflates the specified view into the "content container" of the activity.
-     * This allows the resuse of a single layout containing a navigation drawer and said container
-     * across all instances of this activity. Subclassing activities that call setContentView(...)
-     * will have their requested layout inserted into the content container.
+     * Called after the notification drawer is created. Allows subclasses to override this and configure the navigation drawer.
+     */
+    public void onNavigationDrawerCreated() {
+        // Default implementation is empty
+    }
+
+    /**
+     * Inflates the specified view into the "content container" of the activity. This allows the
+     * resuse of a single layout containing a navigation drawer and said container across all
+     * instances of this activity. Subclassing activities that call setContentView(...) will have
+     * their requested layout inserted into the content container.
      *
      * @param layoutResID id of the view to be inflated into the content container
      */
@@ -144,11 +151,10 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
     }
 
     /**
-     * Provides a default implementation of item click handling that simply opens the
-     * specified mode in a StartActivity that is inserted into the back stack. Children
-     * classes can override this if they want to enable custom handling of click events.
-     * If children override this method, they should <strong>not</strong> call through to
-     * this method.
+     * Provides a default implementation of item click handling that simply opens the specified mode
+     * in a StartActivity that is inserted into the back stack. Children classes can override this
+     * if they want to enable custom handling of click events. If children override this method,
+     * they should <strong>not</strong> call through to this method.
      *
      * @param item The item that was clicked
      */
@@ -157,7 +163,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
         final int id = item.getId();
 
         final Intent intent;
-        switch(id){
+        switch (id) {
             case R.id.nav_item_settings:
                 intent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
                 break;
@@ -172,7 +178,7 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
                 break;
         }
         // Launch after a short delay to give the drawer time to close.
-        if(intent != null) {
+        if (intent != null) {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -273,9 +279,9 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
 
     /**
      * Sets the title of this activity's action bar.
-     * <p/>
-     * If subclassing activities want the title to be automatically handled when the
-     * nav drawer is opened or closed, they should set the action bar title via this method
+     * <p>
+     * If subclassing activities want the title to be automatically handled when the nav drawer is
+     * opened or closed, they should set the action bar title via this method
      *
      * @param title The desired title string
      */
@@ -294,9 +300,9 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
 
     /**
      * Sets the title of this activity's action bar.
-     * <p/>
-     * If subclassing activities want the title to be automatically handled when the
-     * nav drawer is opened or closed, they should set the action bar title via this method
+     * <p>
+     * If subclassing activities want the title to be automatically handled when the nav drawer is
+     * opened or closed, they should set the action bar title via this method
      *
      * @param resID The desired title string resource
      */
@@ -330,13 +336,13 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
             mNavDrawerFragment.setDrawerProfileInfo();
         }
     }
-    
-    
+
+
     /* Plus callbacks */
     @Override
     public void onConnected(Bundle connectionHint) {
         PlusHelper.onConnectCommon(this);
-        if(mNavDrawerFragment != null){
+        if (mNavDrawerFragment != null) {
             mNavDrawerFragment.setDrawerProfileInfo();
         }
     }
