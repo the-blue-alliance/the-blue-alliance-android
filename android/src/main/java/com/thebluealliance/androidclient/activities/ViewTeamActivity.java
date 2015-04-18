@@ -83,6 +83,9 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
+        // This isn't automagically handled because we're in a different activity. Set it manually.
+        setNavigationDrawerItemSelected(R.id.nav_item_gameday);
+
         setModelKey(mTeamKey, ModelHelper.MODELS.TEAM);
         setContentView(R.layout.activity_view_team);
 
@@ -131,7 +134,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
         new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
 
-        // We can call this even though the years particiapted haven't been loaded yet.
+        // We can call this even though the years participated haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
         

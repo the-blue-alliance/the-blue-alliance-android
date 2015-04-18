@@ -60,7 +60,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
     // In milliseconds
-    private static final int ANIAMTION_DURATION = 500;
+    private static final int ANIMATION_DURATION = 500;
 
     private static final float UNDIMMED_ALPHA = 0.0f;
 
@@ -208,7 +208,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         notificationSettings.setVisibility(View.VISIBLE);
         if (hasLApis()) {
             settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
-            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
+            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
         } else {
             settingsPanelAnimator = ValueAnimator.ofFloat(1, 0);
             final int notificationSettingsHeight = notificationSettings.getHeight();
@@ -219,12 +219,12 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 }
             });
             settingsPanelAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
+            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
         }
 
         openNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
 
-        ValueAnimator closeButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIAMTION_DURATION);
+        ValueAnimator closeButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
         closeButtonScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -238,7 +238,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
             }
         });
-        closeButtonScaleUp.setDuration(ANIAMTION_DURATION / 2);
+        closeButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
 
         // Animate the status bar color change
         Integer colorFrom = getResources().getColor(R.color.primary_dark);
@@ -254,7 +254,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             }
 
         });
-        colorAnimation.setDuration(ANIAMTION_DURATION);
+        colorAnimation.setDuration(ANIMATION_DURATION);
 
         ValueAnimator dimAnimation = ValueAnimator.ofFloat(UNDIMMED_ALPHA, DIMMED_ALPHA);
         dimAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -263,11 +263,11 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 foregroundDim.setAlpha((float) animation.getAnimatedValue());
             }
         });
-        dimAnimation.setDuration(ANIAMTION_DURATION);
+        dimAnimation.setDuration(ANIMATION_DURATION);
 
         AnimatorSet animationSet = new AnimatorSet();
         animationSet.play(settingsPanelAnimator);
-        animationSet.play(closeButtonScaleUp).after(ANIAMTION_DURATION / 2);
+        animationSet.play(closeButtonScaleUp).after(ANIMATION_DURATION / 2);
         animationSet.play(colorAnimation).with(settingsPanelAnimator);
         animationSet.play(dimAnimation).with(settingsPanelAnimator);
         animationSet.start();
@@ -291,7 +291,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                     notificationSettings.setVisibility(View.INVISIBLE);
                 }
             });
-            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
+            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
         } else {
             settingsPanelAnimator = ValueAnimator.ofFloat(0, 1);
             final int notificationSettingsHeight = notificationSettings.getHeight();
@@ -301,12 +301,12 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                     notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue());
                 }
             });
-            settingsPanelAnimator.setDuration(ANIAMTION_DURATION);
+            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
             settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
             settingsPanelAnimator.start();
         }
 
-        ValueAnimator closeButtonScaleDown = ValueAnimator.ofFloat(1, 0).setDuration(ANIAMTION_DURATION);
+        ValueAnimator closeButtonScaleDown = ValueAnimator.ofFloat(1, 0).setDuration(ANIMATION_DURATION);
         closeButtonScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -320,9 +320,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
             }
         });
-        closeButtonScaleDown.setDuration(ANIAMTION_DURATION / 2);
+        closeButtonScaleDown.setDuration(ANIMATION_DURATION / 2);
 
-        ValueAnimator openButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIAMTION_DURATION);
+        ValueAnimator openButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
         openButtonScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -336,7 +336,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
             }
         });
-        openButtonScaleUp.setDuration(ANIAMTION_DURATION / 2);
+        openButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
 
         // Animate the status bar color change
 
@@ -353,7 +353,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
             }
 
         });
-        colorAnimation.setDuration(ANIAMTION_DURATION);
+        colorAnimation.setDuration(ANIMATION_DURATION);
 
         // Undim the foreground
         ValueAnimator dimAnimation = ValueAnimator.ofFloat(DIMMED_ALPHA, UNDIMMED_ALPHA);
@@ -363,11 +363,11 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
                 foregroundDim.setAlpha((float) animation.getAnimatedValue());
             }
         });
-        dimAnimation.setDuration(ANIAMTION_DURATION);
+        dimAnimation.setDuration(ANIMATION_DURATION);
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(settingsPanelAnimator);
-        animatorSet.play(closeButtonScaleDown).after(ANIAMTION_DURATION / 2);
+        animatorSet.play(closeButtonScaleDown).after(ANIMATION_DURATION / 2);
         animatorSet.play(colorAnimation).with(settingsPanelAnimator);
         animatorSet.play(dimAnimation).with(settingsPanelAnimator);
         animatorSet.play(openButtonScaleUp).after(settingsPanelAnimator);
