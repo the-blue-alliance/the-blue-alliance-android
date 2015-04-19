@@ -34,3 +34,12 @@ public static *** d(...);
 -keepclassmembers class ** {
     public void onEvent*(**);
 }
+
+-keep class com.firebase.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames class com.thebluealliance.androidclient.models.FirebaseNotification { *; }
+-keep public class com.thebluealliance.androidclient.models.FirebaseNotification {
+    public void set(*);
+    public ** get*();
+}
+-keepattributes *Annotation*,EnclosingMethod
