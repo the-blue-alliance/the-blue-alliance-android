@@ -60,6 +60,12 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
+    }
+
+    @Override
     protected APIResponse.CODE doInBackground(String... params) {
         eventKey = params[0];
 
