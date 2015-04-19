@@ -218,7 +218,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             if (nextMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_next_match), nextMatch.render()));
             }
-            
+
             summary.add(new EmptyListElement(""));
         }
 
@@ -280,7 +280,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                     activity.notifyRefreshComplete(fragment);
                 }
             }
-            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, teamKey + "@" + eventKey + " summary", requestParams.toString());
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime,  + "team@event summary", teamKey + "@" + eventKey);
         }
     }
 
