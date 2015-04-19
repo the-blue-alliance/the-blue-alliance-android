@@ -121,6 +121,14 @@ public class MatchHelper {
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 
+    public static String getEventKeyFromMatchKey(String matchKey) {
+        if(validateMatchKey(matchKey)) {
+            return matchKey.replaceAll("_.+", "");
+        } else {
+            return matchKey;
+        }
+    }
+
     /**
      * Returns the match object of the match next to be played
      *
@@ -626,5 +634,17 @@ public class MatchHelper {
 
     public static String getAbbrevMatchTitleFromMatchKey(Context context, String matchKey) {
         return getMatchTitleFromMatchKey(context, matchKey, true);
+    }
+
+    public static TYPE getMatchTypeFromKey(String matchKey){
+        String keyWithoutEvent = matchKey.replaceAll(".*_", "");
+        Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
+        Matcher m = regexPattern.matcher(keyWithoutEvent);
+        if (m.matches()) {
+            String typeCode = m.group(1);
+            return TYPE.fromShortType(typeCode);
+        }else{
+            return TYPE.NONE;
+        }
     }
 }

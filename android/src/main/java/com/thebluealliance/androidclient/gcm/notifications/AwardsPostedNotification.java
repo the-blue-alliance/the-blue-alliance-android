@@ -4,6 +4,10 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,6 +19,7 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
@@ -61,7 +66,7 @@ public class AwardsPostedNotification extends BaseNotification {
         String eventShortName = EventHelper.shortName(eventName);
         String contentText = context.getString(R.string.notification_awards_updated, eventShortName);
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_AWARDS);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -92,7 +97,45 @@ public class AwardsPostedNotification extends BaseNotification {
     }
 
     @Override
+    public Intent getIntent(Context context) {
+        return ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_AWARDS);
+    }
+
+    @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_awards_posted, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.details = (TextView) convertView.findViewById(R.id.details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = (LinearLayout) convertView.findViewById(R.id.summary_container);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        this.parseMessageData();
+
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.details.setText(c.getString(R.string.notification_awards_updated_gameday_details));
+        holder.time.setText(getNotificationTimeString(c));
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView details;
+        public TextView time;
+        public LinearLayout summaryContainer;
     }
 }

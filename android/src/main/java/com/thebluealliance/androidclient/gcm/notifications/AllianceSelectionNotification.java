@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -65,7 +68,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
         String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
 
-        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -87,6 +90,11 @@ public class AllianceSelectionNotification extends BaseNotification{
     }
 
     @Override
+    public Intent getIntent(Context context) {
+        return ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
+    }
+
+    @Override
     public void updateDataLocally(Context c) {
         if(event != null) {
             event.write(c);
@@ -96,6 +104,42 @@ public class AllianceSelectionNotification extends BaseNotification{
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_awards_posted, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.details = (TextView) convertView.findViewById(R.id.details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        this.parseMessageData();
+
+        String titleString;
+        try {
+            titleString = c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(event.getEventName()), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase());
+        } catch (BasicModel.FieldNotDefinedException e) {
+            titleString = eventKey;
+        }
+        holder.header.setText(titleString);
+        holder.details.setText(c.getString(R.string.notification_alliances_updated_gameday_details));
+        holder.time.setText(getNotificationTimeString(c));
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView details;
+        public TextView time;
     }
 
 }

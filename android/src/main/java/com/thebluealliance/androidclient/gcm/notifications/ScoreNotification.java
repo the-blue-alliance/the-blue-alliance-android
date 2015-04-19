@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -18,9 +22,11 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +37,7 @@ import java.util.Date;
  */
 public class ScoreNotification extends BaseNotification {
 
-    private String eventName, matchKey;
+    private String eventName, eventKey, matchKey;
     private Match match;
 
     public ScoreNotification(String messageData) {
@@ -40,12 +46,18 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException{
-        JsonObject jsonData = jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
         if(!jsonData.has("match")){
             throw new JsonParseException("Notification data does not contain 'match");
         }
         JsonObject match = jsonData.get("match").getAsJsonObject();
         this.match = gson.fromJson(match, Match.class);
+        try {
+            this.matchKey = this.match.getKey();
+        } catch (BasicModel.FieldNotDefinedException e) {
+            e.printStackTrace();
+        }
+        this.eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         if(!jsonData.has("event_name")){
             throw new JsonParseException("Notification data does not contain 'event_name");
         }
@@ -178,7 +190,7 @@ public class ScoreNotification extends BaseNotification {
         }
 
         // We can finally build the notification!
-        Intent instance = ViewMatchActivity.newInstance(context, matchKey);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -207,7 +219,48 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
+    public Intent getIntent(Context c) {
+        return ViewMatchActivity.newInstance(c, matchKey);
+    }
+
+    @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_score, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.matchView = (MatchView) convertView.findViewById(R.id.match_details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = convertView.findViewById(R.id.summary_container);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        this.parseMessageData();
+
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.title.setText(c.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
+        holder.time.setText(getNotificationTimeString(c));
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
+        match.render(false, false, false, true).getView(c, inflater, holder.matchView);
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView title;
+        public MatchView matchView;
+        public TextView time;
+        private View summaryContainer;
     }
 }

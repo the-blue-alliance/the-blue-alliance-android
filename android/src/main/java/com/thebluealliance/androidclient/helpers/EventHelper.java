@@ -496,6 +496,14 @@ public class EventHelper {
         return rankingString;
     }
 
+    public static String getShortCodeForEventKey(String eventKey) {
+        if(validateEventKey(eventKey)) {
+            return eventKey.replaceAll("[0-9]+", "");
+        } else {
+            return eventKey;
+        }
+    }
+
     public static class CaseInsensitiveMap<K> extends HashMap<String, K> {
 
         @Override

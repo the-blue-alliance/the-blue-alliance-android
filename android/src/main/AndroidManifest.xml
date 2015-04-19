@@ -120,6 +120,14 @@
                 android:value="com.thebluealliance.androidclient.activities.ViewDistrictActivity" />
         </activity>
         <activity
+            android:name="com.thebluealliance.androidclient.activities.GamedayActivity"
+            android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
+        </activity>
+        <activity
             android:name="com.thebluealliance.androidclient.activities.settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
@@ -182,7 +190,6 @@
             android:name="com.thebluealliance.androidclient.activities.NotificationDashboardActivity"
             android:label="@string/title_activity_notification_dashboard"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus"
-            android:launchMode="singleTop"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -174,4 +174,25 @@
         <item name="theme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
+    <!-- Used for the checkboxes in the gameday ticker filterer -->
+
+    <style name="GamedayTickerCheckboxUpcomingMatch" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/gameday_ticker_upcoming_match_header</item>
+    </style>
+    <style name="GamedayTickerCheckboxMatchResults" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/gameday_ticker_match_results_header</item>
+    </style>
+    <style name="GamedayTickerCheckboxScheduleUpdated" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/gameday_ticker_schedule_updates_header</item>
+    </style>
+    <style name="GamedayTickerCheckboxCompetitionLevelStarting" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/gameday_ticker_level_starting_header</item>
+    </style>
+    <style name="GamedayTickerCheckboxAllianceSelection" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/gameday_ticker_alliance_selection_header</item>
+    </style>
+    <style name="GamedayTickerCheckboxAwardsPosted" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/gameday_ticker_awards_header</item>
+    </style>
+
 </resources>
