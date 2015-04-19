@@ -221,7 +221,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
             }
         }
 
-        // hide the FAB if we arenTAB_'t on the first page
+        // hide the FAB if we aren't on the first page
         if(position != 0) {
             hideFab(true);
         } else {

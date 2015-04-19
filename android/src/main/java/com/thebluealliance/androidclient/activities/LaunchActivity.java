@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
+import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.Database;
@@ -140,7 +141,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
         if (prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
-            //we are updating the app. Do stuffs.
+            //we are updating the app. Do stuffs. Start from the next version
+            lastVersion++;
             while (lastVersion <= BuildConfig.VERSION_CODE) {
                 Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
                 switch (lastVersion) {
@@ -162,15 +164,17 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                     case 43: //bugfix: extra 2015 CMP division. Remove its cached response so it'll get downloaded again
                         Database.getInstance(this).getResponseTable().deleteResponse("http://www.thebluealliance.com/api/v2/events/2015");
                         break;
+                    case 46: //recreate search indexes to contain foreign keys
+                        RecreateSearchIndexes.startActionRecreateSearchIndexes(this);
+                        break;
                     default:
                         break;
                 }
                 lastVersion++;
             }
-
-            // Store the current version key
-            prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).apply();
         }
+        // Store the current version key
+        prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).apply();
         return redownload;
     }
 

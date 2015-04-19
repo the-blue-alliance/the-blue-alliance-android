@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listeners.MatchClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
@@ -85,6 +86,10 @@ public class MatchView extends FrameLayout {
             selectedTeamNumber = "";
         }
 
+        int year = Integer.parseInt(matchKey.substring(0, 4));
+        MatchHelper.TYPE type = MatchHelper.getMatchTypeFromKey(matchKey);
+        boolean hasWinner = (year != 2015) || (type == MatchHelper.TYPE.FINAL); // 2015 non-finals matches have no winner
+
         matchTitle.setTag(matchKey);
         red1.setLines(1);  // To prevent layout issues when ListView recycles items
 
@@ -92,11 +97,11 @@ public class MatchView extends FrameLayout {
             try {
                 int bScore = Integer.parseInt(blueScore),
                         rScore = Integer.parseInt(redScore);
-                if (bScore > rScore) {
+                if (hasWinner && bScore > rScore) {
                     // blue wins
                     blueAlliance.setBackgroundResource(R.drawable.blue_border);
                     redAlliance.setBackgroundResource(R.drawable.no_border);
-                } else if (bScore < rScore) {
+                } else if (hasWinner && bScore < rScore) {
                     // red wins
                     redAlliance.setBackgroundResource(R.drawable.red_border);
                     blueAlliance.setBackgroundResource(R.drawable.no_border);

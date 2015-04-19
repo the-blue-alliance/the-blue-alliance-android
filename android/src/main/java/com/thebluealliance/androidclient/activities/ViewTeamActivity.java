@@ -131,7 +131,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
         new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
 
-        // We can call this even though the years particiapted haven't been loaded yet.
+        // We can call this even though the years participated haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
         
@@ -157,12 +157,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
             }
         });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getSupportFragmentManager().getFragments().clear();
     }
 
     @Override
