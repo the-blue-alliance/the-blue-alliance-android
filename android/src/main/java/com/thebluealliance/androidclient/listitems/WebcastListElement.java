@@ -34,7 +34,7 @@ public class WebcastListElement extends ListElement {
         ViewHolder holder;
 
         if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
-            convertView = inflater.inflate(R.layout.list_item_carded_summary, null);
+            convertView = inflater.inflate(R.layout.list_item_carded_webcast, null);
 
             holder = new ViewHolder();
             holder.label = (TextView) convertView.findViewById(R.id.label);

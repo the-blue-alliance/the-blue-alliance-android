@@ -280,7 +280,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                     activity.notifyRefreshComplete(fragment);
                 }
             }
-            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime,  + "team@event summary", teamKey + "@" + eventKey);
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime,  "team@event summary", teamKey + "@" + eventKey);
         }
     }
 

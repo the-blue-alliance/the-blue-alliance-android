@@ -14,7 +14,6 @@
         android:layout_marginRight="8dp"
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="2dp"
         app:cardElevation="2dp">
 
@@ -45,7 +44,8 @@
                 android:gravity="center_vertical"
                 android:minHeight="72dp"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:background="?android:attr/selectableItemBackground">
 
                 <TextView
                     android:id="@+id/details"
@@ -68,8 +68,7 @@
                     android:text="Sample Time"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    android:padding="8dp"
-                    />
+                    android:padding="8dp" />
             </RelativeLayout>
         </LinearLayout>
 
