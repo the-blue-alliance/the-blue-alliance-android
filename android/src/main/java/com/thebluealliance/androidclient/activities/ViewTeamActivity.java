@@ -134,29 +134,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         // We can call this even though the years participated haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
-        
-        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                /*Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, ViewTeamActivity.this);
-                t.send(new HitBuilders.EventBuilder()
-                        .setCategory("event_by_week-tabs")
-                        .setAction("tab_change")
-                        .setLabel(mTeamKey + " " + adapter.getPageTitle(position))
-                        .build());
-                        */
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
     @Override
