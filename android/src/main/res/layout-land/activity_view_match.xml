@@ -23,4 +23,19 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@id/overlay_container"
+        style="@style/ContentOverlayStyle">
+
+        <TextView
+            android:id="@+id/info_container"
+            style="@style/InfoOverlayStyle"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@id/warning_container"
+            style="@style/WarningOverlayStyle"
+            android:visibility="gone" />
+    </LinearLayout>
 </RelativeLayout>
