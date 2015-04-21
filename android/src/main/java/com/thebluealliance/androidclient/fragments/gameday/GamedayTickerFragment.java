@@ -73,6 +73,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         childEventListener = new BufferedChildEventListener(this);
         // Delivery will be resumed once the view hierarchy is created
         childEventListener.pauseDelivery();
+        Firebase.setAndroidContext(getActivity());
         ticker = new Firebase(firebaseUrl);
         ticker.limitToLast(firebaseLoadDepth).addChildEventListener(childEventListener);
     }
