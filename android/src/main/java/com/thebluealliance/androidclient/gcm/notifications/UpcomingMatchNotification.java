@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -180,8 +179,6 @@ public class UpcomingMatchNotification extends BaseNotification {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        this.parseMessageData();
 
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_upcoming_match_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));

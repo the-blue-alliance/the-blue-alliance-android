@@ -109,6 +109,7 @@ public class FirebaseNotification {
         } catch (JsonParseException e) {
             // There's really no graceful way to recover from this. Let's hope for the best.
             e.printStackTrace();
+            return null;
         }
 
         return notification;

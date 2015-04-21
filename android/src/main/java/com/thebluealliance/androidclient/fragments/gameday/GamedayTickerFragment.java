@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.firebase.BufferedChildEventListener;
+import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
@@ -189,6 +190,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         Observable.from(allNotifications)
                 .filter(notification -> enabledNotificationKeys.contains(notification.getNotificationType()))
                 .map(FirebaseNotification::getNotification)
+                .filter(n -> n != null)
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notificationsList -> {
@@ -236,8 +238,11 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         // efficient, we should simply add it to the adapter if the notificaiton's type is
         // currently enabled
         if (getEnabledNotificationKeys().contains(notification.getNotificationType())) {
-            notificationsAdapter.values.add(0, notification.getNotification());
-            notificationsAdapter.notifyDataSetChanged();
+            BaseNotification n = notification.getNotification();
+            if(n != null) {
+                notificationsAdapter.values.add(0, n);
+                notificationsAdapter.notifyDataSetChanged();
+            }
         }
     }
 

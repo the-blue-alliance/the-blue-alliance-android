@@ -126,8 +126,6 @@ public class ScheduleUpdatedNotification extends BaseNotification {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        this.parseMessageData();
-
         String firstMatchTime = null;
         if (!JSONManager.isNull(matchTime)) {
             Date date = new Date(matchTime.getAsLong() * 1000L);
