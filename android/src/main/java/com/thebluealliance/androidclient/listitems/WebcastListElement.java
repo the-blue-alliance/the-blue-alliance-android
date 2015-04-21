@@ -18,12 +18,14 @@ import com.thebluealliance.androidclient.helpers.WebcastHelper;
  */
 public class WebcastListElement extends ListElement {
 
+    private String eventKey;
     private String eventName;
     private JsonObject webcast;
     private int number;
 
-    public WebcastListElement(String eventName, JsonObject webcast, int number){
+    public WebcastListElement(String eventKey, String eventName, JsonObject webcast, int number){
         super();
+        this.eventKey = eventKey;
         this.eventName = eventName;
         this.webcast = webcast;
         this.number = number;
@@ -58,7 +60,7 @@ public class WebcastListElement extends ListElement {
             holder.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String url = WebcastHelper.getUrlForWebcast(c, type, webcast);
+                    String url = WebcastHelper.getUrlForWebcast(c, eventKey, type, webcast, number);
                     Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
                     c.startActivity(intent);
                 }

@@ -15,6 +15,7 @@ public class WebcastHelper {
         TWITCH,
         USTREAM,
         LIVESTREAM,
+        IFRAME,
         NONE;
 
         public String render(Context context){
@@ -23,6 +24,7 @@ public class WebcastHelper {
                 case TWITCH: return context.getString(R.string.webcast_type_twitch);
                 case USTREAM: return context.getString(R.string.webcast_type_ustream);
                 case LIVESTREAM: return context.getString(R.string.webcast_type_livestream);
+                case IFRAME: return context.getString(R.string.webcast_type_gameday); // watch on web GameDay
                 default: return "";
             }
         }
@@ -34,20 +36,23 @@ public class WebcastHelper {
             case "twitch":      return TYPE.TWITCH;
             case "ustream":     return TYPE.USTREAM;
             case "livestream":  return TYPE.LIVESTREAM;
+            case "iframe":      return TYPE.IFRAME;
             default:            return TYPE.NONE;
         }
     }
 
-    public static String getUrlForWebcast(Context context, TYPE type, JsonObject params){
+    public static String getUrlForWebcast(Context context, String eventKey, TYPE type, JsonObject params, int number){
         switch(type){
             case YOUTUBE:
-                return String.format(context.getString(R.string.webcast_youtube_embed_pattern), params.get("channel").getAsString());
+                return context.getString(R.string.webcast_youtube_embed_pattern, params.get("channel").getAsString());
             case TWITCH:
-                return String.format(context.getString(R.string.webcast_twitch_embed_pattern), params.get("channel").getAsString());
+                return context.getString(R.string.webcast_twitch_embed_pattern, params.get("channel").getAsString());
             case USTREAM:
-                return String.format(context.getString(R.string.webcast_ustream_embed_pattern), params.get("channel").getAsString());
+                return context.getString(R.string.webcast_ustream_embed_pattern, params.get("channel").getAsString());
             case LIVESTREAM:
-                return String.format(context.getString(R.string.webcast_livestream_embed_pattern), params.get("channel").getAsString(), params.get("file").getAsString());
+                return context.getString(R.string.webcast_livestream_embed_pattern, params.get("channel").getAsString(), params.get("file").getAsString());
+            case IFRAME:
+                return context.getString(R.string.webcast_gameday_pattern, eventKey, number);
             default:
                 return "";
         }
