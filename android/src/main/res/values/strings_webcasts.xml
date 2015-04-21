@@ -18,13 +18,13 @@
 
     <string name="no_webcast_data_found">No webcasts found this week</string>
 
-    <string name="webcast_type_youtube">YouTube</string>
-    <string name="webcast_type_ustream">Ustream</string>
-    <string name="webcast_type_livestream">Livestream</string>
-    <string name="webcast_type_twitch">Twitch</string>
-    <string name="webcast_type_gameday">GameDay</string>
+    <string name="webcast_type_youtube">Watch on YouTube</string>
+    <string name="webcast_type_ustream">Watch on Ustream</string>
+    <string name="webcast_type_livestream">Watch on Livestream</string>
+    <string name="webcast_type_twitch">Watch on Twitch</string>
+    <string name="webcast_type_gameday">Watch on GameDay</string>
+    <string name="webcast_type_html5">Watch</string>
 
-    <string name="webcast_watch_on">Watch on %1$s</string>
     <string name="webcast_event_format">%1$s #%2$d</string>
 
 </resources>

@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -55,15 +53,10 @@ public class WebcastListElement extends ListElement {
         }
         if (service != null) {
             holder.value.setVisibility(View.VISIBLE);
-            holder.value.setText(String.format(c.getString(R.string.webcast_watch_on), type.render(c)));
+            holder.value.setText(type.render(c));
             holder.value.setTypeface(null, Typeface.NORMAL);
-            holder.container.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String url = WebcastHelper.getUrlForWebcast(c, eventKey, type, webcast, number);
-                    Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
-                    c.startActivity(intent);
-                }
+            holder.container.setOnClickListener(v -> {
+                c.startActivity(WebcastHelper.getIntentForWebcast(c, eventKey, type, webcast, number));
             });
         } else {
             holder.value.setVisibility(View.GONE);

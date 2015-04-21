@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
@@ -16,6 +18,7 @@ public class WebcastHelper {
         USTREAM,
         LIVESTREAM,
         IFRAME,
+        HTML5,
         NONE;
 
         public String render(Context context){
@@ -25,6 +28,7 @@ public class WebcastHelper {
                 case USTREAM: return context.getString(R.string.webcast_type_ustream);
                 case LIVESTREAM: return context.getString(R.string.webcast_type_livestream);
                 case IFRAME: return context.getString(R.string.webcast_type_gameday); // watch on web GameDay
+                case HTML5: return context.getString(R.string.webcast_type_html5);
                 default: return "";
             }
         }
@@ -37,25 +41,31 @@ public class WebcastHelper {
             case "ustream":     return TYPE.USTREAM;
             case "livestream":  return TYPE.LIVESTREAM;
             case "iframe":      return TYPE.IFRAME;
+            case "html5":       return TYPE.HTML5;
             default:            return TYPE.NONE;
         }
     }
 
-    public static String getUrlForWebcast(Context context, String eventKey, TYPE type, JsonObject params, int number){
+    public static Intent getIntentForWebcast(Context context, String eventKey, TYPE type, JsonObject params, int number){
         switch(type){
             case YOUTUBE:
-                return context.getString(R.string.webcast_youtube_embed_pattern, params.get("channel").getAsString());
+                return getWebIntentForUrl(context.getString(R.string.webcast_youtube_embed_pattern, params.get("channel").getAsString()));
             case TWITCH:
-                return context.getString(R.string.webcast_twitch_embed_pattern, params.get("channel").getAsString());
+                return getWebIntentForUrl(context.getString(R.string.webcast_twitch_embed_pattern, params.get("channel").getAsString()));
             case USTREAM:
-                return context.getString(R.string.webcast_ustream_embed_pattern, params.get("channel").getAsString());
+                return getWebIntentForUrl(context.getString(R.string.webcast_ustream_embed_pattern, params.get("channel").getAsString()));
             case LIVESTREAM:
-                return context.getString(R.string.webcast_livestream_embed_pattern, params.get("channel").getAsString(), params.get("file").getAsString());
-            case IFRAME:
-                return context.getString(R.string.webcast_gameday_pattern, eventKey, number);
+                return getWebIntentForUrl(context.getString(R.string.webcast_livestream_embed_pattern, params.get("channel").getAsString(), params.get("file").getAsString()));
+            case HTML5:
+                return new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(params.get("channel").getAsString()), "video/*");
             default:
-                return "";
+            case IFRAME:
+                return getWebIntentForUrl(context.getString(R.string.webcast_gameday_pattern, eventKey, number));
         }
+    }
+
+    private static Intent getWebIntentForUrl(String url){
+        return new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
     }
 
 }
