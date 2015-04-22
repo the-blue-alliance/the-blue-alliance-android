@@ -459,10 +459,10 @@ public class Event extends BasicModel<Event> {
             int i = 1;
             for(JsonElement webcast:getWebcasts()) {
                 try {
-                    webcasts.add(new WebcastListElement(getEventShortName(), webcast.getAsJsonObject(), i));
+                    webcasts.add(new WebcastListElement(getEventKey(), getEventShortName(), webcast.getAsJsonObject(), i));
                     i++;
                 } catch (FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: SHORTNAME");
+                    Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
                 }
             }
         } catch (FieldNotDefinedException e) {

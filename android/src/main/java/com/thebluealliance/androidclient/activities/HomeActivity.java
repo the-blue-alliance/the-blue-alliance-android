@@ -356,12 +356,18 @@ public class HomeActivity extends RefreshableHostActivity {
             int requestedMode = intent.getExtras().getInt(REQUESTED_MODE, R.id.nav_item_events);
             if (requestedMode == mCurrentSelectedNavigationItemId) {
                 // We are already in the appropriate mode
+                Log.d(Constants.LOG_TAG, "Same requested mode");
                 return;
             } else {
+                Log.d(Constants.LOG_TAG, "New requested mode");
                 switchToModeForId(requestedMode);
                 // Ensure that the Action Bar is properly configured for the current mode
                 invalidateOptionsMenu();
             }
+        } else {
+            /* No intent given. Switch to default mode */
+            switchToModeForId(mCurrentSelectedNavigationItemId);
+            invalidateOptionsMenu();
         }
     }
 

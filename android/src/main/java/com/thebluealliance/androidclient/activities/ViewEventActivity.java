@@ -88,11 +88,11 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         // This should be increased if we ever add more pages
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
-        pager.setCurrentItem(currentTab);
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
+        pager.setCurrentItem(currentTab);  // Do this after we set onPageChangeListener, so that FAB gets hidden, if needed
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
@@ -214,7 +214,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         currentTab = position;
         
         if (mOptionsMenu != null) {
-            if (position == 5 && !isDistrict) {
+            if (position == ViewEventFragmentPagerAdapter.TAB_STATS && !isDistrict) {
                 showInfoMessage(getString(R.string.warning_not_real_district));
             } else {
                 hideInfoMessage();
@@ -222,7 +222,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         }
 
         // hide the FAB if we aren't on the first page
-        if(position != 0) {
+        if(position != ViewEventFragmentPagerAdapter.TAB_INFO){
             hideFab(true);
         } else {
             showFab(true);

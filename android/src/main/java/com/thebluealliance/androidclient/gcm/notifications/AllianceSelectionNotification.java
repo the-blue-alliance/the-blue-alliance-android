@@ -121,8 +121,6 @@ public class AllianceSelectionNotification extends BaseNotification{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        this.parseMessageData();
-
         String titleString;
         try {
             titleString = c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(event.getEventName()), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase());

@@ -32,7 +32,7 @@
                     android:padding="16dp"
                     android:text="Test header"
                     android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
             </FrameLayout>
 
             <com.thebluealliance.androidclient.views.BlockingLinearLayout

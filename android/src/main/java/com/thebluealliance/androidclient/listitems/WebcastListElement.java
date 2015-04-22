@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -18,12 +16,14 @@ import com.thebluealliance.androidclient.helpers.WebcastHelper;
  */
 public class WebcastListElement extends ListElement {
 
+    private String eventKey;
     private String eventName;
     private JsonObject webcast;
     private int number;
 
-    public WebcastListElement(String eventName, JsonObject webcast, int number){
+    public WebcastListElement(String eventKey, String eventName, JsonObject webcast, int number){
         super();
+        this.eventKey = eventKey;
         this.eventName = eventName;
         this.webcast = webcast;
         this.number = number;
@@ -53,15 +53,10 @@ public class WebcastListElement extends ListElement {
         }
         if (service != null) {
             holder.value.setVisibility(View.VISIBLE);
-            holder.value.setText(String.format(c.getString(R.string.webcast_watch_on), type.render(c)));
+            holder.value.setText(type.render(c));
             holder.value.setTypeface(null, Typeface.NORMAL);
-            holder.container.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String url = WebcastHelper.getUrlForWebcast(c, type, webcast);
-                    Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
-                    c.startActivity(intent);
-                }
+            holder.container.setOnClickListener(v -> {
+                c.startActivity(WebcastHelper.getIntentForWebcast(c, eventKey, type, webcast, number));
             });
         } else {
             holder.value.setVisibility(View.GONE);

@@ -85,8 +85,6 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
-        Firebase.setAndroidContext(this);
-
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
