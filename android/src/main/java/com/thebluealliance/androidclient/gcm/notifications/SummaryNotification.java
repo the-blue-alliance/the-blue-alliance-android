@@ -20,6 +20,11 @@ import java.util.ArrayList;
  * Created by phil on 2/5/15.
  */
 public class SummaryNotification extends BaseNotification {
+    /**
+     * Limit the summary's list to avoid taking up the whole notification shade and to work around
+     * <a hreaf="https://code.google.com/p/android/issues/detail?id=168890">an Android 5.1 bug</a>.
+     */
+    static final int MAX = 7;
 
     public SummaryNotification(){
         super(NotificationTypes.SUMMARY, "");
@@ -31,10 +36,18 @@ public class SummaryNotification extends BaseNotification {
         
         ArrayList<StoredNotification> active = table.getActive();
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
+        int size = active.size();
+        int count = 0;
+
         for(StoredNotification n: active){
+            if (++count == MAX && size > MAX) {
+                style.addLine(context.getString(R.string.notification_summary_more, size + 1 - MAX));
+                break;
+            }
             style.addLine(n.getTitle());
         }
-        String notificationTitle = context.getString(R.string.notification_summary, active.size());
+
+        String notificationTitle = context.getString(R.string.notification_summary, size);
         style.setBigContentTitle(notificationTitle);
         style.setSummaryText(context.getString(R.string.app_name));
 
