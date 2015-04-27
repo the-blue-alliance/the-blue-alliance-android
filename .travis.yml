@@ -15,7 +15,10 @@ env:
   matrix:
     - ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
   
-script: ./gradlew test --info
+script: ./gradlew test
+
+after_success:
+- ./gradlew jacocoTestReport coveralls
 
 notifications:
   slack: tba-android:g0OFNqSnj71KnQC8IHGXnzhj

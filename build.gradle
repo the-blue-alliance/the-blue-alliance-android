@@ -9,6 +9,10 @@ buildscript {
         classpath 'com.android.tools.build:gradle:1.0.0'
         classpath 'me.tatarka:gradle-retrolambda:3.0.1'
         classpath 'com.github.jcandksolutions.gradle:android-unit-test:2.1.1'
+        
+        // code coverage testing
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
+
     }
 }
 
