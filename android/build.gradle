@@ -59,6 +59,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    testOptions {
+        // Don't throw dreaded stub exceptions
+        unitTests.returnDefaultValues = true
+    }
+
     android.applicationVariants.all { variant ->
         println "*********" + variant.description + "**********";
         variant.outputs.each { output ->
