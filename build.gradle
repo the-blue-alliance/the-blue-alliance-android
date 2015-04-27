@@ -11,6 +11,10 @@ buildscript {
 
         // dependency analysis
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.8'
+
+        // code coverage testing
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
+
     }
 }
 

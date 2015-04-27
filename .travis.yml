@@ -17,6 +17,9 @@ env:
   
 script: ./gradlew test
 
+after_success:
+- ./gradlew jacocoTestReport coveralls
+
 notifications:
   slack: tba-android:g0OFNqSnj71KnQC8IHGXnzhj
   email: false

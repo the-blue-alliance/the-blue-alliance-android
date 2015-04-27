@@ -24,6 +24,7 @@ android {
             debug {
                 versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
+                testCoverageEnabled = true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
@@ -127,8 +128,8 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    maven { 
-        url "https://oss.sonatype.org/content/repositories/snapshots" 
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
     }
 }
 
@@ -137,7 +138,7 @@ afterEvaluate {
 }
 
 dependencies {
-    
+
     // compile fileTree(dir: 'libs', include: ['*.jar'])
     compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.20.0'])
     compile 'com.google.http-client:google-http-client-gson:1.20.0' exclude module: 'httpclient'
@@ -165,6 +166,8 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.melnykov:floatingactionbutton:1.2.0'
     compile 'de.hdodenhof:circleimageview:1.2.2'
+    compile 'com.facebook.stetho:stetho:1.0.0'
+    compile 'com.facebook.stetho:stetho-okhttp:1.0.0'
     compile 'com.firebase:firebase-client-android:2.2.3'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile 'io.reactivex:rxjava-math:1.0.0'
@@ -172,4 +175,53 @@ dependencies {
     // testing
     testCompile 'org.robolectric:robolectric:3.0-rc2'
     testCompile 'junit:junit:4.12'
+}
+
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
+
+jacoco {
+    // I have only tried 0.7.x
+    toolVersion = "0.7.1.201405082137"
+}
+
+def coverageSourceDirs = [
+        'src/main/java'
+]
+
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+
+        xml.destination = "build/reports/jacoco/test/jacocoTestReport.xml";
+    }
+    // class R is used, but usage will not be covered, so ignore this class from report
+    // This differs per plugin version (0.10 -> 0.11)
+    // have very different fileTrees.
+    // I have added rules to Ignore Dagger/Butterknife
+    classDirectories = fileTree(
+            dir: './build/intermediates/classes/debug',
+            excludes: ['com/thebluealliance/androidclient/R*.class',
+                       '**/*$InjectAdapter.class',
+                       '**/*$ModuleAdapter.class',
+                       '**/*$ViewInjector*.class'
+            ])
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files('build/jacoco/testDebug.exec')
+    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
+    // We iterate through the compiled .class tree and rename $$ to $.
+    doFirst {
+        new File('android/build/intermediates/classes/').eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+    afterEvaluate {
+        // just clean up coveralls dashboard, following reports are not of interest
+        testDebug.reports.junitXml.enabled = false
+    }
 }
