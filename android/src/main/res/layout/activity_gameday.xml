@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/DefaultToolbarStyle" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/overlay_container"
+        android:layout_below="@id/toolbar"
+        android:orientation="vertical">
+
+        <com.thebluealliance.androidclient.views.SlidingTabs
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/primary" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tabs" />
+
+        <FrameLayout
+            android:id="@+id/filter_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true">
+
+            <com.melnykov.fab.FloatingActionButton
+                android:id="@+id/filter_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_filter_list_white_24dp"
+                app:fab_colorNormal="@color/accent"
+                app:fab_colorPressed="@color/accent_dark"
+                app:fab_colorRipple="@color/accent_dark_ripple" />
+        </FrameLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/overlay_container"
+        style="@style/ContentOverlayStyle">
+
+        <TextView
+            android:id="@+id/info_container"
+            style="@style/InfoOverlayStyle"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/warning_container"
+            style="@style/WarningOverlayStyle"
+            android:visibility="gone" />
+    </LinearLayout>
+</RelativeLayout>

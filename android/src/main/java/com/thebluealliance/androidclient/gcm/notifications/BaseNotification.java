@@ -11,6 +11,9 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -20,12 +23,16 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * Created by Nathan on 7/24/2014.
  */
-public abstract class BaseNotification {
+public abstract class BaseNotification extends ListElement {
 
     String messageData;
     String messageType;
@@ -33,6 +40,7 @@ public abstract class BaseNotification {
     private String logTag;
     protected boolean display;
     StoredNotification stored;
+    protected Date notificationTime;
 
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
@@ -41,6 +49,10 @@ public abstract class BaseNotification {
         this.logTag = null;
         this.display = true;
         this.stored = null;
+    }
+
+    public void setDate(Date date){
+        notificationTime = date;
     }
 
     public boolean shouldShow(){
@@ -58,6 +70,24 @@ public abstract class BaseNotification {
     public abstract void updateDataLocally(Context c);
 
     public abstract int getNotificationId();
+
+    /**
+     * Get the intent to open whatever this notification's click action is
+     * Precondition: parseMessageData has been called
+     * @param c Context to use while creating the intent
+     * @return This notification's intent (may be null if none)
+     */
+    public abstract Intent getIntent(Context c);
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        convertView = inflater.inflate(R.layout.list_item_carded_summary, null);
+        TextView label = (TextView)convertView.findViewById(R.id.label);
+        TextView value = (TextView)convertView.findViewById(R.id.value);
+        label.setText(messageType);
+        value.setText(messageData);
+        return convertView;
+    }
 
     public StoredNotification getStoredNotification(){
         return stored;
@@ -128,4 +158,10 @@ public abstract class BaseNotification {
         return finalBitmap;
     }
 
+    protected String getNotificationTimeString(Context c){
+        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(c);
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(c);
+        if(notificationTime == null) return "";
+        return dateFormat.format(notificationTime) + " " + timeFormat.format(notificationTime);
+    }
 }

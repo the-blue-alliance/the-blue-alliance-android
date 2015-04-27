@@ -171,14 +171,14 @@ public class Database extends SQLiteOpenHelper {
             SearchTeam.KEY + " TEXT PRIMARY KEY, " +
             SearchTeam.TITLES + " TEXT, " +
             SearchTeam.NUMBER + " TEXT, " +
-            "FOREIGN KEY ("+SearchTeam.KEY+") REFERENCES "+TABLE_TEAMS+"("+Teams.KEY+") ON DELETE CASCADE)";
+            ")";
 
     String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
             " USING fts3 (" +
             SearchEvent.KEY + " TEXT PRIMARY KEY, " +
             SearchEvent.TITLES + " TEXT, " +
             SearchEvent.YEAR + " TEXT,  " +
-            "FOREIGN KEY ("+SearchEvent.KEY+") REFERENCES "+TABLE_EVENTS+"("+Events.KEY+") ON DELETE CASCADE)";
+            ")";
 
     String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
             Notifications.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +

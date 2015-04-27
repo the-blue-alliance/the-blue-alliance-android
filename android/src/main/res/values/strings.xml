@@ -40,6 +40,7 @@
     <string name="tab_teams">Teams</string>
     <string name="tab_insights">Insights</string>
     <string name="title_activity_view_event">View Event</string>
+    <string name="title_activity_gameday">GameDay</string>
     <string name="events_label">Events</string>
     <string name="districts_label">Districts</string>
 
@@ -93,6 +94,7 @@
     <string name="no_media_data">No media was found for this team.</string>
     <string name="no_district_points">No district points were found for this event.</string>
     <string name="no_team_list">Unable to load team list.</string>
+    <string name="match_not_found">Match not found.</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
 
     <!-- View Team -->
@@ -159,4 +161,6 @@
     <string name="title_activity_notification_dashboard">Notification Dashboard</string>
     <string name="notification_dashboard_no_notifications">You do not have any recent notifications.</string>
     <string name="notification_dashboard_title">Recent Notifications</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

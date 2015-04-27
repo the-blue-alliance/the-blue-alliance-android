@@ -14,6 +14,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -162,6 +163,7 @@ public class Utilities {
                     intent = HomeActivity.newInstance(c, R.id.nav_item_insights);
                     break;
                 case "gameday":
+                    intent = GamedayActivity.newInstance(c);
                     break;
                 default:
                     intent = null;
@@ -249,9 +251,17 @@ public class Utilities {
         return true;
     }
 
-    public static String readLocalProperty(Context c, String property) {
+    public static String readLocalProperty(Context c, String property){
+        return readLocalProperty(c, property, "");
+    }
+
+    public static String readLocalProperty(Context c, String property, String defaultValue) {
         Properties properties;
         properties = new Properties();
+        if(c == null){
+            Log.w(Constants.LOG_TAG, "Null context. Can't read local properties");
+            return defaultValue;
+        }
         try {
             InputStream fileStream = c.getAssets().open("tba.properties");
             properties.load(fileStream);
@@ -259,12 +269,12 @@ public class Utilities {
             if(isDebuggable() && properties.containsKey(property + ".debug")){
                 return properties.getProperty(property + ".debug");
             }
-            return properties.getProperty(property, "");
+            return properties.getProperty(property, defaultValue);
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "Unable to read from tba.properties");
             e.printStackTrace();
         }
-        return "";
+        return defaultValue;
     }
 
     public static boolean isDebuggable() {

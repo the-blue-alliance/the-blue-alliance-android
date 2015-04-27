@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
+import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -450,6 +451,24 @@ public class Event extends BasicModel<Event> {
                     "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
+    }
+
+    public ArrayList<WebcastListElement> renderWebcasts(){
+        ArrayList<WebcastListElement> webcasts = new ArrayList<>();
+        try {
+            int i = 1;
+            for(JsonElement webcast:getWebcasts()) {
+                try {
+                    webcasts.add(new WebcastListElement(getEventKey(), getEventShortName(), webcast.getAsJsonObject(), i));
+                    i++;
+                } catch (FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
+                }
+            }
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Missing fields to get event webcasts");
+        }
+        return webcasts;
     }
 
     public ArrayList<AllianceListElement> renderAlliances() {
