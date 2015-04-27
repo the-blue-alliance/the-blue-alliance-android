@@ -119,8 +119,8 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    maven { 
-        url "https://oss.sonatype.org/content/repositories/snapshots" 
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
     }
 }
 
@@ -129,7 +129,7 @@ afterEvaluate {
 }
 
 dependencies {
-    
+
     // compile fileTree(dir: 'libs', include: ['*.jar'])
     compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
     compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
@@ -148,6 +148,8 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.melnykov:floatingactionbutton:1.0.7'
     compile 'de.hdodenhof:circleimageview:1.2.0'
+    compile 'com.facebook.stetho:stetho:1.0.0'
+    compile 'com.facebook.stetho:stetho-okhttp:1.0.0'
     compile 'com.firebase:firebase-client-android:2.2.3'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile 'io.reactivex:rxjava-math:1.0.0'
