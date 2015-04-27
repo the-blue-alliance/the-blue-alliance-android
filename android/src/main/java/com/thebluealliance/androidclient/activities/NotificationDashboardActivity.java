@@ -38,9 +38,7 @@ public class NotificationDashboardActivity extends RefreshableHostActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Highlight this item in the navigation drawer
+    public void onNavigationDrawerCreated() {
         setNavigationDrawerItemSelected(R.id.nav_item_notifications);
     }
 

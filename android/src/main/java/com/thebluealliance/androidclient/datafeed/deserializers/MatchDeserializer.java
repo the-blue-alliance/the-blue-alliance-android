@@ -9,6 +9,8 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.lang.reflect.Type;
 
+import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+
 
 public class MatchDeserializer implements JsonDeserializer<Match> {
 
@@ -40,11 +42,11 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
             match.setAlliances(object.get(ALLIANCE_TAG).getAsJsonObject());
         }
 
-        if (object.has("time_string") && !object.get("time_string").isJsonNull()) {
+        if (!isNull(object.get("time_string"))) {
             match.setTimeString(object.get("time_string").getAsString());
         }
 
-        if (object.has("time") && !object.get("time").isJsonNull()) {
+        if (!isNull(object.get("time"))) {
             match.setTime(object.get("time").getAsLong());
         }
 

@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
+import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -452,6 +453,24 @@ public class Event extends BasicModel<Event> {
         }
     }
 
+    public ArrayList<WebcastListElement> renderWebcasts(){
+        ArrayList<WebcastListElement> webcasts = new ArrayList<>();
+        try {
+            int i = 1;
+            for(JsonElement webcast:getWebcasts()) {
+                try {
+                    webcasts.add(new WebcastListElement(getEventKey(), getEventShortName(), webcast.getAsJsonObject(), i));
+                    i++;
+                } catch (FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
+                }
+            }
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Missing fields to get event webcasts");
+        }
+        return webcasts;
+    }
+
     public ArrayList<AllianceListElement> renderAlliances() {
         ArrayList<AllianceListElement> output = new ArrayList<>();
         try {
@@ -526,14 +545,7 @@ public class Event extends BasicModel<Event> {
 
     public static synchronized APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<Event> events = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                events.add(ModelInflater.inflateEvent(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
+        ArrayList<Event> events = new ArrayList<>(); 
 
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
@@ -551,7 +563,20 @@ public class Event extends BasicModel<Event> {
         }
 
         if (changed) {
-            Database.getInstance(c).getEventsTable().storeEvents(events);
+            Database.Events eventsTable = Database.getInstance(c).getEventsTable();
+            int deleted = eventsTable.delete(whereClause, whereArgs);
+            eventsTable.storeEvents(events);
+        }
+
+        // Fetch from db after web, see #372
+        // Allows us to do whereClause filtering again
+        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            events.clear();
+            do {
+                events.add(ModelInflater.inflateEvent(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events, updated in db? " + changed);
         return new APIResponse<>(events, code);

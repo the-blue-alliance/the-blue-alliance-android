@@ -12,8 +12,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.NotificationDashboardActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 
 import java.util.Date;
 
@@ -33,7 +33,7 @@ public class GenericNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException{
-        JsonObject jsonData = jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
         if(!jsonData.has("title")){
             throw new JsonParseException("Notification data does not contain 'title'");
         }
@@ -49,7 +49,8 @@ public class GenericNotification extends BaseNotification {
             launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent = PendingIntent.getActivity(context, 0, launch, 0);
         }else{
-            intent = null;
+            Intent launch = NotificationDashboardActivity.newInstance(context);
+            intent = PendingIntent.getActivity(context, getNotificationId(), launch, 0);
         }
 
         if(jsonData.has("app_version")){
@@ -69,11 +70,16 @@ public class GenericNotification extends BaseNotification {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setContentIntent(intent)
-                .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)))
                 .build();
+    }
+
+    @Override
+    public Intent getIntent(Context c) {
+        /* Don't open anything */
+        return null;
     }
 
     @Override

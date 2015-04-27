@@ -120,6 +120,14 @@
                 android:value="com.thebluealliance.androidclient.activities.ViewDistrictActivity" />
         </activity>
         <activity
+            android:name="com.thebluealliance.androidclient.activities.GamedayActivity"
+            android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
+        </activity>
+        <activity
             android:name="com.thebluealliance.androidclient.activities.settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
@@ -197,15 +205,20 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <!-- The receiver's android:permission filters Intents by sender permission.
+             ${gcmPermissionRequired} is defined in android/build.gradle so debug builds accept
+             Intents from 'adb shell am broadcast'. See test_notification.py . -->
         <receiver
             android:name="com.thebluealliance.androidclient.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="${gcmPermissionRequired}">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
                 <category android:name="com.thebluealliance.androidclient" />
             </intent-filter>
         </receiver>
+
         <receiver 
             android:name="com.thebluealliance.androidclient.listeners.NotificationDismissedListener"
             android:exported="false" />
@@ -221,6 +234,9 @@
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
+        </service>
+        <service android:name="com.thebluealliance.androidclient.background.RecreateSearchIndexes"
+            android:exported="false" >
         </service>
     </application>
 

@@ -4,9 +4,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -101,6 +103,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         super.onPostExecute(code);
 
         if(mActivity != null) {
+            ProgressBar progressBar = (ProgressBar) mActivity.findViewById(R.id.progress);
+            FloatingActionButton myTbaFav = (FloatingActionButton) mActivity.findViewById(R.id.open_notification_settings_button);
             if (code != APIResponse.CODE.NODATA) {
 
                 mActivity.setActionBarTitle(mMatchTitle);
@@ -119,8 +123,16 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                     mActivity.showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
                 }
 
-                mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
 
+            } else{
+                // No data found
+                mActivity.setActionBarTitle(mMatchKey);
+                mActivity.showWarningMessage(mActivity.getString(R.string.match_not_found));
+                progressBar.setVisibility(View.GONE);
+                if(myTbaFav != null){
+                    myTbaFav.setVisibility(View.GONE);
+                }
             }
 
             if (code == APIResponse.CODE.LOCAL && !isCancelled()) {

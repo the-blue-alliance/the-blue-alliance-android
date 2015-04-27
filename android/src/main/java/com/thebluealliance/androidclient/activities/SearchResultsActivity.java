@@ -168,6 +168,13 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 }
                 String key = teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.KEY));
                 Team team = Database.getInstance(this).getTeamsTable().get(key);
+                if(team == null){
+                    // Don't display models that don't exist anymore and delete them from search indexes
+                    team = new Team();
+                    team.setTeamKey(key);
+                    Database.getInstance(this).deleteSearchItemTeam(team);
+                    continue;
+                }
                 try {
                     TeamListElement element;
                     element = new TeamListElement(team);
@@ -208,6 +215,13 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 }
                 String key = eventQueryResults.getString(eventQueryResults.getColumnIndex(Database.SearchEvent.KEY));
                 Event event = Database.getInstance(this).getEventsTable().get(key);
+                if(event == null){
+                    // Don't display models that don't exist anymore and delete them from search indexes
+                    event = new Event();
+                    event.setEventKey(key);
+                    Database.getInstance(this).deleteSearchItemEvent(event);
+                    continue;
+                }
                 try {
                     EventListElement element;
                     element = new EventListElement(event);

@@ -9,6 +9,8 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.lang.reflect.Type;
 
+import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+
 
 public class TeamDeserializer implements JsonDeserializer<Team> {
 
@@ -19,29 +21,29 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
 
         // All the teams should have an associated key and team number,
         // but it doesn't hurt to check in the rare case something goes terribly wrong.
-        if (object.has("key") && !object.get("key").isJsonNull()) {
+        if (!isNull(object.get("key"))) {
             team.setTeamKey(object.get("key").getAsString());
         }
 
-        if (object.has("team_number") && !object.get("team_number").isJsonNull()) {
+        if (!isNull(object.get("team_number"))) {
             team.setTeamNumber(object.get("team_number").getAsInt());
         }
 
         // Some of the old teams don't have names and/or locations.
-        if (object.has("name") && !object.get("name").isJsonNull()) {
+        if (!isNull(object.get("name"))) {
             team.setFullName(object.get("name").getAsString());
         }
 
-        if (object.has("nickname") && !object.get("nickname").isJsonNull()) {
+        if (!isNull(object.get("nickname"))) {
             team.setNickname(object.get("nickname").getAsString());
         }
 
-        if (object.has("location") && !object.get("location").isJsonNull()) {
+        if (!isNull(object.get("location"))) {
             team.setLocation(object.get("location").getAsString());
         }
 
         // Some teams don't have websites
-        if (object.has("website") && !object.get("website").isJsonNull()) {
+        if (!isNull(object.get("website"))) {
             team.setWebsite(object.get("website").getAsString());
         }
 

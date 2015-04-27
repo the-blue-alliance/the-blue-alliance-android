@@ -31,6 +31,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 24;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database",
             TABLE_API = "api",
@@ -169,13 +170,15 @@ public class Database extends SQLiteOpenHelper {
             " USING fts3 (" +
             SearchTeam.KEY + " TEXT PRIMARY KEY, " +
             SearchTeam.TITLES + " TEXT, " +
-            SearchTeam.NUMBER + " TEXT )";
+            SearchTeam.NUMBER + " TEXT, " +
+            ")";
 
     String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
             " USING fts3 (" +
             SearchEvent.KEY + " TEXT PRIMARY KEY, " +
             SearchEvent.TITLES + " TEXT, " +
-            SearchEvent.YEAR + " TEXT )";
+            SearchEvent.YEAR + " TEXT,  " +
+            ")";
 
     String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
             Notifications.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
@@ -368,6 +371,13 @@ public class Database extends SQLiteOpenHelper {
                 case 20:
                     // Create table for notification dashboard
                     db.execSQL(CREATE_NOTIFICATIONS);
+                    break;
+                case 23:
+                case 24:
+                    // remove and recreate search indexes to we can create them with foreign keys
+                    db.execSQL("DROP TABLE "+TABLE_SEARCH_TEAMS);
+                    db.execSQL("DROP TABLE "+TABLE_SEARCH_EVENTS);
+                    onCreate(db);
                     break;
             }
             upgradeTo++;
@@ -569,6 +579,21 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+
+        public ArrayList<Team> getAll(){
+            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_TEAMS, new String[]{});
+            ArrayList<Team> ret = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Team event = ModelInflater.inflateTeam(cursor);
+                    ret.add(event);
+                }while(cursor.moveToNext());
+                cursor.close();
+            }
+            return ret;
+        }
+
+
         @Override
         public boolean exists(String key) {
             Cursor cursor = safeQuery(TABLE_TEAMS, new String[]{}, Teams.KEY + " = ?", new String[]{key}, null, null, null, null);
@@ -720,6 +745,19 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
+        public ArrayList<Event> getAll(){
+            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_EVENTS, new String[]{});
+            ArrayList<Event> ret = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Event event = ModelInflater.inflateEvent(cursor);
+                    ret.add(event);
+                }while(cursor.moveToNext());
+                cursor.close();
+            }
+            return ret;
+        }
+
         public boolean exists(String key) {
             Cursor cursor = safeQuery(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
             boolean result;
@@ -751,6 +789,10 @@ public class Database extends SQLiteOpenHelper {
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete event without Database.Events.KEY");
             }
+        }
+
+        public int delete(String whereClause, String[] whereArgs){
+            return safeDelete(TABLE_EVENTS, whereClause, whereArgs);
         }
 
         public int update(Event event) {
@@ -1887,6 +1929,46 @@ public class Database extends SQLiteOpenHelper {
             return -1;
         } catch (SQLiteException e) {
             return updateSearchItemEvent(event, safe);
+        }
+    }
+
+    public void insertSearchItemEvents(List<Event> events){
+        Semaphore dbSemaphore = null;
+        try {
+            dbSemaphore = getSemaphore();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            db.beginTransaction();
+            for (Event event : events) {
+                insertSearchItemEvent(event, false);
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (InterruptedException e) {
+            Log.w("database", "Unable to acquire database semaphore");
+        } finally {
+            if (dbSemaphore != null) {
+                dbSemaphore.release();
+            }
+        }
+    }
+
+    public void insertSearchItemTeams(List<Team> teams){
+        Semaphore dbSemaphore = null;
+        try {
+            dbSemaphore = getSemaphore();
+            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
+            db.beginTransaction();
+            for (Team team : teams) {
+                insertSearchItemTeam(team, false);
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (InterruptedException e) {
+            Log.w("database", "Unable to acquire database semaphore");
+        } finally {
+            if (dbSemaphore != null) {
+                dbSemaphore.release();
+            }
         }
     }
 

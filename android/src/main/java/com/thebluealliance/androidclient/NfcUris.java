@@ -27,4 +27,6 @@ public class NfcUris {
     // Formatted as match/MATCH_KEY
     public static final String URI_MATCH = "match/%1$s";
     public static final String URI_MATCH_MATCHER = "match/([a-zA-Z0-9_]+)";
+
+    public static final String URI_GAMEDAY = "gameday";
 }

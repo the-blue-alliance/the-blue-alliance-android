@@ -113,6 +113,7 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(Constants.LOG_TAG, "Registering YearChangedEvent");
         EventBus.getDefault().register(this);
     }
 
