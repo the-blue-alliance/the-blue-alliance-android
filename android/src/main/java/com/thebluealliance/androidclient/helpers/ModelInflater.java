@@ -122,6 +122,9 @@ public class ModelInflater {
                 case Database.Events.TEAMS:
                     event.setTeams(data.getString(i));
                     break;
+                case Database.Events.WEBCASTS:
+                    event.setWebcasts(data.getString(i));
+                    break;
                 default:
             }
         }

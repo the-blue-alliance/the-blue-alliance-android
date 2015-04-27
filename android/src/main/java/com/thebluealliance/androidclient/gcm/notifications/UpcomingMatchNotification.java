@@ -1,26 +1,30 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +35,7 @@ import java.util.Date;
  */
 public class UpcomingMatchNotification extends BaseNotification {
 
-    private String eventName, matchTitle, matchKey;
+    private String eventName, eventKey, matchKey, redTeams[], blueTeams[];
     private JsonElement matchTime;
     private JsonArray teamKeys;
 
@@ -46,36 +50,44 @@ public class UpcomingMatchNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'match_key'");
         }
         matchKey = jsonData.get("match_key").getAsString();
-        matchTitle = MatchHelper.getMatchTitleFromMatchKey(matchKey);
+
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
         eventName = jsonData.get("event_name").getAsString();
+        
         if (!jsonData.has("team_keys")) {
             throw new JsonParseException("Notification data does not contain 'team_keys");
         }
+        
+        eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
-        if (!jsonData.has("scheduled_time")) {
-            throw new JsonParseException("Notification data does not contain 'scheduled_time'");
+        redTeams = new String[teamKeys.size()/2];
+        blueTeams = new String[teamKeys.size()/2];
+        for(int i=0; i<teamKeys.size()/2; i++){
+            redTeams[i] = teamKeys.get(i).getAsString().substring(3);
+            blueTeams[i] = teamKeys.get(i+teamKeys.size()/2).getAsString().substring(3);
         }
-        matchTime = jsonData.get("scheduled_time");
+        if (!jsonData.has("scheduled_time")) {
+            matchTime = jsonData.get("scheduled_time");
+        }else{
+            matchTime = JsonNull.INSTANCE;
+        }
+
     }
 
     /**
-     * @param context a Context object for use by the notificatoin builder
+     * @param context a Context object for use by the notification builder
      * @return A constructed notification
      */
     @Override
     public Notification buildNotification(Context context) {
-
-        Resources r = context.getResources();
-
         String scheduledStartTimeString;
-        if (matchTime.isJsonNull()) {
+        if (JSONManager.isNull(matchTime)) {
             scheduledStartTimeString = "";
         } else {
             long scheduledStartTimeUNIX = matchTime.getAsLong();
-            // We multiply by 1000 because the Date constructor expects
+            // We multiply by 1000 because the Date constructor expects ms
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
             java.text.DateFormat format = android.text.format.DateFormat.getTimeFormat(context);
             scheduledStartTimeString = format.format(scheduledStartTime);
@@ -98,40 +110,40 @@ public class UpcomingMatchNotification extends BaseNotification {
             // Looks like we got this GCM notification by mistake
             return null;
         }
+
+        String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
+        String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
+        String eventShortName = EventHelper.shortName(eventName);
+
         if (scheduledStartTimeString.isEmpty()) {
             if (numFavoritedTeams == 1) {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team_no_time), eventName, teamsString, matchTitle);
+                contentText = context.getString(R.string.notification_upcoming_match_text_single_team_no_time, eventShortName, teamsString, matchTitle);
             } else {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time), eventName, teamsString, matchTitle);
+                contentText = context.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time, eventShortName, teamsString, matchTitle);
             }
         } else {
             if (numFavoritedTeams == 1) {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_single_team), eventName, teamsString, matchTitle, scheduledStartTimeString);
+                contentText = context.getString(R.string.notification_upcoming_match_text_single_team, eventShortName, teamsString, matchTitle, scheduledStartTimeString);
             } else {
-                contentText = String.format(r.getString(R.string.notification_upcoming_match_text_multiple_teams), eventName, teamsString, matchTitle, scheduledStartTimeString);
+                contentText = context.getString(R.string.notification_upcoming_match_text_multiple_teams, eventShortName, teamsString, matchTitle, scheduledStartTimeString);
             }
         }
 
-        Intent instance = ViewMatchActivity.newInstance(context, matchKey);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, instance, 0);
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, getNotificationId(), new Intent(context, NotificationDismissedListener.class), 0);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
-        stored.setTitle(r.getString(R.string.notification_upcoming_match_title));
+        String eventCode = EventHelper.getEventCode(matchKey);
+        String notificationTitle = context.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
+        stored.setTitle(notificationTitle);
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         
-        NotificationCompat.Builder builder = getBaseBuilder(context)
-                .setContentTitle(r.getString(R.string.notification_upcoming_match_title))
+        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
+                .setContentTitle(notificationTitle)
                 .setContentText(contentText)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp))
-                .setContentIntent(intent)
-                .setDeleteIntent(onDismiss)
-                .setGroup(GCMMessageHandler.GROUP_KEY)
-                .setAutoCancel(true)
-                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
+                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp));
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
@@ -144,7 +156,51 @@ public class UpcomingMatchNotification extends BaseNotification {
     }
 
     @Override
+    public Intent getIntent(Context c) {
+        return ViewMatchActivity.newInstance(c, matchKey);
+    }
+
+    @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_upcoming_match, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.matchView = (MatchView) convertView.findViewById(R.id.match_details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = convertView.findViewById(R.id.summary_container);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.title.setText(c.getString(R.string.notification_upcoming_match_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
+        if(!JSONManager.isNull(matchTime)) {
+            holder.time.setText(getNotificationTimeString(c));
+            holder.time.setVisibility(View.VISIBLE);
+        }else{
+            holder.time.setVisibility(View.GONE);
+        }
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
+        new MatchListElement(redTeams, blueTeams, matchKey, JSONManager.isNull(matchTime)?-1:matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView title;
+        public MatchView matchView;
+        public TextView time;
+        private View summaryContainer;
     }
 }

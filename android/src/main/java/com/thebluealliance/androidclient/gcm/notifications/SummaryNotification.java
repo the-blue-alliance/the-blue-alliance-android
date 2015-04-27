@@ -34,15 +34,16 @@ public class SummaryNotification extends BaseNotification {
         for(StoredNotification n: active){
             style.addLine(n.getTitle());
         }
-        style.setBigContentTitle(context.getString(R.string.notification_summary_title));
+        String notificationTitle = context.getString(R.string.notification_summary, active.size());
+        style.setBigContentTitle(notificationTitle);
         style.setSummaryText(context.getString(R.string.app_name));
-        
-        PendingIntent intent = PendingIntent.getActivity(context, getNotificationId(), NotificationDashboardActivity.newInstance(context), 0);
+
+        Intent instance = getIntent(context);
+        PendingIntent intent = makeNotificationIntent(context, instance);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
-        
+
         Notification summary = new NotificationCompat.Builder(context)
-                .setContentTitle(context.getString(R.string.notification_summary_title))
-                .setContentText(String.format(context.getString(R.string.notification_summary), active.size()))
+                .setContentTitle(notificationTitle)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
                 .setContentIntent(intent)
@@ -58,6 +59,11 @@ public class SummaryNotification extends BaseNotification {
     @Override
     public void parseMessageData() throws JsonParseException {
         /* Nothing to do */
+    }
+
+    @Override
+    public Intent getIntent(Context c) {
+        return NotificationDashboardActivity.newInstance(c);
     }
 
     @Override
