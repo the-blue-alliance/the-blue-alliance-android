@@ -12,16 +12,6 @@ android {
     compileSdkVersion 22
     buildToolsVersion '22.0.1'
 
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 22
-        versionCode 48
-        versionName "2.2.1"
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
     signingConfigs {
         release {
             storeFile file("somefile.jks")
@@ -58,6 +48,17 @@ android {
         }
     }
 
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 48
+        versionName "2.2.1"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     android.applicationVariants.all { variant ->
         println "*********" + variant.description + "**********";
         variant.outputs.each { output ->
@@ -87,8 +88,6 @@ android {
         }
     }
 }
-
-apply plugin: 'android-unit-test'
 
 task loadProperties << {
     // add in signing keys from local.properties
