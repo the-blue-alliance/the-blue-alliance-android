@@ -14,8 +14,6 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
-import org.apache.commons.lang3.text.WordUtils;
-
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -485,7 +483,7 @@ public class EventHelper {
             if (rankingKey.length() <= 3) {
                 rankingKey = rankingKey.toUpperCase();
             } else {
-                rankingKey = WordUtils.capitalize(rankingKey);
+                rankingKey = capitalize(rankingKey);
             }
             rankingString += rankingKey + ": " + value;
             if (it.hasNext()) {
@@ -494,6 +492,24 @@ public class EventHelper {
         }
         Log.d(Constants.LOG_TAG, "String: "+rankingString);
         return rankingString;
+    }
+
+    /**
+     * Hacky capitalize method to remove dependency on apache lib for only one method
+     * Stupid DEX limit...
+     * @param string Input string
+     * @return Input string with first letter of each word capitalized
+     */
+    private static String capitalize(String string){
+        StringBuilder sb = new StringBuilder();
+        String[] split = string.split(" ");
+        for(String s:split){
+            sb.append(s.substring(0, 1).toUpperCase());
+            sb.append(s.substring(1));
+            sb.append(" ");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
     }
 
     public static String getShortCodeForEventKey(String eventKey) {

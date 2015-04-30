@@ -133,10 +133,6 @@ repositories {
     }
 }
 
-afterEvaluate {
-    tasks.findByName("assembleDebug").dependsOn("testDebugClasses")
-}
-
 dependencies {
 
     // compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -149,6 +145,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:22.0.0'
     compile 'com.android.support:support-v4:22.0.0'
     compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:multidex:1.0.0'
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
@@ -159,8 +156,6 @@ dependencies {
 
     // Other third party libraries
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'org.apache.commons:commons-lang3:3.3.2'
-    compile 'org.apache.commons:commons-io:1.3.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'me.xuender:unidecode:0.0.7'
     compile 'de.greenrobot:eventbus:2.4.0'
