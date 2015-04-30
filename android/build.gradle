@@ -1,23 +1,17 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
+// dependency checker plugin
+// run ./gradlew dependencyUpdates to generate report
+apply plugin: 'com.github.ben-manes.versions'
+
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 def gitBranch = 'git rev-parse --abbrev-ref HEAD'.execute([], project.rootDir).text.trim()
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 21
-        versionCode 48
-        versionName "2.2.1"
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
     signingConfigs {
         release {
             storeFile file("somefile.jks")
@@ -55,6 +49,22 @@ android {
         }
     }
 
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 48
+        versionName "2.2.1"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        // Don't throw dreaded stub exceptions
+        unitTests.returnDefaultValues = true
+    }
+
     android.applicationVariants.all { variant ->
         println "*********" + variant.description + "**********";
         variant.outputs.each { output ->
@@ -84,8 +94,6 @@ android {
         }
     }
 }
-
-apply plugin: 'android-unit-test'
 
 task loadProperties << {
     // add in signing keys from local.properties
@@ -125,30 +133,34 @@ repositories {
     }
 }
 
-afterEvaluate {
-    tasks.findByName("assembleDebug").dependsOn("testDebugClasses")
-}
-
 dependencies {
 
     // compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.19.0'])
-    compile 'com.google.http-client:google-http-client-gson:1.19.0' exclude module: 'httpclient'
+    compile([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.20.0'])
+    compile 'com.google.http-client:google-http-client-gson:1.20.0' exclude module: 'httpclient'
     compile files('libs/tbaMobile-v9-1.19.0-SNAPSHOT.jar')
-    compile 'com.android.support:support-v13:21.0.0'
-    compile 'com.android.support:cardview-v7:21.0.0'
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.google.code.gson:gson:2.3'
-    compile 'org.apache.commons:commons-lang3:3.0'
-    compile 'org.apache.commons:commons-io:1.3.2'
+
+    // Android support libraries
+    compile 'com.android.support:support-v13:22.0.0'
+    compile 'com.android.support:cardview-v7:22.0.0'
+    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:multidex:1.0.0'
+
+    // Play Services Libraries
+    // See http://developer.android.com/google/play-services/setup.html
+    compile 'com.google.android.gms:play-services-base:7.0.0'
+    compile 'com.google.android.gms:play-services-plus:7.0.0'
+    compile 'com.google.android.gms:play-services-analytics:7.0.0'
+    compile 'com.google.android.gms:play-services-gcm:7.0.0'
+
+    // Other third party libraries
+    compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'me.xuender:unidecode:0.0.7'
-    compile 'com.google.android.gms:play-services-base:6.5.87'
-    compile 'com.google.android.gms:play-services-plus:6.5.87'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.melnykov:floatingactionbutton:1.0.7'
-    compile 'de.hdodenhof:circleimageview:1.2.0'
+    compile 'com.melnykov:floatingactionbutton:1.2.0'
+    compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'com.facebook.stetho:stetho:1.0.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.0.0'
     compile 'com.firebase:firebase-client-android:2.2.3'

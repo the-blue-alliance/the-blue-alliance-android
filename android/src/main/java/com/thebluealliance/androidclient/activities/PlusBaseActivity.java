@@ -1,25 +1,14 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.PlusClient;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
@@ -44,25 +33,13 @@ public abstract class PlusBaseActivity extends Activity
     private ConnectionResult mConnectionResult;
 
 
-    /**
-     * Called when the {@link PlusClient} revokes access to this app.
-     */
-    protected abstract void onPlusClientRevokeAccess();
 
     /**
      * Called when the PlusClient is successfully connected.
      */
     protected abstract void onPlusClientSignIn();
 
-    /**
-     * Called when the {@link PlusClient} is disconnected.
-     */
-    protected abstract void onPlusClientSignOut();
 
-    /**
-     * Called when the {@link PlusClient} is blocking the UI.  If you have a progress bar widget,
-     * this tells you when to show or hide it.
-     */
     protected abstract void onPlusClientBlockingUI(boolean show);
 
     /**
@@ -94,21 +71,14 @@ public abstract class PlusBaseActivity extends Activity
         updateConnectButtonState();
     }
 
-    /**
-     * Connect the {@link PlusClient} only if a connection isn't already in progress.  This will
-     * call back to {@link #onConnected(android.os.Bundle)} or
-     * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
-     */
+
     private void initiatePlusClientConnect() {
         if (!PlusHelper.isConnected() && !PlusHelper.isConnecting()) {
             PlusHelper.connect(this, this, this);
         }
     }
 
-    /**
-     * Disconnect the {@link PlusClient} only if it is connected (otherwise, it can throw an error.)
-     * This will call back to {@link #onDisconnected()}.
-     */
+
     private void initiatePlusClientDisconnect() {
         if (PlusHelper.isConnected()) {
             PlusHelper.disconnect();
@@ -140,21 +110,6 @@ public abstract class PlusBaseActivity extends Activity
      * Revoke Google+ authorization completely.
      */
     public void revokeAccess() {
-
-        if (PlusHelper.isConnected()) {
-            // Clear the default account as in the Sign Out.
-            PlusHelper.clearDefaultAccount();
-
-            // Revoke access to this entire application. This will call back to
-            // onAccessRevoked when it is complete, as it needs to reach the Google
-            // authentication servers to revoke all tokens.
-            PlusHelper.revokeAccessAndDisconnect(new PlusClient.OnAccessRevokedListener() {
-                public void onAccessRevoked(ConnectionResult result) {
-                    updateConnectButtonState();
-                    onPlusClientRevokeAccess();
-                }
-            });
-        }
 
     }
 

@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.model.people.Person;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -87,10 +86,6 @@ public class PlusHelper {
         if(mApiClient != null){
             mApiClient.clearDefaultAccountAndReconnect();
         }
-    }
-
-    public static void revokeAccessAndDisconnect(PlusClient.OnAccessRevokedListener listener){
-        disconnect();
     }
 
     public static String getAccountName(){

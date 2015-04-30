@@ -22,8 +22,6 @@ import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -511,10 +509,10 @@ public class Event extends BasicModel<Event> {
             APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Event updatedEvent;
-                if (StringUtils.countMatches(url, "/") == 6) {
+                if (url.substring(url.lastIndexOf("/")).equals(eventKey)) {
                     /* event info request - inflate the event
-                     * any other request will have an additional '/' in the URL
-                     * anybody got a better way to determine this?
+                     * Here, the last url parameter is the event key
+                     * All other endpoints have something else after that
                      */
                     updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
                     if(updatedEvent == null){
