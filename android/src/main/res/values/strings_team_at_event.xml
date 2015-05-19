@@ -6,7 +6,6 @@
     <string name="action_view_team">View Team</string>
     <string name="team_at_event_captain">Captain</string>
     <string name="team_at_event_pick">pick</string>
-    <string name="summary">Summary</string>
     <string name="alliance_summary">%1$s of the %2$s alliance</string>
     <string name="alliance_summary_no_pick_num">On the %1$s alliance</string>
     <string name="opr_no_colon">OPR</string>
@@ -18,10 +17,6 @@
     <string name="team_at_event_record">Record</string>
     <string name="team_at_event_alliance">Alliance</string>
     <string name="team_at_event_status">Elimination Status</string>
-
-    <string name="team_at_district_event1">Event 1</string>
-    <string name="team_at_district_event2">Event 2</string>
-    <string name="team_at_district_cmp">District Championship</string>
 
     <!-- possible statuses -->
     <string name="playing_in_quals">Playing in the qualification matches</string>

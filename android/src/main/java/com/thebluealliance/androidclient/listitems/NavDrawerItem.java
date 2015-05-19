@@ -15,6 +15,7 @@ public class NavDrawerItem implements ListItem {
 
     private int id;
     private String title;
+    private int titleId = -1;
     private int icon = -1;
     private int layout;
 
@@ -25,6 +26,13 @@ public class NavDrawerItem implements ListItem {
     public NavDrawerItem(int id, String title, int icon, int layout) {
         this.id = id;
         this.title = title;
+        this.icon = icon;
+        this.layout = layout;
+    }
+
+    public NavDrawerItem(int id, int titleId, int icon, int layout) {
+        this.id = id;
+        this.titleId = titleId;
         this.icon = icon;
         this.layout = layout;
     }
@@ -44,7 +52,12 @@ public class NavDrawerItem implements ListItem {
             ((SelectableImage) convertView.findViewById(R.id.icon)).setImageResource(icon);
         }
 
-        ((TextView) convertView.findViewById(R.id.title)).setText(title);
+        if (titleId != -1) {
+            ((TextView) convertView.findViewById(R.id.title)).setText(titleId);
+        } else {
+            ((TextView) convertView.findViewById(R.id.title)).setText(title != null ? title : "");
+
+        }
 
         return convertView;
     }

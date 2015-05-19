@@ -14,16 +14,16 @@
         android:id="@+id/activity_foreground_dim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black"
-        android:alpha="0.0" />
+        android:alpha="0.0"
+        android:background="@color/black" />
 
     <RelativeLayout
         android:id="@+id/notification_settings"
-        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:clickable="true">
+        android:clickable="true"
+        android:visibility="invisible">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/notification_settings_toolbar"
@@ -34,8 +34,8 @@
             android:id="@+id/settings_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_below="@id/notification_settings_toolbar" />
+            android:layout_below="@id/notification_settings_toolbar"
+            android:orientation="vertical" />
 
     </RelativeLayout>
 
@@ -44,37 +44,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/warning_container">
+        android:layout_alignParentRight="true">
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/open_notification_settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:src="@drawable/ic_star_white_24dp"
             app:fab_colorNormal="@color/accent"
             app:fab_colorPressed="@color/accent_dark"
-            app:fab_colorRipple="@color/accent_dark_ripple"
-            android:layout_margin="16dp" />
+            app:fab_colorRipple="@color/accent_dark_ripple" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/close_notification_settings_button_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/warning_container"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:visibility="invisible"
-        android:layout_above="@id/warning_container">
+        android:visibility="invisible">
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/close_notification_settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:src="@drawable/ic_check_white_24dp"
             app:fab_colorNormal="@color/accent"
             app:fab_colorPressed="@color/accent_dark"
-            app:fab_colorRipple="@color/accent_dark_ripple"
-            android:layout_margin="16dp" />
+            app:fab_colorRipple="@color/accent_dark_ripple" />
     </FrameLayout>
 </RelativeLayout>

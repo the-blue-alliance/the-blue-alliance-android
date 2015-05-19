@@ -20,9 +20,7 @@ public class CSVManager {
         Reader reader = new StringReader(CSV);
         try {
             List<String> values = CSVHelper.parseLine(reader);
-            int i = 1;
             while (values != null) {
-                StringBuilder sb = new StringBuilder();
                 if (values.size() < 4 || values.get(1).toLowerCase().equals("none")) {
                     values = CSVHelper.parseLine(reader);
                     continue;
