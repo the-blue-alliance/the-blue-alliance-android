@@ -192,7 +192,7 @@ public class HomeActivity extends RefreshableHostActivity {
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
             case R.id.nav_item_notifications:
-                startActivity(NotificationDashboardActivity.newInstance(this));
+                startActivity(RecentNotificationsActivity.newInstance(this));
                 return;
             case R.id.nav_item_gameday:
                 startActivity(GamedayActivity.newInstance(this));

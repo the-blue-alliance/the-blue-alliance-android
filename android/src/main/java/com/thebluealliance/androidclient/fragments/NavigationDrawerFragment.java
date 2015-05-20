@@ -46,6 +46,7 @@ import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.listitems.SpacerListItem;
 
 import java.util.ArrayList;
 import java.util.List;

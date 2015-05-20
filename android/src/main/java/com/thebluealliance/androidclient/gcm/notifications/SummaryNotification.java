@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.NotificationDashboardActivity;
+import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
@@ -63,7 +63,7 @@ public class SummaryNotification extends BaseNotification {
 
     @Override
     public Intent getIntent(Context c) {
-        return NotificationDashboardActivity.newInstance(c);
+        return RecentNotificationsActivity.newInstance(c);
     }
 
     @Override

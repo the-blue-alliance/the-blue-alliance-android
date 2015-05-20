@@ -5,7 +5,7 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorAccent">@color/accent</item>
-        <item name="colorControlHighlight">@color/control_highlight</item>
+        <!--<item name="colorControlHighlight">@color/control_highlight</item>-->
         <!-- Hides the shadow below the actionbar -->
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:textColor">@color/black</item>
@@ -15,12 +15,12 @@
     this is the same as simply not showing the action bar. -->
     <style name="AppThemeNoActionBarTranslucentStatus" parent="AppTheme">
         <item name="windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppThemeNoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="InvertedPrimaryAndAccentTheme" parent="Theme.AppCompat.Light">

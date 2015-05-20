@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -17,21 +16,18 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateNotificationDashboard;
+import com.thebluealliance.androidclient.background.PopulateRecentNotifications;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.LabelValueListItem;
-import com.thebluealliance.androidclient.listitems.ListItem;
 
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by phil on 2/3/15.
  */
-public class NotificationDashboardFragment extends Fragment implements RefreshListener{
-    
-    private PopulateNotificationDashboard task;
+public class RecentNotificationsFragment extends Fragment implements RefreshListener {
+
+    private PopulateRecentNotifications task;
     private Activity parent;
 
     private Parcelable mListState;
@@ -58,21 +54,6 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
             mListView.onRestoreInstanceState(mListState);
             progressBar.setVisibility(View.GONE);
         }
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                if(mAdapter != null) {
-                    ListItem item = mAdapter.values.get(position);
-                    if (item instanceof LabelValueListItem && getActivity() != null) {
-                        String intent = ((LabelValueListItem) item).getIntent();
-                        Log.d(Constants.LOG_TAG, "Intent: "+intent);
-                        if (!intent.isEmpty()) {
-                            getActivity().startActivity(MyTBAHelper.deserializeIntent(intent));
-                        }
-                    }
-                }
-            }
-        });
         return view;
     }
 
@@ -115,8 +96,8 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
 
     @Override
     public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading notification dashboard info");
-        task = new PopulateNotificationDashboard(this);
+        Log.i(Constants.REFRESH_LOG, "Loading recent notifications info");
+        task = new PopulateRecentNotifications(this);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -126,12 +107,12 @@ public class NotificationDashboardFragment extends Fragment implements RefreshLi
             task.cancel(false);
         }
     }
-    
-    public void setAdapter(ListViewAdapter adapter){
+
+    public void setAdapter(ListViewAdapter adapter) {
         mAdapter = adapter;
     }
-    
-    public void updateTask(PopulateNotificationDashboard task){
+
+    public void updateTask(PopulateRecentNotifications task) {
         this.task = task;
     }
 

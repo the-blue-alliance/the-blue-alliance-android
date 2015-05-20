@@ -373,7 +373,7 @@ public class Database extends SQLiteOpenHelper {
                     event.close();
                     break;
                 case 20:
-                    // Create table for notification dashboard
+                    // Create table for recent notification
                     db.execSQL(CREATE_NOTIFICATIONS);
                     break;
                 case 23:
