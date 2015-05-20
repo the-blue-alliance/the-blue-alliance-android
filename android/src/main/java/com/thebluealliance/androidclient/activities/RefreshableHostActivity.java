@@ -31,6 +31,8 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
 
     private boolean mRefreshInProgress = false;
 
+    private boolean mRefreshEnabled = true;
+
     private boolean mProgressBarShowing = false;
 
     @Override
@@ -49,10 +51,12 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.refresh_menu, menu);
-        mOptionsMenu = menu;
-        if (mRefreshInProgress) {
-            setMenuProgressBarVisible(true);
+        if (mRefreshEnabled) {
+            getMenuInflater().inflate(R.menu.refresh_menu, menu);
+            mOptionsMenu = menu;
+            if (mRefreshInProgress) {
+                setMenuProgressBarVisible(true);
+            }
         }
         return true;
     }
@@ -88,6 +92,11 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         super.onPause();
         cancelRefresh();
         EventBus.getDefault().unregister(this);
+    }
+
+    public void setRefreshEnabled(boolean enabled) {
+        mRefreshEnabled = enabled;
+        invalidateOptionsMenu();
     }
 
     public synchronized void registerRefreshListener(RefreshListener listener) {
