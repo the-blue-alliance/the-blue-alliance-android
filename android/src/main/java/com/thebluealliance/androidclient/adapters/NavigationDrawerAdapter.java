@@ -10,14 +10,9 @@ import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import java.util.List;
 
 /**
- * Adapter for NavDrawerItems
- * <p/>
- * TODO: Update to only take NavDrawerItems instead of ListItems.
- * <p/>
  * Created by Nathan on 5/8/2014.
  */
 public class NavigationDrawerAdapter extends ListViewAdapter {
-
 
     public NavigationDrawerAdapter(Context context, List<ListItem> values) {
         super(context, values);
@@ -26,6 +21,16 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        // Prevents spacers/dividers from being selected
+        if(getItem(position) instanceof NavDrawerItem) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

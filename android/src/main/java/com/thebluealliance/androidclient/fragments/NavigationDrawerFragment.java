@@ -90,6 +90,7 @@ public class NavigationDrawerFragment extends Fragment {
         NAVIGATION_ITEMS.add(new DividerListItem());
         NAVIGATION_ITEMS.add(new SpacerListItem());
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, R.string.nav_drawer_settings_title, R.drawable.ic_settings_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new SpacerListItem());
     }
 
     /**

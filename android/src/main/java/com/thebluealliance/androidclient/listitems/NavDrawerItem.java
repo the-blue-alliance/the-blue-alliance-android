@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.views.SelectableImage;
+import com.thebluealliance.androidclient.views.SelectableImageView;
 
 /**
  * File created by phil on 4/20/14.
@@ -44,19 +44,26 @@ public class NavDrawerItem implements ListItem {
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        if (convertView == null) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
             convertView = inflater.inflate(layout, null);
+
+            holder = new ViewHolder();
+            holder.image = (SelectableImageView) convertView.findViewById(R.id.icon);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         if (icon != -1) {
-            ((SelectableImage) convertView.findViewById(R.id.icon)).setImageResource(icon);
+            holder.image.setImageResource(icon);
         }
 
         if (titleId != -1) {
-            ((TextView) convertView.findViewById(R.id.title)).setText(titleId);
+            holder.title.setText(titleId);
         } else {
-            ((TextView) convertView.findViewById(R.id.title)).setText(title != null ? title : "");
-
+            holder.title.setText(title != null ? title : "");
         }
 
         return convertView;
@@ -64,5 +71,10 @@ public class NavDrawerItem implements ListItem {
 
     public int getId() {
         return id;
+    }
+
+    private class ViewHolder {
+        SelectableImageView image;
+        TextView title;
     }
 }
