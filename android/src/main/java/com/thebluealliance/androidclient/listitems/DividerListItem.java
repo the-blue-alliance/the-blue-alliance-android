@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.R;
 /**
  * Created by Nathan on 5/19/2015.
  */
-public class SpacerListItem implements ListItem {
+public class DividerListItem implements ListItem {
     @Override
     public int getViewType() {
         return 0;
@@ -17,7 +17,7 @@ public class SpacerListItem implements ListItem {
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        View v = inflater.inflate(R.layout.list_item_spacer, null);
+        View v = inflater.inflate(R.layout.list_item_divider, null);
         // Prevent clicks
         v.setEnabled(false);
         return v;

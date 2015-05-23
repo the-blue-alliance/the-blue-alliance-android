@@ -28,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -44,6 +43,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
+import com.thebluealliance.androidclient.listitems.DividerListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.listitems.SpacerListItem;
@@ -79,13 +79,17 @@ public class NavigationDrawerFragment extends Fragment {
 
 
     static {
+        NAVIGATION_ITEMS.add(new SpacerListItem());
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, R.string.nav_drawer_mytba_title, R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_gameday, R.string.nav_drawer_gameday_title, R.drawable.ic_videocam_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, R.string.nav_drawer_events_title, R.drawable.ic_event_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, R.string.nav_drawer_districts_title, R.drawable.ic_assignment_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, R.string.nav_drawer_teams_title, R.drawable.ic_group_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_notifications, R.string.nav_drawer_recent_notifications_title, R.drawable.ic_notifications_black_24dp, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, R.string.nav_drawer_settings_title, R.drawable.ic_settings_black_24dp, R.layout.nav_drawer_item_small));
+        NAVIGATION_ITEMS.add(new SpacerListItem());
+        NAVIGATION_ITEMS.add(new DividerListItem());
+        NAVIGATION_ITEMS.add(new SpacerListItem());
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, R.string.nav_drawer_settings_title, R.drawable.ic_settings_black_24dp, R.layout.nav_drawer_item));
     }
 
     /**
@@ -137,9 +141,9 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) v.findViewById(R.id.left_drawer);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mDrawerListView.setOnItemClickListener((parent, view, position, id) -> {
+            // Ignore items that represent things like spacers and dividers
+            if (mNavigationAdapter.getItem(position) instanceof NavDrawerItem) {
                 selectItem(position);
             }
         });
@@ -289,12 +293,7 @@ public class NavigationDrawerFragment extends Fragment {
             };
             mDrawerLayout.setDrawerListener(mDrawerToggle);
             // Defer code dependent on restoration of previous instance state.
-            mDrawerLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mDrawerToggle.syncState();
-                }
-            });
+            mDrawerLayout.post(() -> mDrawerToggle.syncState());
         } else {
             mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 
@@ -342,11 +341,13 @@ public class NavigationDrawerFragment extends Fragment {
     private void selectItem(int position) {
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
-            mNavigationAdapter.setItemSelected(position);
         }
 
-        NavDrawerItem item = mNavigationAdapter.getItem(position);
-        mListener.onNavDrawerItemClicked(item);
+        ListItem item = mNavigationAdapter.getItem(position);
+        if (!(item instanceof NavDrawerItem)) {
+            return;
+        }
+        mListener.onNavDrawerItemClicked((NavDrawerItem) item);
 
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);

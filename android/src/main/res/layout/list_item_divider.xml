@@ -7,8 +7,9 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="8dp"
+        android:layout_height="1dp"
         android:clickable="false"
-        android:focusable="false" />
+        android:focusable="false"
+        android:background="@color/nav_drawer_item_divider"/>
 
 </FrameLayout>
