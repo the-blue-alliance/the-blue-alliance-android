@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventStats;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -81,13 +82,13 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             selectedStatSort = savedInstanceState.getInt(SORT, -1);
         }
-        if(selectedStatSort == -1){
+        if (selectedStatSort == -1) {
             /* Sort has not yet been set. Default to OPR */
             selectedStatSort = Arrays.binarySearch(getResources().getStringArray(R.array.statsDialogArray),
                     getString(R.string.dialog_stats_sort_opr));
@@ -204,9 +205,9 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
-        mTask = new PopulateEventStats(this, true, statSortCategory);
+        mTask = new PopulateEventStats(this, new RequestParams(true, actionIconPressed), statSortCategory);
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 
@@ -224,10 +225,10 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
-    private String getSortTypeFromPosition(int position){
+    private String getSortTypeFromPosition(int position) {
         if (items[position].equals(getString(R.string.dialog_stats_sort_opr))) {
             return "opr";
         } else if (items[position].equals(getString(R.string.dialog_stats_sort_dpr))) {

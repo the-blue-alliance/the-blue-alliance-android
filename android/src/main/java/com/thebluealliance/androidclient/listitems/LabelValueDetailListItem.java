@@ -43,13 +43,13 @@ public class LabelValueDetailListItem extends ListElement {
         }
 
         holder.label.setText(label);
-        if(holder.container.getChildCount() > 2){
+        if (holder.container.getChildCount() > 2) {
             holder.container.removeViewAt(2);
         }
-        if(value != null) {
+        if (value != null) {
             holder.value.setVisibility(View.VISIBLE);
             holder.value.setText(value);
-        }else{
+        } else {
             holder.value.setVisibility(View.GONE);
             holder.container.addView(listItem.getView(c, inflater, null), 2);
         }

@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
@@ -9,13 +8,15 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
+import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,8 +24,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * File created by phil on 6/15/14.
@@ -35,15 +42,60 @@ public class EventHelper {
     public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy");
     public static final SimpleDateFormat shortRenderDateFormat = new SimpleDateFormat("MMM d");
     public static final SimpleDateFormat weekFormat = new SimpleDateFormat("w");
+    public static NumberFormat doubleFormat = new DecimalFormat("###.##");
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
     public static final String REGIONAL_LABEL = "Week %d";
     public static final String WEEKLESS_LABEL = "Other Official Events";
     public static final String OFFSEASON_LABEL = "Offseason Events";
     public static final String PRESEASON_LABEL = "Preseason Events";
+    private static final Pattern eventKeyPattern = Pattern.compile("[a-zA-Z]+");
+
+    private static final Pattern districtEventNamePattern = Pattern.compile("[A-Z]{2,3} District -(.+)");
+    private static final Pattern eventEventNamePattern = Pattern.compile("(.+)Event");
+    private static final Pattern regionalEventNamePattern =
+            Pattern.compile("\\s*(?:MAR |PNW |)(?:FIRST Robotics|FRC|)(.+)(?:(?:District|Regional|Region|State|Tournament|FRC|Field)\\b)");
+    private static final Pattern frcEventNamePattern = Pattern.compile("(.+)(?:FIRST Robotics|FRC)");
 
     public static boolean validateEventKey(String key) {
         if (key == null || key.isEmpty()) return false;
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
+    }
+
+    /**
+     * Extracts a short name like "Silicon Valley" from an event name like
+     * "Silicon Valley Regional sponsored by Google.org".
+     *
+     * <p/>See <a href="https://github.com/the-blue-alliance/the-blue-alliance/blob/master/helpers/event_helper.py"
+     * >the server's event_helper.py</a>.
+     */
+    public static String shortName(String eventName) {
+        Matcher m1 = districtEventNamePattern.matcher(eventName); // XYZ District - NAME
+        if (m1.matches()) {
+            String partial = m1.group(1).trim();
+            Matcher m2 = eventEventNamePattern.matcher(partial); // NAME Event...
+            if (m2.lookingAt()) {
+                return m2.group(1).trim();
+            }
+            return partial;
+        }
+
+        Matcher m3 = regionalEventNamePattern.matcher(eventName); // ... NAME Regional...
+        if (m3.lookingAt()) {
+            String partial = m3.group(1);
+            Matcher m4 = frcEventNamePattern.matcher(partial); // NAME FIRST Robotics/FRC...
+            if (m4.lookingAt()) {
+                return m4.group(1).trim();
+            } else {
+                return partial.trim();
+            }
+        }
+
+        return eventName.trim();
+    }
+
+    public static int getYearWeek(Date date){
+        if (date == null) return -1;
+        return Integer.parseInt(weekFormat.format(date));
     }
 
     public static int competitionWeek(Date date) {
@@ -51,7 +103,8 @@ public class EventHelper {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        int week = Integer.parseInt(weekFormat.format(date)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+        cal.add(Calendar.DAY_OF_YEAR,-1);
+        int week = getYearWeek(cal.getTime()) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         return week < 0 ? 0 : week;
     }
 
@@ -92,6 +145,13 @@ public class EventHelper {
             default:
                 return WEEKLESS_LABEL;
         }
+    }
+
+    public static String currentWeekLabel(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+
+        return weekLabelFromNum(cal.get(Calendar.YEAR), competitionWeek(date));
     }
 
     public static String weekLabelFromNum(int year, int weekNum) {
@@ -319,7 +379,7 @@ public class EventHelper {
                 if (broadcastIfLive && event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
-                    LocalBroadcastManager.getInstance(c).sendBroadcast(new LiveEventBroadcast(event.render()));
+                    EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
 
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -335,10 +395,10 @@ public class EventHelper {
         ArrayList<ListItem> eventListItems = new ArrayList<>();
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
-        for(Event event: events){
+        for (Event event : events) {
             try {
                 currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
-                if(!currentHeader.equals(lastHeader)){
+                if (!currentHeader.equals(lastHeader)) {
                     eventListItems.add(new EventTypeHeader(currentHeader + " Events"));
                 }
                 eventListItems.add(event.render());
@@ -346,7 +406,7 @@ public class EventHelper {
                 if (broadcastIfLive && event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
-                    LocalBroadcastManager.getInstance(c).sendBroadcast(new LiveEventBroadcast(event.render()));
+                    EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
@@ -354,33 +414,6 @@ public class EventHelper {
             lastHeader = currentHeader;
         }
         return eventListItems;
-    }
-
-    public static String getShortNameForEvent(String eventName, TYPE eventType) {
-        // Preseason and offseason events will probably fail our regex matcher
-        if (eventType == EventHelper.TYPE.PRESEASON || eventType == EventHelper.TYPE.OFFSEASON) {
-            return eventName;
-        }
-        String shortName = "";
-        Pattern regexPattern = Pattern.compile("(MAR |PNW )?(FIRST Robotics|FRC)?(.*)( FIRST Robotics| FRC)?( District| Regional| Region| State| Tournament| FRC| Field| Division)( Competition| Event| Championship)?( sponsored by.*)?");
-        Matcher m = regexPattern.matcher(eventName);
-        if (m.matches()) {
-            String s = m.group(3);
-            regexPattern = Pattern.compile("(.*)(FIRST Robotics|FRC)");
-            m = regexPattern.matcher(s);
-            if (m.matches()) {
-                shortName = m.group(1).trim();
-            } else {
-                shortName = s.trim();
-            }
-        }
-
-        // In case an event has a weird name, return the event name
-        if (shortName.isEmpty()) {
-            return eventName;
-        }
-
-        return shortName;
     }
 
     public static String getDateString(Date startDate, Date endDate) {
@@ -400,8 +433,117 @@ public class EventHelper {
             event.setMatches(JSONManager.getasJsonArray(data));
         } else if (url.contains("stats")) {
             event.setStats(data);
-        } else if (url.contains("district_points")){
+        } else if (url.contains("district_points")) {
             event.setDistrictPoints(data);
         }
+    }
+
+    public static String extractRankingString(CaseInsensitiveMap rankingElements){
+        // Find if the rankings contain a record; remove it if it does
+        Iterator it = rankingElements.entrySet().iterator();
+        String record = null;
+        while (it.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry) it.next();
+            if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
+                record = "(" + rankingElements.get(entry.getKey()) + ")";
+                it.remove();
+                break;
+            }
+        }
+
+        if (record == null) {
+            Set<String> keys = rankingElements.keySet();
+            if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
+                record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
+                rankingElements.remove("wins");
+                rankingElements.remove("losses");
+                rankingElements.remove("ties");
+            }
+        }
+
+        return record;
+    }
+
+    public static String createRankingBreakdown(CaseInsensitiveMap rankingElements){
+        String rankingString = "";
+        // Construct rankings string
+        Iterator it = rankingElements.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String value = entry.getValue().toString();
+            // If we have a number like 235.00, remove the useless .00 so it looks cleaner
+            try{
+                value = doubleFormat.format(Double.parseDouble(value));
+            }catch(NumberFormatException e){
+                //Item is not a number
+            }
+
+            // Capitalization hack
+            String rankingKey = entry.getKey().toString();
+            if (rankingKey.length() <= 3) {
+                rankingKey = rankingKey.toUpperCase();
+            } else {
+                rankingKey = capitalize(rankingKey);
+            }
+            rankingString += rankingKey + ": " + value;
+            if (it.hasNext()) {
+                rankingString += ", ";
+            }
+        }
+        Log.d(Constants.LOG_TAG, "String: "+rankingString);
+        return rankingString;
+    }
+
+    /**
+     * Hacky capitalize method to remove dependency on apache lib for only one method
+     * Stupid DEX limit...
+     * @param string Input string
+     * @return Input string with first letter of each word capitalized
+     */
+    private static String capitalize(String string){
+        StringBuilder sb = new StringBuilder();
+        String[] split = string.split(" ");
+        for(String s:split){
+            sb.append(s.substring(0, 1).toUpperCase());
+            sb.append(s.substring(1));
+            sb.append(" ");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    public static String getShortCodeForEventKey(String eventKey) {
+        if(validateEventKey(eventKey)) {
+            return eventKey.replaceAll("[0-9]+", "");
+        } else {
+            return eventKey;
+        }
+    }
+
+    public static class CaseInsensitiveMap<K> extends HashMap<String, K> {
+
+        @Override
+        public K put(String key, K value) {
+            return super.put(key.toLowerCase(), value);
+        }
+
+        public K get(String key) {
+            return super.get(key.toLowerCase());
+        }
+
+        public boolean contains(String key) {
+            return get(key) != null;
+        }
+    }
+
+    /**
+     * Returns an abbreviated event or district code like "CALB" from a match key like
+     * "2014calb_qm17" or event key like "2014necmp" or district key like "2014pnw".
+     * Returns "" if the argument doesn't parse as containing an event/district code.
+     */
+    public static String getEventCode(String matchOrEventOrDistrictKey) {
+        Matcher m = eventKeyPattern.matcher(matchOrEventOrDistrictKey);
+
+        return m.find() ? m.group().toUpperCase(Locale.US) : "";
     }
 }

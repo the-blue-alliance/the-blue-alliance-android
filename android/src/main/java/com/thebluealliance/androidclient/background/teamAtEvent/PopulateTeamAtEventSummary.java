@@ -14,10 +14,15 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -26,35 +31,39 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * File created by phil on 6/3/14.
  */
 public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    String teamKey, eventKey, eventYear, recordString, eventShort;
+    String teamKey, eventKey, rankingString, recordString, eventShort;
     RefreshableHostActivity activity;
     TeamAtEventSummaryFragment fragment;
     ArrayList<Match> eventMatches;
     ArrayList<Match> teamMatches;
     ArrayList<ListItem> summary;
+    int year;
     int rank;
     int allianceNumber = -1, alliancePick = -1;
     Event event;
-    boolean activeEvent, forceFromCache;
+    boolean activeEvent;
     MatchHelper.EventStatus status;
+    RequestParams requestParams;
+    private long startTime;
 
-    public PopulateTeamAtEventSummary(TeamAtEventSummaryFragment fragment, boolean forceFromCache) {
+    public PopulateTeamAtEventSummary(TeamAtEventSummaryFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
         this.activity = (RefreshableHostActivity) fragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -68,13 +77,15 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         APIResponse<ArrayList<Match>> matchResponse;
         Match nextMatch = null, lastMatch = null;
         try {
-            matchResponse = DataManager.Events.getMatchList(activity, eventKey, forceFromCache);
+            matchResponse = DataManager.Events.getMatchList(activity, eventKey, requestParams);
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
-            eventMatches = matchResponse.getData(); //sorted by play order
+            eventMatches = matchResponse.getData();
+            Collections.sort(eventMatches, new MatchSortByPlayOrderComparator());
+
             teamMatches = MatchHelper.getMatchesForTeam(eventMatches, teamKey);
 
             int[] record = MatchHelper.getRecordForTeam(eventMatches, teamKey);
@@ -86,13 +97,15 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
 
         APIResponse<Event> eventResponse;
         try {
-            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);
             event = eventResponse.getData();
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
 
-            if(event.isHappeningNow() && teamMatches != null) {
+            year = event.getEventYear();
+
+            if (event.isHappeningNow() && teamMatches != null) {
                 nextMatch = MatchHelper.getNextMatchPlayed(teamMatches);
                 lastMatch = MatchHelper.getLastMatchPlayed(teamMatches);
             }
@@ -105,8 +118,12 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         }
 
         if (event != null) {
-            eventShort = event.getShortName();
-            eventYear = eventKey.substring(0,4);
+            try {
+                eventShort = event.getEventShortName();
+            } catch (BasicModel.FieldNotDefinedException e) {
+                Log.e(Constants.LOG_TAG, "Can't get event short name");
+                return APIResponse.CODE.NODATA;
+            }
             activeEvent = event.isHappeningNow();
             // Search for team in alliances
             JsonArray alliances;
@@ -134,10 +151,22 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             return APIResponse.CODE.NODATA;
         }
 
-        APIResponse<Integer> rankResponse;
+        APIResponse<JsonArray> rankResponse;
         try {
-            rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, forceFromCache);
-            rank = rankResponse.getData();
+            rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, requestParams);
+            JsonArray rankData = rankResponse.getData();
+            if(rankData.size() > 0){
+                rank = rankData.get(1).getAsJsonArray().get(0).getAsInt(); // fist index of second child is the rank
+                JsonArray headerRow = rankData.get(0).getAsJsonArray();
+                JsonArray teamRank = rankData.get(1).getAsJsonArray();
+                rankingString = "";
+                EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();  // use a CaseInsensitiveMap in order to find wins, losses, and ties below
+                for (int i = 2; i < teamRank.size(); i++) {
+                    rankingElements.put(headerRow.get(i).getAsString(), teamRank.get(i).getAsString());
+                }
+                EventHelper.extractRankingString(rankingElements);
+                rankingString = EventHelper.createRankingBreakdown(rankingElements);
+            }
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
             }
@@ -158,29 +187,39 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         summary = new ArrayList<>();
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
             // Rank
-            if (rank != -1) {
+            if (rank > 0) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_rank), rank + Utilities.getOrdinalFor(rank)));
             }
             // Record
-            if (!recordString.equals("0-0-0")) {
+            /* Don't show for 2015 events, because no wins and such */
+            if (year != 2015 && !recordString.equals("0-0-0")) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_record), recordString));
             }
 
             // Alliance
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
-                status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+                    status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_alliance), generateAllianceSummary(activity.getResources(), allianceNumber, alliancePick)));
             }
 
             // Status
-            summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
+            if(status != MatchHelper.EventStatus.NOT_PICKED) {
+                summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
+            }
 
-            if(lastMatch != null) {
+            // Ranking Breakdown
+            if(rankingString != null && !rankingString.isEmpty()){
+                summary.add(new LabelValueListItem("Ranking Breakdown", rankingString));
+            }
+
+            if (lastMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_last_match), lastMatch.render()));
             }
-            if(nextMatch != null){
+            if (nextMatch != null) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.title_next_match), nextMatch.render()));
             }
+
+            summary.add(new EmptyListElement(""));
         }
 
         return APIResponse.mergeCodes(matchResponse.getCode(), eventResponse.getCode(),
@@ -191,17 +230,17 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
         View view = fragment.getView();
-        if (activity != null && view != null && code != APIResponse.CODE.NODATA) {
-            if (activity.getActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
+        if (activity != null && view != null) {
+            if (activity.getSupportActionBar() != null && eventShort != null && !eventShort.isEmpty()) {
                 activity.setActionBarTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
-                activity.setActionBarSubtitle("@ " + eventYear + " " + eventShort);
+                activity.setActionBarSubtitle("@ " + year + " " + eventShort);
             }
 
             ListViewAdapter adapter = new ListViewAdapter(activity, summary);
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             // If the adapter has no children, display a generic "no data" message.
             // Otherwise, show the list as normal.
-            if (adapter.isEmpty()) {
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && summary.isEmpty())) {
                 noDataText.setText(R.string.not_available);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
@@ -219,28 +258,29 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             }
 
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            PopulateTeamAtEventSummary secondTask = new PopulateTeamAtEventSummary(fragment, false);
-            fragment.updateTask(secondTask);
-            secondTask.execute(teamKey, eventKey);
-        } else {
-            // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
-            if (activity instanceof RefreshableHostActivity) {
-                activity.notifyRefreshComplete(fragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateTeamAtEventSummary secondTask = new PopulateTeamAtEventSummary(fragment, requestParams);
+                fragment.updateTask(secondTask);
+                secondTask.execute(teamKey, eventKey);
+            } else {
+                // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
+                if (activity != null && activity instanceof RefreshableHostActivity) {
+                    activity.notifyRefreshComplete(fragment);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime,  "team@event summary", teamKey + "@" + eventKey);
         }
     }
 

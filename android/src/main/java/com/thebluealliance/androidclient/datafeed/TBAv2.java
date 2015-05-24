@@ -7,15 +7,13 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.squareup.okhttp.Response;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,9 +78,9 @@ public class TBAv2 {
         API_URL.put(QUERY.DISTRICT_RANKINGS, "/api/v2/district/%s/%d/rankings");
     }
 
-    public static String getTBAApiUrl(Context c, QUERY query){
+    public static String getTBAApiUrl(Context c, QUERY query) {
         String host = tbaHostDefault;
-        if(c != null) {
+        if (c != null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
             if (prefs != null) {
                 host = prefs.getString(TBA_HOST_PREF, tbaHostDefault);
@@ -91,7 +89,7 @@ public class TBAv2 {
                 }
             }
         }
-        return host+API_URL.get(query);
+        return host + API_URL.get(query);
     }
 
     public static ArrayList<Event> getEventList(String json) {
@@ -112,17 +110,9 @@ public class TBAv2 {
         return teams;
     }
 
-    public static ArrayList<District> getDistrictList(String json, String url){
-        ArrayList<District> districts = new ArrayList<>();
+    public static ArrayList<District> getDistrictList(String json, String url, int version) {
         JsonArray data = JSONManager.getasJsonArray(json);
-        for (JsonElement d : data) {
-            districts.add(DistrictHelper.buildDistrictFromUrl(d.getAsString(), url));
-        }
-        return districts;
-    }
-
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean forceFromCache) throws DataManager.NoDataException {
-        return getResponseFromURLOrThrow(c, URL, true, forceFromCache);
+        return DistrictHelper.buildVersionedDistrictList(data, url, version);
     }
 
     /**
@@ -137,12 +127,14 @@ public class TBAv2 {
      *
      * @param c              Calling context - used to query the database for the Last-Update time for a URL
      * @param URL            API URL to check and see if an update is required
-     * @param cacheLocally   Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
-     * @param forceFromCache When this parameter is true, we won't make any web requests and just return Code.LOCAL, telling the caller to use whatever it has cached locally
+     * @param params Parameters associated with this request
+       * cacheLocally: Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
+       * forceFromCache: When this parameter is true, we won't make any web requests and just return Code.LOCAL, telling the caller to use whatever it has cached locally
+       * forceFromWeb: When this parameter is true, the API timeout is greatly reduced so we can force (not exactly, but close enough) a web refresh. The timeout still exists for the poor server's sake
      * @return APIResponse containing the data we fetched (if necessary) and the response code for how we obtained that data.
      * @throws DataManager.NoDataException
      */
-    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, boolean cacheLocally, boolean forceFromCache) throws DataManager.NoDataException {
+    public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, RequestParams params) throws DataManager.NoDataException {
         if (c == null) {
             Log.d(Constants.DATAMANAGER_LOG, "Error: null context");
             throw new DataManager.NoDataException("Unexpected problem retrieving data");
@@ -173,8 +165,9 @@ public class TBAv2 {
 
                 /* First, check if we're within the API timeout. If so, just tell the caller to return what data we have */
                 Date now = new Date();
-                Date futureTime = new Date(cachedData.lastHit.getTime() + Constants.API_HIT_TIMEOUT);
-                if (now.before(futureTime)) {
+                long timeout = params.forceFromWeb?Constants.API_HIT_TIMEOUT_LONG:Constants.API_HIT_TIMEOUT_SHORT;
+                Date futureTime = new Date(cachedData.lastHit.getTime() + timeout);
+                if (now.before(futureTime) && !params.forceFromWeb) {
                     //if isn't hasn't been longer than the timeout (1 minute now)
                     //just return what we have in cache
                     return cachedData.updateCode(APIResponse.CODE.CACHED304); /* Send Code.CACHED304 to tell the caller
@@ -184,25 +177,25 @@ public class TBAv2 {
                 }
 
                 /* If we don't want to query the API at all, then tell the caller to return from cache */
-                if (forceFromCache) {
+                if (params.forceFromCache) {
                     return cachedData; /* This will have Code.LOCAL and null data */
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
-                HttpResponse cachedResponse = HTTP.getResponse(URL, cachedData.getLastUpdate());
+                Response cachedResponse = HTTP.getRequest(URL, params.forceFromWeb?null:cachedData.getLastUpdate());
 
-                if(cachedResponse != null) {
+                if (cachedResponse != null) {
 
-                    int responseStatus = cachedResponse.getStatusLine().getStatusCode();
+                    int responseStatus = cachedResponse.code();
 
                     /**
                      * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
                      * and with the response contents (e.g. "404 Not Found") as the error message.
                      * This will have the code APIResponse.ERROR
                      */
-                    if(responseStatus/100 == 4 || responseStatus/100 == 5){
+                    if (responseStatus / 100 == 4 || responseStatus / 100 == 5) {
                         String responseData = HTTP.dataFromResponse(cachedResponse);
-                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP "+responseStatus+"\n "+responseData+" from updating "+URL);
+                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP " + responseStatus + "\n " + responseData + " from updating " + URL);
                         return new APIResponse<>("", responseData);
                     }
 
@@ -217,16 +210,20 @@ public class TBAv2 {
                      * Also, if the server gives a Last-Modified time back, record it and add it to the database for future use
                      */
                         String response = HTTP.dataFromResponse(cachedResponse),
-                                lastUpdate = "";
-                        Header lastModified = cachedResponse.getFirstHeader("Last-Modified");
-                        if (lastModified != null) {
-                            lastUpdate = lastModified.getValue();
+                                lastUpdate =  cachedResponse.header("Last-Modified", "");
+
+                        int apiVersion;
+                        String versionHeader = cachedResponse.header("X-TBA-Version", "");
+                        if(!versionHeader.isEmpty()){
+                            apiVersion = Integer.parseInt(versionHeader);
+                        }else{
+                            apiVersion = 0;
                         }
 
                         Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
 
-                        Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet: " + URL);
-                        return new APIResponse<>(response, APIResponse.CODE.UPDATED); /* This response will contain the data that we fetched */
+                        Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet v"+apiVersion+": " + URL);
+                        return new APIResponse<>(response, APIResponse.CODE.UPDATED, apiVersion); /* This response will contain the data that we fetched */
                     } else {
                     /* The data does not require an update (we got a 304-Not-Modified back), so simply
                      * Update the lastHit time in the database to make sure the timeout stays active
@@ -235,7 +232,7 @@ public class TBAv2 {
 
                         return cachedData.updateCode(APIResponse.CODE.CACHED304);
                     }
-                }else{
+                } else {
                     Log.e(Constants.DATAMANAGER_LOG, "Unable to update data from the web");
                     return new APIResponse<String>(null, APIResponse.CODE.NODATA);
                 }
@@ -248,36 +245,40 @@ public class TBAv2 {
                 /* We haven't hit this response before - it doesn't exist in the database
                  * But we do have the ability to fetch it from the web.
                  */
-                HttpResponse webResponse = HTTP.getResponse(URL);
-                if(webResponse != null) {
+                Response webResponse = HTTP.getRequest(URL);
+                if (webResponse != null) {
 
-                    int responseStatus = webResponse.getStatusLine().getStatusCode();
+                    int responseStatus = webResponse.code();
 
                     /**
                      * If we get 4xx Client Error or 5xx Server back as a code, return a response with an empty string as data
                      * and with the response contents (e.g. "404 Not Found") as the error message.
                      * This will have the code APIResponse.ERROR
                      */
-                    if(responseStatus/100 == 4 || responseStatus/100 == 5){
+                    if (responseStatus / 100 == 4 || responseStatus / 100 == 5) {
                         String responseData = HTTP.dataFromResponse(webResponse);
-                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP "+responseStatus+"\n "+responseData+" from fetching "+URL);
+                        Log.e(Constants.DATAMANAGER_LOG, "Error: HTTP " + responseStatus + "\n " + responseData + " from fetching " + URL);
                         return new APIResponse<>("", responseData);
                     }
 
                     String response = HTTP.dataFromResponse(webResponse),
-                            lastUpdate = "";
-                    Header lastModified = webResponse.getFirstHeader("Last-Modified");
-                    if (lastModified != null) {
-                        lastUpdate = lastModified.getValue();
-                    }
+                            lastUpdate = webResponse.header("Last-Modified", "");
 
-                    if (cacheLocally) {
+                    if (params.cacheLocally) {
                         Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
                     }
 
-                    Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet: " + URL);
-                    return new APIResponse<>(response, APIResponse.CODE.WEBLOAD); /* This response will contain the loaded data */
-                }else{
+                    int apiVersion;
+                    String versionHeader = webResponse.header("X-TBA-Version", "");
+                    if(!versionHeader.isEmpty()){
+                       apiVersion = Integer.parseInt(versionHeader);
+                    }else{
+                        apiVersion = 0;
+                    }
+
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet v"+apiVersion+": " + URL);
+                    return new APIResponse<>(response, APIResponse.CODE.WEBLOAD, apiVersion); /* This response will contain the loaded data */
+                } else {
                     Log.e(Constants.DATAMANAGER_LOG, "Unable to load data from the web");
                     return new APIResponse<String>(null, APIResponse.CODE.NODATA);
                 }

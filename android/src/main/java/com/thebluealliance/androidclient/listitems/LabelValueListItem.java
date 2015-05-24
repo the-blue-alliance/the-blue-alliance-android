@@ -9,23 +9,36 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 
 /**
-* Created by phil on 7/16/14.
-*/
+ * Created by phil on 7/16/14.
+ */
 public class LabelValueListItem extends ListElement {
 
-    String label, value;
+    String label, value, intent;
     ListItem listItem;
+    int layout;
 
+    public LabelValueListItem(String label, String value, String intent, int layout) {
+        this.label = label;
+        this.value = value;
+        this.listItem = null;
+        this.intent = intent;
+        this.layout = layout;
+    }
+    
     public LabelValueListItem(String label, String value) {
         this.label = label;
         this.value = value;
         this.listItem = null;
+        this.intent = "";
+        this.layout = R.layout.list_item_summary;
     }
 
-    public LabelValueListItem(String label, ListItem value){
+    public LabelValueListItem(String label, ListItem value) {
         this.label = label;
         this.listItem = value;
         this.value = null;
+        this.intent = "";
+        this.layout = R.layout.list_item_summary;
     }
 
     @Override
@@ -33,7 +46,7 @@ public class LabelValueListItem extends ListElement {
         ViewHolder holder;
 
         if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
-            convertView = inflater.inflate(R.layout.list_item_summary, null);
+            convertView = inflater.inflate(layout, null);
 
             holder = new ViewHolder();
             holder.label = (TextView) convertView.findViewById(R.id.label);
@@ -45,13 +58,13 @@ public class LabelValueListItem extends ListElement {
         }
 
         holder.label.setText(label);
-        if(holder.container.getChildCount() > 2){
+        if (holder.container.getChildCount() > 2) {
             holder.container.removeViewAt(2);
         }
-        if(value != null) {
+        if (value != null) {
             holder.value.setVisibility(View.VISIBLE);
             holder.value.setText(value);
-        }else{
+        } else {
             holder.value.setVisibility(View.GONE);
             holder.container.addView(listItem.getView(c, inflater, null), 2);
         }
@@ -63,5 +76,9 @@ public class LabelValueListItem extends ListElement {
         TextView label;
         TextView value;
         LinearLayout container;
+    }
+    
+    public String getIntent(){
+        return intent;
     }
 }

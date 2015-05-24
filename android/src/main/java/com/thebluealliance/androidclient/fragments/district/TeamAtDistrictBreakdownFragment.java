@@ -16,13 +16,14 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateTeamAtDistrictBreakdown;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
 /**
  * File created by phil on 7/26/14.
  */
-public class TeamAtDistrictBreakdownFragment extends Fragment implements RefreshListener{
+public class TeamAtDistrictBreakdownFragment extends Fragment implements RefreshListener {
 
     public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 
@@ -33,7 +34,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     private ExpandableListAdapter mAdapter;
     private ExpandableListView mListView;
 
-    public static TeamAtDistrictBreakdownFragment newInstance(String teamKey, String districtKey){
+    public static TeamAtDistrictBreakdownFragment newInstance(String teamKey, String districtKey) {
         TeamAtDistrictBreakdownFragment f = new TeamAtDistrictBreakdownFragment();
         Bundle args = new Bundle();
         args.putString(TEAM, teamKey);
@@ -52,7 +53,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
         mParent = getActivity();
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -96,9 +97,9 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     }
 
     @Override
-    public void onRefreshStart() {
-        Log.d(Constants.REFRESH_LOG, "Loading breakdown for "+teamKey + " at "+districtKey);
-        mTask = new PopulateTeamAtDistrictBreakdown(this, true);
+    public void onRefreshStart(boolean actionIconPressed) {
+        Log.d(Constants.REFRESH_LOG, "Loading breakdown for " + teamKey + " at " + districtKey);
+        mTask = new PopulateTeamAtDistrictBreakdown(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, districtKey);
     }
 
@@ -116,7 +117,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 
 }

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.thebluealliance.androidclient.views.DisableSwipeViewPager xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_pager"
     android:layout_width="match_parent"
@@ -14,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/welcome_next_page"
-            android:layout_alignParentTop="true" >
+            android:layout_alignParentTop="true">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -37,7 +36,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/textView"
-                    android:src="@drawable/logo_highres" />
+                    android:src="@drawable/ic_launcher_ultrahires_noshadow" />
 
                 <TextView
                     android:id="@+id/welcome_message"
@@ -115,7 +114,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"
                     android:layout_alignParentTop="true"
-                    android:src="@drawable/logo_highres" />
+                    android:src="@drawable/ic_launcher_ultrahires_noshadow" />
 
                 <TextView
                     android:layout_width="match_parent"

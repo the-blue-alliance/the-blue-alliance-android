@@ -1,0 +1,19 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment">
+
+    <com.thebluealliance.androidclient.views.SlidingTabs
+        android:id="@+id/my_tba_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/primary" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/my_tba_pager"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+</LinearLayout>

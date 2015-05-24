@@ -6,6 +6,10 @@
     <string name="welcome_message">Before you can use the app, I have to download some data from our servers first. Please make sure you have a good network connection and press \"Next\" when ready.</string>
     <string name="update_message">The Blue Alliance for Android has been updated to a new version. I need to update some data from our servers before it\'s ready to use. Please make sure you have a good network connection and press \"Next\" when ready.</string>
     <string name="load_finished_message">You\'re all set! Enjoy the app.</string>
+    <string name="mytba_title">myTBA Settings</string>
+    <string name="mytba_description">The Blue Alliance for Android includes a cloud-based feature called myTBA. myTBA allows you to keep track of your favorite aspects of the community. You can also add subscriptions to be notified when certain things happen at live events.\n
+    Enabling myTBA requires you to grant access to your Google Account so we can make your favorites synchronize across your devices.</string>
+    <string name="enable_mytba">Enable myTBA</string>
     <string name="finish">Finish</string>
     <string name="next">Next</string>
 

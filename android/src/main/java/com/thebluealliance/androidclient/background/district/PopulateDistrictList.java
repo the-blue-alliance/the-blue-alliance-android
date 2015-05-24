@@ -14,8 +14,9 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
@@ -25,16 +26,17 @@ import java.util.ArrayList;
 /**
  * Created by phil on 7/24/14.
  */
-public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.CODE>{
+public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.CODE> {
 
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private DistrictListFragment fragment;
     private RefreshableHostActivity activity;
     private int year;
     private ArrayList<ListItem> districts;
+    private long startTime;
 
-    public PopulateDistrictList(DistrictListFragment fragment, boolean forceFromCache){
-        this.forceFromCache = forceFromCache;
+    public PopulateDistrictList(DistrictListFragment fragment, RequestParams requestParams) {
+        this.requestParams = requestParams;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
     }
@@ -42,7 +44,7 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -50,16 +52,16 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
         year = params[0];
 
         try {
-            APIResponse<ArrayList<District>> response = DataManager.Districts.getDistrictsInYear(activity, year, forceFromCache);
+            APIResponse<ArrayList<District>> response = DataManager.Districts.getDistrictsInYear(activity, year, requestParams);
             districts = new ArrayList<>();
-            for(District district: response.getData()){
+            for (District district : response.getData()) {
                 int numEvents = DataManager.Districts.getNumEventsForDistrict(activity, district.getKey());
                 district.setNumEvents(numEvents);
                 districts.add(district.render());
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            Log.w(Constants.LOG_TAG, "Unable to get district list for "+year);
+            Log.w(Constants.LOG_TAG, "Unable to get district list for " + year);
             return APIResponse.CODE.NODATA;
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.wtf(Constants.LOG_TAG, "District has no key?");
@@ -79,7 +81,7 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
 
             // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
-            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!forceFromCache && adapter.values.isEmpty())) {
+            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!requestParams.forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(R.string.no_district_list);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
@@ -103,15 +105,17 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateDistrictList second = new PopulateDistrictList(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateDistrictList second = new PopulateDistrictList(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(year);
-            } else {
+            } else if(activity != null){
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Event list refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) fragment);
+                activity.notifyRefreshComplete(fragment);
             }
 
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "district list", Integer.toString(year));
         }
     }
 }

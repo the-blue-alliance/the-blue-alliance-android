@@ -4,12 +4,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.text.Html;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -24,10 +29,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.Format;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import me.xuender.unidecode.Unidecode;
 
@@ -47,6 +58,12 @@ public class Utilities {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
+    }
+
+    public static int getFirstompWeek(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return getFirstCompWeek(cal.get(Calendar.YEAR));
     }
 
     public static int getFirstCompWeek(int year) {
@@ -146,6 +163,7 @@ public class Utilities {
                     intent = HomeActivity.newInstance(c, R.id.nav_item_insights);
                     break;
                 case "gameday":
+                    intent = GamedayActivity.newInstance(c);
                     break;
                 default:
                     intent = null;
@@ -233,23 +251,146 @@ public class Utilities {
         return true;
     }
 
-    public static String readLocalProperty(Context c, String property) {
+    public static String readLocalProperty(Context c, String property){
+        return readLocalProperty(c, property, "");
+    }
+
+    public static String readLocalProperty(Context c, String property, String defaultValue) {
         Properties properties;
         properties = new Properties();
+        if(c == null){
+            Log.w(Constants.LOG_TAG, "Null context. Can't read local properties");
+            return defaultValue;
+        }
         try {
             InputStream fileStream = c.getAssets().open("tba.properties");
             properties.load(fileStream);
             fileStream.close();
-            return properties.getProperty(property, "");
+            if(isDebuggable() && properties.containsKey(property + ".debug")){
+                return properties.getProperty(property + ".debug");
+            }
+            return properties.getProperty(property, defaultValue);
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "Unable to read from tba.properties");
             e.printStackTrace();
         }
-        return "";
+        return defaultValue;
     }
 
-    public static boolean isDebuggable(){
+    public static boolean isDebuggable() {
         return BuildConfig.DEBUG;
+    }
+
+    /**
+     * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware serial number</a>
+     * I hope this actually works universally, android UUIDs are irritatingly difficult
+     *
+     * @return UUID
+     */
+    public static String getUUID() {
+        return Build.SERIAL;
+    }
+
+    /**
+     * Utility method to create a comma separated list of strings. Useful when you have a list of things
+     * that you want to express in a human-readable list, e.g. teams in a match.
+     * <p/>
+     * If the length of the list is 1, this method will return the input string verbatim.
+     * <p/>
+     * If the length of the list is 2, the returned string will be formatted like "XXXX and YYYY".
+     * <p/>
+     * If the length of the list is 3 or more, the returned string will be formatted like "XXXX, YYYY, and ZZZZ".
+     * <p/>
+     * This uses a localized "and" string.
+     */
+    public static String stringifyListOfStrings(Context context, ArrayList<String> strings) {
+        String finalString = "";
+        Resources r = context.getResources();
+        int size = strings.size();
+        if (size == 0) {
+            finalString = "";
+        } else if (size == 1) {
+            finalString = strings.get(0);
+        } else if (size == 2) {
+            finalString = strings.get(0) + " " + r.getString(R.string.and) + " " + strings.get(1);
+            // e.g. "111 and 1114"
+        } else if (size > 2) {
+            finalString += strings.get(0);
+            for (int i = 1; i < size; i++) {
+                if (i < size - 1) {
+                    finalString += ", " + strings.get(i);
+                } else {
+                    finalString += ", " + r.getString(R.string.and) + " " + strings.get(i);
+                }
+            }
+            // e.g. "111, 1114, and 254
+        }
+        return finalString;
+    }
+
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    private static String bytesToHexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        String output = new String(hexChars);
+        return output.toLowerCase();
+    }
+
+    public static String sha256(String input) {
+        MessageDigest digest = null;
+        String hash = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+            digest.update(input.getBytes());
+
+            hash = bytesToHexString(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(Constants.LOG_TAG, "Can't find SHA-256 algorithm.");
+            e.printStackTrace();
+        }
+        return hash;
+    }
+
+    public static boolean hasLApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+    
+    public static String getDeviceUUID(Context context){
+        return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    public static String getBuildTimestamp(Context c){
+        /* Check the last modified time of classes.dex,
+         * which was when the app was last built
+         */
+        try{
+            ApplicationInfo ai = c.getPackageManager().getApplicationInfo(c.getPackageName(), 0);
+            ZipFile zf = new ZipFile(ai.sourceDir);
+            ZipEntry ze = zf.getEntry("classes.dex");
+            long time = ze.getTime();
+            Format dateFormat = DateFormat.getDateFormat(c);
+            Format timeFormat = DateFormat.getTimeFormat(c);
+            Date date = new java.util.Date(time);
+            String s = dateFormat.format(date) + " " + timeFormat.format(date);
+            zf.close();
+            return s;
+        }catch(Exception e){
+            return null;
+        }
+    }
+    
+    public static String getVersionNumber(){
+        /* If this changes, make sure to also change it in SettingsActivity */
+        if(BuildConfig.VERSION_NAME.contains("/")){
+            return BuildConfig.VERSION_NAME.split("/")[0];
+        }else{
+            return BuildConfig.VERSION_NAME;
+        }
     }
 
 }

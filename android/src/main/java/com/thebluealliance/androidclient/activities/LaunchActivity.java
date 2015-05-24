@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,10 +24,10 @@ import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
+import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.util.regex.Matcher;
@@ -46,7 +44,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     public static final String APP_VERSION_KEY = "app_version";
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
 
-    private DisableSwipeViewPager viewPager;
+    protected DisableSwipeViewPager viewPager;
 
     private TextView loadingMessage;
 
@@ -131,6 +129,7 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     private boolean checkDataRedownload() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int lastVersion = prefs.getInt(APP_VERSION_KEY, -1);
+
         if (lastVersion == -1 && !prefs.getBoolean(ALL_DATA_LOADED, false)) {
             // on a clean install, don't think we're updating
             return false;
@@ -141,8 +140,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
-        if (!prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
-            //we are updating the app. Do stuffs.
+        if (prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+            //we are updating the app. Do stuffs. Start from the next version
+            lastVersion++;
             while (lastVersion <= BuildConfig.VERSION_CODE) {
                 Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
                 switch (lastVersion) {
@@ -151,18 +151,40 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                         getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS, LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS});
                         getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
                         break;
+                    case 16: //addition of myTBA - Prompt the user for an account
+                        redownload = true;
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
+                        getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
+                        break;
+                    case 21: //redownload to get event short names
+                        redownload = true;
+                        getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
+                        getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
+                        break;
+                    case 43: //bugfix: extra 2015 CMP division. Remove its cached response so it'll get downloaded again
+                        Database.getInstance(this).getResponseTable().deleteResponse("http://www.thebluealliance.com/api/v2/events/2015");
+                        break;
+                    case 46: //recreate search indexes to contain foreign keys
+                        RecreateSearchIndexes.startActionRecreateSearchIndexes(this);
+                        break;
                     default:
                         break;
                 }
                 lastVersion++;
             }
         }
+        // Store the current version key
+        prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).apply();
         return redownload;
     }
 
     private void goToHome() {
         startActivity(new Intent(this, HomeActivity.class));
         finish();
+    }
+
+    private void authenticate() {
+        startActivity(AuthenticatorActivity.newInstance(this, true));
     }
 
     @Override
@@ -173,8 +195,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 beginLoadingIfConnected();
                 break;
             case R.id.finish:
-                startActivity(new Intent(this, HomeActivity.class));
-                finish();
+                authenticate();
+                break;
         }
     }
 
@@ -290,12 +312,17 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
         if (info.state == LoadAllData.LoadProgressInfo.STATE_NO_CONNECTION) {
             connectionLost();
-        } else if (info.state == LoadAllData.LoadProgressInfo.STATE_LOADING) {
+        } else if (info.state == LoadAllData.LoadProgressInfo.STATE_LOADING && loadingMessage != null) {
             currentLoadingMessage = info.message;
             loadingMessage.setText(currentLoadingMessage);
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_FINISHED) {
             loadingFinished();
-            viewPager.advanceToNextPage();
+            if(viewPager != null) {
+                viewPager.advanceToNextPage();
+            }else{
+                // Pager is null, skipping to HomeActivity
+                startActivity(HomeActivity.newInstance(this, R.id.nav_item_events));
+            }
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_ERROR) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, false).commit();
             errorLoadingData(info.message);
@@ -392,7 +419,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 for (int i = 0; i < dataToLoad.length; i++) {
                     dataToLoad[i] = inData[i];
                 }
-            } else {
+            } else if(getArguments() != null) {
+                //don't load any data
+            }else{
                 dataToLoad = new Short[]{LOAD_TEAMS, LOAD_EVENTS, LOAD_DISTRICTS};
             }
 
@@ -410,17 +439,6 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         public void onProgressUpdate(LoadAllData.LoadProgressInfo info) {
             if (callback != null) {
                 callback.onProgressUpdate(info);
-            }
-        }
-    }
-
-    class RefreshBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
-            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_LOST) {
-                connectionLost();
             }
         }
     }

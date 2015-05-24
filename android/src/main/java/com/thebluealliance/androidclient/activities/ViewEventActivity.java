@@ -3,55 +3,78 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
-
-import java.util.Arrays;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * File created by phil on 4/20/14.
  */
-public class ViewEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
+public class ViewEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENTKEY = "eventKey";
+    public static final String TAB = "tab";
 
     private String mEventKey;
+    private int currentTab;
     private TextView infoMessage;
     private TextView warningMessage;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
 
-    public static Intent newInstance(Context c, String eventKey) {
+    /**
+     * Create new intent for ViewEventActivity 
+     * @param c context
+     * @param eventKey Key of the event to show
+     * @param tab The tab number from ViewEventFragmentPagerAdapter.
+     * @return Intent you can launch
+     */
+    public static Intent newInstance(Context c, String eventKey, int tab){
         Intent intent = new Intent(c, ViewEventActivity.class);
         intent.putExtra(EVENTKEY, eventKey);
+        intent.putExtra(TAB, tab);
         return intent;
+    }
+    
+    public static Intent newInstance(Context c, String eventKey) {
+        return newInstance(c, eventKey, ViewEventFragmentPagerAdapter.TAB_INFO);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_event);
 
+        MyTBAHelper.serializeIntent(getIntent());
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
             mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
         } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
+        
+        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)){
+            currentTab = getIntent().getExtras().getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
+        }else{
+            Log.i(Constants.LOG_TAG, "ViewEvent intent doesn't contain TAB. Defaulting to TAB_INFO");
+            currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
+        }
+
+        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
+        setContentView(R.layout.activity_view_event);
 
         infoMessage = (TextView) findViewById(R.id.info_container);
         warningMessage = (TextView) findViewById(R.id.warning_container);
@@ -66,21 +89,47 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
+        pager.setCurrentItem(currentTab);  // Do this after we set onPageChangeListener, so that FAB gets hidden, if needed
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
         isDistrict = true;
+
+        setSettingsToolbarTitle("Event Settings");
     }
 
-    public void updateDistrict(boolean isDistrict){
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (intent.getExtras() != null && intent.getExtras().containsKey(EVENTKEY)) {
+            mEventKey = intent.getExtras().getString(EVENTKEY, "");
+        } else {
+            throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
+        }
+        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
+        adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
+        pager.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: "+mEventKey);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+        startRefresh();
+    }
+
+    public void updateDistrict(boolean isDistrict) {
         this.isDistrict = isDistrict;
     }
 
@@ -98,7 +147,7 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // The title is empty now; the EventInfoFragment will set the appropriate title
         // once it is loaded.
         setActionBarTitle("");
@@ -116,13 +165,9 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events)).startActivities();
-                } else {
-                    Log.d(Constants.LOG_TAG, "Navigating up...");
-                    NavUtils.navigateUpTo(this, upIntent);
-                }
+                // If this tasks exists in the back stack, it will be brought to the front and all other activities
+                // will be destroyed. HomeActivity will be delivered this intent via onNewIntent().
+                startActivity(HomeActivity.newInstance(this, R.id.nav_item_events).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 return true;
             case R.id.stats_help:
                 Utilities.showHelpDialog(this, R.raw.stats_help, getString(R.string.stats_help_title));
@@ -166,13 +211,30 @@ public class ViewEventActivity extends RefreshableHostActivity implements ViewPa
 
     @Override
     public void onPageSelected(int position) {
-        if(mOptionsMenu != null) {
-            if(position == 5 && !isDistrict){
+        currentTab = position;
+        
+        if (mOptionsMenu != null) {
+            if (position == ViewEventFragmentPagerAdapter.TAB_STATS && !isDistrict) {
                 showInfoMessage(getString(R.string.warning_not_real_district));
-            }else{
+            } else {
                 hideInfoMessage();
             }
         }
+
+        // hide the FAB if we aren't on the first page
+        if(position != ViewEventFragmentPagerAdapter.TAB_INFO){
+            hideFab(true);
+        } else {
+            showFab(true);
+        }
+
+        /* Track the call */
+        /*Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, ViewEventActivity.this);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("view_event-tabs")
+                .setAction("tab_change")
+                .setLabel(mEventKey+ " "+adapter.getPageTitle(position))
+                .build());*/
     }
 
     @Override

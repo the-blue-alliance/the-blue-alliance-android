@@ -18,23 +18,23 @@ public class TeamDistrictPointsDeserializer implements JsonDeserializer<District
         final JsonObject object = json.getAsJsonObject();
         DistrictPointBreakdown breakdown = new DistrictPointBreakdown();
 
-        if(object.has("qual_points")){
+        if (object.has("qual_points")) {
             breakdown.setQualPoints(object.get("qual_points").getAsInt());
         }
 
-        if(object.has("elim_points")){
+        if (object.has("elim_points")) {
             breakdown.setElimPoints(object.get("elim_points").getAsInt());
         }
 
-        if(object.has("alliance_points")){
+        if (object.has("alliance_points")) {
             breakdown.setAlliancePoints(object.get("alliance_points").getAsInt());
         }
 
-        if(object.has("award_points")){
+        if (object.has("award_points")) {
             breakdown.setAwardPoints(object.get("award_points").getAsInt());
         }
 
-        if(object.has("total")){
+        if (object.has("total")) {
             breakdown.setTotalPoints(object.get("total").getAsInt());
         }
 

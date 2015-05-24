@@ -48,7 +48,7 @@ public class Constants {
     public static final int[] FIRST_COMP_WEEK =
             {6, 8, 8, 7, 12, 9, 9, 8,       // 1992 - 1999
              10,8, 9, 9, 9, 9, 8, 8, 8, 8,  // 2000 - 2009
-             9, 9, 8, 8, 8, 7};             // 2010 -
+             9, 9, 8, 8, 8, 8};             // 2010 -
 
     //the competition week of CMP that year, starting with 1992
     public static final int[] CMP_WEEK =
@@ -63,5 +63,7 @@ public class Constants {
 
     public static final int API_TEAM_LIST_PAGE_SIZE = 500;
 
-    public static final long API_HIT_TIMEOUT = 60000; //one minute in milliseconds
+    public static final long API_HIT_TIMEOUT_LONG = 60000;      // one minute in milliseconds
+    public static final long API_HIT_TIMEOUT_SHORT= 500;        // five seconds in milliseconds
+    public static final long MY_TBA_UPDATE_TIMEOUT = 600000;    // ten minutes in milliseconds
 }

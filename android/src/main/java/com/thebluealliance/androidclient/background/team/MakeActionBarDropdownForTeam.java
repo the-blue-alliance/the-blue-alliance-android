@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 import java.util.ArrayList;
@@ -32,12 +33,13 @@ public class MakeActionBarDropdownForTeam extends AsyncTask<String, Void, APIRes
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
+        Log.d(Constants.LOG_TAG, "Starting doInBackground: " + getClass().getName());
         if (params.length < 1 || !TeamHelper.validateTeamKey(params[0])) {
             throw new IllegalArgumentException("You must pass a valid team key to create the action bar");
         }
         teamKey = params[0];
         try {
-            APIResponse<ArrayList<Integer>> yearsResponse = DataManager.Teams.getYearsParticipated(activity, teamKey, false);
+            APIResponse<ArrayList<Integer>> yearsResponse = DataManager.Teams.getYearsParticipated(activity, teamKey, new RequestParams());
             Collections.reverse(yearsResponse.getData());
             Integer[] integerYears = yearsResponse.getData().toArray(new Integer[yearsResponse.getData().size()]);
             years = new int[integerYears.length];

@@ -14,7 +14,9 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -28,14 +30,15 @@ import java.util.ArrayList;
  */
 public class PopulateDistrictRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private DistrictRankingsFragment fragment;
     private RefreshableHostActivity activity;
     private String districtKey;
     private ArrayList<ListItem> rankings;
+    private long startTime;
 
-    public PopulateDistrictRankings(DistrictRankingsFragment fragment, boolean forceFromCache){
-        this.forceFromCache = forceFromCache;
+    public PopulateDistrictRankings(DistrictRankingsFragment fragment, RequestParams params) {
+        this.requestParams = params;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
     }
@@ -43,31 +46,32 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
         districtKey = params[0];
 
+        rankings = new ArrayList<>();
+
         APIResponse<ArrayList<DistrictTeam>> response;
         try {
-            response = DataManager.Districts.getDistrictRankings(activity, districtKey, forceFromCache);
+            response = DataManager.Districts.getDistrictRankings(activity, districtKey, requestParams);
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to get district rankings for " + districtKey);
             return APIResponse.CODE.NODATA;
         }
 
-        rankings = new ArrayList<>();
-        for(DistrictTeam team: response.getData()){
+        for (DistrictTeam team : response.getData()) {
             try {
                 Team teamData = DataManager.Teams.getTeamFromDB(activity, team.getTeamKey());
                 String nickname;
-                if(teamData != null){
+                if (teamData != null) {
                     nickname = teamData.getNickname();
-                }else{
-                    Log.w(Constants.LOG_TAG, "Couldn't find "+team.getTeamKey()+" in db");
-                    nickname = "Team "+team.getTeamKey().substring(3);
+                } else {
+                    Log.w(Constants.LOG_TAG, "Couldn't find " + team.getTeamKey() + " in db");
+                    nickname = "Team " + team.getTeamKey().substring(3);
                 }
                 rankings.add(new DistrictTeamListElement(team.getTeamKey(), team.getDistrictKey(), nickname, team.getRank(), team.getTotalPoints()));
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -81,6 +85,9 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
+        if(fragment == null){
+            return;
+        }
         View view = fragment.getView();
         if (view != null && activity != null) {
             ListViewAdapter adapter = new ListViewAdapter(activity, rankings);
@@ -112,15 +119,17 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(districtKey);
-            } else {
+            } else if(activity != null){
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "District rankings refresh complete");
                 activity.notifyRefreshComplete(fragment);
             }
 
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "district rankings", districtKey);
         }
     }
 }

@@ -1,17 +1,13 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,19 +15,22 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
-import com.thebluealliance.androidclient.intents.LiveEventBroadcast;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
+import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Event;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * File created by phil on 4/22/14.
@@ -42,7 +41,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     private static final String KEY = "eventKey";
     private PopulateEventInfo task;
     private Activity parent;
-    private BroadcastReceiver receiver;
+    private Event event;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -61,7 +60,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         parent = getActivity();
 
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -75,6 +74,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         info.findViewById(R.id.event_cd_button).setOnClickListener(this);
         info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
         info.findViewById(R.id.event_top_oprs_container).setOnClickListener(this);
+        info.findViewById(R.id.event_date_container).setOnClickListener(this);
         return info;
     }
 
@@ -87,23 +87,21 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        receiver = new LiveEventBroadcastReceiver();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(LiveEventBroadcast.ACTION));
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " info");
-        task = new PopulateEventInfo(this, true);
+        task = new PopulateEventInfo(this, new RequestParams(true, actionIconPressed));
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
     }
 
@@ -127,18 +125,42 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         } else if (id == R.id.event_top_oprs_container) {
             ((ViewEventActivity) getActivity()).getPager().setCurrentItem(5);  // Stats
             return;
+        } else if (id == R.id.event_date_container) {
+            if(event == null) {
+                return;
+            }
+
+            // Calendar stuff isn't working propberly, the intent isn't setting the proper date
+            // on the calendar entry. This is disabled for now.
+
+            // Launch the calendar app with the event's info pre-filled
+            /*try {
+                long startTime = event.getStartDate().getTime();
+                long endTime = event.getEndDate().getTime();
+
+                Log.d(Constants.LOG_TAG, "Calendar: " + startTime + " - " + endTime);
+
+                Intent i = new Intent(Intent.ACTION_INSERT);
+                i.setData(CalendarContract.Events.CONTENT_URI);
+                i.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
+                i.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime);
+                i.putExtra(CalendarContract.Events.TITLE, event.getShortName());
+                i.putExtra(CalendarContract.Events.EVENT_LOCATION, event.getVenue());
+                i.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                startActivity(i);
+                return;
+            } catch (BasicModel.FieldNotDefinedException e) {
+                e.printStackTrace();
+                return;
+            }*/
+            return;
         }
+
         if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
             String uri = v.getTag().toString();
 
             //social button was clicked. Track the call
-            Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, getActivity());
-            t.send(new HitBuilders.EventBuilder()
-                    .setCategory("social_click")
-                    .setAction(uri)
-                    .setLabel(eventKey)
-                    .build());
-
+            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, eventKey);
 
             PackageManager manager = getActivity().getPackageManager();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
@@ -156,10 +178,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
-    protected void showLastMatch(MatchListElement match){
+    protected void showLastMatch(MatchListElement match) {
         LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_last_match_container);
         lastLayout.setVisibility(View.VISIBLE);
         if (lastLayout.getChildCount() > 1) {
@@ -169,31 +191,27 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     protected void showNextMatch(MatchListElement match){
-        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
-        lastLayout.setVisibility(View.VISIBLE);
-        if (lastLayout.getChildCount() > 1) {
-            lastLayout.removeViewAt(1);
+        LinearLayout nextLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
+        nextLayout.setVisibility(View.VISIBLE);
+        if (nextLayout.getChildCount() > 1) {
+            nextLayout.removeViewAt(1);
         }
-        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+        nextLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
     }
 
-    class LiveEventBroadcastReceiver extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Constants.LOG_TAG, "Received live event broadcast");
-            if(intent.getAction().equals(LiveEventBroadcast.ACTION)){
-                if(intent.hasExtra(LiveEventBroadcast.LAST_MATCH)){
-                    Log.d(Constants.LOG_TAG, "showing last match");
-                    MatchListElement last = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.LAST_MATCH);
-                    showLastMatch(last);
-                }
-                if(intent.hasExtra(LiveEventBroadcast.NEXT_MATCH)){
-                    Log.d(Constants.LOG_TAG, "showing next match");
-                    MatchListElement next = (MatchListElement)intent.getSerializableExtra(LiveEventBroadcast.NEXT_MATCH);
-                    showNextMatch(next);
-                }
-            }
+    public void onEvent(LiveEventMatchUpdateEvent event) {
+        if(event.getLastMatch() != null){
+            Log.d(Constants.LOG_TAG, "showing last match");
+            showLastMatch(event.getLastMatch().render());
         }
+        if(event.getNextMatch() != null){
+            Log.d(Constants.LOG_TAG, "showing next match");
+            showNextMatch(event.getNextMatch().render());
+        }
+    }
+
+    // Called when the event has been loaded. We use this to set up the calendar stuff.
+    public void onEvent(EventInfoLoadedEvent eventEvent) {
+        this.event = eventEvent.getEvent();
     }
 }

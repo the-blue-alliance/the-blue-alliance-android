@@ -18,14 +18,14 @@ public class AwardDeserializer implements JsonDeserializer<Award> {
         final JsonObject a = json.getAsJsonObject();
         final Award award = new Award();
 
-        if(a.has("event_key") && a.has("award_type")){
+        if (a.has("event_key") && a.has("award_type")) {
             int awardEnum = a.get("award_type").getAsInt();
             String eventKey = a.get("event_key").getAsString();
 
             award.setKey(AwardHelper.createAwardKey(eventKey, awardEnum));
             award.setEnum(awardEnum);
             award.setEventKey(eventKey);
-        }else {
+        } else {
 
             if (a.has("award_type")) {
                 award.setEnum(a.get("award_type").getAsInt());

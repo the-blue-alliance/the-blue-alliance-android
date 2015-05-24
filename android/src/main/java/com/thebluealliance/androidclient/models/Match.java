@@ -7,12 +7,15 @@ import android.util.Log;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
@@ -23,6 +26,11 @@ import java.util.Date;
 
 
 public class Match extends BasicModel<Match> {
+
+    public static final String[] NOTIFICATION_TYPES = {
+            NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE
+    };
 
     private String selectedTeam;
     private int year;
@@ -55,7 +63,7 @@ public class Match extends BasicModel<Match> {
         fields.put(Database.Matches.KEY, key);
         fields.put(Database.Matches.EVENT, key.split("_")[0]);
 
-        this.year = Integer.parseInt(key.substring(0, 3));
+        this.year = Integer.parseInt(key.substring(0, 4));
         this.type = MatchHelper.TYPE.fromKey(key);
     }
 
@@ -129,6 +137,35 @@ public class Match extends BasicModel<Match> {
 
     public void setAlliances(String allianceJson) {
         fields.put(Database.Matches.ALLIANCES, allianceJson);
+    }
+
+    public static JsonObject getRedAlliance(JsonObject alliances) {
+        return alliances.getAsJsonObject("red");
+    }
+
+    public static JsonObject getBlueAlliance(JsonObject alliances) {
+        return alliances.getAsJsonObject("blue");
+    }
+
+    public static int getRedScore(JsonObject alliances) {
+        return getRedAlliance(alliances).get("score").getAsInt();
+    }
+
+    public static int getBlueScore(JsonObject alliances) {
+        return getBlueAlliance(alliances).get("score").getAsInt();
+    }
+
+    public static JsonArray getRedTeams(JsonObject alliances) {
+        return getRedAlliance(alliances).getAsJsonArray("teams");
+    }
+
+    public static JsonArray getBlueTeams(JsonObject alliances) {
+        return getBlueAlliance(alliances).getAsJsonArray("teams");
+    }
+
+    /** @return true if the given team array contains the given team key, e.g. "frc111". */
+    public static boolean hasTeam(JsonArray teams, String teamKey) {
+        return teams.contains(new JsonPrimitive(teamKey));
     }
 
     public JsonArray getVideos() throws FieldNotDefinedException {
@@ -236,14 +273,14 @@ public class Match extends BasicModel<Match> {
         if (selectedTeam.isEmpty()) return false;
         try {
             JsonObject alliances = getAlliances();
-            JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-            int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+            JsonArray redTeams = getRedTeams(alliances),
+                    blueTeams = getBlueTeams(alliances);
+            int redScore = getRedScore(alliances),
+                    blueScore = getBlueScore(alliances);
 
-            if (redTeams.toString().contains(selectedTeam + "\"")) {
+            if (Match.hasTeam(redTeams, selectedTeam)) {
                 return redScore > blueScore;
-            } else if (blueTeams.toString().contains(selectedTeam + "\"")) {
+            } else if (Match.hasTeam(blueTeams, selectedTeam)) {
                 return blueScore > redScore;
             } else {
                 // team did not play in match
@@ -262,13 +299,13 @@ public class Match extends BasicModel<Match> {
             if (currentRecord == null || alliances == null || !(alliances.has("red") && alliances.has("blue"))) {
                 return;
             }
-            JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-            int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+            JsonArray redTeams = getRedTeams(alliances),
+                    blueTeams = getBlueTeams(alliances);
+            int redScore = getRedScore(alliances),
+                    blueScore = getBlueScore(alliances);
 
             if (hasBeenPlayed(redScore, blueScore)) {
-                if (redTeams.toString().contains(teamKey + "\"")) {
+                if (Match.hasTeam(redTeams, teamKey)) {
                     if (redScore > blueScore) {
                         currentRecord[0]++;
                     } else if (redScore < blueScore) {
@@ -276,7 +313,7 @@ public class Match extends BasicModel<Match> {
                     } else {
                         currentRecord[2]++;
                     }
-                } else if (blueTeams.toString().contains(teamKey + "\"")) {
+                } else if (Match.hasTeam(blueTeams, teamKey)) {
                     if (blueScore > redScore) {
                         currentRecord[0]++;
                     } else if (blueScore < redScore) {
@@ -299,8 +336,8 @@ public class Match extends BasicModel<Match> {
     public boolean hasBeenPlayed() {
         try {
             JsonObject alliances = getAlliances();
-            int redScore = alliances.get("red").getAsJsonObject().get("score").getAsInt(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsInt();
+            int redScore = getRedScore(alliances),
+                    blueScore = getBlueScore(alliances);
 
             return redScore >= 0 && blueScore >= 0;
         } catch (FieldNotDefinedException e) {
@@ -322,14 +359,31 @@ public class Match extends BasicModel<Match> {
      * @return A MatchListElement to be used to display this match
      */
     public MatchListElement render(boolean showVideo, boolean showHeaders, boolean showMatchTitle, boolean clickable) {
+        JsonObject alliances = null;
         try {
-            JsonObject alliances = getAlliances();
-            JsonArray videos = getVideos();
-            String key = getKey();
-            JsonArray redTeams = alliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = alliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-            String redScore = alliances.get("red").getAsJsonObject().get("score").getAsString(),
-                    blueScore = alliances.get("blue").getAsJsonObject().get("score").getAsString();
+            alliances = getAlliances();
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.ALLIANCES");
+            return null;
+        }
+        JsonArray videos = null;
+        try {
+            videos = getVideos();
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS. Defaulting to none.");
+            videos = new JsonArray();
+        }
+        String key = null;
+        try {
+            key = getKey();
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.KEY");
+            return null;
+        }
+        JsonArray redTeams = getRedTeams(alliances),
+                    blueTeams = getBlueTeams(alliances);
+            String redScore = getRedAlliance(alliances).get("score").getAsString(),
+                    blueScore = getBlueAlliance(alliances).get("score").getAsString();
 
             if (Integer.parseInt(redScore) < 0) redScore = "?";
             if (Integer.parseInt(blueScore) < 0) blueScore = "?";
@@ -360,17 +414,19 @@ public class Match extends BasicModel<Match> {
                 blueAlliance = new String[]{"", "", ""};
             }
 
-            return new MatchListElement(youTubeVideoKey, getTitle(true),
-                    redAlliance, blueAlliance,
-                    redScore, blueScore, key, getTimeMillis(), selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
+        long matchTime;
+        try {
+            matchTime = getTimeMillis();
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for rendering not present\n" +
-                    "Required: Database.Matches.ALLIANCES, Database.Matches.VIDEOS, Database.Matches.KEY, Database.Matches.MATCHNUM, Database.Matches.SETNUM");
-            return null;
+            matchTime = -1;
         }
+
+        return new MatchListElement(youTubeVideoKey, getTitle(true),
+                    redAlliance, blueAlliance,
+                    redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
     }
 
-    public static synchronized APIResponse<Match> query(Context c, String key, boolean forceFromCache, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<Match> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
         Match match;
@@ -381,11 +437,11 @@ public class Match extends BasicModel<Match> {
             match = new Match();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         ArrayList<Match> allMatches = new ArrayList<>();
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Match updatedMatch = new Match();
                 if (url.contains("event") && url.contains("matches")) {
@@ -418,37 +474,32 @@ public class Match extends BasicModel<Match> {
         return new APIResponse<>(match, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<Match> matches = new ArrayList<>(), allMatches = new ArrayList<>();
+        ArrayList<Match> allMatches = new ArrayList<>(),
+                storedMatches = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                matches.add(ModelInflater.inflateMatch(cursor));
+               storedMatches.add(ModelInflater.inflateMatch(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false, teamSet = teamKey != null && !teamKey.isEmpty();
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        boolean changed = false;
+
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            /* Hit each API URL requested */
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
+                /* If we get back data, parse it */
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
-                matches = new ArrayList<>();
                 allMatches = new ArrayList<>();
                 for (JsonElement m : matchList) {
                     Match match = JSONManager.getGson().fromJson(m, Match.class);
-                    try {
-                        if (teamSet && match.getAlliances().toString().contains(teamKey)) {
-                            matches.add(match);
-                        } else {
-                            allMatches.add(match);
-                        }
-                    } catch (FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Unable to determine if team: " + teamKey + " is involved in match");
-                        allMatches.add(match);
-                    }
+                    allMatches.add(match);
                 }
                 changed = true;
             }
@@ -456,11 +507,17 @@ public class Match extends BasicModel<Match> {
         }
 
         if (changed) {
-            allMatches.addAll(matches);
-            Database.getInstance(c).getMatchesTable().add(allMatches);
+            /* Add the new matches to the local db, after deleting the old ones */
+            Database.Matches matchTable = Database.getInstance(c).getMatchesTable();
+            int deleted = matchTable.delete(whereClause, whereArgs);
+            matchTable.add(allMatches);
+
+            Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted "+deleted);
+            return new APIResponse<>(allMatches, code);
+        }else{
+            Log.d(Constants.DATAMANAGER_LOG, "No new matches.");
+            return new APIResponse<>(new ArrayList<>(storedMatches), code);
         }
-        Log.d(Constants.DATAMANAGER_LOG, "Found " + matches.size() + " matches, updated in db? " + changed);
-        return new APIResponse<>(matches, code);
     }
 
     @Override

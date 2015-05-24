@@ -1,50 +1,85 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
+import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer,
  * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
  */
-public abstract class BaseActivity extends NavigationDrawerActivity implements NfcAdapter.CreateNdefMessageCallback {
+public abstract class BaseActivity extends NavigationDrawerActivity
+        implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     String beamUri;
-
     boolean searchEnabled = true;
+    String modelKey = "";
+    ModelHelper.MODELS modelType;
+
+    /**
+     * If this Activity was triggered by tapping a system notification, dismiss the "active" stored
+     * notifications as having been "read."
+     */
+    private void handleIntent(Intent intent) {
+        if (intent != null && intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
+            sendBroadcast(NotificationDismissedListener.newIntent(this));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        new AnalyticsActions.ReportActivityStart(this).run();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             // Register callback
             mNfcAdapter.setNdefPushMessageCallback(this, this);
         }
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Hide the shadow below the Action Bar
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setElevation(0);
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        /* Report the activity stop to GAnalytics */
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
@@ -60,6 +95,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         switch (item.getItemId()) {
             case R.id.search:
                 startActivity(new Intent(this, SearchResultsActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -72,6 +108,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
         beamUri = uri;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
         if (beamUri == null || beamUri.isEmpty()) {
@@ -84,5 +121,39 @@ public abstract class BaseActivity extends NavigationDrawerActivity implements N
     protected void setSearchEnabled(boolean enabled) {
         searchEnabled = enabled;
         invalidateOptionsMenu();
+    }
+
+    protected void setModelKey(String key, ModelHelper.MODELS type){
+        modelKey = key;
+        modelType = type;
+    }
+
+    /**
+     * Successfully connected (called by PlusClient)
+     */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        String accountName = PlusHelper.getAccountName();
+        AccountHelper.setSelectedAccount(this, accountName);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
+        GCMHelper.registerGCMIfNeeded(this);
+        new UpdateMyTBA(this, new RequestParams(true, false)).execute();
+        setDrawerProfileInfo();
+    }
+
+    /**
+     * Connection failed for some reason (called by PlusClient)
+     * Try and resolve the result.  Failure here is usually not an indication of a serious error,
+     * just that the user's input is needed.
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 }

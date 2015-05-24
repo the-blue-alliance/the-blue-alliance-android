@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -54,7 +55,6 @@ public class TeamListElement extends ListElement {
             holder.teamNumber = (TextView) convertView.findViewById(R.id.team_number);
             holder.teamName = (TextView) convertView.findViewById(R.id.team_name);
             holder.teamLocation = (TextView) convertView.findViewById(R.id.team_location);
-            holder.teamInfoDivider = convertView.findViewById(R.id.team_info_divider);
             holder.teamInfo = (ImageView) convertView.findViewById(R.id.team_info);
             convertView.setTag(holder);
         } else {
@@ -72,17 +72,20 @@ public class TeamListElement extends ListElement {
         holder.teamLocation.setText(mTeamLocation);
 
         if (mShowLinkToTeamDetails) {
-            holder.teamInfoDivider.setVisibility(View.VISIBLE);
             holder.teamInfo.setVisibility(View.VISIBLE);
             holder.teamInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = ViewTeamActivity.newInstance(context, "frc" + mTeamNumber);
+                    String teamKey = "frc" + mTeamNumber;
+                    Intent intent = ViewTeamActivity.newInstance(context, teamKey);
+                    
+                    /* Track the call */
+                    AnalyticsHelper.sendClickUpdate(context, "team_click", "TeamListElement", "");
+
                     context.startActivity(intent);
                 }
             });
         } else {
-            holder.teamInfoDivider.setVisibility(View.GONE);
             holder.teamInfo.setVisibility(View.GONE);
         }
 
@@ -93,7 +96,6 @@ public class TeamListElement extends ListElement {
         TextView teamNumber;
         TextView teamName;
         TextView teamLocation;
-        View teamInfoDivider;
         ImageView teamInfo;
     }
 }

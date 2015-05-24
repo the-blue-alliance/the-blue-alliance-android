@@ -1,15 +1,20 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.database.Cursor;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
+import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.Date;
@@ -69,6 +74,9 @@ public class ModelInflater {
                 case Database.Events.NAME:
                     event.setEventName(data.getString(i));
                     break;
+                case Database.Events.SHORTNAME:
+                    event.setEventShortName(data.getString(i));
+                    break;
                 case Database.Events.LOCATION:
                     event.setLocation(data.getString(i));
                     break;
@@ -113,6 +121,9 @@ public class ModelInflater {
                     break;
                 case Database.Events.TEAMS:
                     event.setTeams(data.getString(i));
+                    break;
+                case Database.Events.WEBCASTS:
+                    event.setWebcasts(data.getString(i));
                     break;
                 default:
             }
@@ -253,10 +264,10 @@ public class ModelInflater {
         return eventTeam;
     }
 
-    public static District inflateDistrict(Cursor data){
+    public static District inflateDistrict(Cursor data) {
         District district = new District();
-        for (int i = 0; i < data.getColumnCount(); i++){
-            switch (data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Districts.KEY:
                     district.setKey(data.getString(i));
                     break;
@@ -269,16 +280,19 @@ public class ModelInflater {
                 case Database.Districts.YEAR:
                     district.setYear(data.getInt(i));
                     break;
+                case Database.Districts.NAME:
+                    district.setName(data.getString(i));
+                    break;
                 default:
             }
         }
         return district;
     }
 
-    public static DistrictTeam inflateDistrictTeam(Cursor data){
+    public static DistrictTeam inflateDistrictTeam(Cursor data) {
         DistrictTeam districtTeam = new DistrictTeam();
-        for (int i = 0; i < data.getColumnCount(); i++){
-            switch (data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.DistrictTeams.KEY:
                     districtTeam.setKey(data.getString(i));
                     break;
@@ -328,5 +342,80 @@ public class ModelInflater {
             }
         }
         return districtTeam;
+    }
+
+    public static Favorite inflateFavorite(Cursor data){
+        Favorite favorite = new Favorite();
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case Database.Favorites.MODEL_KEY:
+                    favorite.setModelKey(data.getString(i));
+                    break;
+                case Database.Favorites.USER_NAME:
+                    favorite.setUserName(data.getString(i));
+                    break;
+                case Database.Favorites.MODEL_ENUM:
+                    favorite.setModelEnum(data.getInt(i));
+                    break;
+                default:
+            }
+        }
+        return favorite;
+    }
+
+    public static Subscription inflateSubscription(Cursor data){
+        Subscription subscription = new Subscription();
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case Database.Subscriptions.MODEL_KEY:
+                    subscription.setModelKey(data.getString(i));
+                    break;
+                case Database.Subscriptions.USER_NAME:
+                    subscription.setUserName(data.getString(i));
+                    break;
+                case Database.Subscriptions.MODEL_ENUM:
+                    subscription.setModelEnum(data.getInt(i));
+                    break;
+                case Database.Subscriptions.NOTIFICATION_SETTINGS:
+                    Log.d(Constants.LOG_TAG, "Settings: "+data.getString(i));
+                    subscription.setNotificationSettings(data.getString(i));
+                    break;
+                default:
+            }
+        }
+        return subscription;
+    }
+    
+    public static StoredNotification inflateStoredNotification(Cursor data){
+        StoredNotification storedNotification = new StoredNotification();
+        for(int i=0; i<data.getColumnCount(); i++){
+            switch(data.getColumnName(i)){
+                case Database.Notifications.ID:
+                    storedNotification.setId(data.getInt(i));
+                    break;
+                case Database.Notifications.TYPE:
+                    storedNotification.setType(data.getString(i));
+                    break;
+                case Database.Notifications.TITLE:
+                    storedNotification.setTitle(data.getString(i));
+                    break;
+                case Database.Notifications.BODY:
+                    storedNotification.setBody(data.getString(i));
+                    break;
+                case Database.Notifications.INTENT:
+                    storedNotification.setIntent(data.getString(i));
+                    break;
+                case Database.Notifications.TIME:
+                    storedNotification.setTime(new Date(data.getLong(i)));
+                    break;
+                case Database.Notifications.SYSTEM_ID:
+                    storedNotification.setSystemId(data.getInt(i));
+                    break;
+                case Database.Notifications.ACTIVE:
+                    storedNotification.setActive(data.getInt(i));
+                    break;
+            }
+        }
+        return storedNotification;
     }
 }

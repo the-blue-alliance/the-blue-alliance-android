@@ -1,35 +1,39 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.TaskStackBuilder;
+import android.support.annotation.StringRes;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
-import com.thebluealliance.androidclient.interfaces.OnYearChangedListener;
+import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * File created by nathan on 4/21/14.
  */
-public class ViewTeamActivity extends RefreshableHostActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
+public class ViewTeamActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
     public static final String TEAM_KEY = "team_key",
             TEAM_YEAR = "team_year",
@@ -50,8 +54,11 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
     private ViewPager pager;
 
-    // List of objects to notify when the year is changed
-    private ArrayList<OnYearChangedListener> yearChangedListeners = new ArrayList<>();
+    private Toolbar toolbar;
+    private View yearSelectorContainer;
+    private View yearSelectorSubtitleContainer;
+    private TextView yearSelectorTitle;
+    private TextView yearSelectorSubtitle;
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
@@ -70,12 +77,22 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_team);
 
         mTeamKey = getIntent().getStringExtra(TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
+
+        setModelKey(mTeamKey, ModelHelper.MODELS.TEAM);
+        setContentView(R.layout.activity_view_team);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        yearSelectorContainer = findViewById(R.id.year_selector_container);
+        yearSelectorSubtitleContainer = findViewById(R.id.year_selector_subtitle_container);
+        yearSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
+        yearSelectorSubtitle = (TextView) findViewById(R.id.year_selector_subtitle);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -101,9 +118,10 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         pager.setOffscreenPageLimit(3);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
         // We will notify the fragments of the year later
-        pager.setAdapter(new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey));
+        final ViewTeamFragmentPagerAdapter adapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey);
+        pager.setAdapter(adapter);
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
 
@@ -112,12 +130,10 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
         }
 
         new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getSupportFragmentManager().getFragments().clear();
+        // We can call this even though the years participated haven't been loaded yet.
+        // The years won't be shown yet; this just shows the team number in the toolbar.
+        setupActionBar();
     }
 
     @Override
@@ -142,19 +158,54 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     }
 
     private void setupActionBar() {
-        ActionBar bar = getActionBar();
-        if(bar != null) {
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
+            bar.setDisplayShowTitleEnabled(false);
+            String teamNumber = mTeamKey.replace("frc", "");
+            yearSelectorTitle.setText(String.format(getString(R.string.team_actionbar_title), teamNumber));
+
+            // If we call this and the years participated haven't been loaded yet, don't try to use them
             if (yearsParticipated != null) {
-                ArrayAdapter<String> actionBarAdapter = new ArrayAdapter<>(bar.getThemedContext(), R.layout.actionbar_spinner_team, R.id.year, yearsParticipated);
-                actionBarAdapter.setDropDownViewResource(R.layout.actionbar_spinner_dropdown);
-                String teamNumber = mTeamKey.replace("frc", "");
-                setActionBarTitle(String.format(getString(R.string.team_actionbar_title), teamNumber));
-                bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-                bar.setListNavigationCallbacks(actionBarAdapter, this);
-                bar.setSelectedNavigationItem(mCurrentSelectedYearPosition);
+
+                yearSelectorSubtitleContainer.setVisibility(View.VISIBLE);
+
+                final Dialog dialog = makeDialogForYearSelection(R.string.select_year, yearsParticipated);
+
+                yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.show();
+                    }
+                });
+
+                if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < yearsParticipated.length) {
+                    onYearSelected(mCurrentSelectedYearPosition);
+                    updateTeamYearSelector(mCurrentSelectedYearPosition);
+                } else {
+                    onYearSelected(0);
+                    updateTeamYearSelector(0);
+                }
             }
         }
+    }
+
+    private Dialog makeDialogForYearSelection(@StringRes int titleResId, String[] dropdownItems) {
+        Resources res = getResources();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(res.getString(titleResId));
+        builder.setItems(dropdownItems, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onYearSelected(which);
+            }
+        });
+
+        return builder.create();
+    }
+
+    private void updateTeamYearSelector(int selectedPosition) {
+        yearSelectorSubtitle.setText(yearsParticipated[selectedPosition]);
     }
 
     public void onYearsParticipatedLoaded(int[] years) {
@@ -171,7 +222,23 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
 
         setupActionBar();
 
-        notifyOnYearChangedListeners(Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition]));
+        // Notify anyone that cares that the year changed
+        EventBus.getDefault().post(new YearChangedEvent(Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition])));
+    }
+
+    private void onYearSelected(int position) {
+        // Only handle this if the year has actually changed
+        if (position == mCurrentSelectedYearPosition) {
+            return;
+        }
+        mCurrentSelectedYearPosition = position;
+        mYear = Integer.valueOf(yearsParticipated[mCurrentSelectedYearPosition]);
+
+        updateTeamYearSelector(position);
+
+        EventBus.getDefault().post(new YearChangedEvent(mYear));
+
+        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
     }
 
     @Override
@@ -183,8 +250,9 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
                 return true;
             }
 
-            // We recreate the back stack every time so we can assure that "up" goes to the teams view
-            TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams)).startActivities();
+            // If this tasks exists in the back stack, it will be brought to the front and all other activities
+            // will be destroyed. HomeActivity will be delivered this intent via onNewIntent().
+            startActivity(HomeActivity.newInstance(this, R.id.nav_item_teams).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -202,23 +270,6 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     }
 
     @Override
-    public boolean onNavigationItemSelected(int position, long itemId) {
-        if (position == mCurrentSelectedYearPosition) {
-            return true;
-        }
-        Log.d(Constants.LOG_TAG, "year selected: " + Integer.parseInt(yearsParticipated[position]));
-
-        mCurrentSelectedYearPosition = position;
-        mYear = Integer.valueOf(yearsParticipated[mCurrentSelectedYearPosition]);
-
-        notifyOnYearChangedListeners(mYear);
-
-        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
-
-        return true;
-    }
-
-    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
@@ -226,30 +277,17 @@ public class ViewTeamActivity extends RefreshableHostActivity implements ActionB
     @Override
     public void onPageSelected(int position) {
         mSelectedTab = position;
+        // hide the FAB if we aren't on the first page
+        if (position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
+        }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
-    }
-
-    public void addOnYearChangedListener(OnYearChangedListener listener) {
-        if (!yearChangedListeners.contains(listener)) {
-            yearChangedListeners.add(listener);
-        }
-    }
-
-    public void removeOnYearChangedListener(OnYearChangedListener listener) {
-        if (yearChangedListeners.contains(listener)) {
-            yearChangedListeners.remove(listener);
-        }
-    }
-
-    private void notifyOnYearChangedListeners(int newYear) {
-        Log.d(Constants.LOG_TAG, "notifying year changed");
-        for (OnYearChangedListener listener : yearChangedListeners) {
-            listener.onYearChanged(newYear);
-        }
     }
 
     public int getCurrentSelectedYearPosition() {

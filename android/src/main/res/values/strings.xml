@@ -3,6 +3,8 @@
 
     <string name="app_name">The Blue Alliance</string>
     <string name="app_name_short">TBA</string>
+    <string name="package_name">com.thebluealliance.androidclient</string>
+    <string name="account_type">com.thebluealliance.androidclient.account.TBAACCOUNT</string>
     <string name="web_url_host">thebluealliance.com</string>
     <string name="web_url_host_www">www.thebluealliance.com</string>
     <string name="action_settings">Settings</string>
@@ -10,6 +12,15 @@
     <string name="menuitem_refresh">Refresh</string>
     <string name="cancel">Cancel</string>
     <string name="refresh_complete">Refresh complete</string>
+    <string name="action_add_favorite">Add Favorite</string>
+    <string name="action_remove_favorite">Remove Favorite</string>
+    <string name="action_add_subscription">Add Subscription</string>
+    <string name="action_remove_subscription">Remove Subscription</string>
+    <string name="close">Close</string>
+    <string name="more_info">More Info</string>
+    <string name="year_selector_title_events">%1$s Events</string>
+    <string name="year_selector_title_districts">%1$s Districts</string>
+    <string name="select_year">Select Year</string>
 
     <!-- Main Activity -->
     <string-array name="event_list_year_selector">
@@ -29,6 +40,7 @@
     <string name="tab_teams">Teams</string>
     <string name="tab_insights">Insights</string>
     <string name="title_activity_view_event">View Event</string>
+    <string name="title_activity_gameday">GameDay</string>
     <string name="events_label">Events</string>
     <string name="districts_label">Districts</string>
 
@@ -82,6 +94,7 @@
     <string name="no_media_data">No media was found for this team.</string>
     <string name="no_district_points">No district points were found for this event.</string>
     <string name="no_team_list">Unable to load team list.</string>
+    <string name="match_not_found">Match not found.</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
 
     <!-- View Team -->
@@ -95,16 +108,28 @@
     <string name="score">Score</string>
     <string name="no_time_available">No time available</string>
     <string name="quals_header">Qualification Matches</string>
+    <string name="eigths_header">Eighth Final Matches</string>
     <string name="quarters_header">Quarterfinal Matches</string>
     <string name="semis_header">Semifinal Matches</string>
     <string name="finals_header">Finals Matches</string>
     <string name="recent_match_header">Recent Matches</string>
     <string name="title_next_match">Next Match</string>
     <string name="title_last_match">Last Match</string>
+    <string name="match_title_format">%1$s %2$s</string>
+    <string name="match_title_abbrev_format">%1$s%2$s</string>
+    <string name="submatch_title_format">%1$s %2$s Match %3$s</string>
+    <string name="submatch_title_abbrev_format">%1$s%2$s-%3$s</string>
 
     <!-- Team Media -->
     <string name="cd_header">Chief Delphi Photos</string>
     <string name="yt_header">YouTube Videos</string>
+
+    <!-- My TBA -->
+    <string name="default_user_name">MyTBA User</string>
+    <string name="no_favorite_data">No favorites found.</string>
+    <string name="no_subscription_data">No subscriptions found</string>
+    <string name="mytba_error">Error code %1$d: %2$s</string>
+    <string name="cannot_find_match_title">Could not find match title</string>
 
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
@@ -125,4 +150,17 @@
     <string name="teams_matching">Teams matching \"%1$s\"</string>
     <string name="events_matching">Events matching \"%1$s\"</string>
 
+    <!-- myTBA -->
+    <string name="mytba_favorite_title">Favorite</string>
+    <string name="mytba_favorite_summary">You can save teams, events, and more for easy access by marking them as "favorites".</string>
+    <string name="mytba_subscription_header">Notification Settings</string>
+    <string name="mytba_subscriptions_summary">Subscribing to something lets you get a push notification whenever there is an update.</string>
+    <string name="mytba_error_no_account">Unable to get account. Is myTBA enabled?</string>
+    <string name="mytba_error_io_token">IO Exception while fetching account token</string>
+    <string name="mytba_error_auth">Unable to authenticate Google Account</string>
+    <string name="title_activity_notification_dashboard">Notification Dashboard</string>
+    <string name="notification_dashboard_no_notifications">You do not have any recent notifications.</string>
+    <string name="notification_dashboard_title">Recent Notifications</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

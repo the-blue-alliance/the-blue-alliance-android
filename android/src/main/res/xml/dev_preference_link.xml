@@ -4,5 +4,5 @@
     <Preference
         android:key="dev_settings"
         android:selectable="true"
-        android:title="@string/dev_settings"/>
+        android:title="@string/dev_settings" />
 </PreferenceScreen>

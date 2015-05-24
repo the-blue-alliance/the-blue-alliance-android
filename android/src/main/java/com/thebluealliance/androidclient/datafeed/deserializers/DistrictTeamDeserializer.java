@@ -11,6 +11,8 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
+import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+
 /**
  * Created by phil on 7/24/14.
  */
@@ -21,35 +23,35 @@ public class DistrictTeamDeserializer implements JsonDeserializer<DistrictTeam> 
         final DistrictTeam districtTeam = new DistrictTeam();
 
 
-        if(object.has("team_key") && !object.get("team_key").isJsonNull()){
+        if (!isNull(object.get("team_key"))) {
             districtTeam.setTeamKey(object.get("team_key").getAsString());
         }
 
-        if(object.has("rank") && !object.get("rank").isJsonNull()){
+        if (!isNull(object.get("rank"))) {
             districtTeam.setRank(object.get("rank").getAsInt());
         }
 
-        if(object.has("rookie_bonus") && !object.get("rookie_bonus").isJsonNull()){
+        if (!isNull(object.get("rookie_bonus"))) {
             districtTeam.setRookiePoints(object.get("rookie_bonus").getAsInt());
         }
 
-        if(object.has("point_total") && !object.get("point_total").isJsonNull()){
+        if (!isNull(object.get("point_total"))) {
             districtTeam.setTotalPoints(object.get("point_total").getAsInt());
         }
 
-        if(object.has("event_points") && !object.get("event_points").isJsonNull()){
+        if (!isNull(object.get("event_points"))) {
             Set<Map.Entry<String, JsonElement>> events = object.get("event_points").getAsJsonObject().entrySet();
-            int regularEvents =  0;
-            for(Map.Entry<String, JsonElement> e: events){
+            int regularEvents = 0;
+            for (Map.Entry<String, JsonElement> e : events) {
                 JsonObject event = e.getValue().getAsJsonObject();
-                if(event.get("district_cmp").getAsBoolean()){
+                if (event.get("district_cmp").getAsBoolean()) {
                     districtTeam.setCmpKey(e.getKey());
                     districtTeam.setCmpPoints(event.get("total").getAsInt());
-                }else if(regularEvents == 0){
+                } else if (regularEvents == 0) {
                     districtTeam.setEvent1Key(e.getKey());
                     districtTeam.setEvent1Points(event.get("total").getAsInt());
-                    regularEvents ++;
-                }else if(regularEvents == 1) {
+                    regularEvents++;
+                } else if (regularEvents == 1) {
                     districtTeam.setEvent2Key(e.getKey());
                     districtTeam.setEvent2Points(event.get("total").getAsInt());
                     regularEvents++;

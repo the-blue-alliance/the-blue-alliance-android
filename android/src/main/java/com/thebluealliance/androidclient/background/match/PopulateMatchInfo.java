@@ -4,10 +4,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-
+import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
@@ -15,6 +16,8 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -33,19 +36,18 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     private RefreshableHostActivity mActivity;
     private String mMatchKey, mEventShortName, mMatchTitle;
     private ArrayList<ListItem> mMatchDetails;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
+    private long startTime;
 
-    public PopulateMatchInfo(RefreshableHostActivity activity, boolean forceFromCache) {
+    public PopulateMatchInfo(RefreshableHostActivity activity, RequestParams requestParams) {
         mActivity = activity;
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (mActivity != null) {
-            mActivity.showMenuProgressBar();
-        }
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -56,7 +58,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
         }
         String mEventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
         try {
-            APIResponse<Match> response = DataManager.Matches.getMatch(mActivity, mMatchKey, forceFromCache);
+            APIResponse<Match> response = DataManager.Matches.getMatch(mActivity, mMatchKey, requestParams);
             Match match = response.getData();
 
             if (isCancelled()) {
@@ -69,8 +71,8 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 mMatchDetails.add(match.render(false, true, false, false));
                 mMatchTitle = match.getTitle();
                 Gson gson = JSONManager.getGson();
-                for(JsonElement v: match.getVideos()){
-                    if(Media.TYPE.fromString(v.getAsJsonObject().get("type").getAsString()) != Media.TYPE.NONE) {
+                for (JsonElement v : match.getVideos()) {
+                    if (Media.TYPE.fromString(v.getAsJsonObject().get("type").getAsString()) != Media.TYPE.NONE) {
                         mMatchDetails.add(gson.fromJson(v, Media.class).render());
                     }
                 }
@@ -79,10 +81,14 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 return APIResponse.CODE.NODATA;
             }
 
-            APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, forceFromCache);
+            APIResponse<Event> eventResponse = DataManager.Events.getEvent(mActivity, mEventKey, requestParams);
             Event event = eventResponse.getData();
             if (event != null) {
-                mEventShortName = event.getShortName();
+                try {
+                    mEventShortName = event.getEventShortName();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Unable to render match info. Missing stuff");
+                }
             }
             return response.getCode();
         } catch (DataManager.NoDataException e) {
@@ -96,42 +102,55 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if (code != APIResponse.CODE.NODATA) {
+        if(mActivity != null) {
+            ProgressBar progressBar = (ProgressBar) mActivity.findViewById(R.id.progress);
+            FloatingActionButton myTbaFav = (FloatingActionButton) mActivity.findViewById(R.id.open_notification_settings_button);
+            if (code != APIResponse.CODE.NODATA) {
 
-            mActivity.setActionBarTitle(mMatchTitle);
-            mActivity.setActionBarSubtitle("@ " + mMatchKey.substring(0,4) + " " + mEventShortName);
+                mActivity.setActionBarTitle(mMatchTitle);
+                mActivity.setActionBarSubtitle("@ " + mMatchKey.substring(0, 4) + " " + mEventShortName);
 
-            ListViewAdapter adapter = new ListViewAdapter(mActivity, mMatchDetails);
-            ListView list = (ListView)mActivity.findViewById(R.id.match_details);
+                ListViewAdapter adapter = new ListViewAdapter(mActivity, mMatchDetails);
+                ListView list = (ListView) mActivity.findViewById(R.id.match_details);
 
-            //disable touch feedback (you can't click the elements here...)
-            list.setCacheColorHint(android.R.color.transparent);
-            list.setSelector(R.drawable.transparent);
+                //disable touch feedback (you can't click the elements here...)
+                list.setCacheColorHint(android.R.color.transparent);
+                list.setSelector(R.drawable.transparent);
 
-            list.setAdapter(adapter);
+                list.setAdapter(adapter);
 
-            if (code == APIResponse.CODE.OFFLINECACHE) {
-                mActivity.showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
+                if (code == APIResponse.CODE.OFFLINECACHE) {
+                    mActivity.showWarningMessage(mActivity.getString(R.string.warning_using_cached_data));
+                }
+
+                progressBar.setVisibility(View.GONE);
+
+            } else{
+                // No data found
+                mActivity.setActionBarTitle(mMatchKey);
+                mActivity.showWarningMessage(mActivity.getString(R.string.match_not_found));
+                progressBar.setVisibility(View.GONE);
+                if(myTbaFav != null){
+                    myTbaFav.setVisibility(View.GONE);
+                }
             }
 
-            mActivity.findViewById(R.id.progress).setVisibility(View.GONE);
-
-        }
-
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            new PopulateMatchInfo(mActivity, false).execute(mMatchKey);
-        } else {
-            // Show notification if we've refreshed data.
-            Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
-            if (mActivity instanceof RefreshableHostActivity) {
-                mActivity.notifyRefreshComplete((RefreshListener) mActivity);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                new PopulateMatchInfo(mActivity, requestParams).execute(mMatchKey);
+            } else {
+                // Show notification if we've refreshed data.
+                Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
+                if (mActivity != null && mActivity instanceof RefreshableHostActivity) {
+                    mActivity.notifyRefreshComplete((RefreshListener) mActivity);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(mActivity, System.currentTimeMillis() - startTime, "match info", mMatchKey);
         }
-
     }
 }

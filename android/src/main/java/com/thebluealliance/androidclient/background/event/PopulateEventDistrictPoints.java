@@ -17,7 +17,9 @@ import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -39,18 +41,20 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
     private RefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
-    private boolean forceFromCache, isDistrict;
+    private boolean isDistrict;
+    private RequestParams requestParams;
+    private long startTime;
 
-    public PopulateEventDistrictPoints(EventDistrictPointsFragment f, boolean forceFromCache) {
+    public PopulateEventDistrictPoints(EventDistrictPointsFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -60,8 +64,8 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
         teams = new ArrayList<>();
 
         try {
-            APIResponse<JsonObject> response = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, forceFromCache);
-            APIResponse<Event> eventResponse = DataManager.Events.getEventBasic(activity, eventKey, forceFromCache);
+            APIResponse<JsonObject> response = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, requestParams);
+            APIResponse<Event> eventResponse = DataManager.Events.getEventBasic(activity, eventKey, requestParams);
             JsonObject points = response.getData();
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -71,8 +75,13 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
             try {
                 DistrictHelper.DISTRICTS type = DistrictHelper.DISTRICTS.fromEnum(eventResponse.getData().getDistrictEnum());
                 isDistrict = type != DistrictHelper.DISTRICTS.NO_DISTRICT;
-                mFragment.updateDistrict(isDistrict);
-                if(isDistrict) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mFragment.updateDistrict(isDistrict);
+                    }
+                });
+                if (isDistrict) {
                     districtKey = eventKey.substring(0, 4) + type.getAbbreviation();
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -82,19 +91,19 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
 
             teams = new ArrayList<>();
             ArrayList<DistrictPointBreakdown> pointBreakdowns = new ArrayList<>();
-            for(Map.Entry<String, JsonElement> teamPoints : points.entrySet()){
+            for (Map.Entry<String, JsonElement> teamPoints : points.entrySet()) {
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamPoints.getKey());
                 DistrictPointBreakdown b = JSONManager.getGson().fromJson(teamPoints.getValue(), DistrictPointBreakdown.class);
                 b.setTeamKey(teamPoints.getKey());
-                b.setTeamName(team.getNickname());
+                b.setTeamName(team != null ? team.getNickname() : "Team "+teamPoints.getKey().substring(3));
                 b.setDistrictKey(districtKey);
                 pointBreakdowns.add(b);
             }
 
             Collections.sort(pointBreakdowns, new PointBreakdownComparater());
 
-            for(int i = 0; i<pointBreakdowns.size(); i++){
-                pointBreakdowns.get(i).setRank( i + 1 );
+            for (int i = 0; i < pointBreakdowns.size(); i++) {
+                pointBreakdowns.get(i).setRank(i + 1);
                 teams.add(pointBreakdowns.get(i).render());
             }
 
@@ -126,6 +135,9 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
                 noDataText.setVisibility(View.GONE);
             }
 
+            // Update district status
+            mFragment.updateDistrict(isDistrict);
+
             // Display a warning if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
@@ -134,23 +146,25 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
             // Remove progress indicator and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            PopulateEventDistrictPoints secondLoad = new PopulateEventDistrictPoints(mFragment, false);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (mFragment instanceof RefreshListener) {
-                Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Rankings refresh complete");
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateEventDistrictPoints secondLoad = new PopulateEventDistrictPoints(mFragment, requestParams);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey);
+            } else {
+                // Show notification if we've refreshed data.
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Rankings refresh complete");
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event districtPoints", eventKey);
         }
     }
 }

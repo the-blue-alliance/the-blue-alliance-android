@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,8 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
 
         setContentView(R.layout.activity_contributors);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
         setupActionBar();
 
         ((ListView) findViewById(android.R.id.list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -37,7 +40,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
             }
         });
 
-        registerRefreshableActivityListener(this);
+        registerRefreshListener(this);
 
         setSearchEnabled(false);
     }
@@ -54,7 +57,7 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
     }
 
     private void setupActionBar() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle(getString(R.string.contributors));
     }
 
@@ -83,13 +86,14 @@ public class ContributorsActivity extends RefreshableHostActivity implements Ref
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionItemPressed) {
         if (ConnectionDetector.isConnectedToInternet(this)) {
             new PopulateContributors(this).execute();
         } else {
             findViewById(android.R.id.list).setVisibility(View.GONE);
             findViewById(R.id.no_data).setVisibility(View.VISIBLE);
             findViewById(R.id.progress).setVisibility(View.GONE);
+            notifyRefreshComplete(this);
         }
     }
 

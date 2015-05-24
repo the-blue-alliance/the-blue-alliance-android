@@ -14,7 +14,9 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
@@ -26,24 +28,24 @@ import java.util.ArrayList;
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private TeamListFragment fragment;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private int start, end;
 
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
     private Cursor teams;
+    private long startTime;
 
-    public PopulateTeamList(TeamListFragment fragment, boolean forceFromCache) {
+    public PopulateTeamList(TeamListFragment fragment, RequestParams requestParams) {
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
-        teamItems = new ArrayList<>();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
         APIResponse<Cursor> response = new APIResponse<>(null, APIResponse.CODE.NODATA);
         if (!isCancelled()) {
             try {
-                response = DataManager.Teams.getCursorForTeamsInRange(activity, start, end);
+                response = DataManager.Teams.getCursorForTeamsInRange(activity, start, end, new RequestParams());
                 teams = response.getData();
             } catch (Exception e) {
                 Log.w(Constants.LOG_TAG, "unable to load team list");
@@ -97,16 +99,18 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateTeamList secondLoad = new PopulateTeamList(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateTeamList secondLoad = new PopulateTeamList(fragment, requestParams);
                 fragment.updateTask(secondLoad);
                 secondLoad.execute(start, end);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Team list " + start + " - " + end + " refresh complete");
-                if (fragment instanceof RefreshListener) {
+                if (activity != null && fragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete(fragment);
                 }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team list", "");
         }
     }
 }

@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventAwards;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -62,13 +63,13 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_carded, null);
         mListView = (ListView) view.findViewById(R.id.list);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
 
@@ -105,9 +106,9 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " awards with team: "+mTeamKey);
-        mTask = new PopulateEventAwards(this, true);
+    public void onRefreshStart(boolean actionIconPressed) {
+        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " awards with team: " + mTeamKey);
+        mTask = new PopulateEventAwards(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey, mTeamKey);
     }
 
@@ -125,6 +126,6 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

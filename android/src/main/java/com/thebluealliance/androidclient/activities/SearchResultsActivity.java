@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,16 +15,13 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -57,17 +56,18 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        /* Report the activity start to GAnalytics */
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        /* Report activity start to Analytics */
+        new AnalyticsActions.ReportActivityStart(this).run();
 
         currentQuery = "";
 
         resultsList = (ListView) findViewById(R.id.results);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        searchView = new SearchView(getActionBar().getThemedContext());
+        searchView = new SearchView(getSupportActionBar().getThemedContext());
         searchView.setOnQueryTextListener(this);
         searchView.setIconifiedByDefault(false);
         searchView.setIconified(false);
@@ -84,8 +84,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
         searchView.findViewById(closeButtonId).setVisibility(View.GONE);
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
-        getActionBar().setDisplayShowCustomEnabled(true);
-        getActionBar().setCustomView(searchView, layoutParams);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(searchView, layoutParams);
 
         // Hide the magnifying glass icon
         int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
@@ -94,28 +94,39 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         // Change search hint text color
         int searchTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         ((TextView) searchView.findViewById(searchTextId)).setHintTextColor(getResources().getColor(R.color.search_hint));
+
+        // Check if we got a search as the intent
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if(intent.getAction() == null) {
+            return;
+        }
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()) || intent.getAction().equals("com.google.android.gms.actions.SEARCH_ACTION")) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchView.setQuery(query, true);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        //track the search query the user submitted
-        //Track the query
-        Tracker t = ((TBAAndroid) getApplication()).getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("search")
-                .setAction(currentQuery)
-                .setLabel("search")
-                .build());
-        currentQuery = "";
+        AnalyticsHelper.sendSearchUpdate(this, currentQuery);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        /* Report the activity stop to GAnalytics */
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
@@ -157,6 +168,13 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 }
                 String key = teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.KEY));
                 Team team = Database.getInstance(this).getTeamsTable().get(key);
+                if(team == null){
+                    // Don't display models that don't exist anymore and delete them from search indexes
+                    team = new Team();
+                    team.setTeamKey(key);
+                    Database.getInstance(this).deleteSearchItemTeam(team);
+                    continue;
+                }
                 try {
                     TeamListElement element;
                     element = new TeamListElement(team);
@@ -197,6 +215,13 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 }
                 String key = eventQueryResults.getString(eventQueryResults.getColumnIndex(Database.SearchEvent.KEY));
                 Event event = Database.getInstance(this).getEventsTable().get(key);
+                if(event == null){
+                    // Don't display models that don't exist anymore and delete them from search indexes
+                    event = new Event();
+                    event.setEventKey(key);
+                    Database.getInstance(this).deleteSearchItemEvent(event);
+                    continue;
+                }
                 try {
                     EventListElement element;
                     element = new EventListElement(event);

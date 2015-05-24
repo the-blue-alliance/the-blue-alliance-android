@@ -3,9 +3,7 @@ package com.thebluealliance.androidclient.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
@@ -39,7 +37,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
     @Override
@@ -48,13 +46,13 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         cancelRefresh();
     }
 
-    public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void registerRefreshListener(RefreshListener listener) {
         if (listener != null && !mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
     }
 
-    public synchronized void deregisterRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void unregisterRefreshListener(RefreshListener listener) {
         if (listener != null && mRefreshListeners.contains(listener)) {
             mRefreshListeners.remove(listener);
         }
@@ -67,7 +65,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         if (completedListener == null) {
             return;
         }
-        if(!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity){
+        if (!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) parent).notifyRefreshComplete(completedListener);
         }
         if (!mCompletedRefreshListeners.contains(completedListener)) {
@@ -84,7 +82,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         ((RefreshableHostActivity) parent).notifyRefreshComplete(this);
     }
 
-    public void startRefresh() {
+    public void startRefresh(boolean actionIconPressed) {
         if (mRefreshInProgress) {
             //if a refresh is already happening, don't start another
             return;
@@ -94,7 +92,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
             return;
         }
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
     }
 
@@ -105,20 +103,20 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         mRefreshInProgress = false;
     }
 
-    public void restartRefresh() {
+    public void restartRefresh(boolean actionIconPressed) {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
         mRefreshInProgress = true;
     }
 
-    public void startRefresh(RefreshListener listener){
+    public void startRefresh(RefreshListener listener) {
         if (!mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
-        listener.onRefreshStart();
+        listener.onRefreshStart(false);
     }
 }

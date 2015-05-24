@@ -1,42 +1,57 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.os.Handler;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
 
 /**
  * Activity that provides a navigation drawer.
- * <p/>
+ * <p>
  * This allows for the easy reuse of a single navigation drawer throughout the app.
- * <p/>
+ * <p>
  * Created by Nathan on 5/15/2014.
  */
-public abstract class NavigationDrawerActivity extends FragmentActivity implements NavigationDrawerFragment.NavigationDrawerListener {
+
+public abstract class NavigationDrawerActivity extends ActionBarActivity
+        implements NavigationDrawerFragment.NavigationDrawerListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
+
+    protected static final int DRAWER_CLOSE_ANIMATION_DURATION = 600;
 
     private NavigationDrawerFragment mNavDrawerFragment;
     private DrawerLayout mDrawerLayout;
     private FrameLayout mContentView;
+    private ScrimInsetsFrameLayout drawerContainer;
 
     private String mActionBarTitle;
 
     private boolean mUseActionBarToggle = false;
     private boolean mEncourageLearning = false;
+    private boolean mShowAppNameWhenDrawerOpened = false;
+
+    protected Handler handler;
 
     /**
-     * Tells the activity whether or not to use the action bar toggle for
-     * the navigation drawer.
+     * Tells the activity whether or not to use the action bar toggle for the navigation drawer.
      *
      * @param use True if this activity should use the action bar toggle
      */
@@ -45,8 +60,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
     }
 
     /**
-     * Tells the activity whether or not to use the action bar toggle for
-     * the navigation drawer.
+     * Tells the activity whether or not to use the action bar toggle for the navigation drawer.
      *
      * @param encourage True if this activity should use the action bar toggle
      */
@@ -61,14 +75,38 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
         super.setContentView(R.layout.activity_navigation_drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
 
+        mContentView = (FrameLayout) findViewById(R.id.content);
+
+        mDrawerLayout.setStatusBarBackground(R.color.primary_dark);
+
+        drawerContainer = (ScrimInsetsFrameLayout) findViewById(R.id.navigation_drawer_fragment_container);
+
+        handler = new Handler();
+    }
+
+    /**
+     * We set up the nav drawer here to give child activities a chance to set the window's Action
+     * Bar if they're using a Toolbar instead of the default Action Bar.
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
         // Call this so that subclasses can configure the navigation drawer before it is created
         onCreateNavigationDrawer();
 
         mNavDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
-        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment,
+        mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment_container,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
                 mEncourageLearning, mUseActionBarToggle);
-        mContentView = (FrameLayout) findViewById(R.id.content);
+        drawerContainer.setOnInsetsCallback(new ScrimInsetsFrameLayout.OnInsetsCallback() {
+            @Override
+            public void onInsetsChanged(Rect insets) {
+                mNavDrawerFragment.onInsetsChanged(insets);
+            }
+        });
 
         // Restore the state of the navigation drawer on rotation changes
         if (savedInstanceState != null) {
@@ -78,22 +116,31 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
                 }
             }
         }
+
+        onNavigationDrawerCreated();
     }
 
     /**
-     * Called before the navigation drawer is created. Subclasses can override this to perform
-     * setup before the navigation drawer is created, such as enabling or disabling it or disabling
-     * the action bar toggle. Subclasses do not have to call through to super.
+     * Called before the navigation drawer is created. Subclasses can override this to perform setup
+     * before the navigation drawer is created, such as enabling or disabling it or disabling the
+     * action bar toggle. Subclasses do not have to call through to super.
      */
     public void onCreateNavigationDrawer() {
         // Default implementation is empty
     }
 
     /**
-     * Inflates the specified view into the "content container" of the activity.
-     * This allows the resuse of a single layout containing a navigation drawer and said container
-     * across all instances of this activity. Subclassing activities that call setContentView(...)
-     * will have their requested layout inserted into the content container.
+     * Called after the notification drawer is created. Allows subclasses to override this and configure the navigation drawer.
+     */
+    public void onNavigationDrawerCreated() {
+        // Default implementation is empty
+    }
+
+    /**
+     * Inflates the specified view into the "content container" of the activity. This allows the
+     * resuse of a single layout containing a navigation drawer and said container across all
+     * instances of this activity. Subclassing activities that call setContentView(...) will have
+     * their requested layout inserted into the content container.
      *
      * @param layoutResID id of the view to be inflated into the content container
      */
@@ -104,37 +151,55 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
     }
 
     /**
-     * Provides a default implementation of item click handling that simply opens the
-     * specified mode in a StartActivity that is inserted into the back stack. Children
-     * classes can override this if they want to enable custom handling of click events.
-     * If children override this method, they should <strong>not</strong> call through to
-     * this method.
+     * Provides a default implementation of item click handling that simply opens the specified mode
+     * in a StartActivity that is inserted into the back stack. Children classes can override this
+     * if they want to enable custom handling of click events. If children override this method,
+     * they should <strong>not</strong> call through to this method.
      *
      * @param item The item that was clicked
      */
     @Override
     public void onNavDrawerItemClicked(NavDrawerItem item) {
-        int id = item.getId();
+        final int id = item.getId();
 
-        // Open settings in the foreground
-        if (id == R.id.nav_item_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return;
+        final Intent intent;
+        switch (id) {
+            case R.id.nav_item_settings:
+                intent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
+                break;
+            case R.id.nav_item_notifications:
+                intent = NotificationDashboardActivity.newInstance(NavigationDrawerActivity.this);
+                break;
+            case R.id.nav_item_gameday:
+                intent = GamedayActivity.newInstance(NavigationDrawerActivity.this);
+                break;
+            default:
+                intent = null;
+                break;
+        }
+        // Launch after a short delay to give the drawer time to close.
+        if (intent != null) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(intent);
+                }
+            }, DRAWER_CLOSE_ANIMATION_DURATION);
         }
 
         /*
          * We manually add the start activity to the back stack so that we maintain proper
-         * back button functionality and so we get the proper "activity finish" animation
+         * back button functionality and so we get the proper "activity finish" animation.
+         *
+         * Launch after a short delay to give the drawer time to close.
          */
-        TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, id)).startActivities();
-    }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (isDrawerOpen()) {
-            getActionBar().setTitle(R.string.app_name);
-        }
-        return super.onPrepareOptionsMenu(menu);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TaskStackBuilder.create(NavigationDrawerActivity.this).addNextIntent(HomeActivity.newInstance(NavigationDrawerActivity.this, id)).startActivities();
+            }
+        }, DRAWER_CLOSE_ANIMATION_DURATION);
     }
 
 
@@ -155,10 +220,10 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
     /**
      * Shows the specified item in the navigation drawer with a highlight.
      *
-     * @param position index of the item to be selected
+     * @param itemId ID of the item to be selected
      */
-    public void setNavigationDrawerItemSelected(int position) {
-        mNavDrawerFragment.setItemSelected(position);
+    public void setNavigationDrawerItemSelected(int itemId) {
+        mNavDrawerFragment.setItemSelected(itemId);
     }
 
     /**
@@ -167,7 +232,7 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
      * @return true if the drawer is open
      */
     public boolean isDrawerOpen() {
-        return mNavDrawerFragment.isDrawerOpen();
+        return mDrawerLayout.isDrawerOpen(Gravity.LEFT);
     }
 
     /**
@@ -214,50 +279,82 @@ public abstract class NavigationDrawerActivity extends FragmentActivity implemen
 
     /**
      * Sets the title of this activity's action bar.
-     * <p/>
-     * If subclassing activities want the title to be automatically handled when the
-     * nav drawer is opened or closed, they should set the action bar title via this method
+     * <p>
+     * If subclassing activities want the title to be automatically handled when the nav drawer is
+     * opened or closed, they should set the action bar title via this method
      *
      * @param title The desired title string
      */
     public void setActionBarTitle(String title) {
         mActionBarTitle = title;
-        if (!isDrawerOpen() && getActionBar() != null) {
-            getActionBar().setTitle(mActionBarTitle);
+        if (!isDrawerOpen() && getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mActionBarTitle);
         }
     }
 
-    public void setActionBarSubtitle(String subtitle){
-        if (!isDrawerOpen() && getActionBar() != null) {
-            getActionBar().setSubtitle(subtitle);
+    public void setActionBarSubtitle(String subtitle) {
+        if (!isDrawerOpen() && getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(subtitle);
         }
     }
 
     /**
      * Sets the title of this activity's action bar.
-     * <p/>
-     * If subclassing activities want the title to be automatically handled when the
-     * nav drawer is opened or closed, they should set the action bar title via this method
+     * <p>
+     * If subclassing activities want the title to be automatically handled when the nav drawer is
+     * opened or closed, they should set the action bar title via this method
      *
      * @param resID The desired title string resource
      */
     public void setActionBarTitle(int resID) {
         mActionBarTitle = getResources().getString(resID);
         if (!isDrawerOpen()) {
-            getActionBar().setTitle(mActionBarTitle);
+            getSupportActionBar().setTitle(mActionBarTitle);
         }
+    }
+
+    public void showAppNameWhenDrawerOpened(boolean show) {
+        mShowAppNameWhenDrawerOpened = show;
     }
 
     @Override
     public void onNavDrawerClosed() {
         if (mActionBarTitle != null) {
-            getActionBar().setTitle(mActionBarTitle);
+            getSupportActionBar().setTitle(mActionBarTitle);
         }
     }
 
     @Override
     public void onNavDrawerOpened() {
-        getActionBar().setTitle(R.string.app_name);
+        if (mShowAppNameWhenDrawerOpened) {
+            getSupportActionBar().setTitle(R.string.app_name);
+        }
+    }
+
+    protected void setDrawerProfileInfo() {
+        if (mNavDrawerFragment != null) {
+            mNavDrawerFragment.setDrawerProfileInfo();
+        }
+    }
+
+
+    /* Plus callbacks */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        PlusHelper.onConnectCommon(this);
+        if (mNavDrawerFragment != null) {
+            mNavDrawerFragment.setDrawerProfileInfo();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.w(Constants.LOG_TAG, "Failed to connect to G+");
+        Toast.makeText(this, "Failed to connect to G+ API", Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -15,7 +15,9 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictSummaryFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
@@ -35,14 +37,15 @@ import java.util.ArrayList;
  */
 public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private TeamAtDistrictSummaryFragment fragment;
     private RefreshableHostActivity activity;
     private String teamKey, districtKey;
     private ArrayList<ListItem> summaryItems;
+    private long startTime;
 
-    public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, boolean forceFromCache){
-        this.forceFromCache = forceFromCache;
+    public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, RequestParams requestParams) {
+        this.requestParams = requestParams;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
     }
@@ -50,60 +53,60 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
-        if(params.length != 2){
+        if (params.length != 2) {
             throw new IllegalArgumentException("PopulateTeamAtDistrictSummary must be constructed with team key & district key");
         }
         teamKey = params[0];
         districtKey = params[1];
 
-        if(!TeamHelper.validateTeamKey(teamKey)){
+        if (!TeamHelper.validateTeamKey(teamKey)) {
             throw new IllegalArgumentException("Invalid team key");
         }
-        if(!DistrictHelper.validateDistrictKey(districtKey)){
+        if (!DistrictHelper.validateDistrictKey(districtKey)) {
             throw new IllegalArgumentException("Invalid district key");
         }
 
         String districtTeamKey = DistrictTeamHelper.generateKey(teamKey, districtKey);
 
         try {
-            APIResponse<DistrictTeam> response = DataManager.Districts.getDistrictTeam(activity, districtTeamKey, forceFromCache);
+            APIResponse<DistrictTeam> response = DataManager.Districts.getDistrictTeam(activity, districtTeamKey, requestParams);
             summaryItems = new ArrayList<>();
             DistrictTeam team = response.getData();
 
             try {
                 summaryItems.add(new LabelValueListItem(activity.getString(R.string.district_point_rank),
-                    team.getRank() + Utilities.getOrdinalFor(team.getRank())));
+                        team.getRank() + Utilities.getOrdinalFor(team.getRank())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get DistrictTeam rank");
             }
 
             try {
-                APIResponse<Event> event1Name = DataManager.Events.getEventBasic(activity, team.getEvent1Key(), forceFromCache);
+                APIResponse<Event> event1Name = DataManager.Events.getEventBasic(activity, team.getEvent1Key(), requestParams);
                 summaryItems.add(new LabelValueDetailListItem(event1Name.getData().getEventName(),
-                        String.format(activity.getString(R.string.district_points_format), team.getEvent1Points()) ,
+                        String.format(activity.getString(R.string.district_points_format), team.getEvent1Points()),
                         EventTeamHelper.generateKey(team.getEvent1Key(), team.getTeamKey())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get Event 1 details");
             }
 
             try {
-                APIResponse<Event> event2Name = DataManager.Events.getEventBasic(activity, team.getEvent2Key(), forceFromCache);
+                APIResponse<Event> event2Name = DataManager.Events.getEventBasic(activity, team.getEvent2Key(), requestParams);
                 summaryItems.add(new LabelValueDetailListItem(event2Name.getData().getEventName(),
-                        String.format(activity.getString(R.string.district_points_format), team.getEvent2Points()) ,
+                        String.format(activity.getString(R.string.district_points_format), team.getEvent2Points()),
                         EventTeamHelper.generateKey(team.getEvent2Key(), team.getTeamKey())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get Event 2 details");
             }
 
             try {
-                APIResponse<Event> cmpName = DataManager.Events.getEventBasic(activity, team.getCmpKey(), forceFromCache);
+                APIResponse<Event> cmpName = DataManager.Events.getEventBasic(activity, team.getCmpKey(), requestParams);
                 summaryItems.add(new LabelValueDetailListItem(cmpName.getData().getEventName(),
-                        String.format(activity.getString(R.string.district_points_format), team.getCmpPoints()) ,
+                        String.format(activity.getString(R.string.district_points_format), team.getCmpPoints()),
                         EventTeamHelper.generateKey(team.getCmpKey(), team.getTeamKey())));
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Unable to get CMP details");
@@ -118,7 +121,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
 
             return response.getCode();
         } catch (DataManager.NoDataException e) {
-            Log.e(Constants.LOG_TAG, "Unable to fetch DistrictTeam "+districtTeamKey);
+            Log.e(Constants.LOG_TAG, "Unable to fetch DistrictTeam " + districtTeamKey);
             e.printStackTrace();
             return APIResponse.CODE.NODATA;
         }
@@ -130,7 +133,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
         //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
         View view = fragment.getView();
         if (view != null && activity != null) {
-            if (activity.getActionBar() != null) {
+            if (activity.getSupportActionBar() != null) {
                 activity.setActionBarTitle(String.format(activity.getString(R.string.team_actionbar_title), teamKey.substring(3)));
                 activity.setActionBarSubtitle("@ " + districtKey.substring(0, 4) + " " + districtKey.substring(4).toUpperCase());
             }
@@ -139,7 +142,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
 
             // If there's no data in the adapter or if we can't download info
             // off the web, display a message.
-            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!forceFromCache && adapter.values.isEmpty())) {
+            if ((code == APIResponse.CODE.NODATA && !ConnectionDetector.isConnectedToInternet(activity)) || (!requestParams.forceFromCache && adapter.values.isEmpty())) {
                 noDataText.setText(R.string.no_district_summary);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
@@ -163,15 +166,17 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateTeamAtDistrictSummary second = new PopulateTeamAtDistrictSummary(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateTeamAtDistrictSummary second = new PopulateTeamAtDistrictSummary(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(teamKey, districtKey);
-            } else {
+            }else{
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Team@District summary refresh complete");
                 activity.notifyRefreshComplete((RefreshListener) fragment);
             }
 
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@district summary", teamKey + "@" + districtKey);
         }
     }
 }

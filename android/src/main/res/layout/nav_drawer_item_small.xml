@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/nav_drawer_item_dark_background"
     android:orientation="vertical">
 
     <View
@@ -15,7 +14,7 @@
         android:layout_height="fill_parent"
         android:minHeight="48dp">
 
-        <ImageView
+        <com.thebluealliance.androidclient.views.SelectableImage
             android:id="@+id/icon"
             style="@style/NavDrawerIconStyle" />
 

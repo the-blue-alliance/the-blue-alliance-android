@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateTeamAtDistrictSummary;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
@@ -33,7 +34,7 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    public static TeamAtDistrictSummaryFragment newInstance(String teamKey, String districtKey){
+    public static TeamAtDistrictSummaryFragment newInstance(String teamKey, String districtKey) {
         TeamAtDistrictSummaryFragment f = new TeamAtDistrictSummaryFragment();
         Bundle args = new Bundle();
         args.putString(TEAM, teamKey);
@@ -52,7 +53,7 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
         mParent = getActivity();
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -97,9 +98,9 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
     }
 
     @Override
-    public void onRefreshStart() {
-        Log.d(Constants.REFRESH_LOG, "Loading summary for "+teamKey + " at "+districtKey);
-        mTask = new PopulateTeamAtDistrictSummary(this, true);
+    public void onRefreshStart(boolean actionIconPressed) {
+        Log.d(Constants.REFRESH_LOG, "Loading summary for " + teamKey + " at " + districtKey);
+        mTask = new PopulateTeamAtDistrictSummary(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, districtKey);
     }
 
@@ -117,7 +118,7 @@ public class TeamAtDistrictSummaryFragment extends Fragment implements RefreshLi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 
 }

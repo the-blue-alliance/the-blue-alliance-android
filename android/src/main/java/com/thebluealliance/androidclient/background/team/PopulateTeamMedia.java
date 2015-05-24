@@ -13,7 +13,9 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -38,18 +40,19 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
     private String team;
     private int year;
     ArrayList<ListGroup> groups;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
+    private long startTime;
 
-    public PopulateTeamMedia(TeamMediaFragment f, boolean forceFromCache) {
+    public PopulateTeamMedia(TeamMediaFragment f, RequestParams requestParams) {
         fragment = f;
         activity = (RefreshableHostActivity) f.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -63,14 +66,14 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
         team = (String) params[0];
         year = (Integer) params[1];
 
-        if(year == -1){
+        if (year == -1) {
             //year has not been set.
             return APIResponse.CODE.NODATA;
         }
 
         APIResponse<ArrayList<Media>> response = null;
         try {
-            response = DataManager.Teams.getTeamMedia(activity, team, year, forceFromCache);
+            response = DataManager.Teams.getTeamMedia(activity, team, year, requestParams);
 
             if (isCancelled()) {
                 return APIResponse.CODE.NODATA;
@@ -157,16 +160,18 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
                  * what we have cached locally for performance reasons.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
-                PopulateTeamMedia secondLoad = new PopulateTeamMedia(fragment, false);
+                requestParams.forceFromCache = false;
+                PopulateTeamMedia secondLoad = new PopulateTeamMedia(fragment, requestParams);
                 fragment.updateTask(secondLoad);
                 secondLoad.execute(team, year);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Team " + team + " " + year + " media refresh complete");
-                if (fragment instanceof RefreshListener) {
+                if (activity != null && fragment instanceof RefreshListener) {
                     activity.notifyRefreshComplete(fragment);
                 }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team media", team);
         }
     }
 }

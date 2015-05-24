@@ -18,6 +18,11 @@ public class MatchListElement extends ListElement implements Serializable {
     long time;
     private boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
 
+    // utility constructor for rendering UpcomingMatchNotification
+    public MatchListElement(String[] redTeams, String[] blueTeams, String matchKey, long time, String selectedTeamKey){
+        this("", "", redTeams, blueTeams, "?", "?", matchKey, time, selectedTeamKey, false, false, false, true);
+    }
+
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, long time, String selectedTeamKey, boolean showVideoIcon, boolean showColumnHeaders, boolean showMatchTitle, boolean clickable) {
         super(matchKey);
         this.videoKey = youTubeVideoKey;
@@ -54,6 +59,9 @@ public class MatchListElement extends ListElement implements Serializable {
         } else {
             match.showTime(true);
             match.showScores(false);
+        }
+        if(time == -1){
+            match.showTime(false);
         }
         match.setClickToShowDetails(clickable);
         match.showMatchTitle(showMatchTitle);

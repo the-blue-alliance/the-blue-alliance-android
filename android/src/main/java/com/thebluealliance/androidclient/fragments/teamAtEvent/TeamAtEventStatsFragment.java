@@ -17,12 +17,13 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventStats;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * Created by phil on 7/16/14.
  */
-public class TeamAtEventStatsFragment extends Fragment implements RefreshListener{
+public class TeamAtEventStatsFragment extends Fragment implements RefreshListener {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -33,7 +34,7 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     private ListView listView;
     private PopulateTeamAtEventStats task;
 
-    public static TeamAtEventStatsFragment newInstance(String teamKey, String eventKey){
+    public static TeamAtEventStatsFragment newInstance(String teamKey, String eventKey) {
         TeamAtEventStatsFragment f = new TeamAtEventStatsFragment();
         Bundle args = new Bundle();
         args.putString(TEAM_KEY, teamKey);
@@ -45,7 +46,7 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)){
+        if (getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)) {
             throw new IllegalArgumentException("TeamAtEventSummaryFragment must contain both team key and event key");
         }
 
@@ -55,7 +56,7 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
         parent = getActivity();
 
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -102,9 +103,9 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + teamKey + "@" + eventKey + " stats");
-        task = new PopulateTeamAtEventStats(this, true);
+        task = new PopulateTeamAtEventStats(this, new RequestParams(true, actionIconPressed));
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, eventKey);
     }
 
@@ -122,6 +123,6 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

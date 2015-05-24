@@ -46,7 +46,7 @@
             android:id="@+id/column_headers_container"
             android:background="@color/column_header_gray"
             android:minHeight="32dp"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textAppearance="@android:style/TextAppearance.Medium"
             android:visibility="visible">
 
             <TextView
@@ -56,7 +56,7 @@
                 android:layout_weight="3"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/teams"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+                android:textAppearance="@android:style/TextAppearance.Medium" />
 
             <TextView
                 android:id="@+id/score_header"
@@ -65,7 +65,7 @@
                 android:layout_weight="1.5"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/score"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+                android:textAppearance="@android:style/TextAppearance.Medium" />
 
             <TextView
                 android:id="@+id/time_header"
@@ -74,7 +74,7 @@
                 android:layout_weight="1.5"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/time"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+                android:textAppearance="@android:style/TextAppearance.Medium" />
         </TableRow>
 
         <TableRow
@@ -180,6 +180,7 @@
 
                 </LinearLayout>
             </LinearLayout>
+
             <TextView
                 android:id="@+id/match_time"
                 android:layout_width="0dp"
@@ -189,7 +190,6 @@
                 android:text="88:88 PM" />
         </TableRow>
     </TableLayout>
-
 
 
 </LinearLayout>

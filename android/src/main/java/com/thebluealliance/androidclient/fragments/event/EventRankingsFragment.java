@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -19,6 +20,8 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -68,7 +71,7 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
         }
         parent = getActivity();
         if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -91,7 +94,12 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey));
+                Intent intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey);
+                
+                 /* Track the call */
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventRankingsFragment", eventKey);
+
+                startActivity(intent);
             }
         });
         return v;
@@ -119,9 +127,9 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " rankings");
-        mTask = new PopulateEventRankings(this, true);
+        mTask = new PopulateEventRankings(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
     }
 
@@ -139,6 +147,6 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

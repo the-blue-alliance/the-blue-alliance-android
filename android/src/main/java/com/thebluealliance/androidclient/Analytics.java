@@ -14,13 +14,12 @@ import java.util.HashMap;
  */
 public class Analytics {
     private static final String PROD_ANALYTICS_KEY = "analytics.id";
-    private static final String DEBUG_ANALYTICS_KEY = "analytics.id.debug";
     static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
     private static GoogleAnalytics analytics;
 
     public static synchronized Tracker getTracker(GAnalyticsTracker trackerId, Context c) {
         if (!mTrackers.containsKey(trackerId)) {
-            if(analytics == null) {
+            if (analytics == null) {
                 analytics = GoogleAnalytics.getInstance(c);
                 boolean dryRun;
 
@@ -33,16 +32,16 @@ public class Analytics {
                 Log.d("GAV4", "Setting analytics dry run? " + dryRun);
             }
 
-            String id;
-            if(Utilities.isDebuggable()){
-                boolean useDebugKey = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("analytics_debug_key", true);
-                id = Utilities.readLocalProperty(c, useDebugKey ? DEBUG_ANALYTICS_KEY : PROD_ANALYTICS_KEY);
-            }else{
-                id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
-            }
+            String id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
             Tracker t;
-            Log.d("GAV4", "Loaded analytics id: "+id);
+            Log.d("GAV4", "Loaded analytics id: " + id);
             t = analytics.newTracker(id);
+            t.setAppId(BuildConfig.VERSION_NAME);
+            t.setAppName(c.getString(R.string.app_name));
+            t.setAppVersion(Utilities.getVersionNumber());
+            t.setSessionTimeout(300);
+            t.set("ga_logLevel", "verbose");
+            t.setSampleRate(100.0);
             t.enableAutoActivityTracking(true);
             t.enableExceptionReporting(true);
             mTrackers.put(trackerId, t);
@@ -50,15 +49,15 @@ public class Analytics {
         return mTrackers.get(trackerId);
     }
 
-    public static void setAnalyticsDryRun(Context c, boolean dryRun){
-        if(analytics == null) {
+    public static void setAnalyticsDryRun(Context c, boolean dryRun) {
+        if (analytics == null) {
             analytics = GoogleAnalytics.getInstance(c);
             analytics.setDryRun(dryRun);
             Log.d("GAV4", "Setting analytics dry run? " + dryRun);
         }
     }
 
-    public enum GAnalyticsTracker{
+    public enum GAnalyticsTracker {
         ANDROID_TRACKER;    // main tracker. We can add others in the future, if we need
     }
 }

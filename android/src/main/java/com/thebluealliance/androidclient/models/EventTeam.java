@@ -11,7 +11,9 @@ import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -24,22 +26,30 @@ import java.util.Arrays;
  */
 public class EventTeam extends BasicModel<EventTeam> {
 
+    public static final String[] NOTIFICATION_TYPES = {
+            NotificationTypes.UPCOMING_MATCH,
+            NotificationTypes.MATCH_SCORE,
+            NotificationTypes.ALLIANCE_SELECTION,
+            //NotificationTypes.AWARDS,
+            //NotificationTypes.FINAL_RESULTS
+    };
+
     public EventTeam() {
         super(Database.TABLE_EVENTTEAMS);
     }
 
-    public void setKey(String newKey){
-        if(EventTeamHelper.validateEventTeamKey(newKey)){
+    public void setKey(String newKey) {
+        if (EventTeamHelper.validateEventTeamKey(newKey)) {
             fields.put(Database.EventTeams.KEY, newKey);
-        }else{
-            throw new IllegalArgumentException("Invalid EventTeam key: "+newKey);
+        } else {
+            throw new IllegalArgumentException("Invalid EventTeam key: " + newKey);
         }
     }
 
     public String getKey() throws FieldNotDefinedException {
         if (fields.containsKey(Database.EventTeams.KEY) && fields.get(Database.EventTeams.KEY) instanceof String) {
             return (String) fields.get(Database.EventTeams.KEY);
-        }else{
+        } else {
             try {
                 String newKey = EventTeamHelper.generateKey(getEventKey(), getTeamKey());
                 setKey(newKey);
@@ -104,7 +114,7 @@ public class EventTeam extends BasicModel<EventTeam> {
         return null;
     }
 
-    public static synchronized APIResponse<ArrayList<EventTeam>> queryList(Context c, boolean forceFromCache, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static synchronized APIResponse<ArrayList<EventTeam>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying eventTeams table: " + whereClause + Arrays.toString(whereArgs));
         Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<EventTeam> eventTeams = new ArrayList<>();
@@ -117,10 +127,10 @@ public class EventTeam extends BasicModel<EventTeam> {
         }
 
 
-        APIResponse.CODE code = forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
+        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, forceFromCache);
+            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 JsonArray matchList = JSONManager.getasJsonArray(response.getData());
                 eventTeams = new ArrayList<>();

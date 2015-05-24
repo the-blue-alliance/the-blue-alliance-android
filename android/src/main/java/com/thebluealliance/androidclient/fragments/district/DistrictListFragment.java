@@ -18,12 +18,13 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateDistrictList;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
 /**
  * Created by phil on 7/23/14.
  */
-public class DistrictListFragment extends Fragment implements RefreshListener{
+public class DistrictListFragment extends Fragment implements RefreshListener {
 
     public static final String YEAR = "year";
 
@@ -34,7 +35,7 @@ public class DistrictListFragment extends Fragment implements RefreshListener{
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    public static DistrictListFragment newInstance(int year){
+    public static DistrictListFragment newInstance(int year) {
         DistrictListFragment f = new DistrictListFragment();
         Bundle args = new Bundle();
         args.putInt(YEAR, year);
@@ -51,7 +52,7 @@ public class DistrictListFragment extends Fragment implements RefreshListener{
         mParent = getActivity();
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -96,9 +97,9 @@ public class DistrictListFragment extends Fragment implements RefreshListener{
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.d(Constants.REFRESH_LOG, "Loading " + mYear + " districts");
-        mTask = new PopulateDistrictList(this, true);
+        mTask = new PopulateDistrictList(this, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mYear);
     }
 
@@ -116,6 +117,6 @@ public class DistrictListFragment extends Fragment implements RefreshListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).deregisterRefreshableActivityListener(this);
+        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 }

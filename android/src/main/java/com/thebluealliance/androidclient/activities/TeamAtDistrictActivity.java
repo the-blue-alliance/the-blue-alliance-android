@@ -1,19 +1,19 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -21,7 +21,9 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtDistrictFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * File created by phil on 7/26/14.
@@ -29,12 +31,16 @@ import com.thebluealliance.androidclient.helpers.TeamHelper;
 public class TeamAtDistrictActivity extends RefreshableHostActivity {
 
     public static final String DISTRICT_KEY = "districtKey",
-        TEAM_KEY = "teamKey";
+            TEAM_KEY = "teamKey";
 
     private String districtKey, teamKey;
     private TextView warningMessage;
     private ViewPager pager;
     private TeamAtDistrictFragmentPagerAdapter adapter;
+
+    public static Intent newInstance(Context c, String teamAtDistrictKey){
+        return newInstance(c, DistrictTeamHelper.getTeamKey(teamAtDistrictKey), DistrictTeamHelper.getDistrictKey(teamAtDistrictKey));
+    }
 
     public static Intent newInstance(Context c, String teamKey, String districtKey) {
         Intent intent = new Intent(c, TeamAtDistrictActivity.class);
@@ -50,7 +56,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
 
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_KEY)) {
             districtKey = getIntent().getExtras().getString(DISTRICT_KEY, "");
-            if(!DistrictHelper.validateDistrictKey(districtKey)){
+            if (!DistrictHelper.validateDistrictKey(districtKey)) {
                 throw new IllegalArgumentException("Invalid district key");
             }
         } else {
@@ -58,12 +64,15 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         }
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_KEY)) {
             teamKey = getIntent().getExtras().getString(TEAM_KEY, "");
-            if(!TeamHelper.validateTeamKey(teamKey)){
+            if (!TeamHelper.validateTeamKey(teamKey)) {
                 throw new IllegalArgumentException("Invalid team key");
             }
         } else {
             throw new IllegalArgumentException("TeamAtDistrictActivity must be constructed with a team key");
         }
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -76,7 +85,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         pager.setOffscreenPageLimit(10);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
 
         setupActionBar();
@@ -95,8 +104,8 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
     }
 
     private void setupActionBar() {
-        ActionBar bar = getActionBar();
-        if(bar != null) {
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
             setActionBarTitle("");
         }
@@ -119,7 +128,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
                 startActivity(ViewDistrictActivity.newInstance(this, districtKey));
                 return true;
             case R.id.action_view_team:
-                int year = Integer.parseInt(districtKey.substring(0,4));
+                int year = Integer.parseInt(districtKey.substring(0, 4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
                 return true;
             case android.R.id.home:

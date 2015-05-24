@@ -24,3 +24,22 @@
 -assumenosideeffects class android.util.Log {
 public static *** d(...);
 }
+
+# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
+
+-keep class com.firebase.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames class com.thebluealliance.androidclient.models.FirebaseNotification { *; }
+-keep public class com.thebluealliance.androidclient.models.FirebaseNotification {
+    public void set(*);
+    public ** get*();
+}
+-keepattributes *Annotation*,EnclosingMethod

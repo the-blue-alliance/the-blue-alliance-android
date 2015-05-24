@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.background;
 
-import android.annotation.TargetApi;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.comparators.EventWeekLabelSortComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
@@ -25,13 +25,20 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
     private int year;
     private ArrayList<String> allLabels;
     private static EventWeekLabelSortComparator comparator;
+    private long startTime;
 
     public BuildEventWeekTabs(EventsByWeekFragment fragment) {
         this.fragment = fragment;
 
-        if(comparator == null){
+        if (comparator == null) {
             comparator = new EventWeekLabelSortComparator();
         }
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -39,7 +46,7 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
         year = params[0];
         try {
             Log.d(Constants.LOG_TAG, "Loading event list...");
-            APIResponse<HashMap<String, ArrayList<Event>>> allEvents = DataManager.Events.getEventsByYear(fragment.getActivity(), year, false);
+            APIResponse<HashMap<String, ArrayList<Event>>> allEvents = DataManager.Events.getEventsByYear(fragment.getActivity(), year, new RequestParams());
             allLabels = new ArrayList<>();
             allLabels.addAll(allEvents.getData().keySet());
             Collections.sort(allLabels, comparator);
@@ -54,12 +61,13 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
-        if(fragment != null && fragment.getActivity() != null) {
+        if (fragment != null && fragment.getActivity() != null) {
             if (code != APIResponse.CODE.NODATA && allLabels != null && allLabels.size() > 0) {
                 Log.d(Constants.REFRESH_LOG, "Event week tabs data downloaded");
                 fragment.updateLabels(allLabels);
                 fragment.notifyRefreshComplete(fragment);
             }
+            AnalyticsHelper.sendTimingUpdate(fragment.getActivity(), System.currentTimeMillis() - startTime,"build week tabs", "");
         }
     }
 

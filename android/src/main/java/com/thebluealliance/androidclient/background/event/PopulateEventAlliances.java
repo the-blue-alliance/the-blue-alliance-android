@@ -13,7 +13,9 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventAlliancesFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
@@ -29,20 +31,20 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> teams;
     private String eventKey;
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private ListViewAdapter adapter;
-    Event event;
+    private long startTime;
 
-    public PopulateEventAlliances(EventAlliancesFragment f, boolean forceFromCache) {
+    public PopulateEventAlliances(EventAlliancesFragment f, RequestParams requestParams) {
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -51,8 +53,9 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
         eventKey = params[0];
 
         APIResponse<Event> eventResponse;
+        Event event;
         try {
-            eventResponse = DataManager.Events.getEvent(activity, eventKey, forceFromCache);
+            eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);
             event = eventResponse.getData();
 
             if (isCancelled()) {
@@ -100,23 +103,24 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
-        }
-
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            PopulateEventAlliances secondLoad = new PopulateEventAlliances(mFragment, false);
-            mFragment.updateTask(secondLoad);
-            secondLoad.execute(eventKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (mFragment instanceof RefreshListener) {
-                Log.d(Constants.REFRESH_LOG, "Event " + eventKey + " alliances refresh complete");
-                activity.notifyRefreshComplete(mFragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateEventAlliances secondLoad = new PopulateEventAlliances(mFragment, requestParams);
+                mFragment.updateTask(secondLoad);
+                secondLoad.execute(eventKey);
+            } else {
+                // Show notification if we've refreshed data.
+                if (activity != null && mFragment instanceof RefreshListener) {
+                    Log.d(Constants.REFRESH_LOG, "Event " + eventKey + " alliances refresh complete");
+                    activity.notifyRefreshComplete(mFragment);
+                }
             }
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event alliances", eventKey);
         }
     }
 }

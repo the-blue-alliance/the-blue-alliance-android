@@ -14,7 +14,9 @@ import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictBreakdownFragment;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
@@ -32,15 +34,16 @@ import java.util.ArrayList;
  */
 public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private boolean forceFromCache;
+    private RequestParams requestParams;
     private TeamAtDistrictBreakdownFragment fragment;
     private RefreshableHostActivity activity;
     private String teamKey, districtKey;
     private ArrayList<ListGroup> groups;
+    private long startTime;
 
-    public PopulateTeamAtDistrictBreakdown(TeamAtDistrictBreakdownFragment fragment, boolean forceFromCache){
+    public PopulateTeamAtDistrictBreakdown(TeamAtDistrictBreakdownFragment fragment, RequestParams requestParams) {
         super();
-        this.forceFromCache = forceFromCache;
+        this.requestParams = requestParams;
         this.fragment = fragment;
         activity = (RefreshableHostActivity) fragment.getActivity();
     }
@@ -48,21 +51,21 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        activity.showMenuProgressBar();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
     protected APIResponse.CODE doInBackground(String... params) {
-        if(params.length != 2){
+        if (params.length != 2) {
             throw new IllegalArgumentException("PopulateTeamAtDistrictSummary must be constructed with team key & district key");
         }
         teamKey = params[0];
         districtKey = params[1];
 
-        if(!TeamHelper.validateTeamKey(teamKey)){
+        if (!TeamHelper.validateTeamKey(teamKey)) {
             throw new IllegalArgumentException("Invalid team key");
         }
-        if(!DistrictHelper.validateDistrictKey(districtKey)){
+        if (!DistrictHelper.validateDistrictKey(districtKey)) {
             throw new IllegalArgumentException("Invalid district key");
         }
 
@@ -70,9 +73,9 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
 
         APIResponse<DistrictTeam> teamEvents;
         try {
-            teamEvents = DataManager.Districts.getDistrictTeamEvents(activity, districtTeamKey, forceFromCache);
+            teamEvents = DataManager.Districts.getDistrictTeamEvents(activity, districtTeamKey, requestParams);
         } catch (DataManager.NoDataException e) {
-            Log.e(Constants.LOG_TAG, "Unable to fetch events for "+teamKey+" in "+districtKey);
+            Log.e(Constants.LOG_TAG, "Unable to fetch events for " + teamKey + " in " + districtKey);
             return APIResponse.CODE.NODATA;
         }
 
@@ -97,33 +100,33 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
         }
 
         groups = new ArrayList<>();
-        for(String eventKey: eventKeys){
+        for (String eventKey : eventKeys) {
             try {
-                APIResponse<JsonObject> teamPoints = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, teamKey, forceFromCache);
+                APIResponse<JsonObject> teamPoints = DataManager.Events.getDistrictPointsForEvent(activity, eventKey, teamKey, requestParams);
                 pointsCodes.add(teamPoints.getCode());
-                ListGroup eventGroup = new ListGroup(DataManager.Events.getEventBasic(activity, eventKey, forceFromCache).getData().getEventName());
+                ListGroup eventGroup = new ListGroup(DataManager.Events.getEventBasic(activity, eventKey, requestParams).getData().getEventName());
 
                 DistrictPointBreakdown breakdown = JSONManager.getGson().fromJson(teamPoints.getData(), DistrictPointBreakdown.class);
 
-                if(breakdown.getQualPoints() > -1){
+                if (breakdown.getQualPoints() > -1) {
                     eventGroup.children.add(breakdown.renderQualPoints(activity));
                 }
-                if(breakdown.getElimPoints() > -1){
+                if (breakdown.getElimPoints() > -1) {
                     eventGroup.children.add(breakdown.renderElimPoints(activity));
                 }
-                if(breakdown.getAlliancePoints() > -1){
+                if (breakdown.getAlliancePoints() > -1) {
                     eventGroup.children.add(breakdown.renderAlliancePoints(activity));
                 }
-                if(breakdown.getAwardPoints() > -1){
+                if (breakdown.getAwardPoints() > -1) {
                     eventGroup.children.add(breakdown.renderAwardPoints(activity));
                 }
-                if(breakdown.getTotalPoints() > -1){
+                if (breakdown.getTotalPoints() > -1) {
                     eventGroup.children.add(breakdown.renderTotalPoints(activity));
                 }
 
                 groups.add(eventGroup);
             } catch (DataManager.NoDataException e) {
-                Log.e(Constants.LOG_TAG, "Unable to get district points for "+eventKey+" "+teamKey);
+                Log.e(Constants.LOG_TAG, "Unable to get district points for " + eventKey + " " + teamKey);
                 e.printStackTrace();
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Unable to fetch event title");
@@ -138,15 +141,14 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
     protected void onPostExecute(APIResponse.CODE code) {
         View view = fragment.getView();
 
-        ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
-
         if (view != null && activity != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
             // only show the message when try try and actually load data from the web
-            if ( code == APIResponse.CODE.NODATA || (!forceFromCache && groups == null || adapter.groups == null || adapter.groups.isEmpty())) {
+            if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && groups == null || adapter.groups == null || adapter.groups.isEmpty())) {
                 noDataText.setVisibility(View.VISIBLE);
                 noDataText.setText(R.string.no_team_district_breakdown);
             } else {
@@ -157,7 +159,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
                 results.setAdapter(adapter);
                 results.onRestoreInstanceState(state);
                 results.setSelection(firstVisiblePosition);
-                if(groups.size() == 1){
+                if (groups.size() == 1) {
                     results.expandGroup(0);
                 }
                 adapter.notifyDataSetChanged();
@@ -171,23 +173,26 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-        }
 
-        if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-            /**
-             * The data has the possibility of being updated, but we at first loaded
-             * what we have cached locally for performance reasons.
-             * Thus, fire off this task again with a flag saying to actually load from the web
-             */
-            PopulateTeamAtDistrictBreakdown secondLoad = new PopulateTeamAtDistrictBreakdown(fragment, false);
-            fragment.updateTask(secondLoad);
-            secondLoad.execute(teamKey, districtKey);
-        } else {
-            // Show notification if we've refreshed data.
-            if (fragment instanceof RefreshListener) {
-                Log.d(Constants.REFRESH_LOG, teamKey + " at " + districtKey + " refresh complete");
-                activity.notifyRefreshComplete(fragment);
+            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
+                /**
+                 * The data has the possibility of being updated, but we at first loaded
+                 * what we have cached locally for performance reasons.
+                 * Thus, fire off this task again with a flag saying to actually load from the web
+                 */
+                requestParams.forceFromCache = false;
+                PopulateTeamAtDistrictBreakdown secondLoad = new PopulateTeamAtDistrictBreakdown(fragment, requestParams);
+                fragment.updateTask(secondLoad);
+                secondLoad.execute(teamKey, districtKey);
+            }{
+                // Show notification if we've refreshed data.
+                if (fragment instanceof RefreshListener) {
+                    Log.d(Constants.REFRESH_LOG, teamKey + " at " + districtKey + " refresh complete");
+                    activity.notifyRefreshComplete(fragment);
+                }
             }
+
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@district breakdown", teamKey + "@" + districtKey);
         }
     }
 }

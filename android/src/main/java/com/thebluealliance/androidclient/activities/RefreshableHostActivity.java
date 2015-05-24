@@ -1,21 +1,22 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.intents.ConnectionChangeBroadcast;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
 import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Nathan on 4/29/2014.
@@ -24,12 +25,20 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
-    private RefreshBroadcastReceiver refreshListener;
     private boolean mRefreshed = false;
 
     Menu mOptionsMenu;
 
     private boolean mRefreshInProgress = false;
+
+    private boolean mProgressBarShowing = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mRefreshed = false;
+        startRefresh();
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -43,7 +52,7 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         getMenuInflater().inflate(R.menu.refresh_menu, menu);
         mOptionsMenu = menu;
         if (mRefreshInProgress) {
-            showMenuProgressBar();
+            setMenuProgressBarVisible(true);
         }
         return true;
     }
@@ -55,9 +64,9 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
                 if (shouldRefresh()) {
                     // If a refresh is already in progress, restart it. Otherwise, begin a refresh.
                     if (!mRefreshInProgress) {
-                        startRefresh();
+                        startRefresh(true);
                     } else {
-                        restartRefresh();
+                        restartRefresh(true);
                     }
                 }
                 break;
@@ -68,9 +77,8 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     @Override
     protected void onResume() {
         super.onResume();
-        refreshListener = new RefreshBroadcastReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(refreshListener, new IntentFilter(ConnectionChangeBroadcast.ACTION));
-        if(!mRefreshed){
+        EventBus.getDefault().register(this);
+        if (!mRefreshed) {
             startRefresh();
         }
     }
@@ -79,17 +87,16 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     protected void onPause() {
         super.onPause();
         cancelRefresh();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshListener);
-        refreshListener = null;
+        EventBus.getDefault().unregister(this);
     }
 
-    public synchronized void registerRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void registerRefreshListener(RefreshListener listener) {
         if (listener != null && !mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
     }
 
-    public synchronized void deregisterRefreshableActivityListener(RefreshListener listener) {
+    public synchronized void unregisterRefreshListener(RefreshListener listener) {
         if (listener != null && mRefreshListeners.contains(listener)) {
             mRefreshListeners.remove(listener);
         }
@@ -136,15 +143,25 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     call super.onRefreshComplete() to ensure proper behavior.
      */
     protected void onRefreshComplete() {
-        hideMenuProgressBar();
+        setMenuProgressBarVisible(false);
         mRefreshInProgress = false;
         mRefreshed = true;
+
+        //update myTBA after content loads
+        if (AccountHelper.isAccountSelected(this)) {
+            new UpdateMyTBA(this, new RequestParams()).execute();
+        }
     }
 
     /*
-    Notifies all registered listeners that they should start their refresh.
+     * Notifies all registered listeners that they should start their refresh.
+     * Passes parameter if toolbar icon initiated refresh (defaults to false)
      */
     public void startRefresh() {
+        startRefresh(false);
+    }
+
+    public void startRefresh(boolean actionIconPressed) {
         if (mRefreshInProgress) {
             //if a refresh is already happening, don't start another
             return;
@@ -153,10 +170,12 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             return;
         }
         mRefreshInProgress = true;
+        setMenuProgressBarVisible(true);
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
-        showMenuProgressBar();
+
+        AnalyticsHelper.sendRefreshUpdate(this, modelKey);
     }
 
     /*
@@ -166,7 +185,8 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
         if (!mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
-        listener.onRefreshStart();
+        listener.onRefreshStart(false);
+        setMenuProgressBarVisible(true);
     }
 
     /*
@@ -177,50 +197,53 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
             listener.onRefreshStop();
         }
         mRefreshInProgress = false;
-        hideMenuProgressBar();
+        setMenuProgressBarVisible(false);
     }
 
     /*
     Notifies all refresh listeners that they should stop, and immediately notifies them that they should start again.
      */
-    public void restartRefresh() {
+    public void restartRefresh(boolean actionIconPressed) {
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
         for (RefreshListener listener : mRefreshListeners) {
-            listener.onRefreshStart();
+            listener.onRefreshStart(actionIconPressed);
         }
         mRefreshInProgress = true;
-        showMenuProgressBar();
+        setMenuProgressBarVisible(true);
     }
 
-    public void showMenuProgressBar() {
+    private void setMenuProgressBarVisible(boolean visible) {
+        MenuItem refresh;
         if (mOptionsMenu != null) {
-            // Show refresh indicator
-            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
-            refresh.setActionView(R.layout.actionbar_indeterminate_progress);
+            refresh = mOptionsMenu.findItem(R.id.refresh);
+        } else {
+            return;
         }
-    }
 
-    private void hideMenuProgressBar() {
-        if (mOptionsMenu != null) {
-            // Hide refresh indicator
-            MenuItem refresh = mOptionsMenu.findItem(R.id.refresh);
+        if (mProgressBarShowing && !visible) {
+            // Hide progress indicator
+            Log.d("RHA", "hidden");
             refresh.setActionView(null);
+            mProgressBarShowing = false;
+        } else if (!mProgressBarShowing && visible) {
+            // Show progress indicator
+            Log.d("RHA", "shown!");
+            refresh.setActionView(R.layout.actionbar_indeterminate_progress);
+            mProgressBarShowing = true;
+        } else {
+            Log.d("RHA", "did nothing! showing: " + mProgressBarShowing + "; desired: " + visible);
+            // Do nothing
         }
     }
 
-    class RefreshBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Constants.LOG_TAG, "RefreshableHost received refresh broadcast");
-            if (intent.getIntExtra(ConnectionChangeBroadcast.CONNECTION_STATUS, ConnectionChangeBroadcast.CONNECTION_LOST) == ConnectionChangeBroadcast.CONNECTION_FOUND) {
-                hideWarningMessage();
-                startRefresh();
-            } else {
-                showWarningMessage(getString(R.string.warning_no_internet_connection));
-            }
+    public void onEvent(ConnectivityChangeEvent event) {
+        if (event.getConnectivityChangeType() == ConnectivityChangeEvent.CONNECTION_FOUND) {
+            hideWarningMessage();
+            startRefresh();
+        } else {
+            showWarningMessage(getString(R.string.warning_no_internet_connection));
         }
     }
 }

@@ -2,31 +2,48 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<PreferenceCategory android:title="@string/pref_header_account" />-->
+    <PreferenceCategory android:title="@string/pref_header_account">
 
-    <!--<PreferenceCategory android:title="@string/pref_header_general" />-->
+        <SwitchPreference
+            android:key="mytba_enabled"
+            android:persistent="false"
+            android:title="@string/is_mytba_enabled" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_notifications">
+        <Preference
+            android:key="notification_dashboard"
+            android:persistent="false"
+            android:title="@string/notification_dashboard"
+            android:summary="@string/notification_dashboard_summary" />
+        <Preference
+            android:key="notifications"
+            android:persistent="false"
+            android:title="@string/notification_settings" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_appinfo">
         <Preference
             android:key="tba_link"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/tbasite_label"
-            android:summary="@string/tbasite_summary"/>
+            android:summary="@string/tbasite_summary"
+            android:title="@string/tbasite_label" />
 
         <Preference
             android:key="github_link"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/github_label"
-            android:summary="@string/github_summary" />
+            android:summary="@string/github_summary"
+            android:title="@string/github_label" />
 
         <Preference
             android:key="contributors"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/contributors"
-            android:summary="@string/contributors_summary" />
+            android:summary="@string/contributors_summary"
+            android:title="@string/contributors" />
 
         <Preference
             android:key="changelog"
@@ -38,13 +55,13 @@
             android:key="app_version"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/settings_version_label" />
+            android:title="@string/settings_build_info_label" />
 
         <Preference
             android:key="licenses"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/license_label"/>
+            android:title="@string/license_label" />
 
     </PreferenceCategory>
 

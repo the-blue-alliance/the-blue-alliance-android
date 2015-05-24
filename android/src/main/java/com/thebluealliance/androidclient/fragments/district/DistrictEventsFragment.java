@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
 
@@ -34,7 +35,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     private ListView mListView;
     private PopulateEventList mTask;
 
-    public static DistrictEventsFragment newInstance(String key){
+    public static DistrictEventsFragment newInstance(String key) {
         DistrictEventsFragment f = new DistrictEventsFragment();
         Bundle args = new Bundle();
         args.putString(KEY, key);
@@ -47,13 +48,13 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
         super.onCreate(savedInstanceState);
 
         mParent = getActivity();
-        if(getArguments() == null || !getArguments().containsKey(KEY)){
+        if (getArguments() == null || !getArguments().containsKey(KEY)) {
             throw new IllegalArgumentException("DistrictEventsFragment must be constructed with district key");
         }
         mKey = getArguments().getString(KEY);
 
         if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshableActivityListener(this);
+            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -74,7 +75,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     @Override
     public void onPause() {
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -86,15 +87,15 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(mParent != null && mParent instanceof RefreshableHostActivity) {
+        if (mParent != null && mParent instanceof RefreshableHostActivity) {
             ((RefreshableHostActivity) mParent).startRefresh(this);
         }
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.d(Constants.REFRESH_LOG, "Loading events for district " + mKey);
-        mTask = new PopulateEventList(this, mKey, true);
+        mTask = new PopulateEventList(this, mKey, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -110,7 +111,7 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     public void onDestroy() {
         super.onDestroy();
         if(mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)mParent).deregisterRefreshableActivityListener(this);
+            ((RefreshableHostActivity)mParent).unregisterRefreshListener(this);
         }
     }
 }

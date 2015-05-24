@@ -6,23 +6,26 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Arrays;
 
-public class TeamAtEventActivity extends RefreshableHostActivity implements ViewPager.OnPageChangeListener {
+public class TeamAtEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
@@ -30,6 +33,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
     private String eventKey, teamKey;
     private ViewPager pager;
     private TeamAtEventFragmentPagerAdapter adapter;
+
+    public static Intent newInstance(Context c, String eventTeamKey){
+        return newInstance(c, EventTeamHelper.getEventKey(eventTeamKey), EventTeamHelper.getTeamKey(eventTeamKey));
+    }
 
     public static Intent newInstance(Context c, String eventKey, String teamKey) {
         Intent intent = new Intent(c, TeamAtEventActivity.class);
@@ -41,7 +48,6 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_team_at_event);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
@@ -51,6 +57,10 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
 
+        String eventTeamKey = EventTeamHelper.generateKey(eventKey, teamKey);
+        setModelKey(eventTeamKey, ModelHelper.MODELS.EVENTTEAM);
+        setContentView(R.layout.activity_team_at_event);
+
         pager = (ViewPager) findViewById(R.id.view_pager);
         adapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), teamKey, eventKey);
         pager.setAdapter(adapter);
@@ -59,11 +69,12 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
         pager.setOffscreenPageLimit(6);
         pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
 
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setupActionBar();
 
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -75,6 +86,8 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
 
         startRefresh();
+
+        setSettingsToolbarTitle("Team at Event Settings");
     }
 
     @Override
@@ -95,7 +108,7 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
                 startActivity(ViewEventActivity.newInstance(this, eventKey));
                 return true;
             case R.id.action_view_team:
-                int year = Integer.parseInt(eventKey.substring(0,4));
+                int year = Integer.parseInt(eventKey.substring(0, 4));
                 startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
                 return true;
             case R.id.stats_help:
@@ -120,6 +133,11 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
         }
     }
 
+    private void setupActionBar() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setActionBarTitle("");
+    }
+
     @Override
     public void showWarningMessage(String message) {
         warningMessage.setText(message);
@@ -138,13 +156,20 @@ public class TeamAtEventActivity extends RefreshableHostActivity implements View
 
     @Override
     public void onPageSelected(int position) {
-        if(mOptionsMenu != null) {
+        if (mOptionsMenu != null) {
             if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
                 //stats position
                 mOptionsMenu.findItem(R.id.stats_help).setVisible(true);
             } else {
                 mOptionsMenu.findItem(R.id.stats_help).setVisible(false);
             }
+        }
+
+        // hide the FAB if we aren't on the first page
+        if (position != 0) {
+            hideFab(true);
+        } else {
+            showFab(true);
         }
     }
 

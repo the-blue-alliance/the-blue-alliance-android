@@ -6,4 +6,14 @@
         <item>@string/dialog_stats_sort_dpr</item>
         <item>@string/dialog_stats_sort_ccwm</item>
     </string-array>
+    <string-array name="notification_visibility">
+        <item>@string/pref_notification_visibility_secret</item>
+        <item>@string/pref_notification_visibility_private</item>
+        <item>@string/pref_notification_visibility_public</item>
+    </string-array>
+    <string-array name="notification_visibility_values">
+        <item>secret</item>
+        <item>private</item>
+        <item>public</item>
+    </string-array>
 </resources>

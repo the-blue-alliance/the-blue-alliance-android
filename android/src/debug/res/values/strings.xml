@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">The Blue Alliance Debug</string>
+    <string name="package_name">com.thebluealliance.androidclient.development</string>
+    <string name="account_type">com.thebluealliance.androidclient.development.account.TBAACCOUNT</string>
 
 </resources>

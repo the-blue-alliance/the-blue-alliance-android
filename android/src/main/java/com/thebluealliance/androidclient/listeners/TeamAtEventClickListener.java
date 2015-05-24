@@ -1,11 +1,17 @@
 package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 /**
@@ -22,7 +28,7 @@ public class TeamAtEventClickListener implements View.OnClickListener {
         this.key = null;
     }
 
-    public TeamAtEventClickListener(Context c, String key){
+    public TeamAtEventClickListener(Context c, String key) {
         super();
         this.c = c;
         this.key = key;
@@ -31,7 +37,7 @@ public class TeamAtEventClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String teamKey, eventKey;
-        if(key == null) {
+        if (key == null) {
             String tag = v.getTag().toString();
             if (tag.contains("@")) {
                 teamKey = tag.split("@")[0];
@@ -40,7 +46,7 @@ public class TeamAtEventClickListener implements View.OnClickListener {
                 teamKey = tag;
                 eventKey = "";
             }
-        }else{
+        } else {
             teamKey = key.split("_")[1];
             eventKey = key.split("_")[0];
         }
@@ -49,12 +55,15 @@ public class TeamAtEventClickListener implements View.OnClickListener {
                 // Take out extra letter at end to make team key valid.
                 teamKey = teamKey.substring(0, teamKey.length() - 1);
             }
-            if(EventHelper.validateEventKey(eventKey)) {
-                c.startActivity(TeamAtEventActivity.newInstance(c, eventKey, teamKey));
-            }else{
-                //if we don't pass a valid event key, just open up the team activity
-                c.startActivity(ViewTeamActivity.newInstance(c, teamKey));
+            //social button was clicked. Track the call
+            Intent intent;
+            if (EventHelper.validateEventKey(eventKey)) {
+                intent = TeamAtEventActivity.newInstance(c, eventKey, teamKey);
+            } else {
+                intent = ViewTeamActivity.newInstance(c, teamKey);
             }
+            AnalyticsHelper.sendClickUpdate(c, "team@event_click", key, "");
+            c.startActivity(intent);
         }
     }
 }

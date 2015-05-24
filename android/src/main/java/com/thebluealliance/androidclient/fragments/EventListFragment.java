@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -9,20 +8,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateEventList;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
-import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * File created by phil on 4/20/14.
@@ -65,14 +61,14 @@ public class EventListFragment extends Fragment implements RefreshListener {
         mWeek = getArguments().getInt(WEEK, -1);
         mTeamKey = getArguments().getString(TEAM_KEY);
         mHeader = getArguments().getString(WEEK_HEADER);
-        if(mHost == null && getActivity() instanceof RefreshableHost){
-            mHost = (RefreshableHost)getActivity();
+        if (mHost == null && getActivity() instanceof RefreshableHost) {
+            mHost = (RefreshableHost) getActivity();
         }
     }
 
-    public void setHost(RefreshableHost host){
+    public void setHost(RefreshableHost host) {
         mHost = host;
-        mHost.registerRefreshableActivityListener(this);
+        mHost.registerRefreshListener(this);
     }
 
     @Override
@@ -97,7 +93,7 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        if(mTask != null) {
+        if (mTask != null) {
             mTask.cancel(false);
         }
         if (mListView != null) {
@@ -109,15 +105,15 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(mHost != null) {
+        if (mHost != null) {
             mHost.startRefresh(this);
         }
     }
 
     @Override
-    public void onRefreshStart() {
+    public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading events for week " + mHeader + " in " + mYear + " for " + mTeamKey);
-        mTask = new PopulateEventList(this, mHost, mYear, mHeader, mTeamKey, true);
+        mTask = new PopulateEventList(this, mHost, mYear, mHeader, mTeamKey, new RequestParams(true, actionIconPressed));
         mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -132,6 +128,6 @@ public class EventListFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHost.deregisterRefreshableActivityListener(this);
+        mHost.unregisterRefreshListener(this);
     }
 }
