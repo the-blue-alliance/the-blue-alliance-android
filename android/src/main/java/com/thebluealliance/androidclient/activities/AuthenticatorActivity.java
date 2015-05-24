@@ -148,17 +148,6 @@ public class AuthenticatorActivity extends PlusBaseActivity {
         mPlusNotNowButton.setVisibility(connected ? View.GONE : View.VISIBLE);
     }
 
-    @Override
-    protected void onPlusClientRevokeAccess() {
-        // TODO: Access to the user's G+ account has been revoked.  Per the developer terms, delete
-        // any stored user data here.
-    }
-
-    @Override
-    protected void onPlusClientSignOut() {
-        AccountHelper.enableMyTBA(this, false);
-    }
-
     /**
      * Check if the device supports Google Play Services.  It's best
      * practice to check first rather than handling this as an error case.
