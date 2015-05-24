@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.format.DateFormat;
@@ -16,6 +17,7 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listeners.MatchClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -231,9 +233,14 @@ public class MatchView extends FrameLayout {
                 // Match has no time
                 localTimeString = getContext().getString(R.string.no_time_available);
             } else {
+                // Format the day-of-week & time in the current locale with the user's 12/24-hour
+                // preference. The day part distinguishes today's matches from tomorrow's matches
+                // and from yesterday's matches with delayed results.
                 Date date = new Date(time * 1000L);
                 java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
-                localTimeString = format.format(date);
+                @SuppressLint("SimpleDateFormat")
+                java.text.DateFormat dowFormat = new SimpleDateFormat("E ");
+                localTimeString = dowFormat.format(date) + format.format(date);
             }
 
             this.time.setText(localTimeString);

@@ -184,12 +184,8 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
         holder.title.setText(c.getString(R.string.notification_upcoming_match_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
-        if(!JSONManager.isNull(matchTime)) {
-            holder.time.setText(getNotificationTimeString(c));
-            holder.time.setVisibility(View.VISIBLE);
-        }else{
-            holder.time.setVisibility(View.GONE);
-        }
+        holder.time.setText(getNotificationTimeString(c));
+
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
         new MatchListElement(redTeams, blueTeams, matchKey, JSONManager.isNull(matchTime)?-1:matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
 
