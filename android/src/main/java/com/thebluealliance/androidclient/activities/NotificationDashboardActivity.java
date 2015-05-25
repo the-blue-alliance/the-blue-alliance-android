@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +22,8 @@ public class NotificationDashboardActivity extends RefreshableHostActivity {
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
+    Toolbar toolbar;
+
     public static Intent newInstance(Context c) {
         return new Intent(c, NotificationDashboardActivity.class);
     }
@@ -30,7 +33,9 @@ public class NotificationDashboardActivity extends RefreshableHostActivity {
         super.onCreate(savedInstanceState);
         Log.d(Constants.LOG_TAG, "Created Dashboard Activity");
         setContentView(R.layout.activity_notification_dashboard);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(toolbar);
         setupActionBar();
         
         Fragment fragment = new NotificationDashboardFragment();

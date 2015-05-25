@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -92,6 +93,8 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setOnPageChangeListener(this);
         tabs.setViewPager(pager);
+        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
+
         pager.setCurrentItem(currentTab);  // Do this after we set onPageChangeListener, so that FAB gets hidden, if needed
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -30,6 +31,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
     private String mMatchKey;
 
     private TextView warningMessage;
+    private Toolbar toolbar;
 
     private PopulateMatchInfo task;
 
@@ -49,7 +51,9 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
         }
         setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
         setContentView(R.layout.activity_view_match);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(toolbar);
         setupActionBar();
 
         setSettingsToolbarTitle("Match settings");

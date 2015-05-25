@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
     private static final String PREPARED_QUERY = "preparedQuery";
 
     private ListView resultsList;
+    private Toolbar toolbar;
     private String query;
 
     private int resultsType;
@@ -55,7 +57,9 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(toolbar);
 
         /* Report activity start to Analytics */
         new AnalyticsActions.ReportActivityStart(this).run();
