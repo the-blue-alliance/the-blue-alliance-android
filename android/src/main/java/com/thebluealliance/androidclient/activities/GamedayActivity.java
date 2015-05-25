@@ -10,14 +10,11 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
-import com.firebase.client.Firebase;
 import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
@@ -31,7 +28,7 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
 
     public static final String TAB = "tab";
 
-    private static final int ANIMATION_DURATION = 250;
+    private static final int FAB_ANIMATE_DURATION = 250;
 
     private TextView warningMessage;
     private int currentTab;
@@ -40,6 +37,8 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
 
     FloatingActionButton fab;
     View fabContainer;
+    boolean fabVisible = true;
+    ValueAnimator runningFabAnimation;
 
     public static Intent newInstance(Context context) {
         return newInstance(context, GamedayFragmentPagerAdapter.TAB_TICKER);
@@ -89,9 +88,7 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        if(Utilities.hasLApis()) {
-            tabs.setElevation(getResources().getDimension(R.dimen.toolbar_elevation));
-        }
+        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
     }
 
     @Override
@@ -134,7 +131,7 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
     @Override
     public void onPageSelected(int position) {
         Log.d("tba", "gameday page selected: " + position);
-        if(position == 0) {
+        if (position == 0) {
             // The gameday ticker tab was selected. Show the FAB.
             showFab();
         } else {
@@ -145,43 +142,61 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
     }
 
     private void showFab() {
-        ValueAnimator closeButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
-        closeButtonScaleUp.addListener(new AnimatorListenerAdapter() {
+        if(fabVisible) {
+            return;
+        }
+        fabVisible = true;
+        if(runningFabAnimation != null) {
+            runningFabAnimation.cancel();
+        }
+
+        ValueAnimator fabScaleUp = ValueAnimator.ofFloat(0, 1);
+        fabScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
                 fabContainer.setVisibility(View.VISIBLE);
             }
         });
-        closeButtonScaleUp.addUpdateListener(animation -> {
+        fabScaleUp.addUpdateListener(animation -> {
             ViewCompat.setScaleX(fab, (float) animation.getAnimatedValue());
             ViewCompat.setScaleY(fab, (float) animation.getAnimatedValue());
         });
-        closeButtonScaleUp.setDuration(ANIMATION_DURATION);
-        closeButtonScaleUp.setInterpolator(new DecelerateInterpolator());
-        closeButtonScaleUp.start();
+        fabScaleUp.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleUp.setInterpolator(new DecelerateInterpolator());
+        fabScaleUp.start();
+        runningFabAnimation = fabScaleUp;
     }
 
     private void hideFab() {
-        ValueAnimator closeButtonScaleUp = ValueAnimator.ofFloat(1, 0).setDuration(ANIMATION_DURATION);
-        closeButtonScaleUp.addListener(new AnimatorListenerAdapter() {
+        if(!fabVisible) {
+            return;
+        }
+        fabVisible = false;
+        if(runningFabAnimation != null) {
+            runningFabAnimation.cancel();
+        }
+
+        ValueAnimator fabScaleDown = ValueAnimator.ofFloat(1, 0);
+        fabScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
                 fabContainer.setVisibility(View.VISIBLE);
             }
         });
-        closeButtonScaleUp.addUpdateListener(animation -> {
+        fabScaleDown.addUpdateListener(animation -> {
             ViewCompat.setScaleX(fab, (float) animation.getAnimatedValue());
             ViewCompat.setScaleY(fab, (float) animation.getAnimatedValue());
         });
-        closeButtonScaleUp.addListener(new AnimatorListenerAdapter() {
+        fabScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 fabContainer.setVisibility(View.GONE);
             }
         });
-        closeButtonScaleUp.setDuration(ANIMATION_DURATION);
-        closeButtonScaleUp.setInterpolator(new AccelerateInterpolator());
-        closeButtonScaleUp.start();
+        fabScaleDown.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleDown.setInterpolator(new AccelerateInterpolator());
+        fabScaleDown.start();
+        runningFabAnimation = fabScaleDown;
     }
 
     @Override

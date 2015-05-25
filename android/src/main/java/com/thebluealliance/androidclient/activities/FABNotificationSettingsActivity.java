@@ -57,12 +57,16 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
     private boolean saveInProgress = false;
 
+    private boolean fabVisible = true;
+    private ValueAnimator runningFabAnimation;
+
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
 
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
     // In milliseconds
     private static final int ANIMATION_DURATION = 500;
+    private static final int FAB_ANIMATE_DURATION = 250;
 
     private static final float UNDIMMED_ALPHA = 0.0f;
 
@@ -342,11 +346,67 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     }
     
     public void showFab(boolean animate) {
-        openNotificationSettingsButton.show(animate);
+        if(fabVisible) {
+            return;
+        }
+        fabVisible = true;
+        if(runningFabAnimation != null) {
+            runningFabAnimation.cancel();
+        }
+        if(!animate) {
+            openNotificationSettingsButtonContainer.setVisibility(View.GONE);
+            return;
+        }
+        ValueAnimator fabScaleUp = ValueAnimator.ofFloat(0, 1);
+        fabScaleUp.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+            }
+        });
+        fabScaleUp.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+        });
+        fabScaleUp.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleUp.setInterpolator(new DecelerateInterpolator());
+        fabScaleUp.start();
+        runningFabAnimation = fabScaleUp;
     }
 
     public void hideFab(boolean animate) {
-        openNotificationSettingsButton.hide(animate);
+        if(!fabVisible) {
+            return;
+        }
+        fabVisible = false;
+        if(runningFabAnimation != null) {
+            runningFabAnimation.cancel();
+        }
+        if(!animate) {
+            openNotificationSettingsButtonContainer.setVisibility(View.GONE);
+            return;
+        }
+        ValueAnimator fabScaleDown = ValueAnimator.ofFloat(1, 0);
+        fabScaleDown.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                openNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+            }
+        });
+        fabScaleDown.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+        });
+        fabScaleDown.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                openNotificationSettingsButtonContainer.setVisibility(View.GONE);
+            }
+        });
+        fabScaleDown.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleDown.setInterpolator(new AccelerateInterpolator());
+        fabScaleDown.start();
+        runningFabAnimation = fabScaleDown;
     }
 
     public void setSettingsToolbarTitle(String title) {
@@ -360,27 +420,13 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         Integer colorFrom = getResources().getColor(R.color.accent);
         Integer colorTo = getResources().getColor(R.color.green);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
-        });
+        colorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
         colorAnimation.setDuration(500);
 
         Integer reverseColorFrom = getResources().getColor(R.color.green);
         Integer reverseColorTo = getResources().getColor(R.color.accent);
         ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
-        reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
-        });
+        reverseColorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
         reverseColorAnimation.setDuration(500);
 
         AnimatorSet animatorSet = new AnimatorSet();
@@ -423,27 +469,13 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         Integer colorFrom = getResources().getColor(R.color.accent);
         Integer colorTo = getResources().getColor(R.color.red);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
-        });
+        colorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
         colorAnimation.setDuration(500);
 
         Integer reverseColorFrom = getResources().getColor(R.color.red);
         Integer reverseColorTo = getResources().getColor(R.color.accent);
         ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
-        reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
-        });
+        reverseColorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
         reverseColorAnimation.setDuration(500);
 
         AnimatorSet animatorSet = new AnimatorSet();
