@@ -19,7 +19,6 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
-import com.thebluealliance.androidclient.activities.NotificationDashboardActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
 public class SettingsActivity extends ActionBarActivity {
@@ -42,9 +41,9 @@ public class SettingsActivity extends ActionBarActivity {
             String versionInfo;
             String[] versionData = BuildConfig.VERSION_NAME.split("/");
             String buildTime = Utilities.getBuildTimestamp(getActivity());
-            if(Utilities.isDebuggable()){
+            if (Utilities.isDebuggable()) {
                 versionInfo = String.format(getString(R.string.settings_build_info_summary_debug), versionData[0], versionData[1], buildTime, versionData[2]);
-            }else{
+            } else {
                 versionInfo = String.format(getString(R.string.settings_build_info_summary), versionData[0], versionData[1], buildTime);
             }
             appVersion.setSummary(versionInfo);
@@ -60,9 +59,6 @@ public class SettingsActivity extends ActionBarActivity {
 
             Preference notifications = findPreference("notifications");
             notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
-            
-            Preference notificationDash = findPreference("notification_dashboard");
-            notificationDash.setIntent(new Intent(getActivity(), NotificationDashboardActivity.class));
 
             Preference changelog = findPreference("changelog");
             if (Utilities.isDebuggable()) {
@@ -79,18 +75,18 @@ public class SettingsActivity extends ActionBarActivity {
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
+            final SwitchPreference enable_mytba = (SwitchPreference) findPreference("mytba_enabled");
             final Activity activity = getActivity();
             enable_mytba.setChecked(AccountHelper.isMyTBAEnabled(activity));
             enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean enabled = AccountHelper.isMyTBAEnabled(activity);
-                    Log.d(Constants.LOG_TAG, "myTBA is: "+enabled);
-                    if(!enabled){
+                    Log.d(Constants.LOG_TAG, "myTBA is: " + enabled);
+                    if (!enabled) {
                         Intent authIntent = AuthenticatorActivity.newInstance(activity, false);
                         activity.startActivity(authIntent);
-                    }else{
+                    } else {
                         AccountHelper.enableMyTBA(activity, false);
                     }
                     return true;

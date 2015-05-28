@@ -5,8 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -84,11 +82,11 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         openNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.open_notification_settings_button);
         openNotificationSettingsButton.setOnClickListener(this);
         openNotificationSettingsButtonContainer = findViewById(R.id.open_notification_settings_button_container);
-        
+
         closeNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
         closeNotificationSettingsButton.setOnClickListener(this);
         closeNotificationSettingsButtonContainer = findViewById(R.id.close_notification_settings_button_container);
-        
+
         // Hide the notification settings button if myTBA isn't enabled
         if (!AccountHelper.isMyTBAEnabled(this)) {
             notificationSettings.setVisibility(View.INVISIBLE);
@@ -149,7 +147,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
         settings = NotificationSettingsFragment.newInstance(modelKey, modelType, savedPreferenceState);
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
-        
+
         // Disable the submit settings button so we can't hit it before the content is loaded
         // This prevents accidently wiping settings (see #317)
         closeNotificationSettingsButton.setEnabled(false);
@@ -202,7 +200,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     private void openNotificationSettingsView() {
         settings.restoreInitialState();
         closeNotificationSettingsButton.setColorNormal(getResources().getColor(R.color.accent));
-        
+
         // this is the center of the button in relation to the main view. This provides the center of the clipping circle for the notification settings view.
         int centerOfButtonOutsideX = (openNotificationSettingsButtonContainer.getLeft() + openNotificationSettingsButtonContainer.getRight()) / 2;
         int centerOfButtonOutsideY = (openNotificationSettingsButtonContainer.getTop() + openNotificationSettingsButtonContainer.getBottom()) / 2;
@@ -344,7 +342,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
         isSettingsPanelOpen = false;
     }
-    
+
     public void showFab(boolean animate) {
         if(fabVisible) {
             return;
@@ -433,7 +431,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         animatorSet.play(colorAnimation);
         animatorSet.play(reverseColorAnimation).after(2000);
         animatorSet.start();
-        
+
         // Tell the settings fragment to reload the now-updated
         settings.refreshSettingsFromDatabase();
 
@@ -453,8 +451,8 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         }
         saveSettingsTaskFragment = null;
         */
-        
-        
+
+
         saveInProgress = false;
     }
 
@@ -464,7 +462,6 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
         // Something went wrong, restore the initial state
         settings.restoreInitialState();
-        final Activity activity = this;
 
         Integer colorFrom = getResources().getColor(R.color.accent);
         Integer colorTo = getResources().getColor(R.color.red);
@@ -495,7 +492,7 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         super.onBackPressed();
     }
 
-    public void onSettingsLoaded(){
+    public void onSettingsLoaded() {
         // Re-enable the submit button
         closeNotificationSettingsButton.setEnabled(true);
     }

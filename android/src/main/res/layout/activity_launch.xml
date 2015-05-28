@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.thebluealliance.androidclient.views.DisableSwipeViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_pager"
+<com.thebluealliance.androidclient.views.DisableSwipeViewPager android:id="@+id/view_pager"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -32,10 +32,10 @@
                     android:id="@+id/welcome_logo"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/textView"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/ic_launcher_ultrahires_noshadow" />
 
                 <TextView
@@ -77,17 +77,17 @@
 
                 <ProgressBar
                     android:id="@+id/progress_bar"
-                    android:minWidth="108dp"
                     android:layout_width="wrap_content"
                     android:layout_height="108dp"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:minWidth="108dp" />
 
                 <TextView
                     android:id="@+id/message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
                     android:layout_below="@id/progress_bar"
+                    android:gravity="center_horizontal"
                     android:textSize="40sp" />
             </RelativeLayout>
         </ScrollView>
@@ -105,15 +105,15 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/finished_logo"
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="20dp"
                     android:layout_alignParentTop="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/ic_launcher_ultrahires_noshadow" />
 
                 <TextView

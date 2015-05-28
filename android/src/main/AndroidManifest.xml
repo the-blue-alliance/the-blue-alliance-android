@@ -187,7 +187,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.thebluealliance.androidclient.activities.NotificationDashboardActivity"
+            android:name=".activities.RecentNotificationsActivity"
             android:label="@string/title_activity_notification_dashboard"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus"
             android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity">

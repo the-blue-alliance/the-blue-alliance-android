@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="nav_drawer_items">
-        <item>Events</item>
-        <item>Teams</item>
-        <item>Insights</item>
-    </string-array>
+    <!-- Item titles -->
+    <string name="nav_drawer_mytba_title">myTBA</string>
+    <string name="nav_drawer_gameday_title">GameDay</string>
+    <string name="nav_drawer_events_title">Events</string>
+    <string name="nav_drawer_districts_title">Districts</string>
+    <string name="nav_drawer_teams_title">Teams</string>
+    <string name="nav_drawer_recent_notifications_title">Recent Notifications</string>
+    <string name="nav_drawer_settings_title">Settings</string>
+
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
 

@@ -192,7 +192,7 @@ public class HomeActivity extends RefreshableHostActivity {
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
             case R.id.nav_item_notifications:
-                startActivity(NotificationDashboardActivity.newInstance(this));
+                startActivity(RecentNotificationsActivity.newInstance(this));
                 return;
             case R.id.nav_item_gameday:
                 startActivity(GamedayActivity.newInstance(this));
@@ -253,12 +253,7 @@ public class HomeActivity extends RefreshableHostActivity {
 
         final Dialog dialog = makeDialogForYearSelection(R.string.select_year, eventsDropdownItems);
 
-        yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.show();
-            }
-        });
+        yearSelectorContainer.setOnClickListener(v -> dialog.show());
 
         if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < eventsDropdownItems.length) {
             onYearSelected(mCurrentSelectedYearPosition);
@@ -282,12 +277,7 @@ public class HomeActivity extends RefreshableHostActivity {
 
         final Dialog dialog = makeDialogForYearSelection(R.string.select_year, districtsDropdownItems);
 
-        yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.show();
-            }
-        });
+        yearSelectorContainer.setOnClickListener(v -> dialog.show());
         if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < eventsDropdownItems.length) {
             onYearSelected(mCurrentSelectedYearPosition);
             updateDistrictsYearSelector(mCurrentSelectedYearPosition);
@@ -327,12 +317,7 @@ public class HomeActivity extends RefreshableHostActivity {
         final int id = item.getId();
         if (id != mCurrentSelectedNavigationItemId) {
             // Launch after a short delay to give the drawer time to close.
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    switchToModeForId(id);
-                }
-            }, DRAWER_CLOSE_ANIMATION_DURATION);
+            handler.postDelayed(() -> switchToModeForId(id), DRAWER_CLOSE_ANIMATION_DURATION);
         }
     }
 

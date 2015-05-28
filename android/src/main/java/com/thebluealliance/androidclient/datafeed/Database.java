@@ -349,10 +349,12 @@ public class Database extends SQLiteOpenHelper {
                     if (sub.getColumnIndex(Subscriptions.MODEL_ENUM) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + Subscriptions.MODEL_ENUM + " INTEGER NOT NULL");
                     }
+                    sub.close();
                     Cursor fav = db.rawQuery("SELECT * FROM " + TABLE_FAVORITES + " LIMIT 0,1", null);
                     if (fav.getColumnIndex(Favorites.MODEL_ENUM) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + Favorites.MODEL_ENUM + " INTEGER NOT NULL");
                     }
+                    fav.close();
                     break;
                 case 17:
                     // add column for district name
@@ -360,6 +362,7 @@ public class Database extends SQLiteOpenHelper {
                     if (dist.getColumnIndex(Districts.NAME) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + Districts.NAME + " TEXT DEFAULT '' ");
                     }
+                    dist.close();
                     break;
                 case 18:
                     // add column for event short name
@@ -367,9 +370,10 @@ public class Database extends SQLiteOpenHelper {
                     if (event.getColumnIndex(Events.SHORTNAME) == -1) {
                         db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + Events.SHORTNAME + " TEXT DEFAULT '' ");
                     }
+                    event.close();
                     break;
                 case 20:
-                    // Create table for notification dashboard
+                    // Create table for recent notification
                     db.execSQL(CREATE_NOTIFICATIONS);
                     break;
                 case 23:
@@ -1759,6 +1763,7 @@ public class Database extends SQLiteOpenHelper {
                         }
                     }
                 }
+                cursor.close();
                 db.setTransactionSuccessful();
                 db.endTransaction();
             } catch (InterruptedException e) {
