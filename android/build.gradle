@@ -8,6 +8,12 @@ apply plugin: 'com.github.ben-manes.versions'
 def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
 def gitBranch = 'git rev-parse --abbrev-ref HEAD'.execute([], project.rootDir).text.trim()
 
+// Fix for https://github.com/evant/gradle-retrolambda/issues/105
+// Without this, the build fails on CI for some reason
+retrolambda {
+    jvmArgs '-noverify'
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion '22.0.1'
