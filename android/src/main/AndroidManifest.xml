@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thebluealliance.androidclient">
+<manifest
+    package="com.thebluealliance.androidclient"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -74,8 +75,7 @@
 
         <activity
             android:name="com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
-        </activity>
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus"></activity>
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewEventActivity"
             android:launchMode="standard"
@@ -96,9 +96,9 @@
         </activity>
         <activity
             android:name="com.thebluealliance.androidclient.activities.ViewMatchActivity"
+            android:launchMode="standard"
             android:parentActivityName="com.thebluealliance.androidclient.activities.ViewEventActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus"
-            android:launchMode="standard">
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
@@ -189,8 +189,8 @@
         <activity
             android:name=".activities.RecentNotificationsActivity"
             android:label="@string/title_activity_notification_dashboard"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus"
-            android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity">
+            android:parentActivityName="com.thebluealliance.androidclient.activities.HomeActivity"
+            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
@@ -219,7 +219,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver 
+        <receiver
             android:name="com.thebluealliance.androidclient.listeners.NotificationDismissedListener"
             android:exported="false" />
 
@@ -235,9 +235,9 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <service android:name="com.thebluealliance.androidclient.background.RecreateSearchIndexes"
-            android:exported="false" >
-        </service>
+        <service
+            android:name="com.thebluealliance.androidclient.background.RecreateSearchIndexes"
+            android:exported="false"></service>
     </application>
 
 </manifest>
