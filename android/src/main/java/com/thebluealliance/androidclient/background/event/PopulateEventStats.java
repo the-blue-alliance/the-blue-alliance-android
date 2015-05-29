@@ -38,7 +38,7 @@ import java.util.Map;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/23/14.
  */
 public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -179,9 +179,9 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                 }
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
                 String nickname;
-                if(team == null){
-                    nickname = "Team "+teamKey.substring(3);
-                }else{
+                if (team == null) {
+                    nickname = "Team " + teamKey.substring(3);
+                } else {
                     nickname = team.getNickname();
                 }
                 teams.add(new StatsListElement(teamKey, statToUse.get(i).getKey(), nickname, statsString,

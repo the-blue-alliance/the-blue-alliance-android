@@ -38,7 +38,7 @@ import de.greenrobot.event.EventBus;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/22/14.
  */
 public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -59,7 +59,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
         mFragment = f;
         activity = (RefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
-        this.matchCount = 0; 
+        this.matchCount = 0;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             ArrayList<Match> results = response.getData();
             matchCount = results.size();
 
-            if(event != null && event.isHappeningNow()){
+            if (event != null && event.isHappeningNow()) {
                 Collections.sort(results, new MatchSortByPlayOrderComparator());
             } else {
                 Collections.sort(results, new MatchSortByDisplayOrderComparator());
@@ -117,7 +117,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             MatchHelper.TYPE lastType = null;
             Match previousIteration = null;
             boolean lastMatchPlayed = false;
-            if(results.size() > 0){
+            if (results.size() > 0) {
                 nextMatch = results.get(0);
             }
             for (Match match : results) {
@@ -164,11 +164,11 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             }
             if (lastMatch == null && !results.isEmpty()) {
                 Match last = results.get(results.size() - 1);
-                if(last.hasBeenPlayed()) {
+                if (last.hasBeenPlayed()) {
                     lastMatch = last;
                 }
             }
-            if(nextMatch != null && nextMatch.hasBeenPlayed()){
+            if (nextMatch != null && nextMatch.hasBeenPlayed()) {
                 // Avoids bug where matches loop over when all played
                 // Because nextMatch is initialized to the first qual match 
                 // So that it displayed before any have been played

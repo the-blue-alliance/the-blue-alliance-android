@@ -31,7 +31,7 @@ import com.thebluealliance.androidclient.listitems.ListElement;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/22/14.
  */
 public class EventRankingsFragment extends Fragment implements RefreshListener {

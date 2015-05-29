@@ -34,7 +34,7 @@ import java.util.HashMap;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/23/14.
  */
 public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -48,7 +48,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
 
     public PopulateEventAwards(EventAwardsFragment f, RequestParams requestParams) {
         mFragment = f;
-        if(mFragment != null) {
+        if (mFragment != null) {
             activity = (RefreshableHostActivity) mFragment.getActivity();
         }
         this.requestParams = requestParams;

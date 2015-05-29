@@ -51,11 +51,11 @@ public abstract class BaseNotification extends ListElement {
         this.stored = null;
     }
 
-    public void setDate(Date date){
+    public void setDate(Date date) {
         notificationTime = date;
     }
 
-    public boolean shouldShow(){
+    public boolean shouldShow() {
         return display;
     }
 
@@ -72,8 +72,9 @@ public abstract class BaseNotification extends ListElement {
     public abstract int getNotificationId();
 
     /**
-     * Get the intent to open whatever this notification's click action is
-     * Precondition: parseMessageData has been called
+     * Get the intent to open whatever this notification's click action is Precondition:
+     * parseMessageData has been called
+     *
      * @param c Context to use while creating the intent
      * @return This notification's intent (may be null if none)
      */
@@ -82,14 +83,14 @@ public abstract class BaseNotification extends ListElement {
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
         convertView = inflater.inflate(R.layout.list_item_carded_summary, null);
-        TextView label = (TextView)convertView.findViewById(R.id.label);
-        TextView value = (TextView)convertView.findViewById(R.id.value);
+        TextView label = (TextView) convertView.findViewById(R.id.label);
+        TextView value = (TextView) convertView.findViewById(R.id.value);
         label.setText(messageType);
         value.setText(messageData);
         return convertView;
     }
 
-    public StoredNotification getStoredNotification(){
+    public StoredNotification getStoredNotification() {
         return stored;
     }
 
@@ -126,7 +127,7 @@ public abstract class BaseNotification extends ListElement {
 
     /**
      * Creates a builder with the important defaults and an Activity content intent.
-     *
+     * <p>
      * <p/>SIDE EFFECTS: Adds a Category to activityIntent so the launched Activity can tell it was
      * triggered by a notification. (Note: Just adding an Extra won't work because Android will
      * retrieve the existing intent, ignoring the new Extra.)
@@ -158,10 +159,10 @@ public abstract class BaseNotification extends ListElement {
         return finalBitmap;
     }
 
-    protected String getNotificationTimeString(Context c){
+    protected String getNotificationTimeString(Context c) {
         DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(c);
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(c);
-        if(notificationTime == null) return "";
+        if (notificationTime == null) return "";
         return dateFormat.format(notificationTime) + " " + timeFormat.format(notificationTime);
     }
 }

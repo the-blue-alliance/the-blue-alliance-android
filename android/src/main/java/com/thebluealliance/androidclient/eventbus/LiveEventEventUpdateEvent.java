@@ -9,7 +9,7 @@ public class LiveEventEventUpdateEvent {
 
     private Event event;
 
-    public LiveEventEventUpdateEvent(Event event){
+    public LiveEventEventUpdateEvent(Event event) {
         this.event = event;
     }
 

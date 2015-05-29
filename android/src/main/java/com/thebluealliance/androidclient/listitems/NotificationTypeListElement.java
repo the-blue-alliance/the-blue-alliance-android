@@ -29,7 +29,7 @@ public class NotificationTypeListElement extends ListElement {
             convertView = inflater.inflate(R.layout.list_item_notification, null);
 
             holder = new ViewHolder();
-            holder.item = (CheckedTextView)convertView.findViewById(R.id.notification_item);
+            holder.item = (CheckedTextView) convertView.findViewById(R.id.notification_item);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -37,22 +37,19 @@ public class NotificationTypeListElement extends ListElement {
 
         holder.item.setText(notificationTitle);
         holder.item.setChecked(enabled);
-        holder.item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                enabled = !enabled;
-                holder.item.setChecked(enabled);
-            }
+        holder.item.setOnClickListener(v -> {
+            enabled = !enabled;
+            holder.item.setChecked(enabled);
         });
 
         return convertView;
     }
 
-    public boolean isEnabled(){
+    public boolean isEnabled() {
         return enabled;
     }
 
-    public int getPosition(){
+    public int getPosition() {
         return position;
     }
 

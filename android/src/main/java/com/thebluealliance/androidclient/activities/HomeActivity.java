@@ -304,12 +304,10 @@ public class HomeActivity extends RefreshableHostActivity {
         Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(res.getString(titleResId));
-        builder.setItems(dropdownItems, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onYearSelected(which);
-            }
+        builder.setItems(dropdownItems, (dialog, which) -> {
+            onYearSelected(which);
         });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
 
         return builder.create();
     }

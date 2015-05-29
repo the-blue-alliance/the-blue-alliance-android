@@ -16,11 +16,10 @@ import java.util.List;
  * view, for instance, if the fragment was being retained across a configuration change. This meant
  * that we couldn't reflect any new events in our list of objects. This solves that by wrapping the
  * target listener in a buffer of sorts. Ordinarilly, events are passed straight through to the
- * target listener. However, when you call {@link BufferedChildEventListener#pauseDelivery()},
- * any future events are buffered in an internal list. When you call {@link
- * BufferedChildEventListener#resumeDelivery()}, the events received during the paused
- * state are delivered to the listener in the order that they were received (this happens
- * synchronously).
+ * target listener. However, when you call {@link BufferedChildEventListener#pauseDelivery()}, any
+ * future events are buffered in an internal list. When you call {@link
+ * BufferedChildEventListener#resumeDelivery()}, the events received during the paused state are
+ * delivered to the listener in the order that they were received (this happens synchronously).
  * <p>
  * Created by Nathan on 4/17/2015.
  */

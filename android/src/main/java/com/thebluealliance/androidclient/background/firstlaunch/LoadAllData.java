@@ -110,8 +110,8 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     APIResponse<String> eventListResponse;
                     String eventsUrl = String.format(TBAv2.getTBAApiUrl(context, TBAv2.QUERY.EVENT_LIST), year);
                     eventListResponse = TBAv2.getResponseFromURLOrThrow(context, eventsUrl, new RequestParams());
-                    if(eventListResponse.getCode() == APIResponse.CODE.WEBLOAD || eventListResponse.getCode() == APIResponse.CODE.UPDATED) {
-                        if(eventListResponse.getData() == null || eventListResponse.getData().isEmpty()){
+                    if (eventListResponse.getCode() == APIResponse.CODE.WEBLOAD || eventListResponse.getCode() == APIResponse.CODE.UPDATED) {
+                        if (eventListResponse.getData() == null || eventListResponse.getData().isEmpty()) {
                             onConnectionError();
                             return null;
                         }
@@ -123,11 +123,11 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                                     continue;
                                 }
                             }
-                        }catch (JsonSyntaxException ex){
-                            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: "+eventListResponse.getData());
+                        } catch (JsonSyntaxException ex) {
+                            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: " + eventListResponse.getData());
                             continue;
                         }
-                        
+
                         ArrayList<Event> yearEvents = TBAv2.getEventList(eventListResponse.getData());
                         events.addAll(yearEvents);
                     }
@@ -204,12 +204,12 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(context != null){
+        if (context != null) {
             AnalyticsHelper.sendTimingUpdate(context, System.currentTimeMillis() - startTime, "load all data", "");
         }
     }
 
-    private void onConnectionError(){
+    private void onConnectionError() {
         publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, context.getString(R.string.connection_lost)));
         // Wipe any partially cached responses
         Database.getInstance(context).getResponseTable().deleteAllResponses();

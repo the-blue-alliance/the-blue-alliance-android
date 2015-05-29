@@ -38,7 +38,7 @@ import java.util.Arrays;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/22/14.
  */
 public class EventStatsFragment extends Fragment implements RefreshListener {
@@ -99,26 +99,21 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         statSortCategory = getSortTypeFromPosition(selectedStatSort);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_stats_title)
-                .setSingleChoiceItems(items, selectedStatSort, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        selectedStatSort = i;
-                        statSortCategory = getSortTypeFromPosition(selectedStatSort);
+                .setSingleChoiceItems(items, selectedStatSort, (dialogInterface, i) -> {
+                    selectedStatSort = i;
+                    statSortCategory = getSortTypeFromPosition(selectedStatSort);
 
-                        dialogInterface.dismiss();
+                    dialogInterface.dismiss();
 
-                        mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
-                        if (mAdapter != null && statSortCategory != null)
+                    mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
+                    if (mAdapter != null && statSortCategory != null)
 
-                        {
-                            mAdapter.sortStats(statSortCategory);
-                        }
+                    {
+                        mAdapter.sortStats(statSortCategory);
                     }
-                }).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+                }).setNegativeButton(R.string.dialog_cancel, (dialog, id) -> {
+                    dialog.cancel();
+                });
 
         statsDialog = builder.create();
         setHasOptionsMenu(true);
@@ -146,19 +141,16 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             mProgressBar.setVisibility(View.GONE);
         }
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
-                    if (TeamHelper.validateMultiTeamKey(teamKey)) {
-                        // Take out extra letter at end to make team key valid.
-                        teamKey = teamKey.substring(0, teamKey.length() - 1);
-                    }
-                    startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
-                } else {
-                    throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
+        mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
+            String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
+            if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
+                if (TeamHelper.validateMultiTeamKey(teamKey)) {
+                    // Take out extra letter at end to make team key valid.
+                    teamKey = teamKey.substring(0, teamKey.length() - 1);
                 }
+                startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+            } else {
+                throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
             }
         });
 

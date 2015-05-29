@@ -62,9 +62,9 @@ public class EventHelper {
     }
 
     /**
-     * Extracts a short name like "Silicon Valley" from an event name like
-     * "Silicon Valley Regional sponsored by Google.org".
-     *
+     * Extracts a short name like "Silicon Valley" from an event name like "Silicon Valley Regional
+     * sponsored by Google.org".
+     * <p>
      * <p/>See <a href="https://github.com/the-blue-alliance/the-blue-alliance/blob/master/helpers/event_helper.py"
      * >the server's event_helper.py</a>.
      */
@@ -93,7 +93,7 @@ public class EventHelper {
         return eventName.trim();
     }
 
-    public static int getYearWeek(Date date){
+    public static int getYearWeek(Date date) {
         if (date == null) return -1;
         return Integer.parseInt(weekFormat.format(date));
     }
@@ -103,7 +103,7 @@ public class EventHelper {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.add(Calendar.DAY_OF_YEAR,-1);
+        cal.add(Calendar.DAY_OF_YEAR, -1);
         int week = getYearWeek(cal.getTime()) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         return week < 0 ? 0 : week;
     }
@@ -147,7 +147,7 @@ public class EventHelper {
         }
     }
 
-    public static String currentWeekLabel(Date date){
+    public static String currentWeekLabel(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
@@ -338,7 +338,8 @@ public class EventHelper {
     }
 
     /**
-     * Returns a list of events sorted by start date and type. This is optimal for viewing a team's season schedule.
+     * Returns a list of events sorted by start date and type. This is optimal for viewing a team's
+     * season schedule.
      *
      * @param events a list of events to render
      * @return a list of ListItems representing the sorted events
@@ -348,8 +349,8 @@ public class EventHelper {
     }
 
     /**
-     * Returns a list of events sorted by name and type. This is optimal for quickly finding a particular
-     * event within a given week.
+     * Returns a list of events sorted by name and type. This is optimal for quickly finding a
+     * particular event within a given week.
      *
      * @param events a list of events to render
      * @return a list of ListItems representing the sorted events
@@ -438,7 +439,7 @@ public class EventHelper {
         }
     }
 
-    public static String extractRankingString(CaseInsensitiveMap rankingElements){
+    public static String extractRankingString(CaseInsensitiveMap rankingElements) {
         // Find if the rankings contain a record; remove it if it does
         Iterator it = rankingElements.entrySet().iterator();
         String record = null;
@@ -464,7 +465,7 @@ public class EventHelper {
         return record;
     }
 
-    public static String createRankingBreakdown(CaseInsensitiveMap rankingElements){
+    public static String createRankingBreakdown(CaseInsensitiveMap rankingElements) {
         String rankingString = "";
         // Construct rankings string
         Iterator it = rankingElements.entrySet().iterator();
@@ -472,9 +473,9 @@ public class EventHelper {
             Map.Entry entry = (Map.Entry) it.next();
             String value = entry.getValue().toString();
             // If we have a number like 235.00, remove the useless .00 so it looks cleaner
-            try{
+            try {
                 value = doubleFormat.format(Double.parseDouble(value));
-            }catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 //Item is not a number
             }
 
@@ -490,20 +491,21 @@ public class EventHelper {
                 rankingString += ", ";
             }
         }
-        Log.d(Constants.LOG_TAG, "String: "+rankingString);
+        Log.d(Constants.LOG_TAG, "String: " + rankingString);
         return rankingString;
     }
 
     /**
-     * Hacky capitalize method to remove dependency on apache lib for only one method
-     * Stupid DEX limit...
+     * Hacky capitalize method to remove dependency on apache lib for only one method Stupid DEX
+     * limit...
+     *
      * @param string Input string
      * @return Input string with first letter of each word capitalized
      */
-    private static String capitalize(String string){
+    private static String capitalize(String string) {
         StringBuilder sb = new StringBuilder();
         String[] split = string.split(" ");
-        for(String s:split){
+        for (String s : split) {
             sb.append(s.substring(0, 1).toUpperCase());
             sb.append(s.substring(1));
             sb.append(" ");
@@ -513,7 +515,7 @@ public class EventHelper {
     }
 
     public static String getShortCodeForEventKey(String eventKey) {
-        if(validateEventKey(eventKey)) {
+        if (validateEventKey(eventKey)) {
             return eventKey.replaceAll("[0-9]+", "");
         } else {
             return eventKey;
@@ -538,8 +540,8 @@ public class EventHelper {
 
     /**
      * Returns an abbreviated event or district code like "CALB" from a match key like
-     * "2014calb_qm17" or event key like "2014necmp" or district key like "2014pnw".
-     * Returns "" if the argument doesn't parse as containing an event/district code.
+     * "2014calb_qm17" or event key like "2014necmp" or district key like "2014pnw". Returns "" if
+     * the argument doesn't parse as containing an event/district code.
      */
     public static String getEventCode(String matchOrEventOrDistrictKey) {
         Matcher m = eventKeyPattern.matcher(matchOrEventOrDistrictKey);

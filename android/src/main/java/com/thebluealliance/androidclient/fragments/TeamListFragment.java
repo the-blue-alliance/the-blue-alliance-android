@@ -69,17 +69,14 @@ public class TeamListFragment extends Fragment implements RefreshListener {
         mListView = (ListView) view.findViewById(R.id.list);
         mListView.setFastScrollAlwaysVisible(true);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
-                Intent i = new Intent(getActivity(), ViewTeamActivity.class);
-                i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+        mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
+            String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
+            Intent i = new Intent(getActivity(), ViewTeamActivity.class);
+            i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
 
-                AnalyticsHelper.sendClickUpdate(getActivity(), "team_click", i.getDataString(), teamKey);
-                
-                startActivity(i);
-            }
+            AnalyticsHelper.sendClickUpdate(getActivity(), "team_click", i.getDataString(), teamKey);
+
+            startActivity(i);
         });
         return view;
     }

@@ -170,7 +170,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
                 PopulateTeamAtDistrictSummary second = new PopulateTeamAtDistrictSummary(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(teamKey, districtKey);
-            }else{
+            } else {
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Team@District summary refresh complete");
                 activity.notifyRefreshComplete((RefreshListener) fragment);

@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.listitems.gameday;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
-import android.support.annotation.LayoutRes;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -63,7 +62,7 @@ public class GamedayTickerFilterCheckbox extends ListElement {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
-        if(checkbox != null) {
+        if (checkbox != null) {
             this.checkbox.setChecked(checked);
         }
     }

@@ -12,12 +12,12 @@ import android.widget.FrameLayout;
 import com.thebluealliance.androidclient.R;
 
 /**
- * A layout that draws something in the insets passed to {@link #fitSystemWindows(Rect)}, i.e. the area above UI chrome
- * (status and navigation bars, overlay action bars).
- *
- * From the Google I/O 2014 source code
- * https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/widget/ScrimInsetsFrameLayout.java
- * Used under the Apace License, Version 2.0, a copy of which is available at http://www.apache.org/licenses/LICENSE-2.0
+ * A layout that draws something in the insets passed to {@link #fitSystemWindows(Rect)}, i.e. the
+ * area above UI chrome (status and navigation bars, overlay action bars).
+ * <p>
+ * From the Google I/O 2014 source code https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/widget/ScrimInsetsFrameLayout.java
+ * Used under the Apace License, Version 2.0, a copy of which is available at
+ * http://www.apache.org/licenses/LICENSE-2.0
  */
 public class ScrimInsetsFrameLayout extends FrameLayout {
     private Drawable mInsetForeground;
@@ -115,16 +115,16 @@ public class ScrimInsetsFrameLayout extends FrameLayout {
     }
 
     /**
-     * Allows the calling container to specify a callback for custom processing when insets change (i.e. when
-     * {@link #fitSystemWindows(Rect)} is called. This is useful for setting padding on UI elements based on
-     * UI chrome insets (e.g. a Google Map or a ListView). When using with ListView or GridView, remember to set
-     * clipToPadding to false.
+     * Allows the calling container to specify a callback for custom processing when insets change
+     * (i.e. when {@link #fitSystemWindows(Rect)} is called. This is useful for setting padding on
+     * UI elements based on UI chrome insets (e.g. a Google Map or a ListView). When using with
+     * ListView or GridView, remember to set clipToPadding to false.
      */
     public void setOnInsetsCallback(OnInsetsCallback onInsetsCallback) {
         mOnInsetsCallback = onInsetsCallback;
     }
 
     public static interface OnInsetsCallback {
-        public void onInsetsChanged(Rect insets);
+        void onInsetsChanged(Rect insets);
     }
 }

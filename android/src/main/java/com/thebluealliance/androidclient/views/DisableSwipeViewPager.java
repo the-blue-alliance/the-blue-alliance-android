@@ -41,8 +41,8 @@ public class DisableSwipeViewPager extends ViewPager {
     }
 
     /**
-     * This method will advance the ViewPager to the next page if the ViewPager is not currently
-     * on the last page.
+     * This method will advance the ViewPager to the next page if the ViewPager is not currently on
+     * the last page.
      *
      * @return true if the ViewPager was able to advance to the next page, false if otherwise.
      */

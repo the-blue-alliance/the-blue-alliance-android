@@ -68,8 +68,8 @@ public class JSONManager {
         JsonElement e = null;
         try {
             e = getParser().parse(input);
-        }catch(JsonSyntaxException ex){
-            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: "+input);
+        } catch (JsonSyntaxException ex) {
+            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: " + input);
         }
         if (isNull(e)) {
             return new JsonObject();
@@ -90,7 +90,7 @@ public class JSONManager {
         } catch (IllegalStateException err) {
             Log.w(Constants.LOG_TAG, "getAsJsonArray failed: " + err);
             return new JsonArray();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Log.w(Constants.LOG_TAG, "Attempted to parse invalid json");
             ex.printStackTrace();
             return new JsonArray();

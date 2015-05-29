@@ -53,7 +53,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
                 .setContentText(contentText)

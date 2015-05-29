@@ -26,7 +26,7 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
 
     private Context context;
 
-    public DisableMyTBA(Context context){
+    public DisableMyTBA(Context context) {
         this.context = context;
     }
 
@@ -46,29 +46,24 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
         request.setDeviceUuid(Utilities.getDeviceUUID(context));
 
         TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-        if(service == null){
+        if (service == null) {
             Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
             Handler mainHandler = new Handler(context.getMainLooper());
-            mainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
-                }
-            });
+            mainHandler.post(() -> Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show());
             return null;
         }
         try {
             ModelsMobileApiMessagesBaseResponse response = service.unregister(request).execute();
-            if(response.getCode() == 200){
+            if (response.getCode() == 200) {
                 Log.i(Constants.LOG_TAG, "Unregistered from GCM");
                 // Remove the GCM ID so it'll be fetched anew if myTBA is re-enabled
                 AccountHelper.setSelectedAccount(context, "");
                 GCMAuthHelper.storeRegistrationId(context, "");
-                if(PlusHelper.isConnected()){
+                if (PlusHelper.isConnected()) {
                     PlusHelper.disconnect();
                 }
-            }else{
-                Log.e(Constants.LOG_TAG, "error unregistering from gcm: "+response.getMessage());
+            } else {
+                Log.e(Constants.LOG_TAG, "error unregistering from gcm: " + response.getMessage());
             }
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "unable to unregister");

@@ -28,19 +28,19 @@ import java.util.Date;
 /**
  * Created by phil on 11/21/14.
  */
-public class AllianceSelectionNotification extends BaseNotification{
+public class AllianceSelectionNotification extends BaseNotification {
 
     private Event event;
     private String eventKey;
 
-    public AllianceSelectionNotification(String messageData){
+    public AllianceSelectionNotification(String messageData) {
         super(NotificationTypes.ALLIANCE_SELECTION, messageData);
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
+    public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONManager.getasJsonObject(messageData);
-        if(!jsonData.has("event")){
+        if (!jsonData.has("event")) {
             throw new JsonParseException("Notification data does not have an 'event' object");
         }
         event = gson.fromJson(jsonData.get("event"), Event.class);
@@ -49,7 +49,7 @@ public class AllianceSelectionNotification extends BaseNotification{
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
-        String eventName = null;
+        String eventName;
         try {
             eventName = event.getEventShortName();
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -96,7 +96,7 @@ public class AllianceSelectionNotification extends BaseNotification{
 
     @Override
     public void updateDataLocally(Context c) {
-        if(event != null) {
+        if (event != null) {
             event.write(c);
         }
     }

@@ -123,7 +123,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         if (selectedTab != -1) {
             mViewPager.setCurrentItem(selectedTab);
         }
-        
+
         mTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,7 +28,7 @@ public class MyTBAFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(!AccountHelper.isMyTBAEnabled(getActivity())){
+        if (!AccountHelper.isMyTBAEnabled(getActivity())) {
             //show a dialog to reenable myTBA
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             final Intent authIntent = AuthenticatorActivity.newInstance(getActivity(), false);

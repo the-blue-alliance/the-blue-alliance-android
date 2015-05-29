@@ -37,7 +37,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
     private String districtKey, teamKey;
     private TextView warningMessage;
 
-    public static Intent newInstance(Context c, String teamAtDistrictKey){
+    public static Intent newInstance(Context c, String teamAtDistrictKey) {
         return newInstance(c, DistrictTeamHelper.getTeamKey(teamAtDistrictKey), DistrictTeamHelper.getDistrictKey(teamAtDistrictKey));
     }
 

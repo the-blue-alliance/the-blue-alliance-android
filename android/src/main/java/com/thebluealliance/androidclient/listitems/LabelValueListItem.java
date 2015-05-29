@@ -24,7 +24,7 @@ public class LabelValueListItem extends ListElement {
         this.intent = intent;
         this.layout = layout;
     }
-    
+
     public LabelValueListItem(String label, String value) {
         this.label = label;
         this.value = value;
@@ -77,8 +77,8 @@ public class LabelValueListItem extends ListElement {
         TextView value;
         LinearLayout container;
     }
-    
-    public String getIntent(){
+
+    public String getIntent() {
         return intent;
     }
 }

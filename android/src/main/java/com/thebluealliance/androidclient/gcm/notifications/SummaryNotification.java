@@ -26,20 +26,20 @@ public class SummaryNotification extends BaseNotification {
      */
     static final int MAX = 7;
 
-    public SummaryNotification(){
+    public SummaryNotification() {
         super(NotificationTypes.SUMMARY, "");
     }
-    
+
     @Override
     public Notification buildNotification(Context context) {
         Database.Notifications table = Database.getInstance(context).getNotificationsTable();
-        
+
         ArrayList<StoredNotification> active = table.getActive();
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
         int size = active.size();
         int count = 0;
 
-        for(StoredNotification n: active){
+        for (StoredNotification n : active) {
             if (++count == MAX && size > MAX) {
                 style.addLine(context.getString(R.string.notification_summary_more, size + 1 - MAX));
                 break;
@@ -55,7 +55,7 @@ public class SummaryNotification extends BaseNotification {
         PendingIntent intent = makeNotificationIntent(context, instance);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
 
-        Notification summary = new NotificationCompat.Builder(context)
+        return new NotificationCompat.Builder(context)
                 .setContentTitle(notificationTitle)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
@@ -65,8 +65,6 @@ public class SummaryNotification extends BaseNotification {
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setGroupSummary(true)
                 .setStyle(style).build();
-        
-        return summary;
     }
 
     @Override
@@ -89,9 +87,9 @@ public class SummaryNotification extends BaseNotification {
         /* All have the same ID so future notifications replace it */
         return 1337;
     }
-    
+
     /* Checks if we've already posted a notification */
-    public static boolean isNotificationActive(Context context){
+    public static boolean isNotificationActive(Context context) {
         Database.Notifications table = Database.getInstance(context).getNotificationsTable();
         return table.getActive().size() > 1;
         // The newest notification has already been added to the table, so we're checking if there are 2+ active

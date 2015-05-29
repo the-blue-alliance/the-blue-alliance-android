@@ -26,8 +26,9 @@ import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 
 /**
- * Provides the features that should be in every activity in the app: a navigation drawer,
- * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
+ * Provides the features that should be in every activity in the app: a navigation drawer, a search
+ * button, and the ability to show and hide warning messages. Also provides Android Beam
+ * functionality.
  */
 public abstract class BaseActivity extends NavigationDrawerActivity
         implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -71,7 +72,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Hide the shadow below the Action Bar
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
         }
     }
@@ -127,7 +128,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         invalidateOptionsMenu();
     }
 
-    protected void setModelKey(String key, ModelHelper.MODELS type){
+    protected void setModelKey(String key, ModelHelper.MODELS type) {
         modelKey = key;
         modelType = type;
     }
@@ -147,9 +148,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     }
 
     /**
-     * Connection failed for some reason (called by PlusClient)
-     * Try and resolve the result.  Failure here is usually not an indication of a serious error,
-     * just that the user's input is needed.
+     * Connection failed for some reason (called by PlusClient) Try and resolve the result.  Failure
+     * here is usually not an indication of a serious error, just that the user's input is needed.
      */
     @Override
     public void onConnectionFailed(ConnectionResult result) {

@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.listitems;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,7 +49,7 @@ public class ModelListElement extends ListElement {
             }
         });
 
-        if(!key.isEmpty()){
+        if (!key.isEmpty()) {
             convertView.setOnClickListener(new ModelClickListener(context, key, type));
         }
 

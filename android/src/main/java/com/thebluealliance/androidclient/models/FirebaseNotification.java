@@ -35,7 +35,8 @@ public class FirebaseNotification {
     private BaseNotification notification;
     @JsonIgnore
     private static final DateFormat dateFormat;
-    static{
+
+    static {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -105,7 +106,7 @@ public class FirebaseNotification {
 
         notification.setDate(date);
         try {
-           notification.parseMessageData();
+            notification.parseMessageData();
         } catch (JsonParseException e) {
             // There's really no graceful way to recover from this. Let's hope for the best.
             e.printStackTrace();

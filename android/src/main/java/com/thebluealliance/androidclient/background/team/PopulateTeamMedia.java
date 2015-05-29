@@ -29,8 +29,8 @@ import java.util.Arrays;
  *
  * @author Phil Lopreiato
  * @author Bryce Matsuda
- *         <p/>
- *         <p/>
+ *         <p>
+ *         <p>
  *         File created by phil on 5/31/14.
  */
 public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE> {

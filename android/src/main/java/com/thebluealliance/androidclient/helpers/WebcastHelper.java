@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.R;
  */
 public class WebcastHelper {
 
-    public static enum TYPE {
+    public enum TYPE {
         YOUTUBE,
         TWITCH,
         USTREAM,
@@ -21,33 +21,47 @@ public class WebcastHelper {
         HTML5,
         NONE;
 
-        public String render(Context context){
-            switch(this){
-                case YOUTUBE: return context.getString(R.string.webcast_type_youtube);
-                case TWITCH: return context.getString(R.string.webcast_type_twitch);
-                case USTREAM: return context.getString(R.string.webcast_type_ustream);
-                case LIVESTREAM: return context.getString(R.string.webcast_type_livestream);
-                case IFRAME: return context.getString(R.string.webcast_type_gameday); // watch on web GameDay
-                case HTML5: return context.getString(R.string.webcast_type_html5);
-                default: return "";
+        public String render(Context context) {
+            switch (this) {
+                case YOUTUBE:
+                    return context.getString(R.string.webcast_type_youtube);
+                case TWITCH:
+                    return context.getString(R.string.webcast_type_twitch);
+                case USTREAM:
+                    return context.getString(R.string.webcast_type_ustream);
+                case LIVESTREAM:
+                    return context.getString(R.string.webcast_type_livestream);
+                case IFRAME:
+                    return context.getString(R.string.webcast_type_gameday); // watch on web GameDay
+                case HTML5:
+                    return context.getString(R.string.webcast_type_html5);
+                default:
+                    return "";
             }
         }
     }
 
-    public static TYPE getType(String typeString){
-        switch(typeString){
-            case "youtube":     return TYPE.YOUTUBE;
-            case "twitch":      return TYPE.TWITCH;
-            case "ustream":     return TYPE.USTREAM;
-            case "livestream":  return TYPE.LIVESTREAM;
-            case "iframe":      return TYPE.IFRAME;
-            case "html5":       return TYPE.HTML5;
-            default:            return TYPE.NONE;
+    public static TYPE getType(String typeString) {
+        switch (typeString) {
+            case "youtube":
+                return TYPE.YOUTUBE;
+            case "twitch":
+                return TYPE.TWITCH;
+            case "ustream":
+                return TYPE.USTREAM;
+            case "livestream":
+                return TYPE.LIVESTREAM;
+            case "iframe":
+                return TYPE.IFRAME;
+            case "html5":
+                return TYPE.HTML5;
+            default:
+                return TYPE.NONE;
         }
     }
 
-    public static Intent getIntentForWebcast(Context context, String eventKey, TYPE type, JsonObject params, int number){
-        switch(type){
+    public static Intent getIntentForWebcast(Context context, String eventKey, TYPE type, JsonObject params, int number) {
+        switch (type) {
             case YOUTUBE:
                 return getWebIntentForUrl(context.getString(R.string.webcast_youtube_embed_pattern, params.get("channel").getAsString()));
             case TWITCH:
@@ -64,7 +78,7 @@ public class WebcastHelper {
         }
     }
 
-    private static Intent getWebIntentForUrl(String url){
+    private static Intent getWebIntentForUrl(String url) {
         return new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
     }
 

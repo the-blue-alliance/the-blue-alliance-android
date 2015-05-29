@@ -79,7 +79,7 @@ public class MySubscriptionsFragment extends Fragment implements RefreshListener
             mListState = mListView.onSaveInstanceState();
         }
     }
-    
+
     @Override
     public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading user subscriptions");

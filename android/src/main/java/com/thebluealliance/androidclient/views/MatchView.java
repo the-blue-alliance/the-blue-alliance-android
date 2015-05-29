@@ -228,7 +228,7 @@ public class MatchView extends FrameLayout {
             this.redScore.setText(redScore);
             this.blueScore.setText(blueScore);
 
-            String localTimeString = "";
+            String localTimeString;
             if (time <= 0) {
                 // Match has no time
                 localTimeString = getContext().getString(R.string.no_time_available);
@@ -248,8 +248,8 @@ public class MatchView extends FrameLayout {
     }
 
     /**
-     * Sets if the whole view should be clickable or not. If so, the view will show touch feedback and
-     * open match details in a new activity when its clicked. Otherwise, nothing happens.
+     * Sets if the whole view should be clickable or not. If so, the view will show touch feedback
+     * and open match details in a new activity when its clicked. Otherwise, nothing happens.
      *
      * @param clickable true if the view should be clickable, false if otherwise
      */

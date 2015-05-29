@@ -11,11 +11,12 @@ public interface RefreshableHost {
      * end up being declared as synchronized on implementation.
      */
 
-    public void registerRefreshListener(RefreshListener listener);
-    public void unregisterRefreshListener(RefreshListener listener);
+    void registerRefreshListener(RefreshListener listener);
 
-    public void notifyRefreshComplete(RefreshListener completedListener);
+    void unregisterRefreshListener(RefreshListener listener);
 
-    public void startRefresh(RefreshListener listener);
+    void notifyRefreshComplete(RefreshListener completedListener);
+
+    void startRefresh(RefreshListener listener);
 
 }

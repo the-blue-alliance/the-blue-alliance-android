@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class DistrictHelper {
 
     /* DO NOT CHANGE ORDER. */
-    public static enum DISTRICTS {
+    public enum DISTRICTS {
         NO_DISTRICT,
         MICHIGAN,
         MID_ATLANTIC,
@@ -27,54 +27,78 @@ public class DistrictHelper {
         public static DISTRICTS fromEnum(int districtEnum) {
             switch (districtEnum) {
                 default:
-                case 0: return NO_DISTRICT;
-                case 1: return MICHIGAN;
-                case 2: return MID_ATLANTIC;
-                case 3: return NEW_ENGLAND;
-                case 4: return PACIFIC_NORTHWEST;
-                case 5: return INDIANA;
+                case 0:
+                    return NO_DISTRICT;
+                case 1:
+                    return MICHIGAN;
+                case 2:
+                    return MID_ATLANTIC;
+                case 3:
+                    return NEW_ENGLAND;
+                case 4:
+                    return PACIFIC_NORTHWEST;
+                case 5:
+                    return INDIANA;
             }
         }
 
-        public static DISTRICTS fromAbbreviation(String abbrev){
-            switch (abbrev){
-                case "fim": return MICHIGAN;
-                case "mar": return MID_ATLANTIC;
-                case "ne":  return NEW_ENGLAND;
-                case "pnw": return PACIFIC_NORTHWEST;
-                case "in":  return INDIANA;
-                default:    return NO_DISTRICT;
+        public static DISTRICTS fromAbbreviation(String abbrev) {
+            switch (abbrev) {
+                case "fim":
+                    return MICHIGAN;
+                case "mar":
+                    return MID_ATLANTIC;
+                case "ne":
+                    return NEW_ENGLAND;
+                case "pnw":
+                    return PACIFIC_NORTHWEST;
+                case "in":
+                    return INDIANA;
+                default:
+                    return NO_DISTRICT;
             }
         }
 
         public String getName() {
             switch (this) {
                 default:
-                case NO_DISTRICT: return "";
-                case MICHIGAN: return "Michigan";
-                case MID_ATLANTIC: return "Mid Atlantic";
-                case NEW_ENGLAND: return "New England";
-                case PACIFIC_NORTHWEST: return "Pacific Northwest";
-                case INDIANA: return "Indiana";
+                case NO_DISTRICT:
+                    return "";
+                case MICHIGAN:
+                    return "Michigan";
+                case MID_ATLANTIC:
+                    return "Mid Atlantic";
+                case NEW_ENGLAND:
+                    return "New England";
+                case PACIFIC_NORTHWEST:
+                    return "Pacific Northwest";
+                case INDIANA:
+                    return "Indiana";
             }
         }
 
         public String getAbbreviation() {
             switch (this) {
                 default:
-                case NO_DISTRICT: return "";
-                case MICHIGAN: return "fim";
-                case MID_ATLANTIC: return "mar";
-                case NEW_ENGLAND: return "ne";
-                case PACIFIC_NORTHWEST: return "pnw";
-                case INDIANA: return "in";
+                case NO_DISTRICT:
+                    return "";
+                case MICHIGAN:
+                    return "fim";
+                case MID_ATLANTIC:
+                    return "mar";
+                case NEW_ENGLAND:
+                    return "ne";
+                case PACIFIC_NORTHWEST:
+                    return "pnw";
+                case INDIANA:
+                    return "in";
             }
         }
 
     }
 
     public static boolean validateDistrictKey(String key) {
-        if(key == null || key.length() <= 4){
+        if (key == null || key.length() <= 4) {
             return false;
         }
         try {
@@ -106,10 +130,10 @@ public class DistrictHelper {
         return out;
     }
 
-    public static ArrayList<District> buildVersionedDistrictList(JsonArray districtList, String url, int version){
+    public static ArrayList<District> buildVersionedDistrictList(JsonArray districtList, String url, int version) {
         ArrayList<District> districts = new ArrayList<>();
         for (JsonElement d : districtList) {
-            if(!d.isJsonNull()) {
+            if (!d.isJsonNull()) {
                 if (version > 1) {
                     JsonObject data = d.getAsJsonObject();
                     District district = DistrictHelper.buildDistrictFromUrl(data.get("key").getAsString(), url);

@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class District extends BasicModel<District> {
 
     public static final String[] NOTIFICATION_TYPES = {
-           // NotificationTypes.DISTRICT_POINTS_UPDATED
+            // NotificationTypes.DISTRICT_POINTS_UPDATED
     };
 
     private int numEvents;

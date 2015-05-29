@@ -43,10 +43,10 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         mCount = 1;
 
         Date now = new Date();
-        if (    EventHelper.getYearWeek(now) >= Utilities.getFirstompWeek(now) &&
+        if (EventHelper.getYearWeek(now) >= Utilities.getFirstompWeek(now) &&
                 Utilities.getCurrentYear() == mYear) {
             mCurrent = EventHelper.currentWeekLabel(now);
-        }else{
+        } else {
             mCurrent = "";
         }
     }

@@ -20,13 +20,13 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public final String[] TITLES = {"Info", "Teams", "Rankings", "Matches", "Alliances", "District Points", "Stats", "Awards"};
     public static final int TAB_INFO = 0,
-        TAB_TEAMS = 1,
-        TAB_RANKINGS= 2,
-        TAB_MATCHES = 3,
-        TAB_ALLIANCES = 4,
-        TAB_DISTRICT_POINTS = 5,
-        TAB_STATS = 6,
-        TAB_AWARDS = 7;
+            TAB_TEAMS = 1,
+            TAB_RANKINGS = 2,
+            TAB_MATCHES = 3,
+            TAB_ALLIANCES = 4,
+            TAB_DISTRICT_POINTS = 5,
+            TAB_STATS = 6,
+            TAB_AWARDS = 7;
 
     private String mEventKey;
 

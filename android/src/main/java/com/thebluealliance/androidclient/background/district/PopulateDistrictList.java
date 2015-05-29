@@ -109,7 +109,7 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
                 PopulateDistrictList second = new PopulateDistrictList(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(year);
-            } else if(activity != null){
+            } else if (activity != null) {
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Event list refresh complete");
                 activity.notifyRefreshComplete(fragment);

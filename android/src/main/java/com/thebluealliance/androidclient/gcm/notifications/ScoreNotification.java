@@ -44,9 +44,9 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
+    public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONManager.getasJsonObject(messageData);
-        if(!jsonData.has("match")){
+        if (!jsonData.has("match")) {
             throw new JsonParseException("Notification data does not contain 'match");
         }
         JsonObject match = jsonData.get("match").getAsJsonObject();
@@ -57,7 +57,7 @@ public class ScoreNotification extends BaseNotification {
             e.printStackTrace();
         }
         this.eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
-        if(!jsonData.has("event_name")){
+        if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name");
         }
         eventName = jsonData.get("event_name").getAsString();
@@ -119,7 +119,7 @@ public class ScoreNotification extends BaseNotification {
         }
 
         // Make sure the score string is formatted properly with the winning score first
-        String scoreString = "";
+        String scoreString;
         if (redScore > blueScore) {
             scoreString = redScore + "-" + blueScore;
         } else if (redScore < blueScore) {
@@ -127,9 +127,9 @@ public class ScoreNotification extends BaseNotification {
         } else {
             scoreString = redScore + "-" + redScore;
         }
-        
+
         String redTeamString = Utilities.stringifyListOfStrings(context, redTeams);
-        String blueTeamString =  Utilities.stringifyListOfStrings(context, blueTeams);
+        String blueTeamString = Utilities.stringifyListOfStrings(context, blueTeams);
 
         boolean useSpecial2015Format;
         try {
@@ -140,14 +140,14 @@ public class ScoreNotification extends BaseNotification {
         }
 
         String eventShortName = EventHelper.shortName(eventName);
-        String notificationString = "";
+        String notificationString;
         if (redTeams.size() == 0 && blueTeams.size() == 0) {
             // We must have gotten this GCM message by mistake
             return null;
-        } else if(useSpecial2015Format) {
+        } else if (useSpecial2015Format) {
             /* Only for 2015 non-finals matches. Ugh */
             notificationString = context.getString(R.string.notification_score_2015_no_winner, eventShortName, matchTitle, redTeamString, redScore, blueTeamString, blueScore);
-        }else if((redTeams.size() > 0 && blueTeams.size() == 0)) {
+        } else if ((redTeams.size() > 0 && blueTeams.size() == 0)) {
             // The user only cares about some teams on the red alliance
             if (redScore > blueScore) {
                 // Red won
@@ -199,7 +199,7 @@ public class ScoreNotification extends BaseNotification {
         stored.setBody(notificationString);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationString)
@@ -212,7 +212,7 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public void updateDataLocally(Context c) {
-        if(match != null){
+        if (match != null) {
             match.write(c);
         }
     }

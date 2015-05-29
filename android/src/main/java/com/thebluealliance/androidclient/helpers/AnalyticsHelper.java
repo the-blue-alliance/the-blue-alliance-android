@@ -13,21 +13,21 @@ public class AnalyticsHelper {
 
     public static boolean ANALYTICS_ENABLED = true;
 
-    public static void sendTimingUpdate(Context c, long time, String name, String label){
-        if(!ANALYTICS_ENABLED) return;
+    public static void sendTimingUpdate(Context c, long time, String name, String label) {
+        if (!ANALYTICS_ENABLED) return;
 
         Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
 
         t.send(new HitBuilders.TimingBuilder()
-            .setCategory("load_timing")
-            .setValue(time)
-            .setVariable(name)
-            .setLabel(label)
-            .build());
+                .setCategory("load_timing")
+                .setValue(time)
+                .setVariable(name)
+                .setLabel(label)
+                .build());
     }
 
-    public static void sendSearchUpdate(Context c, String query){
-        if(!ANALYTICS_ENABLED) return;
+    public static void sendSearchUpdate(Context c, String query) {
+        if (!ANALYTICS_ENABLED) return;
 
         Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
         t.send(new HitBuilders.EventBuilder()
@@ -37,8 +37,8 @@ public class AnalyticsHelper {
                 .build());
     }
 
-    public static void sendRefreshUpdate(Context c, String key){
-        if(!ANALYTICS_ENABLED) return;
+    public static void sendRefreshUpdate(Context c, String key) {
+        if (!ANALYTICS_ENABLED) return;
 
         Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
         t.send(new HitBuilders.EventBuilder()
@@ -48,8 +48,8 @@ public class AnalyticsHelper {
                 .build());
     }
 
-    public static void sendClickUpdate(Context c, String category, String action, String key){
-        if(!ANALYTICS_ENABLED) return;
+    public static void sendClickUpdate(Context c, String category, String action, String key) {
+        if (!ANALYTICS_ENABLED) return;
 
         Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
         t.send(new HitBuilders.EventBuilder()
@@ -59,8 +59,8 @@ public class AnalyticsHelper {
                 .build());
     }
 
-    public static void sendSocialUpdate(Context c, String network, String key){
-        if(!ANALYTICS_ENABLED) return;
+    public static void sendSocialUpdate(Context c, String network, String key) {
+        if (!ANALYTICS_ENABLED) return;
 
         Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
         t.send(new HitBuilders.SocialBuilder()

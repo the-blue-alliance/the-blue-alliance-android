@@ -24,8 +24,6 @@ import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,7 +32,7 @@ import java.util.Set;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/23/14.
  */
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
@@ -103,9 +101,9 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
 
                     Team team = DataManager.Teams.getTeamFromDB(activity, teamKey);
                     String nickname;
-                    if(team != null){
+                    if (team != null) {
                         nickname = team.getNickname();
-                    }else{
+                    } else {
                         nickname = "Team " + teamKey.substring(3);
                     }
                     teams.add(new RankingListElement(teamKey, row.get(1).getAsInt(), nickname, row.get(0).getAsInt(), record, rankingString));

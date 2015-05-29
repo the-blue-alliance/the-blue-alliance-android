@@ -42,7 +42,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     private PopulateTeamInfo task;
 
 
-
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
         Bundle args = new Bundle();
@@ -122,7 +121,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
             }
         }
     }
-
 
 
     @Override

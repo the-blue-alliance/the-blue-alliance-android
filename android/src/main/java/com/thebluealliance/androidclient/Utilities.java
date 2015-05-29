@@ -60,7 +60,7 @@ public class Utilities {
         return sw.toString();
     }
 
-    public static int getFirstompWeek(Date date){
+    public static int getFirstompWeek(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return getFirstCompWeek(cal.get(Calendar.YEAR));
@@ -93,8 +93,9 @@ public class Utilities {
     }
 
     /**
-     * Replaces unicode characters with their ASCII equivalents and appends an asterisk to each term.
-     * <p/>
+     * Replaces unicode characters with their ASCII equivalents and appends an asterisk to each
+     * term.
+     * <p>
      * For example, an input of "Über" would result in the string "Uber*".
      *
      * @param query the query from the user to prepare
@@ -251,14 +252,14 @@ public class Utilities {
         return true;
     }
 
-    public static String readLocalProperty(Context c, String property){
+    public static String readLocalProperty(Context c, String property) {
         return readLocalProperty(c, property, "");
     }
 
     public static String readLocalProperty(Context c, String property, String defaultValue) {
         Properties properties;
         properties = new Properties();
-        if(c == null){
+        if (c == null) {
             Log.w(Constants.LOG_TAG, "Null context. Can't read local properties");
             return defaultValue;
         }
@@ -266,7 +267,7 @@ public class Utilities {
             InputStream fileStream = c.getAssets().open("tba.properties");
             properties.load(fileStream);
             fileStream.close();
-            if(isDebuggable() && properties.containsKey(property + ".debug")){
+            if (isDebuggable() && properties.containsKey(property + ".debug")) {
                 return properties.getProperty(property + ".debug");
             }
             return properties.getProperty(property, defaultValue);
@@ -282,8 +283,9 @@ public class Utilities {
     }
 
     /**
-     * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware serial number</a>
-     * I hope this actually works universally, android UUIDs are irritatingly difficult
+     * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware
+     * serial number</a> I hope this actually works universally, android UUIDs are irritatingly
+     * difficult
      *
      * @return UUID
      */
@@ -292,15 +294,16 @@ public class Utilities {
     }
 
     /**
-     * Utility method to create a comma separated list of strings. Useful when you have a list of things
-     * that you want to express in a human-readable list, e.g. teams in a match.
-     * <p/>
+     * Utility method to create a comma separated list of strings. Useful when you have a list of
+     * things that you want to express in a human-readable list, e.g. teams in a match.
+     * <p>
      * If the length of the list is 1, this method will return the input string verbatim.
-     * <p/>
+     * <p>
      * If the length of the list is 2, the returned string will be formatted like "XXXX and YYYY".
-     * <p/>
-     * If the length of the list is 3 or more, the returned string will be formatted like "XXXX, YYYY, and ZZZZ".
-     * <p/>
+     * <p>
+     * If the length of the list is 3 or more, the returned string will be formatted like "XXXX,
+     * YYYY, and ZZZZ".
+     * <p>
      * This uses a localized "and" string.
      */
     public static String stringifyListOfStrings(Context context, ArrayList<String> strings) {
@@ -359,16 +362,16 @@ public class Utilities {
     public static boolean hasLApis() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
-    
-    public static String getDeviceUUID(Context context){
+
+    public static String getDeviceUUID(Context context) {
         return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static String getBuildTimestamp(Context c){
+    public static String getBuildTimestamp(Context c) {
         /* Check the last modified time of classes.dex,
          * which was when the app was last built
          */
-        try{
+        try {
             ApplicationInfo ai = c.getPackageManager().getApplicationInfo(c.getPackageName(), 0);
             ZipFile zf = new ZipFile(ai.sourceDir);
             ZipEntry ze = zf.getEntry("classes.dex");
@@ -379,16 +382,16 @@ public class Utilities {
             String s = dateFormat.format(date) + " " + timeFormat.format(date);
             zf.close();
             return s;
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
-    
-    public static String getVersionNumber(){
+
+    public static String getVersionNumber() {
         /* If this changes, make sure to also change it in SettingsActivity */
-        if(BuildConfig.VERSION_NAME.contains("/")){
+        if (BuildConfig.VERSION_NAME.contains("/")) {
             return BuildConfig.VERSION_NAME.split("/")[0];
-        }else{
+        } else {
             return BuildConfig.VERSION_NAME;
         }
     }

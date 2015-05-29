@@ -239,7 +239,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         // currently enabled
         if (getEnabledNotificationKeys().contains(notification.getNotificationType())) {
             BaseNotification n = notification.getNotification();
-            if(n != null) {
+            if (n != null) {
                 notificationsAdapter.values.add(0, n);
                 notificationsAdapter.notifyDataSetChanged();
             }

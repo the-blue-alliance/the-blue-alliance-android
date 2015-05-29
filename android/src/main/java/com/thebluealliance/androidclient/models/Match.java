@@ -163,7 +163,9 @@ public class Match extends BasicModel<Match> {
         return getBlueAlliance(alliances).getAsJsonArray("teams");
     }
 
-    /** @return true if the given team array contains the given team key, e.g. "frc111". */
+    /**
+     * @return true if the given team array contains the given team key, e.g. "frc111".
+     */
     public static boolean hasTeam(JsonArray teams, String teamKey) {
         return teams.contains(new JsonPrimitive(teamKey));
     }
@@ -352,9 +354,8 @@ public class Match extends BasicModel<Match> {
     }
 
     /**
-     * Renders a MatchListElement for displaying this match.
-     * ASSUMES 3v3 match structure with red/blue alliances
-     * Use different render methods for other structures
+     * Renders a MatchListElement for displaying this match. ASSUMES 3v3 match structure with
+     * red/blue alliances Use different render methods for other structures
      *
      * @return A MatchListElement to be used to display this match
      */
@@ -381,38 +382,38 @@ public class Match extends BasicModel<Match> {
             return null;
         }
         JsonArray redTeams = getRedTeams(alliances),
-                    blueTeams = getBlueTeams(alliances);
-            String redScore = getRedAlliance(alliances).get("score").getAsString(),
-                    blueScore = getBlueAlliance(alliances).get("score").getAsString();
+                blueTeams = getBlueTeams(alliances);
+        String redScore = getRedAlliance(alliances).get("score").getAsString(),
+                blueScore = getBlueAlliance(alliances).get("score").getAsString();
 
-            if (Integer.parseInt(redScore) < 0) redScore = "?";
-            if (Integer.parseInt(blueScore) < 0) blueScore = "?";
+        if (Integer.parseInt(redScore) < 0) redScore = "?";
+        if (Integer.parseInt(blueScore) < 0) blueScore = "?";
 
-            String youTubeVideoKey = null;
-            for (int i = 0; i < videos.size(); i++) {
-                JsonObject video = videos.get(i).getAsJsonObject();
-                if (video.get("type").getAsString().equals("youtube")) {
-                    youTubeVideoKey = video.get("key").getAsString();
-                }
+        String youTubeVideoKey = null;
+        for (int i = 0; i < videos.size(); i++) {
+            JsonObject video = videos.get(i).getAsJsonObject();
+            if (video.get("type").getAsString().equals("youtube")) {
+                youTubeVideoKey = video.get("key").getAsString();
             }
+        }
 
-            String[] redAlliance, blueAlliance;
-            // Add teams based on alliance size (or none if there isn't for some reason)
-            if (redTeams.size() == 3) {
-                redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)};
-            } else if (redTeams.size() == 2) {
-                redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3)};
-            } else {
-                redAlliance = new String[]{"", "", ""};
-            }
+        String[] redAlliance, blueAlliance;
+        // Add teams based on alliance size (or none if there isn't for some reason)
+        if (redTeams.size() == 3) {
+            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)};
+        } else if (redTeams.size() == 2) {
+            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3)};
+        } else {
+            redAlliance = new String[]{"", "", ""};
+        }
 
-            if (blueTeams.size() == 3) {
-                blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)};
-            } else if (blueTeams.size() == 2) {
-                blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3)};
-            } else {
-                blueAlliance = new String[]{"", "", ""};
-            }
+        if (blueTeams.size() == 3) {
+            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)};
+        } else if (blueTeams.size() == 2) {
+            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3)};
+        } else {
+            blueAlliance = new String[]{"", "", ""};
+        }
 
         long matchTime;
         try {
@@ -422,8 +423,8 @@ public class Match extends BasicModel<Match> {
         }
 
         return new MatchListElement(youTubeVideoKey, getTitle(true),
-                    redAlliance, blueAlliance,
-                    redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
+                redAlliance, blueAlliance,
+                redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
     }
 
     public static synchronized APIResponse<Match> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
@@ -481,7 +482,7 @@ public class Match extends BasicModel<Match> {
                 storedMatches = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-               storedMatches.add(ModelInflater.inflateMatch(cursor));
+                storedMatches.add(ModelInflater.inflateMatch(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -512,9 +513,9 @@ public class Match extends BasicModel<Match> {
             int deleted = matchTable.delete(whereClause, whereArgs);
             matchTable.add(allMatches);
 
-            Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted "+deleted);
+            Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted " + deleted);
             return new APIResponse<>(allMatches, code);
-        }else{
+        } else {
             Log.d(Constants.DATAMANAGER_LOG, "No new matches.");
             return new APIResponse<>(new ArrayList<>(storedMatches), code);
         }

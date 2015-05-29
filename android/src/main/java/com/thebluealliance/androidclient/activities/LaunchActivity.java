@@ -212,16 +212,12 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
             // Set dialog message
             alertDialogBuilder.setMessage(getString(R.string.warning_no_internet_connection)).setCancelable(false)
-                    .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            beginLoadingIfConnected();
-                            dialog.dismiss();
-                        }
-                    }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    finish();
-                }
-            });
+                    .setPositiveButton(getString(R.string.retry), (dialog, id) -> {
+                        beginLoadingIfConnected();
+                        dialog.dismiss();
+                    }).setNegativeButton(getString(R.string.cancel), (dialog, id) -> {
+                        finish();
+                    });
 
             // Create alert dialog
             AlertDialog alertDialog = alertDialogBuilder.create();
@@ -249,19 +245,15 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         alertDialogBuilder.setTitle(getString(R.string.fatal_error));
 
         // Set dialog message
-        alertDialogBuilder.setMessage(getString(R.string.fatal_error_message)).setCancelable(false).setPositiveButton(R.string.contact_developer, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "contact@thebluealliance.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "FATAL ERROR");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "Version: " + BuildConfig.VERSION_NAME + "\nStacktrace:\n" + stacktrace);
-                startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
-                finish();
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                finish();
-            }
+        alertDialogBuilder.setMessage(getString(R.string.fatal_error_message)).setCancelable(false).setPositiveButton(R.string.contact_developer, (dialog, id) -> {
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto", "contact@thebluealliance.com", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "FATAL ERROR");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Version: " + BuildConfig.VERSION_NAME + "\nStacktrace:\n" + stacktrace);
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
+            finish();
+        }).setNegativeButton(R.string.cancel, (dialog, id) -> {
+            finish();
         });
 
         // Create alert dialog
@@ -292,10 +284,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
 
         // Set dialog message
         alertDialogBuilder.setMessage(getString(R.string.connection_lost)).setCancelable(false)
-                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
+                .setPositiveButton(getString(R.string.ok), (dialog, id) -> {
+                    dialog.dismiss();
                 });
 
         // Create alert dialog
@@ -317,9 +307,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             loadingMessage.setText(currentLoadingMessage);
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_FINISHED) {
             loadingFinished();
-            if(viewPager != null) {
+            if (viewPager != null) {
                 viewPager.advanceToNextPage();
-            }else{
+            } else {
                 // Pager is null, skipping to HomeActivity
                 startActivity(HomeActivity.newInstance(this, R.id.nav_item_events));
             }
@@ -419,9 +409,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                 for (int i = 0; i < dataToLoad.length; i++) {
                     dataToLoad[i] = inData[i];
                 }
-            } else if(getArguments() != null) {
+            } else if (getArguments() != null) {
                 //don't load any data
-            }else{
+            } else {
                 dataToLoad = new Short[]{LOAD_TEAMS, LOAD_EVENTS, LOAD_DISTRICTS};
             }
 

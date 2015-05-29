@@ -57,7 +57,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(fragment == null || context == null || fragment.getActivity() == null) {
+        if (fragment == null || context == null || fragment.getActivity() == null) {
             // Uh oh, stuff was destroyed while we were working.
             return;
         }
@@ -93,7 +93,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
             for (String notificationKey : notificationTypes) {
                 boolean enabled;
                 if (savedState != null) {
-                    if(savedState.containsKey(notificationKey)) {
+                    if (savedState.containsKey(notificationKey)) {
                         enabled = savedState.getBoolean(notificationKey);
                     } else {
                         enabled = false;
@@ -109,7 +109,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
                 preference.setPersistent(false);
                 notificationSettingsCategory.addPreference(preference);
             }
-            
+
             Preference buffer = new Preference(context);
             buffer.setLayoutResource(R.layout.buffer_preference);
             notificationSettingsCategory.addPreference(buffer);
@@ -119,7 +119,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
         // Tell the fragment about its initial state. That way if the user checks some boxes and then unchecks them,
         // they can be restored to their proper initial state.
         Bundle initialStateBundle = new Bundle();
-        for(String notificationKey : notificationTypes) {
+        for (String notificationKey : notificationTypes) {
             initialStateBundle.putBoolean(notificationKey, currentSettings.contains(notificationKey));
         }
         initialStateBundle.putBoolean(MyTBAHelper.getFavoritePreferenceKey(), favorite.isChecked());

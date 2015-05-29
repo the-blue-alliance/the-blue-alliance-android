@@ -130,7 +130,8 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     }
 
     /**
-     * Called after the notification drawer is created. Allows subclasses to override this and configure the navigation drawer.
+     * Called after the notification drawer is created. Allows subclasses to override this and
+     * configure the navigation drawer.
      */
     public void onNavigationDrawerCreated() {
         // Default implementation is empty

@@ -37,7 +37,7 @@ import de.greenrobot.event.EventBus;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/22/14.
  */
 public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.CODE> {
@@ -65,7 +65,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         showRanks = showStats = false;
 
         View view = mFragment.getView();
-        if(view == null){
+        if (view == null) {
             cancel(true);
             return;
         }
@@ -91,7 +91,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         if (isCancelled()) {
             return APIResponse.CODE.NODATA;
         }
-        
+
         if (activity != null && eventKey != null) {
             try {
                 eventResponse = DataManager.Events.getEvent(activity, eventKey, requestParams);

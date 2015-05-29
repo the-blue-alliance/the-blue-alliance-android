@@ -344,7 +344,7 @@ public class ModelInflater {
         return districtTeam;
     }
 
-    public static Favorite inflateFavorite(Cursor data){
+    public static Favorite inflateFavorite(Cursor data) {
         Favorite favorite = new Favorite();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -363,7 +363,7 @@ public class ModelInflater {
         return favorite;
     }
 
-    public static Subscription inflateSubscription(Cursor data){
+    public static Subscription inflateSubscription(Cursor data) {
         Subscription subscription = new Subscription();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -377,7 +377,7 @@ public class ModelInflater {
                     subscription.setModelEnum(data.getInt(i));
                     break;
                 case Database.Subscriptions.NOTIFICATION_SETTINGS:
-                    Log.d(Constants.LOG_TAG, "Settings: "+data.getString(i));
+                    Log.d(Constants.LOG_TAG, "Settings: " + data.getString(i));
                     subscription.setNotificationSettings(data.getString(i));
                     break;
                 default:
@@ -385,11 +385,11 @@ public class ModelInflater {
         }
         return subscription;
     }
-    
-    public static StoredNotification inflateStoredNotification(Cursor data){
+
+    public static StoredNotification inflateStoredNotification(Cursor data) {
         StoredNotification storedNotification = new StoredNotification();
-        for(int i=0; i<data.getColumnCount(); i++){
-            switch(data.getColumnName(i)){
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
                 case Database.Notifications.ID:
                     storedNotification.setId(data.getInt(i));
                     break;

@@ -30,7 +30,7 @@ public class GamedayWebcastsFragment extends Fragment {
     private Parcelable listState;
     private int firstVisiblePosition;
 
-    public static GamedayWebcastsFragment newInstance(){
+    public static GamedayWebcastsFragment newInstance() {
         return new GamedayWebcastsFragment();
     }
 
@@ -45,7 +45,7 @@ public class GamedayWebcastsFragment extends Fragment {
             listView.setSelection(firstVisiblePosition);
             Log.d("onCreateView", "using existing adapter");
         } else {
-            adapter = new ListViewAdapter(getActivity(), new ArrayList<ListItem>());
+            adapter = new ListViewAdapter(getActivity(), new ArrayList<>());
             listView.setAdapter(adapter);
         }
         return v;

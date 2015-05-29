@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 
 /**
  * Created by Nathan on 4/18/2015.
- *
+ * <p>
  * Blocks focus/activated/selected/etc state from propagating down to children.
  */
 public class BlockingLinearLayout extends LinearLayout {
