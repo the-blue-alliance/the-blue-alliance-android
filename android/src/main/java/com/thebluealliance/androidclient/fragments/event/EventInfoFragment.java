@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
@@ -120,10 +121,10 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.event_top_teams_container) {
-            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(2);  // Rankings
+            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);  // Rankings
             return;
         } else if (id == R.id.event_top_oprs_container) {
-            ((ViewEventActivity) getActivity()).getPager().setCurrentItem(5);  // Stats
+            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);  // Stats
             return;
         } else if (id == R.id.event_date_container) {
             if(event == null) {

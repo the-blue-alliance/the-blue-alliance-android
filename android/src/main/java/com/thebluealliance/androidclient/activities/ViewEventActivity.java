@@ -39,19 +39,20 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     private boolean isDistrict;
 
     /**
-     * Create new intent for ViewEventActivity 
-     * @param c context
+     * Create new intent for ViewEventActivity
+     *
+     * @param c        context
      * @param eventKey Key of the event to show
-     * @param tab The tab number from ViewEventFragmentPagerAdapter.
+     * @param tab      The tab number from ViewEventFragmentPagerAdapter.
      * @return Intent you can launch
      */
-    public static Intent newInstance(Context c, String eventKey, int tab){
+    public static Intent newInstance(Context c, String eventKey, int tab) {
         Intent intent = new Intent(c, ViewEventActivity.class);
         intent.putExtra(EVENTKEY, eventKey);
         intent.putExtra(TAB, tab);
         return intent;
     }
-    
+
     public static Intent newInstance(Context c, String eventKey) {
         return newInstance(c, eventKey, ViewEventFragmentPagerAdapter.TAB_INFO);
     }
@@ -66,10 +67,10 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
-        
-        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)){
+
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)) {
             currentTab = getIntent().getExtras().getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
-        }else{
+        } else {
             Log.i(Constants.LOG_TAG, "ViewEvent intent doesn't contain TAB. Defaulting to TAB_INFO");
             currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
         }
@@ -122,7 +123,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: "+mEventKey);
+        Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: " + mEventKey);
     }
 
     @Override
@@ -187,6 +188,12 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         return pager;
     }
 
+    public void scrollToTab(int tab) {
+        if (pager != null) {
+            pager.setCurrentItem(tab);
+        }
+    }
+
     public void showInfoMessage(String message) {
         infoMessage.setText(message);
         infoMessage.setVisibility(View.VISIBLE);
@@ -215,7 +222,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     @Override
     public void onPageSelected(int position) {
         currentTab = position;
-        
+
         if (mOptionsMenu != null) {
             if (position == ViewEventFragmentPagerAdapter.TAB_STATS && !isDistrict) {
                 showInfoMessage(getString(R.string.warning_not_real_district));
@@ -225,7 +232,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         }
 
         // hide the FAB if we aren't on the first page
-        if(position != ViewEventFragmentPagerAdapter.TAB_INFO){
+        if (position != ViewEventFragmentPagerAdapter.TAB_INFO) {
             hideFab(true);
         } else {
             showFab(true);
