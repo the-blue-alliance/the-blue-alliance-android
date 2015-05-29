@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.thebluealliance.androidclient.R;
@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.R;
 /**
  * File created by phil on 9/5/14.
  */
-public class NotificationSettingsActivity extends ActionBarActivity {
+public class NotificationSettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,31 +25,31 @@ public class NotificationSettingsActivity extends ActionBarActivity {
                 .commit();
     }
 
-    public static class NotificationSettingsFragment extends PreferenceFragment{
-        
-        private static Preference   notificationTone, 
-                                    notificationVibrate, 
-                                    notificationVisibility, 
-                                    notificationHeadsup;
-        
+    public static class NotificationSettingsFragment extends PreferenceFragment {
+
+        private static Preference notificationTone,
+                notificationVibrate,
+                notificationVisibility,
+                notificationHeadsup;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.notification_preferences);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                 addPreferencesFromResource(R.xml.notification_preferences_lollipop);
             }
 
-            CheckBoxPreference enableNotifications = (CheckBoxPreference)findPreference("enable_notifications");
+            CheckBoxPreference enableNotifications = (CheckBoxPreference) findPreference("enable_notifications");
             notificationTone = findPreference("notification_tone");
             notificationVibrate = findPreference("notification_vibrate");
             notificationVisibility = null;
             notificationHeadsup = null;
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT){
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                 notificationVisibility = findPreference("notification_visibility");
                 notificationHeadsup = findPreference("notification_headsup");
             }
-            
+
             boolean currentlyEnabled = enableNotifications.isChecked();
             notificationTone.setEnabled(currentlyEnabled);
             notificationVibrate.setEnabled(currentlyEnabled);
@@ -57,10 +57,10 @@ public class NotificationSettingsActivity extends ActionBarActivity {
             enableNotifications.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean value = (Boolean)newValue;
+                    boolean value = (Boolean) newValue;
                     notificationTone.setEnabled(value);
                     notificationVibrate.setEnabled(value);
-                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                         notificationVisibility.setEnabled(value);
                         notificationHeadsup.setEnabled(value);
                     }

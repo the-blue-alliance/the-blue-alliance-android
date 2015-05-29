@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +27,7 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 /**
  * Created by Nathan on 6/15/2014.
  */
-public class MoreSearchResultsActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MoreSearchResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int TEAM_RESULTS = 1;
     public static final int EVENT_RESULTS = 2;
