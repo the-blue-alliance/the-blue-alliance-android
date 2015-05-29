@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -46,8 +47,8 @@ public class HomeActivity extends RefreshableHostActivity {
     private static final String REQUESTED_MODE = "requested_mode";
 
     /**
-     * The serialization (saved instance state) Bundle key representing the
-     * current dropdown position.
+     * The serialization (saved instance state) Bundle key representing the current dropdown
+     * position.
      */
     private static final String STATE_SELECTED_YEAR_SPINNER_POSITION = "selected_spinner_position";
 
@@ -205,6 +206,13 @@ public class HomeActivity extends RefreshableHostActivity {
 
         // Call this to make sure the toolbar has the correct contents
         invalidateOptionsMenu();
+
+        // The Districts fragment doesn't have tabs to set an elevation to, so we have to apply an elevation to the toolbar here
+        if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts) {
+            ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        } else {
+            ViewCompat.setElevation(toolbar, 0);
+        }
     }
 
     private void resetActionBar() {

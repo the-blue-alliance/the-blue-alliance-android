@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.fragments;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,6 +71,7 @@ public class EventsByWeekFragment extends RefreshableHostFragment {
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
         mTabs = (SlidingTabs) view.findViewById(R.id.event_pager_tabs);
+        ViewCompat.setElevation(mTabs, getResources().getDimension(R.dimen.toolbar_elevation));
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
 
         Log.d(Constants.LOG_TAG, "EventByWeekFragment view created!");

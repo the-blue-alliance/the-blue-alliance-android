@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -95,13 +96,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         notificationSettingsToolbar = (Toolbar) findViewById(R.id.notification_settings_toolbar);
         notificationSettingsToolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
         notificationSettingsToolbar.setTitle("Team Settings");
-        notificationSettingsToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onNotificationSettingsCloseButtonClick();
-            }
-        });
+        notificationSettingsToolbar.setNavigationOnClickListener(v -> onNotificationSettingsCloseButtonClick());
         notificationSettingsToolbar.setNavigationContentDescription(R.string.close);
+        ViewCompat.setElevation(notificationSettingsToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
 
         foregroundDim = findViewById(R.id.activity_foreground_dim);
 
@@ -242,9 +239,9 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         Integer colorTo = getResources().getColor(R.color.accent_dark);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(animator -> {
-            if (Utilities.hasLApis()) {
-                getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
-            }
+            getDrawerLayout().setStatusBarBackgroundColor((Integer) animator.getAnimatedValue());
+            // We have to invalidate so that the view redraws the background
+            getDrawerLayout().invalidate();
         });
         colorAnimation.setDuration(ANIMATION_DURATION);
 
@@ -316,14 +313,13 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         openButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
 
         // Animate the status bar color change
-
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.primary_dark);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(animator -> {
-            if (Utilities.hasLApis()) {
-                getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
-            }
+            getDrawerLayout().setStatusBarBackgroundColor((Integer) animator.getAnimatedValue());
+            // We have to invalidate so that the view redraws the background
+            getDrawerLayout().invalidate();
         });
         colorAnimation.setDuration(ANIMATION_DURATION);
 
@@ -451,7 +447,6 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         }
         saveSettingsTaskFragment = null;
         */
-
 
         saveInProgress = false;
     }

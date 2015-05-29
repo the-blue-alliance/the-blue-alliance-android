@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -43,8 +44,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     private static final int MAX_RESULTS_PER_CATEGORY = 5;
 
     ListView resultsList;
-
     SearchView searchView;
+    Toolbar toolbar;
 
     int closeButtonId;
 
@@ -56,7 +57,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(toolbar);
 
         /* Report activity start to Analytics */
         new AnalyticsActions.ReportActivityStart(this).run();

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,19 +35,13 @@ public class MyTBAFragment extends Fragment {
             final Intent authIntent = AuthenticatorActivity.newInstance(getActivity(), false);
             builder.setTitle("myTBA is Disabled");
             builder.setMessage("Do you want to enable myTBA?").
-                    setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            getActivity().startActivity(authIntent);
-                            getActivity().finish();
-                            dialog.cancel();
-                        }
+                    setPositiveButton("Yes", (dialog, which) -> {
+                        getActivity().startActivity(authIntent);
+                        getActivity().finish();
+                        dialog.cancel();
                     }).
-                    setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
+                    setNegativeButton("No", (dialog, which) -> {
+                        dialog.cancel();
                     });
             builder.create().show();
         }
@@ -62,17 +57,16 @@ public class MyTBAFragment extends Fragment {
         mViewPager.setOffscreenPageLimit(50);
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
         mTabs = (SlidingTabs) v.findViewById(R.id.my_tba_tabs);
+        ViewCompat.setElevation(mTabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         /**
          * Fix for really strange bug. Menu bar items wouldn't appear only when navigated to from 'Events' in the nav drawer
          * Bug is some derivation of this: https://code.google.com/p/android/issues/detail?id=29472
          * So set the view pager's adapter in another thread to avoid a race condition, or something.
          */
-        mViewPager.post(new Runnable() {
-            public void run() {
-                mViewPager.setAdapter(new MyTBAFragmentPagerAdapter(getChildFragmentManager()));
-                mTabs.setViewPager(mViewPager);
-            }
+        mViewPager.post(() -> {
+            mViewPager.setAdapter(new MyTBAFragmentPagerAdapter(getChildFragmentManager()));
+            mTabs.setViewPager(mViewPager);
         });
 
         return v;

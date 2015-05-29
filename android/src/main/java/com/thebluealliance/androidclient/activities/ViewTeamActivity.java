@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -124,6 +125,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
+        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));

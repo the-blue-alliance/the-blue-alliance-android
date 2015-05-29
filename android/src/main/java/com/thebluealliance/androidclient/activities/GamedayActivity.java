@@ -78,8 +78,8 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
-
         tabs.setOnPageChangeListener(this);
+        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
@@ -87,8 +87,6 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
-
-        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
     }
 
     @Override
