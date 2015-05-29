@@ -8,8 +8,6 @@
 
     <!-- Account -->
     <string name="is_mytba_enabled">Enable myTBA</string>
-    <string name="mytba_enabled">myTBA is enabled</string>
-    <string name="mytba_disabled">myTBA is disabled</string>
 
     <!-- Debug Settings Screen -->
     <string name="pref_header_debug">Debug Preferences</string>
@@ -51,8 +49,6 @@
     <string name="pref_enable_notifications">Enable Notifications</string>
     <string name="pref_notification_tone">Play Sound</string>
     <string name="pref_notification_vibrate">Vibrate</string>
-    <string name="pref_system_notification_settings">System Notification Preferences</string>
-    <string name="pref_system_notification_settings_summary">These can affect how your notifications are shown</string>
     <string name="pref_notification_lockscreen">Lock Screen Notifications</string>
     <string name="pref_notification_lockscreen_summary">Controls what information is visible from notifications on the lockscreen</string>
 

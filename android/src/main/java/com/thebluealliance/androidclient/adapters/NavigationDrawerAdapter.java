@@ -10,42 +10,27 @@ import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import java.util.List;
 
 /**
- * Adapter for NavDrawerItems
- * <p/>
- * TODO: Update to only take NavDrawerItems instead of ListItems.
- * <p/>
  * Created by Nathan on 5/8/2014.
  */
 public class NavigationDrawerAdapter extends ListViewAdapter {
-
-    private int mSelectedItemPosition = -1;
 
     public NavigationDrawerAdapter(Context context, List<ListItem> values) {
         super(context, values);
     }
 
-    public void setItemSelected(int position) {
-        this.mSelectedItemPosition = position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View v = super.getView(position, convertView, parent);
-        boolean isSelectedItem = (position == mSelectedItemPosition);
-        if (isSelectedItem) {
-            //v.set
-        }
-        return v;
-    }
-
-    @Override
-    public NavDrawerItem getItem(int position) {
-        return (NavDrawerItem) super.getItem(position);
-    }
-
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        // Prevents spacers/dividers from being selected
+        if(getItem(position) instanceof NavDrawerItem) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -56,8 +41,11 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
      */
     public int getPositionForId(int id) {
         for (int i = 0; i < getCount(); i++) {
-            if (getItem(i).getId() == id) {
-                return i;
+            ListItem item = getItem(i);
+            if(item instanceof NavDrawerItem) {
+                if (((NavDrawerItem) item).getId() == id) {
+                    return i;
+                }
             }
         }
 

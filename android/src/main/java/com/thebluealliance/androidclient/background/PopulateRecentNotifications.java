@@ -12,11 +12,11 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.fragments.NotificationDashboardFragment;
+import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.RecentNotificationListItem;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
@@ -24,15 +24,15 @@ import java.util.ArrayList;
 /**
  * Created by phil on 2/3/15.
  */
-public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
-    
-    private NotificationDashboardFragment fragment;
+public class PopulateRecentNotifications extends AsyncTask<Void, Void, Void> {
+
+    private RecentNotificationsFragment fragment;
     private RefreshableHostActivity activity;
     private ArrayList<ListItem> items;
     private ListViewAdapter adapter;
     private long startTime;
-    
-    public PopulateNotificationDashboard(NotificationDashboardFragment fragment){
+
+    public PopulateRecentNotifications(RecentNotificationsFragment fragment) {
         super();
         this.fragment = fragment;
         this.activity = (RefreshableHostActivity) fragment.getActivity();
@@ -50,11 +50,10 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
         Database.Notifications table = Database.getInstance(activity).getNotificationsTable();
         ArrayList<StoredNotification> notifications = table.get();
         items = new ArrayList<>();
-        for(StoredNotification notification: notifications){
-            items.add(new LabelValueListItem(notification.getTitle(), notification.getBody(), notification.getIntent(), R.layout.list_item_carded_summary));
+        for (StoredNotification notification : notifications) {
+            items.add(new RecentNotificationListItem(notification.getTitle(), notification.getBody(), notification.getIntent()));
         }
         adapter = new ListViewAdapter(activity, items);
-
         return null;
     }
 
@@ -69,7 +68,7 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             if (adapter.values.isEmpty()) {
-                noDataText.setText(R.string.notification_dashboard_no_notifications);
+                noDataText.setText(R.string.no_recent_notifications);
                 noDataText.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);
@@ -78,7 +77,7 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
                 noDataText.setVisibility(View.GONE);
                 teamList.onRestoreInstanceState(state);
             }
-            
+
             // give the parent a reference to the adapter
             fragment.setAdapter(adapter);
 
@@ -89,7 +88,7 @@ public class PopulateNotificationDashboard extends AsyncTask<Void, Void, Void> {
 
             // Show notification if we've refreshed data.
             if (activity != null && fragment instanceof RefreshListener) {
-                Log.d(Constants.REFRESH_LOG, "Notification dashboard refresh complete");
+                Log.d(Constants.REFRESH_LOG, "Recent notifications refresh complete");
                 activity.notifyRefreshComplete(fragment);
             }
         }

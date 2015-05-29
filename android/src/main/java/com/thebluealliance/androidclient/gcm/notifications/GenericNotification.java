@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.NotificationDashboardActivity;
+import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 
 import java.util.Date;
@@ -49,7 +49,7 @@ public class GenericNotification extends BaseNotification {
             launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent = PendingIntent.getActivity(context, 0, launch, 0);
         }else{
-            Intent launch = NotificationDashboardActivity.newInstance(context);
+            Intent launch = RecentNotificationsActivity.newInstance(context);
             intent = PendingIntent.getActivity(context, getNotificationId(), launch, 0);
         }
 

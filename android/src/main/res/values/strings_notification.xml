@@ -77,7 +77,6 @@
     <!-- *********************
         Summary Notification
         ********************* -->
-    <string name="notification_summary_title">All Notifications</string>
     <string name="notification_summary">%1$d new notifications</string>
     <string name="notification_summary_more">and %1$d more…</string>
 

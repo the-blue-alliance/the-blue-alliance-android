@@ -100,9 +100,13 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public abstract void showWarningMessage(String message);
+    public void showWarningMessage(String message) {
+        // Do nothing by default
+    }
 
-    public abstract void hideWarningMessage();
+    public void hideWarningMessage() {
+        // Do nothing by default
+    }
 
     public void setBeamUri(String uri) {
         beamUri = uri;

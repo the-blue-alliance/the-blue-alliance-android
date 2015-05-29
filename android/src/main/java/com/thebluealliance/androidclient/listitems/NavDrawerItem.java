@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.views.SelectableImage;
+import com.thebluealliance.androidclient.views.SelectableImageView;
 
 /**
  * File created by phil on 4/20/14.
@@ -15,6 +15,7 @@ public class NavDrawerItem implements ListItem {
 
     private int id;
     private String title;
+    private int titleId = -1;
     private int icon = -1;
     private int layout;
 
@@ -29,6 +30,13 @@ public class NavDrawerItem implements ListItem {
         this.layout = layout;
     }
 
+    public NavDrawerItem(int id, int titleId, int icon, int layout) {
+        this.id = id;
+        this.titleId = titleId;
+        this.icon = icon;
+        this.layout = layout;
+    }
+
     @Override
     public int getViewType() {
         return 0;
@@ -36,20 +44,37 @@ public class NavDrawerItem implements ListItem {
 
     @Override
     public View getView(Context c, LayoutInflater inflater, View convertView) {
-        if (convertView == null) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
             convertView = inflater.inflate(layout, null);
+
+            holder = new ViewHolder();
+            holder.image = (SelectableImageView) convertView.findViewById(R.id.icon);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         if (icon != -1) {
-            ((SelectableImage) convertView.findViewById(R.id.icon)).setImageResource(icon);
+            holder.image.setImageResource(icon);
         }
 
-        ((TextView) convertView.findViewById(R.id.title)).setText(title);
+        if (titleId != -1) {
+            holder.title.setText(titleId);
+        } else {
+            holder.title.setText(title != null ? title : "");
+        }
 
         return convertView;
     }
 
     public int getId() {
         return id;
+    }
+
+    private class ViewHolder {
+        SelectableImageView image;
+        TextView title;
     }
 }

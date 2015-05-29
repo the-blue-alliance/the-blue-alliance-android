@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:minHeight="48dp">
 
-    <com.thebluealliance.androidclient.views.SelectableImage
+    <com.thebluealliance.androidclient.views.SelectableImageView
         android:id="@+id/icon"
         style="@style/NavDrawerIconStyle" />
 

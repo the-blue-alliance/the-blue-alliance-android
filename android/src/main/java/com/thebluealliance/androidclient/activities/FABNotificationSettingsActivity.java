@@ -448,7 +448,6 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
         saveSettingsTaskFragment = null;
         */
 
-
         saveInProgress = false;
     }
 
@@ -458,7 +457,6 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
 
         // Something went wrong, restore the initial state
         settings.restoreInitialState();
-        final Activity activity = this;
 
         Integer colorFrom = getResources().getColor(R.color.accent);
         Integer colorTo = getResources().getColor(R.color.red);

@@ -13,7 +13,7 @@ public class APIResponse<A> {
 
     public static String JSON_VERSION = "version",
                          JSON_DATA = "data";
-    public static enum CODE { /* DO NOT CHANGE ORDER. USED FOR COMPARING (ordered least to most precedence) */
+    public enum CODE { /* DO NOT CHANGE ORDER. USED FOR COMPARING (ordered least to most precedence) */
         CACHED304, //data was found to have not changed (API returned 304-Not-Modified)
         WEBLOAD, //data was first loaded from the web
         UPDATED, //data was updated from the API

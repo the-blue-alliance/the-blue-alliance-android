@@ -36,8 +36,6 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
 
     private String districtKey, teamKey;
     private TextView warningMessage;
-    private ViewPager pager;
-    private TeamAtDistrictFragmentPagerAdapter adapter;
 
     public static Intent newInstance(Context c, String teamAtDistrictKey){
         return newInstance(c, DistrictTeamHelper.getTeamKey(teamAtDistrictKey), DistrictTeamHelper.getDistrictKey(teamAtDistrictKey));
@@ -78,8 +76,8 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         warningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        pager = (ViewPager) findViewById(R.id.view_pager);
-        adapter = new TeamAtDistrictFragmentPagerAdapter(getSupportFragmentManager(), teamKey, districtKey);
+        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        TeamAtDistrictFragmentPagerAdapter adapter = new TeamAtDistrictFragmentPagerAdapter(getSupportFragmentManager(), teamKey, districtKey);
         pager.setAdapter(adapter);
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
