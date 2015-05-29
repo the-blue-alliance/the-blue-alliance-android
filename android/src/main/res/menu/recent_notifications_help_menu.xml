@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/recent_notifications_help"
-        android:title="@string/action_help"
         android:icon="@drawable/ic_help_white_24dp"
-        app:showAsAction="never"
-        android:orderInCategory="2" />
+        android:orderInCategory="2"
+        android:title="@string/action_help"
+        app:showAsAction="never" />
 </menu>

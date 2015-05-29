@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.thebluealliance.androidclient.views.ExpandableListView
+        android:id="@+id/team_media_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/team_media_list" />
+        android:layout_height="fill_parent" />
 
     <TextView
+        android:id="@+id/no_media"
         style="@style/NoDataFoundStyle"
         android:text="@string/no_media_data"
-        android:id="@+id/no_media"
         android:visibility="gone" />
 
     <ProgressBar
+        android:id="@+id/progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:id="@+id/progress"
-        android:visibility="visible"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:visibility="visible" />
 </RelativeLayout>

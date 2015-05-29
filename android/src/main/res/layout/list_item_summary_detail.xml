@@ -11,42 +11,42 @@
         android:layout_width="wrap_content"
         android:layout_height="72dp"
         android:layout_alignParentLeft="true"
-        android:paddingRight="16dp"
+        android:layout_toLeftOf="@+id/item_detail"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:layout_toLeftOf="@+id/item_detail">
+        android:paddingRight="16dp">
 
         <TextView
             android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:ellipsize="end"
-            android:singleLine="true"
             android:maxLines="1"
+            android:singleLine="true"
+            android:text="Title"
             android:textColor="@color/secondary_text_color"
-            android:text="Title" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Details"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="Details" />
+            android:textStyle="bold" />
     </LinearLayout>
 
     <View
         android:id="@+id/team_info_divider"
-        android:layout_toLeftOf="@+id/item_detail"
         android:layout_width="1dp"
         android:layout_height="56dp"
         android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/item_detail"
         android:background="?android:attr/dividerVertical" />
 
     <ImageView
-        style="@style/ListItemButtonStyle"
         android:id="@id/item_detail"
+        style="@style/ListItemButtonStyle"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_info_outline_black_24dp" />

@@ -11,13 +11,14 @@
     tools:context="com.thebluealliance.androidclient.activities.AuthenticatorActivity">
 
     <ScrollView
+        android:id="@+id/mytba_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_above="@+id/login_form"
-        android:id="@+id/mytba_desc">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,8 +42,8 @@
                 android:paddingRight="10dp"
                 android:text="@string/mytba_description"
                 android:textSize="20sp" />
-            
-            </LinearLayout>
+
+        </LinearLayout>
     </ScrollView>
 
     <!-- Login progress -->
@@ -51,9 +52,9 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_below="@+id/mytba_desc"/>
-    
+        android:layout_below="@+id/mytba_desc"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@id/login_form"
         android:layout_width="match_parent"

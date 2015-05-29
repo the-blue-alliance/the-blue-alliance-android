@@ -39,30 +39,31 @@
                 android:id="@+id/summary_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:minHeight="72dp"
                 android:orientation="vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
                 android:padding="16dp">
 
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:text="Title"
                     android:textColor="@color/secondary_text_color"
-                    android:text="Title" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="Details" />
+                    android:text="Details"
+                    android:textSize="18sp" />
 
             </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,11 +73,10 @@
                     android:id="@+id/notification_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sample Time"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:padding="8dp"
-                    />
+                    android:text="Sample Time" />
             </RelativeLayout>
         </LinearLayout>
 

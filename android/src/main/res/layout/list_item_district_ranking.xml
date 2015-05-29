@@ -3,10 +3,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="88dp"
-    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="false"
-    android:background="?android:attr/selectableItemBackground">
+    android:padding="16dp">
 
     <LinearLayout
         android:id="@+id/team_number_container"

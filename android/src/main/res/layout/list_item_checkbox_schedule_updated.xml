@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp">
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp">
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -21,6 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="72dp"/>
+        android:layout_marginLeft="72dp" />
 
 </RelativeLayout>

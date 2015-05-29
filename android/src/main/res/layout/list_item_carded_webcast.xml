@@ -9,37 +9,37 @@
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="2dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+        android:layout_marginRight="8dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="2dp">
 
         <LinearLayout
+            android:id="@+id/summary_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
             android:minHeight="72dp"
             android:orientation="vertical"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:gravity="center_vertical"
-            android:id="@+id/summary_container"
-            android:background="?android:attr/selectableItemBackground">
+            android:paddingRight="16dp">
 
             <TextView
                 android:id="@+id/label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:text="Title"
                 android:textColor="@color/secondary_text_color"
-                android:text="Title" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="Details" />
+                android:text="Details"
+                android:textSize="18sp" />
 
         </LinearLayout>
 

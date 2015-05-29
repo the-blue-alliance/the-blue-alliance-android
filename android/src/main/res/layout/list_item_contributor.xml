@@ -18,8 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="72dp"
-        android:textSize="16sp"
+        android:paddingBottom="16dp"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp" />
+        android:textSize="16sp" />
 
 </RelativeLayout>

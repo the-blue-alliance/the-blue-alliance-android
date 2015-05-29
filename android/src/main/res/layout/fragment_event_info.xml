@@ -39,9 +39,9 @@
             <RelativeLayout
                 android:id="@+id/event_date_container"
                 style="@style/InfoItemStyle"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:focusable="true">
 
                 <com.thebluealliance.androidclient.views.RecoloredImageView
                     android:id="@+id/event_date_icon"
@@ -62,9 +62,9 @@
                 android:id="@+id/event_venue_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:focusable="true">
 
                 <View style="@style/InfoItemDividerStyle" />
 
@@ -169,8 +169,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:textSize="16sp"
-                    android:text="@string/top_teams" />
+                    android:text="@string/top_teams"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/event_top_teams"
@@ -186,10 +186,10 @@
                 android:id="@+id/event_top_oprs_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:visibility="gone">
 
                 <View style="@style/InfoItemDividerStyle" />
 
@@ -199,8 +199,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:textSize="16sp"
-                        android:text="@string/top_opr" />
+                        android:text="@string/top_opr"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/event_top_oprs"
@@ -224,8 +224,8 @@
         android:visibility="visible" />
 
     <TextView
-        style="@style/NoDataFoundStyle"
         android:id="@+id/no_data"
-        android:visibility="gone"
-        android:singleLine="false" />
+        style="@style/NoDataFoundStyle"
+        android:singleLine="false"
+        android:visibility="gone" />
 </RelativeLayout>

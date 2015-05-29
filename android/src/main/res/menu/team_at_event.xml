@@ -1,15 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.TeamAtEventActivity"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context=".activities.TeamAtEventActivity">
     <item
         android:id="@+id/action_view_event"
-        android:title="@string/action_view_event"
         android:orderInCategory="100"
+        android:title="@string/action_view_event"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_view_team"
-        android:title="@string/action_view_team"
         android:orderInCategory="105"
+        android:title="@string/action_view_team"
         app:showAsAction="never" />
 </menu>

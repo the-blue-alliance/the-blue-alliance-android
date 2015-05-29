@@ -8,8 +8,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:background="@color/nav_drawer_item_divider"
         android:clickable="false"
-        android:focusable="false"
-        android:background="@color/nav_drawer_item_divider"/>
+        android:focusable="false" />
 
 </FrameLayout>
