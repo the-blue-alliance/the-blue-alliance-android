@@ -140,11 +140,11 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
     }
 
     private void showFab() {
-        if(fabVisible) {
+        if (fabVisible) {
             return;
         }
         fabVisible = true;
-        if(runningFabAnimation != null) {
+        if (runningFabAnimation != null) {
             runningFabAnimation.cancel();
         }
 
@@ -166,11 +166,11 @@ public class GamedayActivity extends BaseActivity implements ViewPager.OnPageCha
     }
 
     private void hideFab() {
-        if(!fabVisible) {
+        if (!fabVisible) {
             return;
         }
         fabVisible = false;
-        if(runningFabAnimation != null) {
+        if (runningFabAnimation != null) {
             runningFabAnimation.cancel();
         }
 

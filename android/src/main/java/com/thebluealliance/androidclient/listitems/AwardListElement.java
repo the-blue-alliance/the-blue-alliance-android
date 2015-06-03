@@ -98,9 +98,9 @@ public class AwardListElement extends ListElement {
                 }
 
                 String nickname;
-                if(team == null){
-                    nickname = "Team "+teamNumber;
-                }else{
+                if (team == null) {
+                    nickname = "Team " + teamNumber;
+                } else {
                     nickname = team.getNickname();
                 }
 

@@ -55,22 +55,22 @@ public class UpcomingMatchNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
         eventName = jsonData.get("event_name").getAsString();
-        
+
         if (!jsonData.has("team_keys")) {
             throw new JsonParseException("Notification data does not contain 'team_keys");
         }
-        
+
         eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
-        redTeams = new String[teamKeys.size()/2];
-        blueTeams = new String[teamKeys.size()/2];
-        for(int i=0; i<teamKeys.size()/2; i++){
+        redTeams = new String[teamKeys.size() / 2];
+        blueTeams = new String[teamKeys.size() / 2];
+        for (int i = 0; i < teamKeys.size() / 2; i++) {
             redTeams[i] = teamKeys.get(i).getAsString().substring(3);
-            blueTeams[i] = teamKeys.get(i+teamKeys.size()/2).getAsString().substring(3);
+            blueTeams[i] = teamKeys.get(i + teamKeys.size() / 2).getAsString().substring(3);
         }
         if (!jsonData.has("scheduled_time")) {
             matchTime = jsonData.get("scheduled_time");
-        }else{
+        } else {
             matchTime = JsonNull.INSTANCE;
         }
 
@@ -139,7 +139,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
                 .setContentText(contentText)
@@ -187,7 +187,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         holder.time.setText(getNotificationTimeString(c));
 
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
-        new MatchListElement(redTeams, blueTeams, matchKey, JSONManager.isNull(matchTime)?-1:matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
+        new MatchListElement(redTeams, blueTeams, matchKey, JSONManager.isNull(matchTime) ? -1 : matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
 
         return convertView;
     }

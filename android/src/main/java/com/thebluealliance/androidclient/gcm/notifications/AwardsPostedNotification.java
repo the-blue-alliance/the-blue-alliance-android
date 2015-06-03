@@ -36,27 +36,27 @@ public class AwardsPostedNotification extends BaseNotification {
     private String eventName, eventKey;
     private List<Award> awards;
 
-    public AwardsPostedNotification(String messageData){
+    public AwardsPostedNotification(String messageData) {
         super(NotificationTypes.AWARDS, messageData);
         awards = new ArrayList<>();
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
+    public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONManager.getasJsonObject(messageData);
-        if(!jsonData.has("event_key")){
+        if (!jsonData.has("event_key")) {
             throw new JsonParseException("Notification data does not contain 'event_key'");
         }
         eventKey = jsonData.get("event_key").getAsString();
-        if(!jsonData.has("event_name")){
+        if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
         eventName = jsonData.get("event_name").getAsString();
-        if(!jsonData.has("awards") || !jsonData.get("awards").isJsonArray()){
+        if (!jsonData.has("awards") || !jsonData.get("awards").isJsonArray()) {
             throw new JsonParseException("Notification data does not contain 'awards' list");
         }
         JsonArray awardArray = jsonData.get("awards").getAsJsonArray();
-        for(JsonElement element: awardArray){
+        for (JsonElement element : awardArray) {
             awards.add(gson.fromJson(element, Award.class));
         }
     }
@@ -76,7 +76,7 @@ public class AwardsPostedNotification extends BaseNotification {
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
                 .setContentText(contentText)
@@ -89,8 +89,8 @@ public class AwardsPostedNotification extends BaseNotification {
 
     @Override
     public void updateDataLocally(Context c) {
-        for(Award award:awards){
-            if(award != null) {
+        for (Award award : awards) {
+            if (award != null) {
                 award.write(c);
             }
         }

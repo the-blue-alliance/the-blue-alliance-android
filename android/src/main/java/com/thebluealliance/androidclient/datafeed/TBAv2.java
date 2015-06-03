@@ -25,7 +25,7 @@ public class TBAv2 {
     private static final String TBA_HOST_PREF = "tba_host";
     private static final String tbaHostDefault = "http://www.thebluealliance.com";
 
-    public static enum QUERY {
+    public enum QUERY {
         CSV_TEAMS,
         TEAM_LIST,
         TEAM,
@@ -116,22 +116,31 @@ public class TBAv2 {
     }
 
     /**
-     * This is the method that, when given an API url, checks the database to see when it was last updated (if event), and tells its calling query
-     * what action to take. If the url has not yet been queried or is in need of update, then download (or update) the data from the internet and
-     * record the Last-Modified header for future use. This method also implements a rate limit on how often you can hit a single API endpoint, which
-     * is defined in Constants.API_HIT_TIMEOUT
-     * <p/>
-     * About the return values. The 'data' field of the resulting APIResponse is only going to have actual data if we needed to load something from the internet (thus,
-     * the accompanying CODE will either be Code.WEBLOAD or Code.UPDATED). If the CODE is anything else, then the 'data' field will be null - so check the code
-     * before assuming it's set.
+     * This is the method that, when given an API url, checks the database to see when it was last
+     * updated (if event), and tells its calling query what action to take. If the url has not yet
+     * been queried or is in need of update, then download (or update) the data from the internet
+     * and record the Last-Modified header for future use. This method also implements a rate limit
+     * on how often you can hit a single API endpoint, which is defined in
+     * Constants.API_HIT_TIMEOUT
+     * <p>
+     * About the return values. The 'data' field of the resulting APIResponse is only going to have
+     * actual data if we needed to load something from the internet (thus, the accompanying CODE
+     * will either be Code.WEBLOAD or Code.UPDATED). If the CODE is anything else, then the 'data'
+     * field will be null - so check the code before assuming it's set.
      *
-     * @param c              Calling context - used to query the database for the Last-Update time for a URL
-     * @param URL            API URL to check and see if an update is required
-     * @param params Parameters associated with this request
-       * cacheLocally: Option to save the fact that we hit this URL in the database. Setting this parameter to TRUE allows us to use If-Modified-Since headers, reducing overhead
-       * forceFromCache: When this parameter is true, we won't make any web requests and just return Code.LOCAL, telling the caller to use whatever it has cached locally
-       * forceFromWeb: When this parameter is true, the API timeout is greatly reduced so we can force (not exactly, but close enough) a web refresh. The timeout still exists for the poor server's sake
-     * @return APIResponse containing the data we fetched (if necessary) and the response code for how we obtained that data.
+     * @param c      Calling context - used to query the database for the Last-Update time for a
+     *               URL
+     * @param URL    API URL to check and see if an update is required
+     * @param params Parameters associated with this request cacheLocally: Option to save the fact
+     *               that we hit this URL in the database. Setting this parameter to TRUE allows us
+     *               to use If-Modified-Since headers, reducing overhead forceFromCache: When this
+     *               parameter is true, we won't make any web requests and just return Code.LOCAL,
+     *               telling the caller to use whatever it has cached locally forceFromWeb: When
+     *               this parameter is true, the API timeout is greatly reduced so we can force (not
+     *               exactly, but close enough) a web refresh. The timeout still exists for the poor
+     *               server's sake
+     * @return APIResponse containing the data we fetched (if necessary) and the response code for
+     * how we obtained that data.
      * @throws DataManager.NoDataException
      */
     public static APIResponse<String> getResponseFromURLOrThrow(Context c, final String URL, RequestParams params) throws DataManager.NoDataException {
@@ -165,7 +174,7 @@ public class TBAv2 {
 
                 /* First, check if we're within the API timeout. If so, just tell the caller to return what data we have */
                 Date now = new Date();
-                long timeout = params.forceFromWeb?Constants.API_HIT_TIMEOUT_LONG:Constants.API_HIT_TIMEOUT_SHORT;
+                long timeout = params.forceFromWeb ? Constants.API_HIT_TIMEOUT_LONG : Constants.API_HIT_TIMEOUT_SHORT;
                 Date futureTime = new Date(cachedData.lastHit.getTime() + timeout);
                 if (now.before(futureTime) && !params.forceFromWeb) {
                     //if isn't hasn't been longer than the timeout (1 minute now)
@@ -182,7 +191,7 @@ public class TBAv2 {
                 }
 
                 /* Now, we can make a web request. Query the API, passing the previous Last-Modified as our current If-Modified-Since */
-                Response cachedResponse = HTTP.getRequest(URL, params.forceFromWeb?null:cachedData.getLastUpdate());
+                Response cachedResponse = HTTP.getRequest(URL, params.forceFromWeb ? null : cachedData.getLastUpdate());
 
                 if (cachedResponse != null) {
 
@@ -210,19 +219,19 @@ public class TBAv2 {
                      * Also, if the server gives a Last-Modified time back, record it and add it to the database for future use
                      */
                         String response = HTTP.dataFromResponse(cachedResponse),
-                                lastUpdate =  cachedResponse.header("Last-Modified", "");
+                                lastUpdate = cachedResponse.header("Last-Modified", "");
 
                         int apiVersion;
                         String versionHeader = cachedResponse.header("X-TBA-Version", "");
-                        if(!versionHeader.isEmpty()){
+                        if (!versionHeader.isEmpty()) {
                             apiVersion = Integer.parseInt(versionHeader);
-                        }else{
+                        } else {
                             apiVersion = 0;
                         }
 
                         Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
 
-                        Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet v"+apiVersion+": " + URL);
+                        Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet v" + apiVersion + ": " + URL);
                         return new APIResponse<>(response, APIResponse.CODE.UPDATED, apiVersion); /* This response will contain the data that we fetched */
                     } else {
                     /* The data does not require an update (we got a 304-Not-Modified back), so simply
@@ -234,7 +243,7 @@ public class TBAv2 {
                     }
                 } else {
                     Log.e(Constants.DATAMANAGER_LOG, "Unable to update data from the web");
-                    return new APIResponse<String>(null, APIResponse.CODE.NODATA);
+                    return new APIResponse<>(null, APIResponse.CODE.NODATA);
                 }
             } else {
                 Log.d(Constants.DATAMANAGER_LOG, "Offline; can't check API. " + URL);
@@ -270,17 +279,17 @@ public class TBAv2 {
 
                     int apiVersion;
                     String versionHeader = webResponse.header("X-TBA-Version", "");
-                    if(!versionHeader.isEmpty()){
-                       apiVersion = Integer.parseInt(versionHeader);
-                    }else{
+                    if (!versionHeader.isEmpty()) {
+                        apiVersion = Integer.parseInt(versionHeader);
+                    } else {
                         apiVersion = 0;
                     }
 
-                    Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet v"+apiVersion+": " + URL);
+                    Log.d(Constants.DATAMANAGER_LOG, "Online; data loaded from internet v" + apiVersion + ": " + URL);
                     return new APIResponse<>(response, APIResponse.CODE.WEBLOAD, apiVersion); /* This response will contain the loaded data */
                 } else {
                     Log.e(Constants.DATAMANAGER_LOG, "Unable to load data from the web");
-                    return new APIResponse<String>(null, APIResponse.CODE.NODATA);
+                    return new APIResponse<>(null, APIResponse.CODE.NODATA);
                 }
             } else {
                 /* There is no locally stored data and we are not connected to the internet.

@@ -19,10 +19,10 @@
             android:id="@+id/list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
             android:clipToPadding="false"
+            android:divider="@null"
             android:dividerHeight="0dp"
-            android:divider="@null"/>
+            android:paddingTop="8dp" />
 
         <ProgressBar
             android:id="@+id/progress"
@@ -34,10 +34,10 @@
             android:visibility="visible" />
 
         <TextView
-            style="@style/NoDataFoundStyle"
             android:id="@+id/no_data"
-            android:visibility="gone"
-            android:singleLine="false" />
+            style="@style/NoDataFoundStyle"
+            android:singleLine="false"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <TextView

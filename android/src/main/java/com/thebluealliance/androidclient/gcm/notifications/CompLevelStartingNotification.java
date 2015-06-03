@@ -61,9 +61,9 @@ public class CompLevelStartingNotification extends BaseNotification {
         String compLevel = getCompLevelNameFromAbbreviation(context, compLevelAbbrev);
         String scheduledStartTimeString;
         JsonElement scheduledTime = jsonData.get("scheduled_time");
-        if(JSONManager.isNull(scheduledTime)){
+        if (JSONManager.isNull(scheduledTime)) {
             scheduledStartTimeString = "";
-        }else{
+        } else {
             long scheduledStartTimeUNIX = scheduledTime.getAsLong();
             // We multiply by 1000 because the Date constructor expects ms
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
@@ -89,7 +89,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
                 .setContentText(contentText)
@@ -152,7 +152,7 @@ public class CompLevelStartingNotification extends BaseNotification {
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.time = (TextView) convertView.findViewById(R.id.notification_time);
-            holder.summaryContainer = (LinearLayout)convertView.findViewById(R.id.summary_container);
+            holder.summaryContainer = (LinearLayout) convertView.findViewById(R.id.summary_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

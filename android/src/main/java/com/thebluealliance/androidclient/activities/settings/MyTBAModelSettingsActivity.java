@@ -116,7 +116,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
         // Create drawable for the FAB
         Resources res = getResources();
-        Drawable backgrounds[] = new Drawable[] {res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
+        Drawable backgrounds[] = new Drawable[]{res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
         fabDrawable = new TransitionDrawable(backgrounds);
         fabDrawable.setCrossFadeEnabled(true);
         saveModelPreferencesFab.setImageDrawable(fabDrawable);
@@ -226,13 +226,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         colorAnimation.start();
 
         // Close the activity in the future
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                MyTBAModelSettingsActivity.this.finish();
-            }
-        }, 1000);
+        handler.postDelayed(() -> MyTBAModelSettingsActivity.this.finish(), 1000);
     }
 
     @Override
@@ -250,28 +244,17 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.red);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                fabDrawable.startTransition(500);
-                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
+        colorAnimation.addUpdateListener(animator -> {
+            fabDrawable.startTransition(500);
+            saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
         });
         colorAnimation.setDuration(500);
 
         Integer reverseColorFrom = getResources().getColor(R.color.red);
         Integer reverseColorTo = getResources().getColor(R.color.accent_dark);
-        final Activity activity = this;
         ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
-        reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                //saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
+        reverseColorAnimation.addUpdateListener(animator -> {
+            //saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
         });
         reverseColorAnimation.setDuration(500);
 
@@ -281,12 +264,6 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         animatorSet.start();
 
         // Close the activity in the future
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                MyTBAModelSettingsActivity.this.finish();
-            }
-        }, 3000);
+        handler.postDelayed(() -> MyTBAModelSettingsActivity.this.finish(), 3000);
     }
 }

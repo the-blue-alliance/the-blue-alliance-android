@@ -146,13 +146,13 @@
                     android:text="@string/currently_competing" />
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:id="@+id/team_current_event"
                     style="@style/InfoItemTextStyle"
                     android:layout_below="@id/team_current_event_label"
                     android:layout_centerVertical="false"
                     android:layout_toLeftOf="@+id/team_current_event_nav_arrow"
-                    android:layout_toRightOf="@id/team_current_event_icon" />
+                    android:layout_toRightOf="@id/team_current_event_icon"
+                    android:orientation="vertical" />
 
                 <ImageView
                     android:id="@id/team_current_event_nav_arrow"
@@ -216,8 +216,8 @@
         android:visibility="visible" />
 
     <TextView
-        style="@style/NoDataFoundStyle"
         android:id="@+id/no_data"
-        android:visibility="gone"
-        android:singleLine="false" />
+        style="@style/NoDataFoundStyle"
+        android:singleLine="false"
+        android:visibility="gone" />
 </RelativeLayout>

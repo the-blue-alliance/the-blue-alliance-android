@@ -15,13 +15,13 @@ import java.io.IOException;
  * Created by phil on 2/5/15.
  */
 public class RegisterGCM extends AsyncTask<Void, Void, Void> {
-    
+
     private Activity activity;
-    
+
     public RegisterGCM(Activity activity) {
         this.activity = activity;
     }
-    
+
     @Override
     protected Void doInBackground(Void... params) {
         try {

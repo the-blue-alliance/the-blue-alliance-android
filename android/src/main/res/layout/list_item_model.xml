@@ -3,26 +3,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:background="?android:attr/selectableItemBackground">
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:textSize="18sp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/model_settings"/>
+        android:layout_toLeftOf="@+id/model_settings"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textSize="18sp" />
 
     <ImageView
-        style="@style/ListItemButtonStyle"
         android:id="@id/model_settings"
+        style="@style/ListItemButtonStyle"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_settings_black_24dp" />

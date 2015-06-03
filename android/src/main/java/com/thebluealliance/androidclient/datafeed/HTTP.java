@@ -13,11 +13,11 @@ import java.util.Map;
 
 
 public class HTTP {
-    
+
     private static OkHttpClient client;
-    
-    public static OkHttpClient getClient(){
-        if(client == null){
+
+    public static OkHttpClient getClient() {
+        if (client == null) {
             client = new OkHttpClient();
             client.networkInterceptors().add(new StethoInterceptor());
         }
@@ -28,24 +28,24 @@ public class HTTP {
         return getRequest(url, null, null);
     }
 
-    public static Response getRequest(String url, String lastUpdated){
+    public static Response getRequest(String url, String lastUpdated) {
         return getRequest(url, lastUpdated, null);
     }
-    
+
     public static Response getRequest(String url, String lastUpdated, Map<String, String> headers) {
 
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .addHeader("X-TBA-App-Id", Constants.getApiHeader());
-        if(lastUpdated != null){
+        if (lastUpdated != null) {
             requestBuilder.addHeader("If-Modified-Since", lastUpdated);
         }
-        if(headers != null){
+        if (headers != null) {
             for (Map.Entry<String, String> header : headers.entrySet()) {
                 requestBuilder.addHeader(header.getKey(), header.getValue());
             }
         }
-        
+
         Request request = requestBuilder.build();
         try {
             return getClient().newCall(request).execute();
@@ -58,7 +58,7 @@ public class HTTP {
 
     public static String GET(String url) {
 
-       return GET(url, null);
+        return GET(url, null);
     }
 
     public static String GET(String url, Map<String, String> headers) {

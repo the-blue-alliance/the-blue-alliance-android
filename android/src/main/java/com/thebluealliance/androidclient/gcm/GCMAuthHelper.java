@@ -49,10 +49,10 @@ public class GCMAuthHelper {
         try {
             String token = currentCredential.getToken();
         } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "IO Exception while fetching account token for "+currentCredential.getSelectedAccountName());
+            Log.e(Constants.LOG_TAG, "IO Exception while fetching account token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
         } catch (GoogleAuthException e) {
-            Log.e(Constants.LOG_TAG, "Auth exception while fetching token for "+currentCredential.getSelectedAccountName());
+            Log.e(Constants.LOG_TAG, "Auth exception while fetching token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
         }
         TbaMobile service = AccountHelper.getTbaMobile(currentCredential);
@@ -64,10 +64,10 @@ public class GCMAuthHelper {
 
         try {
             ModelsMobileApiMessagesBaseResponse response = service.register(request).execute();
-            if(response.getCode() == 200 || response.getCode() == 304){
+            if (response.getCode() == 200 || response.getCode() == 304) {
                 return true;
-            }else{
-                Log.e(Constants.LOG_TAG, response.getCode()+":"+response.getMessage());
+            } else {
+                Log.e(Constants.LOG_TAG, response.getCode() + ":" + response.getMessage());
                 return false;
             }
         } catch (IOException e) {

@@ -49,8 +49,8 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(activity instanceof LoadModelSettingsCallback){
-            loadCallback = (LoadModelSettingsCallback)activity;
+        if (activity instanceof LoadModelSettingsCallback) {
+            loadCallback = (LoadModelSettingsCallback) activity;
         }
     }
 
@@ -77,7 +77,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
 
         // Remove padding from the list view
-        if(getView() != null) {
+        if (getView() != null) {
             View listView = getView().findViewById(android.R.id.list);
             if (listView != null) {
                 listView.setPadding(0, 0, 0, 0);
@@ -145,7 +145,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     // Call when preferences have been loaded into the fragment
     public void setPreferencesLoaded() {
         preferencesLoaded = true;
-        if(loadCallback != null){
+        if (loadCallback != null) {
             loadCallback.onSettingsLoaded();
         }
     }

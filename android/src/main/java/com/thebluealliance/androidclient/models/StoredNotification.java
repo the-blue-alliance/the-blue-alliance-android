@@ -18,8 +18,8 @@ public class StoredNotification {
     private Date time;
     private int systemId;
     private boolean active;
-    
-    public StoredNotification(){
+
+    public StoredNotification() {
     }
 
     public int getId() {
@@ -86,7 +86,7 @@ public class StoredNotification {
         this.systemId = systemId;
     }
 
-    public ContentValues getParams(){
+    public ContentValues getParams() {
         ContentValues params = new ContentValues();
         params.put(Database.Notifications.TYPE, type);
         params.put(Database.Notifications.TITLE, title);

@@ -20,9 +20,9 @@
         android:visibility="visible" />
 
     <TextView
-        style="@style/NoDataFoundStyle"
         android:id="@+id/no_data"
-        android:visibility="gone"
-        android:singleLine="false" />
+        style="@style/NoDataFoundStyle"
+        android:singleLine="false"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -154,8 +154,8 @@ public class GCMMessageHandler extends IntentService {
             e.printStackTrace();
         }
     }
-    
-    private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs){
+
+    private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs) {
         /* Set notification parameters */
         if (prefs.getBoolean("notification_vibrate", true)) {
             built.defaults |= Notification.DEFAULT_VIBRATE;

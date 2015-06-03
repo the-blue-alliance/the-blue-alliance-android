@@ -33,7 +33,7 @@ public class PopulateGameDayWebcasts extends AsyncTask<String, Void, APIResponse
     private ArrayList<ListItem> webcasts;
     private RequestParams requestParams;
 
-    public PopulateGameDayWebcasts(GamedayWebcastsFragment fragment, RequestParams requestParams){
+    public PopulateGameDayWebcasts(GamedayWebcastsFragment fragment, RequestParams requestParams) {
         this.fragment = fragment;
         this.activity = fragment.getActivity();
         this.requestParams = requestParams;
@@ -59,7 +59,7 @@ public class PopulateGameDayWebcasts extends AsyncTask<String, Void, APIResponse
 
         Collections.sort(response.getData(), new EventSortByTypeAndNameComparator());
 
-        for(Event event: response.getData()){
+        for (Event event : response.getData()) {
             webcasts.addAll(event.renderWebcasts());
         }
 
@@ -69,7 +69,7 @@ public class PopulateGameDayWebcasts extends AsyncTask<String, Void, APIResponse
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
-        if(activity != null && fragment != null && fragment.getView() != null){
+        if (activity != null && fragment != null && fragment.getView() != null) {
             View view = fragment.getView();
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             ListViewAdapter adapter = new ListViewAdapter(activity, webcasts);

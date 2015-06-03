@@ -18,8 +18,8 @@ public class RecreateSearchIndexes extends IntentService {
     private static final String ACTION_RECREATE_SEARCH = "com.thebluealliance.androidclient.background.action.RECREATE_SEARCH";
 
     /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
+     * Starts this service to perform action Foo with the given parameters. If the service is
+     * already performing a task this action will be queued.
      *
      * @see IntentService
      */
@@ -46,8 +46,7 @@ public class RecreateSearchIndexes extends IntentService {
     }
 
     /**
-     * Handle action in the provided background thread with the provided
-     * parameters.
+     * Handle action in the provided background thread with the provided parameters.
      */
     private void recreateSearchIndexes() {
         Database db = Database.getInstance(this);
@@ -55,11 +54,11 @@ public class RecreateSearchIndexes extends IntentService {
         // Get current events and teams to create indexes for
         List<Event> events = db.getEventsTable().getAll();
         List<Team> teams = db.getTeamsTable().getAll();
-        Log.d(Constants.LOG_TAG, "Saving "+events.size()+" events and "+teams.size()+ "teams");
+        Log.d(Constants.LOG_TAG, "Saving " + events.size() + " events and " + teams.size() + "teams");
 
         // remove current indexes
-        db.safeRawQuery("DELETE FROM "+Database.TABLE_SEARCH_TEAMS, new String[]{});
-        db.safeRawQuery("DELETE FROM "+Database.TABLE_SEARCH_EVENTS, new String[]{});
+        db.safeRawQuery("DELETE FROM " + Database.TABLE_SEARCH_TEAMS, new String[]{});
+        db.safeRawQuery("DELETE FROM " + Database.TABLE_SEARCH_EVENTS, new String[]{});
 
         // store new indexes
         db.insertSearchItemEvents(events);

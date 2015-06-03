@@ -35,7 +35,7 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
     private ViewPager pager;
     private TeamAtEventFragmentPagerAdapter adapter;
 
-    public static Intent newInstance(Context c, String eventTeamKey){
+    public static Intent newInstance(Context c, String eventTeamKey) {
         return newInstance(c, EventTeamHelper.getEventKey(eventTeamKey), EventTeamHelper.getTeamKey(eventTeamKey));
     }
 

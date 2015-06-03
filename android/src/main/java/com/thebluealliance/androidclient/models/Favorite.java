@@ -14,7 +14,7 @@ public class Favorite {
     private String modelKey;
     private int modelEnum;
 
-    public Favorite(){
+    public Favorite() {
 
     }
 
@@ -24,8 +24,8 @@ public class Favorite {
         setModelEnum(model_type);
     }
 
-    public String getKey(){
-        return userName+":"+modelKey;
+    public String getKey() {
+        return userName + ":" + modelKey;
     }
 
     public String getUserName() {
@@ -48,7 +48,7 @@ public class Favorite {
         return modelEnum;
     }
 
-    public ModelHelper.MODELS getModelType(){
+    public ModelHelper.MODELS getModelType() {
         return ModelHelper.MODELS.values()[modelEnum];
     }
 
@@ -56,7 +56,7 @@ public class Favorite {
         this.modelEnum = modelEnum;
     }
 
-    public ContentValues getParams(){
+    public ContentValues getParams() {
         ContentValues cv = new ContentValues();
         cv.put(Database.Favorites.KEY, getKey());
         cv.put(Database.Favorites.USER_NAME, userName);

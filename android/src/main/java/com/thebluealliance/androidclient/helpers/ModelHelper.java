@@ -77,7 +77,7 @@ public class ModelHelper {
             return "";
         }
 
-        public int getEnum(){
+        public int getEnum() {
             return this.ordinal();
         }
     }
@@ -132,29 +132,30 @@ public class ModelHelper {
             Database db = Database.getInstance(context);
             switch (type) {
                 case EVENT:
-                    if(!db.getEventsTable().exists(key)) return null;
-                        Event event = DataManager.Events.getEvent(context, key, new RequestParams()).getData();
-                        text = event.getEventYear() + " " + event.getEventShortName();
+                    if (!db.getEventsTable().exists(key)) return null;
+                    Event event = DataManager.Events.getEvent(context, key, new RequestParams()).getData();
+                    text = event.getEventYear() + " " + event.getEventShortName();
                     break;
                 case TEAM:
-                    if(!db.getTeamsTable().exists(key)) return null;
+                    if (!db.getTeamsTable().exists(key)) return null;
                     Team team = DataManager.Teams.getTeam(context, key, new RequestParams()).getData();
                     text = team.getNickname();
                     break;
                 case MATCH:
-                    if(!db.getMatchesTable().exists(key)) return null;
+                    if (!db.getMatchesTable().exists(key)) return null;
                     Match match = DataManager.Matches.getMatch(context, key, new RequestParams()).getData();
                     text = match.getEventKey() + " " + match.getTitle();
                     break;
                 case EVENTTEAM:
                     String teamKey = EventTeamHelper.getTeamKey(key), eventKey = EventTeamHelper.getEventKey(key);
-                    if(!db.getEventsTable().exists(eventKey) || !db.getTeamsTable().exists(teamKey)) return null;
+                    if (!db.getEventsTable().exists(eventKey) || !db.getTeamsTable().exists(teamKey))
+                        return null;
                     Team eTeam = DataManager.Teams.getTeam(context, teamKey, new RequestParams()).getData();
                     Event eEvent = DataManager.Events.getEvent(context, eventKey, new RequestParams()).getData();
                     text = eTeam.getNickname() + " @ " + eEvent.getEventYear() + " " + eEvent.getEventShortName();
                     break;
                 case DISTRICT:
-                    if(!db.getDistrictsTable().exists(key)) return null;
+                    if (!db.getDistrictsTable().exists(key)) return null;
                     District district = DataManager.Districts.getDistrict(context, key).getData();
                     text = district.getYear() + " " + DistrictHelper.DISTRICTS.fromAbbreviation(district.getAbbreviation()).getName();
                     break;

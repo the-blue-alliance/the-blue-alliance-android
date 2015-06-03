@@ -110,7 +110,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     }
 
     private void handleIntent(Intent intent) {
-        if(intent.getAction() == null) {
+        if (intent.getAction() == null) {
             return;
         }
         if (Intent.ACTION_SEARCH.equals(intent.getAction()) || intent.getAction().equals("com.google.android.gms.actions.SEARCH_ACTION")) {
@@ -171,7 +171,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 }
                 String key = teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.KEY));
                 Team team = Database.getInstance(this).getTeamsTable().get(key);
-                if(team == null){
+                if (team == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     team = new Team();
                     team.setTeamKey(key);
@@ -218,7 +218,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 }
                 String key = eventQueryResults.getString(eventQueryResults.getColumnIndex(Database.SearchEvent.KEY));
                 Event event = Database.getInstance(this).getEventsTable().get(key);
-                if(event == null){
+                if (event == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     event = new Event();
                     event.setEventKey(key);

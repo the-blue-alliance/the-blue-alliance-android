@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -340,14 +339,14 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     }
 
     public void showFab(boolean animate) {
-        if(fabVisible) {
+        if (fabVisible) {
             return;
         }
         fabVisible = true;
-        if(runningFabAnimation != null) {
+        if (runningFabAnimation != null) {
             runningFabAnimation.cancel();
         }
-        if(!animate) {
+        if (!animate) {
             openNotificationSettingsButtonContainer.setVisibility(View.GONE);
             return;
         }
@@ -369,14 +368,14 @@ public abstract class FABNotificationSettingsActivity extends RefreshableHostAct
     }
 
     public void hideFab(boolean animate) {
-        if(!fabVisible) {
+        if (!fabVisible) {
             return;
         }
         fabVisible = false;
-        if(runningFabAnimation != null) {
+        if (runningFabAnimation != null) {
             runningFabAnimation.cancel();
         }
-        if(!animate) {
+        if (!animate) {
             openNotificationSettingsButtonContainer.setVisibility(View.GONE);
             return;
         }

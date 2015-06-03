@@ -110,8 +110,8 @@ public class DistrictEventsFragment extends Fragment implements RefreshListener 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity)mParent).unregisterRefreshListener(this);
+        if (mParent != null && mParent instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
         }
     }
 }

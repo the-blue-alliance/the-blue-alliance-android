@@ -67,17 +67,17 @@ public class AccountHelper {
     }
 
     public static String getSelectedAccount(Context context) {
-        if(context == null) return "";
+        if (context == null) return "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(PREF_SELECTED_ACCOUNT, "");
     }
 
-    public static Account getCurrentAccount(Context context){
+    public static Account getCurrentAccount(Context context) {
         AccountManager am = AccountManager.get(context);
         Account[] accounts = am.getAccountsByType(context.getString(R.string.account_type));
         String selectedAccount = getSelectedAccount(context);
-        for(Account account: accounts){
-            if(account.name.equals(selectedAccount)) return account;
+        for (Account account : accounts) {
+            if (account.name.equals(selectedAccount)) return account;
         }
         return null;
     }
@@ -108,7 +108,7 @@ public class AccountHelper {
 
     public static TbaMobile getAuthedTbaMobile(Context context) {
         GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
-        if(currentCredential == null){
+        if (currentCredential == null) {
             Log.w(Constants.LOG_TAG, "Unable to get account.");
             return null;
         }
@@ -147,10 +147,10 @@ public class AccountHelper {
         }
     }
 
-    public static boolean registerSystemAccount(Context context, String accountName){
+    public static boolean registerSystemAccount(Context context, String accountName) {
         // register the account with the system
         AccountManager accountManager = AccountManager.get(context);
-        if(accountManager.getAccountsByType(context.getString(R.string.account_type)).length == 0) {
+        if (accountManager.getAccountsByType(context.getString(R.string.account_type)).length == 0) {
             Account account = new Account(accountName, context.getString(R.string.account_type));
             return accountManager.addAccountExplicitly(account, null, null);
         }

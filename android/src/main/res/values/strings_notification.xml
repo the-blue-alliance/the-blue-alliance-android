@@ -3,7 +3,8 @@
 
     <!-- General strings -->
     <string name="and">and</string>
-    <string name="gameday_ticker_event_title_format">%1$s [%2$s]</string> <!-- event name, event short -->
+    <string name="gameday_ticker_event_title_format">%1$s [%2$s]</string>
+    <!-- event name, event short -->
 
     <!-- ******************************
          Upcoming match notification
@@ -31,7 +32,7 @@
     <string name="notification_score_teams_beat_teams">%1$s: %2$s beat %3$s in %4$s with a score of %5$s</string>
     <!-- Example: Midwest Regional: 111 and 1114 tied with the opposing alliance in Quals 32 with a score of 42 - 42. -->
     <string name="notification_score_teams_tied_with_teams">%1$s: %2$s tied with %3$s in %4$s with a score of %5$s</string>
-    
+
     <!-- For use only with 2015 non-finals matches, because that thing with no winners. Such a great game... -->
     <!-- Example: Midwest Regional Quals 32: 111, 33, and 329 scored 156 points; 584, 295, and 594 scored 63 points. -->
     <string name="notification_score_2015_no_winner">%1$s %2$s: %3$s scored %4$d points; %5$s scored %6$d points.</string>

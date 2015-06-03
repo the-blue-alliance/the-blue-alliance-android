@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.accounts.PlusHelper;
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
 public abstract class PlusBaseActivity extends Activity
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = PlusBaseActivity.class.getSimpleName();
 
@@ -33,7 +33,6 @@ public abstract class PlusBaseActivity extends Activity
     private ConnectionResult mConnectionResult;
 
 
-
     /**
      * Called when the PlusClient is successfully connected.
      */
@@ -43,9 +42,9 @@ public abstract class PlusBaseActivity extends Activity
     protected abstract void onPlusClientBlockingUI(boolean show);
 
     /**
-     * Called when there is a change in connection state.  If you have "Sign in"/ "Connect",
-     * "Sign out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states
-     * need to be updated.
+     * Called when there is a change in connection state.  If you have "Sign in"/ "Connect", "Sign
+     * out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states need to
+     * be updated.
      */
     protected abstract void updateConnectButtonState();
 
@@ -53,20 +52,20 @@ public abstract class PlusBaseActivity extends Activity
      * Try to sign in the user.
      */
     public void signIn() {
-            // Show the dialog as we are now signing in.
-            setProgressBarVisible(true);
-            // Make sure that we will start the resolution (e.g. fire the intent and pop up a
-            // dialog for the user) for any errors that come in.
-            mAutoResolveOnFail = true;
-            // We should always have a connection result ready to resolve,
-            // so we can start that process.
-            if (mConnectionResult != null) {
-                startResolution();
-            } else {
-                // If we don't have one though, we can start connect in
-                // order to retrieve one.
-                initiatePlusClientConnect();
-            }
+        // Show the dialog as we are now signing in.
+        setProgressBarVisible(true);
+        // Make sure that we will start the resolution (e.g. fire the intent and pop up a
+        // dialog for the user) for any errors that come in.
+        mAutoResolveOnFail = true;
+        // We should always have a connection result ready to resolve,
+        // so we can start that process.
+        if (mConnectionResult != null) {
+            startResolution();
+        } else {
+            // If we don't have one though, we can start connect in
+            // order to retrieve one.
+            initiatePlusClientConnect();
+        }
 
         updateConnectButtonState();
     }
@@ -123,8 +122,8 @@ public abstract class PlusBaseActivity extends Activity
     }
 
     /**
-     * A helper method to flip the mResolveOnFail flag and start the resolution
-     * of the ConnectionResult from the failed connect() call.
+     * A helper method to flip the mResolveOnFail flag and start the resolution of the
+     * ConnectionResult from the failed connect() call.
      */
     private void startResolution() {
         try {
@@ -144,8 +143,8 @@ public abstract class PlusBaseActivity extends Activity
     }
 
     /**
-     * An earlier connection failed, and we're now receiving the result of the resolution attempt
-     * by PlusClient.
+     * An earlier connection failed, and we're now receiving the result of the resolution attempt by
+     * PlusClient.
      *
      * @see #onConnectionFailed(ConnectionResult)
      */
@@ -187,9 +186,8 @@ public abstract class PlusBaseActivity extends Activity
     }
 
     /**
-     * Connection failed for some reason (called by PlusClient)
-     * Try and resolve the result.  Failure here is usually not an indication of a serious error,
-     * just that the user's input is needed.
+     * Connection failed for some reason (called by PlusClient) Try and resolve the result.  Failure
+     * here is usually not an indication of a serious error, just that the user's input is needed.
      *
      * @see #onActivityResult(int, int, Intent)
      */

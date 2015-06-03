@@ -30,16 +30,14 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * This is an updated version with enhancements made by Daniel Migowski,
- * Andre Bogus, and David Koelle
- * <p/>
- * To convert to use Templates (Java 1.5+):
- * - Change "implements Comparator" to "implements Comparator<String>"
- * - Change "compare(Object o1, Object o2)" to "compare(String s1, String s2)"
- * - Remove the type checking and casting in compare().
- * <p/>
- * To use this class:
- * Use the static "sort" method from the java.util.Collections class:
+ * This is an updated version with enhancements made by Daniel Migowski, Andre Bogus, and David
+ * Koelle
+ * <p>
+ * To convert to use Templates (Java 1.5+): - Change "implements Comparator" to "implements
+ * Comparator<String>" - Change "compare(Object o1, Object o2)" to "compare(String s1, String s2)" -
+ * Remove the type checking and casting in compare().
+ * <p>
+ * To use this class: Use the static "sort" method from the java.util.Collections class:
  * Collections.sort(your list, new AlphanumComparator());
  */
 

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -30,7 +30,7 @@ import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
  * Created by Nathan on 5/15/2014.
  */
 
-public abstract class NavigationDrawerActivity extends ActionBarActivity
+public abstract class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
@@ -130,7 +130,8 @@ public abstract class NavigationDrawerActivity extends ActionBarActivity
     }
 
     /**
-     * Called after the notification drawer is created. Allows subclasses to override this and configure the navigation drawer.
+     * Called after the notification drawer is created. Allows subclasses to override this and
+     * configure the navigation drawer.
      */
     public void onNavigationDrawerCreated() {
         // Default implementation is empty

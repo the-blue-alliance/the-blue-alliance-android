@@ -155,7 +155,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
         try {
             rankResponse = DataManager.Teams.getRankForTeamAtEvent(activity, teamKey, eventKey, requestParams);
             JsonArray rankData = rankResponse.getData();
-            if(rankData.size() > 0){
+            if (rankData.size() > 0) {
                 rank = rankData.get(1).getAsJsonArray().get(0).getAsInt(); // fist index of second child is the rank
                 JsonArray headerRow = rankData.get(0).getAsJsonArray();
                 JsonArray teamRank = rankData.get(1).getAsJsonArray();
@@ -203,12 +203,12 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             }
 
             // Status
-            if(status != MatchHelper.EventStatus.NOT_PICKED) {
+            if (status != MatchHelper.EventStatus.NOT_PICKED) {
                 summary.add(new LabelValueListItem(activity.getString(R.string.team_at_event_status), status.getDescriptionString(activity)));
             }
 
             // Ranking Breakdown
-            if(rankingString != null && !rankingString.isEmpty()){
+            if (rankingString != null && !rankingString.isEmpty()) {
                 summary.add(new LabelValueListItem("Ranking Breakdown", rankingString));
             }
 
@@ -280,7 +280,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
                     activity.notifyRefreshComplete(fragment);
                 }
             }
-            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime,  "team@event summary", teamKey + "@" + eventKey);
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@event summary", teamKey + "@" + eventKey);
         }
     }
 

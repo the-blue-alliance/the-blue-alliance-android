@@ -102,7 +102,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if(mActivity != null) {
+        if (mActivity != null) {
             ProgressBar progressBar = (ProgressBar) mActivity.findViewById(R.id.progress);
             FloatingActionButton myTbaFav = (FloatingActionButton) mActivity.findViewById(R.id.open_notification_settings_button);
             if (code != APIResponse.CODE.NODATA) {
@@ -125,12 +125,12 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
                 progressBar.setVisibility(View.GONE);
 
-            } else{
+            } else {
                 // No data found
                 mActivity.setActionBarTitle(mMatchKey);
                 mActivity.showWarningMessage(mActivity.getString(R.string.match_not_found));
                 progressBar.setVisibility(View.GONE);
-                if(myTbaFav != null){
+                if (myTbaFav != null) {
                     myTbaFav.setVisibility(View.GONE);
                 }
             }

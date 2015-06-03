@@ -14,7 +14,7 @@ public class GamedayTickerClickListener implements View.OnClickListener {
     private Context context;
     private BaseNotification notification;
 
-    public GamedayTickerClickListener(Context context, BaseNotification notification){
+    public GamedayTickerClickListener(Context context, BaseNotification notification) {
         this.context = context;
         this.notification = notification;
     }
@@ -23,7 +23,7 @@ public class GamedayTickerClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Intent intent = notification.getIntent(context);
-        if(intent != null){
+        if (intent != null) {
             context.startActivity(intent);
         }
     }

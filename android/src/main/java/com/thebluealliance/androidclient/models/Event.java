@@ -201,7 +201,9 @@ public class Event extends BasicModel<Event> {
         return getEventName();
     }
 
-    public void setEventShortName(String eventShortName) { fields.put(Database.Events.SHORTNAME, eventShortName); }
+    public void setEventShortName(String eventShortName) {
+        fields.put(Database.Events.SHORTNAME, eventShortName);
+    }
 
     public String getLocation() throws FieldNotDefinedException {
         if (fields.containsKey(Database.Events.LOCATION) && fields.get(Database.Events.LOCATION) instanceof String) {
@@ -349,9 +351,9 @@ public class Event extends BasicModel<Event> {
     }
 
     /**
-     * Sets matches associated with this event model.
-     * Be careful! Matches aren't an official property, this method just exists as a continence.
-     * This model <b>WILL NOT</b> store the matches you set here.
+     * Sets matches associated with this event model. Be careful! Matches aren't an official
+     * property, this method just exists as a continence. This model <b>WILL NOT</b> store the
+     * matches you set here.
      *
      * @param matches Match models to be temporarily associated with this event model.
      */
@@ -370,7 +372,7 @@ public class Event extends BasicModel<Event> {
             c.add(Calendar.DATE, 1);
             endDate = c.getTime();
 
-            if (startDate == null || endDate == null) return false;
+            if (startDate == null) return false;
             Date now = new Date();
             return now.after(startDate) && now.before(endDate);
         } catch (FieldNotDefinedException e) {
@@ -451,11 +453,11 @@ public class Event extends BasicModel<Event> {
         }
     }
 
-    public ArrayList<WebcastListElement> renderWebcasts(){
+    public ArrayList<WebcastListElement> renderWebcasts() {
         ArrayList<WebcastListElement> webcasts = new ArrayList<>();
         try {
             int i = 1;
-            for(JsonElement webcast:getWebcasts()) {
+            for (JsonElement webcast : getWebcasts()) {
                 try {
                     webcasts.add(new WebcastListElement(getEventKey(), getEventShortName(), webcast.getAsJsonObject(), i));
                     i++;
@@ -482,7 +484,7 @@ public class Event extends BasicModel<Event> {
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
                     "Required field: Database.Events.ALLIANCES");
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }
         return output;
@@ -515,7 +517,7 @@ public class Event extends BasicModel<Event> {
                      * All other endpoints have something else after that
                      */
                     updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
-                    if(updatedEvent == null){
+                    if (updatedEvent == null) {
                         // Error parsing the json
                         code = APIResponse.CODE.NODATA;
                         continue;
@@ -543,7 +545,7 @@ public class Event extends BasicModel<Event> {
 
     public static synchronized APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        ArrayList<Event> events = new ArrayList<>(); 
+        ArrayList<Event> events = new ArrayList<>();
 
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;

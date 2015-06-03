@@ -31,9 +31,9 @@ public class MatchListAdapter extends ExpandableListAdapter {
             ((Match) child).setSelectedTeam(teamKey);
         }
         ListItem renderedChild = child.render();
-        if(renderedChild != null){
+        if (renderedChild != null) {
             return renderedChild.getView(activity, inflater, convertView);
-        }else{
+        } else {
             return new LabelValueListItem("Match", "Unable to render").getView(activity, inflater, convertView);
         }
     }

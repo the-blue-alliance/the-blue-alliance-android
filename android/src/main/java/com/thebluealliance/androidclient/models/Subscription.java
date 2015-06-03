@@ -22,7 +22,7 @@ public class Subscription {
     private List<String> notificationList;
     private int modelEnum;
 
-    public Subscription(){
+    public Subscription() {
         notificationList = new ArrayList<>();
     }
 
@@ -34,8 +34,8 @@ public class Subscription {
         setModelEnum(model_type);
     }
 
-    public String getKey(){
-        return userName+":"+modelKey;
+    public String getKey() {
+        return userName + ":" + modelKey;
     }
 
     public String getUserName() {
@@ -68,7 +68,7 @@ public class Subscription {
     }
 
     public List<String> getNotificationList() {
-        if(notificationList == null){
+        if (notificationList == null) {
             notificationList = new ArrayList<>();
             for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
                 notificationList.add(element.getAsString());
@@ -81,7 +81,7 @@ public class Subscription {
         return modelEnum;
     }
 
-    public ModelHelper.MODELS getModelType(){
+    public ModelHelper.MODELS getModelType() {
         return ModelHelper.MODELS.values()[modelEnum];
     }
 
@@ -89,15 +89,15 @@ public class Subscription {
         this.modelEnum = modelEnum;
     }
 
-    private static String makeNotificationJSON(List<String> input){
+    private static String makeNotificationJSON(List<String> input) {
         JsonArray out = new JsonArray();
-        for(String s: input){
+        for (String s : input) {
             out.add(new JsonPrimitive(s));
         }
         return out.toString();
     }
 
-    public ContentValues getParams(){
+    public ContentValues getParams() {
         ContentValues cv = new ContentValues();
         cv.put(Database.Subscriptions.KEY, getKey());
         cv.put(Database.Subscriptions.USER_NAME, userName);

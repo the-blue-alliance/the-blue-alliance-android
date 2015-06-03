@@ -32,7 +32,7 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
     }
 
     public void merge(T in) {
-        if(in != null) {
+        if (in != null) {
             fields.putAll(in.fields);
         }
     }

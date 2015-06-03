@@ -20,12 +20,12 @@
         android:visibility="visible" />
 
     <TextView
+        android:id="@+id/no_match_data"
         style="@style/NoDataFoundStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/no_match_data"
+        android:singleLine="false"
         android:text="@string/no_match_data"
-        android:visibility="gone"
-        android:singleLine="false" />
+        android:visibility="gone" />
 
 </RelativeLayout>

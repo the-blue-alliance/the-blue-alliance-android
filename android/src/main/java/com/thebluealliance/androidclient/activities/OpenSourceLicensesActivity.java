@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 /**
  * Created by Nathan on 5/11/2014.
  */
-public class OpenSourceLicensesActivity extends ActionBarActivity {
+public class OpenSourceLicensesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

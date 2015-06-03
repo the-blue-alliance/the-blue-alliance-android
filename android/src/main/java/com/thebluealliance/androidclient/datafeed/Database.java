@@ -237,8 +237,8 @@ public class Database extends SQLiteOpenHelper {
     public Semaphore getMyTBASemaphore() {
         return mMyTBASemaphore;
     }
-    
-    public Semaphore getNotificationSemaphore(){
+
+    public Semaphore getNotificationSemaphore() {
         return mNotificationSemaphore;
     }
 
@@ -379,8 +379,8 @@ public class Database extends SQLiteOpenHelper {
                 case 23:
                 case 24:
                     // remove and recreate search indexes to we can create them with foreign keys
-                    db.execSQL("DROP TABLE "+TABLE_SEARCH_TEAMS);
-                    db.execSQL("DROP TABLE "+TABLE_SEARCH_EVENTS);
+                    db.execSQL("DROP TABLE " + TABLE_SEARCH_TEAMS);
+                    db.execSQL("DROP TABLE " + TABLE_SEARCH_EVENTS);
                     onCreate(db);
                     break;
             }
@@ -478,8 +478,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         /**
-         * Just updates the last hit time in the database.
-         * Like UNIX `touch`
+         * Just updates the last hit time in the database. Like UNIX `touch`
          *
          * @param url URL for the record to touch
          * @return update code
@@ -542,7 +541,7 @@ public class Database extends SQLiteOpenHelper {
 
                             //add search team item
                             insertSearchItemTeam(team, false);
-                        }else{
+                        } else {
                             db.update(TABLE_TEAMS, team.getParams(), KEY + " =?", new String[]{team.getTeamKey()});
                             updateSearchItemTeam(team);
                         }
@@ -584,14 +583,14 @@ public class Database extends SQLiteOpenHelper {
         }
 
 
-        public ArrayList<Team> getAll(){
+        public ArrayList<Team> getAll() {
             Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_TEAMS, new String[]{});
             ArrayList<Team> ret = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     Team event = ModelInflater.inflateTeam(cursor);
                     ret.add(event);
-                }while(cursor.moveToNext());
+                } while (cursor.moveToNext());
                 cursor.close();
             }
             return ret;
@@ -749,14 +748,14 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public ArrayList<Event> getAll(){
+        public ArrayList<Event> getAll() {
             Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_EVENTS, new String[]{});
             ArrayList<Event> ret = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     Event event = ModelInflater.inflateEvent(cursor);
                     ret.add(event);
-                }while(cursor.moveToNext());
+                } while (cursor.moveToNext());
                 cursor.close();
             }
             return ret;
@@ -795,7 +794,7 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public int delete(String whereClause, String[] whereArgs){
+        public int delete(String whereClause, String[] whereArgs) {
             return safeDelete(TABLE_EVENTS, whereClause, whereArgs);
         }
 
@@ -1031,7 +1030,7 @@ public class Database extends SQLiteOpenHelper {
             }
         }
 
-        public int delete(String whereClause, String[] whereArgs){
+        public int delete(String whereClause, String[] whereArgs) {
             return safeDelete(TABLE_MATCHES, whereClause, whereArgs);
         }
     }
@@ -1814,8 +1813,8 @@ public class Database extends SQLiteOpenHelper {
         }
         return cursor;
     }
-    
-    public Cursor safeRawQuery(String query, String[] args, Semaphore semaphore){
+
+    public Cursor safeRawQuery(String query, String[] args, Semaphore semaphore) {
         Cursor cursor = null;
         try {
             semaphore.tryAcquire(10, TimeUnit.SECONDS);
@@ -1828,7 +1827,7 @@ public class Database extends SQLiteOpenHelper {
             }
         }
         return cursor;
-        
+
     }
 
     public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
@@ -1937,7 +1936,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public void insertSearchItemEvents(List<Event> events){
+    public void insertSearchItemEvents(List<Event> events) {
         Semaphore dbSemaphore = null;
         try {
             dbSemaphore = getSemaphore();
@@ -1957,7 +1956,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public void insertSearchItemTeams(List<Team> teams){
+    public void insertSearchItemTeams(List<Team> teams) {
         Semaphore dbSemaphore = null;
         try {
             dbSemaphore = getSemaphore();

@@ -21,7 +21,7 @@ public class WebcastListElement extends ListElement {
     private JsonObject webcast;
     private int number;
 
-    public WebcastListElement(String eventKey, String eventName, JsonObject webcast, int number){
+    public WebcastListElement(String eventKey, String eventName, JsonObject webcast, int number) {
         super();
         this.eventKey = eventKey;
         this.eventName = eventName;
@@ -55,9 +55,7 @@ public class WebcastListElement extends ListElement {
             holder.value.setVisibility(View.VISIBLE);
             holder.value.setText(type.render(c));
             holder.value.setTypeface(null, Typeface.NORMAL);
-            holder.container.setOnClickListener(v -> {
-                c.startActivity(WebcastHelper.getIntentForWebcast(c, eventKey, type, webcast, number));
-            });
+            holder.container.setOnClickListener(v -> c.startActivity(WebcastHelper.getIntentForWebcast(c, eventKey, type, webcast, number)));
         } else {
             holder.value.setVisibility(View.GONE);
         }

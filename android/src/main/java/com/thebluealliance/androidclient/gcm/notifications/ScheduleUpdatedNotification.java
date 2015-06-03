@@ -82,7 +82,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         stored.setBody(contentText);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
                 .setContentText(contentText)
@@ -120,7 +120,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.details = (TextView) convertView.findViewById(R.id.details);
             holder.time = (TextView) convertView.findViewById(R.id.notification_time);
-            holder.summaryContainer = (LinearLayout)convertView.findViewById(R.id.summary_container);
+            holder.summaryContainer = (LinearLayout) convertView.findViewById(R.id.summary_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

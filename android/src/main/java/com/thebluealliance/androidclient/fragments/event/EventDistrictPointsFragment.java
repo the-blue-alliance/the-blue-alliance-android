@@ -124,7 +124,7 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
 
     public void updateDistrict(boolean isDistrict) {
         this.isDistrict = isDistrict;
-        if(getView() == null) {
+        if (getView() == null) {
             return;
         }
 

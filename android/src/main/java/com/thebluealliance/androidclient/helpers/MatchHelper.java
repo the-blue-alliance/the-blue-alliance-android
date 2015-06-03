@@ -23,12 +23,12 @@ import java.util.regex.Pattern;
  * @author Bryce Matsuda
  * @author Nathan Walters
  * @author Phil Lopreiato
- *         <p/>
+ *         <p>
  *         Created by Nathan on 6/6/2014.
  */
 public class MatchHelper {
 
-    public static enum TYPE {
+    public enum TYPE {
         NONE,
         QUAL {
             @Override
@@ -122,7 +122,7 @@ public class MatchHelper {
     }
 
     public static String getEventKeyFromMatchKey(String matchKey) {
-        if(validateMatchKey(matchKey)) {
+        if (validateMatchKey(matchKey)) {
             return matchKey.replaceAll("_.+", "");
         } else {
             return matchKey;
@@ -260,8 +260,8 @@ public class MatchHelper {
     }
 
     /**
-     * Gets the alliance for a team competing at an event by looking at QF matches
-     * Used if no alliance data available
+     * Gets the alliance for a team competing at an event by looking at QF matches Used if no
+     * alliance data available
      *
      * @param teamMatches team's match list for an event
      * @param teamKey     key associated with team
@@ -279,7 +279,7 @@ public class MatchHelper {
                     JsonArray redTeams = Match.getRedTeams(matchAlliances);
                     Boolean isRed = Match.hasTeam(redTeams, teamKey);
 
-                    if(match.getYear() != 2015) {
+                    if (match.getYear() != 2015) {
                         switch (match.getSetNumber()) {
                             case 1:
                                 alliance = isRed ? 1 : 8;
@@ -294,17 +294,21 @@ public class MatchHelper {
                                 alliance = isRed ? 3 : 6;
                                 break;
                         }
-                    }else{
+                    } else {
                         /* Special format for 2015 */
-                        switch(match.getMatchNumber()){
+                        switch (match.getMatchNumber()) {
                             case 1:
-                                alliance = isRed ? 4 : 5; break;
-                            case 2: 
-                                alliance = isRed ? 3 : 6; break;
-                            case 3: 
-                                alliance = isRed ? 2 : 7; break;
+                                alliance = isRed ? 4 : 5;
+                                break;
+                            case 2:
+                                alliance = isRed ? 3 : 6;
+                                break;
+                            case 3:
+                                alliance = isRed ? 2 : 7;
+                                break;
                             case 4:
-                                alliance = isRed ? 1 : 8; break;
+                                alliance = isRed ? 1 : 8;
+                                break;
                         }
                     }
 
@@ -388,8 +392,8 @@ public class MatchHelper {
             if (Match.hasTeam(redTeams, teamKey) || Match.hasTeam(blueTeams, teamKey)) {
                 teamIsHere = true;
             }
-            
-            if(match.hasBeenPlayed()) {
+
+            if (match.hasBeenPlayed()) {
                 switch (match.getType()) {
                     case QUARTER:
                         elimMatchPlayed = true;
@@ -458,37 +462,37 @@ public class MatchHelper {
             return EventStatus.NOT_PICKED;
         }
 
-        if(year == 2015){
+        if (year == 2015) {
             /* Special elim logic for 2015 season */
-            if(!finalMatches.isEmpty() && sfPlayed > 0){
+            if (!finalMatches.isEmpty() && sfPlayed > 0) {
                 int finalsWon = 0;
-                for(Match match: finalMatches){
-                    if(match.didSelectedTeamWin()){
+                for (Match match : finalMatches) {
+                    if (match.didSelectedTeamWin()) {
                         finalsWon++;
                     }
                 }
-                if(finalsWon >= 2){
+                if (finalsWon >= 2) {
                     return EventStatus.WON_EVENT;
-                } else if((fPlayed == 2  && finalsWon == 0) || (fPlayed == 3 && finalsWon == 1)){
+                } else if ((fPlayed == 2 && finalsWon == 0) || (fPlayed == 3 && finalsWon == 1)) {
                     return EventStatus.ELIMINATED_IN_FINALS;
-                }else{
+                } else {
                     return EventStatus.PLAYING_IN_FINALS;
                 }
-            }else if(!semiMatches.isEmpty() && qfPlayed > 0){
-                if(sfPlayed < 3){
+            } else if (!semiMatches.isEmpty() && qfPlayed > 0) {
+                if (sfPlayed < 3) {
                     return EventStatus.PLAYING_IN_SEMIS;
-                }else{
+                } else {
                     return EventStatus.ELIMINATED_IN_SEMIS;
                 }
-            }else{
-                if(qfPlayed < 2){
+            } else {
+                if (qfPlayed < 2) {
                     return EventStatus.PLAYING_IN_QUARTERS;
-                }else{
+                } else {
                     return EventStatus.ELIMINATED_IN_QUARTERS;
                 }
             }
         }
-        
+
         if (!quarterMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
             for (Match match : quarterMatches) {
@@ -582,7 +586,7 @@ public class MatchHelper {
 
     /**
      * Returns a title like "Quals 10" or "Finals 1 Match 2", or abbreviated "Q10" or "F1-2".
-     *
+     * <p>
      * <p/>NOTE: For people following more than one event at a time, the abbreviated form could
      * include the event code, e.g. "ILCH Q10".
      */
@@ -597,7 +601,7 @@ public class MatchHelper {
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
 
-            String set = null, number = null;
+            String set = null, number;
             String typeCode = m.group(1);
             TYPE type = TYPE.fromShortType(typeCode);
             String typeName = (abbrev ? ABBREV_TYPES : LONG_TYPES).get(type);
@@ -612,7 +616,7 @@ public class MatchHelper {
                 number = m.group(3);
             }
 
-            if(set == null) {
+            if (set == null) {
                 // No set specified; this is a match like "Quals 10" (abbrev "Q10")
                 String format = context.getString(abbrev ? R.string.match_title_abbrev_format
                         : R.string.match_title_format);
@@ -636,14 +640,14 @@ public class MatchHelper {
         return getMatchTitleFromMatchKey(context, matchKey, true);
     }
 
-    public static TYPE getMatchTypeFromKey(String matchKey){
+    public static TYPE getMatchTypeFromKey(String matchKey) {
         String keyWithoutEvent = matchKey.replaceAll(".*_", "");
         Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
             String typeCode = m.group(1);
             return TYPE.fromShortType(typeCode);
-        }else{
+        } else {
             return TYPE.NONE;
         }
     }

@@ -55,16 +55,16 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
     protected APIResponse.CODE doInBackground(Void... params) {
 
         subscriptions = new ArrayList<>();
-        if(!AccountHelper.isMyTBAEnabled(activity)){
+        if (!AccountHelper.isMyTBAEnabled(activity)) {
             return APIResponse.CODE.NODATA;
         }
         APIResponse<ArrayList<Subscription>> response = DataManager.MyTBA.updateUserSubscriptions(activity, requestParams);
         ArrayList<Subscription> collection;
-        if(!requestParams.forceFromCache && response.getCode() == APIResponse.CODE.WEBLOAD){
+        if (!requestParams.forceFromCache && response.getCode() == APIResponse.CODE.WEBLOAD) {
             // we have new subscription data
             collection = response.getData();
             Collections.sort(collection, new SubscriptionSortByModelComparator());
-        }else {
+        } else {
             // otherwise, load local data
             collection = Database.getInstance(activity).getSubscriptionsTable().getForUser(AccountHelper.getSelectedAccount(activity));
             if (requestParams.forceFromCache) {
@@ -78,8 +78,8 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
         if (collection != null) {
             for (Subscription subscription : collection) {
                 ListItem item = ModelHelper.renderModelFromKey(activity, subscription.getModelKey(), subscription.getModelType(), true);
-                if(item != null) {
-                    if(lastModel != subscription.getModelEnum()){
+                if (item != null) {
+                    if (lastModel != subscription.getModelEnum()) {
                         subscriptions.add(new EventTypeHeader(subscription.getModelType().getTitle()));
                     }
                     subscriptions.add(item);
@@ -95,9 +95,9 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if(activity != null && fragment != null && fragment.getView() != null) {
+        if (activity != null && fragment != null && fragment.getView() != null) {
             View view = fragment.getView();
-            TextView noDataText = (TextView)view.findViewById(R.id.no_data);
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             ListView listView = (ListView) fragment.getView().findViewById(R.id.list);
             if (code == APIResponse.CODE.NODATA || subscriptions == null || subscriptions.isEmpty()) {
                 noDataText.setText(activity.getString(R.string.no_subscription_data));
@@ -134,7 +134,7 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
                     activity.notifyRefreshComplete(fragment);
                 }
             }
-            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime,"populate user subscriptions", "");
+            AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "populate user subscriptions", "");
         }
     }
 }

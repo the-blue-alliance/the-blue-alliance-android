@@ -13,8 +13,8 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="Title"
-        android:textSize="16sp"
-        android:textColor="@color/primary_text_color"/>
+        android:textColor="@color/primary_text_color"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/event_dates"

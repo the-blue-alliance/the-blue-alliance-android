@@ -30,7 +30,7 @@ import java.util.Collections;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
+ *         <p>
  *         File created by phil on 4/22/14.
  */
 public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CODE> {

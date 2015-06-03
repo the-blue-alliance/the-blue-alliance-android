@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient.adapters;
 
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
@@ -26,11 +24,8 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
     @Override
     public boolean isEnabled(int position) {
         // Prevents spacers/dividers from being selected
-        if(getItem(position) instanceof NavDrawerItem) {
-            return true;
-        }
+        return getItem(position) instanceof NavDrawerItem;
 
-        return false;
     }
 
     /**
@@ -42,7 +37,7 @@ public class NavigationDrawerAdapter extends ListViewAdapter {
     public int getPositionForId(int id) {
         for (int i = 0; i < getCount(); i++) {
             ListItem item = getItem(i);
-            if(item instanceof NavDrawerItem) {
+            if (item instanceof NavDrawerItem) {
                 if (((NavDrawerItem) item).getId() == id) {
                     return i;
                 }

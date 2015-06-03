@@ -39,13 +39,13 @@
                 android:id="@+id/summary_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:minHeight="72dp"
                 android:orientation="vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:descendantFocusability="blocksDescendants"
                 android:padding="16dp">
 
                 <TextView
@@ -56,13 +56,13 @@
                     android:textColor="@color/secondary_text_color"
                     android:textSize="18sp" />
 
-                <com.thebluealliance.androidclient.views.MatchView xmlns:android="http://schemas.android.com/apk/res/android"
+                <com.thebluealliance.androidclient.views.MatchView android:id="@+id/match_details"
+                    xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:duplicateParentState="false"
-                    android:focusable="false"
                     android:clickable="false"
-                    android:id="@+id/match_details" />
+                    android:duplicateParentState="false"
+                    android:focusable="false" />
             </com.thebluealliance.androidclient.views.BlockingLinearLayout>
 
             <RelativeLayout
@@ -74,10 +74,10 @@
                     android:id="@+id/notification_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sample Time"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    android:padding="8dp" />
+                    android:layout_alignParentRight="true"
+                    android:padding="8dp"
+                    android:text="Sample Time" />
             </RelativeLayout>
         </LinearLayout>
 

@@ -22,8 +22,8 @@
             android:id="@+id/placeholder_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_gravity="center_horizontal"
+            android:gravity="center"
             android:text="@string/insights_placeholder"
             android:textAppearance="@android:style/TextAppearance.Large" />
     </LinearLayout>

@@ -67,7 +67,7 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
                 fragment.updateLabels(allLabels);
                 fragment.notifyRefreshComplete(fragment);
             }
-            AnalyticsHelper.sendTimingUpdate(fragment.getActivity(), System.currentTimeMillis() - startTime,"build week tabs", "");
+            AnalyticsHelper.sendTimingUpdate(fragment.getActivity(), System.currentTimeMillis() - startTime, "build week tabs", "");
         }
     }
 

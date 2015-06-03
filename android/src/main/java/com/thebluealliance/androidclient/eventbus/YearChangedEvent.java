@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.eventbus;
 /**
  * Created by Nathan on 8/15/2014.
  */
-public class YearChangedEvent  {
+public class YearChangedEvent {
 
     private int year;
 

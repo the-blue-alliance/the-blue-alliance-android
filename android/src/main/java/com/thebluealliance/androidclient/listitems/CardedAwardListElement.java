@@ -63,8 +63,8 @@ public class CardedAwardListElement extends ListElement {
             JsonObject winner = mAwardWinner.getAsJsonObject();
             View winnerView = inflater.inflate(R.layout.list_item_award_recipient, null);
 
-            String teamNumber = "";
-            String awardee = "";
+            String teamNumber;
+            String awardee;
             if (JSONManager.isNull(winner.get("team_number"))) {
                 teamNumber = "";
             } else {
@@ -98,9 +98,9 @@ public class CardedAwardListElement extends ListElement {
                 }
 
                 String nickname;
-                if(team == null){
-                    nickname = "Team "+teamNumber;
-                }else{
+                if (team == null) {
+                    nickname = "Team " + teamNumber;
+                } else {
                     nickname = team.getNickname();
                 }
 

@@ -87,7 +87,7 @@ public class DataManager {
                 teamListResponseCodes.add(teamListResponse.getCode());
 
                 ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
-                if(teamListResponse.getCode() == APIResponse.CODE.WEBLOAD || teamListResponse.getCode() == APIResponse.CODE.UPDATED && teams.size() > 0) {
+                if (teamListResponse.getCode() == APIResponse.CODE.WEBLOAD || teamListResponse.getCode() == APIResponse.CODE.UPDATED && teams.size() > 0) {
                     Database.getInstance(c).getTeamsTable().storeTeams(teams);
                 }
             }
@@ -162,7 +162,7 @@ public class DataManager {
 
             ArrayList<JsonArray> data = allRankings.getData();
             JsonArray ret = new JsonArray();
-            for (JsonArray i: data) {
+            for (JsonArray i : data) {
                 if (i.get(1).getAsString().equals(teamNumber)) {
                     ret.add(data.get(0)); // Add the header row
                     ret.add(i);
@@ -482,14 +482,15 @@ public class DataManager {
     public static class MyTBA {
 
         /**
-         * These methods will fetch the current user's myTBA data from the web and store it in the local db
-         * They also return an ArrayList of the favorite/subscription models and a convienence
+         * These methods will fetch the current user's myTBA data from the web and store it in the
+         * local db They also return an ArrayList of the favorite/subscription models and a
+         * convienence
          */
 
         public static final String LAST_FAVORITES_UPDATE = "last_mytba_favorites_update_%s";
         public static final String LAST_SUBSCRIPTIONS_UPDATE = "last_mytba_subscriptions_update_%s";
 
-        public static APIResponse<ArrayList<Favorite>> updateUserFavorites(final Context context, RequestParams requestParams){
+        public static APIResponse<ArrayList<Favorite>> updateUserFavorites(final Context context, RequestParams requestParams) {
             String currentUser = AccountHelper.getSelectedAccount(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String prefString = String.format(LAST_FAVORITES_UPDATE, currentUser);
@@ -504,13 +505,13 @@ public class DataManager {
                 return new APIResponse<>(null, APIResponse.CODE.CACHED304);
             }
 
-            if(!ConnectionDetector.isConnectedToInternet(context)){
+            if (!ConnectionDetector.isConnectedToInternet(context)) {
                 return new APIResponse<>(null, APIResponse.CODE.OFFLINECACHE);
             }
 
             Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-            if(service == null){
+            if (service == null) {
                 Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
                 Handler mainHandler = new Handler(context.getMainLooper());
                 mainHandler.post(new Runnable() {
@@ -537,14 +538,14 @@ public class DataManager {
                     favoriteModels.add(new Favorite(currentUser, f.getModelKey(), f.getModelType().intValue()));
                 }
                 favorites.add(favoriteModels);
-                Log.d(Constants.LOG_TAG, "Added "+favoriteModels.size()+" favorites");
+                Log.d(Constants.LOG_TAG, "Added " + favoriteModels.size() + " favorites");
             }
 
             prefs.edit().putLong(prefString, new Date().getTime()).apply();
             return new APIResponse<>(favoriteModels, APIResponse.CODE.WEBLOAD);
         }
 
-        public static APIResponse<ArrayList<Subscription>> updateUserSubscriptions(final Context context, RequestParams requestParams){
+        public static APIResponse<ArrayList<Subscription>> updateUserSubscriptions(final Context context, RequestParams requestParams) {
             String currentUser = AccountHelper.getSelectedAccount(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String prefString = String.format(LAST_SUBSCRIPTIONS_UPDATE, currentUser);
@@ -559,13 +560,13 @@ public class DataManager {
                 return new APIResponse<>(null, APIResponse.CODE.CACHED304);
             }
 
-            if(!ConnectionDetector.isConnectedToInternet(context)){
+            if (!ConnectionDetector.isConnectedToInternet(context)) {
                 return new APIResponse<>(null, APIResponse.CODE.OFFLINECACHE);
             }
 
             Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
             TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-            if(service == null){
+            if (service == null) {
                 Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
                 Handler mainHandler = new Handler(context.getMainLooper());
                 mainHandler.post(new Runnable() {
@@ -594,7 +595,7 @@ public class DataManager {
                 subscriptions.add(subscriptionModels);
             }
 
-            Log.d(Constants.LOG_TAG, "Added "+subscriptionCollection.size()+" subscriptions");
+            Log.d(Constants.LOG_TAG, "Added " + subscriptionCollection.size() + " subscriptions");
             prefs.edit().putLong(prefString, new Date().getTime()).apply();
             return new APIResponse<>(subscriptionModels, APIResponse.CODE.WEBLOAD);
         }

@@ -85,7 +85,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
     @Override
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
-        if(fragment == null){
+        if (fragment == null) {
             return;
         }
         View view = fragment.getView();
@@ -123,7 +123,7 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                 PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, requestParams);
                 fragment.updateTask(second);
                 second.execute(districtKey);
-            } else if(activity != null){
+            } else if (activity != null) {
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "District rankings refresh complete");
                 activity.notifyRefreshComplete(fragment);

@@ -55,19 +55,19 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
     protected APIResponse.CODE doInBackground(Void... params) {
 
         favorites = new ArrayList<>();
-        if(!AccountHelper.isMyTBAEnabled(activity)){
+        if (!AccountHelper.isMyTBAEnabled(activity)) {
             return APIResponse.CODE.NODATA;
         }
         APIResponse<ArrayList<Favorite>> response = DataManager.MyTBA.updateUserFavorites(activity, requestParams);
         ArrayList<Favorite> collection;
-        if(!requestParams.forceFromCache && response.getCode() == APIResponse.CODE.WEBLOAD){
+        if (!requestParams.forceFromCache && response.getCode() == APIResponse.CODE.WEBLOAD) {
             // we have new favorite data
             collection = response.getData();
             Collections.sort(collection, new FavoriteSortByModelComparator());
-        }else {
+        } else {
             // otherwise, load local data
             collection = Database.getInstance(activity).getFavoritesTable().getForUser(AccountHelper.getSelectedAccount(activity));
-            if(requestParams.forceFromCache){
+            if (requestParams.forceFromCache) {
                 // When we force from cache, set the codes properly
                 // so the second task will fire off
                 response.updateCode(APIResponse.CODE.LOCAL);
@@ -78,8 +78,8 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
         if (collection != null) {
             for (Favorite favorite : collection) {
                 ListItem item = ModelHelper.renderModelFromKey(activity, favorite.getModelKey(), favorite.getModelType(), true);
-                if(item != null) {
-                    if(lastModel != favorite.getModelEnum()){
+                if (item != null) {
+                    if (lastModel != favorite.getModelEnum()) {
                         favorites.add(new EventTypeHeader(favorite.getModelType().getTitle()));
                     }
                     favorites.add(item);
@@ -95,9 +95,9 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
     protected void onPostExecute(APIResponse.CODE code) {
         super.onPostExecute(code);
 
-        if(activity != null && fragment != null && fragment.getView() != null) {
+        if (activity != null && fragment != null && fragment.getView() != null) {
             View view = fragment.getView();
-            TextView noDataText = (TextView)view.findViewById(R.id.no_data);
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
             ListView listView = (ListView) fragment.getView().findViewById(R.id.list);
             if (code == APIResponse.CODE.NODATA || favorites == null || favorites.isEmpty()) {
                 noDataText.setText(activity.getString(R.string.no_favorite_data));

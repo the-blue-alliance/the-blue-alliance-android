@@ -19,11 +19,11 @@ import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 public class RecentNotificationsActivity extends RefreshableHostActivity {
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
-    
+
     public static Intent newInstance(Context c) {
         return new Intent(c, RecentNotificationsActivity.class);
     }
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +32,7 @@ public class RecentNotificationsActivity extends RefreshableHostActivity {
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
         setSupportActionBar(toolbar);
         setupActionBar();
-        
+
         Fragment fragment = new RecentNotificationsFragment();
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
     }
@@ -42,7 +42,7 @@ public class RecentNotificationsActivity extends RefreshableHostActivity {
         setNavigationDrawerItemSelected(R.id.nav_item_notifications);
     }
 
-    private void setupActionBar(){
+    private void setupActionBar() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle(getString(R.string.recent_notifications_title));
     }
@@ -56,7 +56,7 @@ public class RecentNotificationsActivity extends RefreshableHostActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.recent_notifications_help:
                 Utilities.showHelpDialog(this, R.raw.recent_notifications_help, getString(R.string.action_help));
                 return true;
