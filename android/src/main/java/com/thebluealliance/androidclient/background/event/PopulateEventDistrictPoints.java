@@ -126,7 +126,6 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
             // off the web, display a message.
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noData.setText(R.string.no_district_points);
                 noData.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);

@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 /**
  * Fragment that displays the rankings for an FRC event.
@@ -77,10 +78,15 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Setup views & listener
-        View v = inflater.inflate(R.layout.list_view_with_spinner_2, null);
-        mListView = (ListView) v.findViewById(R.id.list);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
+
+        // Initialize "No Data" view
+        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
+        noData.setImage(R.drawable.ic_poll_black_48dp);
+        noData.setText(R.string.no_ranking_data);
+
+        mListView = (ListView) view.findViewById(R.id.list);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
 
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.
@@ -102,7 +108,7 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
                 startActivity(intent);
             }
         });
-        return v;
+        return view;
     }
 
     @Override

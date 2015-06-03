@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventDistrictPoints;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 /**
  * File created by phil on 7/26/14.
@@ -72,6 +73,12 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_district_points, null);
+
+        // Initialize "No Data" view
+        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
+        noData.setImage(R.drawable.ic_assignment_black_48dp);
+        noData.setText(R.string.no_district_points);
+
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (mAdapter != null) {
