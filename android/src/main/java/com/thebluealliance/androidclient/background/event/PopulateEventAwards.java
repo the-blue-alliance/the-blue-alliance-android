@@ -110,7 +110,6 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
             // off the web, display a message.
             ListView rankings = (ListView) view.findViewById(R.id.list);
             if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && awards.isEmpty())) {
-                noData.setText(teamKey.isEmpty() ? R.string.no_awards_data : R.string.no_team_awards_data);
                 noData.setVisibility(View.VISIBLE);
                 view.findViewById(R.id.list).setVisibility(View.GONE);
             } else {

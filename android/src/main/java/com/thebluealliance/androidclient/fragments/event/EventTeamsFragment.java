@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 /**
  * File created by phil on 4/22/14.
@@ -65,6 +66,12 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
+
+        // Initialize "No Data" view
+        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
+        noData.setImage(R.drawable.ic_group_black_48dp);
+        noData.setText(R.string.no_team_data);
+
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (mAdapter != null) {

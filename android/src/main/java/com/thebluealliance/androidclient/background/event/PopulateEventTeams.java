@@ -93,7 +93,6 @@ public class PopulateEventTeams extends AsyncTask<String, String, APIResponse.CO
             // If there's no events in the adapter or if we can't download info
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noData.setText(R.string.no_team_data);
                 noData.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);
