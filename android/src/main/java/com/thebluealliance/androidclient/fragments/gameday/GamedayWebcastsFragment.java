@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.gameday.PopulateGameDayWebcasts;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 
@@ -36,9 +37,15 @@ public class GamedayWebcastsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_carded, null);
-        listView = (ListView) v.findViewById(R.id.list);
-        progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        View view = inflater.inflate(R.layout.list_view_carded, null);
+
+        // Initialize "No Data" view
+        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
+        noData.setImage(R.drawable.ic_videocam_black_48dp);
+        noData.setText(R.string.no_webcast_data_found);
+
+        listView = (ListView) view.findViewById(R.id.list);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (adapter != null) {
             listView.setAdapter(adapter);
             listView.onRestoreInstanceState(listState);
@@ -48,7 +55,7 @@ public class GamedayWebcastsFragment extends Fragment {
             adapter = new ListViewAdapter(getActivity(), new ArrayList<>());
             listView.setAdapter(adapter);
         }
-        return v;
+        return view;
     }
 
     @Override

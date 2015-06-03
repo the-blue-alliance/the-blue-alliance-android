@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Subscription;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,14 +98,13 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
 
         if (activity != null && fragment != null && fragment.getView() != null) {
             View view = fragment.getView();
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
             ListView listView = (ListView) fragment.getView().findViewById(R.id.list);
             if (code == APIResponse.CODE.NODATA || subscriptions == null || subscriptions.isEmpty()) {
-                noDataText.setText(activity.getString(R.string.no_subscription_data));
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setVisibility(View.VISIBLE);
                 listView.setVisibility(View.GONE);
             } else {
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
                 ListViewAdapter adapter = new ListViewAdapter(activity, subscriptions);
                 listView.setAdapter(adapter);

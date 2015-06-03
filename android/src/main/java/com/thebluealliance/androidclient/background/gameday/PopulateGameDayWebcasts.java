@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,17 +72,16 @@ public class PopulateGameDayWebcasts extends AsyncTask<String, Void, APIResponse
         super.onPostExecute(code);
         if (activity != null && fragment != null && fragment.getView() != null) {
             View view = fragment.getView();
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
             ListViewAdapter adapter = new ListViewAdapter(activity, webcasts);
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_webcast_data_found);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
                 Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
                 rankings.onRestoreInstanceState(state);
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
             }
 
             // Remove progress indicator and show content since we're done loading data.

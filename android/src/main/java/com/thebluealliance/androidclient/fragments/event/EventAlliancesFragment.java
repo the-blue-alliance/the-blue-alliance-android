@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventAlliances;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 /**
  * File created by phil on 4/22/14.
@@ -63,6 +64,12 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
+
+        // Initialize "No Data" view
+        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
+        noData.setImage(R.drawable.ic_recent_actors_black_48dp);
+        noData.setText(R.string.no_alliance_data);
+
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 

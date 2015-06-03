@@ -99,7 +99,7 @@
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/internet_blue_selector"
                     android:padding="4dp"
-                    android:src="@drawable/ic_action_web_site" />
+                    android:src="@drawable/ic_language_white_24dp" />
 
                 <ImageView
                     android:id="@+id/event_twitter_button"

@@ -10,10 +10,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <TextView
+    <com.thebluealliance.androidclient.views.NoDataView
         android:id="@+id/no_media"
-        style="@style/NoDataFoundStyle"
-        android:text="@string/no_media_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone" />
 
     <ProgressBar

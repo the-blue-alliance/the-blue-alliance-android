@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,7 +125,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
             ExpandableListView media = (ExpandableListView) view.findViewById(R.id.team_media_list);
 
-            TextView noDataText = (TextView) view.findViewById(R.id.no_media);
+            NoDataView noDataText = (NoDataView) view.findViewById(R.id.no_media);
 
             // If there is no media, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.groups.isEmpty()) {

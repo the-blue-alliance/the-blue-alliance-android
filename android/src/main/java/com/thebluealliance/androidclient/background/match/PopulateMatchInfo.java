@@ -114,7 +114,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
                 ListView list = (ListView) mActivity.findViewById(R.id.match_details);
 
                 //disable touch feedback (you can't click the elements here...)
-                list.setCacheColorHint(android.R.color.transparent);
+                list.setCacheColorHint(mActivity.getResources().getColor(android.R.color.transparent));
                 list.setSelector(R.drawable.transparent);
 
                 list.setAdapter(adapter);

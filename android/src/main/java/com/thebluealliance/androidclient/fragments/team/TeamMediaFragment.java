@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import de.greenrobot.event.EventBus;
 
@@ -62,7 +63,14 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_team_media, container, false);
+        View view = inflater.inflate(R.layout.fragment_team_media, container, false);
+
+        // Initialize "No Data" view
+        NoDataView noData = (NoDataView) view.findViewById(R.id.no_media);
+        noData.setImage(R.drawable.ic_photo_camera_black_48dp);
+        noData.setText(R.string.no_media_data);
+
+        return view;
     }
 
     @Override
@@ -87,8 +95,8 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     @Override
     public void onRefreshStart(boolean actionIconPressed) {
         // Reset the view
-        ((ViewGroup) getView()).removeAllViews();
-        ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_team_media, (ViewGroup) getView(), true);
+        //((ViewGroup) getView()).removeAllViews();
+        //((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_team_media, (ViewGroup) getView(), true);
 
         Log.i(Constants.REFRESH_LOG, "Loading " + teamKey + " media in " + year);
         task = new PopulateTeamMedia(this, new RequestParams(true, actionIconPressed));

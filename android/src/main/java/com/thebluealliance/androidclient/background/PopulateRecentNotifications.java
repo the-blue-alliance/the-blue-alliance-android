@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RecentNotificationListItem;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 
@@ -62,19 +63,17 @@ public class PopulateRecentNotifications extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(aVoid);
         View view = fragment.getView();
         if (view != null) {
-            //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             if (adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_recent_notifications);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);
                 Parcelable state = teamList.onSaveInstanceState();
                 teamList.setAdapter(adapter);
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
                 teamList.onRestoreInstanceState(state);
             }
 
