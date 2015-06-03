@@ -47,21 +47,21 @@
     <string name="close_stats_help">Close</string>
 
     <!-- No Data -->
-    <string name="no_data">No data was found for this event.</string>
-    <string name="no_team_info">No data was found for this team.</string>
-    <string name="no_alliance_data">No alliance data found.</string>
-    <string name="no_team_data">No team list found.</string>
-    <string name="no_match_data">No match results found.</string>
-    <string name="no_team_match_data">No matches found.</string>
-    <string name="no_ranking_data">No rankings found.</string>
-    <string name="no_stats_data">No stats found.</string>
-    <string name="no_awards_data">No awards found.</string>
-    <string name="no_team_stats_data">No stats data found.</string>
-    <string name="no_event_data">No events  found.</string>
-    <string name="no_media_data">No media found.</string>
-    <string name="no_district_points">No district points found.</string>
-    <string name="no_team_list">Unable to load team list.</string>
-    <string name="match_not_found">Match not found.</string>
+    <string name="no_data">No data was found for this event</string>
+    <string name="no_team_info">No data was found for this team</string>
+    <string name="no_alliance_data">No alliance data found</string>
+    <string name="no_team_data">No team list found</string>
+    <string name="no_match_data">No match results found</string>
+    <string name="no_team_match_data">No matches found</string>
+    <string name="no_ranking_data">No rankings found</string>
+    <string name="no_stats_data">No stats found</string>
+    <string name="no_awards_data">No awards found</string>
+    <string name="no_team_stats_data">No stats data found</string>
+    <string name="no_event_data">No events  found</string>
+    <string name="no_media_data">No media found</string>
+    <string name="no_district_points">No district points found</string>
+    <string name="no_team_list">Unable to load team list</string>
+    <string name="match_not_found">Match not found</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
 
     <!-- View Team -->
