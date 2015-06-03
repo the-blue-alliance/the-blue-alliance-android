@@ -26,6 +26,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -205,19 +206,19 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
         if (view != null && activity != null) {
             // Set the new info.
             adapter = new EventStatsFragmentAdapter(activity, teams);
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
 
             // If there's no stats in the adapter or if we can't download info
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_stats_data);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setText(R.string.no_stats_data);
+                noData.setVisibility(View.VISIBLE);
             } else {
                 ListView stats = (ListView) view.findViewById(R.id.list);
                 Parcelable state = stats.onSaveInstanceState();
                 stats.setAdapter(adapter);
                 stats.onRestoreInstanceState(state);
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
             }
 
             // Display warning if offline.

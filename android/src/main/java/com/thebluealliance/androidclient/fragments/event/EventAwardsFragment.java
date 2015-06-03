@@ -74,7 +74,7 @@ public class EventAwardsFragment extends Fragment implements RefreshListener {
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
 
         //disable touch feedback (you can't click the elements here...)
-        mListView.setCacheColorHint(android.R.color.transparent);
+        mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
         mListView.setSelector(R.drawable.transparent);
 
         if (mAdapter != null) {

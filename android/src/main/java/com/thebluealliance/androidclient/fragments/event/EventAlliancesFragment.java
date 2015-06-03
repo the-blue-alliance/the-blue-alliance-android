@@ -62,12 +62,12 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
         //disable touch feedback (you can't click the elements here...)
-        mListView.setCacheColorHint(android.R.color.transparent);
+        mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
         mListView.setSelector(R.drawable.transparent);
 
         if (mAdapter != null) {

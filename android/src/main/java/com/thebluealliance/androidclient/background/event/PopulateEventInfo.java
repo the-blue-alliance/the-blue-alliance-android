@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -191,16 +192,16 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         if (activity != null && mFragment != null && mFragment.getView() != null) {
             View view = mFragment.getView();
 
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
             View infoContainer = view.findViewById(R.id.event_info_container);
             if (c == APIResponse.CODE.NODATA) {
-                noDataText.setText(R.string.no_data);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setText(R.string.no_data);
+                noData.setVisibility(View.VISIBLE);
                 infoContainer.setVisibility(View.GONE);
             } else if (event != null) {
                 activity.setActionBarTitle(titleString);
 
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
 
                 // Set the new info (if necessary)
                 eventName.setText(nameString);

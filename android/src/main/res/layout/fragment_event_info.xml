@@ -223,9 +223,9 @@
         android:layout_centerVertical="true"
         android:visibility="visible" />
 
-    <TextView
+    <com.thebluealliance.androidclient.views.NoDataView
         android:id="@+id/no_data"
-        style="@style/NoDataFoundStyle"
-        android:singleLine="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone" />
 </RelativeLayout>

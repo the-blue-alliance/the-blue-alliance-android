@@ -64,7 +64,7 @@ public class EventTeamsFragment extends Fragment implements RefreshListener {
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (mAdapter != null) {

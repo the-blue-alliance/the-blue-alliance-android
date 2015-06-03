@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -202,7 +203,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            TextView noDataText = (TextView) view.findViewById(R.id.no_match_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
 
             // If there's no results in the adapter or if we can't download info
             // off the web, display a message.
@@ -210,10 +211,10 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
             ExpandableListView results = (ExpandableListView) view.findViewById(R.id.match_results);
             if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && (groups == null || matchCount == 0))) {
                 results.setVisibility(View.GONE);
-                noDataText.setVisibility(View.VISIBLE);
-                noDataText.setText(teamKey.isEmpty() ? R.string.no_match_data : R.string.no_team_match_data);
+                noData.setVisibility(View.VISIBLE);
+                noData.setText(teamKey.isEmpty() ? R.string.no_match_data : R.string.no_team_match_data);
             } else {
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
                 results.setVisibility(View.VISIBLE);
                 Parcelable state = results.onSaveInstanceState();
                 int firstVisiblePosition = results.getFirstVisiblePosition();

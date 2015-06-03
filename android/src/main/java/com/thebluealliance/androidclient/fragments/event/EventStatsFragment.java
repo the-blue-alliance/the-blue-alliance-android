@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -14,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -106,14 +104,12 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
                     dialogInterface.dismiss();
 
                     mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
-                    if (mAdapter != null && statSortCategory != null)
-
-                    {
+                    if (mAdapter != null && statSortCategory != null) {
                         mAdapter.sortStats(statSortCategory);
                     }
                 }).setNegativeButton(R.string.dialog_cancel, (dialog, id) -> {
-                    dialog.cancel();
-                });
+            dialog.cancel();
+        });
 
         statsDialog = builder.create();
         setHasOptionsMenu(true);
@@ -128,7 +124,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
         mListView = (ListView) view.findViewById(R.id.list);
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);

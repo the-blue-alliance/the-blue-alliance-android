@@ -19,13 +19,10 @@
         android:layout_centerVertical="true"
         android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/no_match_data"
-        style="@style/NoDataFoundStyle"
+    <com.thebluealliance.androidclient.views.NoDataView
+        android:id="@+id/no_data"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="false"
-        android:text="@string/no_match_data"
+        android:layout_height="match_parent"
         android:visibility="gone" />
 
 </RelativeLayout>

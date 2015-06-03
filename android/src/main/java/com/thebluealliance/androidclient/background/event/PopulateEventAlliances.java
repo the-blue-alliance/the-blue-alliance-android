@@ -5,7 +5,6 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -19,6 +18,7 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 
@@ -80,18 +80,18 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
         View view = mFragment.getView();
         if (view != null && activity != null) {
             //android gets angry if you modify Views off the UI thread, so we do the actual View manipulation here
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_alliance_data);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setText(R.string.no_alliance_data);
+                noData.setVisibility(View.VISIBLE);
             } else {
                 ListView teamList = (ListView) view.findViewById(R.id.list);
                 Parcelable state = teamList.onSaveInstanceState();
                 teamList.setAdapter(adapter);
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
                 teamList.onRestoreInstanceState(state);
             }
 

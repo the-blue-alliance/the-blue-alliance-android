@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,22 +104,23 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
         View view = mFragment.getView();
         if (view != null && activity != null) {
             ListViewAdapter adapter = new ListViewAdapter(activity, awards);
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
-            noDataText.setVisibility(View.GONE);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
 
             // If there's no awards in the adapter or if we can't download info
             // off the web, display a message.
             ListView rankings = (ListView) view.findViewById(R.id.list);
             if (code == APIResponse.CODE.NODATA || (!requestParams.forceFromCache && awards.isEmpty())) {
-                noDataText.setText(teamKey.isEmpty() ? R.string.no_awards_data : R.string.no_team_awards_data);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setText(teamKey.isEmpty() ? R.string.no_awards_data : R.string.no_team_awards_data);
+                noData.setVisibility(View.VISIBLE);
                 view.findViewById(R.id.list).setVisibility(View.GONE);
             } else {
                 view.findViewById(R.id.list).setVisibility(View.VISIBLE);
                 Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
                 rankings.onRestoreInstanceState(state);
+                noData.setVisibility(View.GONE);
             }
+
             // Display warning message if offline.
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));

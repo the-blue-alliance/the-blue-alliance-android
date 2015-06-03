@@ -22,6 +22,7 @@ import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -123,19 +124,19 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
 
             // If there's no rankings in the adapter or if we can't download info
             // off the web, display a message.
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_ranking_data);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setText(R.string.no_ranking_data);
+                noData.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
                 Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
                 rankings.onRestoreInstanceState(state);
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
             }
 
             // Display a warning if offline.

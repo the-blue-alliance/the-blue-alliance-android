@@ -27,6 +27,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,20 +120,20 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
     protected void onPostExecute(APIResponse.CODE code) {
         View view = mFragment.getView();
         if (view != null && activity != null) {
-            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
 
             // If there's no rankings in the adapter or if we can't download info
             // off the web, display a message.
             ListViewAdapter adapter = new ListViewAdapter(activity, teams);
             if (code == APIResponse.CODE.NODATA || adapter.values.isEmpty()) {
-                noDataText.setText(R.string.no_district_points);
-                noDataText.setVisibility(View.VISIBLE);
+                noData.setText(R.string.no_district_points);
+                noData.setVisibility(View.VISIBLE);
             } else {
                 ListView rankings = (ListView) view.findViewById(R.id.list);
                 Parcelable state = rankings.onSaveInstanceState();
                 rankings.setAdapter(adapter);
                 rankings.onRestoreInstanceState(state);
-                noDataText.setVisibility(View.GONE);
+                noData.setVisibility(View.GONE);
             }
 
             // Update district status
