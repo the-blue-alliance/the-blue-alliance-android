@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.interfaces;
+package com.thebluealliance.androidclient.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;

@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 
 import java.util.Date;
 

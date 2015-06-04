@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datafeed;
+package com.thebluealliance.androidclient.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,8 +14,9 @@ import android.util.Log;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.datafeed.APIResponse;
+import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.helpers.ModelInflater;
-import com.thebluealliance.androidclient.interfaces.ModelTable;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;

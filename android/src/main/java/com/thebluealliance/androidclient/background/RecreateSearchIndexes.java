@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 

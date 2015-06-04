@@ -9,7 +9,7 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 
 /**
  * Created by Nathan on 6/15/2014.

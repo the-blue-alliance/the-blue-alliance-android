@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 
 /**
  * Created by phil on 2/5/15.

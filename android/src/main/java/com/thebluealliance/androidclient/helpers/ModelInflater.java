@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;

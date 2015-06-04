@@ -12,7 +12,7 @@ import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPr
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
