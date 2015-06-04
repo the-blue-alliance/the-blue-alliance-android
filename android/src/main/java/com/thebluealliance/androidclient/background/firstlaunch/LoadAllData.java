@@ -168,7 +168,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             Log.d(Constants.LOG_TAG, "storing teams");
             Database.getInstance(context).getTeamsTable().add(teams);
             Log.d(Constants.LOG_TAG, "storing events");
-            Database.getInstance(context).getEventsTable().storeEvents(events);
+            Database.getInstance(context).getEventsTable().add(events);
             Log.d(Constants.LOG_TAG, "storing districts");
             Database.getInstance(context).getDistrictsTable().add(districts);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();

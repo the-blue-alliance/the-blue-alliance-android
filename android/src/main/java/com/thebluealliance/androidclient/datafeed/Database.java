@@ -558,6 +558,10 @@ public class Database extends SQLiteOpenHelper {
             mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
         }
 
+        public void deleteSearchIndex(Team team){
+            deleteCallback(team);
+        }
+
         public void recreateAllSearchIndexes(List<Team> teams){
             mDb.beginTransaction();
             try{
@@ -651,6 +655,10 @@ public class Database extends SQLiteOpenHelper {
 
         public void deleteAllSearchIndexes(){
             mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+        }
+
+        public void deleteSearchIndex(Event event){
+            deleteCallback(event);
         }
 
         public void recreateAllSearchIndexes(List<Event> events){

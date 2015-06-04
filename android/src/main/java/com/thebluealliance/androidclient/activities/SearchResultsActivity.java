@@ -175,7 +175,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     // Don't display models that don't exist anymore and delete them from search indexes
                     team = new Team();
                     team.setTeamKey(key);
-                    Database.getInstance(this).deleteSearchItemTeam(team);
+                    Database.getInstance(this).getTeamsTable().deleteSearchIndex(team);
                     continue;
                 }
                 try {
@@ -222,7 +222,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     // Don't display models that don't exist anymore and delete them from search indexes
                     event = new Event();
                     event.setEventKey(key);
-                    Database.getInstance(this).deleteSearchItemEvent(event);
+                    Database.getInstance(this).getEventsTable().deleteSearchIndex(event);
                     continue;
                 }
                 try {

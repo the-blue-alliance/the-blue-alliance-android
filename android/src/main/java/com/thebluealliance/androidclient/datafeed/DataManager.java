@@ -470,7 +470,7 @@ public class DataManager {
             int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtKey.substring(4)).ordinal();
             String whereClause = Database.Events.YEAR + " = ? AND " + Database.Events.DISTRICT + " = ?";
             String[] whereArgs = new String[]{year, Integer.toString(districtEnum)};
-            Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+            Cursor cursor = Database.getInstance(c).getEventsTable().query(fields, whereClause, whereArgs, null, null, null, null);
             if (cursor == null || !cursor.moveToFirst()) {
                 return 0;
             } else {
