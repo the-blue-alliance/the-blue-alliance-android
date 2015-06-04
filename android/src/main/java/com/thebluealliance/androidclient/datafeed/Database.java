@@ -475,7 +475,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public class Teams implements ModelTable<Team> {
+    public class Teams extends ModelTable<Team> {
         public static final String KEY = "key",
                 NUMBER = "number",
                 NAME = "name",
@@ -484,119 +484,56 @@ public class Database extends SQLiteOpenHelper {
                 WEBSITE = "website",
                 YEARS_PARTICIPATED = "yearsParticipated";
 
-        public long add(Team team) {
+        public Teams() {
+            super(mDb);
+        }
+
+        @Override
+        protected void insertCallback(Team team) {
+            ContentValues cv = new ContentValues();
             try {
-                if (!exists(team.getTeamKey())) {
-                    insertSearchItemTeam(team);
-                    return mDb.insert(TABLE_TEAMS, null, team.getParams());
-                } else {
-                    return update(team);
-                }
+                cv.put(SearchTeam.KEY, team.getKey());
+                cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+                cv.put(SearchTeam.NUMBER, team.getTeamNumber());
+                mDb.insert(TABLE_SEARCH_TEAMS, null, cv);
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add team without Database.Teams.KEY");
-                return -1;
+                Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:" +
+                        "Database.Teams.KEY, Database.Teams.NUMBER");
+            } catch (SQLiteException e) {
+                Log.w(Constants.LOG_TAG, "Trying to add a SearchTeam that already exists. "+team.getKey());
             }
         }
 
         @Override
-        public int update(Team in) {
-            updateSearchItemTeam(in);
+        protected void updateCallback(Team team) {
             try {
-                return mDb.update(TABLE_TEAMS, in.getParams(), Teams.KEY + " = ?", new String[]{in.getTeamKey()});
+                ContentValues cv = new ContentValues();
+                cv.put(SearchTeam.KEY, team.getKey());
+                cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+                cv.put(SearchTeam.NUMBER, team.getTeamNumber());
+                mDb.update(TABLE_SEARCH_TEAMS, cv, SearchTeam.KEY + "=?", new String[]{team.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update team without Database.Teams.KEY");
-                return -1;
+                Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
+                        "Database.Events.KEY, Database.Events.YEAR");
             }
-        }
-
-        public void storeTeams(ArrayList<Team> teams) {
-            mDb.beginTransaction();
-            for (Team team : teams) {
-                try {
-                    if (!unsafeExists(team.getTeamKey())) {
-                        mDb.insert(TABLE_TEAMS, null, team.getParams());
-
-                        //add search team item
-                        insertSearchItemTeam(team);
-                    } else {
-                        mDb.update(TABLE_TEAMS, team.getParams(), KEY + " =?", new String[]{team.getTeamKey()});
-                        updateSearchItemTeam(team);
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Unable to add team - missing key.");
-                }
-            }
-            mDb.setTransactionSuccessful();
-            mDb.endTransaction();
-        }
-
-        public Team get(String teamKey, String[] fields) {
-            Cursor cursor = mDb.query(TABLE_TEAMS, fields, Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                Team team = ModelInflater.inflateTeam(cursor);
-                cursor.close();
-                return team;
-            } else {
-                return null;
-            }
-        }
-
-        public Team get(String teamKey) {
-            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_TEAMS + " WHERE " + Teams.KEY + " = ?", new String[]{teamKey});
-            if (cursor != null && cursor.moveToFirst()) {
-                Team team = ModelInflater.inflateTeam(cursor);
-                cursor.close();
-                return team;
-            } else {
-                return null;
-            }
-        }
-
-
-        public ArrayList<Team> getAll() {
-            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_TEAMS, new String[]{});
-            ArrayList<Team> ret = new ArrayList<>();
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    Team event = ModelInflater.inflateTeam(cursor);
-                    ret.add(event);
-                } while (cursor.moveToNext());
-                cursor.close();
-            }
-            return ret;
-        }
-
-
-        @Override
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_TEAMS, new String[]{}, Teams.KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result = cursor != null && cursor.moveToFirst();
-            if (cursor != null) {
-                cursor.close();
-            }
-            return result;
         }
 
         @Override
-        public void delete(Team in) {
-            try {
-                mDb.delete(TABLE_TEAMS, Teams.KEY + " = ? ", new String[]{in.getTeamKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete team without Database.Teams.KEY");
-            }
+        protected void deleteCallback(Team team) {
+                mDb.delete(TABLE_SEARCH_TEAMS, SearchTeam.KEY + " = ?", new String[]{team.getKey()});
+        }
+        protected String getTableName() {
+            return TABLE_TEAMS;
         }
 
-        public ArrayList<Team> getInRange(int lowerBound, int upperBound, String[] fields) {
-            ArrayList<Team> teams = new ArrayList<>();
-            // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
-            Cursor cursor = mDb.query(TABLE_TEAMS, fields, Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    teams.add(ModelInflater.inflateTeam(cursor));
-                } while (cursor.moveToNext());
-                cursor.close();
-            }
-            return teams;
+        @Override
+        protected String getKeyColumn() {
+            return KEY;
+        }
+
+        @Override
+        public Team inflate(Cursor cursor) {
+            return ModelInflater.inflateTeam(cursor);
         }
 
         public Cursor getCursorForTeamsInRange(int lowerBound, int upperBound) {
@@ -617,20 +554,24 @@ public class Database extends SQLiteOpenHelper {
             return cursor;
         }
 
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_TEAMS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
+        public void deleteAllSearchIndexes(){
+            mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+        }
+
+        public void recreateAllSearchIndexes(List<Team> teams){
+            mDb.beginTransaction();
+            try{
+                for(Team t: teams){
+                    insertCallback(t);
+                }
+            }finally {
+                mDb.setTransactionSuccessful();
             }
-            return result;
+            mDb.endTransaction();
         }
     }
 
-    public class Events implements ModelTable<Event> {
+    public class Events extends ModelTable<Event> {
         public static final String KEY = "key",
                 YEAR = "year",
                 NAME = "name",
@@ -652,124 +593,80 @@ public class Database extends SQLiteOpenHelper {
                 STATS = "stats",
                 WEBSITE = "website";
 
-        public long add(Event event) {
-            try {
-                if (!exists(event.getEventKey())) {
-                    insertSearchItemEvent(event);
-                    return mDb.insert(TABLE_EVENTS, null, event.getParams());
-                } else {
-                    return update(event);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add event without Database.Events.KEY");
-                return -1;
-            }
-        }
-
-        public void storeEvents(ArrayList<Event> events) {
-            mDb.beginTransaction();
-            for (Event event : events) {
-                try {
-                    if (!unsafeExists(event.getEventKey())) {
-                        mDb.insert(TABLE_EVENTS, null, event.getParams());
-                        insertSearchItemEvent(event);
-                    } else {
-                        mDb.update(TABLE_EVENTS, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
-                        updateSearchItemEvent(event);
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
-                }
-            }
-            mDb.setTransactionSuccessful();
-            mDb.endTransaction();
-        }
-
-        public Event get(String eventKey, String[] fields) {
-            Cursor cursor = mDb.query(TABLE_EVENTS, fields, Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                Event event = ModelInflater.inflateEvent(cursor);
-                cursor.close();
-                return event;
-            } else {
-                return null;
-            }
-        }
-
-        public Event get(String eventKey) {
-            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_EVENTS + " WHERE " + Events.KEY + " =?", new String[]{eventKey});
-            if (cursor != null && cursor.moveToFirst()) {
-                Event event = ModelInflater.inflateEvent(cursor);
-                cursor.close();
-                return event;
-            } else {
-                return null;
-            }
-        }
-
-        public ArrayList<Event> getAll() {
-            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_EVENTS, new String[]{});
-            ArrayList<Event> ret = new ArrayList<>();
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    Event event = ModelInflater.inflateEvent(cursor);
-                    ret.add(event);
-                } while (cursor.moveToNext());
-                cursor.close();
-            }
-            return ret;
-        }
-
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
+        public Events(){
+            super(mDb);
         }
 
         @Override
-        public void delete(Event in) {
+        protected void insertCallback(Event event) {
+            ContentValues cv = new ContentValues();
             try {
-                mDb.delete(TABLE_EVENTS, Events.KEY + " = ?", new String[]{in.getEventKey()});
+                cv.put(SearchEvent.KEY, event.getKey());
+                cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+                cv.put(SearchEvent.YEAR, event.getEventYear());
+                mDb.insert(TABLE_SEARCH_EVENTS, null, cv);
+
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete event without Database.Events.KEY");
+                Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
+                        "Database.Events.KEY, Database.Events.YEAR");
+            } catch (SQLiteException e) {
+                Log.w(Constants.LOG_TAG, "Trying to add a SearchEvent that already exists. "+event.getKey());
             }
         }
 
-        public int delete(String whereClause, String[] whereArgs) {
-            return mDb.delete(TABLE_EVENTS, whereClause, whereArgs);
-        }
-
-        public int update(Event event) {
-            updateSearchItemEvent(event);
+        @Override
+        protected void updateCallback(Event event) {
             try {
-                return mDb.update(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
+                ContentValues cv = new ContentValues();
+                cv.put(SearchEvent.KEY, event.getKey());
+                cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+                cv.put(SearchEvent.YEAR, event.getEventYear());
+
+                mDb.update(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update event without Database.Events.KEY");
-                return -1;
+                Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
+                        "Database.Events.KEY, Database.Events.YEAR");
             }
         }
 
+        @Override
+        protected void deleteCallback(Event event) {
+            mDb.delete(TABLE_SEARCH_EVENTS, SearchEvent.KEY + " = ?", new String[]{event.getKey()});
+        }
+
+        @Override
+        protected String getTableName() {
+            return TABLE_EVENTS;
+        }
+
+        @Override
+        protected String getKeyColumn() {
+            return KEY;
+        }
+
+        @Override
+        public Event inflate(Cursor cursor) {
+            return ModelInflater.inflateEvent(cursor);
+        }
+
+        public void deleteAllSearchIndexes(){
+            mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+        }
+
+        public void recreateAllSearchIndexes(List<Event> events){
+            mDb.beginTransaction();
+            try{
+                for(Event e:events){
+                    insertCallback(e);
+                }
+            }finally {
+                mDb.setTransactionSuccessful();
+            }
+            mDb.endTransaction();
+        }
     }
 
-    public class Awards implements ModelTable<Award> {
+    public class Awards extends ModelTable<Award> {
         public static final String KEY = "key",
                 ENUM = "enum",
                 EVENTKEY = "eventKey",
@@ -777,100 +674,30 @@ public class Database extends SQLiteOpenHelper {
                 YEAR = "year",
                 WINNERS = "winners";
 
-        @Override
-        public long add(Award in) {
-            try {
-                if (!exists(in.getKey())) {
-                    return mDb.insert(TABLE_AWARDS, null, in.getParams());
-                } else {
-                    return update(in);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add award without Database.Awards.KEY");
-                return -1;
-            }
-        }
-
-        public void add(ArrayList<Award> awards) {
-            mDb.beginTransaction();
-            for (Award award : awards) {
-                try {
-                    if (!unsafeExists(award.getKey())) {
-                        mDb.insert(TABLE_AWARDS, null, award.getParams());
-                    } else {
-                        mDb.update(TABLE_AWARDS, award.getParams(), Awards.KEY + " = ? ", new String[]{award.getKey()});
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Unable to add award - missing event key or award name");
-                }
-            }
-            mDb.setTransactionSuccessful();
-            mDb.endTransaction();
+        public Awards(){
+            super(mDb);
         }
 
         @Override
-        public int update(Award in) {
-            try {
-                return mDb.update(TABLE_AWARDS, in.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update award without Database.Awards.EVENTKEY and Database.Awards.NAME");
-                return -1;
-            }
+        protected String getTableName() {
+            return TABLE_AWARDS;
         }
 
         /*
          * For Awards, key is eventKey:awardName
          */
         @Override
-        public Award get(String key, String[] fields) {
-            String eventKey = key.split(":")[0];
-            String awardName = key.split(":")[1];
-            Cursor cursor = mDb.query(TABLE_AWARDS, fields, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                Award award = ModelInflater.inflateAward(cursor);
-                cursor.close();
-                return award;
-            } else {
-                return null;
-            }
+        protected String getKeyColumn() {
+            return KEY;
         }
 
         @Override
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_AWARDS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_AWARDS, new String[]{}, Awards.KEY + " = ? ", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        @Override
-        public void delete(Award in) {
-            try {
-                mDb.delete(TABLE_AWARDS, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete award without Database.Awards.EVENTKEY and Database.Awards.NAME");
-            }
+        public Award inflate(Cursor cursor) {
+            return ModelInflater.inflateAward(cursor);
         }
     }
 
-    public class Matches implements ModelTable<Match> {
+    public class Matches extends ModelTable<Match> {
         public static final String KEY = "key",
                 MATCHNUM = "matchNumber",
                 SETNUM = "setNumber",
@@ -880,193 +707,54 @@ public class Database extends SQLiteOpenHelper {
                 ALLIANCES = "alliances",
                 VIDEOS = "videos";
 
-        @Override
-        public long add(Match in) {
-            try {
-                if (!exists(in.getKey())) {
-                    return mDb.insert(TABLE_MATCHES, null, in.getParams());
-                } else {
-                    return update(in);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add match without Database.Matches.KEY");
-                return -1;
-            }
-        }
-
-        public void add(ArrayList<Match> matches) {
-            mDb.beginTransaction();
-            for (Match match : matches) {
-                try {
-                    if (!unsafeExists(match.getKey())) {
-                        mDb.insert(TABLE_MATCHES, null, match.getParams());
-                    } else {
-                        mDb.update(TABLE_MATCHES, match.getParams(), KEY + " =?", new String[]{match.getKey()});
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
-                }
-            }
-            mDb.setTransactionSuccessful();
-            mDb.endTransaction();
+        public Matches(){
+            super(mDb);
         }
 
         @Override
-        public int update(Match in) {
-            try {
-                return mDb.update(TABLE_MATCHES, in.getParams(), Matches.KEY + " = ?", new String[]{in.getKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update match without Database.Matches.KEY");
-                return -1;
-            }
+        protected String getTableName() {
+            return TABLE_MATCHES;
         }
 
         @Override
-        public Match get(String key, String[] fields) {
-            Cursor cursor = mDb.query(TABLE_EVENTS, fields, Matches.KEY + " = ?", new String[]{key}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                Match match = ModelInflater.inflateMatch(cursor);
-                cursor.close();
-                return match;
-            } else {
-                return null;
-            }
+        protected String getKeyColumn() {
+            return KEY;
         }
 
         @Override
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_MATCHES, new String[]{Matches.KEY}, Matches.KEY + "=?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_MATCHES, new String[]{Matches.KEY}, Matches.KEY + "=?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        @Override
-        public void delete(Match in) {
-            try {
-                mDb.delete(TABLE_MATCHES, Matches.KEY + " = ?", new String[]{in.getKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete match without Database.Matches.KEY");
-            }
-        }
-
-        public int delete(String whereClause, String[] whereArgs) {
-            return mDb.delete(TABLE_MATCHES, whereClause, whereArgs);
+        public Match inflate(Cursor cursor) {
+            return ModelInflater.inflateMatch(cursor);
         }
     }
 
-    public class Medias implements ModelTable<Media> {
+    public class Medias extends ModelTable<Media> {
         public static final String TYPE = "type",
                 FOREIGNKEY = "foreignKey",
                 TEAMKEY = "teamKey",
                 DETAILS = "details",
                 YEAR = "year";
 
-        @Override
-        public long add(Media in) {
-            try {
-                if (!exists(in.getForeignKey())) {
-                    return mDb.insert(TABLE_MEDIAS, null, in.getParams());
-                } else {
-                    return update(in);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add media without Database.Medias.FOREIGNKEY");
-                return -1;
-            }
-        }
-
-        public void add(ArrayList<Media> medias) {
-            mDb.beginTransaction();
-            for (Media media : medias) {
-                try {
-                    if (!unsafeExists(media.getForeignKey())) {
-                        mDb.insert(TABLE_MEDIAS, null, media.getParams());
-                    } else {
-                        mDb.update(TABLE_MEDIAS, media.getParams(), FOREIGNKEY + " = ?", new String[]{media.getForeignKey()});
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Can't update award. Missing fields");
-                }
-            }
-            mDb.setTransactionSuccessful();
+        public Medias(){
+            super(mDb);
         }
 
         @Override
-        public int update(Media in) {
-            try {
-                return mDb.update(TABLE_MEDIAS, in.getParams(), Medias.FOREIGNKEY + " = ?", new String[]{in.getForeignKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update media without Database.Medias.FOREIGNKEY");
-                return -1;
-            }
+        protected String getTableName() {
+            return TABLE_MEDIAS;
         }
 
         @Override
-        public Media get(String foreignKey, String[] fields) {
-            Cursor cursor = mDb.query(TABLE_MEDIAS, fields, Medias.FOREIGNKEY + " = ?", new String[]{foreignKey}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                Media media = ModelInflater.inflateMedia(cursor);
-                cursor.close();
-                return media;
-            } else {
-                return null;
-            }
+        protected String getKeyColumn() {
+            return FOREIGNKEY;
         }
 
         @Override
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_MEDIAS, new String[]{}, Medias.FOREIGNKEY + "= ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_MEDIAS, new String[]{}, Medias.FOREIGNKEY + "= ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        @Override
-        public void delete(Media in) {
-            try {
-                mDb.delete(TABLE_MEDIAS, Medias.FOREIGNKEY + " = ? ", new String[]{in.getForeignKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete media without Database.Medias.FOREIGNKEY");
-            }
+        public Media inflate(Cursor cursor) {
+            return ModelInflater.inflateMedia(cursor);
         }
     }
 
-    public class EventTeams implements ModelTable<EventTeam> {
+    public class EventTeams extends ModelTable<EventTeam> {
 
         public static final String KEY = "key",
                 TEAMKEY = "teamKey",
@@ -1074,62 +762,12 @@ public class Database extends SQLiteOpenHelper {
                 YEAR = "year",
                 COMPWEEK = "week";
 
-        @Override
-        public long add(EventTeam in) {
-            try {
-                if (!exists(in.getKey())) {
-                    return mDb.insert(TABLE_EVENTTEAMS, null, in.getParams());
-                } else {
-                    return update(in);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add media without Database.EventTeams.TEAMKEY and EVENTKEY");
-                return -1;
-            }
+        public EventTeams(){
+            super(mDb);
         }
 
-        public void add(ArrayList<EventTeam> events) {
-            mDb.beginTransaction();
-            for (EventTeam eventTeam : events) {
-                try {
-                    if (!unsafeExists(eventTeam.getKey())) {
-                        mDb.insert(TABLE_EVENTTEAMS, null, eventTeam.getParams());
-                    } else {
-                        mDb.update(TABLE_EVENTTEAMS, eventTeam.getParams(), EventTeams.KEY + " = ?", new String[]{eventTeam.getKey()});
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Can't update eventTeam. Missing fields");
-                }
-            }
-            mDb.setTransactionSuccessful();
-        }
-
-        @Override
-        public int update(EventTeam in) {
-            try {
-                return mDb.update(TABLE_EVENTTEAMS, in.getParams(), EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{in.getTeamKey(), in.getEventKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update media without Database.EventTeams.TEAMKEY and EVENTKEY");
-                return -1;
-            }
-        }
-
-        @Override
-        public EventTeam get(String key, String[] fields) {
-            String eventKey = key.split("_")[0];
-            String teamKey = key.split("_")[1];
-            Cursor cursor = mDb.query(TABLE_EVENTTEAMS, fields, EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{teamKey, eventKey}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                EventTeam eventTeam = ModelInflater.inflateEventTeam(cursor);
-                cursor.close();
-                return eventTeam;
-            } else {
-                return null;
-            }
-        }
-
-        public ArrayList<EventTeam> get(String teamKey, int year, String[] fields) {
-            Cursor cursor = mDb.query(TABLE_EVENTTEAMS, fields, EventTeams.TEAMKEY + " = ? AND " + EventTeams.YEAR + " + ?", new String[]{teamKey, Integer.toString(year)}, null, null, null, null);
+        public List<EventTeam> get(String teamKey, int year, String[] fields) {
+            Cursor cursor = mDb.query(getTableName(), fields, TEAMKEY + " = ? AND " + YEAR + " + ?", new String[]{teamKey, Integer.toString(year)}, null, null, null, null);
             ArrayList<EventTeam> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -1140,41 +778,22 @@ public class Database extends SQLiteOpenHelper {
         }
 
         @Override
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_EVENTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_EVENTTEAMS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
+        protected String getTableName() {
+            return TABLE_EVENTTEAMS;
         }
 
         @Override
-        public void delete(EventTeam in) {
-            try {
-                mDb.delete(TABLE_EVENTTEAMS, TEAMKEY + " = ? AND " + EVENTKEY + " + ?", new String[]{in.getTeamKey(), in.getEventKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete eventTeam without Database.EventTeams.TEAMKEY and EVENTKEY");
-            }
+        protected String getKeyColumn() {
+            return KEY;
+        }
+
+        @Override
+        public EventTeam inflate(Cursor cursor) {
+            return ModelInflater.inflateEventTeam(cursor);
         }
     }
 
-    public class Districts implements ModelTable<District> {
+    public class Districts extends ModelTable<District> {
 
         public static final String KEY = "key",
                 ABBREV = "abbrev",
@@ -1182,94 +801,27 @@ public class Database extends SQLiteOpenHelper {
                 YEAR = "year",
                 NAME = "name";
 
-        @Override
-        public long add(District in) {
-            try {
-                if (!exists(in.getKey())) {
-                    return mDb.insert(TABLE_DISTRICTS, null, in.getParams());
-                } else {
-                    return update(in);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add District without KEY or ENUM+YEAR");
-                return -1;
-            }
-        }
-
-        public void add(ArrayList<District> districts) {
-            mDb.beginTransaction();
-            for (District district : districts) {
-                try {
-                    if (!unsafeExists(district.getKey())) {
-                        mDb.insert(TABLE_DISTRICTS, null, district.getParams());
-                    } else {
-                        mDb.update(TABLE_DISTRICTS, district.getParams(), Districts.KEY + " = ?", new String[]{district.getKey()});
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Can't update district. Missing fields");
-                }
-            }
-            mDb.setTransactionSuccessful();
+        public Districts(){
+            super(mDb);
         }
 
         @Override
-        public int update(District in) {
-            try {
-                return mDb.update(TABLE_DISTRICTS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update district without KEY");
-                return -1;
-            }
+        protected String getTableName() {
+            return TABLE_DISTRICTS;
         }
 
         @Override
-        public District get(String key, String[] fields) {
-            Cursor cursor = mDb.query(TABLE_DISTRICTS, fields, Districts.KEY + " = ?", new String[]{key}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                District district = ModelInflater.inflateDistrict(cursor);
-                cursor.close();
-                return district;
-            } else {
-                return null;
-            }
+        protected String getKeyColumn() {
+            return KEY;
         }
 
         @Override
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_DISTRICTS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_DISTRICTS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        @Override
-        public void delete(District in) {
-            try {
-                mDb.delete(TABLE_DISTRICTS, KEY + " + ?", new String[]{in.getKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete district without KEY");
-            }
+        public District inflate(Cursor cursor) {
+            return ModelInflater.inflateDistrict(cursor);
         }
     }
 
-    public class DistrictTeams implements ModelTable<DistrictTeam> {
+    public class DistrictTeams extends ModelTable<DistrictTeam> {
 
         public static final String KEY = "key",
                 TEAM_KEY = "teamKey",
@@ -1287,90 +839,23 @@ public class Database extends SQLiteOpenHelper {
                 TOTAL_POINTS = "totalPoints",
                 JSON = "json";
 
-        @Override
-        public long add(DistrictTeam in) {
-            try {
-                if (!exists(in.getKey())) {
-                    return mDb.insert(TABLE_DISTRICTTEAMS, null, in.getParams());
-                } else {
-                    return update(in);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't add DistrictTeam without KEY");
-                return -1;
-            }
-        }
-
-        public void add(ArrayList<DistrictTeam> districts) {
-            mDb.beginTransaction();
-            for (DistrictTeam district : districts) {
-                try {
-                    if (!unsafeExists(district.getKey())) {
-                        mDb.insert(TABLE_DISTRICTTEAMS, null, district.getParams());
-                    } else {
-                        mDb.update(TABLE_DISTRICTTEAMS, district.getParams(), KEY + " = ?", new String[]{district.getKey()});
-                    }
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Can't update districtTeam. Missing fields");
-                }
-            }
-            mDb.setTransactionSuccessful();
+        public DistrictTeams(){
+            super(mDb);
         }
 
         @Override
-        public int update(DistrictTeam in) {
-            try {
-                return mDb.update(TABLE_DISTRICTTEAMS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't update districtTeam without KEY");
-                return -1;
-            }
+        protected String getTableName() {
+            return TABLE_DISTRICTTEAMS;
         }
 
         @Override
-        public DistrictTeam get(String key, String[] fields) {
-            Cursor cursor = mDb.query(TABLE_DISTRICTTEAMS, fields, KEY + " = ?", new String[]{key}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                DistrictTeam districtTeam = ModelInflater.inflateDistrictTeam(cursor);
-                cursor.close();
-                return districtTeam;
-            } else {
-                return null;
-            }
+        protected String getKeyColumn() {
+            return KEY;
         }
 
         @Override
-        public boolean exists(String key) {
-            Cursor cursor = mDb.query(TABLE_DISTRICTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        public boolean unsafeExists(String key) {
-            Cursor cursor = mDb.query(TABLE_DISTRICTTEAMS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
-            boolean result;
-            if (cursor != null) {
-                result = cursor.moveToFirst();
-                cursor.close();
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        @Override
-        public void delete(DistrictTeam in) {
-            try {
-                mDb.delete(TABLE_DISTRICTTEAMS, KEY + " + ?", new String[]{in.getKey()});
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "Can't delete districtTeam without KEY");
-            }
+        public DistrictTeam inflate(Cursor cursor) {
+            return ModelInflater.inflateDistrictTeam(cursor);
         }
     }
 
@@ -1613,100 +1098,6 @@ public class Database extends SQLiteOpenHelper {
             cursor.close();
             mDb.setTransactionSuccessful();
             mDb.endTransaction();
-        }
-    }
-
-    public long insertSearchItemTeam(Team team) {
-        ContentValues cv = new ContentValues();
-        try {
-            cv.put(SearchTeam.KEY, team.getTeamKey());
-            cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-            cv.put(SearchTeam.NUMBER, team.getTeamNumber());
-            return mDb.insert(TABLE_SEARCH_TEAMS, null, cv);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:" +
-                    "Database.Teams.KEY, Database.Teams.NUMBER");
-            return -1;
-        }
-    }
-
-    public long insertSearchItemEvent(Event event) {
-        ContentValues cv = new ContentValues();
-        try {
-            cv.put(SearchEvent.KEY, event.getEventKey());
-            cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-            cv.put(SearchEvent.YEAR, event.getEventYear());
-            return mDb.insert(TABLE_SEARCH_EVENTS, null, cv);
-
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
-                    "Database.Events.KEY, Database.Events.YEAR");
-            return -1;
-        } catch (SQLiteException e) {
-            return updateSearchItemEvent(event);
-        }
-    }
-
-    public void insertSearchItemEvents(List<Event> events) {
-        mDb.beginTransaction();
-        for (Event event : events) {
-            insertSearchItemEvent(event);
-        }
-        mDb.setTransactionSuccessful();
-        mDb.endTransaction();
-    }
-
-    public void insertSearchItemTeams(List<Team> teams) {
-        mDb.beginTransaction();
-        for (Team team : teams) {
-            insertSearchItemTeam(team);
-        }
-        mDb.setTransactionSuccessful();
-        mDb.endTransaction();
-    }
-
-    public long updateSearchItemTeam(Team team) {
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(SearchTeam.KEY, team.getTeamKey());
-            cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-            cv.put(SearchTeam.NUMBER, team.getTeamNumber());
-            return mDb.update(TABLE_SEARCH_TEAMS, cv, SearchTeam.KEY + "=?", new String[]{team.getTeamKey()});
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
-                    "Database.Events.KEY, Database.Events.YEAR");
-            return -1;
-        }
-    }
-
-    public long updateSearchItemEvent(Event event) {
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(SearchEvent.KEY, event.getEventKey());
-            cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-            cv.put(SearchEvent.YEAR, event.getEventYear());
-
-            return mDb.update(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
-                    "Database.Events.KEY, Database.Events.YEAR");
-            return -1;
-        }
-    }
-
-    public void deleteSearchItemTeam(Team team) {
-        try {
-            mDb.delete(TABLE_SEARCH_TEAMS, SearchTeam.KEY + " = ?", new String[]{team.getTeamKey()});
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't delete search team without Database.Teams.KEY");
-        }
-    }
-
-    public void deleteSearchItemEvent(Event event) {
-        try {
-            mDb.delete(TABLE_SEARCH_EVENTS, SearchEvent.KEY + " = ?", new String[]{event.getEventKey()});
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't delete search event without Database.Events.KEY");
         }
     }
 

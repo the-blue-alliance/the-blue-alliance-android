@@ -17,7 +17,6 @@ import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
@@ -84,11 +83,7 @@ public class Event extends BasicModel<Event> {
         if (fields.containsKey(Database.Events.YEAR) && fields.get(Database.Events.YEAR) instanceof Integer) {
             return (Integer) fields.get(Database.Events.YEAR);
         } else {
-            try {
-                return Integer.parseInt(getEventKey().substring(0, 4));
-            } catch (FieldNotDefinedException e) {
-                throw new FieldNotDefinedException("Field Database.Events.YEAR is not defined");
-            }
+            return Integer.parseInt(getKey().substring(0, 4));
         }
     }
 
@@ -157,11 +152,12 @@ public class Event extends BasicModel<Event> {
     }
 
 
-    public String getEventKey() throws FieldNotDefinedException {
+    @Override
+    public String getKey() {
         if (fields.containsKey(Database.Events.KEY) && fields.get(Database.Events.KEY) instanceof String) {
             return (String) fields.get(Database.Events.KEY);
         }
-        throw new FieldNotDefinedException("Field Database.Events.KEY is not defined");
+        return "";
     }
 
     /**
@@ -170,7 +166,7 @@ public class Event extends BasicModel<Event> {
      * @return Event key without the year
      */
     public String getYearAgnosticEventKey() throws FieldNotDefinedException {
-        return getEventKey().replaceAll("[0-9]", "");
+        return getKey().replaceAll("[0-9]", "");
     }
 
     public void setEventKey(String eventKey) {
@@ -445,7 +441,7 @@ public class Event extends BasicModel<Event> {
     @Override
     public EventListElement render() {
         try {
-            return new EventListElement(getEventKey(), getEventShortName(), getDateString(), getLocation());
+            return new EventListElement(getKey(), getEventShortName(), getDateString(), getLocation());
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
                     "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
@@ -459,7 +455,7 @@ public class Event extends BasicModel<Event> {
             int i = 1;
             for (JsonElement webcast : getWebcasts()) {
                 try {
-                    webcasts.add(new WebcastListElement(getEventKey(), getEventShortName(), webcast.getAsJsonObject(), i));
+                    webcasts.add(new WebcastListElement(getKey(), getEventShortName(), webcast.getAsJsonObject(), i));
                     i++;
                 } catch (FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
@@ -478,7 +474,7 @@ public class Event extends BasicModel<Event> {
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                output.add(new AllianceListElement(getEventKey(), counter, teams));
+                output.add(new AllianceListElement(getKey(), counter, teams));
                 counter++;
             }
         } catch (FieldNotDefinedException e) {
@@ -491,15 +487,16 @@ public class Event extends BasicModel<Event> {
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {
-        return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
+        return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    public static synchronized APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Events table = Database.getInstance(c).getEventsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Event event;
         if (cursor != null && cursor.moveToFirst()) {
-            event = ModelInflater.inflateEvent(cursor);
+            event = table.inflate(cursor);
             cursor.close();
         } else {
             event = new Event();
@@ -543,7 +540,7 @@ public class Event extends BasicModel<Event> {
         return new APIResponse<>(event, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
         ArrayList<Event> events = new ArrayList<>();
 
@@ -562,19 +559,19 @@ public class Event extends BasicModel<Event> {
             code = APIResponse.mergeCodes(code, response.getCode());
         }
 
+        Database.Events eventsTable = Database.getInstance(c).getEventsTable();
         if (changed) {
-            Database.Events eventsTable = Database.getInstance(c).getEventsTable();
-            int deleted = eventsTable.delete(whereClause, whereArgs);
-            eventsTable.storeEvents(events);
+            eventsTable.delete(whereClause, whereArgs);
+            eventsTable.add(events);
         }
 
         // Fetch from db after web, see #372
         // Allows us to do whereClause filtering again
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        Cursor cursor = eventsTable.query(fields, whereClause, whereArgs, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             events.clear();
             do {
-                events.add(ModelInflater.inflateEvent(cursor));
+                events.add(eventsTable.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }

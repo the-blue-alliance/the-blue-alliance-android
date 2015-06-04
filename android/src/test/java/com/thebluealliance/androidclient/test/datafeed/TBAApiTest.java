@@ -37,7 +37,7 @@ public class TBAApiTest {
 
         //now, assert that all the properties are there
         try {
-            assertEquals(event.getEventKey(), "2014ctgro");
+            assertEquals(event.getKey(), "2014ctgro");
             assertEquals(event.getStartDate(), new Date(114, 2, 8));
             assertEquals(event.getEndDate(), new Date(114, 2, 9));
             assertEquals(event.getEventName(), "Groton District Event");
@@ -72,7 +72,7 @@ public class TBAApiTest {
             assertEquals(team.getFullName(), "UTC Fire and Security & Avon High School");
             assertEquals(team.getLocation(), "Avon, CT, USA");
             assertEquals((int) team.getTeamNumber(), 1124);
-            assertEquals(team.getTeamKey(), "frc1124");
+            assertEquals(team.getKey(), "frc1124");
             assertEquals(team.getNickname(), "ÜberBots");
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to get team fields");

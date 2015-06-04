@@ -379,7 +379,7 @@ public class EventHelper {
 
                 if (broadcastIfLive && event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
 
@@ -406,7 +406,7 @@ public class EventHelper {
 
                 if (broadcastIfLive && event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
             } catch (BasicModel.FieldNotDefinedException e) {

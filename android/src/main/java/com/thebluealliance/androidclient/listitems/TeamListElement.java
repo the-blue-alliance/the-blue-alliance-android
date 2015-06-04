@@ -24,7 +24,7 @@ public class TeamListElement extends ListElement {
     private boolean mShowLinkToTeamDetails = false;
 
     public TeamListElement(Team team) throws BasicModel.FieldNotDefinedException {
-        super(team.getTeamKey());
+        super(team.getKey());
         mTeamNumber = team.getTeamNumber();
         mTeamName = team.getNickname();
         mTeamLocation = team.getLocation();

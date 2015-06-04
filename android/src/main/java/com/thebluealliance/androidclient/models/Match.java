@@ -17,7 +17,6 @@ import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.ArrayList;
@@ -50,11 +49,11 @@ public class Match extends BasicModel<Match> {
         super(Database.TABLE_MATCHES);
     }
 
-    public String getKey() throws FieldNotDefinedException {
+    public String getKey() {
         if (fields.containsKey(Database.Matches.KEY) && fields.get(Database.Matches.KEY) instanceof String) {
             return (String) fields.get(Database.Matches.KEY);
         }
-        throw new FieldNotDefinedException("Field Database.Matches.KEY is not defined");
+        return "";
     }
 
     public void setKey(String key) {
@@ -374,13 +373,11 @@ public class Match extends BasicModel<Match> {
             Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS. Defaulting to none.");
             videos = new JsonArray();
         }
-        String key = null;
-        try {
-            key = getKey();
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.KEY");
+        String key = getKey();
+        if (key.isEmpty()) {
             return null;
         }
+
         JsonArray redTeams = getRedTeams(alliances),
                 blueTeams = getBlueTeams(alliances);
         String redScore = getRedAlliance(alliances).get("score").getAsString(),
@@ -427,12 +424,13 @@ public class Match extends BasicModel<Match> {
                 redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
     }
 
-    public static synchronized APIResponse<Match> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<Match> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Matches table = Database.getInstance(c).getMatchesTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Match match;
         if (cursor != null && cursor.moveToFirst()) {
-            match = ModelInflater.inflateMatch(cursor);
+            match = table.inflate(cursor);
             cursor.close();
         } else {
             match = new Match();
@@ -475,14 +473,15 @@ public class Match extends BasicModel<Match> {
         return new APIResponse<>(match, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Match>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<Match>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MATCHES, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Matches table = Database.getInstance(c).getMatchesTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Match> allMatches = new ArrayList<>(),
                 storedMatches = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                storedMatches.add(ModelInflater.inflateMatch(cursor));
+                storedMatches.add(table.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }

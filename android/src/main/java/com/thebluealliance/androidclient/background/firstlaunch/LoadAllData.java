@@ -166,7 +166,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
             Log.d(Constants.LOG_TAG, "storing teams");
-            Database.getInstance(context).getTeamsTable().storeTeams(teams);
+            Database.getInstance(context).getTeamsTable().add(teams);
             Log.d(Constants.LOG_TAG, "storing events");
             Database.getInstance(context).getEventsTable().storeEvents(events);
             Log.d(Constants.LOG_TAG, "storing districts");

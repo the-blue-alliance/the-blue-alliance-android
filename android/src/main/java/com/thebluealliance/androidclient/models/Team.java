@@ -13,7 +13,6 @@ import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
 
 import java.util.Arrays;
@@ -65,11 +64,12 @@ public class Team extends BasicModel<Team> {
         fields.put(Database.Teams.WEBSITE, website);
     }
 
-    public String getTeamKey() throws FieldNotDefinedException {
+    @Override
+    public String getKey() {
         if (fields.containsKey(Database.Teams.KEY) && fields.get(Database.Teams.KEY) instanceof String) {
             return (String) fields.get(Database.Teams.KEY);
         }
-        throw new FieldNotDefinedException("Field Database.Teams.KEY is not defined");
+        return "";
     }
 
     public void setTeamKey(String teamKey) {
@@ -132,7 +132,7 @@ public class Team extends BasicModel<Team> {
 
     public String getSearchTitles() {
         try {
-            return getTeamKey() + "," + getNickname() + "," + getTeamNumber();
+            return getKey() + "," + getNickname() + "," + getTeamNumber();
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n" +
                     "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
@@ -143,7 +143,7 @@ public class Team extends BasicModel<Team> {
     @Override
     public TeamListElement render() {
         try {
-            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation());
+            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation());
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
                     "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
@@ -153,7 +153,7 @@ public class Team extends BasicModel<Team> {
 
     public TeamListElement render(boolean showTeamInfoButton) {
         try {
-            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
+            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
                     "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
@@ -161,12 +161,13 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    public static synchronized APIResponse<Team> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<Team> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying teams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Teams table = Database.getInstance(c).getTeamsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Team team;
         if (cursor != null && cursor.moveToFirst()) {
-            team = ModelInflater.inflateTeam(cursor);
+            team = table.inflate(cursor);
             cursor.close();
         } else {
             team = new Team();

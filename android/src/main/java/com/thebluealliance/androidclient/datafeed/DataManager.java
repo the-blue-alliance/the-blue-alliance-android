@@ -88,7 +88,7 @@ public class DataManager {
 
                 ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
                 if (teamListResponse.getCode() == APIResponse.CODE.WEBLOAD || teamListResponse.getCode() == APIResponse.CODE.UPDATED && teams.size() > 0) {
-                    Database.getInstance(c).getTeamsTable().storeTeams(teams);
+                    Database.getInstance(c).getTeamsTable().add(teams);
                 }
             }
             cursor = Database.getInstance(c).getTeamsTable().getCursorForTeamsInRange(lowerBound, upperBound);

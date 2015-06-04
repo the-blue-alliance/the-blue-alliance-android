@@ -59,7 +59,7 @@ public class AllianceSelectionNotification extends BaseNotification {
         }
 
         try {
-            eventKey = event.getEventKey();
+            eventKey = event.getKey();
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(getLogTag(), "Event data passed in this notification does not contain an event short name. Can't post this notification.");
             e.printStackTrace();

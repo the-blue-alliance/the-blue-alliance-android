@@ -31,9 +31,15 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
         }
     }
 
+    public String getTable(){
+        return table;
+    }
+
     public ContentValues getParams() {
         return fields;
     }
+
+    public abstract String getKey();
 
     public abstract void write(Context c);
 
