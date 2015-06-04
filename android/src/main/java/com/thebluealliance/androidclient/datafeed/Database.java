@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -192,9 +190,6 @@ public class Database extends SQLiteOpenHelper {
 
     protected SQLiteDatabase mDb;
     private static Database sDatabaseInstance;
-    private Semaphore mSemaphore;
-    private Semaphore mMyTBASemaphore;
-    private Semaphore mNotificationSemaphore;
 
     private Teams mTeamsTable;
     private Events mEventsTable;
@@ -225,21 +220,6 @@ public class Database extends SQLiteOpenHelper {
         mSubscriptionsTable = new Subscriptions();
         mResponseTable = new Response();
         mNotificationsTable = new Notifications();
-        mSemaphore = new Semaphore(1);
-        mMyTBASemaphore = new Semaphore(1);
-        mNotificationSemaphore = new Semaphore(1);
-    }
-
-    public Semaphore getSemaphore() {
-        return mSemaphore;
-    }
-
-    public Semaphore getMyTBASemaphore() {
-        return mMyTBASemaphore;
-    }
-
-    public Semaphore getNotificationSemaphore() {
-        return mNotificationSemaphore;
     }
 
     public static synchronized Database getInstance(Context context) {
@@ -529,35 +509,24 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void storeTeams(ArrayList<Team> teams) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (Team team : teams) {
-                    try {
-                        if (!unsafeExists(team.getTeamKey())) {
-                            mDb.insert(TABLE_TEAMS, null, team.getParams());
+            mDb.beginTransaction();
+            for (Team team : teams) {
+                try {
+                    if (!unsafeExists(team.getTeamKey())) {
+                        mDb.insert(TABLE_TEAMS, null, team.getParams());
 
-                            //add search team item
-                            insertSearchItemTeam(team, false);
-                        } else {
-                            mDb.update(TABLE_TEAMS, team.getParams(), KEY + " =?", new String[]{team.getTeamKey()});
-                            updateSearchItemTeam(team);
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Unable to add team - missing key.");
+                        //add search team item
+                        insertSearchItemTeam(team, false);
+                    } else {
+                        mDb.update(TABLE_TEAMS, team.getParams(), KEY + " =?", new String[]{team.getTeamKey()});
+                        updateSearchItemTeam(team);
                     }
-                }
-                mDb.setTransactionSuccessful();
-                mDb.endTransaction();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Unable to add team - missing key.");
                 }
             }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
         }
 
         public Team get(String teamKey, String[] fields) {
@@ -697,33 +666,22 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void storeEvents(ArrayList<Event> events) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (Event event : events) {
-                    try {
-                        if (!unsafeExists(event.getEventKey())) {
-                            mDb.insert(TABLE_EVENTS, null, event.getParams());
-                            insertSearchItemEvent(event, false);
-                        } else {
-                            mDb.update(TABLE_EVENTS, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
-                            updateSearchItemEvent(event, false);
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
+            mDb.beginTransaction();
+            for (Event event : events) {
+                try {
+                    if (!unsafeExists(event.getEventKey())) {
+                        mDb.insert(TABLE_EVENTS, null, event.getParams());
+                        insertSearchItemEvent(event, false);
+                    } else {
+                        mDb.update(TABLE_EVENTS, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
+                        updateSearchItemEvent(event, false);
                     }
-                }
-                mDb.setTransactionSuccessful();
-                mDb.endTransaction();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
                 }
             }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
         }
 
         public Event get(String eventKey, String[] fields) {
@@ -833,31 +791,20 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void add(ArrayList<Award> awards) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (Award award : awards) {
-                    try {
-                        if (!unsafeExists(award.getKey())) {
-                            mDb.insert(TABLE_AWARDS, null, award.getParams());
-                        } else {
-                            mDb.update(TABLE_AWARDS, award.getParams(), Awards.KEY + " = ? ", new String[]{award.getKey()});
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Unable to add award - missing event key or award name");
+            mDb.beginTransaction();
+            for (Award award : awards) {
+                try {
+                    if (!unsafeExists(award.getKey())) {
+                        mDb.insert(TABLE_AWARDS, null, award.getParams());
+                    } else {
+                        mDb.update(TABLE_AWARDS, award.getParams(), Awards.KEY + " = ? ", new String[]{award.getKey()});
                     }
-                }
-                mDb.setTransactionSuccessful();
-                mDb.endTransaction();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Unable to add award - missing event key or award name");
                 }
             }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
         }
 
         @Override
@@ -947,31 +894,20 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void add(ArrayList<Match> matches) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (Match match : matches) {
-                    try {
-                        if (!unsafeExists(match.getKey())) {
-                            mDb.insert(TABLE_MATCHES, null, match.getParams());
-                        } else {
-                            mDb.update(TABLE_MATCHES, match.getParams(), KEY + " =?", new String[]{match.getKey()});
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
+            mDb.beginTransaction();
+            for (Match match : matches) {
+                try {
+                    if (!unsafeExists(match.getKey())) {
+                        mDb.insert(TABLE_MATCHES, null, match.getParams());
+                    } else {
+                        mDb.update(TABLE_MATCHES, match.getParams(), KEY + " =?", new String[]{match.getKey()});
                     }
-                }
-                mDb.setTransactionSuccessful();
-                mDb.endTransaction();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
                 }
             }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
         }
 
         @Override
@@ -1057,31 +993,19 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void add(ArrayList<Media> medias) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (Media media : medias) {
-                    try {
-                        if (!unsafeExists(media.getForeignKey())) {
-                            mDb.insert(TABLE_MEDIAS, null, media.getParams());
-                        } else {
-                            mDb.update(TABLE_MEDIAS, media.getParams(), FOREIGNKEY + " = ?", new String[]{media.getForeignKey()});
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Can't update award. Missing fields");
+            mDb.beginTransaction();
+            for (Media media : medias) {
+                try {
+                    if (!unsafeExists(media.getForeignKey())) {
+                        mDb.insert(TABLE_MEDIAS, null, media.getParams());
+                    } else {
+                        mDb.update(TABLE_MEDIAS, media.getParams(), FOREIGNKEY + " = ?", new String[]{media.getForeignKey()});
                     }
-                }
-                mDb.setTransactionSuccessful();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                mDb.endTransaction();
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Can't update award. Missing fields");
                 }
             }
+            mDb.setTransactionSuccessful();
         }
 
         @Override
@@ -1164,31 +1088,19 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void add(ArrayList<EventTeam> events) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (EventTeam eventTeam : events) {
-                    try {
-                        if (!unsafeExists(eventTeam.getKey())) {
-                            mDb.insert(TABLE_EVENTTEAMS, null, eventTeam.getParams());
-                        } else {
-                            mDb.update(TABLE_EVENTTEAMS, eventTeam.getParams(), EventTeams.KEY + " = ?", new String[]{eventTeam.getKey()});
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Can't update eventTeam. Missing fields");
+            mDb.beginTransaction();
+            for (EventTeam eventTeam : events) {
+                try {
+                    if (!unsafeExists(eventTeam.getKey())) {
+                        mDb.insert(TABLE_EVENTTEAMS, null, eventTeam.getParams());
+                    } else {
+                        mDb.update(TABLE_EVENTTEAMS, eventTeam.getParams(), EventTeams.KEY + " = ?", new String[]{eventTeam.getKey()});
                     }
-                }
-                mDb.setTransactionSuccessful();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                mDb.endTransaction();
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Can't update eventTeam. Missing fields");
                 }
             }
+            mDb.setTransactionSuccessful();
         }
 
         @Override
@@ -1284,31 +1196,19 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void add(ArrayList<District> districts) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (District district : districts) {
-                    try {
-                        if (!unsafeExists(district.getKey())) {
-                            mDb.insert(TABLE_DISTRICTS, null, district.getParams());
-                        } else {
-                            mDb.update(TABLE_DISTRICTS, district.getParams(), Districts.KEY + " = ?", new String[]{district.getKey()});
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Can't update district. Missing fields");
+            mDb.beginTransaction();
+            for (District district : districts) {
+                try {
+                    if (!unsafeExists(district.getKey())) {
+                        mDb.insert(TABLE_DISTRICTS, null, district.getParams());
+                    } else {
+                        mDb.update(TABLE_DISTRICTS, district.getParams(), Districts.KEY + " = ?", new String[]{district.getKey()});
                     }
-                }
-                mDb.setTransactionSuccessful();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                mDb.endTransaction();
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Can't update district. Missing fields");
                 }
             }
+            mDb.setTransactionSuccessful();
         }
 
         @Override
@@ -1401,31 +1301,19 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void add(ArrayList<DistrictTeam> districts) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (DistrictTeam district : districts) {
-                    try {
-                        if (!unsafeExists(district.getKey())) {
-                            mDb.insert(TABLE_DISTRICTTEAMS, null, district.getParams());
-                        } else {
-                            mDb.update(TABLE_DISTRICTTEAMS, district.getParams(), KEY + " = ?", new String[]{district.getKey()});
-                        }
-                    } catch (BasicModel.FieldNotDefinedException e) {
-                        Log.w(Constants.LOG_TAG, "Can't update districtTeam. Missing fields");
+            mDb.beginTransaction();
+            for (DistrictTeam district : districts) {
+                try {
+                    if (!unsafeExists(district.getKey())) {
+                        mDb.insert(TABLE_DISTRICTTEAMS, null, district.getParams());
+                    } else {
+                        mDb.update(TABLE_DISTRICTTEAMS, district.getParams(), KEY + " = ?", new String[]{district.getKey()});
                     }
-                }
-                mDb.setTransactionSuccessful();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                mDb.endTransaction();
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.w(Constants.LOG_TAG, "Can't update districtTeam. Missing fields");
                 }
             }
+            mDb.setTransactionSuccessful();
         }
 
         @Override
@@ -1493,16 +1381,12 @@ public class Database extends SQLiteOpenHelper {
 
         public long add(Favorite in) {
             if (!exists(in.getKey())) {
-                return safeInsert(TABLE_FAVORITES, null, in.getParams(), getMyTBASemaphore());
+                return safeInsert(TABLE_FAVORITES, null, in.getParams());
             }
             return -1;
         }
 
         public void add(ArrayList<Favorite> in) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getMyTBASemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
                 mDb.beginTransaction();
                 for (Favorite favorite : in) {
                     if (!unsafeExists(favorite.getKey())) {
@@ -1510,23 +1394,14 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
                 mDb.setTransactionSuccessful();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-                e.printStackTrace();
-            } finally {
-                mDb.endTransaction();
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
-                }
-            }
         }
 
         public void remove(String key) {
-            safeDelete(TABLE_FAVORITES, KEY + " = ?", new String[]{key}, getMyTBASemaphore());
+            safeDelete(TABLE_FAVORITES, KEY + " = ?", new String[]{key});
         }
 
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null, getMyTBASemaphore());
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1538,7 +1413,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public Favorite get(String key) {
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null, getMyTBASemaphore());
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 return ModelInflater.inflateFavorite(cursor);
             }
@@ -1558,7 +1433,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Favorite> getForUser(String user) {
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null, getMyTBASemaphore());
+            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
             ArrayList<Favorite> favorites = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -1569,7 +1444,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void recreate(String user) {
-            safeDelete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user}, getMyTBASemaphore());
+            safeDelete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user});
         }
     }
 
@@ -1582,41 +1457,28 @@ public class Database extends SQLiteOpenHelper {
 
         public long add(Subscription in) {
             if (!exists(in.getKey())) {
-                return safeInsert(TABLE_SUBSCRIPTIONS, null, in.getParams(), getMyTBASemaphore());
+                return safeInsert(TABLE_SUBSCRIPTIONS, null, in.getParams());
             } else {
                 return update(in.getKey(), in);
             }
         }
 
         public int update(String key, Subscription in) {
-            return safeUpdate(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key}, getMyTBASemaphore());
+            return safeUpdate(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key});
         }
 
         public void add(ArrayList<Subscription> in) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getMyTBASemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (Subscription subscription : in) {
-                    if (!unsafeExists(subscription.getKey())) {
-                        mDb.insert(TABLE_SUBSCRIPTIONS, null, subscription.getParams());
-                    }
-                }
-                mDb.setTransactionSuccessful();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-                e.printStackTrace();
-            } finally {
-                mDb.endTransaction();
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
+            mDb.beginTransaction();
+            for (Subscription subscription : in) {
+                if (!unsafeExists(subscription.getKey())) {
+                    mDb.insert(TABLE_SUBSCRIPTIONS, null, subscription.getParams());
                 }
             }
+            mDb.setTransactionSuccessful();
         }
 
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null, getMyTBASemaphore());
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1640,11 +1502,11 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void remove(String key) {
-            safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key}, getMyTBASemaphore());
+            safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key});
         }
 
         public Subscription get(String key) {
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null, getMyTBASemaphore());
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 return ModelInflater.inflateSubscription(cursor);
             }
@@ -1652,7 +1514,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Subscription> getForUser(String user) {
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null, getMyTBASemaphore());
+            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
             ArrayList<Subscription> subscriptions = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -1663,7 +1525,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void recreate(String user) {
-            safeDelete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user}, getMyTBASemaphore());
+            safeDelete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
         }
     }
 
@@ -1693,28 +1555,17 @@ public class Database extends SQLiteOpenHelper {
                 ACTIVE = "active";
 
         public void add(StoredNotification... in) {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getNotificationSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                for (StoredNotification notification : in) {
-                    mDb.insert(TABLE_NOTIFICATIONS, null, notification.getParams());
-                }
-                mDb.setTransactionSuccessful();
-                mDb.endTransaction();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
-                }
+            mDb.beginTransaction();
+            for (StoredNotification notification : in) {
+                mDb.insert(TABLE_NOTIFICATIONS, null, notification.getParams());
             }
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
         }
 
         public ArrayList<StoredNotification> get() {
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null, getNotificationSemaphore());
+            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));
@@ -1726,7 +1577,7 @@ public class Database extends SQLiteOpenHelper {
 
         public ArrayList<StoredNotification> getActive() {
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null, getNotificationSemaphore());
+            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));
@@ -1739,162 +1590,49 @@ public class Database extends SQLiteOpenHelper {
         public void dismissAll() {
             ContentValues cv = new ContentValues();
             cv.put(ACTIVE, 0);
-            safeUpdate(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null, getNotificationSemaphore());
+            safeUpdate(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null);
         }
 
         private void delete(int id) {
-            safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)}, getNotificationSemaphore());
+            safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
         }
 
         // Only allow 50 notifications to be stored
         public void prune() {
-            Semaphore dbSemaphore = null;
-            try {
-                dbSemaphore = getNotificationSemaphore();
-                dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-                mDb.beginTransaction();
-                Cursor cursor = mDb.query(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    for (int i = cursor.getCount(); i > 50; i--) {
-                        mDb.delete(TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
-                        if (!cursor.moveToNext()) {
-                            break;
-                        }
+            mDb.beginTransaction();
+            Cursor cursor = mDb.query(TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
+            if (cursor != null && cursor.moveToFirst()) {
+                for (int i = cursor.getCount(); i > 50; i--) {
+                    mDb.delete(TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
+                    if (!cursor.moveToNext()) {
+                        break;
                     }
                 }
-                cursor.close();
-                mDb.setTransactionSuccessful();
-                mDb.endTransaction();
-            } catch (InterruptedException e) {
-                Log.w("database", "Unable to acquire database semaphore");
-            } finally {
-                if (dbSemaphore != null) {
-                    dbSemaphore.release();
-                }
             }
+            cursor.close();
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
         }
     }
 
     public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
-        return safeQuery(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, null);
-    }
-
-    public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, Semaphore semaphore) {
-        if (semaphore == null) {
-            semaphore = getSemaphore();
-        }
-        Cursor cursor = null;
-        try {
-            semaphore.tryAcquire(10, TimeUnit.SECONDS);
-            cursor = mDb.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to acquire database semaphore");
-        } finally {
-            if (semaphore != null) {
-                semaphore.release();
-            }
-        }
-        return cursor;
+        return mDb.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
     }
 
     public Cursor safeRawQuery(String query, String[] args) {
-        Semaphore dbSemaphore = null;
-        Cursor cursor = null;
-        try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-            cursor = mDb.rawQuery(query, args);
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to acquire database semaphore");
-        } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
-            }
-        }
-        return cursor;
-    }
-
-    public Cursor safeRawQuery(String query, String[] args, Semaphore semaphore) {
-        Cursor cursor = null;
-        try {
-            semaphore.tryAcquire(10, TimeUnit.SECONDS);
-            cursor = mDb.rawQuery(query, args);
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to acquire database semaphore");
-        } finally {
-            if (semaphore != null) {
-                semaphore.release();
-            }
-        }
-        return cursor;
-
+        return mDb.rawQuery(query, args);
     }
 
     public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
-        return safeUpdate(table, values, whereClause, whereArgs, null);
-    }
-
-    public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs, Semaphore semaphore) {
-        if (semaphore == null) {
-            semaphore = getSemaphore();
-        }
-        int response = -1;
-        try {
-            semaphore = getSemaphore();
-            semaphore.tryAcquire(10, TimeUnit.SECONDS);
-            response = mDb.update(table, values, whereClause, whereArgs);
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to aquire database semaphore");
-        } finally {
-            if (semaphore != null) {
-                semaphore.release();
-            }
-        }
-        return response;
+        return mDb.update(table, values, whereClause, whereArgs);
     }
 
     public long safeInsert(String table, String nullColumnHack, ContentValues values) {
-        return safeInsert(table, nullColumnHack, values, null);
-    }
-
-    public long safeInsert(String table, String nullColumnHack, ContentValues values, Semaphore semaphore) {
-        if (semaphore == null) {
-            semaphore = getSemaphore();
-        }
-        long response = -1;
-        try {
-            semaphore.tryAcquire(10, TimeUnit.SECONDS);
-            response = mDb.insert(table, nullColumnHack, values);
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to acquire database semaphore");
-        } finally {
-            if (semaphore != null) {
-                semaphore.release();
-            }
-        }
-        return response;
+        return mDb.insert(table, nullColumnHack, values);
     }
 
     public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        return safeDelete(table, whereClause, whereArgs, getSemaphore());
-    }
-
-    public int safeDelete(String table, String whereClause, String[] whereArgs, Semaphore semaphore) {
-        if (semaphore == null) {
-            semaphore = getSemaphore();
-        }
-        int response = -1;
-        try {
-            semaphore.tryAcquire(10, TimeUnit.SECONDS);
-            response = mDb.delete(table, whereClause, whereArgs);
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to acquire database semaphore");
-        } finally {
-            if (semaphore != null) {
-                semaphore.release();
-            }
-        }
-        return response;
+        return mDb.delete(table, whereClause, whereArgs);
     }
 
     public long insertSearchItemTeam(Team team) {
@@ -1937,43 +1675,21 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public void insertSearchItemEvents(List<Event> events) {
-        Semaphore dbSemaphore = null;
-        try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-            mDb.beginTransaction();
-            for (Event event : events) {
-                insertSearchItemEvent(event, false);
-            }
-            mDb.setTransactionSuccessful();
-            mDb.endTransaction();
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to acquire database semaphore");
-        } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
-            }
+        mDb.beginTransaction();
+        for (Event event : events) {
+            insertSearchItemEvent(event, false);
         }
+        mDb.setTransactionSuccessful();
+        mDb.endTransaction();
     }
 
     public void insertSearchItemTeams(List<Team> teams) {
-        Semaphore dbSemaphore = null;
-        try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-            mDb.beginTransaction();
-            for (Team team : teams) {
-                insertSearchItemTeam(team, false);
-            }
-            mDb.setTransactionSuccessful();
-            mDb.endTransaction();
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to acquire database semaphore");
-        } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
-            }
+        mDb.beginTransaction();
+        for (Team team : teams) {
+            insertSearchItemTeam(team, false);
         }
+        mDb.setTransactionSuccessful();
+        mDb.endTransaction();
     }
 
     public long updateSearchItemTeam(Team team) {
@@ -2027,140 +1743,96 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public Cursor getMatchesForTeamQuery(String query) {
-        Semaphore dbSemaphore = null;
         Cursor cursor = null;
-        try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(5, TimeUnit.SECONDS);
-            String selection = SearchTeam.TITLES + " MATCH ?";
-            String[] selectionArgs = new String[]{query};
+        String selection = SearchTeam.TITLES + " MATCH ?";
+        String[] selectionArgs = new String[]{query};
 
-            SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-            builder.setTables(TABLE_SEARCH_TEAMS);
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(TABLE_SEARCH_TEAMS);
 
-            cursor = builder.query(mDb,
-                    new String[]{SearchTeam.KEY, SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
+        cursor = builder.query(mDb,
+                new String[]{SearchTeam.KEY, SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
 
-            if (cursor == null) {
-                return null;
-            } else if (!cursor.moveToFirst()) {
-                cursor.close();
-                return null;
-            }
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to aquire database semaphore");
-        } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
-            }
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
         }
         return cursor;
     }
 
     public Cursor getMatchesForEventQuery(String query) {
-        Semaphore dbSemaphore = null;
         Cursor cursor = null;
-        try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-            String selection = SearchEvent.TITLES + " MATCH ?";
-            String[] selectionArgs = new String[]{query};
+        String selection = SearchEvent.TITLES + " MATCH ?";
+        String[] selectionArgs = new String[]{query};
 
-            SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-            builder.setTables(TABLE_SEARCH_EVENTS);
+        SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
+        builder.setTables(TABLE_SEARCH_EVENTS);
 
-            cursor = builder.query(mDb,
-                    new String[]{SearchEvent.KEY, SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
+        cursor = builder.query(mDb,
+                new String[]{SearchEvent.KEY, SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
 
-            if (cursor == null) {
-                return null;
-            } else if (!cursor.moveToFirst()) {
-                cursor.close();
-                return null;
-            }
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to aquire database semaphore");
-        } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
-            }
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
         }
         return cursor;
     }
 
     public Cursor getTeamsForTeamQuery(String query) {
-        Semaphore dbSemaphore = null;
         Cursor cursor = null;
-        try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-            SQLiteDatabase db = this.getWritableDatabase();
-            db.execSQL("DROP TABLE IF EXISTS tempteams");
-            String createTempTeams = "CREATE TEMP TABLE tempteams (tempkey TEXT)";
-            db.execSQL(createTempTeams);
-            db.execSQL("INSERT INTO tempteams SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_TEAMS + " WHERE " + SearchTeam.TITLES + " MATCH ?", new String[]{query});
-            cursor = db.rawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
-                    + Teams.KEY + ","
-                    + Teams.NUMBER + ","
-                    + Teams.NAME + ","
-                    + Teams.SHORTNAME + ","
-                    + Teams.LOCATION
-                    + " FROM " + TABLE_TEAMS + " JOIN tempteams ON tempteams.tempkey = " + TABLE_TEAMS + "." + Teams.KEY + " ORDER BY ? ASC", new String[]{Teams.NUMBER});
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS tempteams");
+        String createTempTeams = "CREATE TEMP TABLE tempteams (tempkey TEXT)";
+        db.execSQL(createTempTeams);
+        db.execSQL("INSERT INTO tempteams SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_TEAMS + " WHERE " + SearchTeam.TITLES + " MATCH ?", new String[]{query});
+        cursor = db.rawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
+                + Teams.KEY + ","
+                + Teams.NUMBER + ","
+                + Teams.NAME + ","
+                + Teams.SHORTNAME + ","
+                + Teams.LOCATION
+                + " FROM " + TABLE_TEAMS + " JOIN tempteams ON tempteams.tempkey = " + TABLE_TEAMS + "." + Teams.KEY + " ORDER BY ? ASC", new String[]{Teams.NUMBER});
 
-            if (cursor == null) {
-                return null;
-            } else if (!cursor.moveToFirst()) {
-                cursor.close();
-                return null;
-            }
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to aquire database semaphore");
-        } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
-            }
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
         }
         return cursor;
     }
 
     public Cursor getEventsForQuery(String query) {
-        Semaphore dbSemaphore = null;
         Cursor cursor = null;
-        try {
-            dbSemaphore = getSemaphore();
-            dbSemaphore.tryAcquire(10, TimeUnit.SECONDS);
-            SQLiteDatabase db = this.getWritableDatabase();
-            db.execSQL("DROP TABLE IF EXISTS tempevents");
-            String createTempTeams = "CREATE TEMP TABLE tempevents (tempkey TEXT)";
-            db.execSQL(createTempTeams);
-            db.execSQL("INSERT INTO tempevents SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_EVENTS + " WHERE " + SearchEvent.TITLES + " MATCH ?", new String[]{query});
-            cursor = db.rawQuery("SELECT " + TABLE_EVENTS + ".rowid as '_id',"
-                            + Events.KEY + ","
-                            + Events.NAME + ","
-                            + Events.SHORTNAME + ","
-                            + Events.TYPE + ","
-                            + Events.DISTRICT + ","
-                            + Events.START + ","
-                            + Events.END + ","
-                            + Events.LOCATION + ","
-                            + Events.VENUE + ","
-                            + Events.OFFICIAL + ","
-                            + Events.DISTRICT_STRING
-                            + " FROM " + TABLE_EVENTS + " JOIN tempevents ON tempevents.tempkey = " + TABLE_EVENTS + "." + Events.KEY + " ORDER BY ? DESC", new String[]{SearchEvent.YEAR}
-            );
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS tempevents");
+        String createTempTeams = "CREATE TEMP TABLE tempevents (tempkey TEXT)";
+        db.execSQL(createTempTeams);
+        db.execSQL("INSERT INTO tempevents SELECT " + SearchTeam.KEY + " FROM " + TABLE_SEARCH_EVENTS + " WHERE " + SearchEvent.TITLES + " MATCH ?", new String[]{query});
+        cursor = db.rawQuery("SELECT " + TABLE_EVENTS + ".rowid as '_id',"
+                        + Events.KEY + ","
+                        + Events.NAME + ","
+                        + Events.SHORTNAME + ","
+                        + Events.TYPE + ","
+                        + Events.DISTRICT + ","
+                        + Events.START + ","
+                        + Events.END + ","
+                        + Events.LOCATION + ","
+                        + Events.VENUE + ","
+                        + Events.OFFICIAL + ","
+                        + Events.DISTRICT_STRING
+                        + " FROM " + TABLE_EVENTS + " JOIN tempevents ON tempevents.tempkey = " + TABLE_EVENTS + "." + Events.KEY + " ORDER BY ? DESC", new String[]{SearchEvent.YEAR}
+        );
 
-            if (cursor == null) {
-                return null;
-            } else if (!cursor.moveToFirst()) {
-                cursor.close();
-                return null;
-            }
-        } catch (InterruptedException e) {
-            Log.w("database", "Unable to aquire database semaphore");
-        } finally {
-            if (dbSemaphore != null) {
-                dbSemaphore.release();
-            }
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
         }
         return cursor;
     }
