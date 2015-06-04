@@ -200,7 +200,7 @@ public class Database extends SQLiteOpenHelper {
     private Response mResponseTable;
     private Districts mDistrictsTable;
     private DistrictTeams mDistrictTeamsTable;
-    private Favorites favoritesTable;
+    private Favorites mFavoritesTable;
     private Subscriptions mSubscriptionsTable;
     private Notifications mNotificationsTable;
 
@@ -216,7 +216,7 @@ public class Database extends SQLiteOpenHelper {
         mEventTeamsTable = new EventTeams();
         mDistrictsTable = new Districts();
         mDistrictTeamsTable = new DistrictTeams();
-        favoritesTable = new Favorites();
+        mFavoritesTable = new Favorites();
         mSubscriptionsTable = new Subscriptions();
         mResponseTable = new Response();
         mNotificationsTable = new Notifications();
@@ -266,8 +266,8 @@ public class Database extends SQLiteOpenHelper {
         return mDistrictTeamsTable;
     }
 
-    public Favorites getFavoritesTable() {
-        return favoritesTable;
+    public Favorites getmFavoritesTable() {
+        return mFavoritesTable;
     }
 
     public Subscriptions getSubscriptionsTable() {
@@ -419,7 +419,7 @@ public class Database extends SQLiteOpenHelper {
             return mDb.insert(TABLE_API, null, cv);
         }
 
-        public APIResponse<String> getResponse(String url) {
+        public APIResponse<String> getResponseIfExists(String url) {
             Cursor cursor = mDb.query(TABLE_API, new String[]{Response.URL, Response.LASTUPDATE, Response.LASTHIT},
                     Response.URL + "=?", new String[]{url}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {

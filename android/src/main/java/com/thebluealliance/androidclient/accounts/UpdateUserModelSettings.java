@@ -70,7 +70,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         request.setModelType(Long.valueOf(settings.modelType.getEnum()));
 
         Database.Subscriptions subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
-        Database.Favorites favoritesTable = Database.getInstance(context).getFavoritesTable();
+        Database.Favorites favoritesTable = Database.getInstance(context).getmFavoritesTable();
 
         // Determine if we have to do anything
         List<String> existingNotificationsList = new ArrayList<>();
