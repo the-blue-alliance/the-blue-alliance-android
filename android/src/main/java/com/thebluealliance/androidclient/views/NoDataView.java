@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,11 +40,16 @@ public class NoDataView extends RelativeLayout {
     }
 
     public void setImage(Drawable drawable) {
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.icon_gray));
         mImageView.setImageDrawable(drawable);
     }
 
     public void setImage(@DrawableRes int resId) {
-        mImageView.setImageResource(resId);
+        Drawable drawable = getContext().getResources().getDrawable(resId, null);
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.icon_gray));
+        mImageView.setImageDrawable(drawable);
     }
 
     public void setImageVisisble(boolean visible) {
