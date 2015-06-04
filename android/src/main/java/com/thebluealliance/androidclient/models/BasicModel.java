@@ -2,9 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 
-import com.thebluealliance.androidclient.datafeed.Database;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 
 /**
@@ -25,10 +23,6 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
     public BasicModel(String table) {
         this.table = table;
         fields = new ContentValues();
-    }
-
-    public static Cursor query(Context c, String table, String[] fields, String where, String[] whereArgs) {
-        return Database.getInstance(c).safeQuery(table, fields, where, whereArgs, null, null, null, null);
     }
 
     public void merge(T in) {

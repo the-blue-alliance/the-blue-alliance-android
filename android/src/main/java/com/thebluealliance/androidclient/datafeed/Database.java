@@ -416,11 +416,11 @@ public class Database extends SQLiteOpenHelper {
             cv.put(Response.URL, url);
             cv.put(Response.LASTUPDATE, updated);
             cv.put(Response.LASTHIT, new Date().getTime());
-            return safeInsert(TABLE_API, null, cv);
+            return mDb.insert(TABLE_API, null, cv);
         }
 
         public APIResponse<String> getResponse(String url) {
-            Cursor cursor = safeQuery(TABLE_API, new String[]{Response.URL, Response.LASTUPDATE, Response.LASTHIT},
+            Cursor cursor = mDb.query(TABLE_API, new String[]{Response.URL, Response.LASTUPDATE, Response.LASTHIT},
                     Response.URL + "=?", new String[]{url}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 String lastUpdate = cursor.getString(1);
@@ -434,7 +434,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public boolean responseExists(String url) {
-            Cursor cursor = safeQuery(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
             boolean exists = (cursor.moveToFirst()) || (cursor.getCount() != 0);
             cursor.close();
             return exists;
@@ -442,20 +442,20 @@ public class Database extends SQLiteOpenHelper {
 
         public int deleteResponse(String url) {
             if (responseExists(url)) {
-                return safeDelete(TABLE_API, Response.URL + "=?", new String[]{url});
+                return mDb.delete(TABLE_API, Response.URL + "=?", new String[]{url});
             }
             return 0;
         }
 
         public void deleteAllResponses() {
-            safeDelete(TABLE_API, "", new String[]{});
+            mDb.delete(TABLE_API, "", new String[]{});
         }
 
         public int updateResponse(String url, String updated) {
             ContentValues cv = new ContentValues();
             cv.put(Response.LASTUPDATE, updated);
             cv.put(Response.LASTHIT, new Date().getTime());
-            return safeUpdate(TABLE_API, cv, Response.URL + "=?", new String[]{url});
+            return mDb.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
         }
 
         /**
@@ -468,7 +468,7 @@ public class Database extends SQLiteOpenHelper {
             if (responseExists(url)) {
                 ContentValues cv = new ContentValues();
                 cv.put(Response.LASTHIT, new Date().getTime());
-                return safeUpdate(TABLE_API, cv, Response.URL + "=?", new String[]{url});
+                return mDb.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
             } else {
                 return -1;
             }
@@ -488,7 +488,7 @@ public class Database extends SQLiteOpenHelper {
             try {
                 if (!exists(team.getTeamKey())) {
                     insertSearchItemTeam(team);
-                    return safeInsert(TABLE_TEAMS, null, team.getParams());
+                    return mDb.insert(TABLE_TEAMS, null, team.getParams());
                 } else {
                     return update(team);
                 }
@@ -502,7 +502,7 @@ public class Database extends SQLiteOpenHelper {
         public int update(Team in) {
             updateSearchItemTeam(in);
             try {
-                return safeUpdate(TABLE_TEAMS, in.getParams(), Teams.KEY + " = ?", new String[]{in.getTeamKey()});
+                return mDb.update(TABLE_TEAMS, in.getParams(), Teams.KEY + " = ?", new String[]{in.getTeamKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update team without Database.Teams.KEY");
                 return -1;
@@ -517,7 +517,7 @@ public class Database extends SQLiteOpenHelper {
                         mDb.insert(TABLE_TEAMS, null, team.getParams());
 
                         //add search team item
-                        insertSearchItemTeam(team, false);
+                        insertSearchItemTeam(team);
                     } else {
                         mDb.update(TABLE_TEAMS, team.getParams(), KEY + " =?", new String[]{team.getTeamKey()});
                         updateSearchItemTeam(team);
@@ -531,7 +531,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public Team get(String teamKey, String[] fields) {
-            Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_TEAMS, fields, Teams.KEY + " = ?", new String[]{teamKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 Team team = ModelInflater.inflateTeam(cursor);
                 cursor.close();
@@ -542,7 +542,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public Team get(String teamKey) {
-            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_TEAMS + " WHERE " + Teams.KEY + " = ?", new String[]{teamKey});
+            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_TEAMS + " WHERE " + Teams.KEY + " = ?", new String[]{teamKey});
             if (cursor != null && cursor.moveToFirst()) {
                 Team team = ModelInflater.inflateTeam(cursor);
                 cursor.close();
@@ -554,7 +554,7 @@ public class Database extends SQLiteOpenHelper {
 
 
         public ArrayList<Team> getAll() {
-            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_TEAMS, new String[]{});
+            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_TEAMS, new String[]{});
             ArrayList<Team> ret = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -569,7 +569,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_TEAMS, new String[]{}, Teams.KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_TEAMS, new String[]{}, Teams.KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result = cursor != null && cursor.moveToFirst();
             if (cursor != null) {
                 cursor.close();
@@ -580,7 +580,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(Team in) {
             try {
-                safeDelete(TABLE_TEAMS, Teams.KEY + " = ? ", new String[]{in.getTeamKey()});
+                mDb.delete(TABLE_TEAMS, Teams.KEY + " = ? ", new String[]{in.getTeamKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete team without Database.Teams.KEY");
             }
@@ -589,7 +589,7 @@ public class Database extends SQLiteOpenHelper {
         public ArrayList<Team> getInRange(int lowerBound, int upperBound, String[] fields) {
             ArrayList<Team> teams = new ArrayList<>();
             // ?+0 ensures that string arguments that are really numbers are cast to numbers for the query
-            Cursor cursor = safeQuery(TABLE_TEAMS, fields, Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_TEAMS, fields, Teams.NUMBER + " BETWEEN ?+0 AND ?+0", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound)}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     teams.add(ModelInflater.inflateTeam(cursor));
@@ -600,7 +600,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public Cursor getCursorForTeamsInRange(int lowerBound, int upperBound) {
-            Cursor cursor = safeRawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
+            Cursor cursor = mDb.rawQuery("SELECT " + TABLE_TEAMS + ".rowid as '_id',"
                     + Teams.KEY + ","
                     + Teams.NUMBER + ","
                     + Teams.NAME + ","
@@ -656,7 +656,7 @@ public class Database extends SQLiteOpenHelper {
             try {
                 if (!exists(event.getEventKey())) {
                     insertSearchItemEvent(event);
-                    return safeInsert(TABLE_EVENTS, null, event.getParams());
+                    return mDb.insert(TABLE_EVENTS, null, event.getParams());
                 } else {
                     return update(event);
                 }
@@ -672,10 +672,10 @@ public class Database extends SQLiteOpenHelper {
                 try {
                     if (!unsafeExists(event.getEventKey())) {
                         mDb.insert(TABLE_EVENTS, null, event.getParams());
-                        insertSearchItemEvent(event, false);
+                        insertSearchItemEvent(event);
                     } else {
                         mDb.update(TABLE_EVENTS, event.getParams(), KEY + " =?", new String[]{event.getEventKey()});
-                        updateSearchItemEvent(event, false);
+                        updateSearchItemEvent(event);
                     }
                 } catch (BasicModel.FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Unable to add event - missing key.");
@@ -686,7 +686,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public Event get(String eventKey, String[] fields) {
-            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_EVENTS, fields, Events.KEY + " = ?", new String[]{eventKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 Event event = ModelInflater.inflateEvent(cursor);
                 cursor.close();
@@ -697,7 +697,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public Event get(String eventKey) {
-            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_EVENTS + " WHERE " + Events.KEY + " =?", new String[]{eventKey});
+            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_EVENTS + " WHERE " + Events.KEY + " =?", new String[]{eventKey});
             if (cursor != null && cursor.moveToFirst()) {
                 Event event = ModelInflater.inflateEvent(cursor);
                 cursor.close();
@@ -708,7 +708,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Event> getAll() {
-            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_EVENTS, new String[]{});
+            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_EVENTS, new String[]{});
             ArrayList<Event> ret = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -721,7 +721,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_EVENTS, new String[]{Events.KEY}, Events.KEY + "=?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -747,20 +747,20 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(Event in) {
             try {
-                safeDelete(TABLE_EVENTS, Events.KEY + " = ?", new String[]{in.getEventKey()});
+                mDb.delete(TABLE_EVENTS, Events.KEY + " = ?", new String[]{in.getEventKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete event without Database.Events.KEY");
             }
         }
 
         public int delete(String whereClause, String[] whereArgs) {
-            return safeDelete(TABLE_EVENTS, whereClause, whereArgs);
+            return mDb.delete(TABLE_EVENTS, whereClause, whereArgs);
         }
 
         public int update(Event event) {
             updateSearchItemEvent(event);
             try {
-                return safeUpdate(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
+                return mDb.update(TABLE_EVENTS, event.getParams(), Events.KEY + "=?", new String[]{event.getEventKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update event without Database.Events.KEY");
                 return -1;
@@ -781,7 +781,7 @@ public class Database extends SQLiteOpenHelper {
         public long add(Award in) {
             try {
                 if (!exists(in.getKey())) {
-                    return safeInsert(TABLE_AWARDS, null, in.getParams());
+                    return mDb.insert(TABLE_AWARDS, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -811,7 +811,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public int update(Award in) {
             try {
-                return safeUpdate(TABLE_AWARDS, in.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+                return mDb.update(TABLE_AWARDS, in.getParams(), Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update award without Database.Awards.EVENTKEY and Database.Awards.NAME");
                 return -1;
@@ -825,7 +825,7 @@ public class Database extends SQLiteOpenHelper {
         public Award get(String key, String[] fields) {
             String eventKey = key.split(":")[0];
             String awardName = key.split(":")[1];
-            Cursor cursor = safeQuery(TABLE_AWARDS, fields, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_AWARDS, fields, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{eventKey, awardName}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 Award award = ModelInflater.inflateAward(cursor);
                 cursor.close();
@@ -837,7 +837,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_AWARDS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_AWARDS, new String[]{}, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -863,7 +863,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(Award in) {
             try {
-                safeDelete(TABLE_AWARDS, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
+                mDb.delete(TABLE_AWARDS, Awards.EVENTKEY + " = ? AND " + Awards.NAME + " = ? ", new String[]{in.getEventKey(), in.getName()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete award without Database.Awards.EVENTKEY and Database.Awards.NAME");
             }
@@ -884,7 +884,7 @@ public class Database extends SQLiteOpenHelper {
         public long add(Match in) {
             try {
                 if (!exists(in.getKey())) {
-                    return safeInsert(TABLE_MATCHES, null, in.getParams());
+                    return mDb.insert(TABLE_MATCHES, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -914,7 +914,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public int update(Match in) {
             try {
-                return safeUpdate(TABLE_MATCHES, in.getParams(), Matches.KEY + " = ?", new String[]{in.getKey()});
+                return mDb.update(TABLE_MATCHES, in.getParams(), Matches.KEY + " = ?", new String[]{in.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update match without Database.Matches.KEY");
                 return -1;
@@ -923,7 +923,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public Match get(String key, String[] fields) {
-            Cursor cursor = safeQuery(TABLE_EVENTS, fields, Matches.KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_EVENTS, fields, Matches.KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 Match match = ModelInflater.inflateMatch(cursor);
                 cursor.close();
@@ -935,7 +935,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_MATCHES, new String[]{Matches.KEY}, Matches.KEY + "=?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_MATCHES, new String[]{Matches.KEY}, Matches.KEY + "=?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -961,14 +961,14 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(Match in) {
             try {
-                safeDelete(TABLE_MATCHES, Matches.KEY + " = ?", new String[]{in.getKey()});
+                mDb.delete(TABLE_MATCHES, Matches.KEY + " = ?", new String[]{in.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete match without Database.Matches.KEY");
             }
         }
 
         public int delete(String whereClause, String[] whereArgs) {
-            return safeDelete(TABLE_MATCHES, whereClause, whereArgs);
+            return mDb.delete(TABLE_MATCHES, whereClause, whereArgs);
         }
     }
 
@@ -983,7 +983,7 @@ public class Database extends SQLiteOpenHelper {
         public long add(Media in) {
             try {
                 if (!exists(in.getForeignKey())) {
-                    return safeInsert(TABLE_MEDIAS, null, in.getParams());
+                    return mDb.insert(TABLE_MEDIAS, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -1012,7 +1012,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public int update(Media in) {
             try {
-                return safeUpdate(TABLE_MEDIAS, in.getParams(), Medias.FOREIGNKEY + " = ?", new String[]{in.getForeignKey()});
+                return mDb.update(TABLE_MEDIAS, in.getParams(), Medias.FOREIGNKEY + " = ?", new String[]{in.getForeignKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update media without Database.Medias.FOREIGNKEY");
                 return -1;
@@ -1021,7 +1021,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public Media get(String foreignKey, String[] fields) {
-            Cursor cursor = safeQuery(TABLE_MEDIAS, fields, Medias.FOREIGNKEY + " = ?", new String[]{foreignKey}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_MEDIAS, fields, Medias.FOREIGNKEY + " = ?", new String[]{foreignKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 Media media = ModelInflater.inflateMedia(cursor);
                 cursor.close();
@@ -1033,7 +1033,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_MEDIAS, new String[]{}, Medias.FOREIGNKEY + "= ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_MEDIAS, new String[]{}, Medias.FOREIGNKEY + "= ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1059,7 +1059,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(Media in) {
             try {
-                safeDelete(TABLE_MEDIAS, Medias.FOREIGNKEY + " = ? ", new String[]{in.getForeignKey()});
+                mDb.delete(TABLE_MEDIAS, Medias.FOREIGNKEY + " = ? ", new String[]{in.getForeignKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete media without Database.Medias.FOREIGNKEY");
             }
@@ -1078,7 +1078,7 @@ public class Database extends SQLiteOpenHelper {
         public long add(EventTeam in) {
             try {
                 if (!exists(in.getKey())) {
-                    return safeInsert(TABLE_EVENTTEAMS, null, in.getParams());
+                    return mDb.insert(TABLE_EVENTTEAMS, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -1107,7 +1107,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public int update(EventTeam in) {
             try {
-                return safeUpdate(TABLE_EVENTTEAMS, in.getParams(), EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{in.getTeamKey(), in.getEventKey()});
+                return mDb.update(TABLE_EVENTTEAMS, in.getParams(), EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{in.getTeamKey(), in.getEventKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update media without Database.EventTeams.TEAMKEY and EVENTKEY");
                 return -1;
@@ -1118,7 +1118,7 @@ public class Database extends SQLiteOpenHelper {
         public EventTeam get(String key, String[] fields) {
             String eventKey = key.split("_")[0];
             String teamKey = key.split("_")[1];
-            Cursor cursor = safeQuery(TABLE_EVENTTEAMS, fields, EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{teamKey, eventKey}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_EVENTTEAMS, fields, EventTeams.TEAMKEY + " = ? AND " + EventTeams.EVENTKEY + " + ?", new String[]{teamKey, eventKey}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 EventTeam eventTeam = ModelInflater.inflateEventTeam(cursor);
                 cursor.close();
@@ -1129,7 +1129,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<EventTeam> get(String teamKey, int year, String[] fields) {
-            Cursor cursor = safeQuery(TABLE_EVENTTEAMS, fields, EventTeams.TEAMKEY + " = ? AND " + EventTeams.YEAR + " + ?", new String[]{teamKey, Integer.toString(year)}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_EVENTTEAMS, fields, EventTeams.TEAMKEY + " = ? AND " + EventTeams.YEAR + " + ?", new String[]{teamKey, Integer.toString(year)}, null, null, null, null);
             ArrayList<EventTeam> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -1141,7 +1141,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_EVENTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_EVENTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1167,7 +1167,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(EventTeam in) {
             try {
-                safeDelete(TABLE_EVENTTEAMS, TEAMKEY + " = ? AND " + EVENTKEY + " + ?", new String[]{in.getTeamKey(), in.getEventKey()});
+                mDb.delete(TABLE_EVENTTEAMS, TEAMKEY + " = ? AND " + EVENTKEY + " + ?", new String[]{in.getTeamKey(), in.getEventKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete eventTeam without Database.EventTeams.TEAMKEY and EVENTKEY");
             }
@@ -1186,7 +1186,7 @@ public class Database extends SQLiteOpenHelper {
         public long add(District in) {
             try {
                 if (!exists(in.getKey())) {
-                    return safeInsert(TABLE_DISTRICTS, null, in.getParams());
+                    return mDb.insert(TABLE_DISTRICTS, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -1215,7 +1215,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public int update(District in) {
             try {
-                return safeUpdate(TABLE_DISTRICTS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
+                return mDb.update(TABLE_DISTRICTS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update district without KEY");
                 return -1;
@@ -1224,7 +1224,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public District get(String key, String[] fields) {
-            Cursor cursor = safeQuery(TABLE_DISTRICTS, fields, Districts.KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_DISTRICTS, fields, Districts.KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 District district = ModelInflater.inflateDistrict(cursor);
                 cursor.close();
@@ -1236,7 +1236,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_DISTRICTS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_DISTRICTS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1262,7 +1262,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(District in) {
             try {
-                safeDelete(TABLE_DISTRICTS, KEY + " + ?", new String[]{in.getKey()});
+                mDb.delete(TABLE_DISTRICTS, KEY + " + ?", new String[]{in.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete district without KEY");
             }
@@ -1291,7 +1291,7 @@ public class Database extends SQLiteOpenHelper {
         public long add(DistrictTeam in) {
             try {
                 if (!exists(in.getKey())) {
-                    return safeInsert(TABLE_DISTRICTTEAMS, null, in.getParams());
+                    return mDb.insert(TABLE_DISTRICTTEAMS, null, in.getParams());
                 } else {
                     return update(in);
                 }
@@ -1320,7 +1320,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public int update(DistrictTeam in) {
             try {
-                return safeUpdate(TABLE_DISTRICTTEAMS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
+                return mDb.update(TABLE_DISTRICTTEAMS, in.getParams(), Districts.KEY + " = ?", new String[]{in.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't update districtTeam without KEY");
                 return -1;
@@ -1329,7 +1329,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public DistrictTeam get(String key, String[] fields) {
-            Cursor cursor = safeQuery(TABLE_DISTRICTTEAMS, fields, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_DISTRICTTEAMS, fields, KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 DistrictTeam districtTeam = ModelInflater.inflateDistrictTeam(cursor);
                 cursor.close();
@@ -1341,7 +1341,7 @@ public class Database extends SQLiteOpenHelper {
 
         @Override
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_DISTRICTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_DISTRICTTEAMS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1367,7 +1367,7 @@ public class Database extends SQLiteOpenHelper {
         @Override
         public void delete(DistrictTeam in) {
             try {
-                safeDelete(TABLE_DISTRICTTEAMS, KEY + " + ?", new String[]{in.getKey()});
+                mDb.delete(TABLE_DISTRICTTEAMS, KEY + " + ?", new String[]{in.getKey()});
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.e(Constants.LOG_TAG, "Can't delete districtTeam without KEY");
             }
@@ -1382,7 +1382,7 @@ public class Database extends SQLiteOpenHelper {
 
         public long add(Favorite in) {
             if (!exists(in.getKey())) {
-                return safeInsert(TABLE_FAVORITES, null, in.getParams());
+                return mDb.insert(TABLE_FAVORITES, null, in.getParams());
             }
             return -1;
         }
@@ -1398,11 +1398,11 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void remove(String key) {
-            safeDelete(TABLE_FAVORITES, KEY + " = ?", new String[]{key});
+            mDb.delete(TABLE_FAVORITES, KEY + " = ?", new String[]{key});
         }
 
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1414,7 +1414,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public Favorite get(String key) {
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_FAVORITES, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 return ModelInflater.inflateFavorite(cursor);
             }
@@ -1434,7 +1434,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Favorite> getForUser(String user) {
-            Cursor cursor = safeQuery(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
+            Cursor cursor = mDb.query(TABLE_FAVORITES, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
             ArrayList<Favorite> favorites = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -1445,7 +1445,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void recreate(String user) {
-            safeDelete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user});
+            mDb.delete(TABLE_FAVORITES, USER_NAME + " = ?", new String[]{user});
         }
     }
 
@@ -1458,14 +1458,14 @@ public class Database extends SQLiteOpenHelper {
 
         public long add(Subscription in) {
             if (!exists(in.getKey())) {
-                return safeInsert(TABLE_SUBSCRIPTIONS, null, in.getParams());
+                return mDb.insert(TABLE_SUBSCRIPTIONS, null, in.getParams());
             } else {
                 return update(in.getKey(), in);
             }
         }
 
         public int update(String key, Subscription in) {
-            return safeUpdate(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key});
+            return mDb.update(TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key});
         }
 
         public void add(ArrayList<Subscription> in) {
@@ -1479,7 +1479,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public boolean exists(String key) {
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             boolean result;
             if (cursor != null) {
                 result = cursor.moveToFirst();
@@ -1503,11 +1503,11 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void remove(String key) {
-            safeDelete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key});
+            mDb.delete(TABLE_SUBSCRIPTIONS, KEY + " = ?", new String[]{key});
         }
 
         public Subscription get(String key) {
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
+            Cursor cursor = mDb.query(TABLE_SUBSCRIPTIONS, null, KEY + " = ?", new String[]{key}, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 return ModelInflater.inflateSubscription(cursor);
             }
@@ -1515,7 +1515,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public ArrayList<Subscription> getForUser(String user) {
-            Cursor cursor = safeQuery(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
+            Cursor cursor = mDb.query(TABLE_SUBSCRIPTIONS, null, USER_NAME + " = ?", new String[]{user}, null, null, MODEL_ENUM + " ASC", null);
             ArrayList<Subscription> subscriptions = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -1526,7 +1526,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void recreate(String user) {
-            safeDelete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
+            mDb.delete(TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
         }
     }
 
@@ -1566,7 +1566,7 @@ public class Database extends SQLiteOpenHelper {
 
         public ArrayList<StoredNotification> get() {
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeRawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null);
+            Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));
@@ -1578,7 +1578,7 @@ public class Database extends SQLiteOpenHelper {
 
         public ArrayList<StoredNotification> getActive() {
             ArrayList<StoredNotification> out = new ArrayList<>();
-            Cursor cursor = safeQuery(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null);
+            Cursor cursor = mDb.query(TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     out.add(ModelInflater.inflateStoredNotification(cursor));
@@ -1591,11 +1591,11 @@ public class Database extends SQLiteOpenHelper {
         public void dismissAll() {
             ContentValues cv = new ContentValues();
             cv.put(ACTIVE, 0);
-            safeUpdate(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null);
+            mDb.update(TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null);
         }
 
         private void delete(int id) {
-            safeDelete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
+            mDb.delete(TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
         }
 
         // Only allow 50 notifications to be stored
@@ -1616,37 +1616,13 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor safeQuery(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
-        return mDb.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-    }
-
-    public Cursor safeRawQuery(String query, String[] args) {
-        return mDb.rawQuery(query, args);
-    }
-
-    public int safeUpdate(String table, ContentValues values, String whereClause, String[] whereArgs) {
-        return mDb.update(table, values, whereClause, whereArgs);
-    }
-
-    public long safeInsert(String table, String nullColumnHack, ContentValues values) {
-        return mDb.insert(table, nullColumnHack, values);
-    }
-
-    public int safeDelete(String table, String whereClause, String[] whereArgs) {
-        return mDb.delete(table, whereClause, whereArgs);
-    }
-
     public long insertSearchItemTeam(Team team) {
-        return insertSearchItemTeam(team, true);
-    }
-
-    public long insertSearchItemTeam(Team team, boolean safe) {
         ContentValues cv = new ContentValues();
         try {
             cv.put(SearchTeam.KEY, team.getTeamKey());
             cv.put(SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
             cv.put(SearchTeam.NUMBER, team.getTeamNumber());
-            return safe ? safeInsert(TABLE_SEARCH_TEAMS, null, cv) : mDb.insert(TABLE_SEARCH_TEAMS, null, cv);
+            return mDb.insert(TABLE_SEARCH_TEAMS, null, cv);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:" +
                     "Database.Teams.KEY, Database.Teams.NUMBER");
@@ -1655,30 +1631,26 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public long insertSearchItemEvent(Event event) {
-        return insertSearchItemEvent(event, true);
-    }
-
-    public long insertSearchItemEvent(Event event, boolean safe) {
         ContentValues cv = new ContentValues();
         try {
             cv.put(SearchEvent.KEY, event.getEventKey());
             cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
             cv.put(SearchEvent.YEAR, event.getEventYear());
-            return safe ? safeInsert(TABLE_SEARCH_EVENTS, null, cv) : mDb.insert(TABLE_SEARCH_EVENTS, null, cv);
+            return mDb.insert(TABLE_SEARCH_EVENTS, null, cv);
 
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
                     "Database.Events.KEY, Database.Events.YEAR");
             return -1;
         } catch (SQLiteException e) {
-            return updateSearchItemEvent(event, safe);
+            return updateSearchItemEvent(event);
         }
     }
 
     public void insertSearchItemEvents(List<Event> events) {
         mDb.beginTransaction();
         for (Event event : events) {
-            insertSearchItemEvent(event, false);
+            insertSearchItemEvent(event);
         }
         mDb.setTransactionSuccessful();
         mDb.endTransaction();
@@ -1687,7 +1659,7 @@ public class Database extends SQLiteOpenHelper {
     public void insertSearchItemTeams(List<Team> teams) {
         mDb.beginTransaction();
         for (Team team : teams) {
-            insertSearchItemTeam(team, false);
+            insertSearchItemTeam(team);
         }
         mDb.setTransactionSuccessful();
         mDb.endTransaction();
@@ -1708,18 +1680,13 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public long updateSearchItemEvent(Event event) {
-        return updateSearchItemEvent(event, true);
-    }
-
-    public long updateSearchItemEvent(Event event, boolean safe) {
         try {
             ContentValues cv = new ContentValues();
             cv.put(SearchEvent.KEY, event.getEventKey());
             cv.put(SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
             cv.put(SearchEvent.YEAR, event.getEventYear());
 
-            return safe ? safeUpdate(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()}) :
-                    mDb.update(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
+            return mDb.update(TABLE_SEARCH_EVENTS, cv, SearchEvent.KEY + "=?", new String[]{event.getEventKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
                     "Database.Events.KEY, Database.Events.YEAR");
@@ -1729,7 +1696,7 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteSearchItemTeam(Team team) {
         try {
-            safeDelete(TABLE_SEARCH_TEAMS, SearchTeam.KEY + " = ?", new String[]{team.getTeamKey()});
+            mDb.delete(TABLE_SEARCH_TEAMS, SearchTeam.KEY + " = ?", new String[]{team.getTeamKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't delete search team without Database.Teams.KEY");
         }
@@ -1737,7 +1704,7 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteSearchItemEvent(Event event) {
         try {
-            safeDelete(TABLE_SEARCH_EVENTS, SearchEvent.KEY + " = ?", new String[]{event.getEventKey()});
+            mDb.delete(TABLE_SEARCH_EVENTS, SearchEvent.KEY + " = ?", new String[]{event.getEventKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't delete search event without Database.Events.KEY");
         }
