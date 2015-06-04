@@ -196,7 +196,7 @@ public class Database extends SQLiteOpenHelper {
     private Awards mAwardsTable;
     private Matches mMatchesTable;
     private Medias mMediasTable;
-    private EventTeams eventmTeamsTable;
+    private EventTeams mEventTeamsTable;
     private Response mResponseTable;
     private Districts mDistrictsTable;
     private DistrictTeams mDistrictTeamsTable;
@@ -213,7 +213,7 @@ public class Database extends SQLiteOpenHelper {
         mAwardsTable = new Awards();
         mMatchesTable = new Matches();
         mMediasTable = new Medias();
-        eventmTeamsTable = new EventTeams();
+        mEventTeamsTable = new EventTeams();
         mDistrictsTable = new Districts();
         mDistrictTeamsTable = new DistrictTeams();
         favoritesTable = new Favorites();
@@ -225,6 +225,7 @@ public class Database extends SQLiteOpenHelper {
     public static synchronized Database getInstance(Context context) {
         if (sDatabaseInstance == null) {
             sDatabaseInstance = new Database(context);
+            sDatabaseInstance.setWriteAheadLoggingEnabled(true);
         }
         return sDatabaseInstance;
     }
@@ -253,15 +254,15 @@ public class Database extends SQLiteOpenHelper {
         return mResponseTable;
     }
 
-    public EventTeams getEventmTeamsTable() {
-        return eventmTeamsTable;
+    public EventTeams getEventTeamsTable() {
+        return mEventTeamsTable;
     }
 
     public Districts getDistrictsTable() {
         return mDistrictsTable;
     }
 
-    public DistrictTeams getDistrictmTeamsTable() {
+    public DistrictTeams getDistrictTeamsTable() {
         return mDistrictTeamsTable;
     }
 
