@@ -40,12 +40,14 @@ public class JSONManager {
         return element == null || element.isJsonNull();
     }
 
+    @Deprecated
     public static JsonParser getParser() {
         if (parser == null)
             parser = new JsonParser();
         return parser;
     }
 
+    @Deprecated
     public static Gson getGson() {
         if (gson == null) {
             /* Construct new gson with our custom deserializers */
