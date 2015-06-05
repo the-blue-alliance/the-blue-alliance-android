@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 
-public class TBAv2 {
+public class LegacyAPIHelper {
 
     private static final String TBA_HOST_PREF = "tba_host";
     private static final String tbaHostDefault = "http://www.thebluealliance.com";
