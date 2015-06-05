@@ -21,7 +21,7 @@ import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.GamedayFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class GamedayActivity extends BaseActivity implements ViewPager.OnPageChangeListener {

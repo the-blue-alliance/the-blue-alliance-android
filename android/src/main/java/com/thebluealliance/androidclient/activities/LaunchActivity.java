@@ -25,7 +25,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 

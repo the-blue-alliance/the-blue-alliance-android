@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datafeed;
+package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
