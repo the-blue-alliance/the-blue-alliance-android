@@ -9,13 +9,12 @@ import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 import java.util.ArrayList;
@@ -46,7 +45,7 @@ public class EventTeam extends BasicModel<EventTeam> {
         }
     }
 
-    public String getKey() throws FieldNotDefinedException {
+    public String getKey() {
         if (fields.containsKey(Database.EventTeams.KEY) && fields.get(Database.EventTeams.KEY) instanceof String) {
             return (String) fields.get(Database.EventTeams.KEY);
         } else {
@@ -55,7 +54,7 @@ public class EventTeam extends BasicModel<EventTeam> {
                 setKey(newKey);
                 return newKey;
             } catch (FieldNotDefinedException e) {
-                throw new FieldNotDefinedException("Field Database.Awards.KEY is not defined");
+                return "";
             }
         }
     }
@@ -114,18 +113,18 @@ public class EventTeam extends BasicModel<EventTeam> {
         return null;
     }
 
-    public static synchronized APIResponse<ArrayList<EventTeam>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<EventTeam>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying eventTeams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.EventTeams table = Database.getInstance(c).getEventTeamsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<EventTeam> eventTeams = new ArrayList<>();
         ArrayList<Event> events = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                eventTeams.add(ModelInflater.inflateEventTeam(cursor));
+                eventTeams.add(table.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }
-
 
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
@@ -151,7 +150,7 @@ public class EventTeam extends BasicModel<EventTeam> {
 
         if (changed) {
             Database.getInstance(c).getEventTeamsTable().add(eventTeams);
-            Database.getInstance(c).getEventsTable().storeEvents(events);
+            Database.getInstance(c).getEventsTable().add(events);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events and, updated in db? " + changed);
         return new APIResponse<>(eventTeams, code);

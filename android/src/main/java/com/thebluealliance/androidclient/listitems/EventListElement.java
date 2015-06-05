@@ -22,7 +22,7 @@ public class EventListElement extends ListElement implements Serializable {
     private String mEventKey;
 
     public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
-        super(event.getEventKey());
+        super(event.getKey());
         mEventName = event.getEventName();
         mEventDates = event.getDateString();
         mEventLocation = event.getLocation();

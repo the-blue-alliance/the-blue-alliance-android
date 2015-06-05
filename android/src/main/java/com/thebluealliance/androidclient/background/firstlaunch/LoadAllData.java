@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
@@ -166,9 +166,9 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
             Log.d(Constants.LOG_TAG, "storing teams");
-            Database.getInstance(context).getTeamsTable().storeTeams(teams);
+            Database.getInstance(context).getTeamsTable().add(teams);
             Log.d(Constants.LOG_TAG, "storing events");
-            Database.getInstance(context).getEventsTable().storeEvents(events);
+            Database.getInstance(context).getEventsTable().add(events);
             Log.d(Constants.LOG_TAG, "storing districts");
             Database.getInstance(context).getDistrictsTable().add(districts);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
