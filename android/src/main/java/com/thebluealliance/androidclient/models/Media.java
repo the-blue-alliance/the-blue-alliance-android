@@ -10,11 +10,10 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -58,6 +57,15 @@ public class Media extends BasicModel<Media> {
     public Media() {
         super(Database.TABLE_MEDIAS);
         details = null;
+    }
+
+    @Override
+    public String getKey() {
+        try {
+            return getForeignKey();
+        } catch (FieldNotDefinedException e) {
+            return "";
+        }
     }
 
     public Media.TYPE getMediaType() throws FieldNotDefinedException {
@@ -154,10 +162,11 @@ public class Media extends BasicModel<Media> {
 
     public static APIResponse<Media> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Medias table = Database.getInstance(c).getMediasTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Media media;
         if (cursor != null && cursor.moveToFirst()) {
-            media = ModelInflater.inflateMedia(cursor);
+            media = table.inflate(cursor);
             cursor.close();
         } else {
             media = new Media();
@@ -182,13 +191,14 @@ public class Media extends BasicModel<Media> {
         return new APIResponse<>(media, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Medias table = Database.getInstance(c).getMediasTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Media> medias = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                medias.add(ModelInflater.inflateMedia(cursor));
+                medias.add(table.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }

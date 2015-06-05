@@ -8,12 +8,11 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
 
 import java.util.ArrayList;
@@ -39,11 +38,11 @@ public class District extends BasicModel<District> {
         fields.put(Database.Districts.KEY, key);
     }
 
-    public String getKey() throws FieldNotDefinedException {
+    public String getKey() {
         if (fields.containsKey(Database.Districts.KEY) && fields.get(Database.Districts.KEY) instanceof String) {
             return (String) fields.get(Database.Districts.KEY);
         } else {
-            throw new FieldNotDefinedException("Field Database.Districts.KEY is not defined");
+            return "";
         }
     }
 
@@ -120,13 +119,14 @@ public class District extends BasicModel<District> {
     }
 
     // This method will only return a locally stored district
-    public static synchronized APIResponse<District> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<District> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districts table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Districts table = Database.getInstance(c).getDistrictsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         District district;
         boolean changed = false;
         if (cursor != null && cursor.moveToFirst()) {
-            district = ModelInflater.inflateDistrict(cursor);
+            district = table.inflate(cursor);
             cursor.close();
             changed = true;
         } else {
@@ -145,13 +145,14 @@ public class District extends BasicModel<District> {
         return new APIResponse<>(district, requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
     }
 
-    public static synchronized APIResponse<ArrayList<District>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<District>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districts table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Districts table = Database.getInstance(c).getDistrictsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<District> districts = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                districts.add(ModelInflater.inflateDistrict(cursor));
+                districts.add(table.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }

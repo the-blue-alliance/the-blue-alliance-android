@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -88,7 +89,7 @@ public class DataManager {
 
                 ArrayList<Team> teams = TBAv2.getTeamList(teamListResponse.getData());
                 if (teamListResponse.getCode() == APIResponse.CODE.WEBLOAD || teamListResponse.getCode() == APIResponse.CODE.UPDATED && teams.size() > 0) {
-                    Database.getInstance(c).getTeamsTable().storeTeams(teams);
+                    Database.getInstance(c).getTeamsTable().add(teams);
                 }
             }
             cursor = Database.getInstance(c).getTeamsTable().getCursorForTeamsInRange(lowerBound, upperBound);
@@ -470,7 +471,7 @@ public class DataManager {
             int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtKey.substring(4)).ordinal();
             String whereClause = Database.Events.YEAR + " = ? AND " + Database.Events.DISTRICT + " = ?";
             String[] whereArgs = new String[]{year, Integer.toString(districtEnum)};
-            Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+            Cursor cursor = Database.getInstance(c).getEventsTable().query(fields, whereClause, whereArgs, null, null, null, null);
             if (cursor == null || !cursor.moveToFirst()) {
                 return 0;
             } else {

@@ -18,7 +18,6 @@ import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
 import java.util.ArrayList;
@@ -62,10 +61,6 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
             return response.getCode();
         } catch (DataManager.NoDataException e) {
             Log.w(Constants.LOG_TAG, "Unable to get district list for " + year);
-            return APIResponse.CODE.NODATA;
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.wtf(Constants.LOG_TAG, "District has no key?");
-            e.printStackTrace();
             return APIResponse.CODE.NODATA;
         }
     }

@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.squareup.okhttp.Response;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
@@ -161,7 +162,7 @@ public class TBAv2 {
                  */
 
                 APIResponse<String> cachedData;
-                cachedData = Database.getInstance(c).getResponseTable().getResponse(URL);   /* this will always return an empty string and Code.LOCAL for the data.
+                cachedData = Database.getInstance(c).getResponseTable().getResponseIfExists(URL);   /* this will always return an empty string and Code.LOCAL for the data.
                                                                                              * we just care about the updated times for the query.
                                                                                              * getLastUpdate() will return the Last-Modified header from the
                                                                                              * last time we queried this endpoint (which will subsequently be passed
@@ -247,7 +248,7 @@ public class TBAv2 {
                 }
             } else {
                 Log.d(Constants.DATAMANAGER_LOG, "Offline; can't check API. " + URL);
-                return Database.getInstance(c).getResponseTable().getResponse(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
+                return Database.getInstance(c).getResponseTable().getResponseIfExists(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
             }
         } else {
             if (connectedToInternet) {

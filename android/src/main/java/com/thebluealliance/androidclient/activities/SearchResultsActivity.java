@@ -21,7 +21,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -175,7 +175,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     // Don't display models that don't exist anymore and delete them from search indexes
                     team = new Team();
                     team.setTeamKey(key);
-                    Database.getInstance(this).deleteSearchItemTeam(team);
+                    Database.getInstance(this).getTeamsTable().deleteSearchIndex(team);
                     continue;
                 }
                 try {
@@ -222,7 +222,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     // Don't display models that don't exist anymore and delete them from search indexes
                     event = new Event();
                     event.setEventKey(key);
-                    Database.getInstance(this).deleteSearchItemEvent(event);
+                    Database.getInstance(this).getEventsTable().deleteSearchIndex(event);
                     continue;
                 }
                 try {
