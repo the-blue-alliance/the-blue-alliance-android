@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
@@ -247,9 +247,9 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
                 DistrictTeam updatedTeam = new DistrictTeam();
                 if (url.contains("district") && url.contains("rankings")) {
                     /* We're requesting the rankings for an entire district (there isn't yet a single endpoint for this) */
-                    JsonArray teamList = JSONManager.getasJsonArray(response.getData());
+                    JsonArray teamList = JSONHelper.getasJsonArray(response.getData());
                     for (JsonElement t : teamList) {
-                        DistrictTeam inflated = JSONManager.getGson().fromJson(t, DistrictTeam.class);
+                        DistrictTeam inflated = JSONHelper.getGson().fromJson(t, DistrictTeam.class);
                         DistrictTeamHelper.addFieldsFromKey(inflated, key);
 
                         if (inflated.getKey().equals(key)) {
@@ -260,7 +260,7 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
                         }
                     }
                 } else {
-                    updatedTeam = JSONManager.getGson().fromJson(response.getData(), DistrictTeam.class);
+                    updatedTeam = JSONHelper.getGson().fromJson(response.getData(), DistrictTeam.class);
                 }
                 team.merge(updatedTeam);
                 changed = true;
@@ -294,10 +294,10 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray districtList = JSONManager.getasJsonArray(response.getData());
+                JsonArray districtList = JSONHelper.getasJsonArray(response.getData());
                 districtTeams = new ArrayList<>();
                 for (JsonElement d : districtList) {
-                    DistrictTeam next = JSONManager.getGson().fromJson(d, DistrictTeam.class);
+                    DistrictTeam next = JSONHelper.getGson().fromJson(d, DistrictTeam.class);
                     try {
                         DistrictTeamHelper.addFieldsFromAPIUrl(next, next.getTeamKey(), url);
                         districtTeams.add(next);

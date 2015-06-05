@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -57,7 +57,7 @@ public class Event extends BasicModel<Event> {
             return alliances;
         }
         if (fields.containsKey(Database.Events.ALLIANCES) && fields.get(Database.Events.ALLIANCES) instanceof String) {
-            alliances = JSONManager.getasJsonArray((String) fields.get(Database.Events.ALLIANCES));
+            alliances = JSONHelper.getasJsonArray((String) fields.get(Database.Events.ALLIANCES));
             return alliances;
         }
         throw new FieldNotDefinedException("Field Database.Events.ALLIANCES is not defined");
@@ -96,7 +96,7 @@ public class Event extends BasicModel<Event> {
             return rankings;
         }
         if (fields.containsKey(Database.Events.RANKINGS) && fields.get(Database.Events.RANKINGS) instanceof String) {
-            rankings = JSONManager.getasJsonArray((String) fields.get(Database.Events.RANKINGS));
+            rankings = JSONHelper.getasJsonArray((String) fields.get(Database.Events.RANKINGS));
             return rankings;
         }
         throw new FieldNotDefinedException("Field Database.Events.RANKINGS is not defined");
@@ -116,7 +116,7 @@ public class Event extends BasicModel<Event> {
             return webcasts;
         }
         if (fields.containsKey(Database.Events.WEBCASTS) && fields.get(Database.Events.WEBCASTS) instanceof String) {
-            webcasts = JSONManager.getasJsonArray((String) fields.get(Database.Events.WEBCASTS));
+            webcasts = JSONHelper.getasJsonArray((String) fields.get(Database.Events.WEBCASTS));
             return webcasts;
         }
         throw new FieldNotDefinedException("Field Database.Events.WEBCASTS is not defined");
@@ -136,7 +136,7 @@ public class Event extends BasicModel<Event> {
             return stats;
         }
         if (fields.containsKey(Database.Events.STATS) && fields.get(Database.Events.STATS) instanceof String) {
-            stats = JSONManager.getasJsonObject((String) fields.get(Database.Events.STATS));
+            stats = JSONHelper.getasJsonObject((String) fields.get(Database.Events.STATS));
             return stats;
         }
         throw new FieldNotDefinedException("Field Database.Events.STATS is not defined");
@@ -269,7 +269,7 @@ public class Event extends BasicModel<Event> {
             return districtPoints;
         }
         if (fields.containsKey(Database.Events.DISTRICT_POINTS) && fields.get(Database.Events.DISTRICT_POINTS) instanceof String) {
-            districtPoints = JSONManager.getasJsonObject((String) fields.get(Database.Events.DISTRICT_POINTS));
+            districtPoints = JSONHelper.getasJsonObject((String) fields.get(Database.Events.DISTRICT_POINTS));
             return districtPoints;
         }
         throw new FieldNotDefinedException("Field Database.Events.DISTRICT_POINTS is not defined");
@@ -416,7 +416,7 @@ public class Event extends BasicModel<Event> {
             return teams;
         }
         if (fields.containsKey(Database.Events.TEAMS) && fields.get(Database.Events.TEAMS) instanceof String) {
-            teams = JSONManager.getasJsonArray((String) fields.get(Database.Events.TEAMS));
+            teams = JSONHelper.getasJsonArray((String) fields.get(Database.Events.TEAMS));
             return teams;
         }
         throw new FieldNotDefinedException("Field Database.Events.TEAMS is not defined");
@@ -513,7 +513,7 @@ public class Event extends BasicModel<Event> {
                      * Here, the last url parameter is the event key
                      * All other endpoints have something else after that
                      */
-                    updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
+                    updatedEvent = JSONHelper.getGson().fromJson(response.getData(), Event.class);
                     if (updatedEvent == null) {
                         // Error parsing the json
                         code = APIResponse.CODE.NODATA;
@@ -549,10 +549,10 @@ public class Event extends BasicModel<Event> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                 events = new ArrayList<>();
                 for (JsonElement m : matchList) {
-                    events.add(JSONManager.getGson().fromJson(m, Event.class));
+                    events.add(JSONHelper.getGson().fromJson(m, Event.class));
                 }
                 changed = true;
             }

@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
@@ -162,7 +162,7 @@ public class District extends BasicModel<District> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray districtList = JSONManager.getasJsonArray(response.getData());
+                JsonArray districtList = JSONHelper.getasJsonArray(response.getData());
                 districts = DistrictHelper.buildVersionedDistrictList(districtList, url, response.getVersion());
                 changed = true;
             }

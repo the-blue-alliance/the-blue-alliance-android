@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -431,7 +430,7 @@ public class EventHelper {
         } else if (url.contains("rankings")) {
             event.setRankings(data);
         } else if (url.contains("matches")) {
-            event.setMatches(JSONManager.getasJsonArray(data));
+            event.setMatches(JSONHelper.getasJsonArray(data));
         } else if (url.contains("stats")) {
             event.setStats(data);
         } else if (url.contains("district_points")) {

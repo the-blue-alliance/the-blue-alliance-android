@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -120,14 +122,14 @@ public class APIResponse<A> {
     public static JSONObject getVersionedJsonObject(APIResponse<String> response) throws JSONException {
         JSONObject object = new JSONObject();
         object.put(JSON_VERSION, response.getVersion());
-        object.put(JSON_DATA, JSONManager.getasJsonObject(response.getData()));
+        object.put(JSON_DATA, JSONHelper.getasJsonObject(response.getData()));
         return object;
     }
 
     public static JSONObject getVersionedJsonArray(APIResponse<String> response) throws JSONException {
         JSONObject object = new JSONObject();
         object.put(JSON_VERSION, response.getVersion());
-        object.put(JSON_DATA, JSONManager.getasJsonArray(response.getData()));
+        object.put(JSON_DATA, JSONHelper.getasJsonArray(response.getData()));
         return object;
     }
 

@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -45,7 +45,7 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
         if (!jsonData.has("match")) {
             throw new JsonParseException("Notification data does not contain 'match");
         }

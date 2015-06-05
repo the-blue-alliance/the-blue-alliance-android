@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datafeed;
+package com.thebluealliance.androidclient.helpers;
 
 import android.util.Log;
 
@@ -28,7 +28,7 @@ import com.thebluealliance.androidclient.models.Team;
 /**
  * File created by phil on 4/22/14.
  */
-public class JSONManager {
+public class JSONHelper {
     private static Gson gson;
     private static JsonParser parser;
 

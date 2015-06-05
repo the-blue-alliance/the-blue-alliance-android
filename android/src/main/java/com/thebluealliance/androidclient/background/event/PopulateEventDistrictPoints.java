@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
@@ -93,7 +93,7 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
             ArrayList<DistrictPointBreakdown> pointBreakdowns = new ArrayList<>();
             for (Map.Entry<String, JsonElement> teamPoints : points.entrySet()) {
                 Team team = DataManager.Teams.getTeamFromDB(activity, teamPoints.getKey());
-                DistrictPointBreakdown b = JSONManager.getGson().fromJson(teamPoints.getValue(), DistrictPointBreakdown.class);
+                DistrictPointBreakdown b = JSONHelper.getGson().fromJson(teamPoints.getValue(), DistrictPointBreakdown.class);
                 b.setTeamKey(teamPoints.getKey());
                 b.setTeamName(team != null ? team.getNickname() : "Team " + teamPoints.getKey().substring(3));
                 b.setDistrictKey(districtKey);

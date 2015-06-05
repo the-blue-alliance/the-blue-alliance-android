@@ -18,7 +18,7 @@ import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
@@ -87,7 +87,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
                     APIResponse<String> teamListResponse;
                     teamListResponse = LegacyAPIHelper.getResponseFromURLOrThrow(context, String.format(LegacyAPIHelper.getTBAApiUrl(context, LegacyAPIHelper.QUERY.TEAM_LIST), pageNum), new RequestParams());
-                    JsonArray responseObject = JSONManager.getasJsonArray(teamListResponse.getData());
+                    JsonArray responseObject = JSONHelper.getasJsonArray(teamListResponse.getData());
                     if (responseObject != null) {
                         if (responseObject.size() == 0) {
                             // No teams found for a page; we are done
@@ -116,7 +116,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                             return null;
                         }
                         try {
-                            JsonElement responseObject = JSONManager.getParser().parse(eventListResponse.getData());
+                            JsonElement responseObject = JSONHelper.getParser().parse(eventListResponse.getData());
                             if (responseObject instanceof JsonObject) {
                                 if (((JsonObject) responseObject).has("404")) {
                                     // No events found for that year; skip it
@@ -147,7 +147,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                     if (districtListResponse.getData() == null) {
                         continue;
                     }
-                    JsonElement responseObject = JSONManager.getParser().parse(districtListResponse.getData());
+                    JsonElement responseObject = JSONHelper.getParser().parse(districtListResponse.getData());
                     if (responseObject instanceof JsonObject) {
                         if (((JsonObject) responseObject).has("404")) {
                             // No events found for that year; skip it

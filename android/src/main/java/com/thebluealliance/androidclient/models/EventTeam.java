@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -131,10 +131,10 @@ public class EventTeam extends BasicModel<EventTeam> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                 eventTeams = new ArrayList<>();
                 for (JsonElement m : matchList) {
-                    Event e = JSONManager.getGson().fromJson(m, Event.class);
+                    Event e = JSONHelper.getGson().fromJson(m, Event.class);
                     events.add(e);
                     try {
                         EventTeam et = EventTeamHelper.fromEvent(teamKey, e);

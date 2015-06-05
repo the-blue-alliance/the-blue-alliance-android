@@ -15,7 +15,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -39,7 +39,7 @@ public class AllianceSelectionNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
         if (!jsonData.has("event")) {
             throw new JsonParseException("Notification data does not have an 'event' object");
         }

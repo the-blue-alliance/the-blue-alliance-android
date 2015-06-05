@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -70,7 +70,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
 
                 mMatchDetails.add(match.render(false, true, false, false));
                 mMatchTitle = match.getTitle();
-                Gson gson = JSONManager.getGson();
+                Gson gson = JSONHelper.getGson();
                 for (JsonElement v : match.getVideos()) {
                     if (Media.TYPE.fromString(v.getAsJsonObject().get("type").getAsString()) != Media.TYPE.NONE) {
                         mMatchDetails.add(gson.fromJson(v, Media.class).render());

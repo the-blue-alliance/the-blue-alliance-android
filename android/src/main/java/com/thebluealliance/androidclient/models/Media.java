@@ -11,7 +11,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
@@ -110,7 +110,7 @@ public class Media extends BasicModel<Media> {
             return details;
         }
         if (fields.containsKey(Database.Medias.DETAILS) && fields.get(Database.Medias.DETAILS) instanceof String) {
-            details = JSONManager.getasJsonObject((String) fields.get(Database.Medias.DETAILS));
+            details = JSONHelper.getasJsonObject((String) fields.get(Database.Medias.DETAILS));
             return details;
         }
         throw new FieldNotDefinedException("Field Database.Medias.TEAMKEY is not defined");
@@ -177,7 +177,7 @@ public class Media extends BasicModel<Media> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Media updatedMedia = JSONManager.getGson().fromJson(response.getData(), Media.class);
+                Media updatedMedia = JSONHelper.getGson().fromJson(response.getData(), Media.class);
                 media.merge(updatedMedia);
                 changed = true;
             }
@@ -208,10 +208,10 @@ public class Media extends BasicModel<Media> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray mediaList = JSONManager.getasJsonArray(response.getData());
+                JsonArray mediaList = JSONHelper.getasJsonArray(response.getData());
                 medias = new ArrayList<>();
                 for (JsonElement m : mediaList) {
-                    Media media = JSONManager.getGson().fromJson(m, Media.class);
+                    Media media = JSONHelper.getGson().fromJson(m, Media.class);
                     media.setTeamKey(teamKey);
                     media.setYear(year);
                     medias.add(media);

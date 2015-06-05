@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictBreakdownFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
@@ -106,7 +106,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
                 pointsCodes.add(teamPoints.getCode());
                 ListGroup eventGroup = new ListGroup(DataManager.Events.getEventBasic(activity, eventKey, requestParams).getData().getEventName());
 
-                DistrictPointBreakdown breakdown = JSONManager.getGson().fromJson(teamPoints.getData(), DistrictPointBreakdown.class);
+                DistrictPointBreakdown breakdown = JSONHelper.getGson().fromJson(teamPoints.getData(), DistrictPointBreakdown.class);
 
                 if (breakdown.getQualPoints() > -1) {
                     eventGroup.children.add(breakdown.renderQualPoints(activity));

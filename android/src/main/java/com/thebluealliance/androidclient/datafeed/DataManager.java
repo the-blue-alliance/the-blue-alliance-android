@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -233,7 +234,7 @@ public class DataManager {
                 JsonArray teamList = eventResponse.getData().getTeams();
                 Log.d(Constants.LOG_TAG, "Found " + teamList.size() + " teams");
                 for (JsonElement t : teamList) {
-                    teams.add(JSONManager.getGson().fromJson(t, Team.class));
+                    teams.add(JSONHelper.getGson().fromJson(t, Team.class));
                 }
                 return new APIResponse<>(teams, eventResponse.getCode());
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -354,7 +355,7 @@ public class DataManager {
                         for (JsonElement winner : winners) {
                             JsonObject w = winner.getAsJsonObject();
                             JsonElement team_number = w.get("team_number");
-                            if (!JSONManager.isNull(team_number) && team_number.getAsString().equals(teamKey.substring(3))) {
+                            if (!JSONHelper.isNull(team_number) && team_number.getAsString().equals(teamKey.substring(3))) {
                                 awards.add(award);
                                 break;
                             }

@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -96,24 +97,24 @@ public class LegacyAPIHelper {
 
     public static ArrayList<Event> getEventList(String json) {
         ArrayList<Event> events = new ArrayList<>();
-        JsonArray data = JSONManager.getasJsonArray(json);
+        JsonArray data = JSONHelper.getasJsonArray(json);
         for (JsonElement aData : data) {
-            events.add(JSONManager.getGson().fromJson(aData, Event.class));
+            events.add(JSONHelper.getGson().fromJson(aData, Event.class));
         }
         return events;
     }
 
     public static ArrayList<Team> getTeamList(String json) {
         ArrayList<Team> teams = new ArrayList<>();
-        JsonArray data = JSONManager.getasJsonArray(json);
+        JsonArray data = JSONHelper.getasJsonArray(json);
         for (JsonElement aData : data) {
-            teams.add(JSONManager.getGson().fromJson(aData, Team.class));
+            teams.add(JSONHelper.getGson().fromJson(aData, Team.class));
         }
         return teams;
     }
 
     public static ArrayList<District> getDistrictList(String json, String url, int version) {
-        JsonArray data = JSONManager.getasJsonArray(json);
+        JsonArray data = JSONHelper.getasJsonArray(json);
         return DistrictHelper.buildVersionedDistrictList(data, url, version);
     }
 

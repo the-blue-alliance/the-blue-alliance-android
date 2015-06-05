@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
@@ -78,7 +78,7 @@ public class Award extends BasicModel<Award> {
             return winners;
         }
         if (fields.containsKey(Database.Awards.WINNERS) && fields.get(Database.Awards.WINNERS) instanceof String) {
-            winners = JSONManager.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
+            winners = JSONHelper.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
             return winners;
         }
         throw new FieldNotDefinedException("Field Database.Awards.WINNERS is not defined");
@@ -157,7 +157,7 @@ public class Award extends BasicModel<Award> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Award updatedAward = JSONManager.getGson().fromJson(response.getData(), Award.class);
+                Award updatedAward = JSONHelper.getGson().fromJson(response.getData(), Award.class);
                 award.merge(updatedAward);
                 changed = true;
             }
@@ -192,10 +192,10 @@ public class Award extends BasicModel<Award> {
         for (String url : apiUrls) {
             APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray awardList = JSONManager.getasJsonArray(response.getData());
+                JsonArray awardList = JSONHelper.getasJsonArray(response.getData());
                 awards = new ArrayList<>();
                 for (JsonElement a : awardList) {
-                    Award award = JSONManager.getGson().fromJson(a, Award.class);
+                    Award award = JSONHelper.getGson().fromJson(a, Award.class);
                     try {
                         if (teamSet && award.getWinners().toString().contains(teamNumber)) {
                             awards.add(award);

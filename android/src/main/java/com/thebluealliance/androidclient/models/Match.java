@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -123,7 +123,7 @@ public class Match extends BasicModel<Match> {
             return alliances;
         }
         if (fields.containsKey(Database.Matches.ALLIANCES) && fields.get(Database.Matches.ALLIANCES) instanceof String) {
-            alliances = JSONManager.getasJsonObject((String) fields.get(Database.Matches.ALLIANCES));
+            alliances = JSONHelper.getasJsonObject((String) fields.get(Database.Matches.ALLIANCES));
             return alliances;
         }
         throw new FieldNotDefinedException("Field Database.Matches.ALLIANCES is not defined");
@@ -174,7 +174,7 @@ public class Match extends BasicModel<Match> {
             return videos;
         }
         if (fields.containsKey(Database.Matches.VIDEOS) && fields.get(Database.Matches.VIDEOS) instanceof String) {
-            videos = JSONManager.getasJsonArray((String) fields.get(Database.Matches.VIDEOS));
+            videos = JSONHelper.getasJsonArray((String) fields.get(Database.Matches.VIDEOS));
             return videos;
         }
         throw new FieldNotDefinedException("Field Database.Matches.VIDEOS is not defined");
@@ -445,9 +445,9 @@ public class Match extends BasicModel<Match> {
                 Match updatedMatch = new Match();
                 if (url.contains("event") && url.contains("matches")) {
                     /* We're requesting the matches for the whole event (there isn't a single match endpoint */
-                    JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                    JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                     for (JsonElement m : matchList) {
-                        Match inflated = JSONManager.getGson().fromJson(m, Match.class);
+                        Match inflated = JSONHelper.getGson().fromJson(m, Match.class);
                         if (m.getAsJsonObject().get("key").getAsString().equals(key)) {
                             updatedMatch = inflated;
                             //this match will be added to the list below
@@ -456,7 +456,7 @@ public class Match extends BasicModel<Match> {
                         }
                     }
                 } else {
-                    updatedMatch = JSONManager.getGson().fromJson(response.getData(), Match.class);
+                    updatedMatch = JSONHelper.getGson().fromJson(response.getData(), Match.class);
                 }
                 match.merge(updatedMatch);
                 changed = true;
@@ -495,10 +495,10 @@ public class Match extends BasicModel<Match> {
 
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 /* If we get back data, parse it */
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                 allMatches = new ArrayList<>();
                 for (JsonElement m : matchList) {
-                    Match match = JSONManager.getGson().fromJson(m, Match.class);
+                    Match match = JSONHelper.getGson().fromJson(m, Match.class);
                     allMatches.add(match);
                 }
                 changed = true;

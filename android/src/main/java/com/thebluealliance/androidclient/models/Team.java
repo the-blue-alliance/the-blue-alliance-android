@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -124,7 +124,7 @@ public class Team extends BasicModel<Team> {
             return yearsParticipated;
         }
         if (fields.containsKey(Database.Teams.YEARS_PARTICIPATED) && fields.get(Database.Teams.YEARS_PARTICIPATED) instanceof String) {
-            yearsParticipated = JSONManager.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
+            yearsParticipated = JSONHelper.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
             return yearsParticipated;
         }
         throw new FieldNotDefinedException("Field Database.Teams.YEARS_PARTICIPATED is not defined");
@@ -184,7 +184,7 @@ public class Team extends BasicModel<Team> {
                     updatedTeam = new Team();
                     team.setYearsParticipated(response.getData());
                 } else {
-                    updatedTeam = JSONManager.getGson().fromJson(response.getData(), Team.class);
+                    updatedTeam = JSONHelper.getGson().fromJson(response.getData(), Team.class);
                 }
                 team.merge(updatedTeam);
                 changed = true;
