@@ -34,7 +34,7 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         String user = params[0];
 
-        Database.Favorites favorites = Database.getInstance(context).getmFavoritesTable();
+        Database.Favorites favorites = Database.getInstance(context).getFavoritesTable();
         favorites.recreate(user);
 
         Database.Subscriptions subscriptions = Database.getInstance(context).getSubscriptionsTable();

@@ -57,7 +57,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                     fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
                     fav.setModelKey("frc111");
                     fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
-                    Database.getInstance(getActivity()).getmFavoritesTable().add(fav);
+                    Database.getInstance(getActivity()).getFavoritesTable().add(fav);
                     return true;
                 }
             });

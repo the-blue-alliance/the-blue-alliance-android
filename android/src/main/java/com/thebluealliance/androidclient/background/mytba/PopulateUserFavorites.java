@@ -66,7 +66,7 @@ public class PopulateUserFavorites extends AsyncTask<Void, Void, APIResponse.COD
             Collections.sort(collection, new FavoriteSortByModelComparator());
         } else {
             // otherwise, load local data
-            collection = Database.getInstance(activity).getmFavoritesTable().getForUser(AccountHelper.getSelectedAccount(activity));
+            collection = Database.getInstance(activity).getFavoritesTable().getForUser(AccountHelper.getSelectedAccount(activity));
             if (requestParams.forceFromCache) {
                 // When we force from cache, set the codes properly
                 // so the second task will fire off

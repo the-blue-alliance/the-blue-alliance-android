@@ -266,7 +266,7 @@ public class Database extends SQLiteOpenHelper {
         return mDistrictTeamsTable;
     }
 
-    public Favorites getmFavoritesTable() {
+    public Favorites getFavoritesTable() {
         return mFavoritesTable;
     }
 

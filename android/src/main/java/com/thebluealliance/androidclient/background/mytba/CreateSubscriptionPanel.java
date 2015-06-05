@@ -39,7 +39,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         String modelKey = params[0];
 
-        Database.Favorites favTable = Database.getInstance(context).getmFavoritesTable();
+        Database.Favorites favTable = Database.getInstance(context).getFavoritesTable();
         Database.Subscriptions subTable = Database.getInstance(context).getSubscriptionsTable();
 
         String currentUser = AccountHelper.getSelectedAccount(context);

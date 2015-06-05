@@ -532,7 +532,7 @@ public class DataManager {
                 return new APIResponse<>(null, APIResponse.CODE.NODATA);
             }
 
-            Database.Favorites favorites = Database.getInstance(context).getmFavoritesTable();
+            Database.Favorites favorites = Database.getInstance(context).getFavoritesTable();
             favorites.recreate(currentUser);
             if (favoriteCollection.getFavorites() != null) {
                 for (ModelsMobileApiMessagesFavoriteMessage f : favoriteCollection.getFavorites()) {
