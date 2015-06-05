@@ -21,6 +21,8 @@ import rx.Observable;
  */
 interface APIv2 {
 
+    String TBA_APIv2_URL = "http://www.thebluealliance.com/api/v2";
+
     @GET("/teams/{pageNum}")
     Observable<List<Team>> fetchTeamPage(
             @Path("pageNum") int pageNum,

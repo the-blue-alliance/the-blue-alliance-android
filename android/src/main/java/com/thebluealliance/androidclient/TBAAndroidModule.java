@@ -1,11 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import android.content.Context;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
-import dagger.Provides;
 
 @Module(
         injects = {
@@ -19,9 +14,11 @@ public class TBAAndroidModule {
         mApp = app;
     }
 
+    /* UNCOMMENT WHEN NEEDED
     @Provides
     @Singleton
     public Context provideApplicationContext() {
         return mApp.getApplicationContext();
     }
+    */
 }
