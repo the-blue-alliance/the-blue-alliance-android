@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;

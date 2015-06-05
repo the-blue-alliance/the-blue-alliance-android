@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import java.util.ArrayList;

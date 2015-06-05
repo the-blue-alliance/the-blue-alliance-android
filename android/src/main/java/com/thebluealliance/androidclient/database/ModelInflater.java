@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.helpers;
+package com.thebluealliance.androidclient.database;
 
 import android.database.Cursor;
 import android.util.Log;
