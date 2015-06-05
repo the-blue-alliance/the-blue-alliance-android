@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.interfaces.Refreshable;
 
 import java.util.Collection;
 import java.util.HashMap;

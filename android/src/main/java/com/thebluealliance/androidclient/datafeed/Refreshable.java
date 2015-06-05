@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.interfaces;
+package com.thebluealliance.androidclient.datafeed;
 
 /**
  * An interface for an object that can be considered refreshable (it can be signaled to start
