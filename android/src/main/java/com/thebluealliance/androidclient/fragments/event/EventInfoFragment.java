@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
@@ -60,8 +60,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         }
         parent = getActivity();
 
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
+        if (parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -82,8 +82,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
+        if (parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -179,7 +179,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
     protected void showLastMatch(MatchListElement match) {

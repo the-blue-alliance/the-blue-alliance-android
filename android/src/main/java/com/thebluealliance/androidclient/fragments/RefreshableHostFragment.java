@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.interfaces.RefreshableHost;
 
@@ -29,15 +29,15 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
+        if (parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
     @Override
@@ -65,8 +65,8 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
         if (completedListener == null) {
             return;
         }
-        if (!mRefreshListeners.contains(completedListener) && parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).notifyRefreshComplete(completedListener);
+        if (!mRefreshListeners.contains(completedListener) && parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).notifyRefreshComplete(completedListener);
         }
         if (!mCompletedRefreshListeners.contains(completedListener)) {
             mCompletedRefreshListeners.add(completedListener);
@@ -79,7 +79,7 @@ public abstract class RefreshableHostFragment extends Fragment implements Refres
 
     protected void onRefreshComplete() {
         mRefreshInProgress = false;
-        ((RefreshableHostActivity) parent).notifyRefreshComplete(this);
+        ((LegacyRefreshableHostActivity) parent).notifyRefreshComplete(this);
     }
 
     public void startRefresh(boolean actionIconPressed) {

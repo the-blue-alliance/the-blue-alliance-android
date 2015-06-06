@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
@@ -38,7 +38,7 @@ import java.util.Map;
 public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private EventDistrictPointsFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
     private boolean isDistrict;
@@ -47,7 +47,7 @@ public class PopulateEventDistrictPoints extends AsyncTask<String, Void, APIResp
 
     public PopulateEventDistrictPoints(EventDistrictPointsFragment f, RequestParams requestParams) {
         mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
     }
 

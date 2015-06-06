@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -33,13 +33,13 @@ import java.util.ArrayList;
  */
 public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
-    private RefreshableHostActivity mActivity;
+    private LegacyRefreshableHostActivity mActivity;
     private String mMatchKey, mEventShortName, mMatchTitle;
     private ArrayList<ListItem> mMatchDetails;
     private RequestParams requestParams;
     private long startTime;
 
-    public PopulateMatchInfo(RefreshableHostActivity activity, RequestParams requestParams) {
+    public PopulateMatchInfo(LegacyRefreshableHostActivity activity, RequestParams requestParams) {
         mActivity = activity;
         this.requestParams = requestParams;
     }
@@ -146,7 +146,7 @@ public class PopulateMatchInfo extends AsyncTask<String, Void, APIResponse.CODE>
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh complete");
-                if (mActivity != null && mActivity instanceof RefreshableHostActivity) {
+                if (mActivity != null && mActivity instanceof LegacyRefreshableHostActivity) {
                     mActivity.notifyRefreshComplete((RefreshListener) mActivity);
                 }
             }

@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateDistrictList;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -51,8 +51,8 @@ public class DistrictListFragment extends Fragment implements RefreshListener {
         }
         mParent = getActivity();
 
-        if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
+        if (mParent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -91,8 +91,8 @@ public class DistrictListFragment extends Fragment implements RefreshListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).startRefresh(this);
+        if (mParent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) mParent).startRefresh(this);
         }
     }
 
@@ -117,6 +117,6 @@ public class DistrictListFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
+        ((LegacyRefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -31,14 +31,14 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
     private RequestParams requestParams;
     private int start, end;
 
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private ArrayList<ListItem> teamItems;
     private Cursor teams;
     private long startTime;
 
     public PopulateTeamList(TeamListFragment fragment, RequestParams requestParams) {
         this.fragment = fragment;
-        activity = (RefreshableHostActivity) fragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
     }
 

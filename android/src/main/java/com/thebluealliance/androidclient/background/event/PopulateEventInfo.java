@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -43,7 +43,7 @@ import de.greenrobot.event.EventBus;
 public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.CODE> {
 
     private EventInfoFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     View topTeamsContainer, topOprsContainer;
     TextView eventName, eventDate, eventLoc, eventVenue, topTeams, topOprs;
     String eventKey, topTeamsString, topOprsString, nameString, titleString, venueString, locationString;
@@ -54,7 +54,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
     public PopulateEventInfo(EventInfoFragment f, RequestParams requestParams) {
         mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
     }
 

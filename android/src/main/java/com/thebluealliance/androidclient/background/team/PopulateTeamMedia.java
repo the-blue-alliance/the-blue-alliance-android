@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -36,7 +36,7 @@ import java.util.Arrays;
 public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE> {
 
     private TeamMediaFragment fragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String team;
     private int year;
     ArrayList<ListGroup> groups;
@@ -45,7 +45,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
     public PopulateTeamMedia(TeamMediaFragment f, RequestParams requestParams) {
         fragment = f;
-        activity = (RefreshableHostActivity) f.getActivity();
+        activity = (LegacyRefreshableHostActivity) f.getActivity();
         this.requestParams = requestParams;
     }
 

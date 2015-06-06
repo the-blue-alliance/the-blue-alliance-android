@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.SubscriptionSortByModelComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
@@ -33,7 +33,7 @@ import java.util.Collections;
 public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     private MySubscriptionsFragment fragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private RequestParams requestParams;
     private ArrayList<ListItem> subscriptions;
     private long startTime;
@@ -41,7 +41,7 @@ public class PopulateUserSubscriptions extends AsyncTask<Void, Void, APIResponse
     public PopulateUserSubscriptions(MySubscriptionsFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
-        this.activity = (RefreshableHostActivity) fragment.getActivity();
+        this.activity = (LegacyRefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
     }
 

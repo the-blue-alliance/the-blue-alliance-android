@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -36,7 +36,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
 
     private RequestParams requestParams;
     private TeamAtDistrictBreakdownFragment fragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String teamKey, districtKey;
     private ArrayList<ListGroup> groups;
     private long startTime;
@@ -45,7 +45,7 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
         super();
         this.requestParams = requestParams;
         this.fragment = fragment;
-        activity = (RefreshableHostActivity) fragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) fragment.getActivity();
     }
 
     @Override

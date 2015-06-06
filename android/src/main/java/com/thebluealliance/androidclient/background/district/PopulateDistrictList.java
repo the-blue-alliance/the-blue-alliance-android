@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -29,7 +29,7 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
 
     private RequestParams requestParams;
     private DistrictListFragment fragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private int year;
     private ArrayList<ListItem> districts;
     private long startTime;
@@ -37,7 +37,7 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
     public PopulateDistrictList(DistrictListFragment fragment, RequestParams requestParams) {
         this.requestParams = requestParams;
         this.fragment = fragment;
-        activity = (RefreshableHostActivity) fragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) fragment.getActivity();
     }
 
     @Override

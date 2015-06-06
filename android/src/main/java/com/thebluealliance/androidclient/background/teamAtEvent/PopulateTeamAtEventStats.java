@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
 
     TeamAtEventStatsFragment fragment;
-    RefreshableHostActivity activity;
+    LegacyRefreshableHostActivity activity;
     ArrayList<ListItem> statsList;
     String teamKey, eventKey;
     RequestParams requestParams;
@@ -38,7 +38,7 @@ public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIRespons
     public PopulateTeamAtEventStats(TeamAtEventStatsFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
-        this.activity = (RefreshableHostActivity) fragment.getActivity();
+        this.activity = (LegacyRefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
     }
 
@@ -129,7 +129,7 @@ public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIRespons
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
-                if (activity != null && activity instanceof RefreshableHostActivity) {
+                if (activity != null && activity instanceof LegacyRefreshableHostActivity) {
                     activity.notifyRefreshComplete(fragment);
                 }
             }

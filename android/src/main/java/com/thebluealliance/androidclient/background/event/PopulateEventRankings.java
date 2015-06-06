@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -38,7 +38,7 @@ import java.util.Set;
 public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private EventRankingsFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
     private RequestParams requestParams;
@@ -47,7 +47,7 @@ public class PopulateEventRankings extends AsyncTask<String, Void, APIResponse.C
 
     public PopulateEventRankings(EventRankingsFragment f, RequestParams params) {
         mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.requestParams = params;
     }
 

@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateTeamAtDistrictBreakdown;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -52,8 +52,8 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
         }
         mParent = getActivity();
 
-        if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
+        if (mParent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -91,8 +91,8 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).startRefresh(this);
+        if (mParent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) mParent).startRefresh(this);
         }
     }
 
@@ -117,7 +117,7 @@ public class TeamAtDistrictBreakdownFragment extends Fragment implements Refresh
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
+        ((LegacyRefreshableHostActivity) mParent).unregisterRefreshListener(this);
     }
 
 }

@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.mytba.PopulateUserFavorites;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -41,16 +41,16 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
+        if (parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).restartRefresh(true);
+        if (parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).restartRefresh(true);
         }
     }
 
@@ -101,6 +101,6 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

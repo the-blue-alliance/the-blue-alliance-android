@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.comparators.TeamSortByAlphanumComparator;
 import com.thebluealliance.androidclient.comparators.TeamSortByStatComparator;
@@ -44,7 +44,7 @@ import java.util.Map;
 public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private EventStatsFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String eventKey;
     private ArrayList<ListItem> teams;
     private RequestParams requestParams;
@@ -54,7 +54,7 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
 
     public PopulateEventStats(EventStatsFragment f, RequestParams requestParams, String statToSortBy) {
         mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
         this.statToSortBy = statToSortBy;
     }

@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import android.os.Build;
+import android.util.ArrayMap;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
@@ -48,7 +50,12 @@ public class RefreshManager {
     private boolean mIsRefreshing = false;
 
     public RefreshManager() {
-        mRefreshableStates = new HashMap<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // ArrayMap has better memory performance, use it where we can
+            mRefreshableStates = new ArrayMap<>();
+        } else {
+            mRefreshableStates = new HashMap<>();
+        }
     }
 
     /**
@@ -176,9 +183,7 @@ public class RefreshManager {
     /**
      * Used to listen for refreshing state changes.
      */
-    public class RefreshStateListener {
-        public void onRefreshStateChanged(boolean isRefreshing) {
-            // Subclasses can override this
-        }
+    public interface RefreshStateListener {
+        void onRefreshStateChanged(boolean isRefreshing);
     }
 }

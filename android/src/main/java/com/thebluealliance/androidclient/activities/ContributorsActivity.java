@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 /**
  * Created by Nathan on 6/20/2014.
  */
-public class ContributorsActivity extends RefreshableHostActivity implements RefreshListener {
+public class ContributorsActivity extends LegacyRefreshableHostActivity implements RefreshListener {
 
     Toolbar toolbar;
 

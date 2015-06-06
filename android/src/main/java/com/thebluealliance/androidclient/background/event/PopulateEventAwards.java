@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -40,7 +40,7 @@ import java.util.HashMap;
 public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private EventAwardsFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String eventKey, teamKey;
     private ArrayList<ListItem> awards;
     private RequestParams requestParams;
@@ -49,7 +49,7 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
     public PopulateEventAwards(EventAwardsFragment f, RequestParams requestParams) {
         mFragment = f;
         if (mFragment != null) {
-            activity = (RefreshableHostActivity) mFragment.getActivity();
+            activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         }
         this.requestParams = requestParams;
     }

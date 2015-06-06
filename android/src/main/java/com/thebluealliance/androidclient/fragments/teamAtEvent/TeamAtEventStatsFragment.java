@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventStats;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -55,8 +55,8 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
 
         parent = getActivity();
 
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
+        if (parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
         }
     }
 
@@ -97,8 +97,8 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
+        if (parent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
         }
     }
 
@@ -123,6 +123,6 @@ public class TeamAtEventStatsFragment extends Fragment implements RefreshListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

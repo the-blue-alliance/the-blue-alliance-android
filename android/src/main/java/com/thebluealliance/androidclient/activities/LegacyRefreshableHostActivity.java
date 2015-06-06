@@ -18,10 +18,8 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Nathan on 4/29/2014.
- */
-public abstract class RefreshableHostActivity extends BaseActivity implements RefreshableHost {
+@Deprecated
+public abstract class LegacyRefreshableHostActivity extends BaseActivity implements RefreshableHost {
 
     private ArrayList<RefreshListener> mRefreshListeners = new ArrayList<>();
     private ArrayList<RefreshListener> mCompletedRefreshListeners = new ArrayList<>();
@@ -171,6 +169,9 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     }
 
     public void startRefresh(boolean actionIconPressed) {
+        if (!mRefreshEnabled) {
+            return;
+        }
         if (mRefreshInProgress) {
             //if a refresh is already happening, don't start another
             return;
@@ -191,6 +192,9 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
       Refreshes a specific listener
      */
     public void startRefresh(RefreshListener listener) {
+        if (!mRefreshEnabled) {
+            return;
+        }
         if (!mRefreshListeners.contains(listener)) {
             mRefreshListeners.add(listener);
         }
@@ -202,6 +206,9 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     Notifies all registered listeners that they should cancel their refresh
      */
     public void cancelRefresh() {
+        if (!mRefreshEnabled) {
+            return;
+        }
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }
@@ -213,6 +220,9 @@ public abstract class RefreshableHostActivity extends BaseActivity implements Re
     Notifies all refresh listeners that they should stop, and immediately notifies them that they should start again.
      */
     public void restartRefresh(boolean actionIconPressed) {
+        if (!mRefreshEnabled) {
+            return;
+        }
         for (RefreshListener listener : mRefreshListeners) {
             listener.onRefreshStop();
         }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -33,7 +33,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
     private int mYear = -1, mWeek = -1;
     private String mTeamKey = null, mHeader, mDistrictKey;
     private ArrayList<ListItem> events;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private RefreshableHost host;
     private RequestParams requestParams;
     private long startTime;
@@ -51,7 +51,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
     public PopulateEventList(Fragment fragment, String districtKey, RequestParams requestParams) {
         this(fragment, requestParams);
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.host = activity;
 
         mTeamKey = mHeader = null;
@@ -64,7 +64,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         mYear = year;
         mTeamKey = teamKey;
         mHeader = weekHeader;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.host = activity;
         mDistrictKey = null;
     }
@@ -75,7 +75,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         mTeamKey = teamKey;
         mHeader = weekHeader;
         this.host = host;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         mDistrictKey = null;
     }
 
@@ -85,7 +85,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
         mTeamKey = teamKey;
         mHeader = weekHeader;
         this.host = host;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         mDistrictKey = districtKey;
     }
 

@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.district.PopulateDistrictRankings;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -52,8 +52,8 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
         }
         mKey = getArguments().getString(KEY);
 
-        if (mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).registerRefreshListener(this);
+        if (mParent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) mParent).registerRefreshListener(this);
         }
     }
 
@@ -85,8 +85,8 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).startRefresh(this);
+        if (mParent != null && mParent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) mParent).startRefresh(this);
         }
     }
 
@@ -111,8 +111,8 @@ public class DistrictRankingsFragment extends Fragment implements RefreshListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mParent != null && mParent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mParent).unregisterRefreshListener(this);
+        if (mParent != null && mParent instanceof LegacyRefreshableHostActivity) {
+            ((LegacyRefreshableHostActivity) mParent).unregisterRefreshListener(this);
         }
     }
 }

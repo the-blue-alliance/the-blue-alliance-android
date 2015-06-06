@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class PopulateRecentNotifications extends AsyncTask<Void, Void, Void> {
 
     private RecentNotificationsFragment fragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private ArrayList<ListItem> items;
     private ListViewAdapter adapter;
     private long startTime;
@@ -35,7 +35,7 @@ public class PopulateRecentNotifications extends AsyncTask<Void, Void, Void> {
     public PopulateRecentNotifications(RecentNotificationsFragment fragment) {
         super();
         this.fragment = fragment;
-        this.activity = (RefreshableHostActivity) fragment.getActivity();
+        this.activity = (LegacyRefreshableHostActivity) fragment.getActivity();
     }
 
     @Override

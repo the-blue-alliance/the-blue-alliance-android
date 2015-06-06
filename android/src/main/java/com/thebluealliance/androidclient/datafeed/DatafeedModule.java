@@ -75,4 +75,9 @@ public class DatafeedModule {
         builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
         return builder.create();
     }
+
+    @Provides
+    public RefreshManager provideRefreshManager(){
+        return new RefreshManager();
+    }
 }

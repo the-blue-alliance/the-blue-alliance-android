@@ -29,7 +29,7 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 /**
  * File created by phil on 7/26/14.
  */
-public class TeamAtDistrictActivity extends RefreshableHostActivity {
+public class TeamAtDistrictActivity extends LegacyRefreshableHostActivity {
 
     public static final String DISTRICT_KEY = "districtKey",
             TEAM_KEY = "teamKey";

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -39,7 +39,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
 
     private RequestParams requestParams;
     private TeamAtDistrictSummaryFragment fragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String teamKey, districtKey;
     private ArrayList<ListItem> summaryItems;
     private long startTime;
@@ -47,7 +47,7 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
     public PopulateTeamAtDistrictSummary(TeamAtDistrictSummaryFragment fragment, RequestParams requestParams) {
         this.requestParams = requestParams;
         this.fragment = fragment;
-        activity = (RefreshableHostActivity) fragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) fragment.getActivity();
     }
 
     @Override

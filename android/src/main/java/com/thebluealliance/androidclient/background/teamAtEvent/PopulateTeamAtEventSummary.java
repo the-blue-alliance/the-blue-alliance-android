@@ -12,7 +12,7 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
@@ -39,7 +39,7 @@ import java.util.Collections;
 public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIResponse.CODE> {
 
     String teamKey, eventKey, rankingString, recordString, eventShort;
-    RefreshableHostActivity activity;
+    LegacyRefreshableHostActivity activity;
     TeamAtEventSummaryFragment fragment;
     ArrayList<Match> eventMatches;
     ArrayList<Match> teamMatches;
@@ -56,7 +56,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
     public PopulateTeamAtEventSummary(TeamAtEventSummaryFragment fragment, RequestParams requestParams) {
         super();
         this.fragment = fragment;
-        this.activity = (RefreshableHostActivity) fragment.getActivity();
+        this.activity = (LegacyRefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
     }
 
@@ -276,7 +276,7 @@ public class PopulateTeamAtEventSummary extends AsyncTask<String, Void, APIRespo
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
-                if (activity != null && activity instanceof RefreshableHostActivity) {
+                if (activity != null && activity instanceof LegacyRefreshableHostActivity) {
                     activity.notifyRefreshComplete(fragment);
                 }
             }

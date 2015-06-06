@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private EventAlliancesFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private ArrayList<ListItem> teams;
     private String eventKey;
     private RequestParams requestParams;
@@ -37,7 +37,7 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
 
     public PopulateEventAlliances(EventAlliancesFragment f, RequestParams requestParams) {
         mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
     }
 

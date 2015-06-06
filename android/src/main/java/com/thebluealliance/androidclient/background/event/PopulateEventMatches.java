@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
@@ -44,7 +44,7 @@ import de.greenrobot.event.EventBus;
 public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private EventMatchesFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String eventKey;
     private String teamKey;
     private RequestParams requestParams;
@@ -57,7 +57,7 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
 
     public PopulateEventMatches(EventMatchesFragment f, RequestParams requestParams) {
         mFragment = f;
-        activity = (RefreshableHostActivity) mFragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) mFragment.getActivity();
         this.requestParams = requestParams;
         this.matchCount = 0;
     }

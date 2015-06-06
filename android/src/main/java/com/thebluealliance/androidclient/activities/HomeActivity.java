@@ -36,7 +36,7 @@ import java.util.Calendar;
  * File created by phil on 4/20/14.
  */
 
-public class HomeActivity extends RefreshableHostActivity {
+public class HomeActivity extends LegacyRefreshableHostActivity {
 
     /**
      * Saved instance state key representing the last select navigation drawer item
