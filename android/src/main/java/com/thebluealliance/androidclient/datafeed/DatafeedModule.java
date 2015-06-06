@@ -27,6 +27,7 @@ import retrofit.client.OkClient;
 
 @Module(
         injects = {
+                CacheableDatafeed.class,
                 DatafeedModule.class,
                 RetrofitConverter.class
         }
@@ -36,12 +37,15 @@ public class DatafeedModule {
     @Inject OkClient mOkClient;
     @Inject RestAdapter mRestAdapter;
 
-    /* UNCOMMENT WHEN NEEDED
     @Provides @Singleton
     public APIv2 provideRetrofitAPI(){
         return mRestAdapter.create(APIv2.class);
     }
-    */
+
+    @Provides @Singleton
+    public APICache provideAPICache(){
+        return new APICache();
+    }
 
     @Provides @Singleton
     public OkClient provideOkClient(){
