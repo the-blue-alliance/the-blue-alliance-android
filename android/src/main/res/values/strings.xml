@@ -22,10 +22,15 @@
     <string name="districts_label">Districts</string>
 
     <!-- View Event -->
-    <string name="last_match">Last Match:</string>
-    <string name="next_match">Next Match:</string>
-    <string name="top_teams">Top Teams:</string>
-    <string name="top_opr">Top OPRs:</string>
+    <string name="view_event_website">View events\'s website</string>
+    <string name="find_event_on_google">Find event on Google</string>
+    <string name="view_event_twitter">View #%1$s on Twitter</string>
+    <string name="view_event_youtube">View %1$s on YouTube</string>
+    <string name="view_event_cd">View photos on Chief Delphi</string>
+    <string name="last_match">Last Match</string>
+    <string name="next_match">Next Match</string>
+    <string name="top_teams">Top Teams</string>
+    <string name="top_oprs">Top OPRs</string>
     <string name="opr">OPR:</string>
     <string name="dpr">DPR:</string>
     <string name="ccwm">CCWM:</string>

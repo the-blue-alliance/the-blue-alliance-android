@@ -15,24 +15,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- General team info card -->
             <android.support.v7.widget.CardView
-                android:id="@+id/team_info_container"
                 style="@style/InfoItemCardStyle">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="@string/team_info"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-
-                    <View style="@style/InfoItemFullWidthDividerStyle" />
 
                     <RelativeLayout
                         android:id="@+id/team_name_container"
@@ -104,10 +94,10 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
+            <!-- Current event card -->
             <android.support.v7.widget.CardView
                 android:id="@+id/team_current_event_container"
                 style="@style/InfoItemCardStyle"
-                android:foreground="?android:attr/selectableItemBackground"
                 android:visibility="gone">
 
                 <LinearLayout
@@ -129,6 +119,9 @@
                         android:id="@+id/team_current_event"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:orientation="vertical" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -173,8 +166,9 @@
 
             </RelativeLayout>
 
+            <!-- Social media card -->
             <android.support.v7.widget.CardView
-                android:id="@+id/team_social_container_2"
+                android:id="@+id/team_social_container"
                 style="@style/InfoItemCardStyle">
 
                 <LinearLayout
@@ -276,12 +270,10 @@
                             android:layout_toRightOf="@id/team_cd_icon"
                             android:text="@string/view_team_cd" />
                     </RelativeLayout>
-
-                    <View style="@style/InfoItemDividerStyle" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-            <!-- Makes a list divider appear after the last item, and provides padding for the FAB -->
+            <!-- Provides padding for the FAB -->
             <Space
                 android:layout_width="0dp"
                 android:layout_height="88dp" />

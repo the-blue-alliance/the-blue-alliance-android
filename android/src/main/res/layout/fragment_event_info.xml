@@ -5,208 +5,320 @@
     android:layout_height="match_parent">
 
     <ScrollView
+        android:id="@+id/event_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/event_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="88dp"
-            android:visibility="gone">
+            android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/event_name_container"
-                style="@style/InfoItemStyle"
-                android:clickable="true">
+            <!-- Event info card -->
+            <android.support.v7.widget.CardView style="@style/InfoItemCardStyle">
 
-                <com.thebluealliance.androidclient.views.RecoloredImageView
-                    android:id="@+id/event_name_icon"
-                    style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_info_outline_black_24dp"
-                    app:tintColor="@color/primary" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/event_name"
-                    style="@style/InfoItemTextStyle"
-                    android:text="Event Name Goes Here" />
 
-            </RelativeLayout>
+                    <RelativeLayout
+                        android:id="@+id/event_name_container"
+                        style="@style/InfoItemStyle"
+                        android:clickable="true">
 
-            <View style="@style/InfoItemDividerStyle" />
+                        <com.thebluealliance.androidclient.views.RecoloredImageView
+                            android:id="@+id/event_name_icon"
+                            style="@style/InfoItemImageStyle"
+                            android:src="@drawable/ic_info_outline_black_24dp"
+                            app:tintColor="@color/primary" />
 
-            <RelativeLayout
-                android:id="@+id/event_date_container"
-                style="@style/InfoItemStyle"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
+                        <TextView
+                            android:id="@+id/event_name"
+                            style="@style/InfoItemTextStyle"
+                            android:text="Event Name Goes Here" />
 
-                <com.thebluealliance.androidclient.views.RecoloredImageView
-                    android:id="@+id/event_date_icon"
-                    style="@style/InfoItemImageStyle"
-                    android:src="@drawable/ic_event_black_24dp"
-                    app:tintColor="@color/primary" />
+                    </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/event_date"
-                    style="@style/InfoItemTextStyle"
-                    android:text="Event Date Goes Here" />
+                    <View style="@style/InfoItemDividerStyle" />
 
-            </RelativeLayout>
+                    <RelativeLayout
+                        android:id="@+id/event_date_container"
+                        style="@style/InfoItemStyle"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
 
-            <!-- This is wrapped in a FrameLayout so that the divider will
-            hide when the container is hidden -->
-            <FrameLayout
-                android:id="@+id/event_venue_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
+                        <com.thebluealliance.androidclient.views.RecoloredImageView
+                            android:id="@+id/event_date_icon"
+                            style="@style/InfoItemImageStyle"
+                            android:src="@drawable/ic_event_black_24dp"
+                            app:tintColor="@color/primary" />
 
-                <View style="@style/InfoItemDividerStyle" />
+                        <TextView
+                            android:id="@+id/event_date"
+                            style="@style/InfoItemTextStyle"
+                            android:text="Event Date Goes Here" />
 
-                <RelativeLayout style="@style/InfoItemStyle">
+                    </RelativeLayout>
 
-                    <com.thebluealliance.androidclient.views.RecoloredImageView
-                        android:id="@+id/venue_location_icon"
-                        style="@style/InfoItemImageStyle"
-                        android:src="@drawable/ic_location_on_black_24dp"
-                        app:tintColor="@color/primary" />
+                    <!-- This is wrapped in a FrameLayout so that the divider will
+                    hide when the container is hidden -->
+                    <FrameLayout
+                        android:id="@+id/event_venue_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View style="@style/InfoItemDividerStyle" />
+
+                        <RelativeLayout style="@style/InfoItemStyle">
+
+                            <com.thebluealliance.androidclient.views.RecoloredImageView
+                                android:id="@+id/venue_location_icon"
+                                style="@style/InfoItemImageStyle"
+                                android:src="@drawable/ic_location_on_black_24dp"
+                                app:tintColor="@color/primary" />
+
+                            <TextView
+                                android:id="@+id/event_venue"
+                                style="@style/InfoItemTextStyle"
+                                android:text="Event Venue Goes Here" />
+
+                        </RelativeLayout>
+                    </FrameLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+            <!-- Last match card -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/last_match_container"
+                style="@style/InfoItemCardStyle"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/event_venue"
-                        style="@style/InfoItemTextStyle"
-                        android:text="Event Venue Goes Here" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/last_match"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp" />
 
-                </RelativeLayout>
-            </FrameLayout>
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
 
-            <LinearLayout
+                    <FrameLayout
+                        android:id="@+id/last_match_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <!-- Next match card -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/next_match_container"
+                style="@style/InfoItemCardStyle"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/next_match"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp" />
+
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
+
+                    <FrameLayout
+                        android:id="@+id/next_match_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <!-- Social media card -->
+            <android.support.v7.widget.CardView
                 android:id="@+id/event_social_container"
-                style="@style/InfoItemStyle"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                style="@style/InfoItemCardStyle">
 
-                <ImageView
-                    android:id="@+id/event_website_button"
-                    style="@style/InfoItemButtonBarImageStyle"
-                    android:background="@drawable/internet_blue_selector"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_action_web_site" />
-
-                <ImageView
-                    android:id="@+id/event_twitter_button"
-                    style="@style/InfoItemButtonBarImageStyle"
-                    android:background="@drawable/twitter_blue_selector"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_twitter_light" />
-
-                <ImageView
-                    android:id="@+id/event_youtube_button"
-                    style="@style/InfoItemButtonBarImageStyle"
-                    android:background="@drawable/youtube_red_selector"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_youtube_light" />
-
-                <ImageView
-                    android:id="@+id/event_cd_button"
-                    style="@style/InfoItemButtonBarImageStyle"
-                    android:background="@drawable/chief_delphi_orange_selector"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_cd_light" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/event_last_match_container"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    style="@android:style/TextAppearance.Medium"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:text="@string/last_match" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/event_next_match_container"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    style="@android:style/TextAppearance.Medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:paddingRight="@dimen/activity_half_vertical_margin"
-                    android:text="@string/next_match" />
-            </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/event_top_teams_container"
-                style="@style/InfoItemStyle"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/top_teams"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/event_top_teams"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:textSize="16sp" />
-            </RelativeLayout>
-
-            <!-- This is wrapped in a FrameLayout so that the divider will
-           hide when the container is hidden -->
-            <FrameLayout
-                android:id="@+id/event_top_oprs_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:visibility="gone">
-
-                <View style="@style/InfoItemDividerStyle" />
-
-                <RelativeLayout style="@style/InfoItemStyle">
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:text="@string/top_opr"
+                        android:padding="16dp"
+                        android:text="@string/social_media"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp" />
+
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
+
+                    <RelativeLayout
+                        android:id="@+id/event_website_container"
+                        style="@style/InfoItemStyle"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <com.thebluealliance.androidclient.views.RecoloredImageView
+                            android:id="@+id/event_website_icon"
+                            style="@style/InfoItemImageStyle"
+                            android:src="@drawable/ic_web_black_24dp"
+                            app:tintColor="@color/primary" />
+
+                        <TextView
+                            android:id="@+id/event_website_title"
+                            style="@style/InfoItemTextStyle"
+                            android:layout_toRightOf="@id/event_website_icon" />
+                    </RelativeLayout>
+
+                    <View style="@style/InfoItemDividerStyle" />
+
+                    <RelativeLayout
+                        android:id="@+id/event_twitter_container"
+                        style="@style/InfoItemStyle"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <com.thebluealliance.androidclient.views.RecoloredImageView
+                            android:id="@+id/event_twitter_icon"
+                            style="@style/InfoItemImageStyle"
+                            android:src="@drawable/ic_twitter_black_24dp"
+                            app:tintColor="@color/primary" />
+
+                        <TextView
+                            android:id="@+id/event_twitter_title"
+                            style="@style/InfoItemTextStyle"
+                            android:layout_toRightOf="@id/event_twitter_icon"
+                            android:text="View #frc21 on Twitter" />
+                    </RelativeLayout>
+
+                    <View style="@style/InfoItemDividerStyle" />
+
+                    <RelativeLayout
+                        android:id="@+id/event_youtube_container"
+                        style="@style/InfoItemStyle"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <com.thebluealliance.androidclient.views.RecoloredImageView
+                            android:id="@+id/event_youtube_icon"
+                            style="@style/InfoItemImageStyle"
+                            android:src="@drawable/ic_youtube_play_black_24dp"
+                            app:tintColor="@color/primary" />
+
+                        <TextView
+                            android:id="@+id/event_youtube_title"
+                            style="@style/InfoItemTextStyle"
+                            android:layout_toRightOf="@id/event_youtube_icon"
+                            android:text="View team's website" />
+                    </RelativeLayout>
+
+                    <View style="@style/InfoItemDividerStyle" />
+
+                    <RelativeLayout
+                        android:id="@+id/event_cd_container"
+                        style="@style/InfoItemStyle"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <com.thebluealliance.androidclient.views.RecoloredImageView
+                            android:id="@+id/event_cd_icon"
+                            style="@style/InfoItemImageStyle"
+                            android:src="@drawable/ic_photo_library_black_24dp"
+                            app:tintColor="@color/primary" />
+
+                        <TextView
+                            android:id="@+id/event_cd_title"
+                            style="@style/InfoItemTextStyle"
+                            android:layout_toRightOf="@id/event_cd_icon"
+                            android:text="@string/view_team_cd" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <!-- Top teams card -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/top_teams_container"
+                style="@style/InfoItemCardStyle"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/top_teams"
+                        android:textColor="@color/primary"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/event_top_oprs"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/top_teams"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
                         android:textSize="16sp" />
-                </RelativeLayout>
-            </FrameLayout>
 
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <!-- Top OPRs card -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/top_oprs_container"
+                style="@style/InfoItemCardStyle"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/top_oprs"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/top_oprs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp" />
+
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <!-- Provides padding for the FAB -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="88dp" />
         </LinearLayout>
     </ScrollView>
 

@@ -152,16 +152,13 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         final ViewGroup eventLayout = (ViewGroup) getView().findViewById(R.id.team_current_event);
         final View container = getView().findViewById(R.id.team_current_event_container);
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                eventLayout.removeAllViews();
-                eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
+        getActivity().runOnUiThread(() -> {
+            eventLayout.removeAllViews();
+            eventLayout.addView(event.getView(getActivity(), getActivity().getLayoutInflater(), null));
+            eventLayout.setOnClickListener(new TeamAtEventClickListener(getActivity()));
+            eventLayout.setTag(mTeamKey + "@" + event.getEventKey());
 
-                container.setVisibility(View.VISIBLE);
-                container.setTag(mTeamKey + "@" + event.getEventKey());
-                container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
-            }
+            container.setVisibility(View.VISIBLE);
         });
     }
 

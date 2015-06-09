@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -38,11 +39,11 @@ import de.greenrobot.event.EventBus;
  */
 public class EventInfoFragment extends Fragment implements RefreshListener, View.OnClickListener {
 
-    private String eventKey;
+    private String mEventKey;
     private static final String KEY = "eventKey";
-    private PopulateEventInfo task;
-    private Activity parent;
-    private Event event;
+    private PopulateEventInfo mTask;
+    private Activity mActivity;
+    private Event mEvent;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -56,34 +57,33 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            eventKey = getArguments().getString(KEY, "");
+            mEventKey = getArguments().getString(KEY, "");
         }
-        parent = getActivity();
+        mActivity = getActivity();
 
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
+        if (mActivity instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) mActivity).registerRefreshListener(this);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View info = inflater.inflate(R.layout.fragment_event_info, null);
-        info.findViewById(R.id.event_venue_container).setOnClickListener(this);
-        info.findViewById(R.id.event_website_button).setOnClickListener(this);
-        info.findViewById(R.id.event_twitter_button).setOnClickListener(this);
-        info.findViewById(R.id.event_youtube_button).setOnClickListener(this);
-        info.findViewById(R.id.event_cd_button).setOnClickListener(this);
-        info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
-        info.findViewById(R.id.event_top_oprs_container).setOnClickListener(this);
-        info.findViewById(R.id.event_date_container).setOnClickListener(this);
-        return info;
+        View view = inflater.inflate(R.layout.fragment_event_info, null);
+        view.findViewById(R.id.event_venue_container).setOnClickListener(this);
+        view.findViewById(R.id.event_website_container).setOnClickListener(this);
+        view.findViewById(R.id.event_twitter_container).setOnClickListener(this);
+        view.findViewById(R.id.event_youtube_container).setOnClickListener(this);
+        view.findViewById(R.id.event_cd_container).setOnClickListener(this);
+        view.findViewById(R.id.top_teams_container).setOnClickListener(this);
+        view.findViewById(R.id.top_oprs_container).setOnClickListener(this);
+        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
+        if (mActivity instanceof RefreshableHostActivity) {
+            ((RefreshableHostActivity) mActivity).startRefresh(this);
         }
     }
 
@@ -101,59 +101,30 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
 
     @Override
     public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " info");
-        task = new PopulateEventInfo(this, new RequestParams(true, actionIconPressed));
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
+        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " info");
+        mTask = new PopulateEventInfo(this, new RequestParams(true, actionIconPressed));
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
     }
 
     @Override
     public void onRefreshStop() {
-        if (task != null) {
-            task.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
         }
     }
 
     public void updateTask(PopulateEventInfo newTask) {
-        task = newTask;
+        mTask = newTask;
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.event_top_teams_container) {
+        if (id == R.id.top_teams_container) {
             ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);  // Rankings
             return;
-        } else if (id == R.id.event_top_oprs_container) {
+        } else if (id == R.id.top_oprs_container) {
             ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);  // Stats
-            return;
-        } else if (id == R.id.event_date_container) {
-            if (event == null) {
-                return;
-            }
-
-            // Calendar stuff isn't working propberly, the intent isn't setting the proper date
-            // on the calendar entry. This is disabled for now.
-
-            // Launch the calendar app with the event's info pre-filled
-            /*try {
-                long startTime = event.getStartDate().getTime();
-                long endTime = event.getEndDate().getTime();
-
-                Log.d(Constants.LOG_TAG, "Calendar: " + startTime + " - " + endTime);
-
-                Intent i = new Intent(Intent.ACTION_INSERT);
-                i.setData(CalendarContract.Events.CONTENT_URI);
-                i.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
-                i.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime);
-                i.putExtra(CalendarContract.Events.TITLE, event.getShortName());
-                i.putExtra(CalendarContract.Events.EVENT_LOCATION, event.getVenue());
-                i.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
-                startActivity(i);
-                return;
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
-                return;
-            }*/
             return;
         }
 
@@ -161,7 +132,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             String uri = v.getTag().toString();
 
             //social button was clicked. Track the call
-            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, eventKey);
+            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, mEventKey);
 
             PackageManager manager = getActivity().getPackageManager();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
@@ -179,40 +150,51 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+        ((RefreshableHostActivity) mActivity).unregisterRefreshListener(this);
     }
 
     protected void showLastMatch(MatchListElement match) {
-        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_last_match_container);
-        lastLayout.setVisibility(View.VISIBLE);
-        if (lastLayout.getChildCount() > 1) {
-            lastLayout.removeViewAt(1);
-        }
-        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+        ViewGroup lastMatchContainer = (ViewGroup) getView().findViewById(R.id.last_match_container);
+        FrameLayout lastMatchView = (FrameLayout) getView().findViewById(R.id.last_match_view);
+        lastMatchContainer.setVisibility(View.VISIBLE);
+        lastMatchView.removeAllViews();
+        lastMatchView.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    }
+
+    protected void hideLastMatch() {
+        getView().findViewById(R.id.last_match_container).setVisibility(View.GONE);
     }
 
     protected void showNextMatch(MatchListElement match) {
-        LinearLayout nextLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
-        nextLayout.setVisibility(View.VISIBLE);
-        if (nextLayout.getChildCount() > 1) {
-            nextLayout.removeViewAt(1);
-        }
-        nextLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+        ViewGroup nextMatchContainer = (ViewGroup) getView().findViewById(R.id.next_match_container);
+        FrameLayout nextMatchView = (FrameLayout) getView().findViewById(R.id.next_match_view);
+        nextMatchContainer.setVisibility(View.VISIBLE);
+        nextMatchView.removeAllViews();
+        nextMatchView.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    }
+
+    protected void hideNextMatch() {
+        getView().findViewById(R.id.next_match_container).setVisibility(View.GONE);
     }
 
     public void onEvent(LiveEventMatchUpdateEvent event) {
         if (event.getLastMatch() != null) {
             Log.d(Constants.LOG_TAG, "showing last match");
             showLastMatch(event.getLastMatch().render());
+        } else {
+            hideLastMatch();
         }
+
         if (event.getNextMatch() != null) {
             Log.d(Constants.LOG_TAG, "showing next match");
             showNextMatch(event.getNextMatch().render());
+        } else {
+            hideNextMatch();
         }
     }
 
     // Called when the event has been loaded. We use this to set up the calendar stuff.
     public void onEvent(EventInfoLoadedEvent eventEvent) {
-        this.event = eventEvent.getEvent();
+        this.mEvent = eventEvent.getEvent();
     }
 }

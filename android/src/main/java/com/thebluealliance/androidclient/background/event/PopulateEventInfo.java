@@ -73,10 +73,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
         eventDate = (TextView) view.findViewById(R.id.event_date);
         eventLoc = (TextView) view.findViewById(R.id.event_location);
         eventVenue = (TextView) view.findViewById(R.id.event_venue);
-        topTeamsContainer = view.findViewById(R.id.event_top_teams_container);
-        topOprsContainer = view.findViewById(R.id.event_top_oprs_container);
-        topTeams = (TextView) view.findViewById(R.id.event_top_teams);
-        topOprs = (TextView) view.findViewById(R.id.event_top_oprs);
+        topTeamsContainer = view.findViewById(R.id.top_teams_container);
+        topOprsContainer = view.findViewById(R.id.top_oprs_container);
+        topTeams = (TextView) view.findViewById(R.id.top_teams);
+        topOprs = (TextView) view.findViewById(R.id.top_oprs);
     }
 
     @Override
@@ -192,15 +192,16 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
             View view = mFragment.getView();
 
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
-            View infoContainer = view.findViewById(R.id.event_info_container);
+            View content = view.findViewById(R.id.event_content);
             if (c == APIResponse.CODE.NODATA) {
                 noDataText.setText(R.string.no_data);
                 noDataText.setVisibility(View.VISIBLE);
-                infoContainer.setVisibility(View.GONE);
+                content.setVisibility(View.GONE);
             } else if (event != null) {
                 activity.setActionBarTitle(titleString);
 
                 noDataText.setVisibility(View.GONE);
+                content.setVisibility(View.VISIBLE);
 
                 // Set the new info (if necessary)
                 eventName.setText(nameString);
@@ -253,12 +254,22 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                     eventVenueContainer.setClickable(false);
                 }
 
-                view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + nameString);
-                view.findViewById(R.id.event_twitter_button).setTag("https://twitter.com/search?q=%23" + eventKey);
-                view.findViewById(R.id.event_youtube_button).setTag("https://www.youtube.com/results?search_query=" + eventKey);
-                view.findViewById(R.id.event_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + eventKey);
+                // If the event doesn't have a defined website, default to a google search for the event name
+                if(event.getWebsite().isEmpty()) {
+                    view.findViewById(R.id.event_website_container).setTag("https://www.google.com/search?q=" + nameString);
+                    ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.find_event_on_google);
+                } else {
+                    view.findViewById(R.id.event_website_container).setTag(event.getWebsite());
+                    ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.view_event_website);
+                }
 
-                infoContainer.setVisibility(View.VISIBLE);
+                view.findViewById(R.id.event_twitter_container).setTag("https://twitter.com/search?q=%23" + eventKey);
+                ((TextView) view.findViewById(R.id.event_twitter_title)).setText(activity.getResources().getString(R.string.view_event_twitter, eventKey));
+
+                view.findViewById(R.id.event_youtube_container).setTag("https://www.youtube.com/results?search_query=" + eventKey);
+                ((TextView) view.findViewById(R.id.event_youtube_title)).setText(activity.getResources().getString(R.string.view_event_youtube, eventKey));
+
+                view.findViewById(R.id.event_cd_container).setTag("http://www.chiefdelphi.com/media/photos/tags/" + eventKey);
 
                 EventBus.getDefault().post(new EventInfoLoadedEvent(event));
             }

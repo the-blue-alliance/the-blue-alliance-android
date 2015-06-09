@@ -150,8 +150,6 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 if (code == APIResponse.CODE.OFFLINECACHE) {
                     ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
                 }
-
-                view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
             }
             view.findViewById(R.id.progress).setVisibility(View.GONE);
 
