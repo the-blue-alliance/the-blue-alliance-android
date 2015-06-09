@@ -79,12 +79,8 @@
                     <TextView
                         android:id="@+id/event_venue"
                         style="@style/InfoItemTextStyle"
-                        android:layout_toLeftOf="@+id/event_venue_nav_arrow"
                         android:text="Event Venue Goes Here" />
 
-                    <ImageView
-                        android:id="@+id/event_venue_nav_arrow"
-                        style="@style/InfoItemNavigationArrowStyle" />
                 </RelativeLayout>
             </FrameLayout>
 

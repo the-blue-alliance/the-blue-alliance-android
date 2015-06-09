@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -35,11 +36,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     private static final String TEAM_KEY = "team_key";
 
-    private ViewTeamActivity parent;
-
+    private ViewTeamActivity mActivity;
     private String mTeamKey;
-
-    private PopulateTeamInfo task;
+    private PopulateTeamInfo mTask;
 
 
     public static TeamInfoFragment newInstance(String teamKey) {
@@ -60,36 +59,37 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         if (!(getActivity() instanceof ViewTeamActivity)) {
             throw new IllegalArgumentException("TeamMediaFragment must be hosted by a ViewTeamActivity!");
         } else {
-            parent = (ViewTeamActivity) getActivity();
+            mActivity = (ViewTeamActivity) getActivity();
         }
 
-        parent.registerRefreshListener(this);
+        mActivity.registerRefreshListener(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_team_info, container, false);
-        // Register this fragment as the callback for all clickable views
-        v.findViewById(R.id.team_location_container).setOnClickListener(this);
-        v.findViewById(R.id.team_twitter_button).setOnClickListener(this);
-        v.findViewById(R.id.team_cd_button).setOnClickListener(this);
-        v.findViewById(R.id.team_youtube_button).setOnClickListener(this);
-        v.findViewById(R.id.team_website_button).setOnClickListener(this);
+        View view = inflater.inflate(R.layout.fragment_team_info, container, false);
 
-        return v;
+        // Register this fragment as the callback for all clickable views
+        view.findViewById(R.id.team_location_container).setOnClickListener(this);
+        view.findViewById(R.id.team_website_container).setOnClickListener(this);
+        view.findViewById(R.id.team_twitter_container).setOnClickListener(this);
+        view.findViewById(R.id.team_youtube_container).setOnClickListener(this);
+        view.findViewById(R.id.team_cd_container).setOnClickListener(this);
+
+        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        parent.startRefresh(this);
+        mActivity.startRefresh(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (task != null) {
-            task.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
         }
         EventBus.getDefault().unregister(this);
     }
@@ -126,31 +126,31 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onRefreshStart(boolean actionIconPressed) {
         Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " info");
-        task = new PopulateTeamInfo(this, new RequestParams(true, actionIconPressed));
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamKey);
+        mTask = new PopulateTeamInfo(this, new RequestParams(true, actionIconPressed));
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamKey);
     }
 
     @Override
     public void onRefreshStop() {
-        if (task != null) {
-            task.cancel(false);
+        if (mTask != null) {
+            mTask.cancel(false);
         }
     }
 
     public void updateTask(PopulateTeamInfo newTask) {
-        task = newTask;
+        mTask = newTask;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        parent.unregisterRefreshListener(this);
+        mActivity.unregisterRefreshListener(this);
     }
 
     public void showCurrentEvent(final EventListElement event) {
 
-        final LinearLayout eventLayout = (LinearLayout) getView().findViewById(R.id.team_current_event);
-        final RelativeLayout container = (RelativeLayout) getView().findViewById(R.id.team_current_event_container);
+        final ViewGroup eventLayout = (ViewGroup) getView().findViewById(R.id.team_current_event);
+        final View container = getView().findViewById(R.id.team_current_event_container);
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -166,7 +166,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     public void onEvent(YearChangedEvent event) {
-        parent.notifyRefreshComplete(this);
+        mActivity.notifyRefreshComplete(this);
     }
 
     public void onEvent(LiveEventEventUpdateEvent event) {

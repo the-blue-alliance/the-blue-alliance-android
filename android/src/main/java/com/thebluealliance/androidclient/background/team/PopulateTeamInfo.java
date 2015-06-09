@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
@@ -90,13 +91,14 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         View view = mFragment.getView();
         if (view != null && activity != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
-            View infoContainer = view.findViewById(R.id.team_info_container);
+            View content = view.findViewById(R.id.team_content);
             if (code == APIResponse.CODE.NODATA) {
                 noDataText.setText(R.string.no_team_info);
                 noDataText.setVisibility(View.VISIBLE);
-                infoContainer.setVisibility(View.GONE);
+                content.setVisibility(View.GONE);
             } else {
                 noDataText.setVisibility(View.GONE);
+                content.setVisibility(View.VISIBLE);
                 TextView teamName = ((TextView) view.findViewById(R.id.team_name));
                 if (mTeamName.isEmpty()) {
                     teamName.setText("Team " + mTeamNumber);
@@ -115,10 +117,23 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                     view.findViewById(R.id.team_location_container).setTag("geo:0,0?q=" + mLocation.replace(" ", "+"));
                 }
 
-                view.findViewById(R.id.team_twitter_button).setTag("https://twitter.com/search?q=%23" + mTeamKey);
-                view.findViewById(R.id.team_youtube_button).setTag("https://www.youtube.com/results?search_query=" + mTeamKey);
-                view.findViewById(R.id.team_cd_button).setTag("http://www.chiefdelphi.com/media/photos/tags/" + mTeamKey);
-                view.findViewById(R.id.team_website_button).setTag(!mTeamWebsite.isEmpty() ? mTeamWebsite : "https://www.google.com/search?q=" + mTeamKey);
+                // If the team doesn't have a defined website, default to a google search for the team key
+                if(mTeamWebsite.isEmpty()) {
+                    view.findViewById(R.id.team_website_container).setTag("https://www.google.com/search?q=" + mTeamKey);
+                    ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.find_team_on_google);
+                } else {
+                    view.findViewById(R.id.team_website_container).setTag(mTeamWebsite);
+                    ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.view_team_website);
+                }
+
+                view.findViewById(R.id.team_twitter_container).setTag("https://twitter.com/search?q=%23" + mTeamKey);
+                ((TextView) view.findViewById(R.id.team_twitter_title)).setText(activity.getResources().getString(R.string.view_team_twitter, mTeamKey));
+
+                view.findViewById(R.id.team_youtube_container).setTag("https://www.youtube.com/results?search_query=" + mTeamKey);
+                ((TextView) view.findViewById(R.id.team_youtube_title)).setText(activity.getResources().getString(R.string.view_team_youtube, mTeamKey));
+
+                view.findViewById(R.id.team_cd_container).setTag("http://www.chiefdelphi.com/media/photos/tags/" + mTeamKey);
+
                 if (mFullName.isEmpty()) {
                     // No full name specified, hide the view
                     view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);

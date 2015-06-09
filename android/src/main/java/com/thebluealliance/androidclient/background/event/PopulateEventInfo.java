@@ -234,24 +234,23 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                 // Default to showing the nav arrow in the venue view and the venue view being clickable
                 // We need to set these again even though they're defined in XML in case we gain a location
                 // or venue on a refresh and we're reusing the same view.
-                view.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.VISIBLE);
-                view.setFocusable(true);
-                view.setClickable(true);
+                View eventVenueContainer = view.findViewById(R.id.event_venue_container);
+                eventVenueContainer.setFocusable(true);
+                eventVenueContainer.setClickable(true);
 
                 if (!venueString.isEmpty()) {
                     // Set the tag to the event venue if it is available
-                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
+                    eventVenueContainer.setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
                 } else if (!locationString.isEmpty()) {
                     // Otherwise, use the location
-                    view.findViewById(R.id.event_venue_container).setTag("geo:0,0?q=" + locationString.replace(" ", "+"));
+                    eventVenueContainer.setTag("geo:0,0?q=" + locationString.replace(" ", "+"));
                 } else {
                     // If neither location nor venue are available, hide the nav arrow, remove the tag,
                     // and set the view to not clickable so the user cannot interact with it.
                     // It will contain the text "No location available".
-                    view.findViewById(R.id.event_venue_container).setTag(null);
-                    view.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.GONE);
-                    view.setFocusable(false);
-                    view.setClickable(false);
+                    eventVenueContainer.setTag(null);
+                    eventVenueContainer.setFocusable(false);
+                    eventVenueContainer.setClickable(false);
                 }
 
                 view.findViewById(R.id.event_website_button).setTag(!event.getWebsite().isEmpty() ? event.getWebsite() : "https://www.google.com/search?q=" + nameString);
