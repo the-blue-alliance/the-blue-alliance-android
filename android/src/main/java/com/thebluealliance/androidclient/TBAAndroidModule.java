@@ -1,10 +1,20 @@
 package com.thebluealliance.androidclient;
 
-import dagger.Module;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.datafeed.APICache;
 
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
+/**
+ * App-wide dependency injection items
+ */
 @Module(
         injects = {
-                TBAAndroid.class
+                TBAAndroid.class,
+                APICache.class
         }
 )
 public class TBAAndroidModule {
@@ -15,10 +25,14 @@ public class TBAAndroidModule {
     }
 
     /* UNCOMMENT WHEN NEEDED
-    @Provides
-    @Singleton
+    @Provides @Singleton
     public Context provideApplicationContext() {
         return mApp.getApplicationContext();
     }
     */
+
+    @Provides @Singleton
+    public Database provideDatabase() {
+        return Database.getInstance(mApp);
+    }
 }

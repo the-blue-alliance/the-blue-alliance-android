@@ -19,12 +19,14 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroidModule;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.RefreshManager;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
@@ -32,8 +34,16 @@ import java.util.Calendar;
 
 import javax.inject.Inject;
 
+import dagger.Module;
 import de.greenrobot.event.EventBus;
 
+@Module(
+        injects = {
+                ViewTeamActivity.class
+        },
+        addsTo = TBAAndroidModule.class,
+        library = true
+)
 public class ViewTeamActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
 
     public static final String TEAM_KEY = "team_key",
@@ -56,8 +66,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     private View mYearSelectorSubtitleContainer;
     private TextView mYearSelectorTitle;
     private TextView mYearSelectorSubtitle;
-
-    @Inject RefreshManager mRefreshManager;
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);

@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
@@ -11,11 +12,15 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit.http.Header;
 import retrofit.http.Path;
 import rx.Observable;
 
 public class APICache implements APIv2 {
+
+    @Inject Database mDb;
 
     @Override public Observable<List<Team>> fetchTeamPage(
             @Path("pageNum") int pageNum,
@@ -26,7 +31,7 @@ public class APICache implements APIv2 {
     @Override public Observable<Team> fetchTeam(
             @Path("teamKey") String teamKey,
             @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
+        return Observable.just(mDb.getTeamsTable().get(teamKey));
     }
 
     @Override public Observable<List<Event>> fetchTeamEvents(

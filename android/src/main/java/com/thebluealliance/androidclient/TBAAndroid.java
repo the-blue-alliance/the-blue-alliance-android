@@ -16,12 +16,14 @@ import dagger.ObjectGraph;
  */
 public class TBAAndroid extends Application {
 
+    private ObjectGraph mObjectGraph;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
-        ObjectGraph objectGraph = ObjectGraph.create(getModules().toArray());
-        objectGraph.inject(this);
+        mObjectGraph = ObjectGraph.create(getModules().toArray());
+        mObjectGraph.inject(this);
         if (Utilities.isDebuggable()) {
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
@@ -33,5 +35,9 @@ public class TBAAndroid extends Application {
 
     private List<Object> getModules() {
         return Arrays.asList(new TBAAndroidModule(this), new DatafeedModule());
+    }
+
+    public ObjectGraph createScopedGraph(Object... modules) {
+        return mObjectGraph.plus(modules);
     }
 }
