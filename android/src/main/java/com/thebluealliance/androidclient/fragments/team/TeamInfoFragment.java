@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
@@ -29,9 +31,8 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.Observer;
 
-public class TeamInfoFragment extends Fragment implements View.OnClickListener, Observer<Team> {
+public class TeamInfoFragment extends Fragment implements View.OnClickListener, DataConsumer<Team> {
 
     private static final String TEAM_KEY = "team_key";
 
@@ -39,6 +40,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     private String mTeamKey;
     private Observable<Team> mTeamObservable;
 
+    //TODO bring out to super class
     @Inject CacheableDatafeed mDatafeed;
 
     public static TeamInfoFragment newInstance(String teamKey) {
@@ -90,7 +92,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     public void onResume() {
         super.onResume();
         mTeamObservable = mDatafeed.fetchTeam(mTeamKey, null);
-        mTeamObservable.subscribe(this);
+
         EventBus.getDefault().register(this);
     }
 
@@ -147,15 +149,14 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    @Override public void onCompleted() {
-
+    @Override
+    public void updateData(@Nullable Team data) {
+        //TODO set up Android M data binding here
+        // https://developer.android.com/tools/data-binding/guide.html
     }
 
-    @Override public void onError(Throwable throwable) {
-
-    }
-
-    @Override public void onNext(Team team) {
-
+    @Override
+    public void onError() {
+        //TODO show a shiny error page
     }
 }

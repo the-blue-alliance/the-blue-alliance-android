@@ -148,13 +148,13 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                  */
                 requestParams.forceFromCache = false;
                 PopulateTeamInfo secondLoad = new PopulateTeamInfo(mFragment, requestParams);
-                mFragment.updateTask(secondLoad);
-                secondLoad.execute(mTeamKey);
+                // mFragment.updateTask(secondLoad);
+               // secondLoad.execute(mTeamKey);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Team " + mTeamKey + " info refresh complete");
                 if (activity != null && mFragment instanceof RefreshListener) {
-                    activity.notifyRefreshComplete(mFragment);
+                 //   activity.notifyRefreshComplete(mFragment);
                 }
             }
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team info", mTeamKey);

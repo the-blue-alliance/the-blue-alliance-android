@@ -19,7 +19,7 @@ import rx.Observable;
 /**
  * Interface for TBA API spec to be used with Retrofit
  */
-interface APIv2 {
+public interface APIv2 {
 
     String TBA_APIv2_URL = "http://www.thebluealliance.com/api/v2";
 
