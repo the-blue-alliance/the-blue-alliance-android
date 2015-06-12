@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.background.event;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -241,10 +242,10 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                 if (!venueString.isEmpty()) {
                     // Set the tag to the event venue if it is available
-                    eventVenueContainer.setTag("geo:0,0?q=" + venueString.replace(" ", "+"));
+                    eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(venueString));
                 } else if (!locationString.isEmpty()) {
                     // Otherwise, use the location
-                    eventVenueContainer.setTag("geo:0,0?q=" + locationString.replace(" ", "+"));
+                    eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(locationString));
                 } else {
                     // If neither location nor venue are available, hide the nav arrow, remove the tag,
                     // and set the view to not clickable so the user cannot interact with it.
@@ -256,7 +257,7 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
 
                 // If the event doesn't have a defined website, default to a google search for the event name
                 if(event.getWebsite().isEmpty()) {
-                    view.findViewById(R.id.event_website_container).setTag("https://www.google.com/search?q=" + nameString);
+                    view.findViewById(R.id.event_website_container).setTag("https://www.google.com/search?q=" + Uri.encode(nameString));
                     ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.find_event_on_google);
                 } else {
                     view.findViewById(R.id.event_website_container).setTag(event.getWebsite());
