@@ -22,7 +22,7 @@
     <string name="districts_label">Districts</string>
 
     <!-- View Event -->
-    <string name="view_event_website">View events\'s website</string>
+    <string name="view_event_website">View event\'s website</string>
     <string name="find_event_on_google">Find event on Google</string>
     <string name="view_event_twitter">View #%1$s on Twitter</string>
     <string name="view_event_youtube">View %1$s on YouTube</string>

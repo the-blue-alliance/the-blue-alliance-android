@@ -74,8 +74,8 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
         view.findViewById(R.id.event_twitter_container).setOnClickListener(this);
         view.findViewById(R.id.event_youtube_container).setOnClickListener(this);
         view.findViewById(R.id.event_cd_container).setOnClickListener(this);
-        view.findViewById(R.id.top_teams_container).setOnClickListener(this);
-        view.findViewById(R.id.top_oprs_container).setOnClickListener(this);
+        view.findViewById(R.id.top_teams).setOnClickListener(this);
+        view.findViewById(R.id.top_oprs).setOnClickListener(this);
         return view;
     }
 
@@ -120,14 +120,15 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.top_teams_container) {
-            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);  // Rankings
+        if (id == R.id.top_teams) {
+            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);
             return;
-        } else if (id == R.id.top_oprs_container) {
-            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);  // Stats
+        } else if (id == R.id.top_oprs) {
+            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);
             return;
         }
 
+        // Clickable social media views have their tags set to the information needed to construct an intent
         if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
             String uri = v.getTag().toString();
 

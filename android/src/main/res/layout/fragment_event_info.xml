@@ -46,10 +46,7 @@
 
                     <RelativeLayout
                         android:id="@+id/event_date_container"
-                        style="@style/InfoItemStyle"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true">
+                        style="@style/InfoItemStyle">
 
                         <com.thebluealliance.androidclient.views.RecoloredImageView
                             android:id="@+id/event_date_icon"
@@ -69,7 +66,8 @@
                     <FrameLayout
                         android:id="@+id/event_venue_container"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <View style="@style/InfoItemDividerStyle" />
 
@@ -147,6 +145,72 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <!-- Top teams card -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/top_teams_container"
+                style="@style/InfoItemCardStyle"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/top_teams"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp" />
+
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
+
+                    <TextView
+                        android:id="@+id/top_teams"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:padding="16dp"
+                        android:textSize="16sp" />
+
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <!-- Top OPRs card -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/top_oprs_container"
+                style="@style/InfoItemCardStyle"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/top_oprs"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp" />
+
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
+
+                    <TextView
+                        android:id="@+id/top_oprs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:padding="16dp"
+                        android:textSize="16sp" />
+
+                    <View style="@style/InfoItemFullWidthDividerStyle" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -257,63 +321,6 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-            <!-- Top teams card -->
-            <android.support.v7.widget.CardView
-                android:id="@+id/top_teams_container"
-                style="@style/InfoItemCardStyle"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="@string/top_teams"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/top_teams"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp" />
-
-                    <View style="@style/InfoItemFullWidthDividerStyle" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-            <!-- Top OPRs card -->
-            <android.support.v7.widget.CardView
-                android:id="@+id/top_oprs_container"
-                style="@style/InfoItemCardStyle"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="@string/top_oprs"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/top_oprs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp" />
-
-                    <View style="@style/InfoItemFullWidthDividerStyle" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
 
             <!-- Provides padding for the FAB -->
             <Space
