@@ -76,8 +76,8 @@ public class DatafeedModule {
         return builder.create();
     }
 
-    @Provides
-    public RefreshManager provideRefreshManager(){
-        return new RefreshManager();
-    }
+  //  @Provides
+  //  public RefreshManager provideRefreshManager(){
+  //      return new RefreshManager();
+  //  }
 }
