@@ -19,27 +19,21 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroidModule;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.modules.ViewTeamModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Calendar;
 
-import dagger.Module;
+import dagger.ObjectGraph;
 import de.greenrobot.event.EventBus;
 
-@Module(
-        injects = {
-                ViewTeamActivity.class
-        },
-        addsTo = TBAAndroidModule.class,
-        library = true
-)
 public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         ViewPager.OnPageChangeListener,
         View.OnClickListener {
@@ -50,7 +44,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             SELECTED_TAB = "tab";
 
     private TextView mWarningMessage;
-
+    private ObjectGraph mActivityGraph;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
@@ -87,6 +81,11 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         if (mTeamKey == null) {
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
+
+        // inject dependencies
+        // TODO move to superclass
+        mActivityGraph = ((TBAAndroid) getApplication()).createScopedGraph(new ViewTeamModule());
+        mActivityGraph.inject(this);
 
         // disable legacy RefreshableHostActivity
         setRefreshEnabled(false);
@@ -144,6 +143,11 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         // We can call this even though the years participated haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        mActivityGraph = null;
     }
 
     @Override

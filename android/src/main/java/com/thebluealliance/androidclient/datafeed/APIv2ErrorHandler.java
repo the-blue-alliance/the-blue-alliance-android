@@ -8,7 +8,7 @@ import retrofit.mime.TypedByteArray;
 /**
  * File to handler API Errors
  */
-class APIv2ErrorHandler implements ErrorHandler {
+public class APIv2ErrorHandler implements ErrorHandler {
 
     @Override
     public Throwable handleError(RetrofitError cause) {

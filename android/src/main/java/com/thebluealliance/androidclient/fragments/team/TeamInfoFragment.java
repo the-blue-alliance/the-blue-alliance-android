@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import java.util.List;
 
@@ -38,10 +39,10 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     private ViewTeamActivity mParent;
     private String mTeamKey;
-    private Observable<Team> mTeamObservable;
 
     //TODO bring out to super class
     @Inject CacheableDatafeed mDatafeed;
+    @Inject TeamInfoSubscriber mSubscriber;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -86,13 +87,15 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        mSubscriber.unsubscribe();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mTeamObservable = mDatafeed.fetchTeam(mTeamKey, null);
-
+        Observable<Team> mTeamObservable = mDatafeed.fetchTeam(mTeamKey, null);
+        mTeamObservable.subscribe(mSubscriber);
+        //TODO make sure observable stuff happens on the right thread
         EventBus.getDefault().register(this);
     }
 
