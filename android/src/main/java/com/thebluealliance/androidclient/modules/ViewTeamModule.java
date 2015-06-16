@@ -1,18 +1,19 @@
 package com.thebluealliance.androidclient.modules;
 
-import com.thebluealliance.androidclient.TBAAndroidModule;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module(
-               injects = {
-                                 ViewTeamActivity.class
-               },
-               addsTo = TBAAndroidModule.class,
-               library = true
+    injects = {
+        TeamInfoFragment.class
+    },
+    includes = {
+        DatafeedModule.class
+    }
 )
 public class ViewTeamModule {
 

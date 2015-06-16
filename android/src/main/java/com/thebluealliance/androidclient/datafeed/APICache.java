@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.ObjectGraph;
 import retrofit.http.Header;
 import retrofit.http.Path;
 import rx.Observable;
@@ -21,6 +22,10 @@ import rx.Observable;
 public class APICache implements APIv2 {
 
     @Inject Database mDb;
+
+    public APICache() {
+        ObjectGraph.create(new DatafeedModule()).inject(this);
+    }
 
     @Override public Observable<List<Team>> fetchTeamPage(
             @Path("pageNum") int pageNum,

@@ -12,15 +12,19 @@ import dagger.Provides;
  * App-wide dependency injection items
  */
 @Module(
-        injects = {
-                TBAAndroid.class,
-                APICache.class
-        }
+    injects = {
+        TBAAndroid.class,
+        APICache.class
+    }
 )
 public class TBAAndroidModule {
-    private TBAAndroid mApp;
+    static TBAAndroid mApp;
 
-    public TBAAndroidModule(TBAAndroid app){
+    public TBAAndroidModule() {
+
+    }
+
+    public TBAAndroidModule(TBAAndroid app) {
         mApp = app;
     }
 
@@ -31,7 +35,8 @@ public class TBAAndroidModule {
     }
     */
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public Database provideDatabase() {
         return Database.getInstance(mApp);
     }

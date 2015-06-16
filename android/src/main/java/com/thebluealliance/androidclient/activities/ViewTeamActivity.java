@@ -19,14 +19,12 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.modules.ViewTeamModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Calendar;
@@ -81,11 +79,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         if (mTeamKey == null) {
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
-
-        // inject dependencies
-        // TODO move to superclass
-        mActivityGraph = ((TBAAndroid) getApplication()).createScopedGraph(new ViewTeamModule());
-        mActivityGraph.inject(this);
 
         // disable legacy RefreshableHostActivity
         setRefreshEnabled(false);

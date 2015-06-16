@@ -4,16 +4,12 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.stetho.Stetho;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 
 import java.util.Arrays;
 import java.util.List;
 
 import dagger.ObjectGraph;
 
-/**
- * File created by phil on 7/21/14.
- */
 public class TBAAndroid extends Application {
 
     private ObjectGraph mObjectGraph;
@@ -34,7 +30,7 @@ public class TBAAndroid extends Application {
     }
 
     private List<Object> getModules() {
-        return Arrays.asList(new TBAAndroidModule(this), new DatafeedModule());
+        return Arrays.asList(new TBAAndroidModule(this));
     }
 
     public ObjectGraph createScopedGraph(Object... modules) {

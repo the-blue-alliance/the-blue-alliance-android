@@ -12,7 +12,9 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import dagger.ObjectGraph;
 import retrofit.http.Header;
 import retrofit.http.Path;
 import rx.Observable;
@@ -20,8 +22,13 @@ import rx.Observable;
 
 public class CacheableDatafeed implements APIv2 {
 
-    @Inject APIv2 mRetrofitAPI;
-    @Inject APICache mAPICache;
+    @Inject @Named("retrofit") APIv2 mRetrofitAPI;
+    @Inject @Named("cache") APICache mAPICache;
+
+    public CacheableDatafeed() {
+        ObjectGraph objectGraph = ObjectGraph.create(DatafeedModule.class);
+        objectGraph.inject(this);
+    }
 
     @Override public Observable<List<Team>> fetchTeamPage(
             @Path("pageNum") int pageNum,
