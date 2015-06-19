@@ -19,7 +19,7 @@ abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements APISubsc
     T mAPIData;
     V mDataToBind;
 
-    public void setConsumer(DataConsumer<V> consumer){
+    public BaseAPISubscriber(DataConsumer<V> consumer){
         mConsumer = consumer;
     }
 
@@ -32,7 +32,7 @@ abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements APISubsc
 
     @Override public void onError(Throwable throwable) {
         if (mConsumer != null) {
-            mConsumer.onError();
+            mConsumer.onError(throwable);
         }
     }
 }

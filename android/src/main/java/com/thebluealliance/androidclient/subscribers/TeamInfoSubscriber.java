@@ -2,11 +2,14 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.support.annotation.Nullable;
 
+import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.Team;
 
 public class TeamInfoSubscriber extends BaseAPISubscriber<Team, Team>{
 
-    private Team mTeam;
+    public TeamInfoSubscriber(DataConsumer<Team> team) {
+        super(team);
+    }
 
     @Override
     public void parseData() {
@@ -15,11 +18,11 @@ public class TeamInfoSubscriber extends BaseAPISubscriber<Team, Team>{
 
     @Override
     public @Nullable Team getData() {
-        return mTeam;
+        return mAPIData;
     }
 
     @Override
     public void onNext(Team team) {
-        mTeam = team;
+        mAPIData = team;
     }
 }

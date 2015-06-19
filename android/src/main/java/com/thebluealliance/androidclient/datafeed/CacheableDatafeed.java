@@ -37,8 +37,8 @@ public class CacheableDatafeed implements APIv2 {
     }
 
     @Override public Observable<Team> fetchTeam(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+            String teamKey,
+            String ifModifiedSince) {
         return mAPICache.fetchTeam(teamKey, ifModifiedSince).concatWith(
                 mRetrofitAPI.fetchTeam(teamKey, ifModifiedSince));
     }

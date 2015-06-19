@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 
 import javax.inject.Inject;
 
+import dagger.ObjectGraph;
 import retrofit.converter.ConversionException;
 import retrofit.converter.Converter;
 import retrofit.mime.MimeUtil;
@@ -24,7 +25,11 @@ import retrofit.mime.TypedOutput;
 public final class RetrofitConverter implements Converter {
     public static final String ENCODING = "UTF-8";
 
-    @Inject public Gson gson;
+    @Inject Gson gson;
+
+    public RetrofitConverter() {
+        ObjectGraph.create(new DatafeedModule()).inject(this);
+    }
 
     @Override
     public Object fromBody(TypedInput body, Type type) throws ConversionException {

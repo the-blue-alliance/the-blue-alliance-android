@@ -78,7 +78,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
             mParent = (ViewTeamActivity) getActivity();
         }
 
-        mFragmentGraph = ObjectGraph.create(ViewTeamModule.class);
+        mFragmentGraph = ObjectGraph.create(new ViewTeamModule(this));
         mFragmentGraph.inject(this);
     }
 
@@ -242,7 +242,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onError() {
-        //TODO show a shiny error page
+    public void onError(Throwable throwable) {
+        Log.e(Constants.LOG_TAG, throwable.toString());
     }
 }

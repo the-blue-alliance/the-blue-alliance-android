@@ -1,7 +1,9 @@
 package com.thebluealliance.androidclient.modules;
 
+import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
+import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import dagger.Module;
@@ -17,8 +19,14 @@ import dagger.Provides;
 )
 public class ViewTeamModule {
 
+    private DataConsumer<Team> mTeamConsumer;
+
+    public ViewTeamModule(DataConsumer<Team> teamConsumer) {
+        mTeamConsumer = teamConsumer;
+    }
+
     @Provides
     public TeamInfoSubscriber provideTeamInfoSubscriber() {
-        return new TeamInfoSubscriber();
+        return new TeamInfoSubscriber(mTeamConsumer);
     }
 }

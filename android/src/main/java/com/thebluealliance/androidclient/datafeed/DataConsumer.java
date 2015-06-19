@@ -18,5 +18,5 @@ public interface DataConsumer<T> {
     /**
      * Called when we can't fetch data :(
      */
-    void onError();
+    void onError(Throwable throwable);
 }

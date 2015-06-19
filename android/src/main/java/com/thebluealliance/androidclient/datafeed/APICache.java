@@ -34,9 +34,10 @@ public class APICache implements APIv2 {
     }
 
     @Override public Observable<Team> fetchTeam(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return Observable.just(mDb.getTeamsTable().get(teamKey));
+            String teamKey,
+            String ifModifiedSince) {
+        Team team = mDb.getTeamsTable().get(teamKey);
+        return Observable.just(team);
     }
 
     @Override public Observable<List<Event>> fetchTeamEvents(
