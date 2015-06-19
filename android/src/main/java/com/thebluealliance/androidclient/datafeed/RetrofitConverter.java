@@ -11,7 +11,6 @@ import java.lang.reflect.Type;
 
 import javax.inject.Inject;
 
-import dagger.ObjectGraph;
 import retrofit.converter.ConversionException;
 import retrofit.converter.Converter;
 import retrofit.mime.MimeUtil;
@@ -25,10 +24,11 @@ import retrofit.mime.TypedOutput;
 public final class RetrofitConverter implements Converter {
     public static final String ENCODING = "UTF-8";
 
-    @Inject Gson gson;
+    @Inject Gson mGson;
 
-    public RetrofitConverter() {
-        ObjectGraph.create(new DatafeedModule()).inject(this);
+    @Inject
+    public RetrofitConverter(Gson gson) {
+        mGson = gson;
     }
 
     @Override
@@ -40,7 +40,7 @@ public final class RetrofitConverter implements Converter {
         InputStreamReader isr = null;
         try {
             isr = new InputStreamReader(body.in(), charset);
-            return gson.fromJson(isr, type);
+            return mGson.fromJson(isr, type);
         } catch (IOException | JsonParseException e) {
             throw new ConversionException(e);
         } finally {
@@ -57,7 +57,7 @@ public final class RetrofitConverter implements Converter {
     @Override
     public TypedOutput toBody(Object object) {
         try {
-            return new JsonTypedOutput(gson.toJson(object).getBytes(ENCODING), ENCODING);
+            return new JsonTypedOutput(mGson.toJson(object).getBytes(ENCODING), ENCODING);
         } catch (UnsupportedEncodingException e) {
             throw new AssertionError(e);
         }

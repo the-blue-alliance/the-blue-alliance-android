@@ -64,26 +64,12 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public RestAdapter provideRestAdapter() {
-        return new RestAdapter.Builder()
-            .setEndpoint(APIv2.TBA_APIv2_URL)
-            .setConverter(new RetrofitConverter())
-            .setRequestInterceptor(new APIv2RequestInterceptor())
-            .setErrorHandler(new APIv2ErrorHandler())
-            .setClient(mOkClient)
-            .build();
+        return getRestAdapter(mOkClient);
     }
 
     @Provides @Singleton
     public Gson provideGson() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Award.class, new AwardDeserializer());
-        builder.registerTypeAdapter(Event.class, new EventDeserializer());
-        builder.registerTypeAdapter(Match.class, new MatchDeserializer());
-        builder.registerTypeAdapter(Team.class, new TeamDeserializer());
-        builder.registerTypeAdapter(Media.class, new MediaDeserializer());
-        builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
-        builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
-        return builder.create();
+        return getGson();
     }
 
     @Provides @Singleton
@@ -95,4 +81,26 @@ public class DatafeedModule {
     //  public RefreshManager provideRefreshManager(){
     //      return new RefreshManager();
     //  }
+
+    public static Gson getGson() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Award.class, new AwardDeserializer());
+        builder.registerTypeAdapter(Event.class, new EventDeserializer());
+        builder.registerTypeAdapter(Match.class, new MatchDeserializer());
+        builder.registerTypeAdapter(Team.class, new TeamDeserializer());
+        builder.registerTypeAdapter(Media.class, new MediaDeserializer());
+        builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
+        builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
+        return builder.create();
+    }
+
+    public static RestAdapter getRestAdapter(OkClient okClient) {
+        return new RestAdapter.Builder()
+            .setEndpoint(APIv2.TBA_APIv2_URL)
+            .setConverter(new RetrofitConverter(getGson()))
+            .setRequestInterceptor(new APIv2RequestInterceptor())
+            .setErrorHandler(new APIv2ErrorHandler())
+            .setClient(okClient)
+            .build();
+    }
 }
