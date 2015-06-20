@@ -73,7 +73,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         }
         if (!(getActivity() instanceof ViewTeamActivity)) {
             throw new IllegalArgumentException("TeamMediaFragment must be hosted by a " +
-                                                 "ViewTeamActivity!");
+                "ViewTeamActivity!");
         } else {
             mParent = (ViewTeamActivity) getActivity();
         }
@@ -84,9 +84,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public View onCreateView(
-                              LayoutInflater inflater,
-                              ViewGroup container,
-                              Bundle savedInstanceState) {
+        LayoutInflater inflater,
+        ViewGroup container,
+        Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_team_info, container, false);
         // Register this fragment as the callback for all clickable views
         v.findViewById(R.id.team_location_container).setOnClickListener(this);
@@ -110,9 +110,9 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
         super.onResume();
         Observable<Team> mTeamObservable = mDatafeed.fetchTeam(mTeamKey, null);
         mTeamObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mSubscriber);
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(mSubscriber);
         EventBus.getDefault().register(this);
     }
 
@@ -134,29 +134,26 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
             } else {
                 // No application can handle this intent
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT)
-                  .show();
+                    .show();
             }
         }
     }
 
     public void showCurrentEvent(final EventListElement event) {
 
-        final LinearLayout eventLayout = (LinearLayout) getView().findViewById(R.id
-                .team_current_event);
+        final LinearLayout eventLayout = (LinearLayout) getView()
+            .findViewById(R.id.team_current_event);
         final RelativeLayout container = (RelativeLayout) getView()
             .findViewById(R.id.team_current_event_container);
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                eventLayout.removeAllViews();
-                eventLayout.addView(event.getView(getActivity(),
-                                                  getActivity().getLayoutInflater(), null));
+        getActivity().runOnUiThread(() -> {
+            eventLayout.removeAllViews();
+            eventLayout.addView(event.getView(getActivity(),
+                getActivity().getLayoutInflater(), null));
 
-                container.setVisibility(View.VISIBLE);
-                container.setTag(mTeamKey + "@" + event.getEventKey());
-                container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
-            }
+            container.setVisibility(View.VISIBLE);
+            container.setTag(mTeamKey + "@" + event.getEventKey());
+            container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
         });
     }
 
@@ -171,73 +168,66 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void updateData(@Nullable Team team) {
+    public void updateData(@Nullable Team team) throws BasicModel.FieldNotDefinedException {
         //TODO set up Android M data binding here
         // https://developer.android.com/tools/data-binding/guide.html
 
-        try {
-            View view = getView();
-            if (view != null) {
-                TextView noDataText = (TextView) view.findViewById(R.id.no_data);
-                View infoContainer = view.findViewById(R.id.team_info_container);
-                if (team == null) {
-                    noDataText.setText(R.string.no_team_info);
-                    noDataText.setVisibility(View.VISIBLE);
-                    infoContainer.setVisibility(View.GONE);
+        View view = getView();
+        if (view != null) {
+            TextView noDataText = (TextView) view.findViewById(R.id.no_data);
+            View infoContainer = view.findViewById(R.id.team_info_container);
+            if (team == null) {
+                noDataText.setText(R.string.no_team_info);
+                noDataText.setVisibility(View.VISIBLE);
+                infoContainer.setVisibility(View.GONE);
+            } else {
+                noDataText.setVisibility(View.GONE);
+                TextView teamName = ((TextView) view.findViewById(R.id.team_name));
+                if (team.getNickname().isEmpty()) {
+                    teamName.setText("Team " + team.getTeamNumber());
                 } else {
-                    noDataText.setVisibility(View.GONE);
-                    TextView teamName = ((TextView) view.findViewById(R.id.team_name));
-                    if (team.getNickname().isEmpty()) {
-                        teamName.setText("Team " + team.getTeamNumber());
-                    } else {
-                        teamName.setText(team.getNickname());
-                    }
-
-                    View teamLocationContainer = view.findViewById(R.id.team_location_container);
-                    if (team.getLocation().isEmpty()) {
-                        // No location; hide the location view
-                        teamLocationContainer.setVisibility(View.GONE);
-                    } else {
-                        // Show and populate the location view
-                        ((TextView) view.findViewById(R.id.team_location))
-                          .setText(team.getLocation());
-
-                        // Tag is used to create an ACTION_VIEW intent for a maps application
-                        view.findViewById(R.id.team_location_container)
-                          .setTag("geo:0,0?q=" + team.getLocation().replace(" ", "+"));
-                    }
-
-                    view.findViewById(R.id.team_twitter_button)
-                      .setTag("https://twitter" + ".com/search?q=%23" + mTeamKey);
-                    view.findViewById(R.id.team_youtube_button)
-                      .setTag("https://www.youtube" + ".com/results?search_query=" + mTeamKey);
-                    view.findViewById(R.id.team_cd_button)
-                      .setTag("http://www.chiefdelphi" + ".com/media/photos/tags/" + mTeamKey);
-                    view.findViewById(R.id.team_website_button)
-                            .setTag(!team.getWebsite().isEmpty() ? team.getWebsite() :
-                                "https://www.google" + ".com/search?q=" + mTeamKey);
-                    if (team.getFullName().isEmpty()) {
-                        // No full name specified, hide the view
-                        view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
-                    } else {
-                        // This string needs to be specially formatted
-                        SpannableString string = new SpannableString("aka " + team.getFullName());
-                        string.setSpan(new TextAppearanceSpan(getActivity(),
-                                                              R.style.InfoItemLabelStyle),
-                                       0,
-                                       3,
-                                       Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                        ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
-                    }
-
-                    view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
-                    view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
-                    view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
+                    teamName.setText(team.getNickname());
                 }
-                view.findViewById(R.id.progress).setVisibility(View.GONE);
+
+                View teamLocationContainer = view.findViewById(R.id.team_location_container);
+                if (team.getLocation().isEmpty()) {
+                    // No location; hide the location view
+                    teamLocationContainer.setVisibility(View.GONE);
+                } else {
+                    // Show and populate the location view
+                    ((TextView) view.findViewById(R.id.team_location))
+                        .setText(team.getLocation());
+
+                    // Tag is used to create an ACTION_VIEW intent for a maps application
+                    view.findViewById(R.id.team_location_container)
+                        .setTag("geo:0,0?q=" + team.getLocation().replace(" ", "+"));
+                }
+
+                view.findViewById(R.id.team_twitter_button)
+                    .setTag("https://twitter" + ".com/search?q=%23" + mTeamKey);
+                view.findViewById(R.id.team_youtube_button)
+                    .setTag("https://www.youtube" + ".com/results?search_query=" + mTeamKey);
+                view.findViewById(R.id.team_cd_button)
+                    .setTag("http://www.chiefdelphi" + ".com/media/photos/tags/" + mTeamKey);
+                view.findViewById(R.id.team_website_button)
+                    .setTag(!team.getWebsite().isEmpty() ? team.getWebsite() :
+                        "https://www.google" + ".com/search?q=" + mTeamKey);
+                if (team.getFullName().isEmpty()) {
+                    // No full name specified, hide the view
+                    view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
+                } else {
+                    // This string needs to be specially formatted
+                    SpannableString string = new SpannableString("aka " + team.getFullName());
+                    string.setSpan(new TextAppearanceSpan(getActivity(),
+                            R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+                }
+
+                view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
+                view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
+                view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
             }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "ERROR RENDERING TEAM");
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
         }
     }
 
