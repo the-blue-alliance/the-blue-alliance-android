@@ -6,7 +6,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
@@ -22,10 +21,10 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -44,7 +43,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class TeamInfoFragment extends Fragment implements View.OnClickListener, DataConsumer<Team> {
+public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements View.OnClickListener, DataConsumer<Team> {
 
     private static final String TEAM_KEY = "team_key";
 
@@ -52,8 +51,6 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
     private String mTeamKey;
     private ObjectGraph mFragmentGraph;
 
-    //TODO bring out to super class
-    @Inject CacheableDatafeed mDatafeed;
     @Inject TeamInfoSubscriber mSubscriber;
 
     public static TeamInfoFragment newInstance(String teamKey) {
@@ -169,6 +166,7 @@ public class TeamInfoFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void updateData(@Nullable Team team) throws BasicModel.FieldNotDefinedException {
+        //TODO maybe break out into own class for testing
         //TODO set up Android M data binding here
         // https://developer.android.com/tools/data-binding/guide.html
 

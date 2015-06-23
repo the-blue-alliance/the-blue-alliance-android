@@ -18,7 +18,7 @@ import rx.Subscriber;
  * @param <T> Datatype to be returned from the API (one from {@link APIv2}
  * @param <V> Datatype to be returned for binding to views
  */
-abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements APISubscriber<V>{
+public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements APISubscriber<V>{
 
     DataConsumer<V> mConsumer;
     T mAPIData;
