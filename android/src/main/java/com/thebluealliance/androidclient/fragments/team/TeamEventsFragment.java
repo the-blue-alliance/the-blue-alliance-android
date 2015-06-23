@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.fragments.team;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,26 +13,31 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventList;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.modules.HasModule;
+import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import dagger.ObjectGraph;
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-/**
- * Created by Nathan on 6/20/2014.
- */
-public class TeamEventsFragment extends Fragment implements RefreshListener {
+public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAdapter> {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
-
-    private ViewTeamActivity parent;
 
     private int mYear;
     private String mTeamKey;
@@ -42,7 +47,7 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     private ListView mListView;
     private ProgressBar mProgressBar;
 
-    private PopulateEventList mTask;
+    @Inject EventListSubscriber mSubscriber;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -56,15 +61,18 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mYear = getArguments().getInt(YEAR, -1);
-        mTeamKey = getArguments().getString(TEAM_KEY);
-        if (!(getActivity() instanceof ViewTeamActivity)) {
-            throw new IllegalArgumentException("TeamEventsFragment must be hosted by a ViewTeamActivity!");
-        } else {
-            parent = (ViewTeamActivity) getActivity();
+        if (getActivity() instanceof HasModule) {
+            ObjectGraph fragmentGraph = ObjectGraph.create(((HasModule) getActivity()).getModule());
+            fragmentGraph.inject(this);
         }
 
-        parent.registerRefreshListener(this);
+        mYear = getArguments().getInt(YEAR, -1);
+        if (mYear == -1) {
+            // default to current year
+            mYear = Utilities.getCurrentYear();
+        }
+        mTeamKey = getArguments().getString(TEAM_KEY);
+        mSubscriber.setConsumer(this);
     }
 
     @Override
@@ -100,9 +108,6 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
@@ -113,38 +118,40 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(Constants.LOG_TAG, "Registering YearChangedEvent");
+        Observable<List<Event>> mTeamObservable = mDatafeed.fetchTeamEvents(mTeamKey, mYear, null);
+        mTeamObservable
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(mSubscriber);
+
         EventBus.getDefault().register(this);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        parent.startRefresh(this);
-    }
-
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " events in " + mYear);
-        mTask = new PopulateEventList(this, mYear, "", mTeamKey, new RequestParams(true, actionIconPressed));
-        mTask.execute();
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        parent.unregisterRefreshListener(this);
-    }
-
+    //TODO kill eventbus
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-        onRefreshStart(false);
+    }
+
+    @Override
+    public void updateData(@Nullable ListViewAdapter data)
+      throws BasicModel.FieldNotDefinedException {
+        if (data == null || mListView == null) {
+            return;
+        }
+        if (mListView.getAdapter() == null) {
+            mListView.setAdapter(data);
+        }
+        data.notifyDataSetChanged();
+
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+
+        // TODO no data text
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
     }
 }

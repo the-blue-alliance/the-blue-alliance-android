@@ -1,34 +1,40 @@
 package com.thebluealliance.androidclient.modules;
 
-import com.thebluealliance.androidclient.datafeed.DataConsumer;
+import android.content.Context;
+
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.fragments.team.TeamEventsFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
-import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module(
-    injects = {
-        DatafeedFragment.class,
-        TeamInfoFragment.class
-    },
-    includes = {
-        DatafeedModule.class
-    }
+  injects = {
+    TeamInfoFragment.class,
+    TeamEventsFragment.class
+  },
+  includes = {
+    DatafeedModule.class
+  }
 )
 public class ViewTeamModule {
 
-    private DataConsumer<Team> mTeamConsumer;
+    private Context mContext;
 
-    public ViewTeamModule(DataConsumer<Team> teamConsumer) {
-        mTeamConsumer = teamConsumer;
+    public ViewTeamModule(Context context) {
+        mContext = context;
     }
 
     @Provides
     public TeamInfoSubscriber provideTeamInfoSubscriber() {
-        return new TeamInfoSubscriber(mTeamConsumer);
+        return new TeamInfoSubscriber();
+    }
+
+    @Provides
+    public EventListSubscriber provideEventListSubscriber() {
+        return new EventListSubscriber(mContext);
     }
 }

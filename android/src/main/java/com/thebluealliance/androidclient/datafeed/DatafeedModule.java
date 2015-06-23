@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.TBAAndroidModule;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
@@ -10,6 +11,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserialize
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -29,17 +31,19 @@ import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
 @Module(
-    injects = {
-        CacheableDatafeed.class,
-        DatafeedModule.class,
-        RetrofitConverter.class
-    },
-    includes = {
-        TBAAndroidModule.class
-    }
+  injects = {
+    CacheableDatafeed.class,
+    DatafeedModule.class,
+    RetrofitConverter.class,
+    DatafeedFragment.class
+  },
+  includes = {
+    TBAAndroidModule.class
+  }
 )
 public class DatafeedModule {
 
+    @Inject OkHttpClient mOkHttpClient;
     @Inject OkClient mOkClient;
     @Inject RestAdapter mRestAdapter;
 
@@ -59,7 +63,7 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public OkClient provideOkClient() {
-        return new OkClient();
+        return new OkClient(mOkHttpClient);
     }
 
     @Provides @Singleton
@@ -75,6 +79,13 @@ public class DatafeedModule {
     @Provides @Singleton
     public CacheableDatafeed provideDatafeed() {
         return new CacheableDatafeed();
+    }
+
+    @Provides @Singleton
+    public OkHttpClient getOkHttp() {
+        OkHttpClient client = new OkHttpClient();
+        client.interceptors().add(new APIv2RequestInterceptor());
+        return client;
     }
 
     //  @Provides
@@ -98,7 +109,6 @@ public class DatafeedModule {
         return new RestAdapter.Builder()
             .setEndpoint(APIv2.TBA_APIv2_URL)
             .setConverter(new RetrofitConverter(getGson()))
-            .setRequestInterceptor(new APIv2RequestInterceptor())
             .setErrorHandler(new APIv2ErrorHandler())
             .setClient(okClient)
             .build();

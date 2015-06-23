@@ -148,6 +148,21 @@ public abstract class ModelTable<T extends BasicModel> {
         return mDb.query(getTableName(), columns, selection, selectionArgs, groupBy, having, orderBy, limit);
     }
 
+    public final List<T> getForQuery (
+      String[] columns,
+      String selection,
+      String[] selectionArgs) {
+        Cursor cursor = query(columns, selection, selectionArgs, null, null, null, null);
+        List<T> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
+        if (cursor == null || !cursor.moveToFirst()) {
+            return models;
+        }
+        do {
+            models.add(inflate(cursor));
+        } while (cursor.moveToNext());
+        return models;
+    }
+
     /**
      * Fetches all rows from the table
      * Equivalent to SELECT * FROM {@link #getTableName()}

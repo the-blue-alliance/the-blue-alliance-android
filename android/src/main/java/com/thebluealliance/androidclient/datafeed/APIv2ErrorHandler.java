@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import android.util.Log;
+
+import com.thebluealliance.androidclient.Constants;
+
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -12,7 +16,7 @@ public class APIv2ErrorHandler implements ErrorHandler {
 
     @Override
     public Throwable handleError(RetrofitError cause) {
-        System.out.println(cause);
+        Log.e(Constants.LOG_TAG, Log.getStackTraceString(cause));
         Response response = cause.getResponse();
         if(response != null) {
             TypedByteArray data = (TypedByteArray) (response.getBody());

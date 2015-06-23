@@ -33,18 +33,21 @@ public class APICache implements APIv2 {
         return null;
     }
 
-    @Override public Observable<Team> fetchTeam(
+    @Override
+    public Observable<Team> fetchTeam(
             String teamKey,
             String ifModifiedSince) {
         Team team = mDb.getTeamsTable().get(teamKey);
         return Observable.just(team);
     }
 
-    @Override public Observable<List<Event>> fetchTeamEvents(
-            @Path("teamKey") String teamKey,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
+    @Override
+    public Observable<List<Event>> fetchTeamEvents(
+            String teamKey,
+            int year,
+            String ifModifiedSince) {
+        List<Event> events = mDb.getEventTeamsTable().getEvents(teamKey, year);
+        return Observable.just(events);
     }
 
     @Override public Observable<List<Award>> fetchTeamAtEventAwards(

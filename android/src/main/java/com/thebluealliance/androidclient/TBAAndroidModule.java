@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
 
 import javax.inject.Singleton;
 
@@ -12,10 +13,11 @@ import dagger.Provides;
  * App-wide dependency injection items
  */
 @Module(
-    injects = {
-        TBAAndroid.class,
-        APICache.class
-    }
+  injects = {
+    TBAAndroid.class,
+    APICache.class,
+    APIv2RequestInterceptor.class
+  }
 )
 public class TBAAndroidModule {
     static TBAAndroid mApp;
@@ -35,8 +37,7 @@ public class TBAAndroidModule {
     }
     */
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     public Database provideDatabase() {
         return Database.getInstance(mApp);
     }

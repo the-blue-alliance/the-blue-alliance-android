@@ -10,7 +10,7 @@ import javax.inject.Inject;
 /**
  * Easy abstraction of datafeed bindings
  */
-public abstract class DatafeedFragment<T, V> extends Fragment implements DataConsumer<T> {
+public abstract class DatafeedFragment<T, V> extends Fragment implements DataConsumer<V> {
 
     @Inject protected CacheableDatafeed mDatafeed;
 

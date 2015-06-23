@@ -25,24 +25,26 @@ import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownFo
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.modules.HasModule;
+import com.thebluealliance.androidclient.modules.ViewTeamModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Calendar;
 
-import dagger.ObjectGraph;
 import de.greenrobot.event.EventBus;
 
 public class ViewTeamActivity extends FABNotificationSettingsActivity implements
-        ViewPager.OnPageChangeListener,
-        View.OnClickListener {
+    ViewPager.OnPageChangeListener,
+    View.OnClickListener,
+    HasModule {
 
     public static final String TEAM_KEY = "team_key",
             TEAM_YEAR = "team_year",
             SELECTED_YEAR = "year",
             SELECTED_TAB = "tab";
 
+    private static Object mModule;
     private TextView mWarningMessage;
-    private ObjectGraph mActivityGraph;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
@@ -136,11 +138,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         // We can call this even though the years participated haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
-    }
-
-    @Override protected void onDestroy() {
-        super.onDestroy();
-        mActivityGraph = null;
     }
 
     @Override
@@ -301,5 +298,13 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
     public int getCurrentSelectedYearPosition() {
         return mCurrentSelectedYearPosition;
+    }
+
+    @Override
+    public Object getModule() {
+        if (mModule == null) {
+            mModule = new ViewTeamModule(this);
+        }
+        return mModule;
     }
 }

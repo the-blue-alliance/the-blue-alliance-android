@@ -774,12 +774,16 @@ public class Database extends SQLiteOpenHelper {
             super(mDb);
         }
 
-        public List<EventTeam> get(String teamKey, int year, String[] fields) {
-            Cursor cursor = mDb.query(getTableName(), fields, TEAMKEY + " = ? AND " + YEAR + " + ?", new String[]{teamKey, Integer.toString(year)}, null, null, null, null);
-            ArrayList<EventTeam> results = new ArrayList<>();
+        public List<Event> getEvents(String teamKey, int year) {
+            // INNER JOIN EventTeams + Events on KEY, select where teamKey and year = args
+            String query = String.format("SELECT * FROM %1$s JOIN %2$s ON %1$s.%3$s = %2$s.%4$s " +
+              "WHERE %1$s.%5$s = ? AND %1$s.%6$s = ?",
+              TABLE_EVENTTEAMS, TABLE_EVENTS, KEY, Events.KEY, TEAMKEY, YEAR);
+            Cursor cursor = mDb.rawQuery(query, new String[]{teamKey, Integer.toString(year)});
+            ArrayList<Event> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    results.add(ModelInflater.inflateEventTeam(cursor));
+                    results.add(ModelInflater.inflateEvent(cursor));
                 } while (cursor.moveToNext());
             }
             return results;

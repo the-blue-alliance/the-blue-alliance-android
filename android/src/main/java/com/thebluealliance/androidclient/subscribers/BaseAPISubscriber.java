@@ -28,9 +28,12 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
     // or wait until all inputs have arrived
     boolean mAlwaysBind;
 
-    public BaseAPISubscriber(DataConsumer<V> consumer, boolean alwaysBind){
-        mConsumer = consumer;
+    public BaseAPISubscriber(boolean alwaysBind){
         mAlwaysBind = alwaysBind;
+    }
+
+    public void setConsumer(DataConsumer<V> consumer) {
+        mConsumer = consumer;
     }
 
     @Override

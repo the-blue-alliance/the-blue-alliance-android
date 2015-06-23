@@ -25,6 +25,8 @@ public class CacheableDatafeed implements APIv2 {
     @Inject @Named("retrofit") APIv2 mRetrofitAPI;
     @Inject @Named("cache") APICache mAPICache;
 
+    // TODO add callback to retrofit results to store new data in db
+
     public CacheableDatafeed() {
         ObjectGraph objectGraph = ObjectGraph.create(DatafeedModule.class);
         objectGraph.inject(this);
@@ -47,7 +49,8 @@ public class CacheableDatafeed implements APIv2 {
             @Path("teamKey") String teamKey,
             @Path("year") int year,
             @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
+        return mAPICache.fetchTeamEvents(teamKey, year, ifModifiedSince).concatWith(
+          mRetrofitAPI.fetchTeamEvents(teamKey, year, ifModifiedSince));
     }
 
     @Override public Observable<List<Award>> fetchTeamAtEventAwards(

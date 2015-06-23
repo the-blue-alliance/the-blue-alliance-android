@@ -20,8 +20,6 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -30,7 +28,7 @@ import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.ViewTeamModule;
+import com.thebluealliance.androidclient.modules.HasModule;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import java.util.List;
@@ -43,13 +41,11 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements View.OnClickListener, DataConsumer<Team> {
+public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements View.OnClickListener {
 
     private static final String TEAM_KEY = "team_key";
 
-    private ViewTeamActivity mParent;
     private String mTeamKey;
-    private ObjectGraph mFragmentGraph;
 
     @Inject TeamInfoSubscriber mSubscriber;
 
@@ -64,19 +60,18 @@ public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements Vi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getActivity() instanceof HasModule) {
+            ObjectGraph fragmentGraph = ObjectGraph.create(((HasModule) getActivity()).getModule());
+            fragmentGraph.inject(this);
+        }
+
         mTeamKey = getArguments().getString(TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
-        if (!(getActivity() instanceof ViewTeamActivity)) {
-            throw new IllegalArgumentException("TeamMediaFragment must be hosted by a " +
-                "ViewTeamActivity!");
-        } else {
-            mParent = (ViewTeamActivity) getActivity();
-        }
 
-        mFragmentGraph = ObjectGraph.create(new ViewTeamModule(this));
-        mFragmentGraph.inject(this);
+        mSubscriber.setConsumer(this);
     }
 
     @Override
@@ -154,6 +149,7 @@ public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements Vi
         });
     }
 
+    //TODO kill EventBus
     public void onEvent(YearChangedEvent event) {
 
     }
