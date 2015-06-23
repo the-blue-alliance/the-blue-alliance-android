@@ -118,7 +118,7 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
     @Override
     public void onResume() {
         super.onResume();
-        Observable<List<Event>> mTeamObservable = mDatafeed.fetchTeamEvents(mTeamKey, mYear, null);
+        Observable<List<Event>> mTeamObservable = mDatafeed.fetchTeamEvents(mTeamKey, mYear);
         mTeamObservable
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())

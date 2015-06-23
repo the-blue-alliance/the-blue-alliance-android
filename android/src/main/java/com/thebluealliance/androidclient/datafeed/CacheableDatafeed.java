@@ -15,8 +15,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.ObjectGraph;
-import retrofit.http.Header;
-import retrofit.http.Path;
 import rx.Observable;
 
 
@@ -32,143 +30,114 @@ public class CacheableDatafeed implements APIv2 {
         objectGraph.inject(this);
     }
 
-    @Override public Observable<List<Team>> fetchTeamPage(
-            @Path("pageNum") int pageNum,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<Team> fetchTeam(
-            String teamKey,
-            String ifModifiedSince) {
-        return mAPICache.fetchTeam(teamKey, ifModifiedSince).concatWith(
-                mRetrofitAPI.fetchTeam(teamKey, ifModifiedSince));
-    }
-
-    @Override public Observable<List<Event>> fetchTeamEvents(
-            @Path("teamKey") String teamKey,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return mAPICache.fetchTeamEvents(teamKey, year, ifModifiedSince).concatWith(
-          mRetrofitAPI.fetchTeamEvents(teamKey, year, ifModifiedSince));
-    }
-
-    @Override public Observable<List<Award>> fetchTeamAtEventAwards(
-            @Path("teamKey") String teamKey,
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Team>> fetchTeamPage(int pageNum) {
         return null;
     }
 
     @Override
-    public Observable<List<Match>> fetchTeamAtEventMatches(
-            @Path("teamKey") String teamKey,
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    public Observable<Team> fetchTeam(String teamKey) {
+        return mAPICache.fetchTeam(teamKey).concatWith(
+          mRetrofitAPI.fetchTeam(teamKey));
+    }
+
+    @Override
+    public Observable<List<Event>> fetchTeamEvents(String teamKey, int year
+    ) {
+        return mAPICache.fetchTeamEvents(teamKey, year).concatWith(
+          mRetrofitAPI.fetchTeamEvents(teamKey, year));
+    }
+
+    @Override
+    public Observable<List<Award>> fetchTeamAtEventAwards(String teamKey, String eventKey
+    ) {
         return null;
     }
 
     @Override
-    public Observable<List<Integer>> fetchTeamYearsParticipated(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<List<Media>> fetchTeamMediaInYear(
-            String teamKey,
-            int year,
-            String ifModifiedSince) {
-        return mAPICache.fetchTeamMediaInYear(teamKey, year, ifModifiedSince).concatWith(
-          mRetrofitAPI.fetchTeamMediaInYear(teamKey, year, ifModifiedSince));
-    }
-
-    @Override public Observable<List<Event>> fetchTeamEventHistory(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<List<Award>> fetchTeamEventAwards(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<List<Event>> fetchEventsInYear(
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<Event> fetchEvent(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<List<Team>> fetchEventTeams(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<JsonArray> fetchEventRankings(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<List<Match>> fetchEventMatches(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<JsonObject> fetchEventStats(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<List<Award>> fetchEventAwards(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    public Observable<List<Match>> fetchTeamAtEventMatches(String teamKey, String eventKey
+    ) {
         return null;
     }
 
     @Override
-    public Observable<JsonObject> fetchEventDistrictPoints(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
-    }
-
-    @Override public Observable<List<District>> fetchDistrictList(
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey) {
         return null;
     }
 
     @Override
-    public Observable<List<Event>> fetchDistrictEvents(
-            @Path("districtShort") String districtShort,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    public Observable<List<Media>> fetchTeamMediaInYear(String teamKey, int year) {
+        return mAPICache.fetchTeamMediaInYear(teamKey, year).concatWith(
+          mRetrofitAPI.fetchTeamMediaInYear(teamKey, year));
+    }
+
+    @Override
+    public Observable<List<Event>> fetchTeamEventHistory(String teamKey) {
         return null;
     }
 
     @Override
-    public Observable<JsonArray> fetchDistrictRankings(
-            @Path("districtShort") String districtShort,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    public Observable<List<Award>> fetchTeamEventAwards(String teamKey) {
         return null;
     }
 
-    @Override public Observable<Match> fetchMatch(
-            @Path("matchKey") String matchKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Event>> fetchEventsInYear(int year) {
+        return null;
+    }
+
+    @Override
+    public Observable<Event> fetchEvent(String eventKey) {
+        return null;
+    }
+
+    @Override
+    public Observable<List<Team>> fetchEventTeams(String eventKey) {
+        return null;
+    }
+
+    @Override
+    public Observable<JsonArray> fetchEventRankings(String eventKey) {
+        return null;
+    }
+
+    @Override
+    public Observable<List<Match>> fetchEventMatches(String eventKey) {
+        return null;
+    }
+
+    @Override
+    public Observable<JsonObject> fetchEventStats(String eventKey) {
+        return null;
+    }
+
+    @Override
+    public Observable<List<Award>> fetchEventAwards(String eventKey) {
+        return null;
+    }
+
+    @Override
+    public Observable<JsonObject> fetchEventDistrictPoints(String eventKey) {
+        return null;
+    }
+
+    @Override
+    public Observable<List<District>> fetchDistrictList(int year) {
+        return null;
+    }
+
+    @Override
+    public Observable<List<Event>> fetchDistrictEvents(String districtShort, int year) {
+        return null;
+    }
+
+    @Override
+    public Observable<JsonArray> fetchDistrictRankings(String districtShort, int year) {
+        return null;
+    }
+
+    @Override
+    public Observable<Match> fetchMatch(String matchKey) {
         return null;
     }
 }

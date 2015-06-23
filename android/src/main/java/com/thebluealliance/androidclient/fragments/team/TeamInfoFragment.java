@@ -100,7 +100,7 @@ public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements Vi
     @Override
     public void onResume() {
         super.onResume();
-        Observable<Team> mTeamObservable = mDatafeed.fetchTeam(mTeamKey, null);
+        Observable<Team> mTeamObservable = mDatafeed.fetchTeam(mTeamKey);
         mTeamObservable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -90,19 +89,12 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
     @Override
     public void onResume() {
         super.onResume();
-        Observable<List<Media>> mTeamObservable = mDatafeed.fetchTeamMediaInYear(
-          mTeamKey, mYear, null);
+        Observable<List<Media>> mTeamObservable = mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
         mTeamObservable
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(mSubscriber);
         EventBus.getDefault().register(this);
-    }
-
-    public void onRefreshStart(boolean actionIconPressed) {
-        // Reset the view
-        ((ViewGroup) getView()).removeAllViews();
-        ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_team_media, (ViewGroup) getView(), true);
     }
 
     public void onEvent(YearChangedEvent event) {

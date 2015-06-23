@@ -15,8 +15,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.ObjectGraph;
-import retrofit.http.Header;
-import retrofit.http.Path;
 import rx.Observable;
 
 public class APICache implements APIv2 {
@@ -27,141 +25,116 @@ public class APICache implements APIv2 {
         ObjectGraph.create(new DatafeedModule()).inject(this);
     }
 
-    @Override public Observable<List<Team>> fetchTeamPage(
-            @Path("pageNum") int pageNum,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Team>> fetchTeamPage(
+      int pageNum) {
         return null;
     }
 
     @Override
     public Observable<Team> fetchTeam(
-            String teamKey,
-            String ifModifiedSince) {
+      String teamKey) {
         Team team = mDb.getTeamsTable().get(teamKey);
         return Observable.just(team);
     }
 
     @Override
     public Observable<List<Event>> fetchTeamEvents(
-            String teamKey,
-            int year,
-            String ifModifiedSince) {
+      String teamKey,
+      int year) {
         List<Event> events = mDb.getEventTeamsTable().getEvents(teamKey, year);
         return Observable.just(events);
     }
 
-    @Override public Observable<List<Award>> fetchTeamAtEventAwards(
-            @Path("teamKey") String teamKey,
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Award>> fetchTeamAtEventAwards(String teamKey, String eventKey) {
         return null;
     }
 
-    @Override public Observable<List<Match>> fetchTeamAtEventMatches(
-            @Path("teamKey") String teamKey,
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Match>> fetchTeamAtEventMatches(String teamKey, String eventKey) {
         return null;
     }
 
-    @Override public Observable<List<Integer>> fetchTeamYearsParticipated(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey) {
         return null;
     }
 
-    @Override public Observable<List<Media>> fetchTeamMediaInYear(
-            String teamKey,
-            int year,
-            String ifModifiedSince) {
+    @Override
+    public Observable<List<Media>> fetchTeamMediaInYear(String teamKey, int year) {
         String where = Database.Medias.TEAMKEY + " = ? AND " + Database.Medias.YEAR + " = ?";
         return Observable.just(mDb.getMediasTable().getForQuery(null, where, new String[]{teamKey,
           Integer.toString(year)}));
     }
 
-    @Override public Observable<List<Event>> fetchTeamEventHistory(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Event>> fetchTeamEventHistory(String teamKey) {
         return null;
     }
 
-    @Override public Observable<List<Award>> fetchTeamEventAwards(
-            @Path("teamKey") String teamKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Award>> fetchTeamEventAwards(String teamKey) {
         return null;
     }
 
-    @Override public Observable<List<Event>> fetchEventsInYear(
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Event>> fetchEventsInYear(int year) {
         return null;
     }
 
-    @Override public Observable<Event> fetchEvent(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<Event> fetchEvent(String eventKey) {
         return null;
     }
 
-    @Override public Observable<List<Team>> fetchEventTeams(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Team>> fetchEventTeams(String eventKey) {
         return null;
     }
 
-    @Override public Observable<JsonArray> fetchEventRankings(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<JsonArray> fetchEventRankings(String eventKey) {
         return null;
     }
 
-    @Override public Observable<List<Match>> fetchEventMatches(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Match>> fetchEventMatches(String eventKey) {
         return null;
     }
 
-    @Override public Observable<JsonObject> fetchEventStats(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<JsonObject> fetchEventStats(String eventKey) {
         return null;
     }
 
-    @Override public Observable<List<Award>> fetchEventAwards(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Award>> fetchEventAwards(String eventKey) {
         return null;
     }
 
-    @Override public Observable<JsonObject> fetchEventDistrictPoints(
-            @Path("eventKey") String eventKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<JsonObject> fetchEventDistrictPoints(String eventKey) {
         return null;
     }
 
-    @Override public Observable<List<District>> fetchDistrictList(
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<District>> fetchDistrictList(int year) {
         return null;
     }
 
-    @Override public Observable<List<Event>> fetchDistrictEvents(
-            @Path("districtShort") String districtShort,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<List<Event>> fetchDistrictEvents(String districtShort, int year) {
         return null;
     }
 
-    @Override public Observable<JsonArray> fetchDistrictRankings(
-            @Path("districtShort") String districtShort,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<JsonArray> fetchDistrictRankings(String districtShort, int year) {
         return null;
     }
 
-    @Override public Observable<Match> fetchMatch(
-            @Path("matchKey") String matchKey,
-            @Header("If-Modified-Since") String ifModifiedSince) {
+    @Override
+    public Observable<Match> fetchMatch(String matchKey) {
         return null;
     }
 }
