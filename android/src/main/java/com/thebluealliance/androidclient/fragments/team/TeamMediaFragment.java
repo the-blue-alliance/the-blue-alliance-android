@@ -1,36 +1,47 @@
 package com.thebluealliance.androidclient.fragments.team;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.background.team.PopulateTeamMedia;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.modules.HasModule;
+import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
+import com.thebluealliance.androidclient.views.ExpandableListView;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import dagger.ObjectGraph;
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-/**
- * File created by phil on 5/31/14.
- */
-public class TeamMediaFragment extends Fragment implements RefreshListener {
-
-    private ViewTeamActivity parent;
+public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableListAdapter> {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
-    private String teamKey;
-    private int year;
-    private PopulateTeamMedia task;
+    private String mTeamKey;
+    private int mYear;
+    private ExpandableListView mExpandableList;
+    private ProgressBar mProgressBar;
+
+    @Inject MediaListSubscriber mSubscriber;
 
     public static Fragment newInstance(String teamKey, int year) {
         Bundle args = new Bundle();
@@ -45,24 +56,29 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getActivity() instanceof HasModule) {
+            ObjectGraph fragmentGraph = ObjectGraph.create(((HasModule) getActivity()).getModule());
+            fragmentGraph.inject(this);
+        }
+
         Bundle args = getArguments();
         if (args == null || !args.containsKey(TEAM_KEY) || !args.containsKey(YEAR)) {
             throw new IllegalArgumentException("TeamMediaFragment must be constructed with a team key and year");
         }
-        teamKey = args.getString(TEAM_KEY);
-        year = args.getInt(YEAR);
-        if (!(getActivity() instanceof ViewTeamActivity)) {
-            throw new IllegalArgumentException("TeamMediaFragment must be hosted by a ViewTeamActivity!");
-        } else {
-            parent = (ViewTeamActivity) getActivity();
+        mTeamKey = args.getString(TEAM_KEY);
+        mYear = args.getInt(YEAR, -1);
+        if (mYear == -1) {
+            mYear = Utilities.getCurrentYear();
         }
-
-        parent.registerRefreshListener(this);
+        mSubscriber.setConsumer(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_team_media, container, false);
+        View v = inflater.inflate(R.layout.fragment_team_media, container, false);
+        mExpandableList = (ExpandableListView) v.findViewById(R.id.team_media_list);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        return v;
     }
 
     @Override
@@ -74,47 +90,51 @@ public class TeamMediaFragment extends Fragment implements RefreshListener {
     @Override
     public void onResume() {
         super.onResume();
+        Observable<List<Media>> mTeamObservable = mDatafeed.fetchTeamMediaInYear(
+          mTeamKey, mYear, null);
+        mTeamObservable
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(mSubscriber);
         EventBus.getDefault().register(this);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        parent.startRefresh(this);
-
-    }
-
-    @Override
     public void onRefreshStart(boolean actionIconPressed) {
         // Reset the view
         ((ViewGroup) getView()).removeAllViews();
         ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.fragment_team_media, (ViewGroup) getView(), true);
-
-        Log.i(Constants.REFRESH_LOG, "Loading " + teamKey + " media in " + year);
-        task = new PopulateTeamMedia(this, new RequestParams(true, actionIconPressed));
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, year);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (task != null) {
-            task.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateTeamMedia newTask) {
-        task = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        parent.unregisterRefreshListener(this);
     }
 
     public void onEvent(YearChangedEvent event) {
-        year = event.getYear();
-        onRefreshStop();
-        parent.startRefresh(this);
+        mYear = event.getYear();
+    }
+
+    @Override
+    public void updateData(@Nullable ExpandableListAdapter data)
+      throws BasicModel.FieldNotDefinedException {
+        if (data == null || mExpandableList == null) {
+            return;
+        }
+
+        if (mExpandableList.getAdapter() == null) {
+            mExpandableList.setAdapter(data);
+        }
+        mExpandableList.setVisibility(View.VISIBLE);
+        data.notifyDataSetChanged();
+
+        for (int i = 0; i < data.groups.size(); i++) {
+            mExpandableList.expandGroup(i);
+        }
+
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+
+        // TODO no data text
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
     }
 }

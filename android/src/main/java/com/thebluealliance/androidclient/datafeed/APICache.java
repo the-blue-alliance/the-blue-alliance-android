@@ -71,10 +71,12 @@ public class APICache implements APIv2 {
     }
 
     @Override public Observable<List<Media>> fetchTeamMediaInYear(
-            @Path("teamKey") String teamKey,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
+            String teamKey,
+            int year,
+            String ifModifiedSince) {
+        String where = Database.Medias.TEAMKEY + " = ? AND " + Database.Medias.YEAR + " = ?";
+        return Observable.just(mDb.getMediasTable().getForQuery(null, where, new String[]{teamKey,
+          Integer.toString(year)}));
     }
 
     @Override public Observable<List<Event>> fetchTeamEventHistory(

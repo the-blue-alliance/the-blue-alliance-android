@@ -39,17 +39,19 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
     @Override
     public void onNext(T data) {
         mAPIData = data;
-        parseData();
-        if (mAlwaysBind) {
-            bindData();
+        try {
+            parseData();
+            if (mAlwaysBind) {
+                bindData();
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void onCompleted() {
-        if (!mAlwaysBind) {
-            bindData();
-        }
+        bindData();
     }
 
     @Override

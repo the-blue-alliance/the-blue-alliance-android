@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
@@ -154,23 +153,6 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
             view.findViewById(R.id.progress).setVisibility(View.GONE);
             view.findViewById(R.id.team_media_list).setVisibility(View.VISIBLE);
 
-            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-                /**
-                 * The data has the possibility of being updated, but we at first loaded
-                 * what we have cached locally for performance reasons.
-                 * Thus, fire off this task again with a flag saying to actually load from the web
-                 */
-                requestParams.forceFromCache = false;
-                PopulateTeamMedia secondLoad = new PopulateTeamMedia(fragment, requestParams);
-                fragment.updateTask(secondLoad);
-                secondLoad.execute(team, year);
-            } else {
-                // Show notification if we've refreshed data.
-                Log.i(Constants.REFRESH_LOG, "Team " + team + " " + year + " media refresh complete");
-                if (activity != null && fragment instanceof RefreshListener) {
-                    activity.notifyRefreshComplete(fragment);
-                }
-            }
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team media", team);
         }
     }

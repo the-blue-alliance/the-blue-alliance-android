@@ -24,4 +24,7 @@ public class ListGroup {
         return string;
     }
 
+    public void clear() {
+        children.clear();
+    }
 }

@@ -76,10 +76,11 @@ public class CacheableDatafeed implements APIv2 {
     }
 
     @Override public Observable<List<Media>> fetchTeamMediaInYear(
-            @Path("teamKey") String teamKey,
-            @Path("year") int year,
-            @Header("If-Modified-Since") String ifModifiedSince) {
-        return null;
+            String teamKey,
+            int year,
+            String ifModifiedSince) {
+        return mAPICache.fetchTeamMediaInYear(teamKey, year, ifModifiedSince).concatWith(
+          mRetrofitAPI.fetchTeamMediaInYear(teamKey, year, ifModifiedSince));
     }
 
     @Override public Observable<List<Event>> fetchTeamEventHistory(

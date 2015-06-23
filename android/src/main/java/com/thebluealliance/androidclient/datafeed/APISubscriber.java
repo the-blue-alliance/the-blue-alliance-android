@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import android.support.annotation.Nullable;
 
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.models.BasicModel;
 
 /**
  * An interface that a {@link rx.Subscriber} in the package
@@ -15,7 +16,7 @@ public interface APISubscriber<T> {
      * Parse data from the API and construct the values to return, if necessary
      * Usually creates a {@link ListViewAdapter}
      */
-    void parseData();
+    void parseData() throws BasicModel.FieldNotDefinedException;
 
     /**
      * Callback for displaying data to be viewed

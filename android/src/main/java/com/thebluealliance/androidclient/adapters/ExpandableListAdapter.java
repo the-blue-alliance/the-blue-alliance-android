@@ -11,25 +11,26 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * File created by phil on 4/22/14.
  */
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    public final ArrayList<ListGroup> groups;
+    public final List<ListGroup> groups;
     public LayoutInflater inflater;
-    public Activity activity;
+    public Activity mActivity;
     private boolean mIsChildSelectable = true;
 
     public ExpandableListAdapter() {
         groups = new ArrayList<>();
     }
 
-    public ExpandableListAdapter(Activity act, ArrayList<ListGroup> groups) {
-        activity = act;
+    public ExpandableListAdapter(Activity activity, List<ListGroup> groups) {
+        mActivity = activity;
         this.groups = groups;
-        inflater = act.getLayoutInflater();
+        inflater = activity.getLayoutInflater();
     }
 
     @Override
@@ -109,7 +110,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        return groups.get(groupPosition).children.get(childPosition).render().getView(activity, inflater, convertView);
+        return groups.get(groupPosition).children.get(childPosition).render().getView(mActivity, inflater, convertView);
     }
 }
 

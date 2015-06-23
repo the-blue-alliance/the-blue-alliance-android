@@ -32,9 +32,9 @@ public class MatchListAdapter extends ExpandableListAdapter {
         }
         ListItem renderedChild = child.render();
         if (renderedChild != null) {
-            return renderedChild.getView(activity, inflater, convertView);
+            return renderedChild.getView(mActivity, inflater, convertView);
         } else {
-            return new LabelValueListItem("Match", "Unable to render").getView(activity, inflater, convertView);
+            return new LabelValueListItem("Match", "Unable to render").getView(mActivity, inflater, convertView);
         }
     }
 }
