@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.test.datafeed;
 
 import com.thebluealliance.androidclient.datafeed.APIv2;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.modules.DatafeedModule;
 
 import org.junit.Before;
 

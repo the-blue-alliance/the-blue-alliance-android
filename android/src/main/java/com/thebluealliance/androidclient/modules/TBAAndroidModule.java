@@ -1,24 +1,16 @@
-package com.thebluealliance.androidclient;
+package com.thebluealliance.androidclient.modules;
 
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
+
+import javax.inject.Singleton;
 
 /**
  * App-wide dependency injection items
  */
-@Module(
-  injects = {
-    TBAAndroid.class,
-    APICache.class,
-    APIv2RequestInterceptor.class
-  }
-)
+@Module
 public class TBAAndroidModule {
     static TBAAndroid mApp;
 

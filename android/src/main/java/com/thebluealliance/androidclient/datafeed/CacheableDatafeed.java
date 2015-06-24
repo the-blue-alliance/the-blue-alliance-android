@@ -2,20 +2,14 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.Team;
-
-import java.util.List;
+import com.thebluealliance.androidclient.models.*;
+import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.modules.components.DaggerDatafeedComponent;
+import rx.Observable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import dagger.ObjectGraph;
-import rx.Observable;
+import java.util.List;
 
 
 public class CacheableDatafeed implements APIv2 {
@@ -26,8 +20,10 @@ public class CacheableDatafeed implements APIv2 {
     // TODO add callback to retrofit results to store new data in db
 
     public CacheableDatafeed() {
-        ObjectGraph objectGraph = ObjectGraph.create(DatafeedModule.class);
-        objectGraph.inject(this);
+        DaggerDatafeedComponent.builder()
+                .datafeedModule(new DatafeedModule())
+                .build()
+                .inject(this);
     }
 
     @Override

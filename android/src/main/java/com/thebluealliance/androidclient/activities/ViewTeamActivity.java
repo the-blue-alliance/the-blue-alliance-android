@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -25,24 +24,23 @@ import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownFo
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.modules.HasModule;
-import com.thebluealliance.androidclient.modules.ViewTeamModule;
+import com.thebluealliance.androidclient.modules.*;
 import com.thebluealliance.androidclient.views.SlidingTabs;
+import de.greenrobot.event.EventBus;
 
 import java.util.Calendar;
 
-import de.greenrobot.event.EventBus;
-
 public class ViewTeamActivity extends FABNotificationSettingsActivity implements
-    ViewPager.OnPageChangeListener,
-    View.OnClickListener,
-    HasModule {
+        ViewPager.OnPageChangeListener,
+        View.OnClickListener,
+        HasFragmentComponent {
 
     public static final String TEAM_KEY = "team_key",
             TEAM_YEAR = "team_year",
             SELECTED_YEAR = "year",
             SELECTED_TAB = "tab";
 
+    private FragmentComponent mComponent;
     private static Object mModule;
     private TextView mWarningMessage;
     private int mCurrentSelectedYearPosition = -1,
@@ -300,11 +298,13 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         return mCurrentSelectedYearPosition;
     }
 
-    @Override
-    public Object getModule() {
-        if (mModule == null) {
-            mModule = new ViewTeamModule(this);
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            mComponent = DaggerFragmentComponent.builder()
+                    .datafeedModule(new DatafeedModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .build();
         }
-        return mModule;
+        return mComponent;
     }
 }

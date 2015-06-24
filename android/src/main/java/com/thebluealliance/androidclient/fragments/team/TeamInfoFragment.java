@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -28,14 +29,14 @@ import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.HasModule;
+import com.thebluealliance.androidclient.modules.HasFragmentComponent;
+import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.ObjectGraph;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -60,10 +61,8 @@ public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements Vi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getActivity() instanceof HasModule) {
-            ObjectGraph fragmentGraph = ObjectGraph.create(((HasModule) getActivity()).getModule());
-            fragmentGraph.inject(this);
+        if (getActivity() instanceof HasFragmentComponent) {
+            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
         }
 
         mTeamKey = getArguments().getString(TEAM_KEY);

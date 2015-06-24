@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -22,18 +21,15 @@ import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.modules.HasModule;
+import com.thebluealliance.androidclient.modules.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import dagger.ObjectGraph;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import javax.inject.Inject;
+import java.util.List;
 
 public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAdapter> {
     public static final String YEAR = "YEAR";
@@ -61,9 +57,8 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasModule) {
-            ObjectGraph fragmentGraph = ObjectGraph.create(((HasModule) getActivity()).getModule());
-            fragmentGraph.inject(this);
+        if (getActivity() instanceof HasFragmentComponent) {
+            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
         }
 
         mYear = getArguments().getInt(YEAR, -1);

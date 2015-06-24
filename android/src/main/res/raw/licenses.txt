@@ -298,6 +298,7 @@ limitations under the License.
 <b>Dagger</b>
 <br>
 <br>
+Copyright 2014 Google, Inc.
 Copyright 2012 Square, Inc.
 <br>
 <br>
