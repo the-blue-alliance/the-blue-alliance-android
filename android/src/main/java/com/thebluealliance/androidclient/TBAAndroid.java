@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
-
 import com.facebook.stetho.Stetho;
 
-public class TBAAndroid extends Application {
+public class TBAAndroid extends MultiDexApplication {
 
     @Override
     public void onCreate() {
