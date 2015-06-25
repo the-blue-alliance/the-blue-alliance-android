@@ -68,8 +68,8 @@ public class EventInfoFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();
-        Observable<Event> mTeamObservable = mDatafeed.fetchEvent(mEventKey);
-        mTeamObservable
+        Observable<Event> mEventObservable = mDatafeed.fetchEvent(mEventKey);
+        mEventObservable
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.computation())
           .subscribe(mSubscriber);
@@ -78,7 +78,9 @@ public class EventInfoFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onPause() {
         super.onPause();
-        mSubscriber.unsubscribe();
+        if (mSubscriber != null) {
+            mSubscriber.unsubscribe();
+        }
     }
 
     @Override

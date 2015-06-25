@@ -6,6 +6,8 @@ import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
+import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -35,6 +37,11 @@ public class SubscriberModule {
 
     @Provides
     public EventInfoSubscriber provideEventInfoSubscriber() {
-            return new EventInfoSubscriber();
+        return new EventInfoSubscriber();
+    }
+
+    @Provides
+    public TeamListSubscriber provideTeamListSubscriber() {
+        return new TeamListSubscriber(mActivity);
     }
 }

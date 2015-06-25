@@ -43,9 +43,7 @@ public class APICache implements APIv2 {
     }
 
     @Override
-    public Observable<List<Event>> fetchTeamEvents(
-      String teamKey,
-      int year) {
+    public Observable<List<Event>> fetchTeamEvents(String teamKey, int year) {
         List<Event> events = mDb.getEventTeamsTable().getEvents(teamKey, year);
         return Observable.just(events);
     }
@@ -95,7 +93,8 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<Team>> fetchEventTeams(String eventKey) {
-        return null;
+        List<Team> teams = mDb.getEventTeamsTable().getTeams(eventKey);
+        return Observable.just(teams);
     }
 
     @Override

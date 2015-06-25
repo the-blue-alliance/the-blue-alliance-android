@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
-import com.thebluealliance.androidclient.binders.MediaListBinder;
+import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.Media;
@@ -36,7 +36,7 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
     private ProgressBar mProgressBar;
 
     @Inject MediaListSubscriber mSubscriber;
-    @Inject MediaListBinder mBinder;
+    @Inject ExpandableListBinder mBinder;
 
     public static Fragment newInstance(String teamKey, int year) {
         Bundle args = new Bundle();
@@ -80,6 +80,9 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        if (mSubscriber != null) {
+            mSubscriber.unsubscribe();
+        }
     }
 
     @Override

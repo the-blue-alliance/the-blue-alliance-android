@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.EventListBinder;
+import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -43,7 +43,7 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
     private ListView mListView;
 
     @Inject EventListSubscriber mSubscriber;
-    @Inject EventListBinder mBinder;
+    @Inject ListviewBinder mBinder;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -107,6 +107,9 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
+        }
+        if (mSubscriber != null) {
+            mSubscriber.unsubscribe();
         }
         EventBus.getDefault().unregister(this);
     }

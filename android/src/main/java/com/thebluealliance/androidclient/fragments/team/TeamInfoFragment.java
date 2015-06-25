@@ -69,9 +69,9 @@ public class TeamInfoFragment extends DatafeedFragment<Team, TeamInfoBinder.Mode
 
     @Override
     public View onCreateView(
-        LayoutInflater inflater,
-        ViewGroup container,
-        Bundle savedInstanceState) {
+      LayoutInflater inflater,
+      ViewGroup container,
+      Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_team_info, container, false);
         mBinder.setView(view);
         mBinder.mNoDataText = (TextView) view.findViewById(R.id.no_data);
@@ -94,7 +94,9 @@ public class TeamInfoFragment extends DatafeedFragment<Team, TeamInfoBinder.Mode
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-        mSubscriber.unsubscribe();
+        if (mSubscriber != null) {
+            mSubscriber.unsubscribe();
+        }
     }
 
     @Override

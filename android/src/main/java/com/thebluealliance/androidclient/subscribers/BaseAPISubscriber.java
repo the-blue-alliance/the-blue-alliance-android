@@ -72,9 +72,10 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
             if (mConsumer != null) {
                 try {
                     mConsumer.updateData(mDataToBind);
-                } catch (BasicModel.FieldNotDefinedException e) {
+                } catch (Exception e) {
                     Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
                     e.printStackTrace();
+                    mConsumer.onError(e);
                 }
             }
         });

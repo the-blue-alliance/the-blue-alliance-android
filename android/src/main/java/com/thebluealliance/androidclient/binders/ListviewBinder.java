@@ -8,16 +8,14 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.models.BasicModel;
 
-public class EventListBinder extends AbstractDataBinder<ListViewAdapter> {
+public class ListviewBinder extends AbstractDataBinder<ListViewAdapter> {
 
     public ListView mListView;
     public ProgressBar mProgressBar;
 
     @Override
-    public void updateData(@Nullable ListViewAdapter data)
-      throws BasicModel.FieldNotDefinedException {
+    public void updateData(@Nullable ListViewAdapter data) {
         if (data == null || mListView == null) {
             return;
         }

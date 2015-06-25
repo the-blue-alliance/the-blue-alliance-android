@@ -7,17 +7,15 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
-public class MediaListBinder extends AbstractDataBinder<ExpandableListAdapter> {
+public class ExpandableListBinder extends AbstractDataBinder<ExpandableListAdapter> {
 
     public ExpandableListView mExpandableList;
     public ProgressBar mProgressBar;
 
     @Override
-    public void updateData(@Nullable ExpandableListAdapter data)
-      throws BasicModel.FieldNotDefinedException {
+    public void updateData(@Nullable ExpandableListAdapter data) {
         if (data == null || mExpandableList == null) {
             return;
         }

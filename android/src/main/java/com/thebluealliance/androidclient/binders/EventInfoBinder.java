@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 import javax.annotation.Nullable;
 
@@ -25,7 +24,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override
-    public void updateData(@Nullable Model data) throws BasicModel.FieldNotDefinedException {
+    public void updateData(@Nullable Model data) {
         TextView noDataText = (TextView) mView.findViewById(R.id.no_data);
         View infoContainer = mView.findViewById(R.id.event_info_container);
         if (data == null) {
