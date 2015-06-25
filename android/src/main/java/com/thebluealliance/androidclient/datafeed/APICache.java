@@ -3,13 +3,20 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.models.*;
+import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.modules.components.DaggerDatafeedComponent;
-import rx.Observable;
+
+import java.util.List;
 
 import javax.inject.Inject;
-import java.util.List;
+
+import rx.Observable;
 
 public class APICache implements APIv2 {
 
@@ -82,7 +89,8 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<Event> fetchEvent(String eventKey) {
-        return null;
+        Event event = mDb.getEventsTable().get(eventKey);
+        return Observable.just(event);
     }
 
     @Override

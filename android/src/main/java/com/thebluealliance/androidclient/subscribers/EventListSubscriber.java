@@ -23,7 +23,7 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, ListView
         mDataToBind.values.clear();
         for (int i=0; i < mAPIData.size(); i++) {
             Event event = mAPIData.get(i);
-            mDataToBind.add(event.render());
+            mDataToBind.values.add(event.render());
         }
     }
 }

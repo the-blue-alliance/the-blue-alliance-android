@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Base class for a concrete API Subscriber.
@@ -67,13 +68,15 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
     }
 
     private void bindData() {
-        if (mConsumer != null) {
-            try {
-                mConsumer.updateData(mDataToBind);
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
-                e.printStackTrace();
+        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (mConsumer != null) {
+                try {
+                    mConsumer.updateData(mDataToBind);
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
+                    e.printStackTrace();
+                }
             }
-        }
+        });
     }
 }

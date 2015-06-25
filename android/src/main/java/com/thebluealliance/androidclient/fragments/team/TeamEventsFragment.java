@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -21,15 +22,16 @@ import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.modules.HasFragmentComponent;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
-import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+
+import java.util.List;
 
 import javax.inject.Inject;
-import java.util.List;
+
+import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAdapter> {
     public static final String YEAR = "YEAR";
@@ -116,7 +118,7 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
         Observable<List<Event>> mTeamObservable = mDatafeed.fetchTeamEvents(mTeamKey, mYear);
         mTeamObservable
           .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
+          .observeOn(Schedulers.computation())
           .subscribe(mSubscriber);
 
         EventBus.getDefault().register(this);

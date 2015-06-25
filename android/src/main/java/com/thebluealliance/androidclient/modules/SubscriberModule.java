@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.modules;
 
 import android.app.Activity;
+
+import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
@@ -29,5 +31,10 @@ public class SubscriberModule {
     @Provides
     public MediaListSubscriber provideMediaListSubscriber() {
         return new MediaListSubscriber(mActivity);
+    }
+
+    @Provides
+    public EventInfoSubscriber provideEventInfoSubscriber() {
+            return new EventInfoSubscriber();
     }
 }

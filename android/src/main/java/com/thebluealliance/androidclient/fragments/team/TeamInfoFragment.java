@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -29,8 +28,7 @@ import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.HasFragmentComponent;
-import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import java.util.List;
@@ -39,7 +37,6 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements View.OnClickListener {
@@ -102,7 +99,7 @@ public class TeamInfoFragment extends DatafeedFragment<Team, Team> implements Vi
         Observable<Team> mTeamObservable = mDatafeed.fetchTeam(mTeamKey);
         mTeamObservable
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.computation())
             .subscribe(mSubscriber);
         EventBus.getDefault().register(this);
     }

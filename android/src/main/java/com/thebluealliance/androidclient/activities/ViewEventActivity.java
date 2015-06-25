@@ -20,12 +20,16 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.modules.BinderModule;
+import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.modules.components.FragmentComponent;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-/**
- * File created by phil on 4/20/14.
- */
-public class ViewEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
+public class ViewEventActivity extends FABNotificationSettingsActivity
+  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String EVENTKEY = "eventKey";
     public static final String TAB = "tab";
@@ -37,6 +41,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
+    private FragmentComponent mComponent;
 
     /**
      * Create new intent for ViewEventActivity
@@ -60,6 +65,9 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // disable legacy RefreshableHostActivity
+        setRefreshEnabled(false);
 
         MyTBAHelper.serializeIntent(getIntent());
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
@@ -250,5 +258,16 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            mComponent = DaggerFragmentComponent.builder()
+              .datafeedModule(new DatafeedModule())
+              .subscriberModule(new SubscriberModule(this))
+              .binderModule(new BinderModule())
+              .build();
+        }
+        return mComponent;
     }
 }

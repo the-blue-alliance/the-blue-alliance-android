@@ -280,13 +280,11 @@ public class PopulateEventInfo extends AsyncTask<String, String, APIResponse.COD
                  */
                 requestParams.forceFromCache = false;
                 PopulateEventInfo secondLoad = new PopulateEventInfo(mFragment, requestParams);
-                mFragment.updateTask(secondLoad);
                 secondLoad.execute(eventKey);
             } else {
                 // Show notification if we've refreshed data.
                 if (activity != null && mFragment instanceof RefreshListener) {
                     Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Info refresh complete");
-                    activity.notifyRefreshComplete(mFragment);
                 }
             }
 

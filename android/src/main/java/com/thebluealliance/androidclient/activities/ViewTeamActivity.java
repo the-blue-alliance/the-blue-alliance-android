@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -24,16 +25,22 @@ import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownFo
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.modules.*;
+import com.thebluealliance.androidclient.modules.BinderModule;
+import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.modules.components.FragmentComponent;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
-import de.greenrobot.event.EventBus;
 
 import java.util.Calendar;
 
+import de.greenrobot.event.EventBus;
+
 public class ViewTeamActivity extends FABNotificationSettingsActivity implements
-        ViewPager.OnPageChangeListener,
-        View.OnClickListener,
-        HasFragmentComponent {
+  ViewPager.OnPageChangeListener,
+  View.OnClickListener,
+  HasFragmentComponent {
 
     public static final String TEAM_KEY = "team_key",
             TEAM_YEAR = "team_year",
@@ -301,9 +308,10 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     public FragmentComponent getComponent() {
         if (mComponent == null) {
             mComponent = DaggerFragmentComponent.builder()
-                    .datafeedModule(new DatafeedModule())
-                    .subscriberModule(new SubscriberModule(this))
-                    .build();
+              .datafeedModule(new DatafeedModule())
+              .subscriberModule(new SubscriberModule(this))
+              .binderModule(new BinderModule())
+              .build();
         }
         return mComponent;
     }

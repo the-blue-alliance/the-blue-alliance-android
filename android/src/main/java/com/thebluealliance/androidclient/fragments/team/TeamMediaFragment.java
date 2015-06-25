@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -16,16 +17,17 @@ import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.modules.HasFragmentComponent;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
-import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+
+import java.util.List;
 
 import javax.inject.Inject;
-import java.util.List;
+
+import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableListAdapter> {
 
@@ -87,7 +89,7 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
         Observable<List<Media>> mTeamObservable = mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
         mTeamObservable
           .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
+          .observeOn(Schedulers.computation())
           .subscribe(mSubscriber);
         EventBus.getDefault().register(this);
     }

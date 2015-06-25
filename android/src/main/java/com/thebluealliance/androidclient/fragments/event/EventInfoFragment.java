@@ -1,11 +1,9 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,36 +11,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
+import com.thebluealliance.androidclient.binders.EventInfoBinder;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
+import javax.inject.Inject;
 
-/**
- * File created by phil on 4/22/14.
- */
-public class EventInfoFragment extends Fragment implements RefreshListener, View.OnClickListener {
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
-    private String eventKey;
+public class EventInfoFragment extends Fragment implements View.OnClickListener {
+
     private static final String KEY = "eventKey";
-    private PopulateEventInfo task;
-    private Activity parent;
-    private Event event;
+
+    private String mEventKey;
+
+    @Inject CacheableDatafeed mDatafeed;
+    @Inject EventInfoSubscriber mSubscriber;
+    @Inject EventInfoBinder mBinder;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -55,66 +56,45 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getActivity() instanceof HasFragmentComponent) {
+            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
+        }
         if (getArguments() != null) {
-            eventKey = getArguments().getString(KEY, "");
+            mEventKey = getArguments().getString(KEY, "");
         }
-        parent = getActivity();
-
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View info = inflater.inflate(R.layout.fragment_event_info, null);
-        info.findViewById(R.id.event_venue_container).setOnClickListener(this);
-        info.findViewById(R.id.event_website_button).setOnClickListener(this);
-        info.findViewById(R.id.event_twitter_button).setOnClickListener(this);
-        info.findViewById(R.id.event_youtube_button).setOnClickListener(this);
-        info.findViewById(R.id.event_cd_button).setOnClickListener(this);
-        info.findViewById(R.id.event_top_teams_container).setOnClickListener(this);
-        info.findViewById(R.id.event_top_oprs_container).setOnClickListener(this);
-        info.findViewById(R.id.event_date_container).setOnClickListener(this);
-        return info;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
+        mSubscriber.setConsumer(mBinder);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        Observable<Event> mTeamObservable = mDatafeed.fetchEvent(mEventKey);
+        mTeamObservable
+          .subscribeOn(Schedulers.io())
+          .observeOn(Schedulers.computation())
+          .subscribe(mSubscriber);
     }
 
     @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " info");
-        task = new PopulateEventInfo(this, new RequestParams(true, actionIconPressed));
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
+    public void onPause() {
+        super.onPause();
+        mSubscriber.unsubscribe();
     }
 
     @Override
-    public void onRefreshStop() {
-        if (task != null) {
-            task.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventInfo newTask) {
-        task = newTask;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_event_info, null);
+        mBinder.setView(view);
+        mBinder.mEventName = (TextView) view.findViewById(R.id.event_name);
+        mBinder.mEventDate = (TextView) view.findViewById(R.id.event_date);
+        mBinder.mEventLoc = (TextView) view.findViewById(R.id.event_location);
+        mBinder.mEventVenue = (TextView) view.findViewById(R.id.event_venue);
+        mBinder.mTopTeamsContainer = view.findViewById(R.id.event_top_teams_container);
+        mBinder.mTopOprsContainer = view.findViewById(R.id.event_top_oprs_container);
+        mBinder.mTopTeams = (TextView) view.findViewById(R.id.event_top_teams);
+        mBinder.mTopOprs = (TextView) view.findViewById(R.id.event_top_oprs);
+        mBinder.mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        return view;
     }
 
     @Override
@@ -127,33 +107,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);  // Stats
             return;
         } else if (id == R.id.event_date_container) {
-            if (event == null) {
-                return;
-            }
-
-            // Calendar stuff isn't working propberly, the intent isn't setting the proper date
-            // on the calendar entry. This is disabled for now.
-
-            // Launch the calendar app with the event's info pre-filled
-            /*try {
-                long startTime = event.getStartDate().getTime();
-                long endTime = event.getEndDate().getTime();
-
-                Log.d(Constants.LOG_TAG, "Calendar: " + startTime + " - " + endTime);
-
-                Intent i = new Intent(Intent.ACTION_INSERT);
-                i.setData(CalendarContract.Events.CONTENT_URI);
-                i.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime);
-                i.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime);
-                i.putExtra(CalendarContract.Events.TITLE, event.getShortName());
-                i.putExtra(CalendarContract.Events.EVENT_LOCATION, event.getVenue());
-                i.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
-                startActivity(i);
-                return;
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
-                return;
-            }*/
+            //TODO intent to add to calendar
             return;
         }
 
@@ -161,7 +115,7 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             String uri = v.getTag().toString();
 
             //social button was clicked. Track the call
-            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, eventKey);
+            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, mEventKey);
 
             PackageManager manager = getActivity().getPackageManager();
             Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
@@ -174,12 +128,6 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
                 Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 
     protected void showLastMatch(MatchListElement match) {
@@ -209,10 +157,5 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
             Log.d(Constants.LOG_TAG, "showing next match");
             showNextMatch(event.getNextMatch().render());
         }
-    }
-
-    // Called when the event has been loaded. We use this to set up the calendar stuff.
-    public void onEvent(EventInfoLoadedEvent eventEvent) {
-        this.event = eventEvent.getEvent();
     }
 }
