@@ -20,17 +20,14 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-public class EventTeamsFragment extends DatafeedFragment<List<Team>, ListViewAdapter> {
+public class EventTeamsFragment extends DatafeedFragment<TeamListSubscriber, ListviewBinder> {
 
     private static final String KEY = "event_key";
 
@@ -38,9 +35,6 @@ public class EventTeamsFragment extends DatafeedFragment<List<Team>, ListViewAda
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
-
-    @Inject TeamListSubscriber mSubscriber;
-    @Inject ListviewBinder mBinder;
 
     public static EventTeamsFragment newInstance(String eventKey) {
         EventTeamsFragment f = new EventTeamsFragment();
@@ -53,9 +47,7 @@ public class EventTeamsFragment extends DatafeedFragment<List<Team>, ListViewAda
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasFragmentComponent) {
-            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
-        }
+        mComponent.inject(this);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }

@@ -9,34 +9,25 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableListAdapter> {
+public class TeamMediaFragment extends DatafeedFragment<MediaListSubscriber, ExpandableListBinder> {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
     private String mTeamKey;
     private int mYear;
-    private ExpandableListView mExpandableList;
-    private ProgressBar mProgressBar;
-
-    @Inject MediaListSubscriber mSubscriber;
-    @Inject ExpandableListBinder mBinder;
 
     public static Fragment newInstance(String teamKey, int year) {
         Bundle args = new Bundle();
@@ -51,9 +42,7 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasFragmentComponent) {
-            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
-        }
+        mComponent.inject(this);
 
         Bundle args = getArguments();
         if (args == null || !args.containsKey(TEAM_KEY) || !args.containsKey(YEAR)) {

@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,30 +19,24 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
-import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-public class EventInfoFragment extends Fragment implements View.OnClickListener {
+public class EventInfoFragment extends DatafeedFragment<EventInfoSubscriber, EventInfoBinder>
+  implements View.OnClickListener {
 
     private static final String KEY = "eventKey";
 
     private String mEventKey;
-
-    @Inject CacheableDatafeed mDatafeed;
-    @Inject EventInfoSubscriber mSubscriber;
-    @Inject EventInfoBinder mBinder;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -56,9 +49,7 @@ public class EventInfoFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasFragmentComponent) {
-            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
-        }
+        mComponent.inject(this);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }

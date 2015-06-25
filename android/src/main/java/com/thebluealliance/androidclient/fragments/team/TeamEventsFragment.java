@@ -20,18 +20,15 @@ import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAdapter> {
+public class TeamEventsFragment extends DatafeedFragment<EventListSubscriber, ListviewBinder> {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
@@ -41,9 +38,6 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
-
-    @Inject EventListSubscriber mSubscriber;
-    @Inject ListviewBinder mBinder;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -57,9 +51,7 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasFragmentComponent) {
-            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
-        }
+        mComponent.inject(this);
 
         mYear = getArguments().getInt(YEAR, -1);
         if (mYear == -1) {

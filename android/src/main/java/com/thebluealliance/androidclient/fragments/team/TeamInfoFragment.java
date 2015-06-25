@@ -22,26 +22,20 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-public class TeamInfoFragment extends DatafeedFragment<Team, TeamInfoBinder.Model>
+public class TeamInfoFragment extends DatafeedFragment<TeamInfoSubscriber, TeamInfoBinder>
   implements View.OnClickListener {
 
     private static final String TEAM_KEY = "team_key";
 
     private String mTeamKey;
-
-    @Inject TeamInfoSubscriber mSubscriber;
-    @Inject TeamInfoBinder mBinder;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -54,9 +48,7 @@ public class TeamInfoFragment extends DatafeedFragment<Team, TeamInfoBinder.Mode
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasFragmentComponent) {
-            ((HasFragmentComponent) getActivity()).getComponent().inject(this);
-        }
+        mComponent.inject(this);
 
         mTeamKey = getArguments().getString(TEAM_KEY);
         if (mTeamKey == null) {
