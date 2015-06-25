@@ -800,7 +800,6 @@ public class Database extends SQLiteOpenHelper {
             String query = String.format("SELECT * FROM %1$s JOIN %2$s ON %1$s.%3$s = %2$s.%4$s " +
                 "WHERE %1$s.%3$s = ?",
               TABLE_EVENTTEAMS, TABLE_TEAMS, TEAMKEY, Teams.KEY);
-            Log.d(Constants.LOG_TAG, query);
             Cursor cursor = mDb.rawQuery(query, new String[]{eventKey});
             ArrayList<Team> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {

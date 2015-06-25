@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -99,7 +100,16 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<JsonArray> fetchEventRankings(String eventKey) {
-        return null;
+        try {
+            Event event = mDb.getEventsTable()
+              .get(eventKey, new String[]{Database.Events.RANKINGS});
+            if (event != null) {
+                return Observable.just(event.getRankings());
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+
+        }
+        return Observable.just(null);
     }
 
     @Override

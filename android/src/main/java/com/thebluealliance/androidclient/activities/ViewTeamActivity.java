@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
@@ -308,6 +309,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     public FragmentComponent getComponent() {
         if (mComponent == null) {
             mComponent = DaggerFragmentComponent.builder()
+              .tBAAndroidModule(((TBAAndroid) getApplication()).getModule())
               .datafeedModule(new DatafeedModule())
               .subscriberModule(new SubscriberModule(this))
               .binderModule(new BinderModule())

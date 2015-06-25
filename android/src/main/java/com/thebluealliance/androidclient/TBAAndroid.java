@@ -4,8 +4,13 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.stetho.Stetho;
+import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.modules.TBAAndroidModule;
 
 public class TBAAndroid extends Application {
+
+    private TBAAndroidModule mModule;
+    private DatafeedModule mDatafeedModule;
 
     @Override
     public void onCreate() {
@@ -18,5 +23,12 @@ public class TBAAndroid extends Application {
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build());
         }
+    }
+
+    public TBAAndroidModule getModule() {
+        if (mModule == null) {
+            mModule = new TBAAndroidModule(this);
+        }
+        return mModule;
     }
 }

@@ -1,12 +1,8 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +10,17 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
+import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
+
+import rx.Observable;
 
 /**
  * Fragment that displays the rankings for an FRC event.
@@ -31,22 +28,16 @@ import com.thebluealliance.androidclient.listitems.ListElement;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p>
- *         File created by phil on 4/22/14.
  */
-public class EventRankingsFragment extends Fragment implements RefreshListener {
+public class EventRankingsFragment
+  extends DatafeedFragment<RankingsListSubscriber, ListviewBinder> {
 
-    private Activity parent;
-
-    private String eventKey;
     private static final String KEY = "eventKey";
 
+    private String eventKey;
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
-    private ProgressBar mProgressBar;
-
-    private PopulateEventRankings mTask;
 
     /**
      * Creates new rankings fragment for an event
@@ -65,14 +56,13 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mComponent.inject(this);
         // Reload key if returning from another activity/fragment
         if (getArguments() != null) {
             eventKey = getArguments().getString(KEY, "");
         }
-        parent = getActivity();
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+        mSubscriber.setConsumer(mBinder);
+        mBinder.setContext(getActivity());
     }
 
     @Override
@@ -80,7 +70,10 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
         // Setup views & listener
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) v.findViewById(R.id.list);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        ProgressBar mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+
+        mBinder.mListView = mListView;
+        mBinder.mProgressBar = mProgressBar;
 
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.
@@ -106,47 +99,22 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Observable<JsonArray> rankingsObservable = mDatafeed.fetchEventRankings(eventKey);
+        rankingsObservable.subscribe(mSubscriber);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         // Save the data if moving away from fragment.
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
+        if (mSubscriber != null) {
+            mSubscriber.unsubscribe();
         }
-    }
-
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " rankings");
-        mTask = new PopulateEventRankings(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventRankings newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
     }
 }

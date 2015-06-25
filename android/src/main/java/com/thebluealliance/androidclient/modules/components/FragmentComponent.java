@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.modules.components;
 
 import com.thebluealliance.androidclient.fragments.event.EventInfoFragment;
+import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamEventsFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
@@ -21,4 +22,5 @@ public interface FragmentComponent {
     void inject(TeamMediaFragment fragment);
     void inject(EventInfoFragment fragment);
     void inject(EventTeamsFragment fragment);
+    void inject(EventRankingsFragment fragment);
 }
