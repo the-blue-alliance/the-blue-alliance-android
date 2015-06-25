@@ -1,21 +1,18 @@
 package com.thebluealliance.androidclient.fragments.team;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
+import com.thebluealliance.androidclient.binders.MediaListBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
@@ -39,6 +36,7 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
     private ProgressBar mProgressBar;
 
     @Inject MediaListSubscriber mSubscriber;
+    @Inject MediaListBinder mBinder;
 
     public static Fragment newInstance(String teamKey, int year) {
         Bundle args = new Bundle();
@@ -66,14 +64,15 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
         if (mYear == -1) {
             mYear = Utilities.getCurrentYear();
         }
-        mSubscriber.setConsumer(this);
+        mSubscriber.setConsumer(mBinder);
+        mBinder.setContext(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_team_media, container, false);
-        mExpandableList = (ExpandableListView) v.findViewById(R.id.team_media_list);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.mExpandableList = (ExpandableListView) v.findViewById(R.id.team_media_list);
+        mBinder.mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         return v;
     }
 
@@ -96,34 +95,5 @@ public class TeamMediaFragment extends DatafeedFragment<List<Media>, ExpandableL
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-    }
-
-    @Override
-    public void updateData(@Nullable ExpandableListAdapter data)
-      throws BasicModel.FieldNotDefinedException {
-        if (data == null || mExpandableList == null) {
-            return;
-        }
-
-        if (mExpandableList.getAdapter() == null) {
-            mExpandableList.setAdapter(data);
-        }
-        mExpandableList.setVisibility(View.VISIBLE);
-        data.notifyDataSetChanged();
-
-        for (int i = 0; i < data.groups.size(); i++) {
-            mExpandableList.expandGroup(i);
-        }
-
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
-        }
-
-        // TODO no data text
-    }
-
-    @Override
-    public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
     }
 }

@@ -7,14 +7,11 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import javax.annotation.Nullable;
 
-public class EventInfoBinder implements DataConsumer<EventInfoBinder.Model> {
-
-    private View mView;
+public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     public TextView mEventName;
     public TextView  mEventDate;
@@ -25,10 +22,6 @@ public class EventInfoBinder implements DataConsumer<EventInfoBinder.Model> {
     public View  mTopTeamsContainer;
     public View  mTopOprsContainer;
     public ProgressBar mProgressBar;
-
-    public void setView(View view) {
-        mView = view;
-    }
 
     //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override

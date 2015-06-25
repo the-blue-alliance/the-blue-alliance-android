@@ -1,16 +1,23 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
-public class TeamInfoSubscriber extends BaseAPISubscriber<Team, Team>{
+public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.Model>{
 
     public TeamInfoSubscriber() {
         super(true);
     }
 
     @Override
-    public void parseData() {
-        // No parsing needed here
-        mDataToBind = mAPIData;
+    public void parseData() throws BasicModel.FieldNotDefinedException{
+        mDataToBind = new TeamInfoBinder.Model();
+        mDataToBind.teamKey = mAPIData.getKey();
+        mDataToBind.fullName = mAPIData.getFullName();
+        mDataToBind.nickname = mAPIData.getNickname();
+        mDataToBind.teamNumber = mAPIData.getTeamNumber();
+        mDataToBind.location = mAPIData.getLocation();
+        mDataToBind.website = mAPIData.getWebsite();
     }
 }

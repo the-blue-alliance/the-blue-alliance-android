@@ -2,12 +2,10 @@ package com.thebluealliance.androidclient.fragments.team;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -16,11 +14,11 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.binders.EventListBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
@@ -43,9 +41,9 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
-    private ProgressBar mProgressBar;
 
     @Inject EventListSubscriber mSubscriber;
+    @Inject EventListBinder mBinder;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -69,34 +67,35 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
             mYear = Utilities.getCurrentYear();
         }
         mTeamKey = getArguments().getString(TEAM_KEY);
-        mSubscriber.setConsumer(this);
+        mSubscriber.setConsumer(mBinder);
+        mBinder.setContext(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mBinder.setView(v);
+
         mListView = (ListView) v.findViewById(R.id.list);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.mListView = mListView;
+        mBinder.mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
-            mProgressBar.setVisibility(View.GONE);
+            mBinder.mProgressBar.setVisibility(View.GONE);
         }
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!(parent.getAdapter() instanceof ListViewAdapter)) {
-                    //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
-                    Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
-                    return;
-                }
-                Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
-                if (item != null && item instanceof EventListElement) {
-                    String eventKey = ((ListElement) item).getKey();
-                    startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey));
-                } else {
-                    Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
-                }
+        mListView.setOnItemClickListener((parent, view, position, id) -> {
+            if (!(parent.getAdapter() instanceof ListViewAdapter)) {
+                //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
+                Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
+                return;
+            }
+            Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
+            if (item != null && item instanceof EventListElement) {
+                String eventKey = ((ListElement) item).getKey();
+                startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey));
+            } else {
+                Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
             }
         });
         return v;
@@ -127,28 +126,5 @@ public class TeamEventsFragment extends DatafeedFragment<List<Event>, ListViewAd
     //TODO kill eventbus
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-    }
-
-    @Override
-    public void updateData(@Nullable ListViewAdapter data)
-      throws BasicModel.FieldNotDefinedException {
-        if (data == null || mListView == null) {
-            return;
-        }
-        if (mListView.getAdapter() == null) {
-            mListView.setAdapter(data);
-        }
-        data.notifyDataSetChanged();
-
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
-        }
-
-        // TODO no data text
-    }
-
-    @Override
-    public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
     }
 }
