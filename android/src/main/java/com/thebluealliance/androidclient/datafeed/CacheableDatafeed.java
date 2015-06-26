@@ -125,7 +125,8 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<JsonObject> fetchEventDistrictPoints(String eventKey) {
-        return null;
+        return mAPICache.fetchEventDistrictPoints(eventKey).concatWith(
+          mRetrofitAPI.fetchEventDistrictPoints(eventKey));
     }
 
     @Override

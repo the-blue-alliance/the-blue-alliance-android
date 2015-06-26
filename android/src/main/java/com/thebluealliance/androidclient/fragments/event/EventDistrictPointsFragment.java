@@ -1,11 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,32 +10,25 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventDistrictPoints;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 
-/**
- * File created by phil on 7/26/14.
- */
-public class EventDistrictPointsFragment extends Fragment implements RefreshListener {
+import rx.Observable;
 
-    private Activity parent;
-
-    private String mEventKey;
+public class EventDistrictPointsFragment
+  extends DatafeedFragment<JsonObject, ListViewAdapter, DistrictPointsListSubscriber, ListviewBinder> {
     private static final String KEY = "event_key";
 
+    private String mEventKey;
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    private View moreInfoContainer;
-
-    private PopulateEventDistrictPoints mTask;
-
+    //TODO implement way to show "not part of district" warning
     private boolean isDistrict;
 
     public static EventDistrictPointsFragment newInstance(String eventKey) {
@@ -56,12 +45,9 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
-        parent = getActivity();
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
-        }
         isDistrict = true;
         setHasOptionsMenu(true);
+        mSubscriber.setEventKey(mEventKey);
     }
 
     @Override
@@ -74,6 +60,8 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
         View view = inflater.inflate(R.layout.fragment_event_district_points, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mBinder.mListView = mListView;
+        mBinder.mProgressBar = progressBar;
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
@@ -85,41 +73,12 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
-    }
-
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " teams");
-        mTask = new PopulateEventDistrictPoints(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventDistrictPoints newTask) {
-        mTask = newTask;
     }
 
     public void updateDistrict(boolean isDistrict) {
@@ -128,7 +87,7 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
             return;
         }
 
-        moreInfoContainer = getView().findViewById(R.id.more_info_container);
+        View moreInfoContainer = getView().findViewById(R.id.more_info_container);
         if (isDistrict) {
             moreInfoContainer.setVisibility(View.GONE);
         } else {
@@ -137,8 +96,12 @@ public class EventDistrictPointsFragment extends Fragment implements RefreshList
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<JsonObject> getObservable() {
+        return mDatafeed.fetchEventDistrictPoints(mEventKey);
     }
 }

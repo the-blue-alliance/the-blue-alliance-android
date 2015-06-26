@@ -131,7 +131,12 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<JsonObject> fetchEventDistrictPoints(String eventKey) {
-        return null;
+        Event event = mDb.getEventsTable().get(eventKey);
+        try {
+            return Observable.just(event.getDistrictPoints());
+        } catch (BasicModel.FieldNotDefinedException e) {
+            return Observable.just(null);
+        }
     }
 
     @Override

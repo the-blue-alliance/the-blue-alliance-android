@@ -26,8 +26,6 @@ import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownFo
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.modules.BinderModule;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.modules.components.FragmentComponent;
@@ -308,11 +306,12 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
     public FragmentComponent getComponent() {
         if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .tBAAndroidModule(((TBAAndroid) getApplication()).getModule())
-              .datafeedModule(new DatafeedModule())
+              .tBAAndroidModule(application.getModule())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
               .subscriberModule(new SubscriberModule(this))
-              .binderModule(new BinderModule())
               .build();
         }
         return mComponent;

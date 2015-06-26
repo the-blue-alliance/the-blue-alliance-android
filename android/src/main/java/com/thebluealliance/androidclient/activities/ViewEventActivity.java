@@ -21,8 +21,6 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.modules.BinderModule;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.modules.components.FragmentComponent;
@@ -263,11 +261,12 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
 
     public FragmentComponent getComponent() {
         if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .tBAAndroidModule(((TBAAndroid) getApplication()).getModule())
-              .datafeedModule(new DatafeedModule())
+              .tBAAndroidModule(application.getModule())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
               .subscriberModule(new SubscriberModule(this))
-              .binderModule(new BinderModule())
               .build();
         }
         return mComponent;

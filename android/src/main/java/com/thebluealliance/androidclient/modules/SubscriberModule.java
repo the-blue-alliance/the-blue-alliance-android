@@ -2,10 +2,12 @@ package com.thebluealliance.androidclient.modules;
 
 import android.app.Activity;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.modules.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
+import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
@@ -24,11 +26,14 @@ public class SubscriberModule {
 
     private Activity mActivity;
     @Inject Database mDb;
+    @Inject Gson mGson;
 
     public SubscriberModule(Activity activity) {
         mActivity = activity;
+        TBAAndroid application = ((TBAAndroid) activity.getApplication());
         DaggerApplicationComponent.builder()
-          .tBAAndroidModule(((TBAAndroid) activity.getApplication()).getModule())
+          .tBAAndroidModule(application.getModule())
+          .datafeedModule(application.getDatafeedModule())
           .build()
           .inject(this);
     }
@@ -71,5 +76,10 @@ public class SubscriberModule {
     @Provides
     public AllianceListSubscriber provideAllianceListSubscriber() {
         return new AllianceListSubscriber(mActivity);
+    }
+
+    @Provides
+    public DistrictPointsListSubscriber provideDistrictPointsListSubscriber() {
+        return new DistrictPointsListSubscriber(mActivity, mDb, mGson);
     }
 }
