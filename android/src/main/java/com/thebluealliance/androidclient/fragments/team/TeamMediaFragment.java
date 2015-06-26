@@ -55,6 +55,7 @@ public class TeamMediaFragment extends DatafeedFragment<
         if (mYear == -1) {
             mYear = Utilities.getCurrentYear();
         }
+        mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ALL);
     }
 
     @Override

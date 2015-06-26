@@ -54,6 +54,7 @@ public class EventMatchesFragment
         }
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
+        mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ONLY);
     }
 
     @Override
