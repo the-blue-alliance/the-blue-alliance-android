@@ -29,9 +29,9 @@ import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import java.util.List;
 
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
-public class EventInfoFragment extends DatafeedFragment<EventInfoSubscriber, EventInfoBinder>
+public class EventInfoFragment
+  extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder>
   implements View.OnClickListener {
 
     private static final String KEY = "eventKey";
@@ -49,28 +49,8 @@ public class EventInfoFragment extends DatafeedFragment<EventInfoSubscriber, Eve
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent.inject(this);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
-        }
-        mSubscriber.setConsumer(mBinder);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Observable<Event> mEventObservable = mDatafeed.fetchEvent(mEventKey);
-        mEventObservable
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.computation())
-          .subscribe(mSubscriber);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
         }
     }
 
@@ -150,5 +130,15 @@ public class EventInfoFragment extends DatafeedFragment<EventInfoSubscriber, Eve
             Log.d(Constants.LOG_TAG, "showing next match");
             showNextMatch(event.getNextMatch().render());
         }
+    }
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<Event> getObservable() {
+        return mDatafeed.fetchEvent(mEventKey);
     }
 }

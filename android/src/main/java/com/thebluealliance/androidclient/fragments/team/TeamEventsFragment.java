@@ -26,9 +26,9 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
-public class TeamEventsFragment extends DatafeedFragment<EventListSubscriber, ListviewBinder> {
+public class TeamEventsFragment
+  extends DatafeedFragment<List<Event>, ListViewAdapter, EventListSubscriber, ListviewBinder> {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
@@ -51,16 +51,12 @@ public class TeamEventsFragment extends DatafeedFragment<EventListSubscriber, Li
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent.inject(this);
-
         mYear = getArguments().getInt(YEAR, -1);
         if (mYear == -1) {
             // default to current year
             mYear = Utilities.getCurrentYear();
         }
         mTeamKey = getArguments().getString(TEAM_KEY);
-        mSubscriber.setConsumer(mBinder);
-        mBinder.setContext(getActivity());
     }
 
     @Override
@@ -100,26 +96,28 @@ public class TeamEventsFragment extends DatafeedFragment<EventListSubscriber, Li
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
-        if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
-        }
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Observable<List<Event>> mTeamObservable = mDatafeed.fetchTeamEvents(mTeamKey, mYear);
-        mTeamObservable
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.computation())
-          .subscribe(mSubscriber);
-
         EventBus.getDefault().register(this);
     }
 
     //TODO kill eventbus
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
+    }
+
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<List<Event>> getObservable() {
+        return mDatafeed.fetchTeamEvents(mTeamKey, mYear);
     }
 }

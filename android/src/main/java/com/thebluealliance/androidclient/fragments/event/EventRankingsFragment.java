@@ -30,7 +30,7 @@ import rx.Observable;
  * @author Nathan Walters
  */
 public class EventRankingsFragment
-  extends DatafeedFragment<RankingsListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<JsonArray, ListViewAdapter, RankingsListSubscriber, ListviewBinder> {
 
     private static final String KEY = "eventKey";
 
@@ -56,13 +56,10 @@ public class EventRankingsFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent.inject(this);
         // Reload key if returning from another activity/fragment
         if (getArguments() != null) {
             eventKey = getArguments().getString(KEY, "");
         }
-        mSubscriber.setConsumer(mBinder);
-        mBinder.setContext(getActivity());
     }
 
     @Override
@@ -99,13 +96,6 @@ public class EventRankingsFragment
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Observable<JsonArray> rankingsObservable = mDatafeed.fetchEventRankings(eventKey);
-        rankingsObservable.subscribe(mSubscriber);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         // Save the data if moving away from fragment.
@@ -113,8 +103,15 @@ public class EventRankingsFragment
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
-        if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
-        }
+    }
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<JsonArray> getObservable() {
+        return mDatafeed.fetchEventRankings(eventKey);
     }
 }

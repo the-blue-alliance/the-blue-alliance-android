@@ -25,9 +25,9 @@ import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 import java.util.List;
 
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
-public class EventTeamsFragment extends DatafeedFragment<TeamListSubscriber, ListviewBinder> {
+public class EventTeamsFragment
+  extends DatafeedFragment<List<Team>, ListViewAdapter, TeamListSubscriber, ListviewBinder> {
 
     private static final String KEY = "event_key";
 
@@ -47,11 +47,9 @@ public class EventTeamsFragment extends DatafeedFragment<TeamListSubscriber, Lis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent.inject(this);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
-        mSubscriber.setConsumer(mBinder);
     }
 
     @Override
@@ -80,24 +78,21 @@ public class EventTeamsFragment extends DatafeedFragment<TeamListSubscriber, Lis
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Observable<List<Team>> mEventObservable = mDatafeed.fetchEventTeams(mEventKey);
-        mEventObservable
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.computation())
-          .subscribe(mSubscriber);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
-        if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
-        }
+    }
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<List<Team>> getObservable() {
+        return mDatafeed.fetchEventTeams(mEventKey);
     }
 }

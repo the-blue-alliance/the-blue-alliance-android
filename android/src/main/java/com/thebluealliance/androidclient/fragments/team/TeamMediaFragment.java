@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -20,9 +21,12 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
-public class TeamMediaFragment extends DatafeedFragment<MediaListSubscriber, ExpandableListBinder> {
+public class TeamMediaFragment extends DatafeedFragment<
+  List<Media>,
+  ExpandableListAdapter,
+  MediaListSubscriber,
+  ExpandableListBinder> {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
@@ -42,8 +46,6 @@ public class TeamMediaFragment extends DatafeedFragment<MediaListSubscriber, Exp
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent.inject(this);
-
         Bundle args = getArguments();
         if (args == null || !args.containsKey(TEAM_KEY) || !args.containsKey(YEAR)) {
             throw new IllegalArgumentException("TeamMediaFragment must be constructed with a team key and year");
@@ -53,8 +55,6 @@ public class TeamMediaFragment extends DatafeedFragment<MediaListSubscriber, Exp
         if (mYear == -1) {
             mYear = Utilities.getCurrentYear();
         }
-        mSubscriber.setConsumer(mBinder);
-        mBinder.setContext(getActivity());
     }
 
     @Override
@@ -69,23 +69,25 @@ public class TeamMediaFragment extends DatafeedFragment<MediaListSubscriber, Exp
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-        if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Observable<List<Media>> mTeamObservable = mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
-        mTeamObservable
-          .subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.computation())
-          .subscribe(mSubscriber);
         EventBus.getDefault().register(this);
     }
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
+    }
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<List<Media>> getObservable() {
+        return mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
     }
 }

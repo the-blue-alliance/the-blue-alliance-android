@@ -28,9 +28,9 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
-public class TeamInfoFragment extends DatafeedFragment<TeamInfoSubscriber, TeamInfoBinder>
+public class TeamInfoFragment
+  extends DatafeedFragment<Team, TeamInfoBinder.Model, TeamInfoSubscriber, TeamInfoBinder>
   implements View.OnClickListener {
 
     private static final String TEAM_KEY = "team_key";
@@ -48,15 +48,10 @@ public class TeamInfoFragment extends DatafeedFragment<TeamInfoSubscriber, TeamI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent.inject(this);
-
         mTeamKey = getArguments().getString(TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
-
-        mSubscriber.setConsumer(mBinder);
-        mBinder.setContext(getActivity());
     }
 
     @Override
@@ -86,19 +81,11 @@ public class TeamInfoFragment extends DatafeedFragment<TeamInfoSubscriber, TeamI
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-        if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Observable<Team> mTeamObservable = mDatafeed.fetchTeam(mTeamKey);
-        mTeamObservable
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.computation())
-            .subscribe(mSubscriber);
         EventBus.getDefault().register(this);
     }
 
@@ -152,5 +139,15 @@ public class TeamInfoFragment extends DatafeedFragment<TeamInfoSubscriber, TeamI
         if (event.getEvent() != null) {
             showCurrentEvent(event.getEvent().render());
         }
+    }
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<Team> getObservable() {
+        return mDatafeed.fetchTeam(mTeamKey);
     }
 }
