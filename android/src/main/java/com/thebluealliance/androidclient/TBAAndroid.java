@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
-
 import com.facebook.stetho.Stetho;
 import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.modules.TBAAndroidModule;
 
-public class TBAAndroid extends Application {
+public class TBAAndroid extends MultiDexApplication {
 
     private TBAAndroidModule mModule;
     private DatafeedModule mDatafeedModule;
