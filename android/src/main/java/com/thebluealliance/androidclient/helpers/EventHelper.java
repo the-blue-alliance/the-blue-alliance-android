@@ -490,7 +490,6 @@ public class EventHelper {
                 rankingString += ", ";
             }
         }
-        Log.d(Constants.LOG_TAG, "String: " + rankingString);
         return rankingString;
     }
 

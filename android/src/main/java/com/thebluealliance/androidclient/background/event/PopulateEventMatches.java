@@ -252,14 +252,10 @@ public class PopulateEventMatches extends AsyncTask<String, Void, APIResponse.CO
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateEventMatches secondLoad = new PopulateEventMatches(mFragment, requestParams);
-                mFragment.updateTask(secondLoad);
-                secondLoad.execute(eventKey, teamKey);
             } else {
                 // Show notification if we've refreshed data.
                 if (activity != null && mFragment instanceof RefreshListener) {
                     Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Results refresh complete");
-                    activity.notifyRefreshComplete(mFragment);
                 }
             }
 

@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.modules.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
+import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
@@ -59,5 +60,10 @@ public class SubscriberModule {
     @Provides
     public RankingsListSubscriber provideRankingsListSubscriber() {
         return new RankingsListSubscriber(mActivity, mDb);
+    }
+
+    @Provides
+    public MatchListSubscriber provideMatchListSubscriber() {
+        return new MatchListSubscriber(mActivity, mDb);
     }
 }

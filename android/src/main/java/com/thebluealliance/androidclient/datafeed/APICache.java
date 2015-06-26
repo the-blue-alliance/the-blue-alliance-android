@@ -114,7 +114,9 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<Match>> fetchEventMatches(String eventKey) {
-        return null;
+        String where = String.format("%1$s = ?", Database.Matches.EVENT);
+        return Observable.just(
+          mDb.getMatchesTable().getForQuery(null, where, new String[]{eventKey}));
     }
 
     @Override

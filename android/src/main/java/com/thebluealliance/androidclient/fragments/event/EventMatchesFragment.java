@@ -1,42 +1,36 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
+import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventMatches;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.binders.ExpandableListBinder;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
+import com.thebluealliance.androidclient.views.ExpandableListView;
 
-/**
- * File created by phil on 4/22/14.
- */
-public class EventMatchesFragment extends Fragment implements RefreshListener {
+import java.util.List;
 
-    private Activity parent;
+import rx.Observable;
 
-    private String eventKey, teamKey;
+public class EventMatchesFragment
+  extends DatafeedFragment<List<Match>, ExpandableListAdapter, MatchListSubscriber, ExpandableListBinder> {
+
     private static final String KEY = "eventKey", TEAM = "teamKey";
 
+    private String mEventKey, mTeamKey;
     private Parcelable mListState;
     private MatchListAdapter mAdapter;
     private ExpandableListView mListView;
     private int mFirstVisiblePosition;
-    private ProgressBar mProgressBar;
-
-    private PopulateEventMatches mTask;
 
     public static EventMatchesFragment newInstance(String eventKey, String teamKey) {
         EventMatchesFragment f = new EventMatchesFragment();
@@ -55,44 +49,33 @@ public class EventMatchesFragment extends Fragment implements RefreshListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            eventKey = getArguments().getString(KEY, "");
-            teamKey = getArguments().getString(TEAM, "");
+            mEventKey = getArguments().getString(KEY, "");
+            mTeamKey = getArguments().getString(TEAM, "");
         }
-        parent = getActivity();
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+        mSubscriber.setEventKey(mEventKey);
+        mSubscriber.setTeamKey(mTeamKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_event_results, null);
         mListView = (ExpandableListView) v.findViewById(R.id.match_results);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.mExpandableList = mListView;
+        mBinder.mProgressBar = progressBar;
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mListView.setSelection(mFirstVisiblePosition);
             Log.d("onCreateView", "using existing adapter");
-            mProgressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
         }
         return v;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
         if (mListView != null) {
             Log.d("onPause", "saving adapter");
             mAdapter = (MatchListAdapter) mListView.getExpandableListAdapter();
@@ -102,26 +85,12 @@ public class EventMatchesFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " results");
-        mTask = new PopulateEventMatches(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey, teamKey);
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventMatches newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
+    protected Observable<List<Match>> getObservable() {
+        return mDatafeed.fetchEventMatches(mEventKey);
     }
 }
