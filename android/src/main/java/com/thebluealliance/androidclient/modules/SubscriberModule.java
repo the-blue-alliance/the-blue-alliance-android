@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.modules.components.DaggerApplicationComponent;
+import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
@@ -65,5 +66,10 @@ public class SubscriberModule {
     @Provides
     public MatchListSubscriber provideMatchListSubscriber() {
         return new MatchListSubscriber(mActivity, mDb);
+    }
+
+    @Provides
+    public AllianceListSubscriber provideAllianceListSubscriber() {
+        return new AllianceListSubscriber(mActivity);
     }
 }

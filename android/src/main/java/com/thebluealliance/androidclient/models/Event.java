@@ -9,16 +9,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
 import java.text.ParseException;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class Event extends BasicModel<Event> {
@@ -467,23 +469,27 @@ public class Event extends BasicModel<Event> {
         return webcasts;
     }
 
-    public ArrayList<AllianceListElement> renderAlliances() {
-        ArrayList<AllianceListElement> output = new ArrayList<>();
+    public ArrayList<ListItem> renderAlliances() {
+        ArrayList<ListItem> output = new ArrayList<>();
+        renderAlliances(output);
+        return output;
+    }
+
+    public void renderAlliances(List<ListItem> destList) {
         try {
             JsonArray alliances = getAlliances();
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                output.add(new AllianceListElement(getKey(), counter, teams));
+                destList.add(new AllianceListElement(getKey(), counter, teams));
                 counter++;
             }
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
-                    "Required field: Database.Events.ALLIANCES");
+              "Required field: Database.Events.ALLIANCES");
         } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }
-        return output;
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {

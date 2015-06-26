@@ -29,6 +29,10 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
     // or wait until all inputs have arrived
     boolean mAlwaysBind;
 
+    public BaseAPISubscriber() {
+        this(true);
+    }
+
     public BaseAPISubscriber(boolean alwaysBind){
         mAlwaysBind = alwaysBind;
     }

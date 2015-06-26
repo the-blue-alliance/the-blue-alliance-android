@@ -110,14 +110,10 @@ public class PopulateEventAlliances extends AsyncTask<String, Void, APIResponse.
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateEventAlliances secondLoad = new PopulateEventAlliances(mFragment, requestParams);
-                mFragment.updateTask(secondLoad);
-                secondLoad.execute(eventKey);
             } else {
                 // Show notification if we've refreshed data.
                 if (activity != null && mFragment instanceof RefreshListener) {
                     Log.d(Constants.REFRESH_LOG, "Event " + eventKey + " alliances refresh complete");
-                    activity.notifyRefreshComplete(mFragment);
                 }
             }
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event alliances", eventKey);
