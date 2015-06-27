@@ -119,7 +119,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
                 ArrayList<Event> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
-                    events = EventHelper.renderEventListForDistrict(mFragment.getActivity(), eventData, false); // To enable a local broadcast for a live district event, make the last arg true
+                    EventHelper.renderEventListForDistrict(eventData, events);
                 }
                 return response.getCode();
 
@@ -139,7 +139,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
 
                 ArrayList<Event> eventData = response.getData();
                 if (eventData != null && !eventData.isEmpty()) {
-                    events = EventHelper.renderEventListForWeek(eventData);
+                    EventHelper.renderEventListForWeek(eventData, events);
                 }
                 return response.getCode();
             } catch (Exception e) {
@@ -153,7 +153,7 @@ public class PopulateEventList extends AsyncTask<Void, Void, APIResponse.CODE> {
                 response = DataManager.Teams.getEventsForTeam(activity, mTeamKey, mYear, requestParams);
                 ArrayList<Event> eventsArray = response.getData();
                 if (eventsArray != null && !eventsArray.isEmpty()) {
-                    events = EventHelper.renderEventListForTeam(activity, eventsArray, true);
+                    EventHelper.renderEventListForTeam(eventsArray, events);
                 }
                 return response.getCode();
             } catch (Exception e) {

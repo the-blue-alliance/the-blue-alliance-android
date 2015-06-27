@@ -57,6 +57,7 @@ public class TeamEventsFragment
             mYear = Utilities.getCurrentYear();
         }
         mTeamKey = getArguments().getString(TEAM_KEY);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
     }
 
     @Override

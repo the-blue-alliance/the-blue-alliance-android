@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
@@ -24,6 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -341,10 +341,10 @@ public class EventHelper {
      * season schedule.
      *
      * @param events a list of events to render
-     * @return a list of ListItems representing the sorted events
+     * @param output list to render events into
      */
-    public static ArrayList<ListItem> renderEventListForTeam(Context c, ArrayList<Event> events, boolean broadcastIfLive) {
-        return renderEventListWithComparator(c, events, new EventSortByTypeAndDateComparator(), broadcastIfLive);
+    public static void renderEventListForTeam(List<Event> events, List<ListItem> output) {
+        renderEventListWithComparator(events, output, new EventSortByTypeAndDateComparator());
     }
 
     /**
@@ -352,14 +352,16 @@ public class EventHelper {
      * particular event within a given week.
      *
      * @param events a list of events to render
-     * @return a list of ListItems representing the sorted events
+     * @param output list to render events into
      */
-    public static ArrayList<ListItem> renderEventListForWeek(ArrayList<Event> events) {
-        return renderEventListWithComparator(null, events, new EventSortByTypeAndDateComparator(), false);
+    public static void renderEventListForWeek(List<Event> events, List<ListItem> output) {
+        renderEventListWithComparator(events,output, new EventSortByTypeAndDateComparator());
     }
 
-    private static ArrayList<ListItem> renderEventListWithComparator(Context c, ArrayList<Event> events, Comparator<Event> comparator, boolean broadcastIfLive) {
-        ArrayList<ListItem> eventListItems = new ArrayList<>();
+    private static void renderEventListWithComparator(
+      List<Event> events,
+      List<ListItem> output,
+      Comparator<Event> comparator) {
         Collections.sort(events, comparator);
         EventHelper.TYPE lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
@@ -367,16 +369,19 @@ public class EventHelper {
             try {
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
-                if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
+                if (currentType != lastType ||
+                  (currentType == EventHelper.TYPE.DISTRICT
+                    && currentDistrict != lastDistrict)) {
                     if (currentType == EventHelper.TYPE.DISTRICT) {
-                        eventListItems.add(new EventTypeHeader(event.getDistrictTitle() + " District Events"));
+                        output.add(
+                          new EventTypeHeader(event.getDistrictTitle() + " District Events"));
                     } else {
-                        eventListItems.add(new EventTypeHeader(currentType.toString()));
+                        output.add(new EventTypeHeader(currentType.toString()));
                     }
                 }
-                eventListItems.add(event.render());
+                output.add(event.render());
 
-                if (broadcastIfLive && event.isHappeningNow()) {
+                if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
@@ -388,22 +393,22 @@ public class EventHelper {
             lastType = currentType;
             lastDistrict = currentDistrict;
         }
-        return eventListItems;
     }
 
-    public static ArrayList<ListItem> renderEventListForDistrict(Context c, ArrayList<Event> events, boolean broadcastIfLive) {
-        ArrayList<ListItem> eventListItems = new ArrayList<>();
+    public static void renderEventListForDistrict(
+      List<Event> events,
+      List<ListItem> output) {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
             try {
                 currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
                 if (!currentHeader.equals(lastHeader)) {
-                    eventListItems.add(new EventTypeHeader(currentHeader + " Events"));
+                    output.add(new EventTypeHeader(currentHeader + " Events"));
                 }
-                eventListItems.add(event.render());
+                output.add(event.render());
 
-                if (broadcastIfLive && event.isHappeningNow()) {
+                if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
@@ -413,7 +418,6 @@ public class EventHelper {
             }
             lastHeader = currentHeader;
         }
-        return eventListItems;
     }
 
     public static String getDateString(Date startDate, Date endDate) {

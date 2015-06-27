@@ -39,7 +39,7 @@ import java.util.Calendar;
 public class HomeActivity extends LegacyRefreshableHostActivity {
 
     /**
-     * Saved instance state key representing the last select navigation drawer item
+     * Saved instance state key representing the last select navigajjjjtion drawer item
      */
     private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
 
