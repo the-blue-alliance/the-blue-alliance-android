@@ -27,11 +27,11 @@ public class StatListElementComparator implements Comparator<ListItem> {
                 return Integer.compare(left.getTeamNumber(), right.getTeamNumber());
             case "opr":
             default:
-                return Double.compare(left.getOpr(), right.getOpr());
+                return Double.compare(right.getOpr(), left.getOpr());
             case "dpr":
                 return Double.compare(left.getDpr(), right.getDpr());
             case "ccwm":
-                return Double.compare(left.getCcwm(), right.getCcwm());
+                return Double.compare(right.getCcwm(), left.getCcwm());
         }
     }
 }

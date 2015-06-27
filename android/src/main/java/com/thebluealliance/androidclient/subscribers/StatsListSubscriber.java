@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.content.Context;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
@@ -10,11 +11,12 @@ import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map.Entry;
 
 public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewAdapter> {
 
@@ -51,15 +53,18 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewA
         JsonObject oprs = mAPIData.get("oprs").getAsJsonObject();
         JsonObject dprs = mAPIData.get("dprs").getAsJsonObject();
         JsonObject ccwms = mAPIData.get("ccwms").getAsJsonObject();
-        List<Team> teamsAttending = mDb.getEventTeamsTable().getTeams(mEventKey);
 
-        for (int i = 0; i < teamsAttending.size(); i++) {
-            Team team = teamsAttending.get(i);
+        for (Entry<String, JsonElement> stat : oprs.entrySet()) {
+            Team team = mDb.getTeamsTable().get("frc"+stat.getKey());
             String teamKey = team.getKey();
-            double opr = oprs.has(teamKey) ? oprs.get(teamKey).getAsDouble() : 0;
-            double dpr = dprs.has(teamKey) ? dprs.get(teamKey).getAsDouble() : 0;
-            double ccwm = ccwms.has(teamKey) ? ccwms.get(teamKey).getAsDouble() : 0;
-            String displayString = mContext.getString(R.string.stats_format, opr, dpr, ccwm);
+            double opr = stat.getValue().getAsDouble();
+            double dpr = dprs.has(stat.getKey()) ? dprs.get(stat.getKey()).getAsDouble() : 0;
+            double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;
+            String displayString = mContext.getString(
+              R.string.stats_format,
+              Stat.displayFormat.format(opr),
+              Stat.displayFormat.format(dpr),
+              Stat.displayFormat.format(ccwm));
             mDataToBind.values.add(new StatsListElement(
               teamKey,
               Integer.toString(team.getTeamNumber()),
