@@ -236,14 +236,10 @@ public class PopulateEventStats extends AsyncTask<String, Void, APIResponse.CODE
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateEventStats secondLoad = new PopulateEventStats(mFragment, requestParams, statToSortBy);
-                mFragment.updateTask(secondLoad);
-                secondLoad.execute(eventKey);
             } else {
                 // Show notification if we've refreshed data.
                 if (activity != null && mFragment instanceof RefreshListener) {
                     Log.d(Constants.REFRESH_LOG, "Event  " + eventKey + " Stats refresh complete");
-                    activity.notifyRefreshComplete(mFragment);
                 }
             }
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "event stats", eventKey);

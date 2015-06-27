@@ -115,7 +115,8 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<JsonObject> fetchEventStats(String eventKey) {
-        return null;
+        return mAPICache.fetchEventStats(eventKey).concatWith(
+          mRetrofitAPI.fetchEventStats(eventKey));
     }
 
     @Override

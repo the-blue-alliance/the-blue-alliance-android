@@ -121,7 +121,16 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<JsonObject> fetchEventStats(String eventKey) {
-        return null;
+        try {
+            Event event = mDb.getEventsTable()
+              .get(eventKey, new String[]{Database.Events.STATS});
+            if (event != null) {
+                return Observable.just(event.getStats());
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+
+        }
+        return Observable.just(null);
     }
 
     @Override

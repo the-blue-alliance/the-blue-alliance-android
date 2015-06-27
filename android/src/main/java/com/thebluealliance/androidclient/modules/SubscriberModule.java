@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
+import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
@@ -81,5 +82,10 @@ public class SubscriberModule {
     @Provides
     public DistrictPointsListSubscriber provideDistrictPointsListSubscriber() {
         return new DistrictPointsListSubscriber(mActivity, mDb, mGson);
+    }
+
+    @Provides
+    public StatsListSubscriber provideStatsListSubscriber() {
+        return new StatsListSubscriber(mActivity, mDb);
     }
 }
