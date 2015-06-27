@@ -134,14 +134,10 @@ public class PopulateEventAwards extends AsyncTask<String, Void, APIResponse.COD
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateEventAwards secondLoad = new PopulateEventAwards(mFragment, requestParams);
-                mFragment.updateTask(secondLoad);
-                secondLoad.execute(eventKey, teamKey);
             } else {
                 // Show notification if we've refreshed data.
                 if (activity != null && mFragment instanceof RefreshListener) {
                     Log.i(Constants.REFRESH_LOG, "Event " + eventKey + " Awards refresh complete");
-                    activity.notifyRefreshComplete(mFragment);
                 }
             }
 

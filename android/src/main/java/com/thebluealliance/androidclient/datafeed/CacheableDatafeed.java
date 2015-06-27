@@ -121,7 +121,8 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<List<Award>> fetchEventAwards(String eventKey) {
-        return null;
+        return mAPICache.fetchEventAwards(eventKey).concatWith(
+          mRetrofitAPI.fetchEventAwards(eventKey));
     }
 
     @Override

@@ -135,7 +135,9 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<Award>> fetchEventAwards(String eventKey) {
-        return null;
+        String where = String.format("%1$s = ?", Database.Awards.EVENTKEY);
+        return Observable.just(
+          mDb.getAwardsTable().getForQuery(null, where, new String[]{eventKey}));
     }
 
     @Override

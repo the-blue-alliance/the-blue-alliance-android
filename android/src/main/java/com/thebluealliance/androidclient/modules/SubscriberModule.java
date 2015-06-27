@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.modules.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
+import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
@@ -87,5 +88,10 @@ public class SubscriberModule {
     @Provides
     public StatsListSubscriber provideStatsListSubscriber() {
         return new StatsListSubscriber(mActivity, mDb);
+    }
+
+    @Provides
+    public AwardsListSubscriber provideAwardsListSubscriber() {
+        return new AwardsListSubscriber(mActivity, mDb);
     }
 }
