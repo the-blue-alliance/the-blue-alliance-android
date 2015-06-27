@@ -43,10 +43,17 @@ public class ExpandableListBinder extends AbstractDataBinder<ExpandableListAdapt
         if (mExpandableList.getAdapter() == null) {
             mExpandableList.setAdapter(data);
         }
-        mExpandableList.setVisibility(View.VISIBLE);
         data.notifyDataSetChanged();
+        mExpandableList.setVisibility(View.VISIBLE);
         expandForMode(data.groups);
 
+        if (mProgressBar != null && !data.groups.isEmpty()) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onComplete() {
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }

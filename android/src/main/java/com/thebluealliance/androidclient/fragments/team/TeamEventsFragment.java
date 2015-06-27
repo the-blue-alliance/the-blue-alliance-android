@@ -62,7 +62,6 @@ public class TeamEventsFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mBinder.setView(v);
 
         mListView = (ListView) v.findViewById(R.id.list);
         mBinder.mListView = mListView;

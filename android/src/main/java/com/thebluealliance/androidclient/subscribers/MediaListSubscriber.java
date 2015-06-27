@@ -16,7 +16,7 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, Expandab
     private ListGroup mCdPhotos, mYtVideos;
 
     public MediaListSubscriber(Activity activity) {
-        super(true);
+        super();
         mCdPhotos = new ListGroup(activity.getString(R.string.cd_header));
         mYtVideos = new ListGroup(activity.getString(R.string.yt_header));
         mDataToBind = new ExpandableListAdapter(activity, new ArrayList<>());

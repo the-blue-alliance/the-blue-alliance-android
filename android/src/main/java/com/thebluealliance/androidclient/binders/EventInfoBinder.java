@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
+    public View mView;
     public TextView mEventName;
     public TextView  mEventDate;
     public TextView  mEventLoc;
@@ -109,6 +110,11 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             //TODO replace EventBus
             //EventBus.getDefault().post(new EventInfoLoadedEvent(event));
         }
+    }
+
+    @Override
+    public void onComplete() {
+
     }
 
     @Override

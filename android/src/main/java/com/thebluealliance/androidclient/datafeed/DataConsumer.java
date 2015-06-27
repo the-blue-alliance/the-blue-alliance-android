@@ -16,6 +16,11 @@ public interface DataConsumer<T> {
     void updateData(@Nullable T data);
 
     /**
+     * Called when loading completes
+     */
+    void onComplete();
+
+    /**
      * Called when we can't fetch data :(
      */
     void onError(Throwable throwable);

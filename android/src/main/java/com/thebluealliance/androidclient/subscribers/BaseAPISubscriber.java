@@ -25,18 +25,6 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
     T mAPIData;
     V mDataToBind;
 
-    // If we should have the consumer update data in onNext (e.g. render cached data)
-    // or wait until all inputs have arrived
-    boolean mAlwaysBind;
-
-    public BaseAPISubscriber() {
-        this(true);
-    }
-
-    public BaseAPISubscriber(boolean alwaysBind){
-        mAlwaysBind = alwaysBind;
-    }
-
     public void setConsumer(DataConsumer<V> consumer) {
         mConsumer = consumer;
     }
@@ -46,9 +34,7 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
         mAPIData = data;
         try {
             parseData();
-            if (mAlwaysBind) {
-                bindData();
-            }
+            bindData();
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
         }
@@ -56,7 +42,17 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
 
     @Override
     public void onCompleted() {
-        bindData();
+        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (mConsumer != null) {
+                try {
+                    mConsumer.onComplete();
+                } catch (Exception e) {
+                    Log.e(Constants.LOG_TAG, "UNABLE TO COMPLETE RENDER");
+                    e.printStackTrace();
+                    mConsumer.onError(e);
+                }
+            }
+        });
     }
 
     @Override

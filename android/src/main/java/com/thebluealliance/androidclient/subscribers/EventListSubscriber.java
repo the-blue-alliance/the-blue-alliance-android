@@ -15,7 +15,7 @@ import java.util.List;
 public class EventListSubscriber extends BaseAPISubscriber<List<Event>, ListViewAdapter> {
 
     public EventListSubscriber(Context context) {
-        super(true);
+        super();
         mDataToBind = new ListViewAdapter(context, new ArrayList<>());
     }
 

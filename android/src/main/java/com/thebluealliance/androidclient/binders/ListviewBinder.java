@@ -24,6 +24,13 @@ public class ListviewBinder extends AbstractDataBinder<ListViewAdapter> {
         }
         data.notifyDataSetChanged();
 
+        if (mProgressBar != null && !data.values.isEmpty()) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onComplete() {
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }

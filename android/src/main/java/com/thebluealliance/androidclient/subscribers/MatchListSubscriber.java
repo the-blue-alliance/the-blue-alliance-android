@@ -29,7 +29,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, Expandab
     private Database mDb;
 
     public MatchListSubscriber(Activity activity, Database db) {
-        super(true);
+        super();
         mDataToBind = new MatchListAdapter(activity, new ArrayList<>());
         mQualMatches = new ListGroup(activity.getString(R.string.quals_header));
         mQuarterMatches = new ListGroup(activity.getString(R.string.quarters_header));

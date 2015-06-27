@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class AllianceListSubscriber extends BaseAPISubscriber<Event, ListViewAdapter> {
 
     public AllianceListSubscriber(Context context) {
-        super(true);
+        super();
         mDataToBind = new ListViewAdapter(context, new ArrayList<>());
     }
 

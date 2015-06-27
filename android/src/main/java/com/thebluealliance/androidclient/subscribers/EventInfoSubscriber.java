@@ -6,10 +6,6 @@ import com.thebluealliance.androidclient.models.Event;
 
 public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
 
-    public EventInfoSubscriber() {
-        super(true);
-    }
-
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         // no need to parse Event model

@@ -60,7 +60,7 @@ public class TeamInfoFragment
       ViewGroup container,
       Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_team_info, container, false);
-        mBinder.setView(view);
+        mBinder.mView = view;
         mBinder.mNoDataText = (TextView) view.findViewById(R.id.no_data);
         mBinder.mInfoContainer = view.findViewById(R.id.team_info_container);
         mBinder.mTeamName = (TextView) view.findViewById(R.id.team_name);

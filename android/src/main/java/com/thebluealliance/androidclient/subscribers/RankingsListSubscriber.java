@@ -19,7 +19,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, ListVie
     private Database mDb;
 
     public RankingsListSubscriber(Context context, Database db) {
-        super(true);
+        super();
         mDb = db;
         mDataToBind = new ListViewAdapter(context, new ArrayList<>());
     }

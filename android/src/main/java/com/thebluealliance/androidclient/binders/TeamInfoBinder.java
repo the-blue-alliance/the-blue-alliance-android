@@ -17,6 +17,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     public TextView mTeamName;
     public TextView mTeamLocation;
 
+    public View mView;
     public View mInfoContainer;
     public View mTeamLocationContainer;
 
@@ -78,6 +79,11 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             }
             mView.findViewById(R.id.progress).setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onComplete() {
+
     }
 
     @Override

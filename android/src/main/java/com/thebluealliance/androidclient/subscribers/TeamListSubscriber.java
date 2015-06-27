@@ -18,7 +18,7 @@ public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, ListViewAd
     public ProgressBar mProgressBar;
 
     public TeamListSubscriber(Context context) {
-        super(true);
+        super();
         mDataToBind = new ListViewAdapter(context, new ArrayList<>());
     }
 

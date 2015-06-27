@@ -57,7 +57,7 @@ public class EventInfoFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_info, null);
-        mBinder.setView(view);
+        mBinder.mView = view;
         mBinder.mEventName = (TextView) view.findViewById(R.id.event_name);
         mBinder.mEventDate = (TextView) view.findViewById(R.id.event_date);
         mBinder.mEventLoc = (TextView) view.findViewById(R.id.event_location);

@@ -6,10 +6,6 @@ import com.thebluealliance.androidclient.models.Team;
 
 public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.Model>{
 
-    public TeamInfoSubscriber() {
-        super(true);
-    }
-
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException{
         mDataToBind = new TeamInfoBinder.Model();
