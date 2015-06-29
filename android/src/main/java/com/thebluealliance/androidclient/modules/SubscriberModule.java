@@ -30,7 +30,7 @@ import dagger.Provides;
  * Each of these are annotated as @Singleton, so references are shared within their component
  * (e.g. unique references per activity)
  */
-@Module(includes = TBAAndroidModule.class)
+@Module(includes = {TBAAndroidModule.class})
 public class SubscriberModule {
 
     private Activity mActivity;

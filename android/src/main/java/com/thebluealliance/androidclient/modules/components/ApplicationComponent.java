@@ -14,4 +14,5 @@ import dagger.Component;
 public interface ApplicationComponent {
     void inject(TBAAndroid app);
     void inject(SubscriberModule module);
+    void inject(TBAAndroidModule module);
 }

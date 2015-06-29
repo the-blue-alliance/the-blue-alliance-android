@@ -2,10 +2,13 @@ package com.thebluealliance.androidclient.modules;
 
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-
-import javax.inject.Singleton;
 
 /**
  * App-wide dependency injection items
@@ -13,9 +16,10 @@ import javax.inject.Singleton;
 @Module
 public class TBAAndroidModule {
     static TBAAndroid mApp;
+    @Inject Database mDb;
 
     public TBAAndroidModule() {
-
+        mApp.getComponent().inject(this);
     }
 
     public TBAAndroidModule(TBAAndroid app) {
@@ -32,5 +36,10 @@ public class TBAAndroidModule {
     @Provides @Singleton
     public Database provideDatabase() {
         return Database.getInstance(mApp);
+    }
+
+    @Provides @Singleton
+    public DatabaseWriter provideDatabaseWriter() {
+        return new DatabaseWriter(mDb);
     }
 }

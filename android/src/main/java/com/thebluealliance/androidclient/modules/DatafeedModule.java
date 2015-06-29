@@ -3,24 +3,38 @@ package com.thebluealliance.androidclient.modules;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
-import com.thebluealliance.androidclient.datafeed.*;
-import com.thebluealliance.androidclient.datafeed.deserializers.*;
-import com.thebluealliance.androidclient.models.*;
+import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.datafeed.APIv2;
+import com.thebluealliance.androidclient.datafeed.APIv2ErrorHandler;
+import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.RetrofitConverter;
+import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
+import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
+import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.modules.components.DaggerDatafeedComponent;
-import dagger.Module;
-import dagger.Provides;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Module(
-  includes = {
-    TBAAndroidModule.class
-  }
-)
+import dagger.Module;
+import dagger.Provides;
+import retrofit.RestAdapter;
+import retrofit.client.OkClient;
+
+@Module(includes = {TBAAndroidModule.class})
 public class DatafeedModule {
 
     @Inject OkHttpClient mOkHttpClient;
