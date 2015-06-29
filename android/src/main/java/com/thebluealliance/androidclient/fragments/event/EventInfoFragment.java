@@ -5,29 +5,25 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
-import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class EventInfoFragment
@@ -57,6 +53,7 @@ public class EventInfoFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_info, null);
+        mBinder.setInflator(inflater);
         mBinder.mView = view;
         mBinder.mEventName = (TextView) view.findViewById(R.id.event_name);
         mBinder.mEventDate = (TextView) view.findViewById(R.id.event_date);
@@ -103,33 +100,16 @@ public class EventInfoFragment
         }
     }
 
-    protected void showLastMatch(MatchListElement match) {
-        LinearLayout lastLayout = (LinearLayout) getView().findViewById(R.id.event_last_match_container);
-        lastLayout.setVisibility(View.VISIBLE);
-        if (lastLayout.getChildCount() > 1) {
-            lastLayout.removeViewAt(1);
-        }
-        lastLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(mBinder);
     }
 
-    protected void showNextMatch(MatchListElement match) {
-        LinearLayout nextLayout = (LinearLayout) getView().findViewById(R.id.event_next_match_container);
-        nextLayout.setVisibility(View.VISIBLE);
-        if (nextLayout.getChildCount() > 1) {
-            nextLayout.removeViewAt(1);
-        }
-        nextLayout.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
-    }
-
-    public void onEvent(LiveEventMatchUpdateEvent event) {
-        if (event.getLastMatch() != null) {
-            Log.d(Constants.LOG_TAG, "showing last match");
-            showLastMatch(event.getLastMatch().render());
-        }
-        if (event.getNextMatch() != null) {
-            Log.d(Constants.LOG_TAG, "showing next match");
-            showNextMatch(event.getNextMatch().render());
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(mBinder);
     }
 
     @Override

@@ -1,16 +1,30 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
+import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
+import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import javax.annotation.Nullable;
 
+import de.greenrobot.event.EventBus;
+import rx.android.schedulers.AndroidSchedulers;
+
 public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
+
+    private LayoutInflater mInflator;
+    private boolean mIsLive;
 
     public View mView;
     public TextView mEventName;
@@ -23,6 +37,10 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     public View  mTopOprsContainer;
     public ProgressBar mProgressBar;
 
+    public void setInflator(LayoutInflater inflator) {
+        mInflator = inflator;
+    }
+
     //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override
     public void updateData(@Nullable Model data) {
@@ -33,11 +51,9 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             noDataText.setVisibility(View.VISIBLE);
             infoContainer.setVisibility(View.GONE);
         } else {
-            //TODO manage action bar titles with Observable
-
             noDataText.setVisibility(View.GONE);
 
-            // Set the new info (if necessary)
+            mIsLive = data.isLive;
             mEventName.setText(data.nameString);
             if (data.dateString.isEmpty()) {
                 mView.findViewById(R.id.event_date_container).setVisibility(View.GONE);
@@ -54,18 +70,6 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
                 mEventVenue.setText(R.string.no_location_available);
                 mView.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
             }
-
-            /* TODO this should implement DataConsumer for Ranks/Stats and render that info there
-            if (data.showRanks) {
-                mTopTeamsContainer.setVisibility(View.VISIBLE);
-                mTopTeams.setText(Html.fromHtml(data.topTeamsString));
-            }
-
-            if (data.showStats) {
-                mTopOprsContainer.setVisibility(View.VISIBLE);
-                mTopOprs.setText(Html.fromHtml(data.topOprsString));
-            }
-            */
 
             // setup social media intents
             // Default to showing the nav arrow in the venue view and the venue view being clickable
@@ -107,8 +111,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             infoContainer.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);
 
-            //TODO replace EventBus
-            //EventBus.getDefault().post(new EventInfoLoadedEvent(event));
+            EventBus.getDefault().post(new ActionBarTitleEvent(data.titleString));
+            //EventBus.getDefault().post(new EventInfoLoadedEvent());
         }
     }
 
@@ -130,5 +134,52 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         public String venueString;
         public String locationString;
         public String eventWebsite;
+        public String titleString;
+        public boolean isLive;
+    }
+
+    protected void showLastMatch(MatchListElement match) {
+        LinearLayout lastLayout = (LinearLayout) mView.findViewById(R.id.event_last_match_container);
+        lastLayout.setVisibility(View.VISIBLE);
+        if (lastLayout.getChildCount() > 1) {
+            lastLayout.removeViewAt(1);
+        }
+        lastLayout.addView(match.getView(mContext, mInflator, null));
+    }
+
+    protected void showNextMatch(MatchListElement match) {
+        LinearLayout nextLayout = (LinearLayout) mView.findViewById(R.id.event_next_match_container);
+        nextLayout.setVisibility(View.VISIBLE);
+        if (nextLayout.getChildCount() > 1) {
+            nextLayout.removeViewAt(1);
+        }
+        nextLayout.addView(match.getView(mContext, mInflator, null));
+    }
+
+    public void onEvent(LiveEventMatchUpdateEvent event) {
+        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (mIsLive && event.getLastMatch() != null) {
+                Log.d(Constants.LOG_TAG, "showing last match");
+                showLastMatch(event.getLastMatch().render());
+            }
+            if (mIsLive && event.getNextMatch() != null) {
+                Log.d(Constants.LOG_TAG, "showing next match");
+                showNextMatch(event.getNextMatch().render());
+            }
+        });
+    }
+
+    public void onEvent(EventRankingsEvent event) {
+        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            mTopTeamsContainer.setVisibility(View.VISIBLE);
+            mTopTeams.setText(Html.fromHtml(event.getRankString()));
+        });
+    }
+
+    public void onEvent(EventStatsEvent event) {
+        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            mTopOprsContainer.setVisibility(View.VISIBLE);
+            mTopOprs.setText(Html.fromHtml(event.getStatString()));
+        });
     }
 }

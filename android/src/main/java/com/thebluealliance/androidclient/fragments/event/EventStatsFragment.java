@@ -100,7 +100,6 @@ public class EventStatsFragment
 
         mStatsDialog = builder.create();
         setHasOptionsMenu(true);
-        mSubscriber.setEventKey(mEventKey);
         mSubscriber.setStatToSortBy(mStatSortCategory);
     }
 

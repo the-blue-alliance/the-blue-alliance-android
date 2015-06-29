@@ -130,7 +130,6 @@ public class TeamInfoFragment
         });
     }
 
-    //TODO kill EventBus
     public void onEvent(YearChangedEvent event) {
 
     }

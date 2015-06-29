@@ -105,7 +105,6 @@ public class TeamEventsFragment
         EventBus.getDefault().register(this);
     }
 
-    //TODO kill eventbus
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
     }

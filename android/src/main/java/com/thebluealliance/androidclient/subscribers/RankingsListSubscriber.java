@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
@@ -13,6 +14,8 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+import de.greenrobot.event.EventBus;
 
 public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, ListViewAdapter> {
 
@@ -78,5 +81,21 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, ListVie
                 record,
                 rankingString));
         }
+        EventBus.getDefault().post(new EventRankingsEvent(generateTopRanksString()));
+    }
+
+    private String generateTopRanksString() {
+        String rankString = "";
+        if (mAPIData.size() <= 1) {
+            return rankString;
+        }
+        for (int i = 1; i < Math.min(EventRankingsEvent.SIZE + 1, mAPIData.size()); i++) {
+            rankString += ((i) + ". <b>" + mAPIData.get(i).getAsJsonArray().get(1).getAsString()) + "</b>";
+            if (i < Math.min(6, mAPIData.size()) - 1) {
+                rankString += "<br>";
+            }
+        }
+        rankString = rankString.trim();
+        return rankString;
     }
 }

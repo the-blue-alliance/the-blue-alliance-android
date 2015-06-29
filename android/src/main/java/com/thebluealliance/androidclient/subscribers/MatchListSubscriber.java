@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -17,6 +18,8 @@ import com.thebluealliance.androidclient.models.Match;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, ExpandableListAdapter> {
 
@@ -55,6 +58,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, Expandab
         mQuarterMatches.clear();
         mSemiMatches.clear();
         mFinalMatches.clear();
+        if (mAPIData == null || mAPIData.isEmpty()) {
+            return;
+        }
 
         int[] record = {0, 0, 0}; //wins, losses, ties
         Match nextMatch = null;
@@ -139,6 +145,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, Expandab
             mDataToBind.groups.add(mFinalMatches);
         }
 
-        //TODO post nextMatch and lastMatch to an Observable event bus
+        EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
     }
 }

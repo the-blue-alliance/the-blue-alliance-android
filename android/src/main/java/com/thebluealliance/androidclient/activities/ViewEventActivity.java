@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -137,7 +138,6 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
-        startRefresh();
     }
 
     public void updateDistrict(boolean isDistrict) {
@@ -158,6 +158,9 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     }
 
     private void setupActionBar() {
+        if (getSupportActionBar() == null) {
+            return;
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // The title is empty now; the EventInfoFragment will set the appropriate title
         // once it is loaded.
@@ -257,6 +260,10 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public void onEvent(ActionBarTitleEvent event) {
+        setActionBarTitle(event.getTitle());
     }
 
     public FragmentComponent getComponent() {

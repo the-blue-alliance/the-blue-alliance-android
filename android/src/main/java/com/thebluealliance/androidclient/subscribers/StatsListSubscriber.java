@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Stat;
@@ -18,10 +19,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map.Entry;
 
+import de.greenrobot.event.EventBus;
+
 public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewAdapter> {
 
     private String mStatToSortBy;
-    private String mEventKey;
     private Context mContext;
     private Database mDb;
 
@@ -34,10 +36,6 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewA
 
     public void setStatToSortBy(String stat) {
         mStatToSortBy = stat;
-    }
-
-    public void setEventKey(String eventKey) {
-        mEventKey = eventKey;
     }
 
     @Override
@@ -76,5 +74,18 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewA
             ));
         }
         Collections.sort(mDataToBind.values, new StatListElementComparator(mStatToSortBy));
+        EventBus.getDefault().post(new EventStatsEvent(getTopStatsString()));
+    }
+
+    private String getTopStatsString() {
+        String statsString = "";
+        for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mDataToBind.values.size()); i++) {
+            String opr = ((StatsListElement)mDataToBind.values.get(i)).getFormattedOpr();
+            statsString += (i + 1) + ". <b>" + opr + "</b>";
+            if (i < Math.min(EventStatsEvent.SIZE, mDataToBind.values.size()) - 1) {
+                statsString += "<br>";
+            }
+        }
+        return statsString.trim();
     }
 }
