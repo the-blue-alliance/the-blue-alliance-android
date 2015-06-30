@@ -36,59 +36,59 @@ public class SubscriberModule {
         mActivity = activity;
     }
 
-    @Provides @Singleton
+    @Provides
     public TeamInfoSubscriber provideTeamInfoSubscriber() {
         return new TeamInfoSubscriber();
     }
 
-    @Provides @Singleton
+    @Provides
     public EventListSubscriber provideEventListSubscriber() {
         return new EventListSubscriber(mActivity);
     }
 
-    @Provides @Singleton
+    @Provides
     public MediaListSubscriber provideMediaListSubscriber() {
         return new MediaListSubscriber(mActivity);
     }
 
-    @Provides @Singleton
+    @Provides
     public EventInfoSubscriber provideEventInfoSubscriber() {
         return new EventInfoSubscriber();
     }
 
-    @Provides @Singleton
+    @Provides
     public TeamListSubscriber provideTeamListSubscriber() {
         return new TeamListSubscriber(mActivity);
     }
 
-    @Provides @Singleton
+    @Provides
     public RankingsListSubscriber provideRankingsListSubscriber(Database db) {
         return new RankingsListSubscriber(mActivity, db);
     }
 
-    @Provides @Singleton
+    @Provides
     public MatchListSubscriber provideMatchListSubscriber(Database db) {
         return new MatchListSubscriber(mActivity, db);
     }
 
-    @Provides @Singleton
+    @Provides
     public AllianceListSubscriber provideAllianceListSubscriber() {
         return new AllianceListSubscriber(mActivity);
     }
 
-    @Provides @Singleton
+    @Provides
     public DistrictPointsListSubscriber provideDistrictPointsListSubscriber(
       Database db,
       Gson gson) {
         return new DistrictPointsListSubscriber(mActivity, db, gson);
     }
 
-    @Provides @Singleton
+    @Provides
     public StatsListSubscriber provideStatsListSubscriber(Database db) {
         return new StatsListSubscriber(mActivity, db);
     }
 
-    @Provides @Singleton
+    @Provides
     public AwardsListSubscriber provideAwardsListSubscriber(Database db) {
         return new AwardsListSubscriber(mActivity, db);
     }

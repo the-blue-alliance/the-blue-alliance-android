@@ -5,30 +5,28 @@ import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 
 @Module
 public class BinderModule {
 
-    @Provides @Singleton
+    @Provides
     public EventInfoBinder provideEventInfoBinder() {
         return new EventInfoBinder();
     }
 
-    @Provides @Singleton
+    @Provides
     public TeamInfoBinder provideTeamInfoBinder() {
         return new TeamInfoBinder();
     }
 
-    @Provides @Singleton
+    @Provides
     public ListviewBinder provideListviewBinder() {
         return new ListviewBinder();
     }
 
-    @Provides @Singleton
+    @Provides
     public ExpandableListBinder provideMediaListBinder() {
         return new ExpandableListBinder();
     }
