@@ -3,9 +3,7 @@ package com.thebluealliance.androidclient.modules;
 import android.app.Activity;
 
 import com.google.gson.Gson;
-import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.modules.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
@@ -19,7 +17,6 @@ import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -34,17 +31,9 @@ import dagger.Provides;
 public class SubscriberModule {
 
     private Activity mActivity;
-    @Inject Database mDb;
-    @Inject Gson mGson;
 
     public SubscriberModule(Activity activity) {
         mActivity = activity;
-        TBAAndroid application = ((TBAAndroid) activity.getApplication());
-        DaggerApplicationComponent.builder()
-          .tBAAndroidModule(application.getModule())
-          .datafeedModule(application.getDatafeedModule())
-          .build()
-          .inject(this);
     }
 
     @Provides @Singleton
@@ -73,13 +62,13 @@ public class SubscriberModule {
     }
 
     @Provides @Singleton
-    public RankingsListSubscriber provideRankingsListSubscriber() {
-        return new RankingsListSubscriber(mActivity, mDb);
+    public RankingsListSubscriber provideRankingsListSubscriber(Database db) {
+        return new RankingsListSubscriber(mActivity, db);
     }
 
     @Provides @Singleton
-    public MatchListSubscriber provideMatchListSubscriber() {
-        return new MatchListSubscriber(mActivity, mDb);
+    public MatchListSubscriber provideMatchListSubscriber(Database db) {
+        return new MatchListSubscriber(mActivity, db);
     }
 
     @Provides @Singleton
@@ -88,17 +77,19 @@ public class SubscriberModule {
     }
 
     @Provides @Singleton
-    public DistrictPointsListSubscriber provideDistrictPointsListSubscriber() {
-        return new DistrictPointsListSubscriber(mActivity, mDb, mGson);
+    public DistrictPointsListSubscriber provideDistrictPointsListSubscriber(
+      Database db,
+      Gson gson) {
+        return new DistrictPointsListSubscriber(mActivity, db, gson);
     }
 
     @Provides @Singleton
-    public StatsListSubscriber provideStatsListSubscriber() {
-        return new StatsListSubscriber(mActivity, mDb);
+    public StatsListSubscriber provideStatsListSubscriber(Database db) {
+        return new StatsListSubscriber(mActivity, db);
     }
 
     @Provides @Singleton
-    public AwardsListSubscriber provideAwardsListSubscriber() {
-        return new AwardsListSubscriber(mActivity, mDb);
+    public AwardsListSubscriber provideAwardsListSubscriber(Database db) {
+        return new AwardsListSubscriber(mActivity, db);
     }
 }

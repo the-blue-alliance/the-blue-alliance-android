@@ -10,24 +10,22 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
-import com.thebluealliance.androidclient.modules.components.DaggerDatafeedComponent;
 
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import rx.Observable;
 
+@Singleton
 public class APICache implements APIv2 {
 
-    @Inject Database mDb;
+    private Database mDb;
 
-    public APICache() {
-        DaggerDatafeedComponent.builder()
-                .datafeedModule(new DatafeedModule())
-                .build()
-                .inject(this);
+    @Inject
+    public APICache(Database db) {
+       mDb = db;
     }
 
     @Override

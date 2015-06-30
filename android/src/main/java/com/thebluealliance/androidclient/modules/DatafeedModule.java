@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.modules;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.APIv2;
 import com.thebluealliance.androidclient.datafeed.APIv2ErrorHandler;
@@ -23,9 +24,7 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.components.DaggerDatafeedComponent;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -34,38 +33,24 @@ import dagger.Provides;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
-@Module(includes = {TBAAndroidModule.class})
+@Module
 public class DatafeedModule {
 
-    @Inject OkHttpClient mOkHttpClient;
-    @Inject OkClient mOkClient;
-    @Inject RestAdapter mRestAdapter;
-
-    public DatafeedModule() {
-        DaggerDatafeedComponent.builder()
-                .datafeedModule(this)
-                .build()
-                .inject(this);
-    }
+    public DatafeedModule() {}
 
     @Provides @Singleton @Named("retrofit")
-    public APIv2 provideRetrofitAPI() {
-        return mRestAdapter.create(APIv2.class);
-    }
-
-    @Provides @Singleton @Named("cache")
-    public APICache provideAPICache() {
-        return new APICache();
+    public APIv2 provideRetrofitAPI(RestAdapter restAdapter) {
+        return restAdapter.create(APIv2.class);
     }
 
     @Provides @Singleton
-    public OkClient provideOkClient() {
-        return new OkClient(mOkHttpClient);
+    public OkClient provideOkClient(OkHttpClient okHttp) {
+        return new OkClient(okHttp);
     }
 
     @Provides @Singleton
-    public RestAdapter provideRestAdapter() {
-        return getRestAdapter(mOkClient);
+    public RestAdapter provideRestAdapter(OkClient okClient) {
+        return getRestAdapter(okClient);
     }
 
     @Provides @Singleton
@@ -74,15 +59,20 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton
-    public CacheableDatafeed provideDatafeed() {
-        return new CacheableDatafeed();
-    }
-
-    @Provides @Singleton
     public OkHttpClient getOkHttp() {
         OkHttpClient client = new OkHttpClient();
         client.interceptors().add(new APIv2RequestInterceptor());
         return client;
+    }
+
+    @Provides @Singleton
+    public APICache provideApiCache(Database db) {
+        return new APICache(db);
+    }
+
+    @Provides @Singleton
+    public CacheableDatafeed provideDatafeed(@Named("retrofit") APIv2 retrofit, APICache cache) {
+        return new CacheableDatafeed(retrofit, cache);
     }
 
     //  @Provides

@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.modules.components;
 
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.fragments.event.EventAlliancesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
@@ -20,8 +21,13 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {SubscriberModule.class, BinderModule.class, DatafeedModule.class})
+@Component(
+  modules= {SubscriberModule.class, BinderModule.class, DatafeedModule.class},
+  dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
+
+    CacheableDatafeed datafeed();
+
     void inject(TeamInfoFragment fragment);
     void inject(TeamEventsFragment fragment);
     void inject(TeamMediaFragment fragment);

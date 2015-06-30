@@ -270,7 +270,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .tBAAndroidModule(application.getModule())
+              .applicationComponent(application.getComponent())
               .datafeedModule(application.getDatafeedModule())
               .binderModule(application.getBinderModule())
               .subscriberModule(new SubscriberModule(this))

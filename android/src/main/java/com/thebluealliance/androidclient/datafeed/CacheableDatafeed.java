@@ -8,29 +8,29 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
-import com.thebluealliance.androidclient.modules.components.DaggerDatafeedComponent;
 
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import rx.Observable;
 
-
+@Singleton
 public class CacheableDatafeed implements APIv2 {
 
-    @Inject @Named("retrofit") APIv2 mRetrofitAPI;
-    @Inject @Named("cache") APICache mAPICache;
+    private APIv2 mRetrofitAPI;
+    private APICache mAPICache;
 
     // TODO add callback to retrofit results to store new data in db
 
-    public CacheableDatafeed() {
-        DaggerDatafeedComponent.builder()
-                .datafeedModule(new DatafeedModule())
-                .build()
-                .inject(this);
+    @Inject
+    public CacheableDatafeed(
+      @Named("retrofit") APIv2 retrofitAPI,
+      @Named("cache") APICache apiCache) {
+        mRetrofitAPI = retrofitAPI;
+        mAPICache = apiCache;
     }
 
     @Override

@@ -27,8 +27,8 @@ public abstract class DatafeedFragment<
 
     @Inject protected S mSubscriber;
     @Inject protected B mBinder;
-    @Inject protected CacheableDatafeed mDatafeed;
 
+    protected CacheableDatafeed mDatafeed;
     protected Observable<T> mObservable;
     protected FragmentComponent mComponent;
 
@@ -38,6 +38,7 @@ public abstract class DatafeedFragment<
         if (getActivity() instanceof HasFragmentComponent) {
             mComponent = ((HasFragmentComponent) getActivity()).getComponent();
         }
+        mDatafeed = mComponent.datafeed();
         inject();
         mSubscriber.setConsumer(mBinder);
         mBinder.setContext(getActivity());

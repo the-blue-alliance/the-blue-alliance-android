@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -16,11 +15,8 @@ import dagger.Provides;
 @Module
 public class TBAAndroidModule {
     static TBAAndroid mApp;
-    @Inject Database mDb;
 
-    public TBAAndroidModule() {
-        mApp.getComponent().inject(this);
-    }
+    public TBAAndroidModule() {}
 
     public TBAAndroidModule(TBAAndroid app) {
         mApp = app;
@@ -39,7 +35,7 @@ public class TBAAndroidModule {
     }
 
     @Provides @Singleton
-    public DatabaseWriter provideDatabaseWriter() {
-        return new DatabaseWriter(mDb);
+    public DatabaseWriter provideDatabaseWriter(Database db) {
+        return new DatabaseWriter(db);
     }
 }
