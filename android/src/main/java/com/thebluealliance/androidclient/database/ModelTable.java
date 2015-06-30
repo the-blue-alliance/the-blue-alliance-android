@@ -242,6 +242,23 @@ public abstract class ModelTable<T extends BasicModel> {
     }
 
     /**
+     * Updates given fields in the model with the given key
+     * @param key Model key to fetch and update
+     * @param values A {@link ContentValues} object mapping the column names to be updated to values
+     * @return Numbe of rows affected by the query
+     */
+    public final int updateField(String key, ContentValues values) {
+        int returnVal = 0;
+        mDb.beginTransaction();
+        try {
+            returnVal = mDb.update(getTableName(), values, getKeyColumn() + " = ?", new String[]{key});
+        } finally {
+            mDb.endTransaction();
+        }
+        return returnVal;
+    }
+
+    /**
      * Called after a successful row insert
      * Override to let concrete implementations do something with an inserted row
      * e.g. add Search Indexes

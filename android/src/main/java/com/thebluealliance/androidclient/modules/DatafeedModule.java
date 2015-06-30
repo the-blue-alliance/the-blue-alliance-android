@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.APIv2;
 import com.thebluealliance.androidclient.datafeed.APIv2ErrorHandler;
@@ -71,8 +72,11 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton
-    public CacheableDatafeed provideDatafeed(@Named("retrofit") APIv2 retrofit, APICache cache) {
-        return new CacheableDatafeed(retrofit, cache);
+    public CacheableDatafeed provideDatafeed(
+      @Named("retrofit") APIv2 retrofit,
+      APICache cache,
+      DatabaseWriter writer) {
+        return new CacheableDatafeed(retrofit, cache, writer);
     }
 
     //  @Provides

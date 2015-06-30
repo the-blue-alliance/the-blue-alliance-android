@@ -39,85 +39,85 @@ public class DatabaseWriter {
         mDb = db;
     }
 
-    class AwardWriter implements Action1<Award> {
+    public class AwardWriter implements Action1<Award> {
         @Override public void call(Award award) {
             Schedulers.io().createWorker().schedule(() -> mDb.getAwardsTable().add(award));
         }
     }
-    class AwardListWriter implements Action1<List<Award>> {
+    public class AwardListWriter implements Action1<List<Award>> {
         @Override public void call(List<Award> awards) {
             Schedulers.io().createWorker().schedule(() -> mDb.getAwardsTable().add(awards));
         }
     }
-    class DistrictWriter implements Action1<District> {
+    public class DistrictWriter implements Action1<District> {
         @Override public void call(District district) {
            Schedulers.io().createWorker().schedule(() ->  mDb.getDistrictsTable().add(district));
         }
     }
-    class DistrictListWriter implements Action1<List<District>> {
+    public class DistrictListWriter implements Action1<List<District>> {
         @Override public void call(List<District> districts) {
             Schedulers.io().createWorker().schedule(() -> mDb.getDistrictsTable().add(districts));
         }
     }
-    class DistrictTeamWriter implements Action1<DistrictTeam> {
+    public class DistrictTeamWriter implements Action1<DistrictTeam> {
         @Override public void call(DistrictTeam districtTeam) {
             Schedulers.io().createWorker()
               .schedule(() -> mDb.getDistrictTeamsTable().add(districtTeam));
         }
     }
-    class DistrictTeamListWriter implements Action1<List<DistrictTeam>> {
+    public class DistrictTeamListWriter implements Action1<List<DistrictTeam>> {
         @Override public void call(List<DistrictTeam> districtTeams) {
             Schedulers.io().createWorker()
               .schedule(() -> mDb.getDistrictTeamsTable().add(districtTeams));
         }
     }
-    class EventWriter implements Action1<Event> {
+    public class EventWriter implements Action1<Event> {
         @Override public void call(Event event) {
             Schedulers.io().createWorker().schedule(() -> mDb.getEventsTable().add(event));
         }
     }
-    class EventListWriter implements Action1<List<Event>> {
+    public class EventListWriter implements Action1<List<Event>> {
         @Override public void call(List<Event> events) {
             Schedulers.io().createWorker().schedule(() -> mDb.getEventsTable().add(events));
         }
     }
-    class EventTeamWriter implements Action1<EventTeam> {
+    public class EventTeamWriter implements Action1<EventTeam> {
         @Override public void call(EventTeam eventTeam) {
             Schedulers.io().createWorker().schedule(() -> mDb.getEventTeamsTable().add(eventTeam));
         }
     }
-    class EventTeamListWriter implements Action1<List<EventTeam>> {
+    public class EventTeamListWriter implements Action1<List<EventTeam>> {
         @Override public void call(List<EventTeam> eventTeams) {
             Schedulers.io().createWorker()
               .schedule(() -> mDb.getEventTeamsTable().add(eventTeams));
         }
     }
-    class MatchWriter implements Action1<Match> {
+    public class MatchWriter implements Action1<Match> {
         @Override public void call(Match match) {
             Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(match));
         }
     }
-    class MatchListWriter implements Action1<List<Match>> {
+    public class MatchListWriter implements Action1<List<Match>> {
         @Override public void call(List<Match> matches) {
             Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(matches));
         }
     }
-    class MediaWriter implements Action1<Media> {
+    public class MediaWriter implements Action1<Media> {
         @Override public void call(Media media) {
             Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(media));
         }
     }
-    class MediaListWriter implements Action1<List<Media>> {
+    public class MediaListWriter implements Action1<List<Media>> {
         @Override public void call(List<Media> medias) {
             Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(medias));
         }
     }
-    class TeamWriter implements Action1<Team> {
+    public class TeamWriter implements Action1<Team> {
         @Override public void call(Team team) {
             Schedulers.io().createWorker().schedule(() -> mDb.getTeamsTable().add(team));
         }
     }
-    class TeamListWriter implements Action1<List<Team>> {
+    public class TeamListWriter implements Action1<List<Team>> {
         @Override public void call(List<Team> teams) {
             Schedulers.io().createWorker().schedule(() -> mDb.getTeamsTable().add(teams));
         }
