@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.List;
 
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class DatabaseWriter {
 
@@ -39,99 +40,86 @@ public class DatabaseWriter {
     }
 
     class AwardWriter implements Action1<Award> {
-        private AwardWriter() {}
         @Override public void call(Award award) {
-            mDb.getAwardsTable().add(award);
+            Schedulers.io().createWorker().schedule(() -> mDb.getAwardsTable().add(award));
         }
     }
     class AwardListWriter implements Action1<List<Award>> {
-        private AwardListWriter() {}
         @Override public void call(List<Award> awards) {
-            mDb.getAwardsTable().add(awards);
+            Schedulers.io().createWorker().schedule(() -> mDb.getAwardsTable().add(awards));
         }
     }
     class DistrictWriter implements Action1<District> {
-        private DistrictWriter() {}
         @Override public void call(District district) {
-            mDb.getDistrictsTable().add(district);
+           Schedulers.io().createWorker().schedule(() ->  mDb.getDistrictsTable().add(district));
         }
     }
     class DistrictListWriter implements Action1<List<District>> {
-        private DistrictListWriter() {}
         @Override public void call(List<District> districts) {
-            mDb.getDistrictsTable().add(districts);
+            Schedulers.io().createWorker().schedule(() -> mDb.getDistrictsTable().add(districts));
         }
     }
     class DistrictTeamWriter implements Action1<DistrictTeam> {
-        private DistrictTeamWriter() {}
         @Override public void call(DistrictTeam districtTeam) {
-            mDb.getDistrictTeamsTable().add(districtTeam);
+            Schedulers.io().createWorker()
+              .schedule(() -> mDb.getDistrictTeamsTable().add(districtTeam));
         }
     }
     class DistrictTeamListWriter implements Action1<List<DistrictTeam>> {
-        private DistrictTeamListWriter() {}
         @Override public void call(List<DistrictTeam> districtTeams) {
-            mDb.getDistrictTeamsTable().add(districtTeams);
+            Schedulers.io().createWorker()
+              .schedule(() -> mDb.getDistrictTeamsTable().add(districtTeams));
         }
     }
     class EventWriter implements Action1<Event> {
-        private EventWriter() {}
         @Override public void call(Event event) {
-            mDb.getEventsTable().add(event);
+            Schedulers.io().createWorker().schedule(() -> mDb.getEventsTable().add(event));
         }
     }
     class EventListWriter implements Action1<List<Event>> {
-        private EventListWriter() {}
         @Override public void call(List<Event> events) {
-            mDb.getEventsTable().add(events);
+            Schedulers.io().createWorker().schedule(() -> mDb.getEventsTable().add(events));
         }
     }
     class EventTeamWriter implements Action1<EventTeam> {
-        private EventTeamWriter() {}
         @Override public void call(EventTeam eventTeam) {
-            mDb.getEventTeamsTable().add(eventTeam);
+            Schedulers.io().createWorker().schedule(() -> mDb.getEventTeamsTable().add(eventTeam));
         }
     }
     class EventTeamListWriter implements Action1<List<EventTeam>> {
-        private EventTeamListWriter() {}
         @Override public void call(List<EventTeam> eventTeams) {
-            mDb.getEventTeamsTable().add(eventTeams);
+            Schedulers.io().createWorker()
+              .schedule(() -> mDb.getEventTeamsTable().add(eventTeams));
         }
     }
     class MatchWriter implements Action1<Match> {
-        private MatchWriter() {}
         @Override public void call(Match match) {
-            mDb.getMatchesTable().add(match);
+            Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(match));
         }
     }
     class MatchListWriter implements Action1<List<Match>> {
-        private MatchListWriter() {}
         @Override public void call(List<Match> matches) {
-            mDb.getMatchesTable().add(matches);
+            Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(matches));
         }
     }
     class MediaWriter implements Action1<Media> {
-        private MediaWriter() {}
         @Override public void call(Media media) {
-            mDb.getMediasTable().add(media);
+            Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(media));
         }
     }
     class MediaListWriter implements Action1<List<Media>> {
-        private MediaListWriter() {}
         @Override public void call(List<Media> medias) {
-            mDb.getMediasTable().add(medias);
+            Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(medias));
         }
     }
     class TeamWriter implements Action1<Team> {
-        private TeamWriter() {}
         @Override public void call(Team team) {
-            mDb.getTeamsTable().add(team);
+            Schedulers.io().createWorker().schedule(() -> mDb.getTeamsTable().add(team));
         }
     }
     class TeamListWriter implements Action1<List<Team>> {
-        private TeamListWriter() {}
         @Override public void call(List<Team> teams) {
-            mDb.getTeamsTable().add(teams);
+            Schedulers.io().createWorker().schedule(() -> mDb.getTeamsTable().add(teams));
         }
     }
 
