@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -40,7 +41,7 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
             return;
         }
 
-        ExpandableListAdapter adapter = newAdapter(data);
+        ExpandableListAdapter adapter = newAdapter(ImmutableList.copyOf(data));
         mExpandableList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         mExpandableList.setVisibility(View.VISIBLE);

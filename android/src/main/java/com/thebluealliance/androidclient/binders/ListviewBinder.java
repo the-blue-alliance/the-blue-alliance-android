@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -22,7 +23,7 @@ public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
         if (data == null || mListView == null) {
             return;
         }
-        ListViewAdapter adapter = newAdapter(data);
+        ListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
         mListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
