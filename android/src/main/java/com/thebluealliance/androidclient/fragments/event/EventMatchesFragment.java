@@ -94,6 +94,10 @@ public class EventMatchesFragment
 
     @Override
     protected Observable<List<Match>> getObservable() {
-        return mDatafeed.fetchEventMatches(mEventKey);
+        if (mTeamKey == null || mTeamKey.isEmpty()) {
+            return mDatafeed.fetchEventMatches(mEventKey);
+        } else {
+            return mDatafeed.fetchTeamAtEventMatches(mTeamKey, mEventKey);
+        }
     }
 }

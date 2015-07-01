@@ -54,7 +54,7 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<Match>> fetchTeamAtEventMatches(String teamKey, String eventKey) {
-        return null;
+        return Observable.just(mDb.getMatchesTable().getTeamAtEventMatches(teamKey, eventKey));
     }
 
     @Override

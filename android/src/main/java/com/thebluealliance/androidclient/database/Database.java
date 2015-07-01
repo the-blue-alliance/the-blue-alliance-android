@@ -746,6 +746,19 @@ public class Database extends SQLiteOpenHelper {
         public Match inflate(Cursor cursor) {
             return ModelInflater.inflateMatch(cursor);
         }
+
+        public List<Match> getTeamAtEventMatches(String teamKey, String eventKey) {
+            Cursor cursor = mDb.rawQuery("SELECT * FROM `" + TABLE_MATCHES + "` WHERE `" + EVENT
+              + "` = ? AND `" + ALLIANCES + "` LIKE '%" + teamKey + "," + "%'", new String[]{eventKey});
+            List<Match> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
+            if (cursor == null || !cursor.moveToFirst()) {
+                return models;
+            }
+            do {
+                models.add(inflate(cursor));
+            } while (cursor.moveToNext());
+            return models;
+        }
     }
 
     public class Medias extends ModelTable<Media> {
