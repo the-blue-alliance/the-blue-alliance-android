@@ -12,6 +12,8 @@ import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamEventsFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
+import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
+import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.modules.BinderModule;
 import com.thebluealliance.androidclient.modules.DatabaseWriterModule;
 import com.thebluealliance.androidclient.modules.DatafeedModule;
@@ -45,4 +47,7 @@ public interface FragmentComponent {
     void inject(EventDistrictPointsFragment fragment);
     void inject(EventStatsFragment fragment);
     void inject(EventAwardsFragment fragment);
+
+    void inject(TeamAtEventStatsFragment fragment);
+    void inject(TeamAtEventSummaryFragment fragment);
 }

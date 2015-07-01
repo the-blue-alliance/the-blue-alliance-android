@@ -21,9 +21,6 @@ import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEv
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 
-/**
- * Created by phil on 7/16/14.
- */
 public class TeamAtEventSummaryFragment extends Fragment implements RefreshListener {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";

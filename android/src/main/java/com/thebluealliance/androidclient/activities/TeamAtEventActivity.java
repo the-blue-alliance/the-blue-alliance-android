@@ -17,23 +17,29 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.modules.components.FragmentComponent;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Arrays;
 
-public class TeamAtEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
+public class TeamAtEventActivity extends FABNotificationSettingsActivity
+  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
-    private TextView warningMessage;
-    private String eventKey, teamKey;
-    private ViewPager pager;
-    private TeamAtEventFragmentPagerAdapter adapter;
+    private TextView mWarningMessage;
+    private String mEventKey, mTeamKey;
+    private TeamAtEventFragmentPagerAdapter mAdapter;
+    private FragmentComponent mComponent;
 
     public static Intent newInstance(Context c, String eventTeamKey) {
         return newInstance(c, EventTeamHelper.getEventKey(eventTeamKey), EventTeamHelper.getTeamKey(eventTeamKey));
@@ -50,21 +56,24 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // disable legacy RefreshableHostActivity
+        setRefreshEnabled(false);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
-            teamKey = extras.getString(TEAM);
-            eventKey = extras.getString(EVENT);
+            mTeamKey = extras.getString(TEAM);
+            mEventKey = extras.getString(EVENT);
         } else {
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
         }
 
-        String eventTeamKey = EventTeamHelper.generateKey(eventKey, teamKey);
+        String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
         setModelKey(eventTeamKey, ModelHelper.MODELS.EVENTTEAM);
         setContentView(R.layout.activity_team_at_event);
 
-        pager = (ViewPager) findViewById(R.id.view_pager);
-        adapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), teamKey, eventKey);
-        pager.setAdapter(adapter);
+        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        mAdapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mEventKey);
+        pager.setAdapter(mAdapter);
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
         pager.setOffscreenPageLimit(6);
@@ -78,14 +87,14 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
-        warningMessage = (TextView) findViewById(R.id.warning_container);
+        mWarningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, eventKey, teamKey));
+        setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
 
         startRefresh();
 
@@ -107,11 +116,11 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_view_event:
-                startActivity(ViewEventActivity.newInstance(this, eventKey));
+                startActivity(ViewEventActivity.newInstance(this, mEventKey));
                 return true;
             case R.id.action_view_team:
-                int year = Integer.parseInt(eventKey.substring(0, 4));
-                startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
+                int year = Integer.parseInt(mEventKey.substring(0, 4));
+                startActivity(ViewTeamActivity.newInstance(this, mTeamKey, year));
                 return true;
             case R.id.stats_help:
                 Utilities.showHelpDialog(this, R.raw.stats_help, getString(R.string.stats_help_title));
@@ -121,10 +130,10 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
+                Intent upIntent = ViewEventActivity.newInstance(this, mEventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
-                            .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
+                            .addNextIntent(ViewEventActivity.newInstance(this, mEventKey)).startActivities();
                 } else {
                     Log.d(Constants.LOG_TAG, "Navigating up...");
                     NavUtils.navigateUpTo(this, upIntent);
@@ -142,13 +151,13 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
 
     @Override
     public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+        mWarningMessage.setText(message);
+        mWarningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override
@@ -159,7 +168,7 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
     @Override
     public void onPageSelected(int position) {
         if (mOptionsMenu != null) {
-            if (position == Arrays.binarySearch(adapter.TITLES, "Stats")) {
+            if (position == Arrays.binarySearch(mAdapter.TITLES, "Stats")) {
                 //stats position
                 mOptionsMenu.findItem(R.id.stats_help).setVisible(true);
             } else {
@@ -178,5 +187,19 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity impleme
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .build();
+        }
+        return mComponent;
     }
 }

@@ -123,15 +123,9 @@ public class PopulateTeamAtEventStats extends AsyncTask<String, Void, APIRespons
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateTeamAtEventStats secondTask = new PopulateTeamAtEventStats(fragment, requestParams);
-                fragment.updateTask(secondTask);
-                secondTask.execute(teamKey, eventKey);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, teamKey + "@" + eventKey + " refresh complete");
-                if (activity != null && activity instanceof LegacyRefreshableHostActivity) {
-                    activity.notifyRefreshComplete(fragment);
-                }
             }
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@event stats", teamKey + "@" + eventKey);
         }

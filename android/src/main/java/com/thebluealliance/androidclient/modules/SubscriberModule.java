@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
+import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 
 import dagger.Module;
 import dagger.Provides;
@@ -89,5 +90,9 @@ public class SubscriberModule {
     @Provides
     public AwardsListSubscriber provideAwardsListSubscriber(Database db) {
         return new AwardsListSubscriber(db);
+    }
+
+    @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {
+        return new TeamStatsSubscriber(mActivity);
     }
 }
