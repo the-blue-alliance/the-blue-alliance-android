@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.modules;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -40,12 +42,10 @@ public class TBAAndroidModule {
         mApp = app;
     }
 
-    /* UNCOMMENT WHEN NEEDED
-    @Provides @Singleton
+    @Provides
     public Context provideApplicationContext() {
         return mApp.getApplicationContext();
     }
-    */
 
     @Provides
     @Singleton

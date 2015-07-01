@@ -1,7 +1,10 @@
 package com.thebluealliance.androidclient.modules;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -34,8 +37,10 @@ import dagger.Provides;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
-@Module
+@Module(includes = TBAAndroidModule.class)
 public class DatafeedModule {
+
+    public static int CACHE_SIZE = 1024;
 
     public DatafeedModule() {}
 
@@ -60,10 +65,16 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton
-    public OkHttpClient getOkHttp() {
+    public OkHttpClient getOkHttp(Cache responseCache) {
         OkHttpClient client = new OkHttpClient();
         client.interceptors().add(new APIv2RequestInterceptor());
+        client.setCache(responseCache);
         return client;
+    }
+
+    @Provides @Singleton
+    public Cache provideOkCache(Context context) {
+        return new Cache(context.getCacheDir(), CACHE_SIZE);
     }
 
     @Provides @Singleton
