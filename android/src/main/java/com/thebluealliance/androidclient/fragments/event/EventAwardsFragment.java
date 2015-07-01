@@ -94,6 +94,10 @@ public class EventAwardsFragment
 
     @Override
     protected Observable<List<Award>> getObservable() {
-        return mDatafeed.fetchEventAwards(mEventKey);
+        if (mTeamKey == null || mTeamKey.isEmpty()) {
+            return mDatafeed.fetchEventAwards(mEventKey);
+        } else {
+            return mDatafeed.fetchTeamAtEventAwards(mTeamKey, mEventKey);
+        }
     }
 }

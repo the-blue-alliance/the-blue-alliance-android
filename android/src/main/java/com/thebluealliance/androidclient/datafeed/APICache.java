@@ -49,7 +49,7 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<Award>> fetchTeamAtEventAwards(String teamKey, String eventKey) {
-        return null;
+        return Observable.just(mDb.getAwardsTable().getTeamAtEventAwards(teamKey, eventKey));
     }
 
     @Override

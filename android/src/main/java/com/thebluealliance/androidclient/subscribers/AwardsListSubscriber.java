@@ -48,7 +48,7 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
             for (JsonElement winner : award.getWinners()) {
                 if (!winner.getAsJsonObject().get("team_number").isJsonNull()) {
                     String teamKey = "frc" + winner.getAsJsonObject().get("team_number");
-                    Team team = mDb.getTeamsTable().get(mTeamKey);
+                    Team team = mDb.getTeamsTable().get(teamKey);
                     teams.put(teamKey, team);
                 }
             }

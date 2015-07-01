@@ -703,6 +703,19 @@ public class Database extends SQLiteOpenHelper {
         public Award inflate(Cursor cursor) {
             return ModelInflater.inflateAward(cursor);
         }
+
+        public List<Award> getTeamAtEventAwards(String teamKey, String eventKey) {
+            Cursor cursor = mDb.rawQuery("SELECT * FROM `" + TABLE_AWARDS + "` WHERE `" + EVENTKEY
+              + "` = ? AND `" + WINNERS + "` LIKE '%" + teamKey + "," + "%'", new String[]{eventKey});
+            List<Award> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
+            if (cursor == null || !cursor.moveToFirst()) {
+                return models;
+            }
+            do {
+                models.add(inflate(cursor));
+            } while (cursor.moveToNext());
+            return models;
+        }
     }
 
     public class Matches extends ModelTable<Match> {
