@@ -45,14 +45,14 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<Team> fetchTeam(String teamKey) {
         Observable<Team> apiData = mRetrofitAPI.fetchTeam(teamKey);
-        apiData.subscribe(mWriter.getTeamWriter());
+        apiData.subscribe(mWriter.teamWriter.get());
         return mAPICache.fetchTeam(teamKey).concatWith(apiData);
     }
 
     @Override
     public Observable<List<Event>> fetchTeamEvents(String teamKey, int year) {
         Observable<List<Event>> apiData = mRetrofitAPI.fetchTeamEvents(teamKey, year);
-        apiData.subscribe(mWriter.getEventListWriter());
+        apiData.subscribe(mWriter.eventListWriter.get());
         return mAPICache.fetchTeamEvents(teamKey, year).concatWith(apiData);
     }
 
@@ -74,7 +74,7 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<List<Media>> fetchTeamMediaInYear(String teamKey, int year) {
         Observable<List<Media>> apiData = mRetrofitAPI.fetchTeamMediaInYear(teamKey, year);
-        apiData.subscribe(mWriter.getMediaListWriter());
+        apiData.subscribe(mWriter.mediaListWriter.get());
         return mAPICache.fetchTeamMediaInYear(teamKey, year).concatWith(apiData);
     }
 
@@ -96,14 +96,14 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<Event> fetchEvent(String eventKey) {
         Observable<Event> apiData = mRetrofitAPI.fetchEvent(eventKey);
-        apiData.subscribe(mWriter.getEventWriter());
+        apiData.subscribe(mWriter.eventWriter.get());
         return mAPICache.fetchEvent(eventKey).concatWith(apiData);
     }
 
     @Override
     public Observable<List<Team>> fetchEventTeams(String eventKey) {
         Observable<List<Team>> apiData = mRetrofitAPI.fetchEventTeams(eventKey);
-        apiData.subscribe(mWriter.getTeamListWriter());
+        apiData.subscribe(mWriter.teamListWriter.get());
         return mAPICache.fetchEventTeams(eventKey).concatWith(apiData);
     }
 
@@ -116,7 +116,7 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<List<Match>> fetchEventMatches(String eventKey) {
         Observable<List<Match>> apiData = mRetrofitAPI.fetchEventMatches(eventKey);
-        apiData.subscribe(mWriter.getMatchListWriter());
+        apiData.subscribe(mWriter.matchListWriter.get());
         return mAPICache.fetchEventMatches(eventKey).concatWith(apiData);
     }
 
@@ -129,7 +129,7 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<List<Award>> fetchEventAwards(String eventKey) {
         Observable<List<Award>> apiData = mRetrofitAPI.fetchEventAwards(eventKey);
-        apiData.subscribe(mWriter.getAwardListWriter());
+        apiData.subscribe(mWriter.awardListWriter.get());
         return mAPICache.fetchEventAwards(eventKey).concatWith(apiData);
     }
 

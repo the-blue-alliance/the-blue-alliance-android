@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.facebook.stetho.Stetho;
 import com.thebluealliance.androidclient.modules.BinderModule;
+import com.thebluealliance.androidclient.modules.DatabaseWriterModule;
 import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.modules.TBAAndroidModule;
 import com.thebluealliance.androidclient.modules.components.ApplicationComponent;
@@ -16,6 +17,7 @@ public class TBAAndroid extends MultiDexApplication {
     private TBAAndroidModule mModule;
     private DatafeedModule mDatafeedModule;
     private BinderModule mBinderModule;
+    private DatabaseWriterModule mDatabaseWriterModule;
 
     @Override
     public void onCreate() {
@@ -49,6 +51,13 @@ public class TBAAndroid extends MultiDexApplication {
             mBinderModule = new BinderModule();
         }
         return mBinderModule;
+    }
+
+    public DatabaseWriterModule getDatabaseWriterModule() {
+        if (mDatabaseWriterModule == null) {
+            mDatabaseWriterModule = new DatabaseWriterModule();
+        }
+        return mDatabaseWriterModule;
     }
 
     public ApplicationComponent getComponent() {

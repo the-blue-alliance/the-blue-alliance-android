@@ -273,6 +273,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
               .applicationComponent(application.getComponent())
               .datafeedModule(application.getDatafeedModule())
               .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
               .build();
         }

@@ -311,6 +311,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
               .applicationComponent(application.getComponent())
               .datafeedModule(application.getDatafeedModule())
               .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
               .build();
         }

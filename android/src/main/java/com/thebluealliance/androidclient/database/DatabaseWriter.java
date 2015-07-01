@@ -1,222 +1,78 @@
 package com.thebluealliance.androidclient.database;
 
-import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.DistrictTeam;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.EventTeam;
-import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.database.writers.AwardListWriter;
+import com.thebluealliance.androidclient.database.writers.AwardWriter;
+import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
+import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter;
+import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
+import com.thebluealliance.androidclient.database.writers.DistrictWriter;
+import com.thebluealliance.androidclient.database.writers.EventListWriter;
+import com.thebluealliance.androidclient.database.writers.EventTeamListWriter;
+import com.thebluealliance.androidclient.database.writers.EventTeamWriter;
+import com.thebluealliance.androidclient.database.writers.EventWriter;
+import com.thebluealliance.androidclient.database.writers.MatchListWriter;
+import com.thebluealliance.androidclient.database.writers.MatchWriter;
+import com.thebluealliance.androidclient.database.writers.MediaListWriter;
+import com.thebluealliance.androidclient.database.writers.MediaWriter;
+import com.thebluealliance.androidclient.database.writers.TeamListWriter;
+import com.thebluealliance.androidclient.database.writers.TeamWriter;
 
-import java.util.List;
+import javax.inject.Inject;
 
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
+import dagger.Lazy;
 
 public class DatabaseWriter {
 
-    private Database mDb;
+    public Lazy<AwardWriter> awardWriter;
+    public Lazy<AwardListWriter> awardListWriter;
+    public Lazy<DistrictWriter> districtWriter;
+    public Lazy<DistrictListWriter> districtListWriter;
+    public Lazy<DistrictTeamWriter> districtTeamWriter;
+    public Lazy<DistrictTeamListWriter> districtTeamListWriter;
+    public Lazy<EventWriter> eventWriter;
+    public Lazy<EventListWriter> eventListWriter;
+    public Lazy<EventTeamWriter> eventTeamWriter;
+    public Lazy<EventTeamListWriter> eventTeamListWriter;
+    public Lazy<MatchWriter> matchWriter;
+    public Lazy<MatchListWriter> matchListWriter;
+    public Lazy<MediaWriter> mediaWriter;
+    public Lazy<MediaListWriter> mediaListWriter;
+    public Lazy<TeamWriter> teamWriter;
+    public Lazy<TeamListWriter> teamListWriter;
 
-    private AwardWriter awardWriter;
-    private AwardListWriter awardListWriter;
-    private DistrictWriter districtWriter;
-    private DistrictListWriter districtListWriter;
-    private DistrictTeamWriter districtTeamWriter;
-    private DistrictTeamListWriter districtTeamListWriter;
-    private EventWriter eventWriter;
-    private EventListWriter eventListWriter;
-    private EventTeamWriter eventTeamWriter;
-    private EventTeamListWriter eventTeamListWriter;
-    private MatchWriter matchWriter;
-    private MatchListWriter matchListWriter;
-    private MediaWriter mediaWriter;
-    private MediaListWriter mediaListWriter;
-    private TeamWriter teamWriter;
-    private TeamListWriter teamListWriter;
-
-    public DatabaseWriter(Database db) {
-        mDb = db;
-    }
-
-    public class AwardWriter implements Action1<Award> {
-        @Override public void call(Award award) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getAwardsTable().add(award));
-        }
-    }
-    public class AwardListWriter implements Action1<List<Award>> {
-        @Override public void call(List<Award> awards) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getAwardsTable().add(awards));
-        }
-    }
-    public class DistrictWriter implements Action1<District> {
-        @Override public void call(District district) {
-           Schedulers.io().createWorker().schedule(() ->  mDb.getDistrictsTable().add(district));
-        }
-    }
-    public class DistrictListWriter implements Action1<List<District>> {
-        @Override public void call(List<District> districts) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getDistrictsTable().add(districts));
-        }
-    }
-    public class DistrictTeamWriter implements Action1<DistrictTeam> {
-        @Override public void call(DistrictTeam districtTeam) {
-            Schedulers.io().createWorker()
-              .schedule(() -> mDb.getDistrictTeamsTable().add(districtTeam));
-        }
-    }
-    public class DistrictTeamListWriter implements Action1<List<DistrictTeam>> {
-        @Override public void call(List<DistrictTeam> districtTeams) {
-            Schedulers.io().createWorker()
-              .schedule(() -> mDb.getDistrictTeamsTable().add(districtTeams));
-        }
-    }
-    public class EventWriter implements Action1<Event> {
-        @Override public void call(Event event) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getEventsTable().add(event));
-        }
-    }
-    public class EventListWriter implements Action1<List<Event>> {
-        @Override public void call(List<Event> events) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getEventsTable().add(events));
-        }
-    }
-    public class EventTeamWriter implements Action1<EventTeam> {
-        @Override public void call(EventTeam eventTeam) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getEventTeamsTable().add(eventTeam));
-        }
-    }
-    public class EventTeamListWriter implements Action1<List<EventTeam>> {
-        @Override public void call(List<EventTeam> eventTeams) {
-            Schedulers.io().createWorker()
-              .schedule(() -> mDb.getEventTeamsTable().add(eventTeams));
-        }
-    }
-    public class MatchWriter implements Action1<Match> {
-        @Override public void call(Match match) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(match));
-        }
-    }
-    public class MatchListWriter implements Action1<List<Match>> {
-        @Override public void call(List<Match> matches) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(matches));
-        }
-    }
-    public class MediaWriter implements Action1<Media> {
-        @Override public void call(Media media) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(media));
-        }
-    }
-    public class MediaListWriter implements Action1<List<Media>> {
-        @Override public void call(List<Media> medias) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(medias));
-        }
-    }
-    public class TeamWriter implements Action1<Team> {
-        @Override public void call(Team team) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getTeamsTable().add(team));
-        }
-    }
-    public class TeamListWriter implements Action1<List<Team>> {
-        @Override public void call(List<Team> teams) {
-            Schedulers.io().createWorker().schedule(() -> mDb.getTeamsTable().add(teams));
-        }
-    }
-
-    public AwardWriter getAwardWriter() {
-        if (awardWriter == null) {
-            awardWriter = new AwardWriter();
-        }
-        return awardWriter;
-    }
-    public AwardListWriter getAwardListWriter() {
-        if (awardListWriter == null) {
-            awardListWriter = new AwardListWriter();
-        }
-        return awardListWriter;
-    }
-    public DistrictWriter getDistrictWriter() {
-        if (districtWriter == null) {
-            districtWriter = new DistrictWriter();
-        }
-        return districtWriter;
-    }
-    public DistrictListWriter getDistrictListWriter() {
-        if (districtListWriter == null) {
-            districtListWriter = new DistrictListWriter();
-        }
-        return districtListWriter;
-    }
-    public DistrictTeamWriter getDistrictTeamWriter() {
-        if (districtTeamWriter == null) {
-            districtTeamWriter = new DistrictTeamWriter();
-        }
-        return districtTeamWriter;
-    }
-    public DistrictTeamListWriter getDistrictTeamListWriter() {
-        if (districtTeamListWriter == null) {
-            districtTeamListWriter = new DistrictTeamListWriter();
-        }
-        return districtTeamListWriter;
-    }
-    public EventWriter getEventWriter() {
-        if (eventWriter == null) {
-            eventWriter = new EventWriter();
-        }
-        return eventWriter;
-    }
-    public EventListWriter getEventListWriter() {
-        if (eventListWriter == null) {
-            eventListWriter = new EventListWriter();
-        }
-        return eventListWriter;
-    }
-    public EventTeamWriter getEventTeamWriter() {
-        if (eventTeamWriter == null) {
-            eventTeamWriter = new EventTeamWriter();
-        }
-        return eventTeamWriter;
-    }
-    public EventTeamListWriter getEventTeamListWriter() {
-        if (eventTeamListWriter == null) {
-            eventTeamListWriter = new EventTeamListWriter();
-        }
-        return eventTeamListWriter;
-    }
-    public MatchWriter getMatchWriter() {
-        if (matchWriter == null) {
-            matchWriter = new MatchWriter();
-        }
-        return matchWriter;
-    }
-    public MatchListWriter getMatchListWriter() {
-        if (matchListWriter == null) {
-            matchListWriter = new MatchListWriter();
-        }
-        return matchListWriter;
-    }
-    public MediaWriter getMediaWriter() {
-        if (mediaWriter == null) {
-            mediaWriter = new MediaWriter();
-        }
-        return mediaWriter;
-    }
-    public MediaListWriter getMediaListWriter() {
-        if (mediaListWriter == null) {
-            mediaListWriter = new MediaListWriter();
-        }
-        return mediaListWriter;
-    }
-    public TeamWriter getTeamWriter() {
-        if (teamWriter == null) {
-            teamWriter = new TeamWriter();
-        }
-        return teamWriter;
-    }
-    public TeamListWriter getTeamListWriter() {
-        if (teamListWriter == null) {
-            teamListWriter = new TeamListWriter();
-        }
-        return teamListWriter;
+    @Inject
+    public DatabaseWriter(
+      Lazy<AwardWriter> award,
+      Lazy<AwardListWriter> awardList,
+      Lazy<DistrictWriter> district,
+      Lazy<DistrictListWriter> districtList,
+      Lazy<DistrictTeamWriter> districtTeam,
+      Lazy<DistrictTeamListWriter> districtTeamList,
+      Lazy<EventWriter> event,
+      Lazy<EventListWriter> eventList,
+      Lazy<EventTeamWriter> eventTeam,
+      Lazy<EventTeamListWriter> eventTeamList,
+      Lazy<MatchWriter> match,
+      Lazy<MatchListWriter> matchList,
+      Lazy<MediaWriter> media,
+      Lazy<MediaListWriter> mediaList,
+      Lazy<TeamWriter> team,
+      Lazy<TeamListWriter> teamList) {
+        awardWriter = award;
+        awardListWriter = awardList;
+        districtWriter = district;
+        districtListWriter = districtList;
+        districtTeamWriter = districtTeam;
+        districtTeamListWriter = districtTeamList;
+        eventWriter = event;
+        eventListWriter = eventList;
+        eventTeamWriter = eventTeam;
+        eventTeamListWriter = eventTeamList;
+        matchWriter = match;
+        matchListWriter = matchList;
+        mediaWriter = media;
+        mediaListWriter = mediaList;
+        teamWriter = team;
+        teamListWriter = teamList;
     }
 }
