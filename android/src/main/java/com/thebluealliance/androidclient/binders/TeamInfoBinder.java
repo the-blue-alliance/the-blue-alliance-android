@@ -68,7 +68,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
                 } else {
                     // This string needs to be specially formatted
                     SpannableString string = new SpannableString("aka " + data.fullName);
-                    string.setSpan(new TextAppearanceSpan(mContext,
+                    string.setSpan(new TextAppearanceSpan(mActivity,
                       R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                     ((TextView) mView.findViewById(R.id.team_full_name)).setText(string);
                 }

@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 
@@ -20,7 +21,7 @@ import java.util.List;
 import rx.Observable;
 
 public class EventAwardsFragment
-  extends DatafeedFragment<List<Award>, ListViewAdapter, AwardsListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<List<Award>, List<ListItem>, AwardsListSubscriber, ListviewBinder> {
     private static final String EVENT_KEY = "eventKey", TEAM_KEY = "teamKey";
 
     private String mEventKey, mTeamKey;

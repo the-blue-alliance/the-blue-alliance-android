@@ -15,12 +15,15 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
+
+import java.util.List;
 
 import rx.Observable;
 
 public class EventDistrictPointsFragment
-  extends DatafeedFragment<JsonObject, ListViewAdapter, DistrictPointsListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<JsonObject, List<ListItem>, DistrictPointsListSubscriber, ListviewBinder> {
     private static final String KEY = "event_key";
 
     private String mEventKey;

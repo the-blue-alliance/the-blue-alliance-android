@@ -9,10 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
+import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
@@ -22,7 +23,7 @@ import java.util.List;
 import rx.Observable;
 
 public class EventMatchesFragment
-  extends DatafeedFragment<List<Match>, ExpandableListAdapter, MatchListSubscriber, ExpandableListBinder> {
+  extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> {
 
     private static final String KEY = "eventKey", TEAM = "teamKey";
 
@@ -55,6 +56,7 @@ public class EventMatchesFragment
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
         mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ONLY);
+        mBinder.setSelectedTeam(mTeamKey);
     }
 
     @Override

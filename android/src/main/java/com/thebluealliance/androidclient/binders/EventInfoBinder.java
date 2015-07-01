@@ -144,7 +144,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         if (lastLayout.getChildCount() > 1) {
             lastLayout.removeViewAt(1);
         }
-        lastLayout.addView(match.getView(mContext, mInflator, null));
+        lastLayout.addView(match.getView(mActivity, mInflator, null));
     }
 
     protected void showNextMatch(MatchListElement match) {
@@ -153,7 +153,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         if (nextLayout.getChildCount() > 1) {
             nextLayout.removeViewAt(1);
         }
-        nextLayout.addView(match.getView(mContext, mInflator, null));
+        nextLayout.addView(match.getView(mActivity, mInflator, null));
     }
 
     public void onEvent(LiveEventMatchUpdateEvent event) {

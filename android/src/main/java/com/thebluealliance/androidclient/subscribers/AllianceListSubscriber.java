@@ -1,23 +1,22 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class AllianceListSubscriber extends BaseAPISubscriber<Event, ListViewAdapter> {
+public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListItem>> {
 
-    public AllianceListSubscriber(Context context) {
+    public AllianceListSubscriber() {
         super();
-        mDataToBind = new ListViewAdapter(context, new ArrayList<>());
+        mDataToBind = new ArrayList<>();
     }
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.values.clear();
-        mAPIData.renderAlliances(mDataToBind.values);
+        mDataToBind.clear();
+        mAPIData.renderAlliances(mDataToBind);
     }
 }

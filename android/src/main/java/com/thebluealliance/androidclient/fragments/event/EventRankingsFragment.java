@@ -18,7 +18,10 @@ import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
+
+import java.util.List;
 
 import rx.Observable;
 
@@ -30,7 +33,7 @@ import rx.Observable;
  * @author Nathan Walters
  */
 public class EventRankingsFragment
-  extends DatafeedFragment<JsonArray, ListViewAdapter, RankingsListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<JsonArray, List<ListItem>, RankingsListSubscriber, ListviewBinder> {
 
     private static final String KEY = "eventKey";
 

@@ -8,25 +8,31 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.listitems.ListItem;
 
-public class ListviewBinder extends AbstractDataBinder<ListViewAdapter> {
+import java.util.List;
+
+public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
 
     public ListView mListView;
     public ProgressBar mProgressBar;
 
     @Override
-    public void updateData(@Nullable ListViewAdapter data) {
+    public void updateData(@Nullable List<ListItem> data) {
         if (data == null || mListView == null) {
             return;
         }
-        if (mListView.getAdapter() == null) {
-            mListView.setAdapter(data);
-        }
-        data.notifyDataSetChanged();
+        ListViewAdapter adapter = newAdapter(data);
+        mListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
-        if (mProgressBar != null && !data.values.isEmpty()) {
+        if (mProgressBar != null && !data.isEmpty()) {
             mProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    protected ListViewAdapter newAdapter(List<ListItem> data) {
+        return new ListViewAdapter(mActivity, data);
     }
 
     @Override

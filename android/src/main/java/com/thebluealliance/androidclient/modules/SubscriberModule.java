@@ -17,8 +17,6 @@ import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 
@@ -43,7 +41,7 @@ public class SubscriberModule {
 
     @Provides
     public EventListSubscriber provideEventListSubscriber() {
-        return new EventListSubscriber(mActivity);
+        return new EventListSubscriber();
     }
 
     @Provides
@@ -58,12 +56,12 @@ public class SubscriberModule {
 
     @Provides
     public TeamListSubscriber provideTeamListSubscriber() {
-        return new TeamListSubscriber(mActivity);
+        return new TeamListSubscriber();
     }
 
     @Provides
     public RankingsListSubscriber provideRankingsListSubscriber(Database db) {
-        return new RankingsListSubscriber(mActivity, db);
+        return new RankingsListSubscriber(db);
     }
 
     @Provides
@@ -73,14 +71,14 @@ public class SubscriberModule {
 
     @Provides
     public AllianceListSubscriber provideAllianceListSubscriber() {
-        return new AllianceListSubscriber(mActivity);
+        return new AllianceListSubscriber();
     }
 
     @Provides
     public DistrictPointsListSubscriber provideDistrictPointsListSubscriber(
       Database db,
       Gson gson) {
-        return new DistrictPointsListSubscriber(mActivity, db, gson);
+        return new DistrictPointsListSubscriber(db, gson);
     }
 
     @Provides
@@ -90,6 +88,6 @@ public class SubscriberModule {
 
     @Provides
     public AwardsListSubscriber provideAwardsListSubscriber(Database db) {
-        return new AwardsListSubscriber(mActivity, db);
+        return new AwardsListSubscriber(db);
     }
 }

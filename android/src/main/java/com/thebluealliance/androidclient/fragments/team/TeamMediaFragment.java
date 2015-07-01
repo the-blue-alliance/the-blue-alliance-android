@@ -9,10 +9,10 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
@@ -24,7 +24,7 @@ import rx.Observable;
 
 public class TeamMediaFragment extends DatafeedFragment<
   List<Media>,
-  ExpandableListAdapter,
+  List<ListGroup>,
   MediaListSubscriber,
   ExpandableListBinder> {
 

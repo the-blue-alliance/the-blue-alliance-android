@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,9 +15,9 @@ import com.thebluealliance.androidclient.datafeed.DataConsumer;
  * @param <T>
  */
 public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
-    Context mContext;
+    Activity mActivity;
 
-    public void setContext(Context context) {
-        mContext = context;
+    public void setActivity(Activity activity) {
+        mActivity = activity;
     }
 }

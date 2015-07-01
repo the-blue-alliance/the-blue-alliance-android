@@ -17,13 +17,15 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 
 import java.util.Arrays;
+import java.util.List;
 
 import rx.Observable;
 
@@ -35,7 +37,7 @@ import rx.Observable;
  * @author Nathan Walters
  */
 public class EventStatsFragment
-  extends DatafeedFragment<JsonObject, ListViewAdapter, StatsListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<JsonObject, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
     private static final String KEY = "eventKey", SORT = "sort";
 

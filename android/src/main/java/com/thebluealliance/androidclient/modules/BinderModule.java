@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.modules;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.binders.MatchListBinder;
+import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 
 import dagger.Module;
@@ -27,7 +29,17 @@ public class BinderModule {
     }
 
     @Provides
-    public ExpandableListBinder provideMediaListBinder() {
+    public ExpandableListBinder provideExpandableListBinder() {
         return new ExpandableListBinder();
+    }
+
+    @Provides
+    public StatsListBinder provideStatsListBinder() {
+        return new StatsListBinder();
+    }
+
+    @Provides
+    public MatchListBinder provideMatchListBinder() {
+        return new MatchListBinder();
     }
 }

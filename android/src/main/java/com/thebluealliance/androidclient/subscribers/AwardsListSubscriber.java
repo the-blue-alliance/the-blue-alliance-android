@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
 import android.os.Build;
 import android.util.ArrayMap;
 
 import com.google.gson.JsonElement;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
@@ -17,15 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, ListViewAdapter> {
+public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<ListItem>> {
 
     private String mTeamKey;
     private String mEventKey;
     private Database mDb;
 
-    public AwardsListSubscriber(Context context, Database db) {
+    public AwardsListSubscriber(Database db) {
         super();
-        mDataToBind = new ListViewAdapter(context, new ArrayList<>());
+        mDataToBind = new ArrayList<>();
         mDb = db;
     }
 
@@ -39,7 +38,7 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, ListVie
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.values.clear();
+        mDataToBind.clear();
         if (mAPIData == null || mAPIData.isEmpty()) {
             return;
         }
@@ -53,7 +52,7 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, ListVie
                     teams.put(teamKey, team);
                 }
             }
-            mDataToBind.values.add(new CardedAwardListElement(
+            mDataToBind.add(new CardedAwardListElement(
               award.getName(),
               mEventKey,
               award.getWinners(),

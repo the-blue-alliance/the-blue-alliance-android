@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
@@ -27,7 +28,7 @@ import java.util.List;
 import rx.Observable;
 
 public class EventTeamsFragment
-  extends DatafeedFragment<List<Team>, ListViewAdapter, TeamListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<List<Team>, List<ListItem>, TeamListSubscriber, ListviewBinder> {
 
     private static final String KEY = "event_key";
 

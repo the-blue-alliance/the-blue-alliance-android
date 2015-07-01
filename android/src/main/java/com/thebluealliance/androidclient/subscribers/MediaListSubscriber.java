@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import android.app.Activity;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
@@ -11,7 +10,7 @@ import com.thebluealliance.androidclient.models.Media;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, ExpandableListAdapter> {
+public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<ListGroup>> {
 
     private ListGroup mCdPhotos, mYtVideos;
 
@@ -19,12 +18,12 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, Expandab
         super();
         mCdPhotos = new ListGroup(activity.getString(R.string.cd_header));
         mYtVideos = new ListGroup(activity.getString(R.string.yt_header));
-        mDataToBind = new ExpandableListAdapter(activity, new ArrayList<>());
+        mDataToBind = new ArrayList<>();
     }
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException{
-        mDataToBind.groups.clear();
+        mDataToBind.clear();
         mCdPhotos.clear();
         mYtVideos.clear();
         for (int i=0; i < mAPIData.size(); i++) {
@@ -39,10 +38,10 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, Expandab
             }
         }
         if (!mCdPhotos.children.isEmpty()) {
-            mDataToBind.groups.add(mCdPhotos);
+            mDataToBind.add(mCdPhotos);
         }
         if (!mYtVideos.children.isEmpty()) {
-            mDataToBind.groups.add(mYtVideos);
+            mDataToBind.add(mYtVideos);
         }
     }
 }

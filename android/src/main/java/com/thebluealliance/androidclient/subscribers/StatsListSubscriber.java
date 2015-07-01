@@ -5,11 +5,10 @@ import android.content.Context;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Stat;
@@ -17,11 +16,12 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map.Entry;
 
 import de.greenrobot.event.EventBus;
 
-public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewAdapter> {
+public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<ListItem>> {
 
     private String mStatToSortBy;
     private Context mContext;
@@ -30,7 +30,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewA
     public StatsListSubscriber(Context context, Database db) {
         super();
         mContext = context;
-        mDataToBind = new EventStatsFragmentAdapter(context, new ArrayList<>());
+        mDataToBind = new ArrayList<>();
         mDb = db;
     }
 
@@ -40,7 +40,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewA
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.values.clear();
+        mDataToBind.clear();
         if (mAPIData == null ||
           !mAPIData.has("oprs") ||
           !mAPIData.has("dprs") ||
@@ -63,7 +63,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewA
               Stat.displayFormat.format(opr),
               Stat.displayFormat.format(dpr),
               Stat.displayFormat.format(ccwm));
-            mDataToBind.values.add(new StatsListElement(
+            mDataToBind.add(new StatsListElement(
               teamKey,
               Integer.toString(team.getTeamNumber()),
               team.getNickname(),
@@ -73,16 +73,16 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewA
               ccwm
             ));
         }
-        Collections.sort(mDataToBind.values, new StatListElementComparator(mStatToSortBy));
+        Collections.sort(mDataToBind, new StatListElementComparator(mStatToSortBy));
         EventBus.getDefault().post(new EventStatsEvent(getTopStatsString()));
     }
 
     private String getTopStatsString() {
         String statsString = "";
-        for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mDataToBind.values.size()); i++) {
-            String opr = ((StatsListElement)mDataToBind.values.get(i)).getFormattedOpr();
+        for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()); i++) {
+            String opr = ((StatsListElement)mDataToBind.get(i)).getFormattedOpr();
             statsString += (i + 1) + ". <b>" + opr + "</b>";
-            if (i < Math.min(EventStatsEvent.SIZE, mDataToBind.values.size()) - 1) {
+            if (i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()) - 1) {
                 statsString += "<br>";
             }
         }

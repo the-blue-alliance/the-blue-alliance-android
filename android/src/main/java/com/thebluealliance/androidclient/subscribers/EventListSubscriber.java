@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Bind a list of events to a {@link ListViewAdapter}
  */
-public class EventListSubscriber extends BaseAPISubscriber<List<Event>, ListViewAdapter> {
+public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<ListItem>> {
 
     public static final int
       MODE_WEEK = 0,
@@ -21,9 +20,9 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, ListView
 
     private int mRenderMode;
 
-    public EventListSubscriber(Context context) {
+    public EventListSubscriber() {
         super();
-        mDataToBind = new ListViewAdapter(context, new ArrayList<>());
+        mDataToBind = new ArrayList<>();
         mRenderMode = MODE_WEEK;
     }
 
@@ -33,17 +32,17 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, ListView
 
     @Override
     public void parseData() {
-        mDataToBind.values.clear();
+        mDataToBind.clear();
         switch (mRenderMode) {
             case MODE_WEEK:
             default:
-                EventHelper.renderEventListForWeek(mAPIData, mDataToBind.values);
+                EventHelper.renderEventListForWeek(mAPIData, mDataToBind);
                 break;
             case MODE_TEAM:
-                EventHelper.renderEventListForTeam(mAPIData, mDataToBind.values);
+                EventHelper.renderEventListForTeam(mAPIData, mDataToBind);
                 break;
             case MODE_DISTRICT:
-                EventHelper.renderEventListForDistrict(mAPIData, mDataToBind.values);
+                EventHelper.renderEventListForDistrict(mAPIData, mDataToBind);
                 break;
         }
     }

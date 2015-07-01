@@ -12,13 +12,16 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
+
+import java.util.List;
 
 import rx.Observable;
 
 public class EventAlliancesFragment
-  extends DatafeedFragment<Event, ListViewAdapter, AllianceListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<Event, List<ListItem>, AllianceListSubscriber, ListviewBinder> {
     private static final String KEY = "event_key";
 
     private String mEventKey;

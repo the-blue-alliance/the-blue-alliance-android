@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import android.app.Activity;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
-import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
@@ -21,7 +19,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, ExpandableListAdapter> {
+public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<ListGroup>> {
 
     private ListGroup mQualMatches;
     private ListGroup mQuarterMatches;
@@ -33,7 +31,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, Expandab
 
     public MatchListSubscriber(Activity activity, Database db) {
         super();
-        mDataToBind = new MatchListAdapter(activity, new ArrayList<>());
+        mDataToBind = new ArrayList<>();
         mQualMatches = new ListGroup(activity.getString(R.string.quals_header));
         mQuarterMatches = new ListGroup(activity.getString(R.string.quarters_header));
         mSemiMatches = new ListGroup(activity.getString(R.string.semis_header));
@@ -48,12 +46,11 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, Expandab
 
     public void setTeamKey(String teamKey) {
         mTeamKey = teamKey;
-        ((MatchListAdapter) mDataToBind).setTeamKey(teamKey);
     }
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.groups.clear();
+        mDataToBind.clear();
         mQualMatches.clear();
         mQuarterMatches.clear();
         mSemiMatches.clear();
@@ -133,16 +130,16 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, Expandab
         }
 
         if (!mQualMatches.children.isEmpty()) {
-            mDataToBind.groups.add(mQualMatches);
+            mDataToBind.add(mQualMatches);
         }
         if (!mQuarterMatches.children.isEmpty()) {
-            mDataToBind.groups.add(mQuarterMatches);
+            mDataToBind.add(mQuarterMatches);
         }
         if (!mSemiMatches.children.isEmpty()) {
-            mDataToBind.groups.add(mSemiMatches);
+            mDataToBind.add(mSemiMatches);
         }
         if (!mFinalMatches.children.isEmpty()) {
-            mDataToBind.groups.add(mFinalMatches);
+            mDataToBind.add(mFinalMatches);
         }
 
         EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));

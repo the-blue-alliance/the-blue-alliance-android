@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.views.ExpandableListView;
 
 import java.util.List;
 
-public class ExpandableListBinder extends AbstractDataBinder<ExpandableListAdapter> {
+public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
 
     public static final short
       MODE_EXPAND_NONE = 0,
@@ -35,21 +35,24 @@ public class ExpandableListBinder extends AbstractDataBinder<ExpandableListAdapt
     }
 
     @Override
-    public void updateData(@Nullable ExpandableListAdapter data) {
+    public void updateData(@Nullable List<ListGroup> data) {
         if (data == null || mExpandableList == null) {
             return;
         }
 
-        if (mExpandableList.getAdapter() == null) {
-            mExpandableList.setAdapter(data);
-        }
-        data.notifyDataSetChanged();
+        ExpandableListAdapter adapter = newAdapter(data);
+        mExpandableList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         mExpandableList.setVisibility(View.VISIBLE);
-        expandForMode(data.groups);
+        expandForMode(data);
 
-        if (mProgressBar != null && !data.groups.isEmpty()) {
+        if (mProgressBar != null && !data.isEmpty()) {
             mProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    protected ExpandableListAdapter newAdapter(List<ListGroup> data) {
+        return new ExpandableListAdapter(mActivity, data);
     }
 
     @Override

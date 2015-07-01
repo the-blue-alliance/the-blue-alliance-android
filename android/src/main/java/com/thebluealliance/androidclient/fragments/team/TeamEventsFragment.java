@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
@@ -28,7 +29,7 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class TeamEventsFragment
-  extends DatafeedFragment<List<Event>, ListViewAdapter, EventListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<List<Event>, List<ListItem>, EventListSubscriber, ListviewBinder> {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 

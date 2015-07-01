@@ -41,7 +41,7 @@ public abstract class DatafeedFragment<
         mDatafeed = mComponent.datafeed();
         inject();
         mSubscriber.setConsumer(mBinder);
-        mBinder.setContext(getActivity());
+        mBinder.setActivity(getActivity());
     }
 
     @Override

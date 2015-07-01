@@ -1,35 +1,34 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-
 import com.google.gson.JsonArray;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 
-public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, ListViewAdapter> {
+public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, List<ListItem>> {
 
     private Database mDb;
 
-    public RankingsListSubscriber(Context context, Database db) {
+    public RankingsListSubscriber(Database db) {
         super();
         mDb = db;
-        mDataToBind = new ListViewAdapter(context, new ArrayList<>());
+        mDataToBind = new ArrayList<>();
     }
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.values.clear();
+        mDataToBind.clear();
         if (mAPIData == null || mAPIData.size() == 0) {
             return;
         }
@@ -72,7 +71,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, ListVie
             } else {
                 nickname = "Team " + teamKey.substring(3);
             }
-            mDataToBind.values.add(
+            mDataToBind.add(
               new RankingListElement(
                 teamKey,
                 row.get(1).getAsInt(), // team number

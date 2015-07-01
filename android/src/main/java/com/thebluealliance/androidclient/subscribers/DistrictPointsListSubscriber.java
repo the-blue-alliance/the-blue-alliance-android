@@ -1,14 +1,12 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.Event;
@@ -16,19 +14,20 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonObject, ListViewAdapter> {
+public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonObject, List<ListItem>> {
 
     private Database mDb;
     private String mEventKey;
     private Gson mGson;
 
-    public DistrictPointsListSubscriber(Context context, Database db, Gson gson) {
+    public DistrictPointsListSubscriber(Database db, Gson gson) {
         super();
-        mDataToBind = new ListViewAdapter(context, new ArrayList<>());
         mDb = db;
         mGson = gson;
+        mDataToBind = new ArrayList<>();
     }
 
     public void setEventKey(String eventKey) {
@@ -37,7 +36,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonObject, 
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.values.clear();
+        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
@@ -70,7 +69,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonObject, 
 
         for (int i = 0; i < pointBreakdowns.size(); i++) {
             pointBreakdowns.get(i).setRank(i + 1);
-            mDataToBind.values.add(pointBreakdowns.get(i).render());
+            mDataToBind.add(pointBreakdowns.get(i).render());
         }
     }
 }
