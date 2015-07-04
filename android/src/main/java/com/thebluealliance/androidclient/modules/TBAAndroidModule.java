@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
+import de.greenrobot.event.EventBus;
 
 /**
  * App-wide dependency injection items
@@ -51,6 +52,12 @@ public class TBAAndroidModule {
     @Singleton
     public Database provideDatabase() {
         return Database.getInstance(mApp);
+    }
+
+    @Provides
+    @Singleton
+    public EventBus provideEventBus() {
+        return EventBus.getDefault();
     }
 
     @Provides

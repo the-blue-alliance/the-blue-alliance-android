@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -27,6 +28,7 @@ public abstract class DatafeedFragment<
 
     @Inject protected S mSubscriber;
     @Inject protected B mBinder;
+    @Inject protected EventBus mEventBus;
 
     protected CacheableDatafeed mDatafeed;
     protected Observable<T> mObservable;
@@ -47,10 +49,15 @@ public abstract class DatafeedFragment<
     @Override
     public void onResume() {
         super.onResume();
-        mObservable = getObservable();
-        mObservable.subscribeOn(Schedulers.io())
-          .observeOn(Schedulers.computation())
-          .subscribe(mSubscriber);
+        if (mSubscriber != null) {
+            mObservable = getObservable();
+            if (mObservable != null) {
+                mObservable.subscribeOn(Schedulers.io())
+                  .observeOn(Schedulers.computation())
+                  .subscribe(mSubscriber);
+            }
+            mEventBus.register(mSubscriber);
+        }
     }
 
     @Override
@@ -58,6 +65,7 @@ public abstract class DatafeedFragment<
         super.onPause();
         if (mSubscriber != null) {
             mSubscriber.unsubscribe();
+            mEventBus.unregister(mSubscriber);
         }
     }
 

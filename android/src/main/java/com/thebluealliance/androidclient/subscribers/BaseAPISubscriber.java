@@ -29,6 +29,11 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
         mConsumer = consumer;
     }
 
+    // also allow data posting via event bus
+    public void onEvent(T data) {
+        onNext(data);
+    }
+
     @Override
     public void onNext(T data) {
         mAPIData = data;
