@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.modules.BinderModule;
 import com.thebluealliance.androidclient.modules.DatabaseWriterModule;
 import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.subscribers.MultiEndpointSubscriber;
 
 import javax.inject.Singleton;
 
@@ -34,6 +35,7 @@ import dagger.Component;
 public interface FragmentComponent {
 
     CacheableDatafeed datafeed();
+    MultiEndpointSubscriber multiSubscriber();
 
     void inject(TeamInfoFragment fragment);
     void inject(TeamEventsFragment fragment);

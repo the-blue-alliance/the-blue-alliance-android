@@ -30,7 +30,7 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
     }
 
     // also allow data posting via event bus
-    public void onEvent(T data) {
+    public void onEventAsync(T data) {
         onNext(data);
     }
 
