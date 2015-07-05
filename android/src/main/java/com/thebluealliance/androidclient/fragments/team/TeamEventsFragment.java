@@ -1,25 +1,19 @@
 package com.thebluealliance.androidclient.fragments.team;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.fragments.ListviewFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
@@ -28,17 +22,12 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class TeamEventsFragment
-  extends DatafeedFragment<List<Event>, List<ListItem>, EventListSubscriber, ListviewBinder> {
+public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
     private int mYear;
     private String mTeamKey;
-
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -63,16 +52,7 @@ public class TeamEventsFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
-
-        mListView = (ListView) v.findViewById(R.id.list);
-        mBinder.mListView = mListView;
-        mBinder.mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            mBinder.mProgressBar.setVisibility(View.GONE);
-        }
+        View v = super.onCreateView(inflater, container, savedInstanceState);
         mListView.setOnItemClickListener((parent, view, position, id) -> {
             if (!(parent.getAdapter() instanceof ListViewAdapter)) {
                 //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
@@ -93,10 +73,6 @@ public class TeamEventsFragment
     @Override
     public void onPause() {
         super.onPause();
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -109,7 +85,6 @@ public class TeamEventsFragment
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
     }
-
 
     @Override
     protected void inject() {

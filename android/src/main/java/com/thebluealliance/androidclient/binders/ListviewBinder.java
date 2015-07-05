@@ -15,20 +15,20 @@ import java.util.List;
 
 public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
 
-    public ListView mListView;
-    public ProgressBar mProgressBar;
+    public ListView listView;
+    public ProgressBar progressBar;
 
     @Override
     public void updateData(@Nullable List<ListItem> data) {
-        if (data == null || mListView == null) {
+        if (data == null || listView == null) {
             return;
         }
         ListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
-        mListView.setAdapter(adapter);
+        listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        if (mProgressBar != null && !data.isEmpty()) {
-            mProgressBar.setVisibility(View.GONE);
+        if (progressBar != null && !data.isEmpty()) {
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -38,8 +38,8 @@ public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void onComplete() {
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
         }
 
         // TODO no data text

@@ -2,24 +2,18 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.ListviewBinder;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.fragments.ListviewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
@@ -27,15 +21,11 @@ import java.util.List;
 
 import rx.Observable;
 
-public class EventTeamsFragment
-  extends DatafeedFragment<List<Team>, List<ListItem>, TeamListSubscriber, ListviewBinder> {
+public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSubscriber> {
 
     private static final String KEY = "event_key";
 
     private String mEventKey;
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
 
     public static EventTeamsFragment newInstance(String eventKey) {
         EventTeamsFragment f = new EventTeamsFragment();
@@ -55,16 +45,7 @@ public class EventTeamsFragment
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mListView = (ListView) view.findViewById(R.id.list);
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mBinder.mListView = mListView;
-        mBinder.mProgressBar = progressBar;
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            progressBar.setVisibility(View.GONE);
-        }
+        View view = super.onCreateView(inflater, container, savedInstanceState);
         mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
             Log.d(Constants.LOG_TAG, "Team clicked!");
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
@@ -76,15 +57,6 @@ public class EventTeamsFragment
             startActivity(intent);
         });
         return view;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-        }
     }
 
     @Override

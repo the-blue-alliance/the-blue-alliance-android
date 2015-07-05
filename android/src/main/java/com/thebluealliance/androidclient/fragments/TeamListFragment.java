@@ -6,16 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
-import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.datafeed.maps.TeamPageCombiner;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
@@ -26,8 +21,7 @@ import rx.Observable;
 /**
  * Displays 1000 team numbers starting with {@link #START}
  */
-public class TeamListFragment
-  extends DatafeedFragment<List<Team>, List<ListItem>, TeamListSubscriber, ListviewBinder> {
+public class TeamListFragment extends ListviewFragment<List<Team>, TeamListSubscriber> {
 
     private static final String START = "START";
     private int mPageStart;
@@ -51,11 +45,8 @@ public class TeamListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
-        ListView listView = (ListView) view.findViewById(R.id.list);
-        listView.setFastScrollAlwaysVisible(true);
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        listView.setOnItemClickListener((adapterView, view1, position, id) -> {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
             String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
             Intent i = new Intent(getActivity(), ViewTeamActivity.class);
             i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
@@ -64,8 +55,6 @@ public class TeamListFragment
 
             startActivity(i);
         });
-        mBinder.mListView = listView;
-        mBinder.mProgressBar = progressBar;
         return view;
     }
 
