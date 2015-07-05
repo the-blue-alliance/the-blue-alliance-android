@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -143,5 +144,15 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
 
         EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+    }
+
+    @Override
+    protected boolean shouldPostToEventBus() {
+        return true;
+    }
+
+    @Override
+    protected void postToEventBus(EventBus eventBus) {
+        eventBus.post(new EventMatchesEvent(mAPIData));
     }
 }

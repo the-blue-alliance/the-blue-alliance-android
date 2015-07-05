@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
@@ -69,6 +70,11 @@ public class CacheableDatafeed implements APIv2 {
         Observable<List<Match>> apiData = mRetrofitAPI.fetchTeamAtEventMatches(teamKey, eventKey);
         apiData.subscribe(mWriter.matchListWriter.get());
         return mAPICache.fetchTeamAtEventMatches(teamKey, eventKey).concatWith(apiData);
+    }
+
+    public Observable<JsonArray> fetchTeamAtEventRank(String teamKey, String eventKey) {
+        TeamRankExtractor extractor = new TeamRankExtractor(teamKey);
+        return fetchEventRankings(eventKey).map(extractor);
     }
 
     @Override

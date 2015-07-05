@@ -9,9 +9,11 @@ import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.modules.components.FragmentComponent;
 import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 
 import javax.inject.Inject;
 
+import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -23,12 +25,13 @@ import rx.schedulers.Schedulers;
  * @param <S> {@link BaseAPISubscriber} that will take API Data -> prepare data to render
  * @param <B> {@link AbstractDataBinder} that will take prepared data -> view
  */
-public abstract class DatafeedFragment<
-  T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>> extends Fragment {
+public abstract class DatafeedFragment
+  <T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>> extends Fragment {
 
     @Inject protected S mSubscriber;
     @Inject protected B mBinder;
     @Inject protected EventBus mEventBus;
+    @Inject protected Lazy<EventBusSubscriber> mEventBusSubscriber;
 
     protected CacheableDatafeed mDatafeed;
     protected Observable<T> mObservable;
@@ -56,7 +59,15 @@ public abstract class DatafeedFragment<
                   .observeOn(Schedulers.computation())
                   .subscribe(mSubscriber);
             }
-            mEventBus.register(mSubscriber);
+            Observable[] extras = getExtraObservables();
+            if (extras != null && extras.length > 0) {
+                mEventBus.register(mSubscriber);
+                for (int i = 0; i < extras.length; i++) {
+                    extras[i].subscribeOn(Schedulers.io())
+                      .observeOn(Schedulers.computation())
+                      .subscribe(mEventBusSubscriber.get());
+                }
+            }
         }
     }
 
@@ -83,4 +94,8 @@ public abstract class DatafeedFragment<
      * Called in {@link #onResume()}
      */
     protected abstract Observable<T> getObservable();
+
+    protected Observable[] getExtraObservables() {
+        return null;
+    }
 }

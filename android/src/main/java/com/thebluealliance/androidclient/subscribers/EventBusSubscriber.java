@@ -5,12 +5,14 @@ import javax.inject.Inject;
 import de.greenrobot.event.EventBus;
 import rx.Subscriber;
 
-public class MultiEndpointSubscriber extends Subscriber<Object> {
-
+/**
+ * A class to take data from an observable and push it to the EventBus
+ */
+public class EventBusSubscriber extends Subscriber<Object> {
     private EventBus mEventBus;
 
     @Inject
-    public MultiEndpointSubscriber(EventBus eventBus) {
+    public EventBusSubscriber(EventBus eventBus) {
         mEventBus = eventBus;
     }
 

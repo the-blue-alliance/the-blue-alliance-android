@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
@@ -182,6 +183,12 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
         } else {
             showFab(true);
         }
+    }
+
+    @SuppressWarnings(value = "unused")
+    public void onEventMainThread(ActionBarTitleEvent event) {
+        setActionBarTitle(event.getTitle());
+        setActionBarSubtitle(event.getSubtitle());
     }
 
     @Override

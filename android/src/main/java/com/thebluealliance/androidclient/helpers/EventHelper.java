@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
@@ -549,5 +551,33 @@ public class EventHelper {
         Matcher m = eventKeyPattern.matcher(matchOrEventOrDistrictKey);
 
         return m.find() ? m.group().toUpperCase(Locale.US) : "";
+    }
+
+    public static String generateAllianceSummary(Resources r, int allianceNumber, int alliancePick) {
+        String[] args = new String[2];
+        String summary;
+        if (allianceNumber > 0) {
+            switch (alliancePick) {
+                case 0:
+                    args[0] = r.getString(R.string.team_at_event_captain);
+                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
+                    break;
+                case -1:
+                    args[0] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
+                    break;
+                default:
+                    args[0] = alliancePick + Utilities.getOrdinalFor(alliancePick) + " " + r.getString(R.string.team_at_event_pick);
+                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
+                    break;
+            }
+            if (alliancePick == -1) {
+                summary = String.format(r.getString(R.string.alliance_summary_no_pick_num), args[0]);
+            } else {
+                summary = String.format(r.getString(R.string.alliance_summary), args[0], args[1]);
+            }
+        } else {
+            summary = r.getString(R.string.not_picked);
+        }
+        return summary;
     }
 }

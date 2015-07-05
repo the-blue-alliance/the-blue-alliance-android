@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
@@ -9,6 +10,7 @@ import com.thebluealliance.androidclient.datafeed.APIv2;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.BasicModel;
 
+import de.greenrobot.event.EventBus;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -29,14 +31,11 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
         mConsumer = consumer;
     }
 
-    // also allow data posting via event bus
-    public void onEventAsync(T data) {
-        onNext(data);
-    }
-
     @Override
+    @WorkerThread
     public void onNext(T data) {
         mAPIData = data;
+        postToEventBus(EventBus.getDefault());
         try {
             parseData();
             bindData();
@@ -72,7 +71,7 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
         return mDataToBind;
     }
 
-    private void bindData() {
+    protected void bindData() {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 try {
@@ -84,5 +83,20 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
                 }
             }
         });
+    }
+
+    /**
+     * Post {@link #mAPIData} to the given {@link EventBus}
+     */
+    protected void postToEventBus(EventBus eventBus) {
+        eventBus.post(mAPIData);
+    }
+
+    /**
+     * Do we post {@link #mAPIData} to the EventBus?
+     * Override and return true to do so
+     */
+    protected boolean shouldPostToEventBus() {
+        return false;
     }
 }
