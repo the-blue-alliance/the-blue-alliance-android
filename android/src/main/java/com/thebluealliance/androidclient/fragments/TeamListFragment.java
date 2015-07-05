@@ -1,52 +1,42 @@
 package com.thebluealliance.androidclient.fragments;
 
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
-import com.thebluealliance.androidclient.background.PopulateTeamList;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.datafeed.maps.TeamPageCombiner;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
+
+import java.util.List;
+
+import rx.Observable;
 
 /**
- * File created by phil on 4/20/14.
+ * Displays 1000 team numbers starting with {@link #START}
  */
-
-public class TeamListFragment extends Fragment implements RefreshListener {
-
-    private Activity parent;
-
+public class TeamListFragment
+  extends DatafeedFragment<List<Team>, List<ListItem>, TeamListSubscriber, ListviewBinder> {
 
     private static final String START = "START";
-    private static final String END = "END";
+    private int mPageStart;
+    private TeamPageCombiner mCombiner;
 
-    private ListView mListView;
-    private ProgressBar mProgressBar;
-
-    private PopulateTeamList mTask;
-
-    private int mTeamNumberStart, mTeamNumberEnd;
-
-    public static TeamListFragment newInstance(int startTeamNumber, int endTeamNumber) {
+    public static TeamListFragment newInstance(int startTeamNumber) {
         TeamListFragment f = new TeamListFragment();
         Bundle args = new Bundle();
         args.putInt(START, startTeamNumber);
-        args.putInt(END, endTeamNumber);
         f.setArguments(args);
         return f;
     }
@@ -54,21 +44,18 @@ public class TeamListFragment extends Fragment implements RefreshListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeamNumberStart = getArguments().getInt(START);
-        mTeamNumberEnd = getArguments().getInt(END);
-        parent = getActivity();
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+        int teamNumberStart = getArguments().getInt(START);
+
+        mPageStart = teamNumberStart/500;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mListView = (ListView) view.findViewById(R.id.list);
-        mListView.setFastScrollAlwaysVisible(true);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
+        ListView listView = (ListView) view.findViewById(R.id.list);
+        listView.setFastScrollAlwaysVisible(true);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        listView.setOnItemClickListener((adapterView, view1, position, id) -> {
             String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
             Intent i = new Intent(getActivity(), ViewTeamActivity.class);
             i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
@@ -77,38 +64,20 @@ public class TeamListFragment extends Fragment implements RefreshListener {
 
             startActivity(i);
         });
+        mBinder.mListView = listView;
+        mBinder.mProgressBar = progressBar;
         return view;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).startRefresh(this);
-        }
+    protected void inject() {
+        mComponent.inject(this);
+        mCombiner = new TeamPageCombiner();
     }
 
     @Override
-    public void onRefreshStart(boolean actionItemPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading teams between " + mTeamNumberStart + " and " + mTeamNumberEnd);
-        mTask = new PopulateTeamList(this, new RequestParams(true, actionItemPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTeamNumberStart, mTeamNumberEnd);
-    }
-
-    public void updateTask(PopulateTeamList newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
+    protected Observable<List<Team>> getObservable() {
+        return mDatafeed.fetchTeamPage(mPageStart)
+          .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1), mCombiner);
     }
 }

@@ -43,7 +43,9 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<List<Team>> fetchTeamPage(int pageNum) {
-        return null;
+        Observable<List<Team>> apiData = mRetrofitAPI.fetchTeamPage(pageNum);
+        apiData.subscribe(mWriter.teamListWriter.get());
+        return mAPICache.fetchTeamPage(pageNum).concatWith(apiData);
     }
 
     @Override

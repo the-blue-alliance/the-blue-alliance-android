@@ -29,9 +29,13 @@ public class APICache implements APIv2 {
     }
 
     @Override
-    public Observable<List<Team>> fetchTeamPage(
-      int pageNum) {
-        return null;
+    public Observable<List<Team>> fetchTeamPage(int pageNum) {
+        String where = String.format("%1$s >= ? AND %1$s <= ?", Database.Teams.NUMBER);
+        int startNum = 500 * pageNum;
+        return Observable.just(mDb.getTeamsTable().getForQuery(
+          null,
+          where,
+          new String[]{Integer.toString(startNum), Integer.toString(startNum + 499)}));
     }
 
     @Override

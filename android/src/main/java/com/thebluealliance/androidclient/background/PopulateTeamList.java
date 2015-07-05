@@ -17,14 +17,10 @@ import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.ArrayList;
 
-/**
- * File created by phil on 4/20/14.
- */
 public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.CODE> {
 
     private TeamListFragment fragment;
@@ -100,15 +96,9 @@ public class PopulateTeamList extends AsyncTask<Integer, String, APIResponse.COD
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateTeamList secondLoad = new PopulateTeamList(fragment, requestParams);
-                fragment.updateTask(secondLoad);
-                secondLoad.execute(start, end);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Team list " + start + " - " + end + " refresh complete");
-                if (activity != null && fragment instanceof RefreshListener) {
-                    activity.notifyRefreshComplete(fragment);
-                }
             }
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team list", "");
         }

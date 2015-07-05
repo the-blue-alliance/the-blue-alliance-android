@@ -36,6 +36,6 @@ public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return TeamListFragment.newInstance(position * 1000, (position * 1000) + 999);
+        return TeamListFragment.newInstance(position * 1000);
     }
 }
