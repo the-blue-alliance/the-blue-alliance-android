@@ -11,6 +11,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.format.DateFormat;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -35,16 +36,15 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.xuender.unidecode.Unidecode;
 
-/**
- * Created by Nathan on 5/20/2014.
- */
 public class Utilities {
 
     public static int getPixelsFromDp(Context c, int dipValue) {
@@ -69,7 +69,9 @@ public class Utilities {
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {
-            return Constants.FIRST_COMP_WEEK[offset];
+;            return offset >= Constants.FIRST_COMP_WEEK.length ?
+              Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1] :
+              Constants.FIRST_COMP_WEEK[offset];
         } else {
             //if no data for this year, return the most recent data
             Log.w(Constants.LOG_TAG, "No first competition week data available for " + year + ". Using most recent year.");
@@ -396,4 +398,22 @@ public class Utilities {
         }
     }
 
+    /**
+     * {@link ArrayMap} is more memory efficient than {@link HashMap}, so prefer that if possible
+     */
+    public static <K, V> Map<K, V> getMapForPlatform(Class<K> key, Class<V> value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return new ArrayMap<>();
+        } else {
+            return new HashMap<>();
+        }
+    }
+
+    public static <K, V> Map<K, List<V>> getListMapForPlatform(Class<K> key, Class<V> value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return new ArrayMap<>();
+        } else {
+            return new HashMap<>();
+        }
+    }
 }

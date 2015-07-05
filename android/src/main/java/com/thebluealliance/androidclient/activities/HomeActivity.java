@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -29,14 +30,14 @@ import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.modules.components.FragmentComponent;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 
 import java.util.Calendar;
 
-/**
- * File created by phil on 4/20/14.
- */
-
-public class HomeActivity extends LegacyRefreshableHostActivity {
+public class HomeActivity extends LegacyRefreshableHostActivity implements HasFragmentComponent {
 
     /**
      * Saved instance state key representing the last select navigajjjjtion drawer item
@@ -53,18 +54,15 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
-    private boolean fromSavedInstance = false;
-
+    private boolean mFromSavedInstance = false;
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
-
-    private String[] eventsDropdownItems, districtsDropdownItems;
-
-    private TextView warningMessage;
-
-    private Toolbar toolbar;
-    private View yearSelectorContainer;
-    private TextView yearSelectorTitle;
+    private String[] mEventsDropdownItems, mDistrictsDropdownItems;
+    private TextView mWarningMessage;
+    private Toolbar mToolbar;
+    private View mYearSelectorContainer;
+    private TextView mYarSelectorTitle;
+    private FragmentComponent mComponent;
 
     public static Intent newInstance(Context context, int requestedMode) {
         Intent i = new Intent(context, HomeActivity.class);
@@ -78,26 +76,26 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
 
         setContentView(R.layout.activity_home);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        yearSelectorContainer = findViewById(R.id.year_selector_container);
-        yearSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
+        mYearSelectorContainer = findViewById(R.id.year_selector_container);
+        mYarSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
 
-        warningMessage = (TextView) findViewById(R.id.warning_container);
+        mWarningMessage = (TextView) findViewById(R.id.warning_container);
 
         hideWarningMessage();
 
         handler = new Handler();
 
-        eventsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
-        for (int i = 0; i < eventsDropdownItems.length; i++) {
-            eventsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+        mEventsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
+        for (int i = 0; i < mEventsDropdownItems.length; i++) {
+            mEventsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
         }
 
-        districtsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_DISTRICT_YEAR + 1];
-        for (int i = 0; i < districtsDropdownItems.length; i++) {
-            districtsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+        mDistrictsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_DISTRICT_YEAR + 1];
+        for (int i = 0; i < mDistrictsDropdownItems.length; i++) {
+            mDistrictsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
         }
 
         int initNavId = R.id.nav_item_events;
@@ -112,7 +110,7 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
         }
 
         if (savedInstanceState != null) {
-            fromSavedInstance = true;
+            mFromSavedInstance = true;
             Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
@@ -150,7 +148,7 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
         useActionBarToggle(true);
         // Only encourage learning on the launch of the app, not when the activity is
         // recreated from orientation changes
-        encourageLearning(!fromSavedInstance);
+        encourageLearning(!mFromSavedInstance);
     }
 
     @Override
@@ -208,16 +206,16 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
 
         // The Districts fragment doesn't have tabs to set an elevation to, so we have to apply an elevation to the toolbar here
         if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts) {
-            ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+            ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
         } else {
-            ViewCompat.setElevation(toolbar, 0);
+            ViewCompat.setElevation(mToolbar, 0);
         }
     }
 
     private void resetActionBar() {
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
-            yearSelectorContainer.setVisibility(View.GONE);
+            mYearSelectorContainer.setVisibility(View.GONE);
             //bar.setDisplayShowCustomEnabled(false);
             bar.setDisplayShowTitleEnabled(true);
         }
@@ -237,15 +235,15 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
                 break;
             case R.id.nav_item_teams:
                 getSupportActionBar().setTitle("Teams");
-                toolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
             case R.id.nav_item_insights:
                 getSupportActionBar().setTitle("Insights");
-                toolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
             case R.id.nav_item_my_tba:
                 getSupportActionBar().setTitle("myTBA");
-                toolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
         }
 
@@ -256,13 +254,13 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
         ActionBar bar = getSupportActionBar();
         bar.setDisplayShowTitleEnabled(false);
 
-        yearSelectorContainer.setVisibility(View.VISIBLE);
+        mYearSelectorContainer.setVisibility(View.VISIBLE);
 
-        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, eventsDropdownItems);
+        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, mEventsDropdownItems);
 
-        yearSelectorContainer.setOnClickListener(v -> dialog.show());
+        mYearSelectorContainer.setOnClickListener(v -> dialog.show());
 
-        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < eventsDropdownItems.length) {
+        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < mEventsDropdownItems.length) {
             onYearSelected(mCurrentSelectedYearPosition);
             updateEventsYearSelector(mCurrentSelectedYearPosition);
         } else {
@@ -273,19 +271,19 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
 
     private void updateEventsYearSelector(int selectedPosition) {
         Resources res = getResources();
-        yearSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_events), eventsDropdownItems[selectedPosition]));
+        mYarSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_events), mEventsDropdownItems[selectedPosition]));
     }
 
     private void setupActionBarForDistricts() {
         ActionBar bar = getSupportActionBar();
         bar.setDisplayShowTitleEnabled(false);
 
-        yearSelectorContainer.setVisibility(View.VISIBLE);
+        mYearSelectorContainer.setVisibility(View.VISIBLE);
 
-        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, districtsDropdownItems);
+        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, mDistrictsDropdownItems);
 
-        yearSelectorContainer.setOnClickListener(v -> dialog.show());
-        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < eventsDropdownItems.length) {
+        mYearSelectorContainer.setOnClickListener(v -> dialog.show());
+        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < mEventsDropdownItems.length) {
             onYearSelected(mCurrentSelectedYearPosition);
             updateDistrictsYearSelector(mCurrentSelectedYearPosition);
         } else {
@@ -296,7 +294,7 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
 
     private void updateDistrictsYearSelector(int selectedPosition) {
         Resources res = getResources();
-        yearSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_districts), districtsDropdownItems[selectedPosition]));
+        mYarSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_districts), mDistrictsDropdownItems[selectedPosition]));
     }
 
     private Dialog makeDialogForYearSelection(@StringRes int titleResId, String[] dropdownItems) {
@@ -328,13 +326,13 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
 
     @Override
     public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+        mWarningMessage.setText(message);
+        mWarningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override
@@ -382,5 +380,19 @@ public class HomeActivity extends LegacyRefreshableHostActivity {
         }
         transaction.commit();
         mCurrentSelectedYearPosition = position;
+    }
+
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .build();
+        }
+        return mComponent;
     }
 }

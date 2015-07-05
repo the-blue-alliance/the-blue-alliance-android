@@ -34,9 +34,6 @@ import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * File created by phil on 6/15/14.
- */
 public class EventHelper {
 
     public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH);
@@ -186,14 +183,14 @@ public class EventHelper {
         return -1;
     }
 
-    public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
-        HashMap<String, ArrayList<Event>> groups = new HashMap<>();
+    public static HashMap<String, List<Event>> groupByWeek(List<Event> events) {
+        HashMap<String, List<Event>> groups = new HashMap<>();
         ArrayList<Event> offseason = new ArrayList<>(),
                 preseason = new ArrayList<>(),
                 weekless = new ArrayList<>();
 
         for (Event e : events) {
-            ArrayList<Event> list;
+            List<Event> list;
             try {
                 boolean official = e.isOfficial();
                 TYPE type = e.getEventType();

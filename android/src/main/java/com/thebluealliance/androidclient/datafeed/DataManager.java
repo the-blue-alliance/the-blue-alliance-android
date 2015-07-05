@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Nathan on 4/30/2014.
@@ -209,8 +210,8 @@ public class DataManager {
             return Event.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
-        public static APIResponse<HashMap<String, ArrayList<Event>>> getEventsByYear(Context c, int year, RequestParams requestParams) throws NoDataException {
-            HashMap<String, ArrayList<Event>> groupedEvents;
+        public static APIResponse<HashMap<String, List<Event>>> getEventsByYear(Context c, int year, RequestParams requestParams) throws NoDataException {
+            HashMap<String, List<Event>> groupedEvents;
             APIResponse<ArrayList<Event>> eventListResponse;
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_LIST), year);
             String sqlWhere = Database.Events.YEAR + " =?";

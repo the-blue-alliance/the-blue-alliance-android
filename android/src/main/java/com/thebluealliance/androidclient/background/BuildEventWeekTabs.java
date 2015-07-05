@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.models.Event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * File created by phil on 5/21/14.
@@ -46,7 +47,7 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
         year = params[0];
         try {
             Log.d(Constants.LOG_TAG, "Loading event list...");
-            APIResponse<HashMap<String, ArrayList<Event>>> allEvents = DataManager.Events.getEventsByYear(fragment.getActivity(), year, new RequestParams());
+            APIResponse<HashMap<String, List<Event>>> allEvents = DataManager.Events.getEventsByYear(fragment.getActivity(), year, new RequestParams());
             allLabels = new ArrayList<>();
             allLabels.addAll(allEvents.getData().keySet());
             Collections.sort(allLabels, comparator);
@@ -65,7 +66,6 @@ public class BuildEventWeekTabs extends AsyncTask<Integer, Void, APIResponse.COD
             if (code != APIResponse.CODE.NODATA && allLabels != null && allLabels.size() > 0) {
                 Log.d(Constants.REFRESH_LOG, "Event week tabs data downloaded");
                 fragment.updateLabels(allLabels);
-                fragment.notifyRefreshComplete(fragment);
             }
             AnalyticsHelper.sendTimingUpdate(fragment.getActivity(), System.currentTimeMillis() - startTime, "build week tabs", "");
         }

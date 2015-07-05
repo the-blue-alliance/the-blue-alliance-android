@@ -27,8 +27,6 @@ public class CacheableDatafeed implements APIv2 {
     private APICache mAPICache;
     private DatabaseWriter mWriter;
 
-    // TODO add callback to retrofit results to store new data in db
-
     @Inject
     public CacheableDatafeed(
       @Named("retrofit") APIv2 retrofitAPI,
@@ -37,6 +35,10 @@ public class CacheableDatafeed implements APIv2 {
         mRetrofitAPI = retrofitAPI;
         mAPICache = apiCache;
         mWriter = writer;
+    }
+
+    public APICache getCache() {
+        return mAPICache;
     }
 
     @Override
@@ -101,7 +103,9 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<List<Event>> fetchEventsInYear(int year) {
-        return null;
+        Observable<List<Event>> apiData = mRetrofitAPI.fetchEventsInYear(year);
+        apiData.subscribe(mWriter.eventListWriter.get());
+        return mAPICache.fetchEventsInYear(year).concatWith(apiData);
     }
 
     @Override

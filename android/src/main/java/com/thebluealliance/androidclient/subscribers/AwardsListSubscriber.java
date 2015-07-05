@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.os.Build;
-import android.util.ArrayMap;
-
 import com.google.gson.JsonElement;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -12,7 +10,6 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +39,7 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
         if (mAPIData == null || mAPIData.isEmpty()) {
             return;
         }
-        Map<String, Team> teams = getMapForPlatform();
+        Map<String, Team> teams = Utilities.getMapForPlatform(String.class, Team.class);
         for (int i = 0; i < mAPIData.size(); i++) {
             Award award = mAPIData.get(i);
             for (JsonElement winner : award.getWinners()) {
@@ -58,17 +55,6 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
               award.getWinners(),
               teams,
               mTeamKey));
-        }
-    }
-
-    /**
-     * {@link ArrayMap} is more memory efficient than {@link HashMap}, so prefer that if possible
-     */
-    private Map<String, Team> getMapForPlatform() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return new ArrayMap<>();
-        } else {
-            return new HashMap<>();
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.modules;
 
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
+import com.thebluealliance.androidclient.binders.EventTabBinder;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
@@ -41,5 +42,10 @@ public class BinderModule {
     @Provides
     public MatchListBinder provideMatchListBinder() {
         return new MatchListBinder();
+    }
+
+    @Provides
+    public EventTabBinder provideEventTabBinder() {
+        return new EventTabBinder();
     }
 }

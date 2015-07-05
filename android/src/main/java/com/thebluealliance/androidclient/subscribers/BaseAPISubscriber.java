@@ -89,7 +89,9 @@ public abstract class BaseAPISubscriber<T, V> extends Subscriber<T> implements A
      * Post {@link #mAPIData} to the given {@link EventBus}
      */
     protected void postToEventBus(EventBus eventBus) {
-        eventBus.post(mAPIData);
+        if (shouldPostToEventBus()) {
+            eventBus.post(mAPIData);
+        }
     }
 
     /**

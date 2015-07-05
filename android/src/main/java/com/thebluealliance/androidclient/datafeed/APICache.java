@@ -81,7 +81,16 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<Event>> fetchEventsInYear(int year) {
-        return null;
+        String where = String.format("%1$s = ?", Database.Events.YEAR);
+        return Observable.just(
+          mDb.getEventsTable().getForQuery(null, where, new String[]{Integer.toString(year)}));
+    }
+
+    public Observable<List<Event>> fetchEventsInWeek(int year, int week) {
+        String where =
+          String.format("%1$s = ? AND %2$s = ?", Database.Events.YEAR, Database.Events.WEEK);
+        return Observable.just(mDb.getEventsTable()
+          .getForQuery(null, where, new String[]{Integer.toString(year), Integer.toString(week)}));
     }
 
     @Override

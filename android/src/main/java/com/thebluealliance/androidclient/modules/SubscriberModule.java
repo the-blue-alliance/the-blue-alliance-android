@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
+import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
@@ -99,5 +100,9 @@ public class SubscriberModule {
 
     @Provides TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(Database db) {
         return new TeamAtEventSummarySubscriber(mActivity, db);
+    }
+
+    @Provides EventTabSubscriber provideEventTabsSubscriber() {
+        return new EventTabSubscriber();
     }
 }
