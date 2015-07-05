@@ -69,7 +69,7 @@ public class Utilities {
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {
-;            return offset >= Constants.FIRST_COMP_WEEK.length ?
+;            return offset >= Constants.FIRST_COMP_WEEK.length || offset < 0?
               Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1] :
               Constants.FIRST_COMP_WEEK[offset];
         } else {

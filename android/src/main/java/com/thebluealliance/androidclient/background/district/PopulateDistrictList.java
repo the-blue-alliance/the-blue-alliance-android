@@ -101,13 +101,9 @@ public class PopulateDistrictList extends AsyncTask<Integer, Void, APIResponse.C
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateDistrictList second = new PopulateDistrictList(fragment, requestParams);
-                fragment.updateTask(second);
-                second.execute(year);
             } else if (activity != null) {
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Event list refresh complete");
-                activity.notifyRefreshComplete(fragment);
             }
 
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "district list", Integer.toString(year));

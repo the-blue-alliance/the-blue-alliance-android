@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.RetrofitConverter;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
@@ -22,6 +23,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserialize
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
@@ -102,6 +104,7 @@ public class DatafeedModule {
         builder.registerTypeAdapter(Match.class, new MatchDeserializer());
         builder.registerTypeAdapter(Team.class, new TeamDeserializer());
         builder.registerTypeAdapter(Media.class, new MediaDeserializer());
+        builder.registerTypeAdapter(District.class, new DistrictDeserializer());
         builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
         builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
         return builder.create();

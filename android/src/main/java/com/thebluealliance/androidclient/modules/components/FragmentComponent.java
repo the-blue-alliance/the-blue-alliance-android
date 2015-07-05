@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
+import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.event.EventAlliancesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
@@ -59,4 +60,5 @@ public interface FragmentComponent {
     void inject(EventsByWeekFragment fragment);
     void inject(EventListFragment fragment);
     void inject(TeamListFragment teamListFragment);
+    void inject(DistrictListFragment districtListFragment);
 }

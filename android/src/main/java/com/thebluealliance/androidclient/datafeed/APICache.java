@@ -163,7 +163,9 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<District>> fetchDistrictList(int year) {
-        return null;
+        String where = String.format("%1$s = ?", Database.Districts.YEAR);
+        return Observable.just(
+          mDb.getDistrictsTable().getForQuery(null, where, new String[]{Integer.toString(year)}));
     }
 
     @Override

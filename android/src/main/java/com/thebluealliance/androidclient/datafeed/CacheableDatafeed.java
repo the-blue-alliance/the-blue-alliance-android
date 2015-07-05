@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.models.Award;
@@ -164,7 +165,10 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<List<District>> fetchDistrictList(int year) {
-        return null;
+        Observable<List<District>> apiData = mRetrofitAPI.fetchDistrictList(year)
+          .map(new AddDistrictKeys(year));
+        apiData.subscribe(mWriter.districtListWriter.get());
+        return mAPICache.fetchDistrictList(year).concatWith(apiData);
     }
 
     @Override

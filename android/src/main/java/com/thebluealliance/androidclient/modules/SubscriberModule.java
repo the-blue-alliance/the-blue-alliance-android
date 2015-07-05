@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
@@ -104,5 +105,9 @@ public class SubscriberModule {
 
     @Provides EventTabSubscriber provideEventTabsSubscriber() {
         return new EventTabSubscriber();
+    }
+
+    @Provides DistrictListSubscriber provideDistrictListSubscriber(Database db) {
+        return new DistrictListSubscriber(db);
     }
 }
