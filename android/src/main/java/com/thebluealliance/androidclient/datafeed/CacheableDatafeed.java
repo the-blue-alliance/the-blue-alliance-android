@@ -173,7 +173,9 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<List<Event>> fetchDistrictEvents(String districtShort, int year) {
-        return null;
+        Observable<List<Event>> apiData = mRetrofitAPI.fetchDistrictEvents(districtShort, year);
+        apiData.subscribe(mWriter.eventListWriter.get());
+        return mAPICache.fetchDistrictEvents(districtShort, year).concatWith(apiData);
     }
 
     @Override

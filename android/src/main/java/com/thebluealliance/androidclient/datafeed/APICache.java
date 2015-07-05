@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
@@ -170,7 +171,13 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<List<Event>> fetchDistrictEvents(String districtShort, int year) {
-        return null;
+        String where =
+          String.format("$1%s = ? AND %2$s = ?", Database.Events.YEAR, Database.Events.DISTRICT);
+        int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtShort).ordinal();
+        return Observable.just(mDb.getEventsTable().getForQuery(
+          null,
+          where,
+          new String[]{Integer.toString(year), Integer.toString(districtEnum)}));
     }
 
     @Override
