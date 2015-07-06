@@ -19,7 +19,7 @@ public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventL
 
     public static final String KEY = "districtKey";
 
-    private String mKey, mShort;
+    private String mShort;
     private int mYear;
 
     public static DistrictEventsFragment newInstance(String key) {
@@ -33,12 +33,12 @@ public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mKey = getArguments().getString(KEY);
-        if (!DistrictHelper.validateDistrictKey(mKey)) {
-            throw new IllegalArgumentException("Invalid district key + " + mKey);
+        String key = getArguments().getString(KEY);
+        if (!DistrictHelper.validateDistrictKey(key)) {
+            throw new IllegalArgumentException("Invalid district key + " + key);
         }
-        mShort = mKey.substring(4);
-        mYear = Integer.parseInt(mKey.substring(0, 4));
+        mShort = key.substring(4);
+        mYear = Integer.parseInt(key.substring(0, 4));
     }
 
     @Override

@@ -25,9 +25,6 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 
-/**
- * Created by phil on 7/24/14.
- */
 public class PopulateDistrictRankings extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private RequestParams requestParams;
@@ -120,13 +117,9 @@ public class PopulateDistrictRankings extends AsyncTask<String, Void, APIRespons
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateDistrictRankings second = new PopulateDistrictRankings(fragment, requestParams);
-                fragment.updateTask(second);
-                second.execute(districtKey);
             } else if (activity != null) {
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "District rankings refresh complete");
-                activity.notifyRefreshComplete(fragment);
             }
 
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "district rankings", districtKey);

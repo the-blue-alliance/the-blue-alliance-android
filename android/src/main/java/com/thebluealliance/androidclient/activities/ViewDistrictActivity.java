@@ -56,7 +56,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRefreshEnabled(false);
         String districtAbbrev;
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_ABBREV)) {
             districtAbbrev = getIntent().getExtras().getString(DISTRICT_ABBREV, "");

@@ -4,10 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
+import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -179,8 +181,12 @@ public class CacheableDatafeed implements APIv2 {
     }
 
     @Override
-    public Observable<JsonArray> fetchDistrictRankings(String districtShort, int year) {
-        return null;
+    public Observable<List<DistrictTeam>> fetchDistrictRankings(String districtShort, int year) {
+        Observable<List<DistrictTeam>> apiData =
+          mRetrofitAPI.fetchDistrictRankings(districtShort, year)
+            .map(new AddDistrictTeamKey(districtShort, year));
+        apiData.subscribe(mWriter.districtTeamListWriter.get());
+        return mAPICache.fetchDistrictRankings(districtShort, year).concatWith(apiData);
     }
 
     @Override

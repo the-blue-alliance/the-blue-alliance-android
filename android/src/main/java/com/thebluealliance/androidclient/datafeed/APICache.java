@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -26,7 +27,7 @@ public class APICache implements APIv2 {
 
     @Inject
     public APICache(Database db) {
-       mDb = db;
+        mDb = db;
     }
 
     @Override
@@ -40,8 +41,7 @@ public class APICache implements APIv2 {
     }
 
     @Override
-    public Observable<Team> fetchTeam(
-      String teamKey) {
+    public Observable<Team> fetchTeam(String teamKey) {
         Team team = mDb.getTeamsTable().get(teamKey);
         return Observable.just(team);
     }
@@ -181,8 +181,16 @@ public class APICache implements APIv2 {
     }
 
     @Override
-    public Observable<JsonArray> fetchDistrictRankings(String districtShort, int year) {
-        return null;
+    public Observable<List<DistrictTeam>> fetchDistrictRankings(String districtShort, int year) {
+        String where = String.format(
+          "%1$s = ? AND %2$s = ?",
+          Database.DistrictTeams.YEAR,
+          Database.DistrictTeams.DISTRICT_ENUM);
+        int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtShort).ordinal();
+        return Observable.just(mDb.getDistrictTeamsTable().getForQuery(
+          null,
+          where,
+          new String[]{Integer.toString(year), Integer.toString(districtEnum)}));
     }
 
     @Override

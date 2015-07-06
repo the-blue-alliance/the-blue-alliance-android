@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -123,10 +124,10 @@ public interface APIv2 {
       );
 
     @GET("/district/{districtShort}/{year}/rankings")
-    Observable<JsonArray> fetchDistrictRankings(
+    Observable<List<DistrictTeam>> fetchDistrictRankings(
       @Path("districtShort") String districtShort,
       @Path("year") int year
-      );
+    );
 
     @GET("/match/{matchKey}")
     Observable<Match> fetchMatch(
