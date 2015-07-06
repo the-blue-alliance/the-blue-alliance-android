@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
+import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.models.Award;
@@ -187,6 +188,13 @@ public class CacheableDatafeed implements APIv2 {
             .map(new AddDistrictTeamKey(districtShort, year));
         apiData.subscribe(mWriter.districtTeamListWriter.get());
         return mAPICache.fetchDistrictRankings(districtShort, year).concatWith(apiData);
+    }
+
+    public Observable<DistrictTeam> fetchTeamAtDistrictRankings(
+      String teamKey,
+      String districtShort,
+      int year) {
+        return fetchDistrictRankings(districtShort, year).map(new DistrictTeamExtractor(teamKey));
     }
 
     @Override

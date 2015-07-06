@@ -13,16 +13,15 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictSummaryFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.LabelValueDetailListItem;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -167,13 +166,9 @@ public class PopulateTeamAtDistrictSummary extends AsyncTask<String, Void, APIRe
                  * Thus, fire off this task again with a flag saying to actually load from the web
                  */
                 requestParams.forceFromCache = false;
-                PopulateTeamAtDistrictSummary second = new PopulateTeamAtDistrictSummary(fragment, requestParams);
-                fragment.updateTask(second);
-                second.execute(teamKey, districtKey);
             } else {
                 // Show notification if we've refreshed data.
                 Log.d(Constants.REFRESH_LOG, "Team@District summary refresh complete");
-                activity.notifyRefreshComplete((RefreshListener) fragment);
             }
 
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@district summary", teamKey + "@" + districtKey);
