@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.LabelValueDetailListItem;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
@@ -16,17 +17,29 @@ import com.thebluealliance.androidclient.models.Event;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 public class TeamAtDistrictSummarySubscriber
   extends BaseAPISubscriber<DistrictTeam, List<ListItem>> {
 
     private Database mDb;
     private Resources mResources;
+    private String mTeamKey;
+    private String mDistrictKey;
 
     public TeamAtDistrictSummarySubscriber(Database db, Resources resources) {
         super();
         mDb = db;
         mResources = resources;
         mDataToBind = new ArrayList<>();
+    }
+
+    public void setTeamKey(String teamKey) {
+        mTeamKey = teamKey;
+    }
+
+    public void setDistrictKey(String districtKey) {
+        mDistrictKey = districtKey;
     }
 
     @Override
@@ -60,5 +73,12 @@ public class TeamAtDistrictSummarySubscriber
         mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.total_district_points),
           String.format(
             mResources.getString(R.string.district_points_format), mAPIData.getTotalPoints())));
+
+        String actionBarTitle =
+          String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
+        String actionBarSubtitle = String.format("@ %1$s %2$s",
+          mDistrictKey.substring(0, 4),
+          mDistrictKey.substring(4).toUpperCase());
+        EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
     }
 }

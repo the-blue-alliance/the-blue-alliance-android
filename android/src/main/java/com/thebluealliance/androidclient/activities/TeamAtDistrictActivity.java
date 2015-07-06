@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtDistrictFragmentPagerAdapter;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
@@ -162,6 +163,12 @@ public class TeamAtDistrictActivity extends LegacyRefreshableHostActivity
     @Override
     public void hideWarningMessage() {
         mWarningMessage.setVisibility(View.GONE);
+    }
+
+    @SuppressWarnings(value = "unused")
+    public void onEventMainThread(ActionBarTitleEvent event) {
+        setActionBarTitle(event.getTitle());
+        setActionBarSubtitle(event.getSubtitle());
     }
 
     @Override

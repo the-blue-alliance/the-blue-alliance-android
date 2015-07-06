@@ -42,6 +42,8 @@ public class TeamAtDistrictSummaryFragment
             }
             mDistrictShort = districtKey.substring(4);
             mYear = Integer.parseInt(districtKey.substring(0, 4));
+            mSubscriber.setTeamKey(mTeamKey);
+            mSubscriber.setDistrictKey(districtKey);
         }
     }
 
