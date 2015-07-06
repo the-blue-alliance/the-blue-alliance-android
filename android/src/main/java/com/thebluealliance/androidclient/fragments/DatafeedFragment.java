@@ -60,9 +60,9 @@ public abstract class DatafeedFragment
                   .subscribe(mSubscriber);
             }
             Observable[] extras = getExtraObservables();
-            if (extras != null && extras.length > 0) {
+            if (shouldRegisterSubscriberToEventBus() || (extras != null && extras.length > 0)) {
                 mEventBus.register(mSubscriber);
-                for (int i = 0; i < extras.length; i++) {
+                for (int i = 0; extras != null && i < extras.length; i++) {
                     extras[i].subscribeOn(Schedulers.io())
                       .observeOn(Schedulers.computation())
                       .subscribe(mEventBusSubscriber.get());
@@ -95,7 +95,14 @@ public abstract class DatafeedFragment
      */
     protected abstract Observable<T> getObservable();
 
+    /**
+     * In case there are other endpoints that need to be hit
+     */
     protected Observable[] getExtraObservables() {
         return null;
+    }
+
+    protected boolean shouldRegisterSubscriberToEventBus() {
+        return false;
     }
 }

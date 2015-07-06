@@ -64,8 +64,8 @@ public class EventMatchesFragment
         View v = inflater.inflate(R.layout.fragment_event_results, null);
         mListView = (ExpandableListView) v.findViewById(R.id.match_results);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        mBinder.mExpandableList = mListView;
-        mBinder.mProgressBar = progressBar;
+        mBinder.expandableList = mListView;
+        mBinder.progressBar = progressBar;
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);

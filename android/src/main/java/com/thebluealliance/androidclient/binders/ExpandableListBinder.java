@@ -21,8 +21,8 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
       MODE_EXPAND_ONLY = 2,
       MODE_EXPAND_ALL = 3;
 
-    public ExpandableListView mExpandableList;
-    public ProgressBar mProgressBar;
+    public ExpandableListView expandableList;
+    public ProgressBar progressBar;
 
     private short mExpandMode;
 
@@ -37,18 +37,18 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
 
     @Override
     public void updateData(@Nullable List<ListGroup> data) {
-        if (data == null || mExpandableList == null) {
+        if (data == null || expandableList == null) {
             return;
         }
 
         ExpandableListAdapter adapter = newAdapter(ImmutableList.copyOf(data));
-        mExpandableList.setAdapter(adapter);
+        expandableList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        mExpandableList.setVisibility(View.VISIBLE);
+        expandableList.setVisibility(View.VISIBLE);
         expandForMode(data);
 
-        if (mProgressBar != null && !data.isEmpty()) {
-            mProgressBar.setVisibility(View.GONE);
+        if (progressBar != null && !data.isEmpty()) {
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -58,8 +58,8 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
 
     @Override
     public void onComplete() {
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
         }
 
         // TODO no data text
@@ -74,29 +74,29 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
         switch (mExpandMode) {
             case MODE_EXPAND_ALL:
                 for (int i = 0; i < groups.size(); i++) {
-                    mExpandableList.expandGroup(i);
+                    expandableList.expandGroup(i);
                 }
                 break;
             case MODE_EXPAND_FIRST:
                 if (groups.size() > 0) {
-                    mExpandableList.expandGroup(0);
+                    expandableList.expandGroup(0);
                 }
                 for (int i = 1; i < groups.size(); i++) {
-                    mExpandableList.collapseGroup(i);
+                    expandableList.collapseGroup(i);
                 }
                 break;
             case MODE_EXPAND_ONLY:
                 if (groups.size() == 1) {
-                    mExpandableList.expandGroup(0);
+                    expandableList.expandGroup(0);
                 } else {
                     for (int i = 0; i < groups.size(); i++) {
-                        mExpandableList.collapseGroup(i);
+                        expandableList.collapseGroup(i);
                     }
                 }
                 break;
             case MODE_EXPAND_NONE:
                 for (int i = 0; i < groups.size(); i++) {
-                    mExpandableList.collapseGroup(i);
+                    expandableList.collapseGroup(i);
                 }
                 break;
         }

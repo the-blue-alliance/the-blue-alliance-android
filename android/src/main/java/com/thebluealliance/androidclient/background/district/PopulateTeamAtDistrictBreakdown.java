@@ -13,14 +13,13 @@ import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivit
 import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictBreakdownFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
@@ -173,26 +172,6 @@ public class PopulateTeamAtDistrictBreakdown extends AsyncTask<String, Void, API
             if (code == APIResponse.CODE.OFFLINECACHE) {
                 activity.showWarningMessage(activity.getString(R.string.warning_using_cached_data));
             }
-
-            if (code == APIResponse.CODE.LOCAL && !isCancelled()) {
-                /**
-                 * The data has the possibility of being updated, but we at first loaded
-                 * what we have cached locally for performance reasons.
-                 * Thus, fire off this task again with a flag saying to actually load from the web
-                 */
-                requestParams.forceFromCache = false;
-                PopulateTeamAtDistrictBreakdown secondLoad = new PopulateTeamAtDistrictBreakdown(fragment, requestParams);
-                fragment.updateTask(secondLoad);
-                secondLoad.execute(teamKey, districtKey);
-            }
-            {
-                // Show notification if we've refreshed data.
-                if (fragment instanceof RefreshListener) {
-                    Log.d(Constants.REFRESH_LOG, teamKey + " at " + districtKey + " refresh complete");
-                    activity.notifyRefreshComplete(fragment);
-                }
-            }
-
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team@district breakdown", teamKey + "@" + districtKey);
         }
     }
