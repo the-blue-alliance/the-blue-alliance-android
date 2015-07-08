@@ -199,6 +199,8 @@ public class CacheableDatafeed implements APIv2 {
 
     @Override
     public Observable<Match> fetchMatch(String matchKey) {
-        return null;
+        Observable<Match> apiData = mRetrofitAPI.fetchMatch(matchKey);
+        apiData.subscribe(mWriter.matchWriter.get());
+        return mAPICache.fetchMatch(matchKey).concatWith(apiData);
     }
 }

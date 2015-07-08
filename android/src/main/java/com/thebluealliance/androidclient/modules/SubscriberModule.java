@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
+import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
@@ -26,6 +27,7 @@ import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 
 import dagger.Module;
 import dagger.Provides;
+import de.greenrobot.event.EventBus;
 
 /**
  * Module that injects {@link BaseAPISubscriber} objects to bind datafeed values to views
@@ -126,5 +128,9 @@ public class SubscriberModule {
       Database db,
       Gson gson) {
         return new TeamAtDistrictBreakdownSubscriber(mActivity, db, gson);
+    }
+
+    @Provides MatchInfoSubscriber provideMatchInfoSubscriber(Gson gson, EventBus eventBus) {
+        return new MatchInfoSubscriber(gson, eventBus);
     }
 }

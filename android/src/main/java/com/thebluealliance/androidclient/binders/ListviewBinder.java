@@ -29,6 +29,9 @@ public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
 
         if (progressBar != null && !data.isEmpty()) {
             progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        } else {
+            listView.setVisibility(View.GONE);
         }
     }
 

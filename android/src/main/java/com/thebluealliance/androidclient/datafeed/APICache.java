@@ -195,6 +195,6 @@ public class APICache implements APIv2 {
 
     @Override
     public Observable<Match> fetchMatch(String matchKey) {
-        return null;
+        return Observable.just(mDb.getMatchesTable().get(matchKey));
     }
 }
