@@ -39,11 +39,14 @@ import rx.Observable;
 public class EventStatsFragment
   extends DatafeedFragment<JsonObject, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
-    private static final String KEY = "eventKey", SORT = "sort";
+    private static final String KEY = "eventKey";
+    private static final String SORT = "sort";
+    public static final String DATAFEED_TAG_FORMAT = "event_stats_%1$s";
 
     private AlertDialog mStatsDialog;
     private String[] mItems;
     private String mEventKey;
+    private String mDatafeedTag;
     private Parcelable mListState;
     private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
@@ -71,6 +74,7 @@ public class EventStatsFragment
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
 
         if (savedInstanceState != null) {
             mSelectedStatSort = savedInstanceState.getInt(SORT, -1);
@@ -195,4 +199,8 @@ public class EventStatsFragment
         return "";
     }
 
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
+    }
 }

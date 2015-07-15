@@ -16,8 +16,11 @@ import rx.Observable;
 public class TeamAtDistrictSummaryFragment
   extends ListviewFragment<DistrictTeam, TeamAtDistrictSummarySubscriber> {
 
-    public static final String DISTRICT = "districtKey", TEAM = "teamKey";
+    public static final String DISTRICT = "districtKey";
+    public static final String TEAM = "teamKey";
+    public static final String DATAFEED_TAG_FORMAT = "team_at_district_summary_%1$s_%2$d_%3$s";
 
+    private String mDatafeedTag;
     private String mTeamKey;
     private String mDistrictShort;
     private int mYear;
@@ -42,6 +45,8 @@ public class TeamAtDistrictSummaryFragment
             }
             mDistrictShort = districtKey.substring(4);
             mYear = Integer.parseInt(districtKey.substring(0, 4));
+            mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mYear, mDistrictShort);
+
             mSubscriber.setTeamKey(mTeamKey);
             mSubscriber.setDistrictKey(districtKey);
         }
@@ -62,5 +67,10 @@ public class TeamAtDistrictSummaryFragment
     @Override
     protected Observable<DistrictTeam> getObservable() {
         return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }

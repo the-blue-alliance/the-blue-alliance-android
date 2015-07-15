@@ -34,8 +34,10 @@ public class TeamInfoFragment
   implements View.OnClickListener {
 
     private static final String TEAM_KEY = "team_key";
+    public static final String DATAFEED_TAG_FORMAT = "team_info_%1$s";
 
     private String mTeamKey;
+    private String mDatafeedTag;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -52,6 +54,7 @@ public class TeamInfoFragment
         if (mTeamKey == null) {
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey);
     }
 
     @Override
@@ -148,5 +151,10 @@ public class TeamInfoFragment
     @Override
     protected Observable<Team> getObservable() {
         return mDatafeed.fetchTeam(mTeamKey);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }

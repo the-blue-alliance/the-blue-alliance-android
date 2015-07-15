@@ -18,9 +18,11 @@ import rx.Observable;
 public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
 
     public static final String KEY = "districtKey";
+    public static final String DATAFEED_TAG_FORMAT = "district_events_%1$d_%2$s";
 
     private String mShort;
     private int mYear;
+    private String mDatafeedTag;
 
     public static DistrictEventsFragment newInstance(String key) {
         DistrictEventsFragment f = new DistrictEventsFragment();
@@ -39,6 +41,7 @@ public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventL
         }
         mShort = key.substring(4);
         mYear = Integer.parseInt(key.substring(0, 4));
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear, mShort);
     }
 
     @Override
@@ -56,5 +59,10 @@ public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventL
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchDistrictEvents(mShort, mYear);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }

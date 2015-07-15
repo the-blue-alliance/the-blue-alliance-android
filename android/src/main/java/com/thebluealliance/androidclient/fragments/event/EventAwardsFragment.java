@@ -16,8 +16,11 @@ import rx.Observable;
 
 public class EventAwardsFragment extends ListviewFragment<List<Award>, AwardsListSubscriber> {
     private static final String EVENT_KEY = "eventKey", TEAM_KEY = "teamKey";
+    public static final String DATAFEED_TAG_FORMAT = "event_awards_%1$s_%2$s";
 
-    private String mEventKey, mTeamKey;
+    private String mEventKey;
+    private String mTeamKey;
+    private String mDatafeedTag;
 
     public static EventAwardsFragment newInstance(String eventKey) {
         EventAwardsFragment f = new EventAwardsFragment();
@@ -45,6 +48,7 @@ public class EventAwardsFragment extends ListviewFragment<List<Award>, AwardsLis
         }
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey, mTeamKey);
     }
 
     @Override
@@ -69,5 +73,10 @@ public class EventAwardsFragment extends ListviewFragment<List<Award>, AwardsLis
         } else {
             return mDatafeed.fetchTeamAtEventAwards(mTeamKey, mEventKey);
         }
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }

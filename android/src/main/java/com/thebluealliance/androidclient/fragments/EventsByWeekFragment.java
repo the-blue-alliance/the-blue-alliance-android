@@ -27,8 +27,11 @@ import rx.Observable;
 public class EventsByWeekFragment
   extends DatafeedFragment<List<Event>, List<String>, EventTabSubscriber, EventTabBinder> {
 
-    private static final String YEAR = "YEAR", TAB = "tab";
+    private static final String YEAR = "YEAR";
+    private static final String TAB = "tab";
+    public static final String DATAFEED_TAG_FORMAT = "events_by_week_%1$d";
 
+    private String mDatafeedTag;
     private int mYear;
     private EventsByWeekFragmentPagerAdapter mFragmentAdapter;
     private Parcelable mPagerState, mAdapterState;
@@ -54,6 +57,7 @@ public class EventsByWeekFragment
             // Default to the current year if no year is provided in the arguments
             mYear = getArguments().getInt(YEAR, currentYear);
         }
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear);
         if (savedInstanceState != null) {
             mSelectedTab = savedInstanceState.getInt(TAB, -1);
         } else {
@@ -138,6 +142,11 @@ public class EventsByWeekFragment
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchEventsInYear(mYear);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 
     private void setPagerWeek() {

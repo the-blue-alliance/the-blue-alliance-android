@@ -20,9 +20,11 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
     public static final String WEEK = "WEEK";
     public static final String TEAM_KEY = "TEAM_KEY";
     public static final String WEEK_HEADER = "HEADER";
+    private static final String DATAFEED_TAG_FORAMAT = "event_list_%1$d_%2$d";
 
     private int mYear;
     private int mWeek;
+    private String mDatafeedTag;
 
     public static EventListFragment newInstance(int year, int week, String weekHeader) {
         EventListFragment f = new EventListFragment();
@@ -44,6 +46,8 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
         if (mWeek == -1 && !(header == null || header.isEmpty())) {
             mWeek = EventHelper.weekNumFromLabel(mYear, header);
         }
+
+        mDatafeedTag = String.format(DATAFEED_TAG_FORAMAT, mYear, mWeek);
     }
 
     @Override
@@ -61,5 +65,10 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.getCache().fetchEventsInWeek(mYear, mWeek);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }

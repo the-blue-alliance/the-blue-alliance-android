@@ -25,7 +25,9 @@ public class DistrictListFragment
   extends DatafeedFragment<List<District>, List<ListItem>, DistrictListSubscriber, ListviewBinder> {
 
     public static final String YEAR = "year";
+    public static final String DATAFEED_TAG_FORMAT = "district_list_%1$d";
 
+    private String mDatafeedTag;
     private int mYear;
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
@@ -45,6 +47,7 @@ public class DistrictListFragment
         if (getArguments() != null) {
             mYear = getArguments().getInt(YEAR, Utilities.getCurrentYear());
         }
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear);
     }
 
     @Override
@@ -86,5 +89,10 @@ public class DistrictListFragment
     @Override
     protected Observable<List<District>> getObservable() {
         return mDatafeed.fetchDistrictList(mYear);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }

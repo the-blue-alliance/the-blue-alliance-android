@@ -28,8 +28,11 @@ public class TeamMediaFragment extends DatafeedFragment<
   MediaListSubscriber,
   ExpandableListBinder> {
 
-    public static final String TEAM_KEY = "team", YEAR = "year";
+    public static final String TEAM_KEY = "team";
+    public static final String YEAR = "year";
+    public static final String DATAFEED_TAG_FORMAT = "team_media_%1$s_%2$d";
 
+    private String mDatafeedTag;
     private String mTeamKey;
     private int mYear;
 
@@ -55,6 +58,7 @@ public class TeamMediaFragment extends DatafeedFragment<
         if (mYear == -1) {
             mYear = Utilities.getCurrentYear();
         }
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mYear);
         mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ALL);
     }
 
@@ -90,5 +94,10 @@ public class TeamMediaFragment extends DatafeedFragment<
     @Override
     protected Observable<List<Media>> getObservable() {
         return mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }

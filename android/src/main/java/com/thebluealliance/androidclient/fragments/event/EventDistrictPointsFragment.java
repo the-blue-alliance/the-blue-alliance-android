@@ -17,8 +17,10 @@ import rx.Observable;
 public class EventDistrictPointsFragment
   extends ListviewFragment<JsonObject, DistrictPointsListSubscriber> {
     private static final String KEY = "event_key";
+    public static final String DATAFEED_TAG_FORMAT = "event_district_points_%1$s";
 
     private String mEventKey;
+    private String mDatafeedTag;
 
     //TODO implement way to show "not part of district" warning
     private boolean isDistrict;
@@ -37,6 +39,7 @@ public class EventDistrictPointsFragment
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
         isDistrict = true;
         setHasOptionsMenu(true);
         mSubscriber.setEventKey(mEventKey);
@@ -79,5 +82,10 @@ public class EventDistrictPointsFragment
     @Override
     protected Observable<JsonObject> getObservable() {
         return mDatafeed.fetchEventDistrictPoints(mEventKey);
+    }
+
+    @Override
+    protected String getDatafeedTag() {
+        return mDatafeedTag;
     }
 }
