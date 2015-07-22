@@ -881,13 +881,17 @@ public class Database extends SQLiteOpenHelper {
         }
 
         public void add(ArrayList<Favorite> in) {
-                mDb.beginTransaction();
+            mDb.beginTransaction();
+            try {
                 for (Favorite favorite : in) {
                     if (!unsafeExists(favorite.getKey())) {
                         mDb.insert(TABLE_FAVORITES, null, favorite.getParams());
                     }
                 }
                 mDb.setTransactionSuccessful();
+            } finally {
+                mDb.endTransaction();
+            }
         }
 
         public void remove(String key) {
@@ -963,12 +967,16 @@ public class Database extends SQLiteOpenHelper {
 
         public void add(ArrayList<Subscription> in) {
             mDb.beginTransaction();
-            for (Subscription subscription : in) {
-                if (!unsafeExists(subscription.getKey())) {
-                    mDb.insert(TABLE_SUBSCRIPTIONS, null, subscription.getParams());
+            try {
+                for (Subscription subscription : in) {
+                    if (!unsafeExists(subscription.getKey())) {
+                        mDb.insert(TABLE_SUBSCRIPTIONS, null, subscription.getParams());
+                    }
                 }
+                mDb.setTransactionSuccessful();
+            } finally {
+                mDb.endTransaction();
             }
-            mDb.setTransactionSuccessful();
         }
 
         public boolean exists(String key) {
