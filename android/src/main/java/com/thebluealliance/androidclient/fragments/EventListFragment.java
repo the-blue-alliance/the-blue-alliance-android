@@ -38,7 +38,6 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mYear = getArguments().getInt(YEAR, -1);
         mWeek = getArguments().getInt(WEEK, -1);
         String header = getArguments().getString(WEEK_HEADER);
@@ -48,6 +47,7 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
         }
 
         mDatafeedTag = String.format(DATAFEED_TAG_FORAMAT, mYear, mWeek);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

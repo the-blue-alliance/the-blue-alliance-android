@@ -52,12 +52,13 @@ public class EventMatchesFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
             mTeamKey = getArguments().getString(TEAM, "");
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
+        super.onCreate(savedInstanceState);
+
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
         mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ONLY);

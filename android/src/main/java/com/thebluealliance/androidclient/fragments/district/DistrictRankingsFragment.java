@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.district;
 
 import android.os.Bundle;
 
-import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.fragments.ListviewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -32,7 +31,6 @@ public class DistrictRankingsFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() == null || !getArguments().containsKey(KEY)) {
             throw new IllegalArgumentException("DistrictRankingsFragment must be constructed with district key");
         }
@@ -43,6 +41,7 @@ public class DistrictRankingsFragment
         mShort = key.substring(4);
         mYear = Integer.parseInt(key.substring(0, 4));
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear, mShort);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

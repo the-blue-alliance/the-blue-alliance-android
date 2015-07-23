@@ -69,12 +69,12 @@ public class EventStatsFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         // Reload key if returning from another fragment/activity
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
+        super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
             mSelectedStatSort = savedInstanceState.getInt(SORT, -1);

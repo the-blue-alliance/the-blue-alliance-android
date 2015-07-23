@@ -48,7 +48,6 @@ public class TeamMediaFragment extends DatafeedFragment<
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args == null || !args.containsKey(TEAM_KEY) || !args.containsKey(YEAR)) {
             throw new IllegalArgumentException("TeamMediaFragment must be constructed with a team key and year");
@@ -59,6 +58,8 @@ public class TeamMediaFragment extends DatafeedFragment<
             mYear = Utilities.getCurrentYear();
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mYear);
+        super.onCreate(savedInstanceState);
+
         mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ALL);
     }
 

@@ -33,7 +33,6 @@ public class TeamAtEventStatsFragment extends ListviewFragment<JsonObject, TeamS
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)) {
             throw new IllegalArgumentException("TeamAtEventSummaryFragment must contain both team key and event key");
         }
@@ -41,6 +40,8 @@ public class TeamAtEventStatsFragment extends ListviewFragment<JsonObject, TeamS
         mTeamKey = getArguments().getString(TEAM_KEY);
         mEventKey = getArguments().getString(EVENT_KEY);
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mEventKey);
+        super.onCreate(savedInstanceState);
+
         mSubscriber.setTeamKey(mTeamKey);
     }
 

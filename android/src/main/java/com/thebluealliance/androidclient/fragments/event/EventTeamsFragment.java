@@ -39,11 +39,11 @@ public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSub
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

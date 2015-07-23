@@ -41,11 +41,12 @@ public class EventAwardsFragment extends ListviewFragment<List<Award>, AwardsLis
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(EVENT_KEY, "");
             mTeamKey = getArguments().getString(TEAM_KEY, "");
         }
+        super.onCreate(savedInstanceState);
+
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey, mTeamKey);

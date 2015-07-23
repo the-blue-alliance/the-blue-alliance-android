@@ -50,14 +50,14 @@ public class EventsByWeekFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Log.d(Constants.LOG_TAG, "EventsByWeekFragment created!");
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        if (getArguments() != null) {
+        mYear = Calendar.getInstance().get(Calendar.YEAR);
+        if (getArguments() != null && getArguments().containsKey(YEAR)) {
             // Default to the current year if no year is provided in the arguments
-            mYear = getArguments().getInt(YEAR, currentYear);
+            mYear = getArguments().getInt(YEAR);
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear);
+        super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mSelectedTab = savedInstanceState.getInt(TAB, -1);
         } else {

@@ -42,7 +42,6 @@ public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListS
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mYear = getArguments().getInt(YEAR, -1);
         if (mYear == -1) {
             // default to current year
@@ -50,6 +49,8 @@ public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListS
         }
         mTeamKey = getArguments().getString(TEAM_KEY);
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear, mTeamKey);
+        super.onCreate(savedInstanceState);
+
         mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
     }
 

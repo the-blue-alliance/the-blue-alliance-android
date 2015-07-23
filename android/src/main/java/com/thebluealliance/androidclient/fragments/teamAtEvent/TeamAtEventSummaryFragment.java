@@ -36,7 +36,6 @@ public class TeamAtEventSummaryFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)) {
             throw new IllegalArgumentException("TeamAtEventSummaryFragment must contain both team key and event key");
         }
@@ -45,6 +44,7 @@ public class TeamAtEventSummaryFragment
         mEventKey = getArguments().getString(EVENT_KEY);
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mEventKey);
         mExtraTags = new String[]{String.format(EventInfoFragment.DATAFEED_TAG_FORMAT, mEventKey)};
+        super.onCreate(savedInstanceState);
 
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);

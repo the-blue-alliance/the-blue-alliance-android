@@ -49,12 +49,12 @@ public class TeamInfoFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mTeamKey = getArguments().getString(TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

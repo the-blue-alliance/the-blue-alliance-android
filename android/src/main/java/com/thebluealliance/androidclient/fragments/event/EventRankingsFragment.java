@@ -47,12 +47,12 @@ public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsL
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         // Reload key if returning from another activity/fragment
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

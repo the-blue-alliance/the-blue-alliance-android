@@ -36,20 +36,21 @@ public class TeamAtDistrictSummaryFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        String districtKey = "";
         if (getArguments() != null) {
             mTeamKey = getArguments().getString(TEAM);
-            String districtKey = getArguments().getString(DISTRICT);
-            if (!DistrictHelper.validateDistrictKey(districtKey)) {
-                throw new IllegalArgumentException("Invalid district key " + districtKey);
-            }
-            mDistrictShort = districtKey.substring(4);
-            mYear = Integer.parseInt(districtKey.substring(0, 4));
-            mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mYear, mDistrictShort);
-
-            mSubscriber.setTeamKey(mTeamKey);
-            mSubscriber.setDistrictKey(districtKey);
+            districtKey = getArguments().getString(DISTRICT);
         }
+        if (!DistrictHelper.validateDistrictKey(districtKey)) {
+            throw new IllegalArgumentException("Invalid district key " + districtKey);
+        }
+        mDistrictShort = districtKey.substring(4);
+        mYear = Integer.parseInt(districtKey.substring(0, 4));
+        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mYear, mDistrictShort);
+        super.onCreate(savedInstanceState);
+
+        mSubscriber.setTeamKey(mTeamKey);
+        mSubscriber.setDistrictKey(districtKey);
     }
 
     @Override

@@ -9,7 +9,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -43,11 +42,10 @@ public class DistrictListFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mYear = getArguments().getInt(YEAR, Utilities.getCurrentYear());
         }
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

@@ -30,7 +30,6 @@ public class MatchInfoFragment extends ListviewFragment<Match, MatchInfoSubscrib
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mMatchKey = getArguments().getString(KEY, "");
         }
@@ -40,6 +39,7 @@ public class MatchInfoFragment extends ListviewFragment<Match, MatchInfoSubscrib
         mEventKey = MatchHelper.getEventKeyFromMatchKey(mMatchKey);
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mMatchKey);
         mExtraTags = new String[]{String.format(EventInfoFragment.DATAFEED_TAG_FORMAT, mEventKey)};
+        super.onCreate(savedInstanceState);
     }
 
     @Override

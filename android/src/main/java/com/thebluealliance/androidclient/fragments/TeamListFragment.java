@@ -40,11 +40,11 @@ public class TeamListFragment extends ListviewFragment<List<Team>, TeamListSubsc
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         int teamNumberStart = getArguments().getInt(START);
 
         mPageStart = teamNumberStart/500;
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mPageStart);
+        super.onCreate(savedInstanceState);
     }
 
     @Override

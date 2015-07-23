@@ -43,7 +43,6 @@ public class TeamAtDistrictBreakdownFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTeamKey = getArguments().getString(TEAM);
             String districtKey = getArguments().getString(DISTRICT);
@@ -54,6 +53,7 @@ public class TeamAtDistrictBreakdownFragment
             mYear = Integer.parseInt(districtKey.substring(0, 4));
             mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mYear, mDistrictShort);
         }
+        super.onCreate(savedInstanceState);
     }
 
     @Override

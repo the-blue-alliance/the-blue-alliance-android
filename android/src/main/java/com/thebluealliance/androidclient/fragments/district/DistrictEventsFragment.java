@@ -34,7 +34,6 @@ public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventL
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         String key = getArguments().getString(KEY);
         if (!DistrictHelper.validateDistrictKey(key)) {
             throw new IllegalArgumentException("Invalid district key + " + key);
@@ -42,6 +41,7 @@ public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventL
         mShort = key.substring(4);
         mYear = Integer.parseInt(key.substring(0, 4));
         mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear, mShort);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
