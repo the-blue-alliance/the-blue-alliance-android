@@ -299,13 +299,27 @@ public class Event extends BasicModel<Event> {
         try {
             Date start = EventHelper.eventDateFormat.parse(startString);
             Calendar cal = Calendar.getInstance();
-            cal.setTime(start);
+            cal.setTimeInMillis(start.getTime());
             fields.put(Database.Events.START, start.getTime());
-            int week = Integer.parseInt(EventHelper.weekFormat.format(start)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
-            setCompetitionWeek(week);
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
+        }
+    }
+
+    public void setCompetitionWeekFromStartDate() {
+        Date start;
+        try {
+            start = getStartDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(start.getTime());
+            int eventWeek = cal.get(Calendar.WEEK_OF_YEAR);
+            int firstWeek = Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+            int week = eventWeek - firstWeek;
+            setCompetitionWeek(week);
+        } catch (FieldNotDefinedException e) {
+            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "Can't set week, no start date");
         }
     }
 

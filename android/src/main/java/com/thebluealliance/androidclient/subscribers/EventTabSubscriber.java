@@ -38,15 +38,16 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Stri
             TYPE type = e.getEventType();
             Date start = e.getStartDate();
             if (official &&
-              (type == TYPE.CMP_DIVISION || type == TYPE.CMP_FINALS) &&
-              !champsFound) {
+              (type == TYPE.CMP_DIVISION || type == TYPE.CMP_FINALS) && !champsFound) {
                 mDataToBind.add(EventHelper.CHAMPIONSHIP_LABEL);
                 champsFound = true;
             } else if (official &&
               (type == TYPE.REGIONAL || type == TYPE.DISTRICT || type == TYPE.DISTRICT_CMP)) {
-                if (start == null && !weeklessFound) {
-                    mDataToBind.add(EventHelper.WEEKLESS_LABEL);
-                    weeklessFound = true;
+                if (start == null) {
+                    if (!weeklessFound) {
+                        mDataToBind.add(EventHelper.WEEKLESS_LABEL);
+                        weeklessFound = true;
+                    }
                 } else {
                     String label =
                       String.format(EventHelper.REGIONAL_LABEL, e.getCompetitionWeek());

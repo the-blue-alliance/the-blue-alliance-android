@@ -34,15 +34,16 @@ import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 
+import static java.util.Locale.ENGLISH;
+
 public class EventHelper {
 
-    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH);
-    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy");
-    public static final SimpleDateFormat shortRenderDateFormat = new SimpleDateFormat("MMM d");
-    public static final SimpleDateFormat weekFormat = new SimpleDateFormat("w");
+    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", ENGLISH);
+    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy", ENGLISH);
+    public static final SimpleDateFormat shortRenderDateFormat = new SimpleDateFormat("MMM d", ENGLISH);
     public static NumberFormat doubleFormat = new DecimalFormat("###.##");
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
-    public static final String REGIONAL_LABEL = "Week %d";
+    public static final String REGIONAL_LABEL = "Week %1$d";
     public static final String WEEKLESS_LABEL = "Other Official Events";
     public static final String OFFSEASON_LABEL = "Offseason Events";
     public static final String PRESEASON_LABEL = "Preseason Events";
@@ -93,7 +94,9 @@ public class EventHelper {
 
     public static int getYearWeek(Date date) {
         if (date == null) return -1;
-        return Integer.parseInt(weekFormat.format(date));
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(date.getTime());
+        return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
     public static int competitionWeek(Date date) {

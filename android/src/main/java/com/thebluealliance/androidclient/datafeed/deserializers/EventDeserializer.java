@@ -57,6 +57,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setStartDate("");
         } else {
             event.setStartDate(object.get("start_date").getAsString());
+            event.setCompetitionWeekFromStartDate();
         }
 
         if (isNull(object.get("end_date"))) {
