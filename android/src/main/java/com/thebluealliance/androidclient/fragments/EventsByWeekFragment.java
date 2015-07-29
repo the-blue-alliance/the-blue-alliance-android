@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
-import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
@@ -24,6 +23,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import rx.Observable;
+import rx.android.internal.Preconditions;
 
 public class EventsByWeekFragment
   extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
@@ -150,23 +150,43 @@ public class EventsByWeekFragment
         return mDatafeedTag;
     }
 
+    /**
+     * Set the default selected pager tab
+     * If the user isn't viewing this year's events, default to Week 1
+     * Otherwise, default to the current week (or the first tab, if past the last week)
+     */
     private void setPagerWeek() {
         int currentWeek = Utilities.getCurrentCompWeek();
         int currentYear = Utilities.getCurrentYear();
-        //set the currently selected tab to the current week or week 1
-        int week1Index = mFragmentAdapter.getLabels()
-          .indexOf(String.format(EventHelper.REGIONAL_LABEL, 1));
-        if (currentYear != mYear) {
+        int week1Index = getIndexForWeek(1);
+        int currentIndex = getIndexForWeek(currentWeek);
+        int weekCount = mViewPager.getAdapter().getCount();
+
+        if (currentYear != mYear && week1Index > -1) {
             mViewPager.setCurrentItem(week1Index);
+        } else if(currentIndex < weekCount && currentIndex > -1) {
+            mViewPager.setCurrentItem(currentIndex);
         } else {
-            mViewPager.setCurrentItem((currentWeek > Utilities.getCmpWeek(mYear) + 1)
-                    ? Math.min(mViewPager.getAdapter().getCount(), week1Index)
-                    : currentWeek);
-            /** Explanation for above lines:
-             * If the current week is past CMP, then
-             * show week 1 (which is either index 1 or 2, which we'll find in the adapter
-             * Else, we display the current week
-             */
+            mViewPager.setCurrentItem(0);
         }
+    }
+
+    /**
+     * Finds the index in the adapter of the given week.
+     * If the week is skipped over, return the next week (assumes sorted adapter items)
+     * @return Adapter index containing the week, -1 if not found
+     */
+    private int getIndexForWeek(int week) {
+        Preconditions.checkState(
+          mViewPager.getAdapter() instanceof EventsByWeekFragmentPagerAdapter,
+          "EventsByWeekFragment must use EventsByWeekFragmentPagerAdapter");
+        List<EventWeekTab> tabs = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter())
+          .getTabs();
+        for (int i = 0; i < tabs.size(); i++) {
+            if (tabs.get(i).getWeek() >= week) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

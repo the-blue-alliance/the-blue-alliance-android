@@ -58,4 +58,8 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     public List<String> getLabels() {
         return mLabels;
     }
+
+    public List<EventWeekTab> getTabs() {
+        return mThisYearsWeekTabs;
+    }
 }
