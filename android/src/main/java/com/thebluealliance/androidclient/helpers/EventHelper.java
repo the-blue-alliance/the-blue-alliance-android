@@ -14,10 +14,6 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -34,14 +30,8 @@ import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 
-import static java.util.Locale.ENGLISH;
-
 public class EventHelper {
 
-    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", ENGLISH);
-    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy", ENGLISH);
-    public static final SimpleDateFormat shortRenderDateFormat = new SimpleDateFormat("MMM d", ENGLISH);
-    public static NumberFormat doubleFormat = new DecimalFormat("###.##");
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
     public static final String REGIONAL_LABEL = "Week %1$d";
     public static final String WEEKLESS_LABEL = "Other Official Events";
@@ -427,9 +417,10 @@ public class EventHelper {
     public static String getDateString(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) return "";
         if (startDate.equals(endDate)) {
-            return EventHelper.renderDateFormat.format(startDate);
+            return ThreadSafeFormatters.renderEventDate(startDate);
         }
-        return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
+        return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
+          ThreadSafeFormatters.renderEventDate(endDate);
     }
 
     public static void addFieldByAPIUrl(Event event, String url, String data) {
@@ -481,7 +472,7 @@ public class EventHelper {
             String value = entry.getValue().toString();
             // If we have a number like 235.00, remove the useless .00 so it looks cleaner
             try {
-                value = doubleFormat.format(Double.parseDouble(value));
+                value = ThreadSafeFormatters.formatDoubleTwoPlaces(Double.parseDouble(value));
             } catch (NumberFormatException e) {
                 //Item is not a number
             }

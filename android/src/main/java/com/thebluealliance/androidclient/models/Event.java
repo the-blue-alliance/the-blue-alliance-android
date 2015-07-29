@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -289,11 +290,6 @@ public class Event extends BasicModel<Event> {
     }
 
     public void setStartDate(Date startDate) {
-        if (startDate.compareTo(new Date(631152000000l)) < 0) {
-            Log.w(Constants.LOG_TAG, "Trying to set bad date: " + startDate);
-            // sanity check
-            return;
-        }
         fields.put(Database.Events.START, startDate.getTime());
     }
 
@@ -302,12 +298,7 @@ public class Event extends BasicModel<Event> {
             return;
         }
         try {
-            Date start = EventHelper.eventDateFormat.parse(startString);
-            if (start.compareTo(new Date(631152000000l)) < 0) {
-                Log.w(Constants.LOG_TAG, "Trying to set bad date: " + start + " / " + startString);
-                // sanity check
-                return;
-            }
+            Date start = ThreadSafeFormatters.parseEventDate(startString);
             fields.put(Database.Events.START, start.getTime());
         } catch (ParseException ex) {
             //can't parse the date
@@ -347,7 +338,9 @@ public class Event extends BasicModel<Event> {
             return;
         }
         try {
-            fields.put(Database.Events.END, EventHelper.eventDateFormat.parse(endString).getTime());
+            fields.put(
+              Database.Events.END,
+              ThreadSafeFormatters.parseEventDate(endString).getTime());
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
@@ -452,9 +445,10 @@ public class Event extends BasicModel<Event> {
                     endDate = getEndDate();
             if (startDate == null || endDate == null) return "";
             if (startDate.equals(endDate)) {
-                return EventHelper.renderDateFormat.format(startDate);
+                return ThreadSafeFormatters.renderEventDate(startDate);
             }
-            return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
+            return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
+              ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
                     "Required fields: Database.Events.START, Database.Events.END");
