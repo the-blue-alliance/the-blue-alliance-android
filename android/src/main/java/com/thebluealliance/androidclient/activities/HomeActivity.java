@@ -84,6 +84,7 @@ public class HomeActivity extends LegacyRefreshableHostActivity implements HasFr
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);
 
+        setRefreshEnabled(false);
         hideWarningMessage();
 
         handler = new Handler();
