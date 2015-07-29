@@ -145,7 +145,7 @@ task loadProperties << {
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("packageRelease") || theTask.name.equals("packageBeta")) {
+    if (theTask.name.equals("packageDevRelease") || theTask.name.equals("packageProdRelease")) {
         theTask.dependsOn "loadProperties"
     }
 }
