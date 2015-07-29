@@ -672,6 +672,7 @@ public class Database extends SQLiteOpenHelper {
             }
             mDb.endTransaction();
         }
+
     }
 
     public class Awards extends ModelTable<Award> {

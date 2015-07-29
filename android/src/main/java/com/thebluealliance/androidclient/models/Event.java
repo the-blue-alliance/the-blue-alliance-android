@@ -289,6 +289,11 @@ public class Event extends BasicModel<Event> {
     }
 
     public void setStartDate(Date startDate) {
+        if (startDate.compareTo(new Date(631152000000l)) < 0) {
+            Log.w(Constants.LOG_TAG, "Trying to set bad date: " + startDate);
+            // sanity check
+            return;
+        }
         fields.put(Database.Events.START, startDate.getTime());
     }
 
@@ -298,8 +303,11 @@ public class Event extends BasicModel<Event> {
         }
         try {
             Date start = EventHelper.eventDateFormat.parse(startString);
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(start.getTime());
+            if (start.compareTo(new Date(631152000000l)) < 0) {
+                Log.w(Constants.LOG_TAG, "Trying to set bad date: " + start + " / " + startString);
+                // sanity check
+                return;
+            }
             fields.put(Database.Events.START, start.getTime());
         } catch (ParseException ex) {
             //can't parse the date

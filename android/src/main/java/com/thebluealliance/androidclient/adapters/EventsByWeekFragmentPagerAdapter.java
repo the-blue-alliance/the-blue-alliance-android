@@ -5,22 +5,28 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.thebluealliance.androidclient.fragments.EventListFragment;
+import com.thebluealliance.androidclient.models.EventWeekTab;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int mCount;
     private int mYear;
-    private List<String> thisYearsWeekLabels;
-
+    private List<EventWeekTab> mThisYearsWeekTabs;
+    private List<String> mLabels;
 
     public EventsByWeekFragmentPagerAdapter(
       FragmentManager fm,
       int year,
-      List<String> labels) {
+      List<EventWeekTab> labels) {
         super(fm);
-        thisYearsWeekLabels = labels;
+        mLabels = new ArrayList<>();
+        mThisYearsWeekTabs = labels;
+        for (int i = 0; i < mThisYearsWeekTabs.size(); i++) {
+            mLabels.add(mThisYearsWeekTabs.get(i).getLabel());
+        }
         mCount = labels.size();
         mYear = year;
     }
@@ -33,7 +39,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
         } else {
             return label;
         }*/
-        return thisYearsWeekLabels.get(position);
+        return mThisYearsWeekTabs.get(position).getLabel();
     }
 
     @Override
@@ -45,11 +51,11 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         return EventListFragment.newInstance(
           mYear,
-          position,
+          mThisYearsWeekTabs.get(position).getWeek(),
           getPageTitle(position).toString());
     }
 
     public List<String> getLabels() {
-        return thisYearsWeekLabels;
+        return mLabels;
     }
 }

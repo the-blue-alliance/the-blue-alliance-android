@@ -45,7 +45,7 @@ public class EventHelper {
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
     public static final String REGIONAL_LABEL = "Week %1$d";
     public static final String WEEKLESS_LABEL = "Other Official Events";
-    public static final String OFFSEASON_LABEL = "Offseason Events";
+    public static final String OFFSEASON_LABEL = "Offseason Week %1$d";
     public static final String PRESEASON_LABEL = "Preseason Events";
     private static final Pattern eventKeyPattern = Pattern.compile("[a-zA-Z]+");
 
@@ -140,7 +140,9 @@ public class EventHelper {
             case DISTRICT_CMP:
                 return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
             case OFFSEASON:
-                return OFFSEASON_LABEL;
+                int cmpWeek = Utilities.getCmpWeek(e.getEventYear());
+                int compWeek = e.getCompetitionWeek();
+                return String.format(OFFSEASON_LABEL, compWeek - cmpWeek);
             case PRESEASON:
                 return PRESEASON_LABEL;
             default:

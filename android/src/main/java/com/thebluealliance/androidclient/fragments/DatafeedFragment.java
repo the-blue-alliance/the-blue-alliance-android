@@ -19,8 +19,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-import java.util.Map;
-
 /**
  * Easy abstraction of Fragment datafeed bindings
  * @param <T> Type returned by the API
@@ -53,7 +51,7 @@ public abstract class DatafeedFragment
         mSubscriber.setConsumer(mBinder);
         mBinder.setActivity(getActivity());
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             // fresh create, load new datafeed
             getAndCacheObservables();
         } else {
@@ -63,7 +61,8 @@ public abstract class DatafeedFragment
                 // no cached observables found, load anew
                 getAndCacheObservables();
             }
-        }
+        }*/
+        getAndCacheObservables();
     }
 
     @Override

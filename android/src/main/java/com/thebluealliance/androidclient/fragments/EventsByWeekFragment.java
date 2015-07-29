@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapt
 import com.thebluealliance.androidclient.binders.EventTabBinder;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
@@ -25,7 +26,7 @@ import java.util.List;
 import rx.Observable;
 
 public class EventsByWeekFragment
-  extends DatafeedFragment<List<Event>, List<String>, EventTabSubscriber, EventTabBinder> {
+  extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
 
     private static final String YEAR = "YEAR";
     private static final String TAB = "tab";
@@ -113,7 +114,7 @@ public class EventsByWeekFragment
         }
     }
 
-    public void updateLabels(List<String> labels) {
+    public void updateLabels(List<EventWeekTab> labels) {
         if (getView() != null) {
             getView().findViewById(R.id.tabs_progress).setVisibility(View.GONE);
         }
