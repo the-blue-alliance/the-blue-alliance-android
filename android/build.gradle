@@ -6,6 +6,8 @@ apply plugin: 'gitsemver'
 // run ./gradlew dependencyUpdates to generate report
 apply plugin: 'com.github.ben-manes.versions'
 
+apply from: 'versioning.gradle'
+
 // Fix for https://github.com/evant/gradle-retrolambda/issues/105
 // Without this, the build fails on CI for some reason
 retrolambda {
@@ -13,7 +15,6 @@ retrolambda {
 }
 
 version semverVersion()
-println version.toString()
 
 android {
     compileSdkVersion 22
@@ -29,7 +30,6 @@ android {
 
         buildTypes {
             debug {
-                //versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
                 testCoverageEnabled = true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
@@ -40,13 +40,11 @@ android {
             // 'adb install -r <file name>'
             debugBlue {
                 signingConfig signingConfigs.debug
-                //versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
                 manifestPlaceholders = [gcmPermissionRequired: ""]
             }
 
             release {
-                //versionNameSuffix "/"+gitBranch
                 manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
                 signingConfig signingConfigs.release
                 minifyEnabled true
@@ -59,8 +57,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 51
-        versionName "2.2.4"
+        versionCode buildVersionCode()
+        versionName version.toString()
 
         multiDexEnabled true
     }
@@ -103,6 +101,8 @@ android {
         }
     }
 }
+
+println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
 task loadProperties << {
     // add in signing keys from local.properties
