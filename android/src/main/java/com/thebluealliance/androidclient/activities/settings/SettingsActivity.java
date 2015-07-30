@@ -47,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
             String commit = "";
             if (BuildConfig.VERSION_NAME.contains("+")) {
                 commit = BuildConfig.VERSION_NAME.replace(".dirty", "")
-                  .substring(BuildConfig.VERSION_NAME.indexOf('+') + 1);
+                  .substring(BuildConfig.VERSION_NAME.indexOf('+') + 2);
             }
             String versionName = String.format("v%1$d.%2$d.%3$d", major, minor, patch);
             String buildTime = Utilities.getBuildTimestamp(getActivity());
