@@ -42,9 +42,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<List
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
         if (mAPIData == null ||
-          !mAPIData.has("oprs") ||
-          !mAPIData.has("dprs") ||
-          !mAPIData.has("ccwms")) {
+          !mAPIData.has("oprs") || !mAPIData.get("oprs").isJsonObject() ||
+          !mAPIData.has("dprs") ||!mAPIData.get("dprs").isJsonObject() ||
+          !mAPIData.has("ccwms") || !mAPIData.get("ccwms").isJsonObject()) {
             return;
         }
 
