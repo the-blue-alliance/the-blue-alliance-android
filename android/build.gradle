@@ -76,7 +76,7 @@ android {
         println "*********" + variant.description + "**********";
         variant.outputs.each { output ->
             def apkName = "tba-android-";
-            apkName += "v" + android.defaultConfig.versionName;
+            apkName += "v" + version.tagName;
             apkName += "-" + variant.buildType.name + ".apk";
             println "*********" + "$project.buildDir/apk/" + apkName + "**********";
             output.outputFile = file("$project.buildDir/apk/" + apkName)
