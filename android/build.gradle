@@ -1,19 +1,21 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'gitsemver'
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
 apply plugin: 'com.github.ben-manes.versions'
 
-def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
-def gitBranch = 'git rev-parse --abbrev-ref HEAD'.execute([], project.rootDir).text.trim()
+apply from: 'versioning.gradle'
 
 // Fix for https://github.com/evant/gradle-retrolambda/issues/105
 // Without this, the build fails on CI for some reason
 retrolambda {
     jvmArgs '-noverify'
 }
+
+version semverVersion()
 
 android {
     compileSdkVersion 22
@@ -46,7 +48,6 @@ android {
 
         buildTypes {
             debug {
-                versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
                 testCoverageEnabled = true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
@@ -57,13 +58,11 @@ android {
             // 'adb install -r <file name>'
             debugBlue {
                 signingConfig signingConfigs.debug
-                versionNameSuffix "/"+gitBranch+"/" + gitSha
                 applicationIdSuffix ".development"
                 manifestPlaceholders = [gcmPermissionRequired: ""]
             }
 
             release {
-                versionNameSuffix "/"+gitBranch
                 manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
                 signingConfig signingConfigs.release
                 minifyEnabled true
@@ -76,8 +75,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 51
-        versionName "2.2.4"
+        versionCode buildVersionCode()
+        versionName version.toString()
 
         multiDexEnabled true
     }
@@ -95,7 +94,7 @@ android {
         println "*********" + variant.description + "**********";
         variant.outputs.each { output ->
             def apkName = "tba-android-";
-            apkName += "v" + android.defaultConfig.versionName;
+            apkName += "v" + version.tagName;
             apkName += "-" + variant.buildType.name + ".apk";
             println "*********" + "$project.buildDir/apk/" + apkName + "**********";
             output.outputFile = file("$project.buildDir/apk/" + apkName)
@@ -120,6 +119,8 @@ android {
         }
     }
 }
+
+println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
 task loadProperties << {
     // add in signing keys from local.properties
