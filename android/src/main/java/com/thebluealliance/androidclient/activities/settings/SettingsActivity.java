@@ -41,13 +41,13 @@ public class SettingsActivity extends AppCompatActivity {
             int versionCode = BuildConfig.VERSION_CODE;
             int major = versionCode / 1000000;
             int minor = versionCode / 10000 % 100;
-            int patch = versionCode / 100 % 10000;
+            int patch = versionCode / 100 % 100;
 
             String versionInfo;
             String commit = "";
             if (BuildConfig.VERSION_NAME.contains("+")) {
                 commit = BuildConfig.VERSION_NAME.replace(".dirty", "")
-                  .substring(BuildConfig.VERSION_NAME.indexOf('+'));
+                  .substring(BuildConfig.VERSION_NAME.indexOf('+') + 1);
             }
             String versionName = String.format("v%1$d.%2$d.%3$d", major, minor, patch);
             String buildTime = Utilities.getBuildTimestamp(getActivity());
