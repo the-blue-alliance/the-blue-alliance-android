@@ -22,5 +22,5 @@ public interface APISubscriber<T> {
      * Callback for displaying data to be viewed
      * @return The data to be bound to the view
      */
-    @Nullable T getData();
+    @Nullable T getBoundData();
 }

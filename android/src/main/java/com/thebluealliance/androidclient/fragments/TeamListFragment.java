@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.datafeed.maps.TeamPageCombiner;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.Team;
@@ -51,7 +50,11 @@ public class TeamListFragment extends ListviewFragment<List<Team>, TeamListSubsc
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
-            String teamKey = ((TeamCursorAdapter) adapterView.getAdapter()).getKey(position);
+            List<Team> teams = mSubscriber.getApiData();
+            if (teams == null) {
+                return;
+            }
+            String teamKey = teams.get(position).getKey();
             Intent i = new Intent(getActivity(), ViewTeamActivity.class);
             i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
 

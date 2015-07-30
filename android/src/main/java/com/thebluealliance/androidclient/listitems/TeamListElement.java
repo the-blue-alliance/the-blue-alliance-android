@@ -73,17 +73,14 @@ public class TeamListElement extends ListElement {
 
         if (mShowLinkToTeamDetails) {
             holder.teamInfo.setVisibility(View.VISIBLE);
-            holder.teamInfo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String teamKey = "frc" + mTeamNumber;
-                    Intent intent = ViewTeamActivity.newInstance(context, teamKey);
-                    
-                    /* Track the call */
-                    AnalyticsHelper.sendClickUpdate(context, "team_click", "TeamListElement", "");
+            holder.teamInfo.setOnClickListener(view -> {
+                String teamKey = "frc" + mTeamNumber;
+                Intent intent = ViewTeamActivity.newInstance(context, teamKey);
 
-                    context.startActivity(intent);
-                }
+                /* Track the call */
+                AnalyticsHelper.sendClickUpdate(context, "team_click", "TeamListElement", "");
+
+                context.startActivity(intent);
             });
         } else {
             holder.teamInfo.setVisibility(View.GONE);
