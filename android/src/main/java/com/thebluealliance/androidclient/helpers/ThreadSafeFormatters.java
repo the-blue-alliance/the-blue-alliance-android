@@ -24,7 +24,8 @@ public class ThreadSafeFormatters {
     private static final DateFormat sEventRenderShortFormat =
       new SimpleDateFormat("MMM d", ENGLISH);
 
-    public static NumberFormat sDoubleFormat = new DecimalFormat("###.##");
+    private static NumberFormat sDoubleOnePlaceFormat = new DecimalFormat("##.#");
+    private static NumberFormat sDoubleTwoPlacesFormat = new DecimalFormat("###.##");
 
     public static synchronized Date parseEventDate(String dateString) throws ParseException{
         return sEventDateFormat.parse(dateString);
@@ -38,7 +39,11 @@ public class ThreadSafeFormatters {
         return sEventRenderShortFormat.format(date);
     }
 
+    public static synchronized String formatDoubleOnePlace(double input) {
+        return sDoubleOnePlaceFormat.format(input);
+    }
+
     public static synchronized String formatDoubleTwoPlaces(double input) {
-        return sDoubleFormat.format(input);
+        return sDoubleTwoPlacesFormat.format(input);
     }
 }

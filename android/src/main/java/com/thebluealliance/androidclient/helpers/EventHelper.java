@@ -34,6 +34,7 @@ public class EventHelper {
 
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
     public static final String REGIONAL_LABEL = "Week %1$d";
+    public static final String FLOAT_REGIONAL_LABEL = "Week %1$.1f";
     public static final String WEEKLESS_LABEL = "Other Official Events";
     public static final String OFFSEASON_LABEL = "Offseason Week %1$d";
     public static final String PRESEASON_LABEL = "Preseason Events";
@@ -128,7 +129,21 @@ public class EventHelper {
             case REGIONAL:
             case DISTRICT:
             case DISTRICT_CMP:
-                return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                /**
+                 * Special cases for 2016:
+                 * Week 1 is actually Week 0.5, eveything else is one less
+                 * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
+                 */
+                if (e.getEventYear() == 2016) {
+                    int week = e.getCompetitionWeek();
+                    if (week == 1) {
+                        return String.format(FLOAT_REGIONAL_LABEL, 0.5);
+                    } else {
+                        return String.format(REGIONAL_LABEL, week - 1);
+                    }
+                } else {
+                    return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                }
             case OFFSEASON:
                 int cmpWeek = Utilities.getCmpWeek(e.getEventYear());
                 int compWeek = e.getCompetitionWeek();
