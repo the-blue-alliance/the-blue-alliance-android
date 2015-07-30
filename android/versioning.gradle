@@ -21,7 +21,7 @@ ext {
             candidate = "0"
         }
         def (major, minor, patch) = version.toString().toLowerCase().replaceAll('.dirty', '')
-                .replaceAll('-', '').tokenize('.')
+                .substring(0, version.toString().indexOf('-')).tokenize('.')
         if (patch.contains("+")) {
             candidate = "0"
             patch = patch.replaceAll("[^0-9]","")
