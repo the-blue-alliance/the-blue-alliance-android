@@ -16,13 +16,18 @@ ext {
         //final release counts as 99.
 
         def candidate = "99"
-        if (version.toString().contains('.dirty')) {
+        def versionString = version.toString()
+        if (versionString.contains('.dirty')) {
             // Same as SNAPSHOT
             candidate = "0"
         }
-        def (major, minor, patch) = version.toString().toLowerCase().replaceAll('.dirty', '')
-                .substring(0, version.toString().indexOf('-')).tokenize('.')
-        if (version.toString().contains("+")) {
+        def lastDash = versionString.lastIndexOf('-');
+        def cleaned = versionString.toLowerCase().replaceAll('.dirty', '')
+        if (lastDash > -1) {
+            cleaned = cleaned.substring(0, lastDash)
+        }
+        def (major, minor, patch) = cleaned.tokenize('.')
+        if (versionString.contains("+")) {
             candidate = "0"
             patch = patch.replaceAll("[^0-9]","")
         } else {
