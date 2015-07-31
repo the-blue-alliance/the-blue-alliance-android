@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.binders.EventTabBinder;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
+import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 
@@ -47,5 +48,10 @@ public class BinderModule {
     @Provides
     public EventTabBinder provideEventTabBinder() {
         return new EventTabBinder();
+    }
+
+    @Provides
+    public NoDataBinder provideNoDataBinder() {
+        return new NoDataBinder();
     }
 }

@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
+import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.ObservableCache;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.modules.components.FragmentComponent;
 import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
@@ -34,6 +36,7 @@ public abstract class DatafeedFragment
     @Inject protected EventBus mEventBus;
     @Inject protected ObservableCache mObservableCache;
     @Inject protected Lazy<EventBusSubscriber> mEventBusSubscriber;
+    @Inject protected NoDataBinder mNoDataBinder;
 
     protected CacheableDatafeed mDatafeed;
     protected Observable<T> mObservable;
@@ -50,6 +53,8 @@ public abstract class DatafeedFragment
         inject();
         mSubscriber.setConsumer(mBinder);
         mBinder.setActivity(getActivity());
+        mBinder.setNoDataBinder(mNoDataBinder);
+        mBinder.setNoDataParams(getNoDataParams());
 
         /*if (savedInstanceState == null) {
             // fresh create, load new datafeed
@@ -143,6 +148,10 @@ public abstract class DatafeedFragment
      * e.g. team_at_event_details_2015cthar_frc1124
      */
     protected abstract String getDatafeedTag();
+
+    protected NoDataViewParams getNoDataParams() {
+        return null;
+    }
 
     /**
      * In case there are other endpoints that need to be hit
