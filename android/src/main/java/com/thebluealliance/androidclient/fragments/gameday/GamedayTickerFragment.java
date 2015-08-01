@@ -85,7 +85,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         }
         mFilterListView.setAdapter(mNotificationFilterAdapter);
 
-        mFab = ((GamedayActivity) getActivity()).getFab();
+        mFab = ((GamedayActivity) getActivity()).getmFab();
         mFab.setOnClickListener(v1 -> onFabClicked());
         mListView = (ListView) v.findViewById(R.id.list);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);

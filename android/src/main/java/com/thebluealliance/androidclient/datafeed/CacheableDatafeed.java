@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
+import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -64,6 +65,13 @@ public class CacheableDatafeed implements APIv2 {
         Observable<List<Event>> apiData = mRetrofitAPI.fetchTeamEvents(teamKey, year);
         apiData.subscribe(mWriter.eventListWriter.get());
         return mAPICache.fetchTeamEvents(teamKey, year).concatWith(apiData);
+    }
+
+    public Observable<List<Event>> fetchEventsInWeek(int year, int week) {
+        WeekEventsExtractor extractor = new WeekEventsExtractor(week);
+        Observable<List<Event>> apiData = mRetrofitAPI.fetchEventsInYear(year);
+        apiData.subscribe(mWriter.eventListWriter.get());
+        return mAPICache.fetchEventsInWeek(year, week).concatWith(apiData.map(extractor));
     }
 
     @Override

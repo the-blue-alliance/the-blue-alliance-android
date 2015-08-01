@@ -46,8 +46,8 @@ public abstract class DatafeedFragment
         if (getActivity() instanceof HasFragmentComponent) {
             mComponent = ((HasFragmentComponent) getActivity()).getComponent();
         }
-        mDatafeed = mComponent.datafeed();
         inject();
+        mDatafeed = mComponent.datafeed();
         mSubscriber.setConsumer(mBinder);
         mBinder.setActivity(getActivity());
         mBinder.setNoDataBinder(mNoDataBinder);

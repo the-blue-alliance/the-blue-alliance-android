@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscribe
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
+import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import dagger.Module;
 import dagger.Provides;
@@ -132,5 +133,9 @@ public class SubscriberModule {
 
     @Provides MatchInfoSubscriber provideMatchInfoSubscriber(Gson gson, EventBus eventBus) {
         return new MatchInfoSubscriber(gson, eventBus);
+    }
+
+    @Provides WebcastListSubscriber provideWebcastListSubscriber() {
+        return new WebcastListSubscriber();
     }
 }
