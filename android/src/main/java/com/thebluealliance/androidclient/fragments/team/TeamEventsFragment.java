@@ -25,11 +25,9 @@ import rx.Observable;
 public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
-    public static final String DATAFEED_TAG_FORMAT = "team_events_%1$d_%2$s";
 
     private int mYear;
     private String mTeamKey;
-    private String mDatafeedTag;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -48,7 +46,6 @@ public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListS
             mYear = Utilities.getCurrentYear();
         }
         mTeamKey = getArguments().getString(TEAM_KEY);
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear, mTeamKey);
         super.onCreate(savedInstanceState);
 
         mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
@@ -98,10 +95,5 @@ public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListS
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchTeamEvents(mTeamKey, mYear);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }

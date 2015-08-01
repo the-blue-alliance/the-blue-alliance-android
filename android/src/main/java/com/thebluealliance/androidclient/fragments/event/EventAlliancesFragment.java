@@ -14,9 +14,7 @@ import rx.Observable;
 
 public class EventAlliancesFragment extends ListviewFragment<Event, AllianceListSubscriber> {
     private static final String KEY = "event_key";
-    public static final String DATAFEED_TAG_FORMAT = "event_alliances_%1$s";
 
-    private String mDatafeedTag;
     private String mEventKey;
 
     public static EventAlliancesFragment newInstance(String eventKey) {
@@ -31,7 +29,6 @@ public class EventAlliancesFragment extends ListviewFragment<Event, AllianceList
     public void onCreate(Bundle savedInstanceState) {
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
-            mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
         }
         super.onCreate(savedInstanceState);
     }
@@ -54,10 +51,5 @@ public class EventAlliancesFragment extends ListviewFragment<Event, AllianceList
     @Override
     protected Observable<Event> getObservable() {
         return mDatafeed.fetchEvent(mEventKey);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }

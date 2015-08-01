@@ -28,11 +28,8 @@ import rx.android.internal.Preconditions;
 public class EventsByWeekFragment
   extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
 
-    private static final String YEAR = "YEAR";
-    private static final String TAB = "tab";
-    public static final String DATAFEED_TAG_FORMAT = "events_by_week_%1$d";
+    private static final String YEAR = "YEAR", TAB = "tab";
 
-    private String mDatafeedTag;
     private int mYear;
     private EventsByWeekFragmentPagerAdapter mFragmentAdapter;
     private Parcelable mPagerState, mAdapterState;
@@ -57,7 +54,6 @@ public class EventsByWeekFragment
             // Default to the current year if no year is provided in the arguments
             mYear = getArguments().getInt(YEAR);
         }
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear);
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mSelectedTab = savedInstanceState.getInt(TAB, -1);
@@ -143,11 +139,6 @@ public class EventsByWeekFragment
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchEventsInYear(mYear);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 
     /**

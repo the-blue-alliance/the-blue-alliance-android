@@ -31,10 +31,8 @@ public class EventInfoFragment
   implements View.OnClickListener {
 
     private static final String KEY = "eventKey";
-    public static final String DATAFEED_TAG_FORMAT = "event_info_%1$s";
 
     private String mEventKey;
-    private String mDatafeedTag;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -48,7 +46,6 @@ public class EventInfoFragment
     public void onCreate(Bundle savedInstanceState) {
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
-            mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
         }
         super.onCreate(savedInstanceState);
     }
@@ -123,10 +120,5 @@ public class EventInfoFragment
     @Override
     protected Observable<Event> getObservable() {
         return mDatafeed.fetchEvent(mEventKey);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }

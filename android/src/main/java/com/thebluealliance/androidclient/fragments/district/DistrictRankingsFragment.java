@@ -15,9 +15,7 @@ public class DistrictRankingsFragment
   extends ListviewFragment<List<DistrictTeam>, DistrictRankingsSubscriber> {
 
     public static final String KEY = "districtKey";
-    public static final String DATAFEED_TAG_FORMAT = "district_rankings_%1$d_%2$s";
 
-    private String mDatafeedTag;
     private String mShort;
     private int mYear;
 
@@ -40,7 +38,6 @@ public class DistrictRankingsFragment
         }
         mShort = key.substring(4);
         mYear = Integer.parseInt(key.substring(0, 4));
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mYear, mShort);
         super.onCreate(savedInstanceState);
     }
 
@@ -52,10 +49,5 @@ public class DistrictRankingsFragment
     @Override
     protected Observable<List<DistrictTeam>> getObservable() {
         return mDatafeed.fetchDistrictRankings(mShort, mYear);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }

@@ -14,13 +14,9 @@ import rx.Observable;
 
 public class TeamAtEventStatsFragment extends ListviewFragment<JsonObject, TeamStatsSubscriber> {
 
-    public static final String TEAM_KEY = "team";
-    public static final String EVENT_KEY = "event";
-    public static final String DATAFEED_TAG_FORMAT = "team_at_event_stats_%1$s_%2$s";
+    public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
-    private String mTeamKey;
-    private String mEventKey;
-    private String mDatafeedTag;
+    private String mTeamKey, mEventKey;
 
     public static TeamAtEventStatsFragment newInstance(String teamKey, String eventKey) {
         TeamAtEventStatsFragment f = new TeamAtEventStatsFragment();
@@ -39,7 +35,6 @@ public class TeamAtEventStatsFragment extends ListviewFragment<JsonObject, TeamS
 
         mTeamKey = getArguments().getString(TEAM_KEY);
         mEventKey = getArguments().getString(EVENT_KEY);
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mTeamKey, mEventKey);
         super.onCreate(savedInstanceState);
 
         mSubscriber.setTeamKey(mTeamKey);
@@ -62,10 +57,5 @@ public class TeamAtEventStatsFragment extends ListviewFragment<JsonObject, TeamS
     @Override
     protected Observable<JsonObject> getObservable() {
         return mDatafeed.fetchTeamAtEventStats(mEventKey, mTeamKey);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }

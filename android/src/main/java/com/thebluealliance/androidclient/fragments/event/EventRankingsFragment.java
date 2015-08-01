@@ -25,11 +25,9 @@ import rx.Observable;
  */
 public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsListSubscriber> {
 
-    private static final String KEY = "mEventKey";
-    public static final String DATAFEED_TAG_FORMAT = "event_rankings_%1$s";
+    private static final String KEY = "eventKey";
 
-    private String mEventKey;
-    private String mDatafeedTag;
+    private String eventKey;
 
     /**
      * Creates new rankings fragment for an event
@@ -49,9 +47,8 @@ public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsL
     public void onCreate(Bundle savedInstanceState) {
         // Reload key if returning from another activity/fragment
         if (getArguments() != null) {
-            mEventKey = getArguments().getString(KEY, "");
+            eventKey = getArguments().getString(KEY, "");
         }
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
         super.onCreate(savedInstanceState);
     }
 
@@ -61,11 +58,11 @@ public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsL
         mListView.setOnItemClickListener((adapterView, view, position, id) -> {
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter())
               .getItem(position)).getKey();
-            Intent intent = TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey);
+            Intent intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey);
 
              /* Track the call */
             AnalyticsHelper.sendClickUpdate(
-              getActivity(), "team@event_click", "EventRankingsFragment", mEventKey);
+              getActivity(), "team@event_click", "EventRankingsFragment", eventKey);
 
             startActivity(intent);
         });
@@ -79,11 +76,6 @@ public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsL
 
     @Override
     protected Observable<JsonArray> getObservable() {
-        return mDatafeed.fetchEventRankings(mEventKey);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
+        return mDatafeed.fetchEventRankings(eventKey);
     }
 }

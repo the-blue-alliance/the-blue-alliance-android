@@ -24,10 +24,8 @@ import rx.Observable;
 public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSubscriber> {
 
     private static final String KEY = "event_key";
-    public static final String DATAFEED_TAG_FORMAT = "event_teams_%1$s";
 
     private String mEventKey;
-    private String mDatafeedTag;
 
     public static EventTeamsFragment newInstance(String eventKey) {
         EventTeamsFragment f = new EventTeamsFragment();
@@ -42,7 +40,6 @@ public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSub
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
         super.onCreate(savedInstanceState);
     }
 
@@ -70,10 +67,5 @@ public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSub
     @Override
     protected Observable<List<Team>> getObservable() {
         return mDatafeed.fetchEventTeams(mEventKey);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }

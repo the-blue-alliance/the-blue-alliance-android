@@ -23,10 +23,7 @@ import rx.Observable;
 public class TeamListFragment extends ListviewFragment<List<Team>, TeamListSubscriber> {
 
     private static final String START = "START";
-    public static final String DATAFEED_TAG_FORMAT = "team_list_starting_%1$d";
-
     private int mPageStart;
-    private String mDatafeedTag;
     private TeamPageCombiner mCombiner;
 
     public static TeamListFragment newInstance(int startTeamNumber) {
@@ -42,7 +39,6 @@ public class TeamListFragment extends ListviewFragment<List<Team>, TeamListSubsc
         int teamNumberStart = getArguments().getInt(START);
 
         mPageStart = teamNumberStart/500;
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mPageStart);
         super.onCreate(savedInstanceState);
     }
 
@@ -75,10 +71,5 @@ public class TeamListFragment extends ListviewFragment<List<Team>, TeamListSubsc
     protected Observable<List<Team>> getObservable() {
         return mDatafeed.fetchTeamPage(mPageStart)
           .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1), mCombiner);
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }

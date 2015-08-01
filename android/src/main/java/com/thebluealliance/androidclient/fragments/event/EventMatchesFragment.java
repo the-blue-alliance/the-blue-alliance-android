@@ -25,13 +25,9 @@ import rx.Observable;
 public class EventMatchesFragment
   extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> {
 
-    private static final String KEY = "eventKey";
-    private static final String TEAM = "teamKey";
-    public static final String DATAFEED_TAG_FORMAT = "event_matches_%1$s";
+    private static final String KEY = "eventKey", TEAM = "teamKey";
 
-    private String mEventKey;
-    private String mTeamKey;
-    private String mDatafeedTag;
+    private String mEventKey, mTeamKey;
     private Parcelable mListState;
     private MatchListAdapter mAdapter;
     private ExpandableListView mListView;
@@ -56,7 +52,6 @@ public class EventMatchesFragment
             mEventKey = getArguments().getString(KEY, "");
             mTeamKey = getArguments().getString(TEAM, "");
         }
-        mDatafeedTag = String.format(DATAFEED_TAG_FORMAT, mEventKey);
         super.onCreate(savedInstanceState);
 
         mSubscriber.setEventKey(mEventKey);
@@ -105,10 +100,5 @@ public class EventMatchesFragment
         } else {
             return mDatafeed.fetchTeamAtEventMatches(mTeamKey, mEventKey);
         }
-    }
-
-    @Override
-    protected String getDatafeedTag() {
-        return mDatafeedTag;
     }
 }
