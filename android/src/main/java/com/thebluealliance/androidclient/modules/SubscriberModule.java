@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
+import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
@@ -137,5 +138,9 @@ public class SubscriberModule {
 
     @Provides WebcastListSubscriber provideWebcastListSubscriber() {
         return new WebcastListSubscriber();
+    }
+
+    @Provides SubscriptionListSubscriber provideSubscriptionListSubscriber() {
+        return new SubscriptionListSubscriber(mActivity);
     }
 }

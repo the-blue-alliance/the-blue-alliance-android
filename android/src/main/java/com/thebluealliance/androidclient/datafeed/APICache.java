@@ -1,7 +1,10 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import android.content.Context;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -11,6 +14,7 @@ import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.List;
@@ -196,5 +200,10 @@ public class APICache implements APIv2 {
     @Override
     public Observable<Match> fetchMatch(String matchKey) {
         return Observable.just(mDb.getMatchesTable().get(matchKey));
+    }
+
+    public Observable<List<Subscription>> fetchUserSubscription(Context context) {
+        String account = AccountHelper.getSelectedAccount(context);
+        return Observable.just(mDb.getSubscriptionsTable().getForUser(account));
     }
 }

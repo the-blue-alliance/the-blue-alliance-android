@@ -1,49 +1,35 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
-import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.mytba.PopulateUserSubscriptions;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.models.Subscription;
+import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
+
+import java.util.List;
+
+import rx.Observable;
 
 /**
  * File created by phil on 8/2/14.
  */
-public class MySubscriptionsFragment extends Fragment implements RefreshListener {
-
-    private Activity parent;
+public class MySubscriptionsFragment
+  extends ListviewFragment<List<Subscription>, SubscriptionListSubscriber> {
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    private PopulateUserSubscriptions mTask;
-
     public static MySubscriptionsFragment newInstance() {
         return new MySubscriptionsFragment();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        parent = getActivity();
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).registerRefreshListener(this);
-        }
     }
 
     @Override
@@ -52,6 +38,8 @@ public class MySubscriptionsFragment extends Fragment implements RefreshListener
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
+        mBinder.listView = mListView;
+        mBinder.progressBar = progressBar;
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
@@ -61,19 +49,8 @@ public class MySubscriptionsFragment extends Fragment implements RefreshListener
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (parent instanceof LegacyRefreshableHostActivity) {
-            ((LegacyRefreshableHostActivity) parent).restartRefresh(true);
-        }
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
@@ -81,27 +58,12 @@ public class MySubscriptionsFragment extends Fragment implements RefreshListener
     }
 
     @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading user subscriptions");
-        mTask = new PopulateUserSubscriptions(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
+    protected Observable<List<Subscription>> getObservable() {
+        return mDatafeed.getCache().fetchUserSubscription(getActivity());
     }
-
-    public void updateTask(PopulateUserSubscriptions newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((LegacyRefreshableHostActivity) parent).unregisterRefreshListener(this);
-    }
-
 }
