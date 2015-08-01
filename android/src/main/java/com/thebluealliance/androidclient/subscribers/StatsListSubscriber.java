@@ -54,6 +54,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<List
 
         for (Entry<String, JsonElement> stat : oprs.entrySet()) {
             Team team = mDb.getTeamsTable().get("frc"+stat.getKey());
+            if (team == null) {
+                continue;
+            }
             String teamKey = team.getKey();
             double opr = stat.getValue().getAsDouble();
             double dpr = dprs.has(stat.getKey()) ? dprs.get(stat.getKey()).getAsDouble() : 0;

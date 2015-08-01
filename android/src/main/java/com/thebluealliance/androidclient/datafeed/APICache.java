@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Subscription;
@@ -202,8 +203,13 @@ public class APICache implements APIv2 {
         return Observable.just(mDb.getMatchesTable().get(matchKey));
     }
 
-    public Observable<List<Subscription>> fetchUserSubscription(Context context) {
+    public Observable<List<Subscription>> fetchUserSubscriptions(Context context) {
         String account = AccountHelper.getSelectedAccount(context);
         return Observable.just(mDb.getSubscriptionsTable().getForUser(account));
+    }
+
+    public Observable<List<Favorite>> fetchUserFavorites(Context context) {
+        String account = AccountHelper.getSelectedAccount(context);
+        return Observable.just(mDb.getFavoritesTable().getForUser(account));
     }
 }

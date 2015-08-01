@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
+import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
@@ -142,5 +143,9 @@ public class SubscriberModule {
 
     @Provides SubscriptionListSubscriber provideSubscriptionListSubscriber() {
         return new SubscriptionListSubscriber(mActivity);
+    }
+
+    @Provides FavoriteListSubscriber provideFavoriteListSubscriber() {
+        return new FavoriteListSubscriber(mActivity);
     }
 }

@@ -64,6 +64,6 @@ public class MySubscriptionsFragment
 
     @Override
     protected Observable<List<Subscription>> getObservable() {
-        return mDatafeed.getCache().fetchUserSubscription(getActivity());
+        return mDatafeed.getCache().fetchUserSubscriptions(getActivity());
     }
 }
