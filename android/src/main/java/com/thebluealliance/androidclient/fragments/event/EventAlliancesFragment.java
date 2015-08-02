@@ -1,45 +1,21 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-/**
- * Created by phil on 7/8/14.
- */
-
-import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventAlliances;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.views.NoDataView;
+import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 
-/**
- * File created by phil on 4/22/14.
- */
-public class EventAlliancesFragment extends Fragment implements RefreshListener {
+import rx.Observable;
 
-    private Activity parent;
-
-    private String mEventKey;
+public class EventAlliancesFragment extends ListviewFragment<Event, AllianceListSubscriber> {
     private static final String KEY = "event_key";
 
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
-
-    private PopulateEventAlliances mTask;
+    private String mEventKey;
 
     public static EventAlliancesFragment newInstance(String eventKey) {
         EventAlliancesFragment f = new EventAlliancesFragment();
@@ -51,81 +27,29 @@ public class EventAlliancesFragment extends Fragment implements RefreshListener 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
-
-        // Initialize "No Data" view
-        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
-        noData.setImage(R.drawable.ic_recent_actors_black_48dp);
-        noData.setText(R.string.no_alliance_data);
-
-        mListView = (ListView) view.findViewById(R.id.list);
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
 
         //disable touch feedback (you can't click the elements here...)
         mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
         mListView.setSelector(R.drawable.transparent);
-
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            progressBar.setVisibility(View.GONE);
-        }
         return view;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-        }
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " teams");
-        mTask = new PopulateEventAlliances(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventAlliances newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+    protected Observable<Event> getObservable() {
+        return mDatafeed.fetchEvent(mEventKey);
     }
 }

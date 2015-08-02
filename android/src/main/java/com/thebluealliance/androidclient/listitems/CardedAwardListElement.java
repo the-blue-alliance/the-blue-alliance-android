@@ -11,20 +11,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
-import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Created by Nathan on 11/13/2014.
- */
 public class CardedAwardListElement extends ListElement {
 
     private String mAwardName, mEventKey, mSelectedTeamNum;
     private JsonArray mAwardWinners;
-    private HashMap<String, Team> mAwardTeams;
+    private Map<String, Team> mAwardTeams;
 
     public CardedAwardListElement(String name, JsonArray winners) {
         super();
@@ -33,7 +30,7 @@ public class CardedAwardListElement extends ListElement {
         mAwardTeams = null;
     }
 
-    public CardedAwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams, String selectedTeamKey) {
+    public CardedAwardListElement(String name, String eventKey, JsonArray winners, Map<String, Team> teams, String selectedTeamKey) {
         super();
         mAwardName = name;
         mEventKey = eventKey;
@@ -65,7 +62,7 @@ public class CardedAwardListElement extends ListElement {
 
             String teamNumber;
             String awardee;
-            if (JSONManager.isNull(winner.get("team_number"))) {
+            if (JSONHelper.isNull(winner.get("team_number"))) {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
@@ -76,7 +73,7 @@ public class CardedAwardListElement extends ListElement {
                 }
                 winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
             }
-            if (JSONManager.isNull(winner.get("awardee"))) {
+            if (JSONHelper.isNull(winner.get("awardee"))) {
                 awardee = "";
             } else {
                 awardee = winner.get("awardee").getAsString();

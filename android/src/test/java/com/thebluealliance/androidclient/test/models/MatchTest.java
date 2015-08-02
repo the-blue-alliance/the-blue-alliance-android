@@ -1,83 +1,75 @@
 package com.thebluealliance.androidclient.test.models;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
 import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
-/**
- * Created by Jerry on 4/15/2015.
- */
-@RunWith(RobolectricTestRunner.class)
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
+@Ignore
 public class MatchTest {
-    private static final String ALLIANCES_2009 = "{" +
-            "\"red\":  {\"score\": 81, \"teams\": [\"frc68\", \"frc217\", \"frc247\"]}," +
-            "\"blue\": {\"score\": 98, \"teams\": [\"frc111\", \"frc971\", \"frc67\"]}" +
-            "}";
-    private JsonObject alliances;
+    Match mMatch;
 
     @Before
-    public void setUp() {
-        alliances = new JsonParser().parse(ALLIANCES_2009).getAsJsonObject();
-    }
-
-    private static String[] jsonToStringArray(JsonArray array) {
-        String[] result = new String[array.size()];
-        int i = 0;
-
-        for (JsonElement e : array) {
-            result[i++] = e.getAsString();
+    public void readJsonData(){
+        BufferedReader matchReader;
+        Gson gson = JSONHelper.getGson();
+        String basePath = new File("").getAbsolutePath();
+        try {
+            matchReader = new BufferedReader(
+                new FileReader(basePath + "/android/src/test/java/com/thebluealliance/" +
+                    "androidclient/test/models/data/match_2014cmp_f1m1.json"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            assertTrue(false);
+            return;
         }
 
-        return result;
+        mMatch = gson.fromJson(matchReader, Match.class);
     }
 
-    @org.junit.Test
-    public void testGetAlliance() {
-        JsonObject redAlliance = Match.getRedAlliance(alliances);
-        assertEquals(81, redAlliance.get("score").getAsInt());
+    @Test
+    public void testMatchModel() throws BasicModel.FieldNotDefinedException {
+        assertNotNull(mMatch);
+        assertEquals(mMatch.getKey(), "2014cmp_f1m1");
+        assertEquals(mMatch.getMatchNumber(), 1);
+        assertEquals(mMatch.getSetNumber(), 1);
+        assertEquals(mMatch.getEventKey(), "2014cmp");
+        assertEquals(mMatch.getTimeString(), "5:38 PM");
+        assertEquals(mMatch.getTime().getTime(), 1398551880);
+        assertNotNull(mMatch.getVideos());
+        assertNotNull(mMatch.getAlliances());
 
-        JsonObject blueAlliance = Match.getBlueAlliance(alliances);
-        assertEquals(3, blueAlliance.getAsJsonArray("teams").size());
-        assertEquals("frc971", blueAlliance.getAsJsonArray("teams").get(1).getAsString());
-    }
+        JsonArray videos = mMatch.getVideos();
+        assertEquals(videos.size(), 2);
+        assertTrue(videos.get(0).isJsonObject());
+        JsonObject video1 = videos.get(0).getAsJsonObject();
+        assertEquals(video1.get("type").getAsString(), "youtube");
+        assertEquals(video1.get("key").getAsString(), "jdJutaggCMk");
 
-    @org.junit.Test
-    public void testGetScore() {
-        assertEquals(81, Match.getRedScore(alliances));
-        assertEquals(98, Match.getBlueScore(alliances));
-    }
-
-    @org.junit.Test
-    public void testGetTeams() {
-        assertArrayEquals(new String[]{"frc68", "frc217", "frc247"},
-                jsonToStringArray(Match.getRedTeams(alliances)));
-        assertArrayEquals(new String[]{"frc111", "frc971", "frc67"},
-                jsonToStringArray(Match.getBlueTeams(alliances)));
-    }
-
-    @org.junit.Test
-    public void testHasTeam() {
-        JsonArray blueTeams = Match.getBlueTeams(alliances);
-        assertTrue(Match.hasTeam(blueTeams, "frc111"));
-        assertTrue(Match.hasTeam(blueTeams, "frc971"));
-        assertTrue(Match.hasTeam(blueTeams, "frc67"));
-
-        assertFalse(Match.hasTeam(blueTeams, "frc1111"));
-        assertFalse(Match.hasTeam(blueTeams, "frc11"));
-        assertFalse(Match.hasTeam(blueTeams, "frc1"));
-        assertFalse(Match.hasTeam(blueTeams, "frc9"));
-        assertFalse(Match.hasTeam(blueTeams, "1"));
-        assertFalse(Match.hasTeam(blueTeams, ""));
+        JsonObject alliances = mMatch.getAlliances().getAsJsonObject();
+        assertTrue(alliances.has("blue") && alliances.get("blue").isJsonObject());
+        assertTrue(alliances.has("red") && alliances.get("red").isJsonObject());
+        JsonObject blueAlliance = alliances.get("blue").getAsJsonObject();
+        assertTrue(blueAlliance.has("score") && blueAlliance.has("teams"));
+        assertEquals(blueAlliance.get("score").getAsInt(), 361);
+        assertTrue(blueAlliance.get("teams").isJsonArray());
+        JsonArray blueTeams = blueAlliance.get("teams").getAsJsonArray();
+        assertEquals(blueTeams.size(), 3);
+        assertEquals(blueTeams.get(0).getAsString(), "frc469");
     }
 }

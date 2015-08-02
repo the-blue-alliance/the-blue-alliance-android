@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
@@ -126,7 +126,7 @@ public class ModelHelper {
         }
     }
 
-    public static ListItem renderModelFromKey(Context context, String key, MODELS type, boolean showSettingsButton) {
+    public static ListItem renderModelFromKey(Context context, String key, MODELS type) {
         try {
             String text;
             Database db = Database.getInstance(context);

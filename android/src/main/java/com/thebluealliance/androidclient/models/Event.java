@@ -9,17 +9,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
 import java.text.ParseException;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class Event extends BasicModel<Event> {
@@ -58,7 +60,7 @@ public class Event extends BasicModel<Event> {
             return alliances;
         }
         if (fields.containsKey(Database.Events.ALLIANCES) && fields.get(Database.Events.ALLIANCES) instanceof String) {
-            alliances = JSONManager.getasJsonArray((String) fields.get(Database.Events.ALLIANCES));
+            alliances = JSONHelper.getasJsonArray((String) fields.get(Database.Events.ALLIANCES));
             return alliances;
         }
         throw new FieldNotDefinedException("Field Database.Events.ALLIANCES is not defined");
@@ -84,11 +86,7 @@ public class Event extends BasicModel<Event> {
         if (fields.containsKey(Database.Events.YEAR) && fields.get(Database.Events.YEAR) instanceof Integer) {
             return (Integer) fields.get(Database.Events.YEAR);
         } else {
-            try {
-                return Integer.parseInt(getEventKey().substring(0, 4));
-            } catch (FieldNotDefinedException e) {
-                throw new FieldNotDefinedException("Field Database.Events.YEAR is not defined");
-            }
+            return Integer.parseInt(getKey().substring(0, 4));
         }
     }
 
@@ -101,7 +99,7 @@ public class Event extends BasicModel<Event> {
             return rankings;
         }
         if (fields.containsKey(Database.Events.RANKINGS) && fields.get(Database.Events.RANKINGS) instanceof String) {
-            rankings = JSONManager.getasJsonArray((String) fields.get(Database.Events.RANKINGS));
+            rankings = JSONHelper.getasJsonArray((String) fields.get(Database.Events.RANKINGS));
             return rankings;
         }
         throw new FieldNotDefinedException("Field Database.Events.RANKINGS is not defined");
@@ -121,7 +119,7 @@ public class Event extends BasicModel<Event> {
             return webcasts;
         }
         if (fields.containsKey(Database.Events.WEBCASTS) && fields.get(Database.Events.WEBCASTS) instanceof String) {
-            webcasts = JSONManager.getasJsonArray((String) fields.get(Database.Events.WEBCASTS));
+            webcasts = JSONHelper.getasJsonArray((String) fields.get(Database.Events.WEBCASTS));
             return webcasts;
         }
         throw new FieldNotDefinedException("Field Database.Events.WEBCASTS is not defined");
@@ -141,7 +139,7 @@ public class Event extends BasicModel<Event> {
             return stats;
         }
         if (fields.containsKey(Database.Events.STATS) && fields.get(Database.Events.STATS) instanceof String) {
-            stats = JSONManager.getasJsonObject((String) fields.get(Database.Events.STATS));
+            stats = JSONHelper.getasJsonObject((String) fields.get(Database.Events.STATS));
             return stats;
         }
         throw new FieldNotDefinedException("Field Database.Events.STATS is not defined");
@@ -157,11 +155,12 @@ public class Event extends BasicModel<Event> {
     }
 
 
-    public String getEventKey() throws FieldNotDefinedException {
+    @Override
+    public String getKey() {
         if (fields.containsKey(Database.Events.KEY) && fields.get(Database.Events.KEY) instanceof String) {
             return (String) fields.get(Database.Events.KEY);
         }
-        throw new FieldNotDefinedException("Field Database.Events.KEY is not defined");
+        return "";
     }
 
     /**
@@ -170,7 +169,7 @@ public class Event extends BasicModel<Event> {
      * @return Event key without the year
      */
     public String getYearAgnosticEventKey() throws FieldNotDefinedException {
-        return getEventKey().replaceAll("[0-9]", "");
+        return getKey().replaceAll("[0-9]", "");
     }
 
     public void setEventKey(String eventKey) {
@@ -273,7 +272,7 @@ public class Event extends BasicModel<Event> {
             return districtPoints;
         }
         if (fields.containsKey(Database.Events.DISTRICT_POINTS) && fields.get(Database.Events.DISTRICT_POINTS) instanceof String) {
-            districtPoints = JSONManager.getasJsonObject((String) fields.get(Database.Events.DISTRICT_POINTS));
+            districtPoints = JSONHelper.getasJsonObject((String) fields.get(Database.Events.DISTRICT_POINTS));
             return districtPoints;
         }
         throw new FieldNotDefinedException("Field Database.Events.DISTRICT_POINTS is not defined");
@@ -299,15 +298,27 @@ public class Event extends BasicModel<Event> {
             return;
         }
         try {
-            Date start = EventHelper.eventDateFormat.parse(startString);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(start);
+            Date start = ThreadSafeFormatters.parseEventDate(startString);
             fields.put(Database.Events.START, start.getTime());
-            int week = Integer.parseInt(EventHelper.weekFormat.format(start)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
-            setCompetitionWeek(week);
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
+        }
+    }
+
+    public void setCompetitionWeekFromStartDate() {
+        Date start;
+        try {
+            start = getStartDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(start.getTime());
+            int eventWeek = cal.get(Calendar.WEEK_OF_YEAR);
+            int firstWeek = Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+            int week = eventWeek - firstWeek;
+            setCompetitionWeek(week);
+        } catch (FieldNotDefinedException e) {
+            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "Can't set week, no start date");
         }
     }
 
@@ -327,7 +338,9 @@ public class Event extends BasicModel<Event> {
             return;
         }
         try {
-            fields.put(Database.Events.END, EventHelper.eventDateFormat.parse(endString).getTime());
+            fields.put(
+              Database.Events.END,
+              ThreadSafeFormatters.parseEventDate(endString).getTime());
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
@@ -420,7 +433,7 @@ public class Event extends BasicModel<Event> {
             return teams;
         }
         if (fields.containsKey(Database.Events.TEAMS) && fields.get(Database.Events.TEAMS) instanceof String) {
-            teams = JSONManager.getasJsonArray((String) fields.get(Database.Events.TEAMS));
+            teams = JSONHelper.getasJsonArray((String) fields.get(Database.Events.TEAMS));
             return teams;
         }
         throw new FieldNotDefinedException("Field Database.Events.TEAMS is not defined");
@@ -432,9 +445,10 @@ public class Event extends BasicModel<Event> {
                     endDate = getEndDate();
             if (startDate == null || endDate == null) return "";
             if (startDate.equals(endDate)) {
-                return EventHelper.renderDateFormat.format(startDate);
+                return ThreadSafeFormatters.renderEventDate(startDate);
             }
-            return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
+            return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
+              ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
                     "Required fields: Database.Events.START, Database.Events.END");
@@ -445,7 +459,7 @@ public class Event extends BasicModel<Event> {
     @Override
     public EventListElement render() {
         try {
-            return new EventListElement(getEventKey(), getEventShortName(), getDateString(), getLocation());
+            return new EventListElement(getKey(), getEventShortName(), getDateString(), getLocation());
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
                     "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
@@ -459,7 +473,7 @@ public class Event extends BasicModel<Event> {
             int i = 1;
             for (JsonElement webcast : getWebcasts()) {
                 try {
-                    webcasts.add(new WebcastListElement(getEventKey(), getEventShortName(), webcast.getAsJsonObject(), i));
+                    webcasts.add(new WebcastListElement(getKey(), getEventShortName(), webcast.getAsJsonObject(), i));
                     i++;
                 } catch (FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
@@ -471,35 +485,40 @@ public class Event extends BasicModel<Event> {
         return webcasts;
     }
 
-    public ArrayList<AllianceListElement> renderAlliances() {
-        ArrayList<AllianceListElement> output = new ArrayList<>();
+    public ArrayList<ListItem> renderAlliances() {
+        ArrayList<ListItem> output = new ArrayList<>();
+        renderAlliances(output);
+        return output;
+    }
+
+    public void renderAlliances(List<ListItem> destList) {
         try {
             JsonArray alliances = getAlliances();
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                output.add(new AllianceListElement(getEventKey(), counter, teams));
+                destList.add(new AllianceListElement(getKey(), counter, teams));
                 counter++;
             }
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
-                    "Required field: Database.Events.ALLIANCES");
+              "Required field: Database.Events.ALLIANCES");
         } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }
-        return output;
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {
-        return getEventKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
+        return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    public static synchronized APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Events table = Database.getInstance(c).getEventsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Event event;
         if (cursor != null && cursor.moveToFirst()) {
-            event = ModelInflater.inflateEvent(cursor);
+            event = table.inflate(cursor);
             cursor.close();
         } else {
             event = new Event();
@@ -508,7 +527,7 @@ public class Event extends BasicModel<Event> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Event updatedEvent;
                 if (url.substring(url.lastIndexOf("/")).equals(eventKey)) {
@@ -516,7 +535,7 @@ public class Event extends BasicModel<Event> {
                      * Here, the last url parameter is the event key
                      * All other endpoints have something else after that
                      */
-                    updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
+                    updatedEvent = JSONHelper.getGson().fromJson(response.getData(), Event.class);
                     if (updatedEvent == null) {
                         // Error parsing the json
                         code = APIResponse.CODE.NODATA;
@@ -543,38 +562,38 @@ public class Event extends BasicModel<Event> {
         return new APIResponse<>(event, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
         ArrayList<Event> events = new ArrayList<>();
 
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                 events = new ArrayList<>();
                 for (JsonElement m : matchList) {
-                    events.add(JSONManager.getGson().fromJson(m, Event.class));
+                    events.add(JSONHelper.getGson().fromJson(m, Event.class));
                 }
                 changed = true;
             }
             code = APIResponse.mergeCodes(code, response.getCode());
         }
 
+        Database.Events eventsTable = Database.getInstance(c).getEventsTable();
         if (changed) {
-            Database.Events eventsTable = Database.getInstance(c).getEventsTable();
-            int deleted = eventsTable.delete(whereClause, whereArgs);
-            eventsTable.storeEvents(events);
+            eventsTable.delete(whereClause, whereArgs);
+            eventsTable.add(events);
         }
 
         // Fetch from db after web, see #372
         // Allows us to do whereClause filtering again
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_EVENTS, fields, whereClause, whereArgs, null, null, null, null);
+        Cursor cursor = eventsTable.query(fields, whereClause, whereArgs, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             events.clear();
             do {
-                events.add(ModelInflater.inflateEvent(cursor));
+                events.add(eventsTable.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }

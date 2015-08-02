@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -26,7 +26,7 @@ import com.thebluealliance.androidclient.models.Team;
 public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> {
 
     private TeamInfoFragment mFragment;
-    private RefreshableHostActivity activity;
+    private LegacyRefreshableHostActivity activity;
     private String mTeamName;
     private int mTeamNumber;
     private String mLocation;
@@ -38,7 +38,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
 
     public PopulateTeamInfo(TeamInfoFragment fragment, RequestParams requestParams) {
         mFragment = fragment;
-        activity = (RefreshableHostActivity) fragment.getActivity();
+        activity = (LegacyRefreshableHostActivity) fragment.getActivity();
         this.requestParams = requestParams;
     }
 
@@ -133,7 +133,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                 view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
 
                 if (code == APIResponse.CODE.OFFLINECACHE) {
-                    ((RefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
+                    ((LegacyRefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
                 }
 
                 view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
@@ -148,13 +148,13 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                  */
                 requestParams.forceFromCache = false;
                 PopulateTeamInfo secondLoad = new PopulateTeamInfo(mFragment, requestParams);
-                mFragment.updateTask(secondLoad);
-                secondLoad.execute(mTeamKey);
+                // mFragment.updateTask(secondLoad);
+               // secondLoad.execute(mTeamKey);
             } else {
                 // Show notification if we've refreshed data.
                 Log.i(Constants.REFRESH_LOG, "Team " + mTeamKey + " info refresh complete");
                 if (activity != null && mFragment instanceof RefreshListener) {
-                    activity.notifyRefreshComplete(mFragment);
+                 //   activity.notifyRefreshComplete(mFragment);
                 }
             }
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team info", mTeamKey);

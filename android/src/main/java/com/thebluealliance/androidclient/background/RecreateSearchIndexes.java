@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -57,12 +57,12 @@ public class RecreateSearchIndexes extends IntentService {
         Log.d(Constants.LOG_TAG, "Saving " + events.size() + " events and " + teams.size() + "teams");
 
         // remove current indexes
-        db.safeRawQuery("DELETE FROM " + Database.TABLE_SEARCH_TEAMS, new String[]{});
-        db.safeRawQuery("DELETE FROM " + Database.TABLE_SEARCH_EVENTS, new String[]{});
+        db.getTeamsTable().deleteAllSearchIndexes();
+        db.getEventsTable().deleteAllSearchIndexes();
 
         // store new indexes
-        db.insertSearchItemEvents(events);
-        db.insertSearchItemTeams(teams);
+        db.getEventsTable().recreateAllSearchIndexes(events);
+        db.getTeamsTable().recreateAllSearchIndexes(teams);
         Log.d(Constants.LOG_TAG, "New indexes inserted");
     }
 }

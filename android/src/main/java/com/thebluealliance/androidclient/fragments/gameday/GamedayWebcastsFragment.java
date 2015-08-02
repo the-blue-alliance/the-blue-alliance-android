@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.fragments.gameday;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,66 +11,63 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.gameday.PopulateGameDayWebcasts;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.views.NoDataView;
+import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by phil on 3/27/15.
- */
-public class GamedayWebcastsFragment extends Fragment {
+import rx.Observable;
 
-    private ListView listView;
-    private ProgressBar progressBar;
-    private ListViewAdapter adapter;
-    private Parcelable listState;
-    private int firstVisiblePosition;
+public class GamedayWebcastsFragment extends ListviewFragment<List<Event>, WebcastListSubscriber> {
+
+    private ListView mListView;
+    private ListViewAdapter mAdapter;
+    private Parcelable mListState;
+    private int mFirstVisiblePosition;
+    private int mYear;
+    private int mWeek;
 
     public static GamedayWebcastsFragment newInstance() {
         return new GamedayWebcastsFragment();
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        mYear = Utilities.getCurrentYear();
+        mWeek = Utilities.getCurrentCompWeek();
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_carded, null);
-
-        // Initialize "No Data" view
-        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
-        noData.setImage(R.drawable.ic_videocam_black_48dp);
-        noData.setText(R.string.no_webcast_data_found);
-
-        listView = (ListView) view.findViewById(R.id.list);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        if (adapter != null) {
-            listView.setAdapter(adapter);
-            listView.onRestoreInstanceState(listState);
-            listView.setSelection(firstVisiblePosition);
+        View v = inflater.inflate(R.layout.list_view_carded, null);
+        mListView = (ListView) v.findViewById(R.id.list);
+        ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.listView = mListView;
+        mBinder.progressBar = progressBar;
+        if (mAdapter != null) {
+            mListView.setAdapter(mAdapter);
+            mListView.onRestoreInstanceState(mListState);
+            mListView.setSelection(mFirstVisiblePosition);
             Log.d("onCreateView", "using existing adapter");
         } else {
-            adapter = new ListViewAdapter(getActivity(), new ArrayList<>());
-            listView.setAdapter(adapter);
+            mAdapter = new ListViewAdapter(getActivity(), new ArrayList<>());
+            mListView.setAdapter(mAdapter);
         }
-        return view;
+        return v;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (listView != null) {
-            Log.d("onPause", "saving adapter");
-            adapter = (ListViewAdapter) listView.getAdapter();
-            listState = listView.onSaveInstanceState();
-            firstVisiblePosition = listView.getFirstVisiblePosition();
-        }
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        new PopulateGameDayWebcasts(this, new RequestParams(true, false)).execute();
+    protected Observable<List<Event>> getObservable() {
+        return mDatafeed.fetchEventsInWeek(mYear, mWeek);
     }
 }

@@ -10,11 +10,10 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -60,6 +59,15 @@ public class Media extends BasicModel<Media> {
         details = null;
     }
 
+    @Override
+    public String getKey() {
+        try {
+            return getForeignKey();
+        } catch (FieldNotDefinedException e) {
+            return "";
+        }
+    }
+
     public Media.TYPE getMediaType() throws FieldNotDefinedException {
         if (fields.containsKey(Database.Medias.TYPE) && fields.get(Database.Medias.TYPE) instanceof String) {
             return TYPE.fromString((String) fields.get(Database.Medias.TYPE));
@@ -102,7 +110,7 @@ public class Media extends BasicModel<Media> {
             return details;
         }
         if (fields.containsKey(Database.Medias.DETAILS) && fields.get(Database.Medias.DETAILS) instanceof String) {
-            details = JSONManager.getasJsonObject((String) fields.get(Database.Medias.DETAILS));
+            details = JSONHelper.getasJsonObject((String) fields.get(Database.Medias.DETAILS));
             return details;
         }
         throw new FieldNotDefinedException("Field Database.Medias.TEAMKEY is not defined");
@@ -154,10 +162,11 @@ public class Media extends BasicModel<Media> {
 
     public static APIResponse<Media> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Medias table = Database.getInstance(c).getMediasTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Media media;
         if (cursor != null && cursor.moveToFirst()) {
-            media = ModelInflater.inflateMedia(cursor);
+            media = table.inflate(cursor);
             cursor.close();
         } else {
             media = new Media();
@@ -166,9 +175,9 @@ public class Media extends BasicModel<Media> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Media updatedMedia = JSONManager.getGson().fromJson(response.getData(), Media.class);
+                Media updatedMedia = JSONHelper.getGson().fromJson(response.getData(), Media.class);
                 media.merge(updatedMedia);
                 changed = true;
             }
@@ -182,13 +191,14 @@ public class Media extends BasicModel<Media> {
         return new APIResponse<>(media, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_MEDIAS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Medias table = Database.getInstance(c).getMediasTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Media> medias = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                medias.add(ModelInflater.inflateMedia(cursor));
+                medias.add(table.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -196,12 +206,12 @@ public class Media extends BasicModel<Media> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray mediaList = JSONManager.getasJsonArray(response.getData());
+                JsonArray mediaList = JSONHelper.getasJsonArray(response.getData());
                 medias = new ArrayList<>();
                 for (JsonElement m : mediaList) {
-                    Media media = JSONManager.getGson().fromJson(m, Media.class);
+                    Media media = JSONHelper.getGson().fromJson(m, Media.class);
                     media.setTeamKey(teamKey);
                     media.setYear(year);
                     medias.add(media);

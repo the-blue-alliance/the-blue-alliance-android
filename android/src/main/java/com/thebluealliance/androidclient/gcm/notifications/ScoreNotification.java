@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -45,17 +45,13 @@ public class ScoreNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
         if (!jsonData.has("match")) {
             throw new JsonParseException("Notification data does not contain 'match");
         }
         JsonObject match = jsonData.get("match").getAsJsonObject();
         this.match = gson.fromJson(match, Match.class);
-        try {
-            this.matchKey = this.match.getKey();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
-        }
+        this.matchKey = this.match.getKey();
         this.eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name");
@@ -68,14 +64,8 @@ public class ScoreNotification extends BaseNotification {
         Resources r = context.getResources();
 
         String matchKey;
-        try {
-            matchKey = match.getKey();
-            this.matchKey = matchKey;
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Incoming Match object does not have a key. Can't post score update");
-            e.printStackTrace();
-            return null;
-        }
+        matchKey = match.getKey();
+        this.matchKey = matchKey;
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);

@@ -5,8 +5,8 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class Subscription {
         this.notificationSettings = notificationSettings;
         // Update the ArrayList
         notificationList.clear();
-        for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
+        for (JsonElement element : JSONHelper.getasJsonArray(notificationSettings)) {
             notificationList.add(element.getAsString());
         }
     }
@@ -70,7 +70,7 @@ public class Subscription {
     public List<String> getNotificationList() {
         if (notificationList == null) {
             notificationList = new ArrayList<>();
-            for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
+            for (JsonElement element : JSONHelper.getasJsonArray(notificationSettings)) {
                 notificationList.add(element.getAsString());
             }
         }

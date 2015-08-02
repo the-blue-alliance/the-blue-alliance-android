@@ -15,7 +15,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;

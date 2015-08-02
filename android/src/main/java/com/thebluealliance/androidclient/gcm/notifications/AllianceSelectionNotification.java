@@ -15,7 +15,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -39,7 +39,7 @@ public class AllianceSelectionNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
         if (!jsonData.has("event")) {
             throw new JsonParseException("Notification data does not have an 'event' object");
         }
@@ -58,16 +58,8 @@ public class AllianceSelectionNotification extends BaseNotification {
             return null;
         }
 
-        try {
-            eventKey = event.getEventKey();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Event data passed in this notification does not contain an event short name. Can't post this notification.");
-            e.printStackTrace();
-            return null;
-        }
-
+        eventKey = event.getKey();
         String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
-
         Intent instance = getIntent(context);
 
         stored = new StoredNotification();
@@ -121,9 +113,11 @@ public class AllianceSelectionNotification extends BaseNotification {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String titleString;
+        String titleString, shortName, shortCode;
         try {
-            titleString = c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(event.getEventName()), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase());
+            shortName = event.getEventShortName();
+            shortCode = EventHelper.getShortCodeForEventKey(event.getKey()).toUpperCase();
+            titleString = c.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
         } catch (BasicModel.FieldNotDefinedException e) {
             titleString = eventKey;
         }

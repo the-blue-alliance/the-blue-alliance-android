@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 /**
  * Created by phil on 2/3/15.
  */
-public class RecentNotificationsActivity extends RefreshableHostActivity {
+public class RecentNotificationsActivity extends LegacyRefreshableHostActivity {
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 

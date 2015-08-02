@@ -9,12 +9,11 @@ import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class Award extends BasicModel<Award> {
         }
     }
 
-    public String getKey() throws FieldNotDefinedException {
+    public String getKey() {
         if (fields.containsKey(Database.Awards.KEY) && fields.get(Database.Awards.KEY) instanceof String) {
             return (String) fields.get(Database.Awards.KEY);
         } else {
@@ -54,7 +53,7 @@ public class Award extends BasicModel<Award> {
                 setKey(newKey);
                 return newKey;
             } catch (FieldNotDefinedException e) {
-                throw new FieldNotDefinedException("Field Database.Awards.KEY is not defined");
+                return "";
             }
         }
     }
@@ -79,7 +78,7 @@ public class Award extends BasicModel<Award> {
             return winners;
         }
         if (fields.containsKey(Database.Awards.WINNERS) && fields.get(Database.Awards.WINNERS) instanceof String) {
-            winners = JSONManager.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
+            winners = JSONHelper.getasJsonArray((String) fields.get(Database.Awards.WINNERS));
             return winners;
         }
         throw new FieldNotDefinedException("Field Database.Awards.WINNERS is not defined");
@@ -141,12 +140,13 @@ public class Award extends BasicModel<Award> {
         return out;
     }
 
-    public static synchronized APIResponse<Award> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<Award> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Awards table = Database.getInstance(c).getAwardsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Award award;
         if (cursor != null && cursor.moveToFirst()) {
-            award = ModelInflater.inflateAward(cursor);
+            award = table.inflate(cursor);
             cursor.close();
         } else {
             award = new Award();
@@ -155,9 +155,9 @@ public class Award extends BasicModel<Award> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Award updatedAward = JSONManager.getGson().fromJson(response.getData(), Award.class);
+                Award updatedAward = JSONHelper.getGson().fromJson(response.getData(), Award.class);
                 award.merge(updatedAward);
                 changed = true;
             }
@@ -171,13 +171,14 @@ public class Award extends BasicModel<Award> {
         return new APIResponse<>(award, code);
     }
 
-    public static synchronized APIResponse<ArrayList<Award>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<Award>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying awards table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_AWARDS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Awards table = Database.getInstance(c).getAwardsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Award> awards = new ArrayList<>(), allAwards = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                awards.add(ModelInflater.inflateAward(cursor));
+                awards.add(table.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -189,12 +190,12 @@ public class Award extends BasicModel<Award> {
             teamNumber = teamKey.substring(3);
         }
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray awardList = JSONManager.getasJsonArray(response.getData());
+                JsonArray awardList = JSONHelper.getasJsonArray(response.getData());
                 awards = new ArrayList<>();
                 for (JsonElement a : awardList) {
-                    Award award = JSONManager.getGson().fromJson(a, Award.class);
+                    Award award = JSONHelper.getGson().fromJson(a, Award.class);
                     try {
                         if (teamSet && award.getWinners().toString().contains(teamNumber)) {
                             awards.add(award);

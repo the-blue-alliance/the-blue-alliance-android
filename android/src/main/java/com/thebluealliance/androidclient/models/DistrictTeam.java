@@ -9,12 +9,11 @@ import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -34,11 +33,11 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         fields.put(Database.DistrictTeams.KEY, key);
     }
 
-    public String getKey() throws FieldNotDefinedException {
+    public String getKey() {
         if (fields.containsKey(Database.DistrictTeams.KEY) && fields.get(Database.DistrictTeams.KEY) instanceof String) {
             return (String) fields.get(Database.DistrictTeams.KEY);
         } else {
-            throw new FieldNotDefinedException("Field Database.DistrictTeams.KEY is not defined");
+            return "";
         }
     }
 
@@ -226,12 +225,13 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         }
     }
 
-    public static synchronized APIResponse<DistrictTeam> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<DistrictTeam> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.DistrictTeams table = Database.getInstance(c).getDistrictTeamsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         DistrictTeam team;
         if (cursor != null && cursor.moveToFirst()) {
-            team = ModelInflater.inflateDistrictTeam(cursor);
+            team = table.inflate(cursor);
             cursor.close();
         } else {
             team = new DistrictTeam();
@@ -242,30 +242,25 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         boolean changed = false;
         allTeams = new ArrayList<>();
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 DistrictTeam updatedTeam = new DistrictTeam();
                 if (url.contains("district") && url.contains("rankings")) {
                     /* We're requesting the rankings for an entire district (there isn't yet a single endpoint for this) */
-                    JsonArray teamList = JSONManager.getasJsonArray(response.getData());
+                    JsonArray teamList = JSONHelper.getasJsonArray(response.getData());
                     for (JsonElement t : teamList) {
-                        DistrictTeam inflated = JSONManager.getGson().fromJson(t, DistrictTeam.class);
+                        DistrictTeam inflated = JSONHelper.getGson().fromJson(t, DistrictTeam.class);
                         DistrictTeamHelper.addFieldsFromKey(inflated, key);
 
-                        try {
-                            if (inflated.getKey().equals(key)) {
-                                updatedTeam = inflated;
-                                //this match will be added to the list below
-                            } else {
-                                allTeams.add(inflated);
-                            }
-                        } catch (FieldNotDefinedException e) {
-                            Log.e(Constants.LOG_TAG, "Unable to get districtTeam key");
+                        if (inflated.getKey().equals(key)) {
+                            updatedTeam = inflated;
+                            //this match will be added to the list below
+                        } else {
                             allTeams.add(inflated);
                         }
                     }
                 } else {
-                    updatedTeam = JSONManager.getGson().fromJson(response.getData(), DistrictTeam.class);
+                    updatedTeam = JSONHelper.getGson().fromJson(response.getData(), DistrictTeam.class);
                 }
                 team.merge(updatedTeam);
                 changed = true;
@@ -282,13 +277,14 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         return new APIResponse<>(team, requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
     }
 
-    public static synchronized APIResponse<ArrayList<DistrictTeam>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<ArrayList<DistrictTeam>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_DISTRICTTEAMS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.DistrictTeams table = Database.getInstance(c).getDistrictTeamsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<DistrictTeam> districtTeams = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                districtTeams.add(ModelInflater.inflateDistrictTeam(cursor));
+                districtTeams.add(table.inflate(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }
@@ -296,12 +292,12 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray districtList = JSONManager.getasJsonArray(response.getData());
+                JsonArray districtList = JSONHelper.getasJsonArray(response.getData());
                 districtTeams = new ArrayList<>();
                 for (JsonElement d : districtList) {
-                    DistrictTeam next = JSONManager.getGson().fromJson(d, DistrictTeam.class);
+                    DistrictTeam next = JSONHelper.getGson().fromJson(d, DistrictTeam.class);
                     try {
                         DistrictTeamHelper.addFieldsFromAPIUrl(next, next.getTeamKey(), url);
                         districtTeams.add(next);

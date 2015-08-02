@@ -1,23 +1,19 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -25,6 +21,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -33,20 +30,13 @@ import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * File created by phil on 6/15/14.
- */
 public class EventHelper {
 
-    public static final DateFormat eventDateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH);
-    public static final SimpleDateFormat renderDateFormat = new SimpleDateFormat("MMM d, yyyy");
-    public static final SimpleDateFormat shortRenderDateFormat = new SimpleDateFormat("MMM d");
-    public static final SimpleDateFormat weekFormat = new SimpleDateFormat("w");
-    public static NumberFormat doubleFormat = new DecimalFormat("###.##");
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
-    public static final String REGIONAL_LABEL = "Week %d";
+    public static final String REGIONAL_LABEL = "Week %1$d";
+    public static final String FLOAT_REGIONAL_LABEL = "Week %1$.1f";
     public static final String WEEKLESS_LABEL = "Other Official Events";
-    public static final String OFFSEASON_LABEL = "Offseason Events";
+    public static final String OFFSEASON_LABEL = "%1$s Offseason Events";
     public static final String PRESEASON_LABEL = "Preseason Events";
     private static final Pattern eventKeyPattern = Pattern.compile("[a-zA-Z]+");
 
@@ -95,7 +85,9 @@ public class EventHelper {
 
     public static int getYearWeek(Date date) {
         if (date == null) return -1;
-        return Integer.parseInt(weekFormat.format(date));
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(date.getTime());
+        return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
     public static int competitionWeek(Date date) {
@@ -137,9 +129,24 @@ public class EventHelper {
             case REGIONAL:
             case DISTRICT:
             case DISTRICT_CMP:
-                return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                /**
+                 * Special cases for 2016:
+                 * Week 1 is actually Week 0.5, everything else is one less
+                 * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
+                 */
+                if (e.getEventYear() == 2016) {
+                    int week = e.getCompetitionWeek();
+                    if (week == 1) {
+                        return String.format(FLOAT_REGIONAL_LABEL, 0.5);
+                    } else {
+                        return String.format(REGIONAL_LABEL, week - 1);
+                    }
+                } else {
+                    return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                }
             case OFFSEASON:
-                return OFFSEASON_LABEL;
+                String month = ThreadSafeFormatters.renderEventMonth(e.getStartDate());
+                return String.format(OFFSEASON_LABEL, month);
             case PRESEASON:
                 return PRESEASON_LABEL;
             default:
@@ -185,14 +192,14 @@ public class EventHelper {
         return -1;
     }
 
-    public static HashMap<String, ArrayList<Event>> groupByWeek(ArrayList<Event> events) {
-        HashMap<String, ArrayList<Event>> groups = new HashMap<>();
+    public static HashMap<String, List<Event>> groupByWeek(List<Event> events) {
+        HashMap<String, List<Event>> groups = new HashMap<>();
         ArrayList<Event> offseason = new ArrayList<>(),
                 preseason = new ArrayList<>(),
                 weekless = new ArrayList<>();
 
         for (Event e : events) {
-            ArrayList<Event> list;
+            List<Event> list;
             try {
                 boolean official = e.isOfficial();
                 TYPE type = e.getEventType();
@@ -342,10 +349,10 @@ public class EventHelper {
      * season schedule.
      *
      * @param events a list of events to render
-     * @return a list of ListItems representing the sorted events
+     * @param output list to render events into
      */
-    public static ArrayList<ListItem> renderEventListForTeam(Context c, ArrayList<Event> events, boolean broadcastIfLive) {
-        return renderEventListWithComparator(c, events, new EventSortByTypeAndDateComparator(), broadcastIfLive);
+    public static void renderEventListForTeam(List<Event> events, List<ListItem> output) {
+        renderEventListWithComparator(events, output, new EventSortByTypeAndDateComparator());
     }
 
     /**
@@ -353,14 +360,16 @@ public class EventHelper {
      * particular event within a given week.
      *
      * @param events a list of events to render
-     * @return a list of ListItems representing the sorted events
+     * @param output list to render events into
      */
-    public static ArrayList<ListItem> renderEventListForWeek(ArrayList<Event> events) {
-        return renderEventListWithComparator(null, events, new EventSortByTypeAndDateComparator(), false);
+    public static void renderEventListForWeek(List<Event> events, List<ListItem> output) {
+        renderEventListWithComparator(events,output, new EventSortByTypeAndDateComparator());
     }
 
-    private static ArrayList<ListItem> renderEventListWithComparator(Context c, ArrayList<Event> events, Comparator<Event> comparator, boolean broadcastIfLive) {
-        ArrayList<ListItem> eventListItems = new ArrayList<>();
+    private static void renderEventListWithComparator(
+      List<Event> events,
+      List<ListItem> output,
+      Comparator<Event> comparator) {
         Collections.sort(events, comparator);
         EventHelper.TYPE lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
@@ -368,18 +377,21 @@ public class EventHelper {
             try {
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
-                if (currentType != lastType || (currentType == EventHelper.TYPE.DISTRICT && currentDistrict != lastDistrict)) {
+                if (currentType != lastType ||
+                  (currentType == EventHelper.TYPE.DISTRICT
+                    && currentDistrict != lastDistrict)) {
                     if (currentType == EventHelper.TYPE.DISTRICT) {
-                        eventListItems.add(new EventTypeHeader(event.getDistrictTitle() + " District Events"));
+                        output.add(
+                          new EventTypeHeader(event.getDistrictTitle() + " District Events"));
                     } else {
-                        eventListItems.add(new EventTypeHeader(currentType.toString()));
+                        output.add(new EventTypeHeader(currentType.toString()));
                     }
                 }
-                eventListItems.add(event.render());
+                output.add(event.render());
 
-                if (broadcastIfLive && event.isHappeningNow()) {
+                if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
 
@@ -389,24 +401,24 @@ public class EventHelper {
             lastType = currentType;
             lastDistrict = currentDistrict;
         }
-        return eventListItems;
     }
 
-    public static ArrayList<ListItem> renderEventListForDistrict(Context c, ArrayList<Event> events, boolean broadcastIfLive) {
-        ArrayList<ListItem> eventListItems = new ArrayList<>();
+    public static void renderEventListForDistrict(
+      List<Event> events,
+      List<ListItem> output) {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
             try {
                 currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
                 if (!currentHeader.equals(lastHeader)) {
-                    eventListItems.add(new EventTypeHeader(currentHeader + " Events"));
+                    output.add(new EventTypeHeader(currentHeader + " Events"));
                 }
-                eventListItems.add(event.render());
+                output.add(event.render());
 
-                if (broadcastIfLive && event.isHappeningNow()) {
+                if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getEventKey());
+                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -414,15 +426,15 @@ public class EventHelper {
             }
             lastHeader = currentHeader;
         }
-        return eventListItems;
     }
 
     public static String getDateString(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) return "";
         if (startDate.equals(endDate)) {
-            return EventHelper.renderDateFormat.format(startDate);
+            return ThreadSafeFormatters.renderEventDate(startDate);
         }
-        return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
+        return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
+          ThreadSafeFormatters.renderEventDate(endDate);
     }
 
     public static void addFieldByAPIUrl(Event event, String url, String data) {
@@ -431,7 +443,7 @@ public class EventHelper {
         } else if (url.contains("rankings")) {
             event.setRankings(data);
         } else if (url.contains("matches")) {
-            event.setMatches(JSONManager.getasJsonArray(data));
+            event.setMatches(JSONHelper.getasJsonArray(data));
         } else if (url.contains("stats")) {
             event.setStats(data);
         } else if (url.contains("district_points")) {
@@ -474,7 +486,7 @@ public class EventHelper {
             String value = entry.getValue().toString();
             // If we have a number like 235.00, remove the useless .00 so it looks cleaner
             try {
-                value = doubleFormat.format(Double.parseDouble(value));
+                value = ThreadSafeFormatters.formatDoubleTwoPlaces(Double.parseDouble(value));
             } catch (NumberFormatException e) {
                 //Item is not a number
             }
@@ -491,7 +503,6 @@ public class EventHelper {
                 rankingString += ", ";
             }
         }
-        Log.d(Constants.LOG_TAG, "String: " + rankingString);
         return rankingString;
     }
 
@@ -547,5 +558,33 @@ public class EventHelper {
         Matcher m = eventKeyPattern.matcher(matchOrEventOrDistrictKey);
 
         return m.find() ? m.group().toUpperCase(Locale.US) : "";
+    }
+
+    public static String generateAllianceSummary(Resources r, int allianceNumber, int alliancePick) {
+        String[] args = new String[2];
+        String summary;
+        if (allianceNumber > 0) {
+            switch (alliancePick) {
+                case 0:
+                    args[0] = r.getString(R.string.team_at_event_captain);
+                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
+                    break;
+                case -1:
+                    args[0] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
+                    break;
+                default:
+                    args[0] = alliancePick + Utilities.getOrdinalFor(alliancePick) + " " + r.getString(R.string.team_at_event_pick);
+                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
+                    break;
+            }
+            if (alliancePick == -1) {
+                summary = String.format(r.getString(R.string.alliance_summary_no_pick_num), args[0]);
+            } else {
+                summary = String.format(r.getString(R.string.alliance_summary), args[0], args[1]);
+            }
+        } else {
+            summary = r.getString(R.string.not_picked);
+        }
+        return summary;
     }
 }

@@ -1,40 +1,24 @@
 package com.thebluealliance.androidclient.fragments.teamAtEvent;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
+import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.teamAtEvent.PopulateTeamAtEventSummary;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 
-/**
- * Created by phil on 7/16/14.
- */
-public class TeamAtEventSummaryFragment extends Fragment implements RefreshListener {
+import rx.Observable;
+
+public class TeamAtEventSummaryFragment
+  extends ListviewFragment<JsonArray, TeamAtEventSummarySubscriber> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
-    private String teamKey, eventKey;
-    private Activity parent;
-    private Parcelable listState;
-    private ListViewAdapter adapter;
-    private ListView listView;
-    private PopulateTeamAtEventSummary task;
-    private BroadcastReceiver receiver;
+    private String mTeamKey;
+    private String mEventKey;
 
     public static TeamAtEventSummaryFragment newInstance(String teamKey, String eventKey) {
         TeamAtEventSummaryFragment f = new TeamAtEventSummaryFragment();
@@ -47,85 +31,39 @@ public class TeamAtEventSummaryFragment extends Fragment implements RefreshListe
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() == null || !getArguments().containsKey(TEAM_KEY) || !getArguments().containsKey(EVENT_KEY)) {
             throw new IllegalArgumentException("TeamAtEventSummaryFragment must contain both team key and event key");
         }
 
-        teamKey = getArguments().getString(TEAM_KEY);
-        eventKey = getArguments().getString(EVENT_KEY);
+        mTeamKey = getArguments().getString(TEAM_KEY);
+        mEventKey = getArguments().getString(EVENT_KEY);
+        super.onCreate(savedInstanceState);
 
-        parent = getActivity();
-
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+        mSubscriber.setEventKey(mEventKey);
+        mSubscriber.setTeamKey(mTeamKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Setup views & listener
-        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
-        listView = (ListView) v.findViewById(R.id.list);
-        ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
-
+        View v = super.onCreateView(inflater, container, savedInstanceState);
         //disable touch feedback (you can't click the elements here...)
-        listView.setCacheColorHint(android.R.color.transparent);
-        listView.setSelector(R.drawable.transparent);
-
-        // Either reload data if returning from another fragment/activity
-        // Or get data if viewing fragment for the first time.
-        if (adapter != null) {
-            listView.setAdapter(adapter);
-            listView.onRestoreInstanceState(listState);
-            progressBar.setVisibility(View.GONE);
-        }
+        mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
+        mListView.setSelector(R.drawable.transparent);
         return v;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        // Save the data if moving away from fragment.
-        if (task != null) {
-            task.cancel(false);
-        }
-        if (listView != null) {
-            adapter = (ListViewAdapter) listView.getAdapter();
-            listState = listView.onSaveInstanceState();
-        }
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
+    protected Observable<JsonArray> getObservable() {
+        return mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey);
     }
 
     @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + teamKey + "@" + eventKey + " summary");
-        task = new PopulateTeamAtEventSummary(this, new RequestParams(true, actionIconPressed));
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, teamKey, eventKey);
+    protected Observable[] getExtraObservables() {
+        return new Observable[]{mDatafeed.fetchEvent(mEventKey)};
     }
-
-    @Override
-    public void onRefreshStop() {
-        if (task != null) {
-            task.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateTeamAtEventSummary newTask) {
-        task = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
-    }
-
 }

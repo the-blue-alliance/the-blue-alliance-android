@@ -6,10 +6,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.models.Stat;
 
-/**
- * File created by phil on 4/23/14.
- */
 public class StatsListElement extends ListElement {
 
     private String mTeamNumber;
@@ -61,19 +59,31 @@ public class StatsListElement extends ListElement {
         TextView teamStat;
     }
 
-    public String getTeamNumber() {
-        return mTeamNumber;
+    public int getTeamNumber() {
+        return Integer.parseInt(mTeamNumber);
     }
 
     public Double getOpr() {
         return opr;
     }
 
+    public String getFormattedOpr() {
+        return Stat.displayFormat.format(opr);
+    }
+
     public Double getDpr() {
         return dpr;
     }
 
+    public String getFormattedDpr() {
+        return Stat.displayFormat.format(dpr);
+    }
+
     public Double getCcwm() {
         return ccwm;
+    }
+
+    public String getFormattedCcwm() {
+        return Stat.displayFormat.format(ccwm);
     }
 }

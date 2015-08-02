@@ -8,12 +8,11 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
 
 import java.util.Arrays;
@@ -65,11 +64,12 @@ public class Team extends BasicModel<Team> {
         fields.put(Database.Teams.WEBSITE, website);
     }
 
-    public String getTeamKey() throws FieldNotDefinedException {
+    @Override
+    public String getKey() {
         if (fields.containsKey(Database.Teams.KEY) && fields.get(Database.Teams.KEY) instanceof String) {
             return (String) fields.get(Database.Teams.KEY);
         }
-        throw new FieldNotDefinedException("Field Database.Teams.KEY is not defined");
+        return "";
     }
 
     public void setTeamKey(String teamKey) {
@@ -124,7 +124,7 @@ public class Team extends BasicModel<Team> {
             return yearsParticipated;
         }
         if (fields.containsKey(Database.Teams.YEARS_PARTICIPATED) && fields.get(Database.Teams.YEARS_PARTICIPATED) instanceof String) {
-            yearsParticipated = JSONManager.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
+            yearsParticipated = JSONHelper.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
             return yearsParticipated;
         }
         throw new FieldNotDefinedException("Field Database.Teams.YEARS_PARTICIPATED is not defined");
@@ -132,7 +132,7 @@ public class Team extends BasicModel<Team> {
 
     public String getSearchTitles() {
         try {
-            return getTeamKey() + "," + getNickname() + "," + getTeamNumber();
+            return getKey() + "," + getNickname() + "," + getTeamNumber();
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n" +
                     "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
@@ -143,7 +143,7 @@ public class Team extends BasicModel<Team> {
     @Override
     public TeamListElement render() {
         try {
-            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation());
+            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation());
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
                     "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
@@ -153,7 +153,7 @@ public class Team extends BasicModel<Team> {
 
     public TeamListElement render(boolean showTeamInfoButton) {
         try {
-            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
+            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
                     "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
@@ -161,12 +161,13 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    public static synchronized APIResponse<Team> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
+    public static APIResponse<Team> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying teams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
+        Database.Teams table = Database.getInstance(c).getTeamsTable();
+        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Team team;
         if (cursor != null && cursor.moveToFirst()) {
-            team = ModelInflater.inflateTeam(cursor);
+            team = table.inflate(cursor);
             cursor.close();
         } else {
             team = new Team();
@@ -175,7 +176,7 @@ public class Team extends BasicModel<Team> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Team updatedTeam;
                 if (url.contains("years_participated")) {
@@ -183,7 +184,7 @@ public class Team extends BasicModel<Team> {
                     updatedTeam = new Team();
                     team.setYearsParticipated(response.getData());
                 } else {
-                    updatedTeam = JSONManager.getGson().fromJson(response.getData(), Team.class);
+                    updatedTeam = JSONHelper.getGson().fromJson(response.getData(), Team.class);
                 }
                 team.merge(updatedTeam);
                 changed = true;

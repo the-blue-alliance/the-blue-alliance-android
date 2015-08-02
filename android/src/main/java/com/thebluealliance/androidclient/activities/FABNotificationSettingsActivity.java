@@ -32,10 +32,7 @@ import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
-/**
- * Created by Nathan on 11/6/2014.
- */
-public abstract class FABNotificationSettingsActivity extends RefreshableHostActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
+public abstract class FABNotificationSettingsActivity extends LegacyRefreshableHostActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private RelativeLayout notificationSettings;
     private FloatingActionButton openNotificationSettingsButton;

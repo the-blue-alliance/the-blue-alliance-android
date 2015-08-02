@@ -12,8 +12,8 @@ import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPr
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
@@ -113,7 +113,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                     Log.e(Constants.LOG_TAG, response.getMessage());
                     return Result.ERROR;
                 }
-                JsonObject responseJson = JSONManager.getasJsonObject(response.getMessage());
+                JsonObject responseJson = JSONHelper.getasJsonObject(response.getMessage());
                 JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
                         sub = responseJson.get("subscription").getAsJsonObject();
                 int favCode = fav.get("code").getAsInt(),

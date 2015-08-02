@@ -1,30 +1,20 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
+import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventRankings;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.fragments.ListviewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.views.NoDataView;
+import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
+
+import rx.Observable;
 
 /**
  * Fragment that displays the rankings for an FRC event.
@@ -32,22 +22,12 @@ import com.thebluealliance.androidclient.views.NoDataView;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p>
- *         File created by phil on 4/22/14.
  */
-public class EventRankingsFragment extends Fragment implements RefreshListener {
+public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsListSubscriber> {
 
-    private Activity parent;
-
-    private String eventKey;
     private static final String KEY = "eventKey";
 
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
-    private ProgressBar mProgressBar;
-
-    private PopulateEventRankings mTask;
+    private String eventKey;
 
     /**
      * Creates new rankings fragment for an event
@@ -65,94 +45,37 @@ public class EventRankingsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         // Reload key if returning from another activity/fragment
         if (getArguments() != null) {
             eventKey = getArguments().getString(KEY, "");
         }
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner_2, null);
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        mListView.setOnItemClickListener((adapterView, view, position, id) -> {
+            String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter())
+              .getItem(position)).getKey();
+            Intent intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey);
 
-        // Initialize "No Data" view
-        NoDataView noData = (NoDataView) view.findViewById(R.id.no_data);
-        noData.setImage(R.drawable.ic_poll_black_48dp);
-        noData.setText(R.string.no_ranking_data);
+             /* Track the call */
+            AnalyticsHelper.sendClickUpdate(
+              getActivity(), "team@event_click", "EventRankingsFragment", eventKey);
 
-        mListView = (ListView) view.findViewById(R.id.list);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-
-        // Either reload data if returning from another fragment/activity
-        // Or get data if viewing fragment for the first time.
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            mProgressBar.setVisibility(View.GONE);
-        }
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                Intent intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey);
-                
-                 /* Track the call */
-                AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventRankingsFragment", eventKey);
-
-                startActivity(intent);
-            }
+            startActivity(intent);
         });
-        return view;
+        return v;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        // Save the data if moving away from fragment.
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-        }
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
-    }
-
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + eventKey + " rankings");
-        mTask = new PopulateEventRankings(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, eventKey);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventRankings newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+    protected Observable<JsonArray> getObservable() {
+        return mDatafeed.fetchEventRankings(eventKey);
     }
 }

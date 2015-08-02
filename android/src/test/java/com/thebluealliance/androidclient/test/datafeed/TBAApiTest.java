@@ -6,7 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -33,11 +33,11 @@ public class TBAApiTest {
     @org.junit.Test
     public void testParseEvent() {
         String eventJson = "{\"key\": \"2014ctgro\", \"end_date\": \"2014-03-09\", \"name\": \"Groton District Event\", \"short_name\": \"Groton\", \"facebook_eid\": null, \"official\": true, \"location\": \"Groton, CT, USA\", \"event_code\": \"ctgro\", \"year\": 2014, \"event_type_string\": \"District\", \"start_date\": \"2014-03-08\", \"event_type\": 1}";
-        Event event = JSONManager.getGson().fromJson(eventJson, Event.class);
+        Event event = JSONHelper.getGson().fromJson(eventJson, Event.class);
 
         //now, assert that all the properties are there
         try {
-            assertEquals(event.getEventKey(), "2014ctgro");
+            assertEquals(event.getKey(), "2014ctgro");
             assertEquals(event.getStartDate(), new Date(114, 2, 8));
             assertEquals(event.getEndDate(), new Date(114, 2, 9));
             assertEquals(event.getEventName(), "Groton District Event");
@@ -65,14 +65,14 @@ public class TBAApiTest {
                 "  \"country_name\": \"USA\",\n" +
                 "  \"nickname\": \"ÜberBots\"\n" +
                 "}";
-        Team team = JSONManager.getGson().fromJson(teamJson, Team.class);
+        Team team = JSONHelper.getGson().fromJson(teamJson, Team.class);
 
         try {
             assertEquals(team.getWebsite(), "http://www.uberbots.org");
             assertEquals(team.getFullName(), "UTC Fire and Security & Avon High School");
             assertEquals(team.getLocation(), "Avon, CT, USA");
             assertEquals((int) team.getTeamNumber(), 1124);
-            assertEquals(team.getTeamKey(), "frc1124");
+            assertEquals(team.getKey(), "frc1124");
             assertEquals(team.getNickname(), "ÜberBots");
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to get team fields");
@@ -98,9 +98,9 @@ public class TBAApiTest {
                 "]";
 
         ArrayList<Media> medias = new ArrayList<>();
-        JsonArray mediaArray = JSONManager.getasJsonArray(mediaJson);
+        JsonArray mediaArray = JSONHelper.getasJsonArray(mediaJson);
         for (JsonElement media : mediaArray) {
-            medias.add(JSONManager.getGson().fromJson(media, Media.class));
+            medias.add(JSONHelper.getGson().fromJson(media, Media.class));
         }
 
         assertEquals(medias.size(), mediaArray.size());
@@ -111,7 +111,7 @@ public class TBAApiTest {
         try {
             assertEquals(cd.getForeignKey(), "39894");
             assertEquals(cd.getMediaType(), Media.TYPE.CD_PHOTO_THREAD);
-            assertEquals(cd.getDetails(), JSONManager.getasJsonObject("{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"}"));
+            assertEquals(cd.getDetails(), JSONHelper.getasJsonObject("{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"}"));
 
             assertEquals(yt.getMediaType(), Media.TYPE.YOUTUBE);
             assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
@@ -125,7 +125,7 @@ public class TBAApiTest {
     @org.junit.Test
     public void testParseMatch() {
         String matchJson = "{\"comp_level\": \"f\", \"match_number\": 1, \"videos\": [{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}], \"time_string\": \"3:36 PM\", \"set_number\": 1, \"key\": \"2014ctgro_f1m1\", \"time\": \"1394393760\", \"alliances\": {\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}, \"event_key\": \"2014ctgro\"}";
-        Match match = JSONManager.getGson().fromJson(matchJson, Match.class);
+        Match match = JSONHelper.getGson().fromJson(matchJson, Match.class);
 
         try {
             assertEquals(match.getKey(), "2014ctgro_f1m1");
@@ -133,10 +133,10 @@ public class TBAApiTest {
             assertEquals(match.getMatchNumber(), 1);
             assertEquals(match.getSetNumber(), 1);
             assertEquals(match.getType(), MatchHelper.TYPE.FINAL);
-            assertEquals(match.getAlliances(), JSONManager.getasJsonObject("{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}"));
+            assertEquals(match.getAlliances(), JSONHelper.getasJsonObject("{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}"));
             assertEquals(match.getTimeString(), "3:36 PM");
             assertEquals(match.getTime(), new Date(1394393760));
-            assertEquals(match.getVideos(), JSONManager.getasJsonArray("[{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}]"));
+            assertEquals(match.getVideos(), JSONHelper.getasJsonArray("[{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}]"));
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to get match fields");
             e.printStackTrace();
@@ -164,7 +164,7 @@ public class TBAApiTest {
                 "    ],\n" +
                 "    \"year\": 2010\n" +
                 "  }";
-        Award award = JSONManager.getGson().fromJson(json, Award.class);
+        Award award = JSONHelper.getGson().fromJson(json, Award.class);
 
         try {
             assertEquals(award.getEventKey(), "2010sc");
@@ -200,7 +200,7 @@ public class TBAApiTest {
                 "    ],\n" +
                 "    \"year\": 2010\n" +
                 "  }";
-        Award award = JSONManager.getGson().fromJson(json, Award.class);
+        Award award = JSONHelper.getGson().fromJson(json, Award.class);
 
         try {
             assertEquals(award.getEventKey(), "2010sc");

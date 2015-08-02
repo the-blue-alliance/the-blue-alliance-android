@@ -1,0 +1,90 @@
+{
+  "key": "2015cthar",
+  "website": "http://www.nefirst.org/",
+  "official": true,
+  "end_date": "2015-03-29",
+  "name": "NE District - Hartford Event",
+  "short_name": "Hartford",
+  "facebook_eid": null,
+  "event_district_string": "New England",
+  "venue_address": "Hartford Public High School\n55 Forest Street\nHartford, CT 06105\nUSA",
+  "event_district": 3,
+  "location": "Hartford, CT, USA",
+  "event_code": "cthar",
+  "year": 2015,
+  "webcast": [
+    {
+      "type": "twitch",
+      "channel": "nefirst_red"
+    }
+  ],
+  "alliances": [
+    {
+      "declines": [],
+      "picks": [
+        "frc195",
+        "frc230",
+        "frc2064"
+      ]
+    },
+    {
+      "declines": [],
+      "picks": [
+        "frc2067",
+        "frc2170",
+        "frc3464"
+      ]
+    },
+    {
+      "declines": [],
+      "picks": [
+        "frc2836",
+        "frc999",
+        "frc181"
+      ]
+    },
+    {
+      "declines": [],
+      "picks": [
+        "frc1699",
+        "frc175",
+        "frc228"
+      ]
+    },
+    {
+      "declines": [],
+      "picks": [
+        "frc3146",
+        "frc173",
+        "frc95"
+      ]
+    },
+    {
+      "declines": [],
+      "picks": [
+        "frc4055",
+        "frc839",
+        "frc4557"
+      ]
+    },
+    {
+      "declines": [],
+      "picks": [
+        "frc177",
+        "frc1124",
+        "frc236"
+      ]
+    },
+    {
+      "declines": [],
+      "picks": [
+        "frc1740",
+        "frc1991",
+        "frc558"
+      ]
+    }
+  ],
+  "event_type_string": "District",
+  "start_date": "2015-03-27",
+  "event_type": 1
+}
