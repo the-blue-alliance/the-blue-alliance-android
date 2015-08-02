@@ -49,9 +49,11 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        EventWeekTab tab = mThisYearsWeekTabs.get(position);
         return EventListFragment.newInstance(
           mYear,
-          mThisYearsWeekTabs.get(position).getWeek(),
+          tab.getWeek(),
+          tab.getMonth(),
           getPageTitle(position).toString());
     }
 

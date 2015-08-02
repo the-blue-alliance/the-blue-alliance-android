@@ -18,17 +18,23 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
 
     public static final String YEAR = "YEAR";
     public static final String WEEK = "WEEK";
-    public static final String TEAM_KEY = "TEAM_KEY";
+    public static final String MONTH = "MONTH";
     public static final String WEEK_HEADER = "HEADER";
 
     private int mYear;
     private int mWeek;
+    private int mMonth;
 
-    public static EventListFragment newInstance(int year, int week, String weekHeader) {
+    public static EventListFragment newInstance(
+      int year,
+      int week,
+      int month,
+      String weekHeader) {
         EventListFragment f = new EventListFragment();
         Bundle args = new Bundle();
         args.putInt(YEAR, year);
         args.putInt(WEEK, week);
+        args.putInt(MONTH, month);
         args.putString(WEEK_HEADER, weekHeader);
         f.setArguments(args);
         return f;
@@ -38,6 +44,7 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
     public void onCreate(Bundle savedInstanceState) {
         mYear = getArguments().getInt(YEAR, -1);
         mWeek = getArguments().getInt(WEEK, -1);
+        mMonth = getArguments().getInt(MONTH, -1);
         String header = getArguments().getString(WEEK_HEADER);
 
         if (mWeek == -1 && !(header == null || header.isEmpty())) {
@@ -60,6 +67,10 @@ public class EventListFragment extends ListviewFragment<List<Event>, EventListSu
 
     @Override
     protected Observable<List<Event>> getObservable() {
-        return mDatafeed.getCache().fetchEventsInWeek(mYear, mWeek);
+        if (mMonth != -1) {
+            return mDatafeed.getCache().fetchEventsInMonth(mYear, mMonth);
+        } else {
+            return mDatafeed.getCache().fetchEventsInWeek(mYear, mWeek);
+        }
     }
 }

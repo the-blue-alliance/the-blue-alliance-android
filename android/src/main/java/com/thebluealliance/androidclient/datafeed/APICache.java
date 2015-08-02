@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -101,6 +102,22 @@ public class APICache implements APIv2 {
           String.format("%1$s = ? AND %2$s = ?", Database.Events.YEAR, Database.Events.WEEK);
         return Observable.just(mDb.getEventsTable()
           .getForQuery(null, where, new String[]{Integer.toString(year), Integer.toString(week)}));
+    }
+
+    public Observable<List<Event>> fetchEventsInMonth(int year, int month) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month, 1);
+        String start = Long.toString(cal.getTimeInMillis());
+        cal.add(Calendar.MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        String end = Long.toString(cal.getTimeInMillis());
+
+        String where = String.format(
+          "%1$s >= ? AND %2$s < ?",
+          Database.Events.START,
+          Database.Events.END);
+        return Observable.just(mDb.getEventsTable()
+          .getForQuery(null, where, new String[]{start, end}));
     }
 
     @Override

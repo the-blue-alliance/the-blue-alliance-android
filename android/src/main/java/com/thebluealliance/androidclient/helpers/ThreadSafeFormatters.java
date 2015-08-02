@@ -23,6 +23,7 @@ public class ThreadSafeFormatters {
       new SimpleDateFormat("MMM d, yyyy", ENGLISH);
     private static final DateFormat sEventRenderShortFormat =
       new SimpleDateFormat("MMM d", ENGLISH);
+    private static final DateFormat sMonthFormat = new SimpleDateFormat("MMM", ENGLISH);
 
     private static NumberFormat sDoubleOnePlaceFormat = new DecimalFormat("##.#");
     private static NumberFormat sDoubleTwoPlacesFormat = new DecimalFormat("###.##");
@@ -37,6 +38,10 @@ public class ThreadSafeFormatters {
 
     public static synchronized String renderEventShortFormat(Date date) {
         return sEventRenderShortFormat.format(date);
+    }
+
+    public static synchronized String renderEventMonth(Date date) {
+        return sMonthFormat.format(date);
     }
 
     public static synchronized String formatDoubleOnePlace(double input) {
