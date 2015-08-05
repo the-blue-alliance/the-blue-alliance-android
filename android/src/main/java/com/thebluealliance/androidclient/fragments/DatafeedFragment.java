@@ -81,6 +81,21 @@ public abstract class DatafeedFragment
     }
 
     /**
+     * Allows other things to bind this instance
+     */
+    public void bind() {
+        if (mSubscriber != null) {
+            mSubscriber.bindData();
+        }
+    }
+
+    public void setShouldBindImmediately(boolean shouldBind) {
+        if (mSubscriber != null) {
+            mSubscriber.setShouldBindImmediately(shouldBind);
+        }
+    }
+
+    /**
      * Registers and subscribes new observables
      */
     private void getNewObservables() {

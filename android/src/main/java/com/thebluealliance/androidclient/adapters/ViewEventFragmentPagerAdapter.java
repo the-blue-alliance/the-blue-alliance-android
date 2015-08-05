@@ -13,9 +13,6 @@ import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
 
-/**
- * Created by Nathan on 4/22/2014.
- */
 public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public final String[] TITLES = {"Info", "Teams", "Rankings", "Matches", "Alliances", "District Points", "Stats", "Awards"};

@@ -29,6 +29,15 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     DataConsumer<BindType> mConsumer;
     APIType mAPIData;
     BindType mDataToBind;
+    boolean shouldBindImmediately;
+
+    public BaseAPISubscriber() {
+        shouldBindImmediately = true;
+    }
+
+    public void setShouldBindImmediately(boolean shouldBind) {
+        shouldBindImmediately = shouldBind;
+    }
 
     public void setConsumer(DataConsumer<BindType> consumer) {
         mConsumer = consumer;
@@ -41,7 +50,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         postToEventBus(EventBus.getDefault());
         try {
             parseData();
-            bindData();
+            if (shouldBindImmediately) {
+                bindData();
+            }
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
         }
@@ -83,7 +94,6 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         return mAPIData;
     }
 
-    @VisibleForTesting
     public void bindData() {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
