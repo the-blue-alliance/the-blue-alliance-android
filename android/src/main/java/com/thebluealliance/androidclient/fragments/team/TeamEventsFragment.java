@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Event;
@@ -24,7 +24,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
+public class TeamEventsFragment extends ListvVewFragment<List<Event>, EventListSubscriber> {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 

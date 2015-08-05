@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.modules;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
-import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
@@ -26,8 +26,8 @@ public class BinderModule {
     }
 
     @Provides
-    public ListviewBinder provideListviewBinder() {
-        return new ListviewBinder();
+    public ListViewBinder provideListviewBinder() {
+        return new ListViewBinder();
     }
 
     @Provides

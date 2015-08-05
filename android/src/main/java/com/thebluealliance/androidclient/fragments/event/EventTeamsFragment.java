@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSubscriber> {
+public class EventTeamsFragment extends ListvVewFragment<List<Team>, TeamListSubscriber> {
 
     private static final String KEY = "event_key";
 

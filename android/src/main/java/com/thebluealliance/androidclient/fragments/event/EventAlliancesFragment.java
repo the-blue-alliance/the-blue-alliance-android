@@ -6,13 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 
 import rx.Observable;
 
-public class EventAlliancesFragment extends ListviewFragment<Event, AllianceListSubscriber> {
+public class EventAlliancesFragment extends ListvVewFragment<Event, AllianceListSubscriber> {
     private static final String KEY = "event_key";
 
     private String mEventKey;

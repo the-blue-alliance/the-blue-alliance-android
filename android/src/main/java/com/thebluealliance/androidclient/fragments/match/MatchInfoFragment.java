@@ -2,14 +2,14 @@ package com.thebluealliance.androidclient.fragments.match;
 
 import android.os.Bundle;
 
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 
 import rx.Observable;
 
-public class MatchInfoFragment extends ListviewFragment<Match, MatchInfoSubscriber> {
+public class MatchInfoFragment extends ListvVewFragment<Match, MatchInfoSubscriber> {
 
     private static final String KEY = "key";
 

@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
 import com.thebluealliance.androidclient.models.Event;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
+public class DistrictEventsFragment extends ListvVewFragment<List<Event>, EventListSubscriber> {
 
     public static final String KEY = "districtKey";
 

@@ -6,7 +6,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.List;
 
-public class StatsListBinder extends ListviewBinder {
+public class StatsListBinder extends ListViewBinder {
 
     @Override
     public ListViewAdapter newAdapter(List<ListItem> data) {

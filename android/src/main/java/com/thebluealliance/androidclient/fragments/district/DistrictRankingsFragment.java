@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.fragments.district;
 
 import android.os.Bundle;
 
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
@@ -12,7 +12,7 @@ import java.util.List;
 import rx.Observable;
 
 public class DistrictRankingsFragment
-  extends ListviewFragment<List<DistrictTeam>, DistrictRankingsSubscriber> {
+  extends ListvVewFragment<List<DistrictTeam>, DistrictRankingsSubscriber> {
 
     public static final String KEY = "districtKey";
 

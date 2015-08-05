@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
@@ -22,7 +22,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class GamedayWebcastsFragment extends ListviewFragment<List<Event>, WebcastListSubscriber> {
+public class GamedayWebcastsFragment extends ListvVewFragment<List<Event>, WebcastListSubscriber> {
 
     private ListView mListView;
     private ListViewAdapter mAdapter;

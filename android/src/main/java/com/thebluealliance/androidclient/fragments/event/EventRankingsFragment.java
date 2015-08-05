@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
@@ -23,7 +23,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
-public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsListSubscriber> {
+public class EventRankingsFragment extends ListvVewFragment<JsonArray, RankingsListSubscriber> {
 
     private static final String KEY = "eventKey";
 

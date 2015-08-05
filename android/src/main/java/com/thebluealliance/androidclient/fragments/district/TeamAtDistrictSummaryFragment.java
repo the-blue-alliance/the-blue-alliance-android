@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscriber;
@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscr
 import rx.Observable;
 
 public class TeamAtDistrictSummaryFragment
-  extends ListviewFragment<DistrictTeam, TeamAtDistrictSummarySubscriber> {
+  extends ListvVewFragment<DistrictTeam, TeamAtDistrictSummarySubscriber> {
 
     public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 

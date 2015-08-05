@@ -14,7 +14,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class EventListFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
+public class EventListFragment extends ListvVewFragment<List<Event>, EventListSubscriber> {
 
     public static final String YEAR = "YEAR";
     public static final String WEEK = "WEEK";

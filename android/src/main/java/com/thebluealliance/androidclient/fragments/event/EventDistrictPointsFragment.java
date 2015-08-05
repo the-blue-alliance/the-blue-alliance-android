@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 
 import rx.Observable;
 
 public class EventDistrictPointsFragment
-  extends ListviewFragment<JsonObject, DistrictPointsListSubscriber> {
+  extends ListvVewFragment<JsonObject, DistrictPointsListSubscriber> {
     private static final String KEY = "event_key";
 
     private String mEventKey;

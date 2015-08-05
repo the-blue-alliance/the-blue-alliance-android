@@ -11,15 +11,15 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
-public abstract class ListviewFragment<T, S extends BaseAPISubscriber<T, List<ListItem>>>
-  extends DatafeedFragment<T, List<ListItem>, S, ListviewBinder> {
+public abstract class ListvVewFragment<T, S extends BaseAPISubscriber<T, List<ListItem>>>
+  extends DatafeedFragment<T, List<ListItem>, S, ListViewBinder> {
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;

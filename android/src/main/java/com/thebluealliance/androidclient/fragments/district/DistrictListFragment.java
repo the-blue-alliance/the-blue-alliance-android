@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.ListviewBinder;
+import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.District;
@@ -21,7 +21,7 @@ import java.util.List;
 import rx.Observable;
 
 public class DistrictListFragment
-  extends DatafeedFragment<List<District>, List<ListItem>, DistrictListSubscriber, ListviewBinder> {
+  extends DatafeedFragment<List<District>, List<ListItem>, DistrictListSubscriber, ListViewBinder> {
 
     public static final String YEAR = "year";
 
