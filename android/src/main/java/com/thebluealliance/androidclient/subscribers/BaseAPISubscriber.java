@@ -18,12 +18,13 @@ import rx.android.schedulers.AndroidSchedulers;
  * Base class for a concrete API Subscriber.
  * This class takes an input of data directly from Retrofit (using {@link rx.Subscriber} and
  * provides a callback to
- * @param <APIType> Datatype to be returned from the API (one from {@link APIv2}
+ *
+ * @param <APIType>  Datatype to be returned from the API (one from {@link APIv2}
  * @param <BindType> Datatype to be returned for binding to views
  */
 public abstract class BaseAPISubscriber<APIType, BindType>
-  extends Subscriber<APIType>
-  implements APISubscriber<BindType>{
+        extends Subscriber<APIType>
+        implements APISubscriber<BindType> {
 
     DataConsumer<BindType> mConsumer;
     APIType mAPIData;
@@ -63,17 +64,23 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onError(Throwable throwable) {
-        if (mConsumer != null) {
-            mConsumer.onError(throwable);
-        }
+        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (mConsumer != null) {
+                mConsumer.onError(throwable);
+            }
+        });
     }
 
     @Override
-    public @Nullable BindType getBoundData() {
+    public
+    @Nullable
+    BindType getBoundData() {
         return mDataToBind;
     }
 
-    public @Nullable APIType getApiData() {
+    public
+    @Nullable
+    APIType getApiData() {
         return mAPIData;
     }
 

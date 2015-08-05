@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -15,6 +16,7 @@ import com.thebluealliance.androidclient.fragments.ListviewFragment;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
 import java.util.List;
@@ -95,5 +97,10 @@ public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListS
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchTeamEvents(mTeamKey, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
     }
 }

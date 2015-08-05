@@ -47,8 +47,8 @@ public class GamedayWebcastsFragment extends ListviewFragment<List<Event>, Webca
         View v = inflater.inflate(R.layout.list_view_carded, null);
         mListView = (ListView) v.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        mBinder.listView = mListView;
-        mBinder.progressBar = progressBar;
+        mBinder.mListView = mListView;
+        mBinder.mProgressBar = progressBar;
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);

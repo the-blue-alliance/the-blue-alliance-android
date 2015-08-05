@@ -41,14 +41,14 @@ public class NoDataView extends RelativeLayout {
 
     public void setImage(Drawable drawable) {
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.icon_gray));
+        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.black));
         mImageView.setImageDrawable(drawable);
     }
 
     public void setImage(@DrawableRes int resId) {
         Drawable drawable = getContext().getResources().getDrawable(resId, null);
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.icon_gray));
+        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.black));
         mImageView.setImageDrawable(drawable);
     }
 

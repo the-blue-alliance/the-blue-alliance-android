@@ -52,8 +52,8 @@ public class DistrictListFragment
         mListView = (ListView) view.findViewById(R.id.list);
 
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mBinder.listView = mListView;
-        mBinder.progressBar = progressBar;
+        mBinder.mListView = mListView;
+        mBinder.mProgressBar = progressBar;
 
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.

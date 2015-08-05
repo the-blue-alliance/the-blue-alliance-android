@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.ListviewBinder;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
@@ -24,10 +25,11 @@ public abstract class ListviewFragment<T, S extends BaseAPISubscriber<T, List<Li
     private ListViewAdapter mAdapter;
 
     protected ListView mListView;
+    protected NoDataView mNoDataView;
 
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View v = inflater.inflate(R.layout.list_view_with_spinner_2, null);
         mListView = (ListView) v.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mAdapter != null) {
@@ -35,8 +37,10 @@ public abstract class ListviewFragment<T, S extends BaseAPISubscriber<T, List<Li
             mListView.onRestoreInstanceState(mListState);
             progressBar.setVisibility(View.GONE);
         }
-        mBinder.listView = mListView;
-        mBinder.progressBar = progressBar;
+        mBinder.mListView = mListView;
+        mBinder.mProgressBar = progressBar;
+
+        mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;
     }
 
