@@ -12,7 +12,7 @@ public class APIv2DistrictTest extends AbstractAPIv2Test {
 
     @Test
     public void testFetchDistrictListObservable() {
-        mApi.fetchDistrictList(2014, null).subscribe(districts -> {
+        mApi.fetchDistrictList(2014).subscribe(districts -> {
             assertEquals(districts.size(), 4);
             assertEquals(districts.get(0).getKey(), "fim");
         });
@@ -20,16 +20,15 @@ public class APIv2DistrictTest extends AbstractAPIv2Test {
 
     @Test
     public void testFetchDistrictEventsObservable() {
-        mApi.fetchDistrictEvents("ne", 2014, null).subscribe(events -> {
+        mApi.fetchDistrictEvents("ne", 2014).subscribe(events -> {
             assertTrue(events.size() > 0);
         });
     }
 
     @Test
     public void testFetchDistrictRankingsObservable() {
-        mApi.fetchDistrictRankings("ne", 2014, null).subscribe(rankings -> {
+        mApi.fetchDistrictRankings("ne", 2014).subscribe(rankings -> {
             assertTrue(rankings.size() > 0);
-            assertTrue(rankings.get(0).isJsonObject());
         });
     }
 }
