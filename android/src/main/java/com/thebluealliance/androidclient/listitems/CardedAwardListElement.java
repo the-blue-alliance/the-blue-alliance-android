@@ -19,24 +19,30 @@ import java.util.Map;
 
 public class CardedAwardListElement extends ListElement {
 
-    private String mAwardName, mEventKey, mSelectedTeamNum;
-    private JsonArray mAwardWinners;
-    private Map<String, Team> mAwardTeams;
+    public final String awardName;
+    public final String eventKey;
+    public final String selectedTeamNum;
+    public final JsonArray awardWinners;
+    private final Map<String, Team> mAwardTeams;
 
     public CardedAwardListElement(String name, JsonArray winners) {
         super();
-        mAwardName = name;
-        mAwardWinners = winners;
+        awardName = name;
+        awardWinners = winners;
         mAwardTeams = null;
+        eventKey = "";
+        selectedTeamNum = "";
     }
 
     public CardedAwardListElement(String name, String eventKey, JsonArray winners, Map<String, Team> teams, String selectedTeamKey) {
         super();
-        mAwardName = name;
-        mEventKey = eventKey;
-        mAwardWinners = winners;
-        mAwardTeams = teams;
-        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4) ? "" : selectedTeamKey.substring(3);
+        this.awardName = name;
+        this.eventKey = eventKey;
+        this.awardWinners = winners;
+        this.mAwardTeams = teams;
+        this.selectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4)
+          ? "" 
+          : selectedTeamKey.substring(3);
     }
 
     @Override
@@ -54,9 +60,9 @@ public class CardedAwardListElement extends ListElement {
             holder.awardRecipients.removeAllViews();
         }
 
-        holder.awardName.setText(mAwardName);
+        holder.awardName.setText(awardName);
 
-        for (JsonElement mAwardWinner : mAwardWinners) {
+        for (JsonElement mAwardWinner : awardWinners) {
             JsonObject winner = mAwardWinner.getAsJsonObject();
             View winnerView = inflater.inflate(R.layout.list_item_award_recipient, null);
 
@@ -66,12 +72,12 @@ public class CardedAwardListElement extends ListElement {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
-                if (!mSelectedTeamNum.equals(teamNumber)) {
+                if (!selectedTeamNum.equals(teamNumber)) {
                     winnerView.setOnClickListener(new TeamAtEventClickListener(context));
                 } else {
                     winnerView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));  // disable touch feedback
                 }
-                winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
+                winnerView.setTag("frc" + teamNumber + "@" + eventKey);
             }
             if (JSONHelper.isNull(winner.get("awardee"))) {
                 awardee = "";

@@ -16,17 +16,12 @@ import java.util.Map;
 public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<ListItem>> {
 
     private String mTeamKey;
-    private String mEventKey;
     private Database mDb;
 
     public AwardsListSubscriber(Database db) {
         super();
         mDataToBind = new ArrayList<>();
         mDb = db;
-    }
-
-    public void setEventKey(String eventKey) {
-        mEventKey = eventKey;
     }
 
     public void setTeamKey(String teamKey) {
@@ -51,7 +46,7 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
             }
             mDataToBind.add(new CardedAwardListElement(
               award.getName(),
-              mEventKey,
+              award.getEventKey(),
               award.getWinners(),
               teams,
               mTeamKey));
