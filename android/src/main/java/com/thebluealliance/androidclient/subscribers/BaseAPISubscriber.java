@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
@@ -36,7 +37,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     @Override
     @WorkerThread
     public void onNext(APIType data) {
-        mAPIData = data;
+        setApiData(data);
         postToEventBus(EventBus.getDefault());
         try {
             parseData();
@@ -73,11 +74,17 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         return mDataToBind;
     }
 
+    @VisibleForTesting
+    public void setApiData(APIType data) {
+        mAPIData = data;
+    }
+
     public @Nullable APIType getApiData() {
         return mAPIData;
     }
 
-    protected void bindData() {
+    @VisibleForTesting
+    public void bindData() {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 try {
