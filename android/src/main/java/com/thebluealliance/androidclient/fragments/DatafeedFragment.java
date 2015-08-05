@@ -57,23 +57,7 @@ public abstract class DatafeedFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (mSubscriber != null) {
-            mObservable = getObservable();
-            if (mObservable != null) {
-                mObservable.subscribeOn(Schedulers.io())
-                  .observeOn(Schedulers.computation())
-                  .subscribe(mSubscriber);
-            }
-            Observable[] extras = getExtraObservables();
-            if (shouldRegisterSubscriberToEventBus() || (extras != null && extras.length > 0)) {
-                mEventBus.register(mSubscriber);
-                for (int i = 0; extras != null && i < extras.length; i++) {
-                    extras[i].subscribeOn(Schedulers.io())
-                      .observeOn(Schedulers.computation())
-                      .subscribe(mEventBusSubscriber.get());
-                }
-            }
-        }
+        getNewObservables();
     }
 
     @Override
@@ -82,6 +66,40 @@ public abstract class DatafeedFragment
         if (mSubscriber != null) {
             mSubscriber.unsubscribe();
             mEventBus.unregister(mSubscriber);
+        }
+    }
+
+    /**
+     * Unbinds current data, fetches new observables, and reparses/binds
+     *
+     */
+    public void invalidate() {
+        if (mSubscriber != null && mBinder != null) {
+            mBinder.unbind();
+            getNewObservables();
+        }
+    }
+
+    /**
+     * Registers and subscribes new observables
+     */
+    private void getNewObservables() {
+        if (mSubscriber != null) {
+            mObservable = getObservable();
+            if (mObservable != null) {
+                mObservable.subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.computation())
+                        .subscribe(mSubscriber);
+            }
+            Observable[] extras = getExtraObservables();
+            if (shouldRegisterSubscriberToEventBus() || (extras != null && extras.length > 0)) {
+                mEventBus.register(mSubscriber);
+                for (int i = 0; extras != null && i < extras.length; i++) {
+                    extras[i].subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.computation())
+                            .subscribe(mEventBusSubscriber.get());
+                }
+            }
         }
     }
 

@@ -18,6 +18,12 @@ public interface DataConsumer<T> {
     void updateData(@Nullable T data);
 
     /**
+     * A hook for binders to clean up their views
+     */
+    @UiThread
+    void unbind();
+
+    /**
      * Called when loading completes
      */
     @UiThread
