@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -14,11 +15,11 @@ public class MediasTable extends ModelTable<Media> {
             DETAILS = "details",
             YEAR = "year";
 
-    private Database mDb;
+    private SQLiteDatabase mDb;
 
-    public MediasTable(Database mDb){
-        super(mDb);
-        this.mDb = mDb;
+    public MediasTable(SQLiteDatabase db){
+        super(db);
+        this.mDb = db;
     }
 
     @Override

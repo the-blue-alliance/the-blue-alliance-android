@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.tables;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
@@ -24,11 +25,11 @@ public class TeamsTable extends ModelTable<Team> {
             WEBSITE = "website",
             YEARS_PARTICIPATED = "yearsParticipated";
 
-    private Database database;
+    private SQLiteDatabase mDb;
 
-    public TeamsTable(Database database) {
-        super(database.mDb);
-        this.database = database;
+    public TeamsTable(SQLiteDatabase db) {
+        super(db);
+        mDb = db;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class TeamsTable extends ModelTable<Team> {
             cv.put(Database.SearchTeam.KEY, team.getKey());
             cv.put(Database.SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
             cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
-            database.mDb.insert(Database.TABLE_SEARCH_TEAMS, null, cv);
+            mDb.insert(Database.TABLE_SEARCH_TEAMS, null, cv);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:" +
               "Database.Teams.KEY, Database.Teams.NUMBER");
@@ -54,7 +55,7 @@ public class TeamsTable extends ModelTable<Team> {
             cv.put(Database.SearchTeam.KEY, team.getKey());
             cv.put(Database.SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
             cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
-            database.mDb.update(Database.TABLE_SEARCH_TEAMS, cv, Database.SearchTeam.KEY + "=?", new String[]{team.getKey()});
+            mDb.update(Database.TABLE_SEARCH_TEAMS, cv, Database.SearchTeam.KEY + "=?", new String[]{team.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
                     "Database.Events.KEY, Database.Events.YEAR");
@@ -63,7 +64,7 @@ public class TeamsTable extends ModelTable<Team> {
 
     @Override
     protected void deleteCallback(Team team) {
-            database.mDb.delete(Database.TABLE_SEARCH_TEAMS, Database.SearchTeam.KEY + " = ?", new String[]{team.getKey()});
+            mDb.delete(Database.TABLE_SEARCH_TEAMS, Database.SearchTeam.KEY + " = ?", new String[]{team.getKey()});
     }
     protected String getTableName() {
         return Database.TABLE_TEAMS;
@@ -80,7 +81,7 @@ public class TeamsTable extends ModelTable<Team> {
     }
 
     public Cursor getCursorForTeamsInRange(int lowerBound, int upperBound) {
-        Cursor cursor = database.mDb.rawQuery("SELECT " + Database.TABLE_TEAMS + ".rowid as '_id',"
+        Cursor cursor = mDb.rawQuery("SELECT " + Database.TABLE_TEAMS + ".rowid as '_id',"
                 + TeamsTable.KEY + ","
                 + TeamsTable.NUMBER + ","
                 + TeamsTable.NAME + ","
@@ -98,7 +99,7 @@ public class TeamsTable extends ModelTable<Team> {
     }
 
     public void deleteAllSearchIndexes(){
-        database.mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+        mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
     }
 
     public void deleteSearchIndex(Team team){
@@ -106,14 +107,14 @@ public class TeamsTable extends ModelTable<Team> {
     }
 
     public void recreateAllSearchIndexes(List<Team> teams){
-        database.mDb.beginTransaction();
+        mDb.beginTransaction();
         try{
             for(Team t: teams){
                 insertCallback(t);
             }
         }finally {
-            database.mDb.setTransactionSuccessful();
+            mDb.setTransactionSuccessful();
         }
-        database.mDb.endTransaction();
+        mDb.endTransaction();
     }
 }

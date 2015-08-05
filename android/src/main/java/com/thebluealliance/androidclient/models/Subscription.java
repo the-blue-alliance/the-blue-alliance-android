@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 
@@ -99,11 +99,11 @@ public class Subscription {
 
     public ContentValues getParams() {
         ContentValues cv = new ContentValues();
-        cv.put(Database.Subscriptions.KEY, getKey());
-        cv.put(Database.Subscriptions.USER_NAME, userName);
-        cv.put(Database.Subscriptions.MODEL_KEY, modelKey);
-        cv.put(Database.Subscriptions.NOTIFICATION_SETTINGS, notificationSettings);
-        cv.put(Database.Subscriptions.MODEL_ENUM, modelEnum);
+        cv.put(SubscriptionsTable.KEY, getKey());
+        cv.put(SubscriptionsTable.USER_NAME, userName);
+        cv.put(SubscriptionsTable.MODEL_KEY, modelKey);
+        cv.put(SubscriptionsTable.NOTIFICATION_SETTINGS, notificationSettings);
+        cv.put(SubscriptionsTable.MODEL_ENUM, modelEnum);
         return cv;
     }
 }

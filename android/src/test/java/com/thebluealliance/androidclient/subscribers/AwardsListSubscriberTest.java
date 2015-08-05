@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
@@ -34,7 +35,7 @@ public class AwardsListSubscriberTest {
     @Before
     public void setUp() {
         Database db = mock(Database.class);
-        Database.Teams teams = mock(Database.Teams.class);
+        TeamsTable teams = mock(TeamsTable.class);
         Team team = mock(Team.class);
 
         mSubscriber = new AwardsListSubscriber(db);

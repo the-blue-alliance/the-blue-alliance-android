@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -20,11 +21,11 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             YEAR = "year",
             COMPWEEK = "week";
 
-    private Database mDb;
+    private SQLiteDatabase mDb;
 
-    public EventTeamsTable(Database mDb){
-        super(mDb);
-        this.mDb = mDb;
+    public EventTeamsTable(SQLiteDatabase db){
+        super(db);
+        this.mDb = db;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -15,10 +16,10 @@ public class SubscriptionsTable {
             MODEL_ENUM = "model_enum",
             NOTIFICATION_SETTINGS = "settings";
 
-    private Database mDb;
+    private SQLiteDatabase mDb;
 
-    public SubscriptionsTable(Database mDb) {
-        this.mDb = mDb;
+    public SubscriptionsTable(SQLiteDatabase db) {
+        this.mDb = db;
     }
 
     public long add(Subscription in) {

@@ -10,6 +10,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -32,7 +33,7 @@ public class SummaryNotification extends BaseNotification {
 
     @Override
     public Notification buildNotification(Context context) {
-        Database.Notifications table = Database.getInstance(context).getNotificationsTable();
+        NotificationsTable table = Database.getInstance(context).getNotificationsTable();
 
         ArrayList<StoredNotification> active = table.getActive();
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
@@ -90,7 +91,7 @@ public class SummaryNotification extends BaseNotification {
 
     /* Checks if we've already posted a notification */
     public static boolean isNotificationActive(Context context) {
-        Database.Notifications table = Database.getInstance(context).getNotificationsTable();
+        NotificationsTable table = Database.getInstance(context).getNotificationsTable();
         return table.getActive().size() > 1;
         // The newest notification has already been added to the table, so we're checking if there are 2+ active
     }

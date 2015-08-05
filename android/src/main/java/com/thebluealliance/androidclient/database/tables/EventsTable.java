@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.tables;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
@@ -37,11 +38,11 @@ public class EventsTable extends ModelTable<Event> {
             STATS = "stats",
             WEBSITE = "website";
 
-    private Database database;
+    private SQLiteDatabase mDb;
 
-    public EventsTable(Database database){
-        super(database.mDb);
-        this.database = database;
+    public EventsTable(SQLiteDatabase db){
+        super(db);
+        mDb = db;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class EventsTable extends ModelTable<Event> {
             cv.put(Database.SearchEvent.KEY, event.getKey());
             cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
             cv.put(Database.SearchEvent.YEAR, event.getEventYear());
-            database.mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
+            mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
 
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
@@ -69,7 +70,7 @@ public class EventsTable extends ModelTable<Event> {
             cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
             cv.put(Database.SearchEvent.YEAR, event.getEventYear());
 
-            database.mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
+            mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
                     "Database.Events.KEY, Database.Events.YEAR");
@@ -78,7 +79,7 @@ public class EventsTable extends ModelTable<Event> {
 
     @Override
     protected void deleteCallback(Event event) {
-        database.mDb.delete(Database.TABLE_SEARCH_EVENTS, Database.SearchEvent.KEY + " = ?", new String[]{event.getKey()});
+        mDb.delete(Database.TABLE_SEARCH_EVENTS, Database.SearchEvent.KEY + " = ?", new String[]{event.getKey()});
     }
 
     @Override
@@ -97,7 +98,7 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     public void deleteAllSearchIndexes(){
-        database.mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+        mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
     }
 
     public void deleteSearchIndex(Event event){
@@ -105,15 +106,15 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     public void recreateAllSearchIndexes(List<Event> events){
-        database.mDb.beginTransaction();
+        mDb.beginTransaction();
         try{
             for(Event e:events){
                 insertCallback(e);
             }
         }finally {
-            database.mDb.setTransactionSuccessful();
+            mDb.setTransactionSuccessful();
         }
-        database.mDb.endTransaction();
+        mDb.endTransaction();
     }
 
 }

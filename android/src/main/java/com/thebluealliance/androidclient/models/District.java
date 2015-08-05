@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
@@ -35,63 +36,63 @@ public class District extends BasicModel<District> {
     }
 
     public void setKey(String key) {
-        fields.put(Database.Districts.KEY, key);
+        fields.put(DistrictsTable.KEY, key);
     }
 
     public String getKey() {
-        if (fields.containsKey(Database.Districts.KEY) && fields.get(Database.Districts.KEY) instanceof String) {
-            return (String) fields.get(Database.Districts.KEY);
+        if (fields.containsKey(DistrictsTable.KEY) && fields.get(DistrictsTable.KEY) instanceof String) {
+            return (String) fields.get(DistrictsTable.KEY);
         } else {
             return "";
         }
     }
 
     public void setAbbreviation(String abbrev) {
-        fields.put(Database.Districts.ABBREV, abbrev);
+        fields.put(DistrictsTable.ABBREV, abbrev);
     }
 
     public String getAbbreviation() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Districts.ABBREV) && fields.get(Database.Districts.ABBREV) instanceof String) {
-            return (String) fields.get(Database.Districts.ABBREV);
+        if (fields.containsKey(DistrictsTable.ABBREV) && fields.get(DistrictsTable.ABBREV) instanceof String) {
+            return (String) fields.get(DistrictsTable.ABBREV);
         } else {
             throw new FieldNotDefinedException("Field Database.Districts.ABBREV is not defined");
         }
     }
 
     public void setEnum(int districtEnum) {
-        fields.put(Database.Districts.ENUM, districtEnum);
+        fields.put(DistrictsTable.ENUM, districtEnum);
     }
 
     public int getEnum() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Districts.ENUM) && fields.get(Database.Districts.ENUM) instanceof Integer) {
-            return (Integer) fields.get(Database.Districts.ENUM);
+        if (fields.containsKey(DistrictsTable.ENUM) && fields.get(DistrictsTable.ENUM) instanceof Integer) {
+            return (Integer) fields.get(DistrictsTable.ENUM);
         } else {
             throw new FieldNotDefinedException("Field Database.Districts.ENUM is not defined");
         }
     }
 
     public void setYear(int year) {
-        fields.put(Database.Districts.YEAR, year);
+        fields.put(DistrictsTable.YEAR, year);
     }
 
     public int getYear() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Districts.YEAR) && fields.get(Database.Districts.YEAR) instanceof Integer) {
-            return (Integer) fields.get(Database.Districts.YEAR);
+        if (fields.containsKey(DistrictsTable.YEAR) && fields.get(DistrictsTable.YEAR) instanceof Integer) {
+            return (Integer) fields.get(DistrictsTable.YEAR);
         } else {
             throw new FieldNotDefinedException("Field Database.Districts.YEAR is not defined");
         }
     }
 
     public String getName() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Districts.NAME) && fields.get(Database.Districts.NAME) instanceof String) {
-            return (String) fields.get(Database.Districts.NAME);
+        if (fields.containsKey(DistrictsTable.NAME) && fields.get(DistrictsTable.NAME) instanceof String) {
+            return (String) fields.get(DistrictsTable.NAME);
         } else {
             throw new FieldNotDefinedException("Field Database.Districts.NAME is not defined");
         }
     }
 
     public void setName(String name) {
-        fields.put(Database.Districts.NAME, name);
+        fields.put(DistrictsTable.NAME, name);
     }
 
     @Override
@@ -121,7 +122,7 @@ public class District extends BasicModel<District> {
     // This method will only return a locally stored district
     public static APIResponse<District> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districts table: " + whereClause + Arrays.toString(whereArgs));
-        Database.Districts table = Database.getInstance(c).getDistrictsTable();
+        DistrictsTable table = Database.getInstance(c).getDistrictsTable();
         Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         District district;
         boolean changed = false;
@@ -147,7 +148,7 @@ public class District extends BasicModel<District> {
 
     public static APIResponse<ArrayList<District>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying districts table: " + whereClause + Arrays.toString(whereArgs));
-        Database.Districts table = Database.getInstance(c).getDistrictsTable();
+        DistrictsTable table = Database.getInstance(c).getDistrictsTable();
         Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<District> districts = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {

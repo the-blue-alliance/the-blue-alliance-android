@@ -1,12 +1,14 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.Favorite;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FavoritesTable {
     public static final String KEY = "key",
@@ -14,10 +16,10 @@ public class FavoritesTable {
             MODEL_KEY = "modelKey",
             MODEL_ENUM = "model_enum";
 
-    private Database mDb;
+    private SQLiteDatabase mDb;
 
-    public FavoritesTable(Database mDb) {
-        this.mDb = mDb;
+    public FavoritesTable(SQLiteDatabase db) {
+        this.mDb = db;
     }
 
     public long add(Favorite in) {
@@ -27,7 +29,7 @@ public class FavoritesTable {
         return -1;
     }
 
-    public void add(ArrayList<Favorite> in) {
+    public void add(List<Favorite> in) {
         mDb.beginTransaction();
         try {
             for (Favorite favorite : in) {

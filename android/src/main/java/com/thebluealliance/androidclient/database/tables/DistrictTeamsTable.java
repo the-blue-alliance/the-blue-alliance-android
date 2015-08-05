@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -25,11 +26,11 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
             TOTAL_POINTS = "totalPoints",
             JSON = "json";
 
-    private Database mDb;
+    private SQLiteDatabase mDb;
 
-    public DistrictTeamsTable(Database mDb){
-        super(mDb);
-        this.mDb = mDb;
+    public DistrictTeamsTable(SQLiteDatabase db){
+        super(db);
+        this.mDb = db;
     }
 
     @Override

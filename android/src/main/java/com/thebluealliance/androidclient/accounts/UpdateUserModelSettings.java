@@ -13,6 +13,8 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
@@ -69,8 +71,8 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         request.setFavorite(isFavorite);
         request.setModelType(Long.valueOf(settings.modelType.getEnum()));
 
-        Database.Subscriptions subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
-        Database.Favorites favoritesTable = Database.getInstance(context).getFavoritesTable();
+        SubscriptionsTable subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
+        FavoritesTable favoritesTable = Database.getInstance(context).getFavoritesTable();
 
         // Determine if we have to do anything
         List<String> existingNotificationsList = new ArrayList<>();

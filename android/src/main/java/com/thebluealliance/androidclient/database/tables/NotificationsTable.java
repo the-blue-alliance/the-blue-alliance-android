@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.tables;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -20,10 +21,10 @@ public class NotificationsTable {
             SYSTEM_ID = "system_id",
             ACTIVE = "active";
 
-    private Database mDb;
+    private SQLiteDatabase mDb;
 
-    public NotificationsTable(Database mDb) {
-        this.mDb = mDb;
+    public NotificationsTable(SQLiteDatabase db) {
+        this.mDb = db;
     }
 
     public void add(StoredNotification... in) {

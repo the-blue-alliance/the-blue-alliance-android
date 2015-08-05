@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -18,11 +19,11 @@ public class AwardsTable extends ModelTable<Award> {
             YEAR = "year",
             WINNERS = "winners";
 
-    private Database db;
+    private SQLiteDatabase mDb;
 
-    public AwardsTable(Database db){
-        super(db.mDb);
-        this.db = db;
+    public AwardsTable(SQLiteDatabase db){
+        super(db);
+        this.mDb = db;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class AwardsTable extends ModelTable<Award> {
     }
 
     public List<Award> getTeamAtEventAwards(String teamKey, String eventKey) {
-        Cursor cursor = db.mDb.rawQuery("SELECT * FROM `" + Database.TABLE_AWARDS + "` WHERE `" + EVENTKEY
+        Cursor cursor = mDb.rawQuery("SELECT * FROM `" + Database.TABLE_AWARDS + "` WHERE `" + EVENTKEY
           + "` = ? AND `" + WINNERS + "` LIKE '%" + teamKey + "," + "%'", new String[]{eventKey});
         List<Award> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
         if (cursor == null || !cursor.moveToFirst()) {
