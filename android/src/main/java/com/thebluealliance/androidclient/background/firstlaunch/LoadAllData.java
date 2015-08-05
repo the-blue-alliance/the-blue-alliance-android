@@ -193,8 +193,6 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
         } catch (Exception e) {
             // This is bad, probably an error in the response from the server
             e.printStackTrace();
-            // Wipe any partially cached responses
-            Database.getInstance(context).getResponseTable().deleteAllResponses();
             // Alert the user that there was a problem
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(e)));
         }
@@ -211,8 +209,6 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
 
     private void onConnectionError() {
         publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, context.getString(R.string.connection_lost)));
-        // Wipe any partially cached responses
-        Database.getInstance(context).getResponseTable().deleteAllResponses();
     }
 
     @Override

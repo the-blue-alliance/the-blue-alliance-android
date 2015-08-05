@@ -14,7 +14,6 @@ import android.util.Log;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -30,21 +29,17 @@ import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 
-/**
- * File created by phil on 4/28/14.
- */
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 24;
+    private static final int DATABASE_VERSION = 25;
     private Context context;
-    public static final String DATABASE_NAME = "the-blue-alliance-android-database",
-            TABLE_API = "api",
-            TABLE_TEAMS = "teams",
+    public static final String DATABASE_NAME = "the-blue-alliance-android-database";
+    public static final @Deprecated String TABLE_API = "api";
+    public static final String TABLE_TEAMS = "teams",
             TABLE_EVENTS = "events",
             TABLE_AWARDS = "awards",
             TABLE_MATCHES = "matches",
@@ -59,11 +54,6 @@ public class Database extends SQLiteOpenHelper {
             TABLE_SEARCH_EVENTS = "search_events",
             TABLE_NOTIFICATIONS = "notifications";
 
-    String CREATE_API = "CREATE TABLE IF NOT EXISTS " + TABLE_API + "("
-            + Response.URL + " TEXT PRIMARY KEY NOT NULL, "
-            + Response.LASTUPDATE + " TIMESTAMP, "
-            + Response.LASTHIT + " TIMESTAMP "
-            + ")";
     String CREATE_TEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS + "("
             + Teams.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + Teams.NUMBER + " INTEGER NOT NULL, "
@@ -197,7 +187,6 @@ public class Database extends SQLiteOpenHelper {
     private Matches mMatchesTable;
     private Medias mMediasTable;
     private EventTeams mEventTeamsTable;
-    private Response mResponseTable;
     private Districts mDistrictsTable;
     private DistrictTeams mDistrictTeamsTable;
     private Favorites mFavoritesTable;
@@ -218,7 +207,6 @@ public class Database extends SQLiteOpenHelper {
         mDistrictTeamsTable = new DistrictTeams();
         mFavoritesTable = new Favorites();
         mSubscriptionsTable = new Subscriptions();
-        mResponseTable = new Response();
         mNotificationsTable = new Notifications();
     }
 
@@ -250,10 +238,6 @@ public class Database extends SQLiteOpenHelper {
         return mMediasTable;
     }
 
-    public Response getResponseTable() {
-        return mResponseTable;
-    }
-
     public EventTeams getEventTeamsTable() {
         return mEventTeamsTable;
     }
@@ -280,7 +264,6 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_API);
         db.execSQL(CREATE_TEAMS);
         db.execSQL(CREATE_EVENTS);
         db.execSQL(CREATE_AWARDS);
@@ -364,6 +347,10 @@ public class Database extends SQLiteOpenHelper {
                     db.execSQL("DROP TABLE " + TABLE_SEARCH_EVENTS);
                     onCreate(db);
                     break;
+                case 25:
+                    // delete deprecated responses table
+                    db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
+                    break;
             }
             upgradeTo++;
         }
@@ -380,7 +367,6 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTTEAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBSCRIPTIONS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
@@ -401,78 +387,6 @@ public class Database extends SQLiteOpenHelper {
                 remove(LaunchActivity.ALL_DATA_LOADED).commit();
 
         onCreate(db);
-    }
-
-    public class Response {
-        public static final String URL = "url", //text
-                LASTUPDATE = "lastUpdated",     //timestamp for Last-Modified from API
-                LASTHIT = "lastHit";           //last time we hit the API
-
-        public long storeResponse(String url, String updated) {
-            if (responseExists(url)) {
-                return updateResponse(url, updated);
-            }
-            ContentValues cv = new ContentValues();
-            cv.put(Response.URL, url);
-            cv.put(Response.LASTUPDATE, updated);
-            cv.put(Response.LASTHIT, new Date().getTime());
-            return mDb.insert(TABLE_API, null, cv);
-        }
-
-        public APIResponse<String> getResponseIfExists(String url) {
-            Cursor cursor = mDb.query(TABLE_API, new String[]{Response.URL, Response.LASTUPDATE, Response.LASTHIT},
-                    Response.URL + "=?", new String[]{url}, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                String lastUpdate = cursor.getString(1);
-                long lastHit = cursor.getLong(2);
-                cursor.close();
-                return new APIResponse<>(null, APIResponse.CODE.LOCAL, lastUpdate, new Date(lastHit));
-            } else {
-                Log.w(Constants.LOG_TAG, "Failed to find response in database with url " + url);
-                return null;
-            }
-        }
-
-        public boolean responseExists(String url) {
-            Cursor cursor = mDb.query(TABLE_API, new String[]{Response.URL}, Response.URL + "=?", new String[]{url}, null, null, null, null);
-            boolean exists = (cursor.moveToFirst()) || (cursor.getCount() != 0);
-            cursor.close();
-            return exists;
-        }
-
-        public int deleteResponse(String url) {
-            if (responseExists(url)) {
-                return mDb.delete(TABLE_API, Response.URL + "=?", new String[]{url});
-            }
-            return 0;
-        }
-
-        public void deleteAllResponses() {
-            mDb.delete(TABLE_API, "", new String[]{});
-        }
-
-        public int updateResponse(String url, String updated) {
-            ContentValues cv = new ContentValues();
-            cv.put(Response.LASTUPDATE, updated);
-            cv.put(Response.LASTHIT, new Date().getTime());
-            return mDb.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
-        }
-
-        /**
-         * Just updates the last hit time in the database. Like UNIX `touch`
-         *
-         * @param url URL for the record to touch
-         * @return update code
-         */
-        public int touchResponse(String url) {
-            if (responseExists(url)) {
-                ContentValues cv = new ContentValues();
-                cv.put(Response.LASTHIT, new Date().getTime());
-                return mDb.update(TABLE_API, cv, Response.URL + "=?", new String[]{url});
-            } else {
-                return -1;
-            }
-        }
     }
 
     public class Teams extends ModelTable<Team> {
