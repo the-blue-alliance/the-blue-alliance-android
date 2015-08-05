@@ -8,6 +8,7 @@ apply plugin: 'gitsemver'
 apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
+apply from: 'build.workaround-missing-resource.gradle'
 
 // Fix for https://github.com/evant/gradle-retrolambda/issues/105
 // Without this, the build fails on CI for some reason

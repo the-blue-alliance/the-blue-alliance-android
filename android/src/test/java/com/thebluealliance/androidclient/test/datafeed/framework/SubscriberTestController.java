@@ -79,7 +79,6 @@ public class SubscriberTestController<API, VIEW> {
 
     public SubscriberTestController<API, VIEW> onNext(@Nullable API data) {
         checkPreconditions();
-        Preconditions.checkState(mConsumer != null, "Must set a consumer with .withConsumer");
         mSubscriber.onNext(data);
         hasParsed = true;
         hasBound = true;
