@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.test.datafeed.framework;
+package com.thebluealliance.androidclient.datafeed.framework;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.modules.DatafeedModule;

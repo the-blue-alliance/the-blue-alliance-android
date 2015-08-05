@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.test.notifications;
+package com.thebluealliance.androidclient.notifications;
 
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;

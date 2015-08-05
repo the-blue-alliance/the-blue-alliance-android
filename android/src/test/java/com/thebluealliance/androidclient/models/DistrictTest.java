@@ -1,9 +1,7 @@
-package com.thebluealliance.androidclient.test.models;
+package com.thebluealliance.androidclient.models;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.District;
 
 import org.junit.Before;
 import org.junit.Ignore;

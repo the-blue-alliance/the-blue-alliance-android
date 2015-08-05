@@ -1,9 +1,8 @@
-package com.thebluealliance.androidclient.test.datafeed;
+package com.thebluealliance.androidclient.datafeed;
 
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.CSVManager;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 

@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.test.helpers;
+package com.thebluealliance.androidclient.helpers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

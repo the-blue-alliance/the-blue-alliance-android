@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.test.datafeed.framework;
+package com.thebluealliance.androidclient.datafeed.framework;
 
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.BasicModel;

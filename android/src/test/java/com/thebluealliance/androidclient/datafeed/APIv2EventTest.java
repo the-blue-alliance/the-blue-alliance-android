@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.test.datafeed;
+package com.thebluealliance.androidclient.datafeed;
 
 import org.junit.Test;
 

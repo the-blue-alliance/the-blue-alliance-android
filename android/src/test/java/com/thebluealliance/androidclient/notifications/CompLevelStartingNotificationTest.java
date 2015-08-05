@@ -1,7 +1,7 @@
-package com.thebluealliance.androidclient.test.notifications;
+package com.thebluealliance.androidclient.notifications;
 
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
-import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
+import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,15 +12,16 @@ import org.robolectric.RobolectricTestRunner;
  * Created by phil on 2/7/15.
  */
 @RunWith(RobolectricTestRunner.class)
-public class ScheduleUpdatedNotificationTest {
+public class CompLevelStartingNotificationTest {
     BaseNotification notification;
     String messageData = "{\"event_name\": \"New England FRC Region Championship\", " +
-            "\"first_match_time\": 1397330280, " +
-            "\"event_key\": \"2014necmp\"}";
+            "\"comp_level\": \"f\", " +
+            "\"event_key\": \"2014necmp\", " +
+            "\"scheduled_time\": 1397330280}\n";
     
     @Before
-    public void setNotification(){
-        notification = new ScheduleUpdatedNotification(messageData);
+    public void setupNotification(){
+        notification = new CompLevelStartingNotification(messageData);
     }
     
     @Test

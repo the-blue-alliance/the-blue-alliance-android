@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.test.validators;
+package com.thebluealliance.androidclient.validators;
 
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
