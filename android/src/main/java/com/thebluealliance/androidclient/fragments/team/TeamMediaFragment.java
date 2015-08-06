@@ -14,8 +14,10 @@ import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
@@ -23,10 +25,10 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class TeamMediaFragment extends DatafeedFragment<
-  List<Media>,
-  List<ListGroup>,
-  MediaListSubscriber,
-  ExpandableListBinder> {
+        List<Media>,
+        List<ListGroup>,
+        MediaListSubscriber,
+        ExpandableListBinder> {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
@@ -62,8 +64,9 @@ public class TeamMediaFragment extends DatafeedFragment<
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_team_media, container, false);
-        mBinder.expandableList = (ExpandableListView) v.findViewById(R.id.team_media_list);
-        mBinder.progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.mExpandableListView = (ExpandableListView) v.findViewById(R.id.team_media_list);
+        mBinder.mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;
     }
 
@@ -91,5 +94,10 @@ public class TeamMediaFragment extends DatafeedFragment<
     @Override
     protected Observable<List<Media>> getObservable() {
         return mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_photo_camera_black_48dp, R.string.no_media_data);
     }
 }

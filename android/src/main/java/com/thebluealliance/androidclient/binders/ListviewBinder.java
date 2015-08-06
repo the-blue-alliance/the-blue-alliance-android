@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
-public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
+public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     public ListView mListView;
     public ProgressBar mProgressBar;
@@ -23,28 +23,23 @@ public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
     public void updateData(@Nullable List<ListItem> data) {
         if (data == null || mListView == null) {
             setDataBound(false);
-            Log.d(Constants.LOG_TAG, "DATA IS NULL");
             return;
         }
         if (data.isEmpty()) {
             setDataBound(false);
-            Log.d(Constants.LOG_TAG, "DATA IS EMPTY");
             return;
         }
-        Log.d(Constants.LOG_TAG, "LIST VIEW SIZE: " + data.size());
         ListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
         mListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        if (mProgressBar != null && !data.isEmpty()) {
+        if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
-            mListView.setVisibility(View.VISIBLE);
-        } else {
-            mListView.setVisibility(View.GONE);
         }
+
+        mListView.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
         setDataBound(true);
-        Log.d(Constants.LOG_TAG, "DATA BOUND SUCCESSFULLY");
     }
 
     protected ListViewAdapter newAdapter(List<ListItem> data) {
@@ -53,21 +48,19 @@ public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void onComplete() {
-        Log.d(Constants.LOG_TAG, "ONCOMPLETE CALLED");
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }
 
         if (!isDataBound()) {
-            Log.d(Constants.LOG_TAG, "BINDING NO DATA VIEW");
             bindNoDataView();
         }
     }
 
     @Override
     public void onError(Throwable throwable) {
-        Log.d(Constants.LOG_TAG, "ONERROR CALLED");
         Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
+
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.
         if (!isDataBound()) {

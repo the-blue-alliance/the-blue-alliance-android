@@ -38,7 +38,7 @@ public class TeamListFragment extends ListvVewFragment<List<Team>, TeamListSubsc
     public void onCreate(Bundle savedInstanceState) {
         int teamNumberStart = getArguments().getInt(START);
 
-        mPageStart = teamNumberStart/500;
+        mPageStart = teamNumberStart / 500;
         super.onCreate(savedInstanceState);
     }
 
@@ -58,6 +58,9 @@ public class TeamListFragment extends ListvVewFragment<List<Team>, TeamListSubsc
 
             startActivity(i);
         });
+
+        // Enable fast scrolling
+        mListView.setFastScrollEnabled(true);
         return view;
     }
 
@@ -70,6 +73,6 @@ public class TeamListFragment extends ListvVewFragment<List<Team>, TeamListSubsc
     @Override
     protected Observable<List<Team>> getObservable() {
         return mDatafeed.fetchTeamPage(mPageStart)
-          .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1), mCombiner);
+                .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1), mCombiner);
     }
 }

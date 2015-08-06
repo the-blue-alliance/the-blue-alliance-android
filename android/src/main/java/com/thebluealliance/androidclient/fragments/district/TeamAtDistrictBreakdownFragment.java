@@ -59,8 +59,8 @@ public class TeamAtDistrictBreakdownFragment
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.expandable_list);
 
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mBinder.expandableList = listView;
-        mBinder.progressBar = progressBar;
+        mBinder.mExpandableListView = listView;
+        mBinder.mProgressBar = progressBar;
         listView.setSelector(R.drawable.transparent);
         return view;
     }
