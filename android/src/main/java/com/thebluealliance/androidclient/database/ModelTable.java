@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.VisibleForTesting;
 
 import com.thebluealliance.androidclient.models.BasicModel;
 
@@ -289,12 +290,14 @@ public abstract class ModelTable<T extends BasicModel> {
     /**
      * @return a String containing the same of the backing SQL table
      */
-    protected abstract String getTableName();
+    @VisibleForTesting
+    public abstract String getTableName();
 
     /**
      * @return a String containing the column name of the primary key in the backing table
      */
-    protected abstract String getKeyColumn();
+    @VisibleForTesting
+    public abstract String getKeyColumn();
 
     /**
      * Inflates a cursor row from the db to a model class

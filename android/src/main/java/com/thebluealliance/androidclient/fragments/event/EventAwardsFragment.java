@@ -44,7 +44,6 @@ public class EventAwardsFragment extends ListvVewFragment<List<Award>, AwardsLis
         }
         super.onCreate(savedInstanceState);
 
-        mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
     }
 

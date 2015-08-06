@@ -53,4 +53,8 @@ public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
     public void setNoDataView(NoDataView noDataView) {
         mNoDataBinder.setView(noDataView);
     }
+
+    public void unbind() {
+        //TODO remove regular data, show progress bar again
+    }
 }

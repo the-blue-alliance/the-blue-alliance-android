@@ -21,6 +21,16 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.AwardsTable;
+import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
+import com.thebluealliance.androidclient.database.tables.DistrictsTable;
+import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.MatchesTable;
+import com.thebluealliance.androidclient.database.tables.MediasTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
+import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
@@ -71,7 +81,7 @@ public class DataManager {
 
         public static APIResponse<Team> getTeam(Context c, String teamKey, RequestParams requestParams) throws NoDataException {
             final String URL = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.TEAM), teamKey);
-            final String sqlWhere = Database.Teams.KEY + " = ?";
+            final String sqlWhere = TeamsTable.KEY + " = ?";
             return Team.query(c, requestParams, null, sqlWhere, new String[]{teamKey}, new String[]{URL});
         }
 
@@ -103,8 +113,8 @@ public class DataManager {
 
         public static APIResponse<ArrayList<Integer>> getYearsParticipated(Context c, String teamKey, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.TEAM_YEARS_PARTICIPATED), teamKey);
-            String sqlWhere = Database.Teams.KEY + " = ?";
-            String[] teamFields = new String[]{Database.Teams.KEY, Database.Teams.YEARS_PARTICIPATED, Database.Teams.SHORTNAME, Database.Teams.NUMBER};
+            String sqlWhere = TeamsTable.KEY + " = ?";
+            String[] teamFields = new String[]{TeamsTable.KEY, TeamsTable.YEARS_PARTICIPATED, TeamsTable.SHORTNAME, TeamsTable.NUMBER};
             APIResponse<Team> teamResponse = Team.query(c, requestParams, teamFields, sqlWhere, new String[]{teamKey}, new String[]{apiUrl});
             ArrayList<Integer> years = new ArrayList<>();
             try {
@@ -119,7 +129,7 @@ public class DataManager {
 
         public static APIResponse<ArrayList<Event>> getEventsForTeam(Context c, String teamKey, int year, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.TEAM_EVENTS), teamKey, year);
-            String sqlWhere = Database.EventTeams.TEAMKEY + " = ? AND " + Database.EventTeams.YEAR + " = ?";
+            String sqlWhere = EventTeamsTable.TEAMKEY + " = ? AND " + EventTeamsTable.YEAR + " = ?";
             APIResponse<ArrayList<EventTeam>> eventTeams = EventTeam.queryList(c, requestParams, teamKey, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
             ArrayList<Event> events = new ArrayList<>();
             APIResponse.CODE code = eventTeams.getCode();
@@ -138,7 +148,7 @@ public class DataManager {
         public static APIResponse<ArrayList<Event>> getDistrictEventsForTeam(Context c, String teamKey, String districtKey, RequestParams requestParams) throws NoDataException {
             int year = Integer.parseInt(districtKey.substring(0, 4));
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.TEAM_EVENTS), teamKey, year);
-            String sqlWhere = Database.EventTeams.TEAMKEY + " = ? AND " + Database.EventTeams.YEAR + " = ?";
+            String sqlWhere = EventTeamsTable.TEAMKEY + " = ? AND " + EventTeamsTable.YEAR + " = ?";
             APIResponse<ArrayList<EventTeam>> eventTeams = EventTeam.queryList(c, requestParams, teamKey, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
             ArrayList<Event> events = new ArrayList<>();
             APIResponse.CODE code = eventTeams.getCode();
@@ -156,7 +166,7 @@ public class DataManager {
 
         public static APIResponse<ArrayList<Media>> getTeamMedia(Context c, String teamKey, int year, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.TEAM_MEDIA), teamKey, year);
-            String sqlWhere = Database.Medias.TEAMKEY + " = ? AND " + Database.Medias.YEAR + " = ?";
+            String sqlWhere = MediasTable.TEAMKEY + " = ? AND " + MediasTable.YEAR + " = ?";
             return Media.queryList(c, teamKey, year, requestParams, null, sqlWhere, new String[]{teamKey, Integer.toString(year)}, new String[]{apiUrl});
         }
 
@@ -182,14 +192,14 @@ public class DataManager {
 
         public static APIResponse<Event> getEvent(Context c, String key, RequestParams requestParams) throws NoDataException {
             final String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_INFO), key);
-            String sqlWhere = Database.Events.KEY + " = ?";
+            String sqlWhere = EventsTable.KEY + " = ?";
             return Event.query(c, key, requestParams, null, sqlWhere, new String[]{key}, new String[]{apiUrl});
         }
 
         public static APIResponse<Event> getEventBasic(Context c, String key, RequestParams requestParams) throws NoDataException {
             final String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_INFO), key);
-            String[] fields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.DISTRICT};
-            String sqlWhere = Database.Events.KEY + " = ?";
+            String[] fields = new String[]{EventsTable.KEY, EventsTable.NAME, EventsTable.DISTRICT};
+            String sqlWhere = EventsTable.KEY + " = ?";
             return Event.query(c, key, requestParams, fields, sqlWhere, new String[]{key}, new String[]{apiUrl});
         }
 
@@ -200,10 +210,10 @@ public class DataManager {
             String sqlWhere;
             String[] whereArgs;
             if (week > Utilities.getCmpWeek(year)) {
-                sqlWhere = Database.Events.YEAR + " = ? AND " + Database.Events.WEEK + " > ?";
+                sqlWhere = EventsTable.YEAR + " = ? AND " + EventsTable.WEEK + " > ?";
                 whereArgs = new String[]{Integer.toString(year), Integer.toString(Utilities.getCmpWeek(year))};
             } else {
-                sqlWhere = Database.Events.YEAR + " = ? AND " + Database.Events.WEEK + " = ?";
+                sqlWhere = EventsTable.YEAR + " = ? AND " + EventsTable.WEEK + " = ?";
                 whereArgs = new String[]{Integer.toString(year), Integer.toString(week)};
             }
 
@@ -214,7 +224,7 @@ public class DataManager {
             HashMap<String, List<Event>> groupedEvents;
             APIResponse<ArrayList<Event>> eventListResponse;
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_LIST), year);
-            String sqlWhere = Database.Events.YEAR + " =?";
+            String sqlWhere = EventsTable.YEAR + " =?";
             eventListResponse = Event.queryList(c, requestParams, null, sqlWhere, new String[]{Integer.toString(year)}, new String[]{apiUrl});
 
             if (eventListResponse.getCode() != APIResponse.CODE.NODATA) {
@@ -228,8 +238,8 @@ public class DataManager {
             ArrayList<Team> teams = new ArrayList<>();
             Log.d("event teams", "Fetching teams for " + eventKey);
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_TEAMS), eventKey);
-            String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.TEAMS};
+            String sqlWhere = EventsTable.KEY + " = ?";
+            String[] eventFields = new String[]{EventsTable.KEY, EventsTable.NAME, EventsTable.YEAR, EventsTable.TYPE, EventsTable.TEAMS};
             APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray teamList = eventResponse.getData().getTeams();
@@ -247,8 +257,8 @@ public class DataManager {
             ArrayList<JsonArray> rankings = new ArrayList<>();
             Log.d("event ranks", "Fetching rankings for " + eventKey);
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_RANKS), eventKey);
-            String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.RANKINGS};
+            String sqlWhere = EventsTable.KEY + " = ?";
+            String[] eventFields = new String[]{EventsTable.KEY, EventsTable.NAME, EventsTable.YEAR, EventsTable.TYPE, EventsTable.RANKINGS};
             APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonArray rankArray = eventResponse.getData().getRankings();
@@ -268,7 +278,7 @@ public class DataManager {
             DistrictHelper.DISTRICTS districtType = DistrictHelper.districtTypeFromKey(districtKey);
 
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.DISTRICT_EVENTS), districtType.getAbbreviation(), year);
-            String sqlWhere = Database.Events.DISTRICT + " = ? AND " + Database.Events.YEAR + " = ? ";
+            String sqlWhere = EventsTable.DISTRICT + " = ? AND " + EventsTable.YEAR + " = ? ";
             String[] whereArgs = new String[]{Integer.toString(districtType.ordinal()), Integer.toString(year)};
 
             return Event.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
@@ -283,7 +293,7 @@ public class DataManager {
             Log.d("match list", "fetching matches for " + eventKey);
 
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_MATCHES), eventKey);
-            String sqlWhere = Database.Matches.EVENT + " = ?";
+            String sqlWhere = MatchesTable.EVENT + " = ?";
             APIResponse<ArrayList<Match>> matchResponse = Match.queryList(c, requestParams, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             Log.d(Constants.LOG_TAG, "Found " + matchResponse.getData().size() + " matches");
             for (Match match : matchResponse.getData()) {
@@ -305,8 +315,8 @@ public class DataManager {
 
         public static APIResponse<JsonObject> getEventStats(Context c, String eventKey, String teamKey, RequestParams requestParams) throws NoDataException {
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_STATS), eventKey);
-            String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.STATS};
+            String sqlWhere = EventsTable.KEY + " = ?";
+            String[] eventFields = new String[]{EventsTable.KEY, EventsTable.NAME, EventsTable.YEAR, EventsTable.TYPE, EventsTable.STATS};
             APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 JsonObject allStats = eventResponse.getData().getStats();
@@ -345,7 +355,7 @@ public class DataManager {
             ArrayList<Award> awards = new ArrayList<>();
             Log.d("event awards", "Fetching awards for " + eventKey + " " + teamKey);
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_AWARDS), eventKey);
-            String sqlWhere = Database.Awards.EVENTKEY + " = ?";
+            String sqlWhere = AwardsTable.EVENTKEY + " = ?";
             APIResponse<ArrayList<Award>> awardResponse = Award.queryList(c, requestParams, null, null, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             for (Award award : awardResponse.getData()) {
                 try {
@@ -376,8 +386,8 @@ public class DataManager {
         public static APIResponse<JsonObject> getDistrictPointsForEvent(Context c, String eventKey, String teamKey, RequestParams requestParams) throws NoDataException {
             Log.d(Constants.DATAMANAGER_LOG, "Fetching district points for " + eventKey + " " + teamKey);
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_DISTRICT_POINTS), eventKey);
-            String sqlWhere = Database.Events.KEY + " = ?";
-            String[] eventFields = new String[]{Database.Events.KEY, Database.Events.NAME, Database.Events.YEAR, Database.Events.TYPE, Database.Events.DISTRICT_POINTS};
+            String sqlWhere = EventsTable.KEY + " = ?";
+            String[] eventFields = new String[]{EventsTable.KEY, EventsTable.NAME, EventsTable.YEAR, EventsTable.TYPE, EventsTable.DISTRICT_POINTS};
             APIResponse<Event> eventResponse = Event.query(c, eventKey, requestParams, eventFields, sqlWhere, new String[]{eventKey}, new String[]{apiUrl});
             try {
                 if (teamKey.isEmpty()) {
@@ -409,7 +419,7 @@ public class DataManager {
             }
             String eventKey = matchKey.substring(0, matchKey.indexOf("_"));
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_MATCHES), eventKey);
-            String sqlWhere = Database.Matches.KEY + " = ?";
+            String sqlWhere = MatchesTable.KEY + " = ?";
             return Match.query(c, matchKey, requestParams, null, sqlWhere, new String[]{matchKey}, new String[]{apiUrl});
         }
 
@@ -420,7 +430,7 @@ public class DataManager {
         public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
         public static APIResponse<District> getDistrict(Context c, String districtKey) throws NoDataException {
-            String sqlWhere = Database.Districts.KEY + " = ?";
+            String sqlWhere = DistrictsTable.KEY + " = ?";
             String[] whereArgs = new String[]{districtKey};
             return District.query(c, new RequestParams(true, false), null, sqlWhere, whereArgs, new String[]{});
         }
@@ -429,7 +439,7 @@ public class DataManager {
             Log.d(Constants.DATAMANAGER_LOG, "getting districts in : " + year);
 
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.DISTRICT_LIST), year);
-            String sqlWhere = Database.Districts.YEAR + " = ?";
+            String sqlWhere = DistrictsTable.YEAR + " = ?";
             String[] whereArgs = new String[]{Integer.toString(year)};
 
             return District.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
@@ -440,7 +450,7 @@ public class DataManager {
 
             String districtKey = DistrictTeamHelper.getDistrictKey(districtTeamKey);
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
-            String sqlWhere = Database.DistrictTeams.KEY + " = ?";
+            String sqlWhere = DistrictTeamsTable.KEY + " = ?";
             String[] whereArgs = new String[]{districtTeamKey};
 
             return DistrictTeam.query(c, districtTeamKey, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
@@ -451,9 +461,9 @@ public class DataManager {
 
             String districtKey = DistrictTeamHelper.getDistrictKey(districtTeamKey);
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
-            String sqlWhere = Database.DistrictTeams.KEY + " = ?";
+            String sqlWhere = DistrictTeamsTable.KEY + " = ?";
             String[] whereArgs = new String[]{districtTeamKey};
-            String[] fields = new String[]{Database.DistrictTeams.KEY, Database.DistrictTeams.EVENT1_KEY, Database.DistrictTeams.EVENT2_KEY, Database.DistrictTeams.CMP_KEY};
+            String[] fields = new String[]{DistrictTeamsTable.KEY, DistrictTeamsTable.EVENT1_KEY, DistrictTeamsTable.EVENT2_KEY, DistrictTeamsTable.CMP_KEY};
 
             return DistrictTeam.query(c, districtTeamKey, requestParams, fields, sqlWhere, whereArgs, new String[]{apiUrl});
         }
@@ -462,17 +472,17 @@ public class DataManager {
             Log.d(Constants.DATAMANAGER_LOG, "getting district rankings for: " + districtKey);
 
             String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.DISTRICT_RANKINGS), districtKey.substring(4), Integer.parseInt(districtKey.substring(0, 4)));
-            String sqlWhere = Database.DistrictTeams.DISTRICT_KEY + " = ?";
+            String sqlWhere = DistrictTeamsTable.DISTRICT_KEY + " = ?";
             String[] whereArgs = new String[]{districtKey};
 
             return DistrictTeam.queryList(c, requestParams, null, sqlWhere, whereArgs, new String[]{apiUrl});
         }
 
         public static int getNumEventsForDistrict(Context c, String districtKey) {
-            String[] fields = new String[]{Database.Districts.KEY};
+            String[] fields = new String[]{DistrictsTable.KEY};
             String year = districtKey.substring(0, 4);
             int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtKey.substring(4)).ordinal();
-            String whereClause = Database.Events.YEAR + " = ? AND " + Database.Events.DISTRICT + " = ?";
+            String whereClause = EventsTable.YEAR + " = ? AND " + EventsTable.DISTRICT + " = ?";
             String[] whereArgs = new String[]{year, Integer.toString(districtEnum)};
             Cursor cursor = Database.getInstance(c).getEventsTable().query(fields, whereClause, whereArgs, null, null, null, null);
             if (cursor == null || !cursor.moveToFirst()) {
@@ -535,7 +545,7 @@ public class DataManager {
                 return new APIResponse<>(null, APIResponse.CODE.NODATA);
             }
 
-            Database.Favorites favorites = Database.getInstance(context).getFavoritesTable();
+            FavoritesTable favorites = Database.getInstance(context).getFavoritesTable();
             favorites.recreate(currentUser);
             if (favoriteCollection.getFavorites() != null) {
                 for (ModelsMobileApiMessagesFavoriteMessage f : favoriteCollection.getFavorites()) {
@@ -590,7 +600,7 @@ public class DataManager {
                 return new APIResponse<>(null, APIResponse.CODE.NODATA);
             }
 
-            Database.Subscriptions subscriptions = Database.getInstance(context).getSubscriptionsTable();
+            SubscriptionsTable subscriptions = Database.getInstance(context).getSubscriptionsTable();
             subscriptions.recreate(currentUser);
             if (subscriptionCollection.getSubscriptions() != null) {
                 for (ModelsMobileApiMessagesSubscriptionMessage s : subscriptionCollection.getSubscriptions()) {

@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -48,7 +49,7 @@ public class PopulateRecentNotifications extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         Log.d(Constants.LOG_TAG, "Starting to fetch notifications");
-        Database.Notifications table = Database.getInstance(activity).getNotificationsTable();
+        NotificationsTable table = Database.getInstance(activity).getNotificationsTable();
         ArrayList<StoredNotification> notifications = table.get();
         items = new ArrayList<>();
         for (StoredNotification notification : notifications) {

@@ -16,17 +16,12 @@ import java.util.Map;
 public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<ListItem>> {
 
     private String mTeamKey;
-    private String mEventKey;
     private Database mDb;
 
     public AwardsListSubscriber(Database db) {
         super();
         mDataToBind = new ArrayList<>();
         mDb = db;
-    }
-
-    public void setEventKey(String eventKey) {
-        mEventKey = eventKey;
     }
 
     public void setTeamKey(String teamKey) {
@@ -43,7 +38,8 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
         for (int i = 0; i < mAPIData.size(); i++) {
             Award award = mAPIData.get(i);
             for (JsonElement winner : award.getWinners()) {
-                if (!winner.getAsJsonObject().get("team_number").isJsonNull()) {
+                if (winner.isJsonObject() &&
+                  !winner.getAsJsonObject().get("team_number").isJsonNull()) {
                     String teamKey = "frc" + winner.getAsJsonObject().get("team_number");
                     Team team = mDb.getTeamsTable().get(teamKey);
                     teams.put(teamKey, team);
@@ -51,7 +47,7 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
             }
             mDataToBind.add(new CardedAwardListElement(
               award.getName(),
-              mEventKey,
+              award.getEventKey(),
               award.getWinners(),
               teams,
               mTeamKey));

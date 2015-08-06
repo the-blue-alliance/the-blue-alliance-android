@@ -125,7 +125,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         pager.setPageMargin(Utilities.getPixelsFromDp(this,
                                                       16));
         // We will notify the fragments of the year later
-        final ViewTeamFragmentPagerAdapter adapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey);
+        final ViewTeamFragmentPagerAdapter adapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mYear);
         pager.setAdapter(adapter);
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);

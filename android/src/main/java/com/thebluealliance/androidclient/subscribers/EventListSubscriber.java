@@ -33,6 +33,9 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Lis
     @Override
     public void parseData() {
         mDataToBind.clear();
+        if (mAPIData == null) {
+            return;
+        }
         switch (mRenderMode) {
             case MODE_WEEK:
             default:

@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.subscribers;
 import android.database.Cursor;
 
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.DistrictsTable;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -37,10 +39,10 @@ public class DistrictListSubscriber extends BaseAPISubscriber<List<District>, Li
     }
 
     private int getNumEventsForDistrict(String districtKey) {
-        String[] fields = new String[]{Database.Districts.KEY};
+        String[] fields = new String[]{DistrictsTable.KEY};
         String year = districtKey.substring(0, 4);
         int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtKey.substring(4)).ordinal();
-        String whereClause = Database.Events.YEAR + " = ? AND " + Database.Events.DISTRICT + " = ?";
+        String whereClause = EventsTable.YEAR + " = ? AND " + EventsTable.DISTRICT + " = ?";
         String[] whereArgs = new String[]{year, Integer.toString(districtEnum)};
         Cursor cursor =
           mDb.getEventsTable().query(fields, whereClause, whereArgs, null, null, null, null);

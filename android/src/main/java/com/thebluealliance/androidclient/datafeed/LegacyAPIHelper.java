@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.squareup.okhttp.Response;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
@@ -153,7 +152,7 @@ public class LegacyAPIHelper {
         }
 
         /* Check if we have hit (and recorded) this URL in the past and if we are connected to the intertubes */
-        boolean existsInDb = Database.getInstance(c).getResponseTable().responseExists(URL);
+        boolean existsInDb = false;
         boolean connectedToInternet = ConnectionDetector.isConnectedToInternet(c);
 
         if (existsInDb) {
@@ -163,17 +162,16 @@ public class LegacyAPIHelper {
                  * to return local content from the database, as the remote content is unchanged
                  */
 
-                APIResponse<String> cachedData;
-                cachedData = Database.getInstance(c).getResponseTable().getResponseIfExists(URL);   /* this will always return an empty string and Code.LOCAL for the data.
-                                                                                             * we just care about the updated times for the query.
-                                                                                             * getLastUpdate() will return the Last-Modified header from the
-                                                                                             * last time we queried this endpoint (which will subsequently be passed
-                                                                                             * as If-Modified-Since for this request) and lastHit will be the system
-                                                                                             * time when we last queried this endpoint.
-                                                                                             *
-                                                                                             * The Last-Modified time is set by the TBA server and used for all web requests
-                                                                                             * The local times are used for determining if we're within the limit for how often we can query one endpoint
-                                                                                             */
+                APIResponse<String> cachedData = new APIResponse<>("", APIResponse.CODE.LOCAL);
+                /* this will always return an empty string and Code.LOCAL for the data.
+                 * we just care about the updated times for the query.
+                 * getLastUpdate() will return the Last-Modified header from the
+                 * last time we queried this endpoint (which will subsequently be passed
+                 * as If-Modified-Since for this request) and lastHit will be the system
+                 * time when we last queried this endpoint.
+                 * The Last-Modified time is set by the TBA server and used for all web requests
+                 * The local times are used for determining if we're within the limit for how often we can query one endpoint
+                 * */
 
                 /* First, check if we're within the API timeout. If so, just tell the caller to return what data we have */
                 Date now = new Date();
@@ -232,16 +230,12 @@ public class LegacyAPIHelper {
                             apiVersion = 0;
                         }
 
-                        Database.getInstance(c).getResponseTable().updateResponse(URL, lastUpdate);
-
                         Log.d(Constants.DATAMANAGER_LOG, "Online; data updated from internet v" + apiVersion + ": " + URL);
                         return new APIResponse<>(response, APIResponse.CODE.UPDATED, apiVersion); /* This response will contain the data that we fetched */
                     } else {
                     /* The data does not require an update (we got a 304-Not-Modified back), so simply
                      * Update the lastHit time in the database to make sure the timeout stays active
                      */
-                        Database.getInstance(c).getResponseTable().touchResponse(URL);
-
                         return cachedData.updateCode(APIResponse.CODE.CACHED304);
                     }
                 } else {
@@ -249,8 +243,7 @@ public class LegacyAPIHelper {
                     return new APIResponse<>(null, APIResponse.CODE.NODATA);
                 }
             } else {
-                Log.d(Constants.DATAMANAGER_LOG, "Offline; can't check API. " + URL);
-                return Database.getInstance(c).getResponseTable().getResponseIfExists(URL).updateCode(APIResponse.CODE.OFFLINECACHE);
+                return new APIResponse<>("", APIResponse.CODE.OFFLINECACHE);
             }
         } else {
             if (connectedToInternet) {
@@ -275,10 +268,6 @@ public class LegacyAPIHelper {
 
                     String response = HTTP.dataFromResponse(webResponse),
                             lastUpdate = webResponse.header("Last-Modified", "");
-
-                    if (params.cacheLocally) {
-                        Database.getInstance(c).getResponseTable().storeResponse(URL, lastUpdate);
-                    }
 
                     int apiVersion;
                     String versionHeader = webResponse.header("X-TBA-Version", "");

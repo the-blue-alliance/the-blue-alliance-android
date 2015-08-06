@@ -8,18 +8,17 @@ import com.thebluealliance.androidclient.fragments.team.TeamEventsFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 
-/**
- * Created by Nathan on 4/22/2014.
- */
 public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private final String[] TITLES = {"Info", "Events", "Media"};
 
     private String mTeamKey;
+    private int mYear;
 
-    public ViewTeamFragmentPagerAdapter(FragmentManager fm, String teamKey) {
+    public ViewTeamFragmentPagerAdapter(FragmentManager fm, String teamKey, int year) {
         super(fm);
         mTeamKey = teamKey;
+        mYear = year;
     }
 
     @Override
@@ -39,10 +38,10 @@ public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
                 // This is the info page
                 return TeamInfoFragment.newInstance(mTeamKey);
             case 1: // events
-                return TeamEventsFragment.newInstance(mTeamKey, -1);
+                return TeamEventsFragment.newInstance(mTeamKey, mYear);
             case 2: // media
             default:
-                return TeamMediaFragment.newInstance(mTeamKey, -1);
+                return TeamMediaFragment.newInstance(mTeamKey, mYear);
         }
 
     }

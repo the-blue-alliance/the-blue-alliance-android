@@ -44,13 +44,15 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonObject, 
             return;
         }
         JsonObject points = mAPIData.get("points").getAsJsonObject();
-        String districtKey = null;
+        String districtKey = "";
         Event event = mDb.getEventsTable().get(mEventKey);
 
-        DistrictHelper.DISTRICTS type = DistrictHelper.DISTRICTS.fromEnum(event.getDistrictEnum());
-        boolean isDistrict = type != DistrictHelper.DISTRICTS.NO_DISTRICT;
-        if (isDistrict) {
-            districtKey = mEventKey.substring(0, 4) + type.getAbbreviation();
+        if (event != null) {
+            DistrictHelper.DISTRICTS type = DistrictHelper.DISTRICTS.fromEnum(event.getDistrictEnum());
+            boolean isDistrict = type != DistrictHelper.DISTRICTS.NO_DISTRICT;
+            if (isDistrict) {
+                districtKey = mEventKey.substring(0, 4) + type.getAbbreviation();
+            }
         }
 
         ArrayList<DistrictPointBreakdown> pointBreakdowns = new ArrayList<>();
