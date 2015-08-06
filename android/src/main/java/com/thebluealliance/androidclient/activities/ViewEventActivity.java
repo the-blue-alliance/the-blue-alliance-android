@@ -253,7 +253,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         t.send(new HitBuilders.EventBuilder()
                 .setCategory("view_event-tabs")
                 .setAction("tab_change")
-                .setLabel(mEventKey+ " "+adapter.getPageTitle(position))
+                .setLabel(eventKey+ " "+adapter.getPageTitle(position))
                 .build());*/
     }
 
