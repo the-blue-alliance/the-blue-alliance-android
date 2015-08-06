@@ -34,12 +34,12 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
     }
 
     @Override
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_DISTRICTTEAMS;
     }
 
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return KEY;
     }
 

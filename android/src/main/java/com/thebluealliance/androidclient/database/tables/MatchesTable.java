@@ -29,12 +29,12 @@ public class MatchesTable extends ModelTable<Match> {
     }
 
     @Override
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_MATCHES;
     }
 
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return KEY;
     }
 

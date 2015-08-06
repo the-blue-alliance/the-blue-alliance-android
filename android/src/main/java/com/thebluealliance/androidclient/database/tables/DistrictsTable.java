@@ -24,12 +24,12 @@ public class DistrictsTable extends ModelTable<District> {
     }
 
     @Override
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_DISTRICTS;
     }
 
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return KEY;
     }
 

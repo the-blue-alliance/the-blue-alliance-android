@@ -83,12 +83,12 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     @Override
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_EVENTS;
     }
 
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return KEY;
     }
 

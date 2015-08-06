@@ -38,7 +38,8 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
         for (int i = 0; i < mAPIData.size(); i++) {
             Award award = mAPIData.get(i);
             for (JsonElement winner : award.getWinners()) {
-                if (!winner.getAsJsonObject().get("team_number").isJsonNull()) {
+                if (winner.isJsonObject() &&
+                  !winner.getAsJsonObject().get("team_number").isJsonNull()) {
                     String teamKey = "frc" + winner.getAsJsonObject().get("team_number");
                     Team team = mDb.getTeamsTable().get(teamKey);
                     teams.put(teamKey, team);

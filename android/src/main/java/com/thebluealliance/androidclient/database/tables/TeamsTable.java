@@ -16,6 +16,10 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class TeamsTable extends ModelTable<Team> {
     public static final String KEY = "key",
             NUMBER = "number",
@@ -27,6 +31,7 @@ public class TeamsTable extends ModelTable<Team> {
 
     private SQLiteDatabase mDb;
 
+    @Inject
     public TeamsTable(SQLiteDatabase db) {
         super(db);
         mDb = db;
@@ -66,12 +71,12 @@ public class TeamsTable extends ModelTable<Team> {
     protected void deleteCallback(Team team) {
             mDb.delete(Database.TABLE_SEARCH_TEAMS, Database.SearchTeam.KEY + " = ?", new String[]{team.getKey()});
     }
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_TEAMS;
     }
 
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return KEY;
     }
 

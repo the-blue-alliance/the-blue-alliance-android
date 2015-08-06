@@ -23,12 +23,12 @@ public class MediasTable extends ModelTable<Media> {
     }
 
     @Override
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_MEDIAS;
     }
 
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return FOREIGNKEY;
     }
 

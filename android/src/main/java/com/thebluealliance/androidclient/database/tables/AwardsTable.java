@@ -27,7 +27,7 @@ public class AwardsTable extends ModelTable<Award> {
     }
 
     @Override
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_AWARDS;
     }
 
@@ -35,7 +35,7 @@ public class AwardsTable extends ModelTable<Award> {
      * For Awards, key is eventKey:awardName
      */
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return KEY;
     }
 

@@ -65,12 +65,12 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
     }
 
     @Override
-    protected String getTableName() {
+    public String getTableName() {
         return Database.TABLE_EVENTTEAMS;
     }
 
     @Override
-    protected String getKeyColumn() {
+    public String getKeyColumn() {
         return KEY;
     }
 
