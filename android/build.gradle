@@ -206,8 +206,6 @@ dependencies {
     testCompile 'org.robolectric:robolectric:3.0-rc2'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.2'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.2'
 }
 
 apply plugin: 'jacoco'
