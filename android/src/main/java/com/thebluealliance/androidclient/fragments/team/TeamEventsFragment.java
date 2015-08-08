@@ -101,6 +101,6 @@ public class TeamEventsFragment extends ListvVewFragment<List<Event>, EventListS
 
     @Override
     protected NoDataViewParams getNoDataParams() {
-        return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
+        return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_team_info);
     }
 }

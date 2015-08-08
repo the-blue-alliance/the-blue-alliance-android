@@ -25,7 +25,6 @@ public abstract class ListvVewFragment<T, S extends BaseAPISubscriber<T, List<Li
     private ListViewAdapter mAdapter;
 
     protected ListView mListView;
-    protected NoDataView mNoDataView;
 
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import java.util.ArrayList;
@@ -69,5 +70,10 @@ public class GamedayWebcastsFragment extends ListvVewFragment<List<Event>, Webca
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchEventsInWeek(mYear, mWeek);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_videocam_black_48dp, R.string.no_webcast_data_found);
     }
 }

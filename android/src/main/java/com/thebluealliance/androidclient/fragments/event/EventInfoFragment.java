@@ -19,7 +19,9 @@ import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
@@ -55,6 +57,7 @@ public class EventInfoFragment
         View view = inflater.inflate(R.layout.fragment_event_info, null);
         mBinder.setInflator(inflater);
         mBinder.mView = view;
+        mBinder.mContent = view.findViewById(R.id.content);
         mBinder.mEventName = (TextView) view.findViewById(R.id.event_name);
         mBinder.mEventDate = (TextView) view.findViewById(R.id.event_date);
         mBinder.mEventLoc = (TextView) view.findViewById(R.id.event_location);
@@ -64,6 +67,7 @@ public class EventInfoFragment
         mBinder.mTopTeams = (TextView) view.findViewById(R.id.event_top_teams);
         mBinder.mTopOprs = (TextView) view.findViewById(R.id.event_top_oprs);
         mBinder.mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
         return view;
     }
 
@@ -120,5 +124,10 @@ public class EventInfoFragment
     @Override
     protected Observable<Event> getObservable() {
         return mDatafeed.fetchEvent(mEventKey);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_event_info);
     }
 }

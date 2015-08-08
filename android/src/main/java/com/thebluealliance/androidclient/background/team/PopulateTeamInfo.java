@@ -90,11 +90,11 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
         View view = mFragment.getView();
         if (view != null && activity != null) {
             TextView noDataText = (TextView) view.findViewById(R.id.no_data);
-            View infoContainer = view.findViewById(R.id.team_info_container);
+            // View infoContainer = view.findViewById(R.id.team_info_container);
             if (code == APIResponse.CODE.NODATA) {
                 noDataText.setText(R.string.no_team_info);
                 noDataText.setVisibility(View.VISIBLE);
-                infoContainer.setVisibility(View.GONE);
+                //infoContainer.setVisibility(View.GONE);
             } else {
                 noDataText.setVisibility(View.GONE);
                 TextView teamName = ((TextView) view.findViewById(R.id.team_name));
@@ -136,7 +136,7 @@ public class PopulateTeamInfo extends AsyncTask<String, Void, APIResponse.CODE> 
                     ((LegacyRefreshableHostActivity) mFragment.getActivity()).showWarningMessage(mFragment.getString(R.string.warning_using_cached_data));
                 }
 
-                view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
+                // view.findViewById(R.id.team_info_container).setVisibility(View.VISIBLE);
             }
             view.findViewById(R.id.progress).setVisibility(View.GONE);
 

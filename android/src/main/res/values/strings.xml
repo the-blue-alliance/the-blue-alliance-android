@@ -48,8 +48,7 @@
     <string name="close_stats_help">Close</string>
 
     <!-- No Data -->
-    <string name="no_data">No data was found for this event</string>
-    <string name="no_team_info">No data was found for this team</string>
+    <string name="no_team_info">No team info found</string>
     <string name="no_alliance_data">No alliance data found</string>
     <string name="no_team_data">No team list found</string>
     <string name="no_match_data">No match results found</string>
@@ -59,6 +58,7 @@
     <string name="no_awards_data">No awards found</string>
     <string name="no_team_stats_data">No stats data found</string>
     <string name="no_event_data">No events found</string>
+    <string name="no_event_info">No event info found</string>
     <string name="no_media_data">No media found</string>
     <string name="no_district_points">No district points found</string>
     <string name="no_team_list">Unable to load team list</string>

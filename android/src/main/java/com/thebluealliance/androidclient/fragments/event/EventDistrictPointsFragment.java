@@ -10,12 +10,13 @@ import android.view.ViewGroup;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListvVewFragment;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 
 import rx.Observable;
 
 public class EventDistrictPointsFragment
-  extends ListvVewFragment<JsonObject, DistrictPointsListSubscriber> {
+        extends ListvVewFragment<JsonObject, DistrictPointsListSubscriber> {
     private static final String KEY = "event_key";
 
     private String mEventKey;
@@ -79,5 +80,10 @@ public class EventDistrictPointsFragment
     @Override
     protected Observable<JsonObject> getObservable() {
         return mDatafeed.fetchEventDistrictPoints(mEventKey);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_recent_actors_black_48dp, R.string.no_district_points);
     }
 }

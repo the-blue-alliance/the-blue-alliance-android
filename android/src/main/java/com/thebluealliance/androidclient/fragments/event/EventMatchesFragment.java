@@ -15,8 +15,10 @@ import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
@@ -67,6 +69,8 @@ public class EventMatchesFragment
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
         mBinder.mExpandableListView = mListView;
         mBinder.mProgressBar = progressBar;
+        mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
+
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
@@ -100,5 +104,10 @@ public class EventMatchesFragment
         } else {
             return mDatafeed.fetchTeamAtEventMatches(mTeamKey, mEventKey);
         }
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_gamepad_variant_black_48dp, R.string.no_match_data);
     }
 }

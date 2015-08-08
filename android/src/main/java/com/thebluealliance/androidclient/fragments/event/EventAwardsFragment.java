@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 
 import java.util.List;
@@ -69,5 +70,10 @@ public class EventAwardsFragment extends ListvVewFragment<List<Award>, AwardsLis
         } else {
             return mDatafeed.fetchTeamAtEventAwards(mTeamKey, mEventKey);
         }
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_trophy_black_48dp, R.string.no_awards_data);
     }
 }

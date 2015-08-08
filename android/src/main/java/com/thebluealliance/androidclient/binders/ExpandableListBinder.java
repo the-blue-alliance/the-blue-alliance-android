@@ -58,6 +58,7 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
         }
 
         mExpandableListView.setVisibility(View.VISIBLE);
+        mNoDataBinder.unbindData();
         setDataBound(true);
     }
 

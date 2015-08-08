@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListvVewFragment;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 
 import rx.Observable;
@@ -51,5 +52,10 @@ public class EventAlliancesFragment extends ListvVewFragment<Event, AllianceList
     @Override
     protected Observable<Event> getObservable() {
         return mDatafeed.fetchEvent(mEventKey);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_handshake_black_48dp, R.string.no_alliance_data);
     }
 }
