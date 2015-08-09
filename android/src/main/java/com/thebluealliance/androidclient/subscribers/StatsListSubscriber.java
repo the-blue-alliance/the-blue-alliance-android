@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
+import android.content.res.Resources;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -24,12 +24,14 @@ import de.greenrobot.event.EventBus;
 public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<ListItem>> {
 
     private String mStatToSortBy;
-    private Context mContext;
+    private Resources mResources;
     private Database mDb;
+    private EventBus mEventBus;
 
-    public StatsListSubscriber(Context context, Database db) {
+    public StatsListSubscriber(Resources resources, Database db, EventBus eventBus) {
         super();
-        mContext = context;
+        mResources = resources;
+        mEventBus = eventBus;
         mDataToBind = new ArrayList<>();
         mDb = db;
     }
@@ -53,23 +55,21 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<List
         JsonObject ccwms = mAPIData.get("ccwms").getAsJsonObject();
 
         for (Entry<String, JsonElement> stat : oprs.entrySet()) {
-            Team team = mDb.getTeamsTable().get("frc"+stat.getKey());
-            if (team == null) {
-                continue;
-            }
-            String teamKey = team.getKey();
+            String teamKey = "frc" + stat.getKey();
+            Team team = mDb.getTeamsTable().get(teamKey);
+            String teamName = team == null ? "Team " + stat.getKey() : team.getNickname();
             double opr = stat.getValue().getAsDouble();
             double dpr = dprs.has(stat.getKey()) ? dprs.get(stat.getKey()).getAsDouble() : 0;
             double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;
-            String displayString = mContext.getString(
+            String displayString = mResources.getString(
               R.string.stats_format,
               Stat.displayFormat.format(opr),
               Stat.displayFormat.format(dpr),
               Stat.displayFormat.format(ccwm));
             mDataToBind.add(new StatsListElement(
               teamKey,
-              Integer.toString(team.getTeamNumber()),
-              team.getNickname(),
+              stat.getKey(),
+              teamName,
               displayString,
               opr,
               dpr,
@@ -77,7 +77,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<List
             ));
         }
         Collections.sort(mDataToBind, new StatListElementComparator(mStatToSortBy));
-        EventBus.getDefault().post(new EventStatsEvent(getTopStatsString()));
+        mEventBus.post(new EventStatsEvent(getTopStatsString()));
     }
 
     private String getTopStatsString() {

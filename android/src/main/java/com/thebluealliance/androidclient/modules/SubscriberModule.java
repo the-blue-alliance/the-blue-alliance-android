@@ -94,8 +94,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public StatsListSubscriber provideStatsListSubscriber(Database db) {
-        return new StatsListSubscriber(mActivity, db);
+    public StatsListSubscriber provideStatsListSubscriber(Database db, EventBus eventBus) {
+        return new StatsListSubscriber(mActivity.getResources(), db, eventBus);
     }
 
     @Provides
