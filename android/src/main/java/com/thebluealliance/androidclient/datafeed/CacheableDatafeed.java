@@ -34,9 +34,9 @@ public class CacheableDatafeed implements APIv2 {
 
     @Inject
     public CacheableDatafeed(
-      @Named("retrofit") APIv2 retrofitAPI,
-      @Named("cache") APICache apiCache,
-      DatabaseWriter writer) {
+            @Named("retrofit") APIv2 retrofitAPI,
+            @Named("cache") APICache apiCache,
+            DatabaseWriter writer) {
         mRetrofitAPI = retrofitAPI;
         mAPICache = apiCache;
         mWriter = writer;
@@ -139,7 +139,7 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<JsonArray> fetchEventRankings(String eventKey) {
         return mAPICache.fetchEventRankings(eventKey).concatWith(
-          mRetrofitAPI.fetchEventRankings(eventKey));
+                mRetrofitAPI.fetchEventRankings(eventKey));
     }
 
     @Override
@@ -152,13 +152,13 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<JsonObject> fetchEventStats(String eventKey) {
         return mAPICache.fetchEventStats(eventKey).concatWith(
-          mRetrofitAPI.fetchEventStats(eventKey));
+                mRetrofitAPI.fetchEventStats(eventKey));
     }
 
     public Observable<JsonObject> fetchTeamAtEventStats(String eventKey, String teamKey) {
         TeamStatsExtractor extractor = new TeamStatsExtractor(teamKey);
         return mAPICache.fetchEventStats(eventKey).map(extractor)
-          .concatWith(mRetrofitAPI.fetchEventStats(eventKey).map(extractor));
+                .concatWith(mRetrofitAPI.fetchEventStats(eventKey).map(extractor));
     }
 
     @Override
@@ -171,13 +171,13 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<JsonObject> fetchEventDistrictPoints(String eventKey) {
         return mAPICache.fetchEventDistrictPoints(eventKey).concatWith(
-          mRetrofitAPI.fetchEventDistrictPoints(eventKey));
+                mRetrofitAPI.fetchEventDistrictPoints(eventKey));
     }
 
     @Override
     public Observable<List<District>> fetchDistrictList(int year) {
         Observable<List<District>> apiData = mRetrofitAPI.fetchDistrictList(year)
-          .map(new AddDistrictKeys(year));
+                .map(new AddDistrictKeys(year));
         apiData.subscribe(mWriter.districtListWriter.get());
         return mAPICache.fetchDistrictList(year).concatWith(apiData);
     }
@@ -192,16 +192,16 @@ public class CacheableDatafeed implements APIv2 {
     @Override
     public Observable<List<DistrictTeam>> fetchDistrictRankings(String districtShort, int year) {
         Observable<List<DistrictTeam>> apiData =
-          mRetrofitAPI.fetchDistrictRankings(districtShort, year)
-            .map(new AddDistrictTeamKey(districtShort, year));
+                mRetrofitAPI.fetchDistrictRankings(districtShort, year)
+                        .map(new AddDistrictTeamKey(districtShort, year));
         apiData.subscribe(mWriter.districtTeamListWriter.get());
         return mAPICache.fetchDistrictRankings(districtShort, year).concatWith(apiData);
     }
 
     public Observable<DistrictTeam> fetchTeamAtDistrictRankings(
-      String teamKey,
-      String districtShort,
-      int year) {
+            String teamKey,
+            String districtShort,
+            int year) {
         return fetchDistrictRankings(districtShort, year).map(new DistrictTeamExtractor(teamKey));
     }
 

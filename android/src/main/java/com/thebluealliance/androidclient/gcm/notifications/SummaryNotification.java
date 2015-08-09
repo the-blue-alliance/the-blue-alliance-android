@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.listeners.NotificationDismissedListener
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by phil on 2/5/15.
@@ -35,7 +36,7 @@ public class SummaryNotification extends BaseNotification {
     public Notification buildNotification(Context context) {
         NotificationsTable table = Database.getInstance(context).getNotificationsTable();
 
-        ArrayList<StoredNotification> active = table.getActive();
+        List<StoredNotification> active = table.getActive();
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
         int size = active.size();
         int count = 0;

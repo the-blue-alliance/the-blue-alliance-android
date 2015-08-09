@@ -64,7 +64,7 @@ public class EventMatchesFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, null);
-        mListView = (ExpandableListView) v.findViewById(R.id.list);
+        mListView = (ExpandableListView) v.findViewById(R.id.expandable_list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
         mBinder.mExpandableListView = mListView;
         mBinder.mProgressBar = progressBar;

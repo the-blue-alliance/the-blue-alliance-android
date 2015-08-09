@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.modules.components;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
+import com.thebluealliance.androidclient.fragments.RecentNotificationsFragmentV2;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictEventsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
@@ -78,6 +79,8 @@ public interface FragmentComponent {
     void inject(MatchInfoFragment matchInfoFragment);
 
     void inject(GamedayWebcastsFragment gamedayWebcastsFragment);
+
+    void inject(RecentNotificationsFragmentV2 recentNotificationsFragment);
 
     void inject(MySubscriptionsFragment mySubscriptionsFragment);
     void inject(MyFavoritesFragment myFavoritesFragment);

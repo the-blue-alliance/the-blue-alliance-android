@@ -22,6 +22,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by phil on 2/3/15.
@@ -50,7 +51,7 @@ public class PopulateRecentNotifications extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         Log.d(Constants.LOG_TAG, "Starting to fetch notifications");
         NotificationsTable table = Database.getInstance(activity).getNotificationsTable();
-        ArrayList<StoredNotification> notifications = table.get();
+        List<StoredNotification> notifications = table.get();
         items = new ArrayList<>();
         for (StoredNotification notification : notifications) {
             items.add(new RecentNotificationListItem(notification.getTitle(), notification.getBody(), notification.getIntent()));
