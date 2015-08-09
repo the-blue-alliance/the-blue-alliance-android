@@ -72,8 +72,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public RankingsListSubscriber provideRankingsListSubscriber(Database db) {
-        return new RankingsListSubscriber(db);
+    public RankingsListSubscriber provideRankingsListSubscriber(Database db, EventBus eventBus) {
+        return new RankingsListSubscriber(db, eventBus);
     }
 
     @Provides

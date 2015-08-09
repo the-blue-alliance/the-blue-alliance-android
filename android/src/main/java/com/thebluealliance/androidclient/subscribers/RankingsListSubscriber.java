@@ -19,11 +19,13 @@ import de.greenrobot.event.EventBus;
 public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, List<ListItem>> {
 
     private Database mDb;
+    private EventBus mEventBus;
 
-    public RankingsListSubscriber(Database db) {
+    public RankingsListSubscriber(Database db, EventBus eventBus) {
         super();
         mDb = db;
         mDataToBind = new ArrayList<>();
+        mEventBus = eventBus;
     }
 
     @Override
@@ -32,8 +34,8 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, List<Li
         if (mAPIData == null || mAPIData.size() == 0) {
             return;
         }
-        JsonArray headerRow = mAPIData.remove(0).getAsJsonArray();
-        for (int i=1; i < mAPIData.size(); i++) {
+        JsonArray headerRow = mAPIData.get(0).getAsJsonArray();
+        for (int i = 1; i < mAPIData.size(); i++) {
             JsonArray row = mAPIData.get(i).getAsJsonArray();
             /* Assume that the list of lists has rank first and team # second, always */
             String teamKey = "frc" + row.get(1).getAsString();
@@ -80,7 +82,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, List<Li
                 record,
                 rankingString));
         }
-        EventBus.getDefault().post(new EventRankingsEvent(generateTopRanksString()));
+        mEventBus.post(new EventRankingsEvent(generateTopRanksString()));
     }
 
     private String generateTopRanksString() {
