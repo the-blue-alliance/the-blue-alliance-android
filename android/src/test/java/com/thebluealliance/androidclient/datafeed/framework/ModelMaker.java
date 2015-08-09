@@ -38,6 +38,18 @@ public class ModelMaker {
         return sModelMaker.innerGetModelList(listClass, fileName);
     }
 
+
+    public static <MODEL> List<MODEL> getMultiModelList(Class<MODEL> listClass, String... files) {
+        if (sModelMaker == null) {
+            sModelMaker = new ModelMaker();
+        }
+        List<MODEL> models = new ArrayList<>();
+        for (int i = 0; i < files.length; i++) {
+            models.add(sModelMaker.innerGetModel(listClass, files[i]));
+        }
+        return models;
+    }
+
     private <MODEL> MODEL innerGetModel(Class<MODEL> modelClass, String fileName) {
         fileName = fileName + ".json";
         ClassLoader classLoader = getClass().getClassLoader();

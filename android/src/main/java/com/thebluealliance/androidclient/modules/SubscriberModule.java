@@ -77,8 +77,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public MatchListSubscriber provideMatchListSubscriber(Database db) {
-        return new MatchListSubscriber(mActivity, db);
+    public MatchListSubscriber provideMatchListSubscriber(Database db, EventBus eventBus) {
+        return new MatchListSubscriber(mActivity.getResources(), db, eventBus);
     }
 
     @Provides
