@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.app.Activity;
+import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
@@ -29,15 +29,17 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
     private String mTeamKey;
     private String mEventKey;
     private Database mDb;
+    private EventBus mEventBus;
 
-    public MatchListSubscriber(Activity activity, Database db) {
+    public MatchListSubscriber(Resources resources, Database db, EventBus eventBus) {
         super();
         mDataToBind = new ArrayList<>();
-        mQualMatches = new ListGroup(activity.getString(R.string.quals_header));
-        mQuarterMatches = new ListGroup(activity.getString(R.string.quarters_header));
-        mSemiMatches = new ListGroup(activity.getString(R.string.semis_header));
-        mFinalMatches = new ListGroup(activity.getString(R.string.finals_header));
+        mQualMatches = new ListGroup(resources.getString(R.string.quals_header));
+        mQuarterMatches = new ListGroup(resources.getString(R.string.quarters_header));
+        mSemiMatches = new ListGroup(resources.getString(R.string.semis_header));
+        mFinalMatches = new ListGroup(resources.getString(R.string.finals_header));
         mDb = db;
+        mEventBus = eventBus;
         mTeamKey = null;
     }
 
@@ -143,7 +145,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             mDataToBind.add(mFinalMatches);
         }
 
-        EventBus.getDefault().post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+        mEventBus.post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
     }
 
     @Override

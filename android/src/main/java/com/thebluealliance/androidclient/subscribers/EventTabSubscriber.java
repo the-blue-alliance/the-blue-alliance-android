@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.comparators.EventWeekComparator;
+import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -19,13 +19,13 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
     public EventTabSubscriber() {
         super();
         mDataToBind = new ArrayList<>();
-        mEventComparator = new EventWeekComparator();
+        mEventComparator = new EventSortByDateComparator();
     }
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData.isEmpty()) {
+        if (mAPIData == null || mAPIData.isEmpty()) {
             return;
         }
         Collections.sort(mAPIData, mEventComparator);

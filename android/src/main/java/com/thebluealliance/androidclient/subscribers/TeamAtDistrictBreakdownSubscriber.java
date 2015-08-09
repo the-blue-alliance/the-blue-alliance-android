@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
+import android.content.res.Resources;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -19,13 +19,13 @@ import java.util.Map;
 public class TeamAtDistrictBreakdownSubscriber
   extends BaseAPISubscriber<DistrictTeam, List<ListGroup>> {
 
-    private Context mContext;
+    private Resources mResources;
     private Database mDb;
     private Gson mGson;
 
-    public TeamAtDistrictBreakdownSubscriber(Context context, Database db, Gson gson) {
+    public TeamAtDistrictBreakdownSubscriber(Resources resources, Database db, Gson gson) {
         super();
-        mContext = context;
+        mResources = resources;
         mDb = db;
         mGson = gson;
         mDataToBind = new ArrayList<>();
@@ -55,25 +55,27 @@ public class TeamAtDistrictBreakdownSubscriber
 
         for (Map.Entry<String, JsonObject> eventData : eventBreakdowns.entrySet()) {
             Event event = mDb.getEventsTable().get(eventData.getKey());
-            ListGroup eventGroup = new ListGroup(event.getEventName());
+            ListGroup eventGroup = new ListGroup(event == null ?
+              eventData.getKey() :
+              event.getEventName());
 
             DistrictPointBreakdown breakdown =
               mGson.fromJson(eventData.getValue(), DistrictPointBreakdown.class);
 
             if (breakdown.getQualPoints() > -1) {
-                eventGroup.children.add(breakdown.renderQualPoints(mContext));
+                eventGroup.children.add(breakdown.renderQualPoints(mResources));
             }
             if (breakdown.getElimPoints() > -1) {
-                eventGroup.children.add(breakdown.renderElimPoints(mContext));
+                eventGroup.children.add(breakdown.renderElimPoints(mResources));
             }
             if (breakdown.getAlliancePoints() > -1) {
-                eventGroup.children.add(breakdown.renderAlliancePoints(mContext));
+                eventGroup.children.add(breakdown.renderAlliancePoints(mResources));
             }
             if (breakdown.getAwardPoints() > -1) {
-                eventGroup.children.add(breakdown.renderAwardPoints(mContext));
+                eventGroup.children.add(breakdown.renderAwardPoints(mResources));
             }
             if (breakdown.getTotalPoints() > -1) {
-                eventGroup.children.add(breakdown.renderTotalPoints(mContext));
+                eventGroup.children.add(breakdown.renderTotalPoints(mResources));
             }
 
             mDataToBind.add(eventGroup);

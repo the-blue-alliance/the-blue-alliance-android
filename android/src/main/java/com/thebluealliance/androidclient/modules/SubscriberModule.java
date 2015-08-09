@@ -59,7 +59,7 @@ public class SubscriberModule {
 
     @Provides
     public MediaListSubscriber provideMediaListSubscriber() {
-        return new MediaListSubscriber(mActivity);
+        return new MediaListSubscriber(mActivity.getResources());
     }
 
     @Provides
@@ -73,13 +73,13 @@ public class SubscriberModule {
     }
 
     @Provides
-    public RankingsListSubscriber provideRankingsListSubscriber(Database db) {
-        return new RankingsListSubscriber(db);
+    public RankingsListSubscriber provideRankingsListSubscriber(Database db, EventBus eventBus) {
+        return new RankingsListSubscriber(db, eventBus);
     }
 
     @Provides
-    public MatchListSubscriber provideMatchListSubscriber(Database db) {
-        return new MatchListSubscriber(mActivity, db);
+    public MatchListSubscriber provideMatchListSubscriber(Database db, EventBus eventBus) {
+        return new MatchListSubscriber(mActivity.getResources(), db, eventBus);
     }
 
     @Provides
@@ -95,8 +95,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public StatsListSubscriber provideStatsListSubscriber(Database db) {
-        return new StatsListSubscriber(mActivity, db);
+    public StatsListSubscriber provideStatsListSubscriber(Database db, EventBus eventBus) {
+        return new StatsListSubscriber(mActivity.getResources(), db, eventBus);
     }
 
     @Provides
@@ -131,7 +131,7 @@ public class SubscriberModule {
     @Provides TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
       Database db,
       Gson gson) {
-        return new TeamAtDistrictBreakdownSubscriber(mActivity, db, gson);
+        return new TeamAtDistrictBreakdownSubscriber(mActivity.getResources(), db, gson);
     }
 
     @Provides MatchInfoSubscriber provideMatchInfoSubscriber(Gson gson, EventBus eventBus) {
