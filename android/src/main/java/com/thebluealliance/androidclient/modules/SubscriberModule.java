@@ -58,7 +58,7 @@ public class SubscriberModule {
 
     @Provides
     public MediaListSubscriber provideMediaListSubscriber() {
-        return new MediaListSubscriber(mActivity);
+        return new MediaListSubscriber(mActivity.getResources());
     }
 
     @Provides
