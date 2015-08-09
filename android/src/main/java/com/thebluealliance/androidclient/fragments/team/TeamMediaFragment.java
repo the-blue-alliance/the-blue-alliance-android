@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.binders.ExpandableListBinder;
+import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -28,7 +28,7 @@ public class TeamMediaFragment extends DatafeedFragment<
         List<Media>,
         List<ListGroup>,
         MediaListSubscriber,
-        ExpandableListBinder> {
+        ExpandableListViewBinder> {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
@@ -58,13 +58,13 @@ public class TeamMediaFragment extends DatafeedFragment<
         }
         super.onCreate(savedInstanceState);
 
-        mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ALL);
+        mBinder.setExpandMode(ExpandableListViewBinder.MODE_EXPAND_ALL);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_team_media, container, false);
-        mBinder.mExpandableListView = (ExpandableListView) v.findViewById(R.id.team_media_list);
+        View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, container, false);
+        mBinder.mExpandableListView = (ExpandableListView) v.findViewById(R.id.list);
         mBinder.mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;

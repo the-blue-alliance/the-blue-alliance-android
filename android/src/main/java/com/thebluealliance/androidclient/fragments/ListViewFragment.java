@@ -18,7 +18,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
-public abstract class ListvVewFragment<T, S extends BaseAPISubscriber<T, List<ListItem>>>
+public abstract class ListViewFragment<T, S extends BaseAPISubscriber<T, List<ListItem>>>
   extends DatafeedFragment<T, List<ListItem>, S, ListViewBinder> {
 
     private Parcelable mListState;

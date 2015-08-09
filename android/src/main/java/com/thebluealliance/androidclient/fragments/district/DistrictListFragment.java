@@ -9,11 +9,14 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
 
 import java.util.List;
@@ -21,14 +24,11 @@ import java.util.List;
 import rx.Observable;
 
 public class DistrictListFragment
-  extends DatafeedFragment<List<District>, List<ListItem>, DistrictListSubscriber, ListViewBinder> {
+  extends ListViewFragment<List<District>, DistrictListSubscriber> {
 
     public static final String YEAR = "year";
 
     private int mYear;
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
 
     public static DistrictListFragment newInstance(int year) {
         DistrictListFragment f = new DistrictListFragment();
@@ -41,39 +41,9 @@ public class DistrictListFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (getArguments() != null) {
+            mYear = getArguments().getInt(YEAR, Utilities.getCurrentYear());
         }
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Setup views & listeners
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mListView = (ListView) view.findViewById(R.id.list);
-
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mBinder.mListView = mListView;
-        mBinder.mProgressBar = progressBar;
-
-        // Either reload data if returning from another fragment/activity
-        // Or get data if viewing fragment for the first time.
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            progressBar.setVisibility(View.GONE);
-        }
-
-        return view;
-    }
-
-    @Override
-    public void onPause() {
-        // Save the data if moving away from fragment.
-        super.onPause();
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-        }
     }
 
     @Override
@@ -84,5 +54,10 @@ public class DistrictListFragment
     @Override
     protected Observable<List<District>> getObservable() {
         return mDatafeed.fetchDistrictList(mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_assignment_black_48dp, R.string.no_district_list);
     }
 }

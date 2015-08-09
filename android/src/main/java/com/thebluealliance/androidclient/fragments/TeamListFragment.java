@@ -20,7 +20,7 @@ import rx.Observable;
 /**
  * Displays 1000 team numbers starting with {@link #START}
  */
-public class TeamListFragment extends ListvVewFragment<List<Team>, TeamListSubscriber> {
+public class TeamListFragment extends ListViewFragment<List<Team>, TeamListSubscriber> {
 
     private static final String START = "START";
     private int mPageStart;

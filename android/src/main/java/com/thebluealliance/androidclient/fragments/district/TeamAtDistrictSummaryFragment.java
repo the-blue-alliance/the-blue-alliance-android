@@ -6,15 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListvVewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscriber;
 
 import rx.Observable;
 
 public class TeamAtDistrictSummaryFragment
-  extends ListvVewFragment<DistrictTeam, TeamAtDistrictSummarySubscriber> {
+  extends ListViewFragment<DistrictTeam, TeamAtDistrictSummarySubscriber> {
 
     public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 
@@ -42,8 +43,6 @@ public class TeamAtDistrictSummaryFragment
             }
             mDistrictShort = districtKey.substring(4);
             mYear = Integer.parseInt(districtKey.substring(0, 4));
-            mSubscriber.setTeamKey(mTeamKey);
-            mSubscriber.setDistrictKey(districtKey);
         }
         mDistrictShort = districtKey.substring(4);
         mYear = Integer.parseInt(districtKey.substring(0, 4));
@@ -68,5 +67,10 @@ public class TeamAtDistrictSummaryFragment
     @Override
     protected Observable<DistrictTeam> getObservable() {
         return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_assignment_black_48dp, R.string.no_district_summary);
     }
 }

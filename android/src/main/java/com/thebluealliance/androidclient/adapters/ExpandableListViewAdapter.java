@@ -16,18 +16,18 @@ import java.util.List;
 /**
  * File created by phil on 4/22/14.
  */
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     public final List<ListGroup> groups;
     public LayoutInflater inflater;
     public Activity mActivity;
     private boolean mIsChildSelectable = true;
 
-    public ExpandableListAdapter() {
+    public ExpandableListViewAdapter() {
         groups = new ArrayList<>();
     }
 
-    public ExpandableListAdapter(Activity activity, List<ListGroup> groups) {
+    public ExpandableListViewAdapter(Activity activity, List<ListGroup> groups) {
         mActivity = activity;
         this.groups = groups;
         inflater = activity.getLayoutInflater();

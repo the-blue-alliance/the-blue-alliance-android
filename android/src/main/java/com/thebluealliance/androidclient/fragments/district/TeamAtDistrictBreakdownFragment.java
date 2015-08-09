@@ -7,21 +7,23 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.binders.ExpandableListBinder;
+import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.fragments.ExpandableListViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
 import rx.Observable;
 
 public class TeamAtDistrictBreakdownFragment
-  extends DatafeedFragment<DistrictTeam, List<ListGroup>,
-  TeamAtDistrictBreakdownSubscriber, ExpandableListBinder> {
+  extends ExpandableListViewFragment<DistrictTeam, TeamAtDistrictBreakdownSubscriber> {
 
     public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 
@@ -50,19 +52,13 @@ public class TeamAtDistrictBreakdownFragment
             mYear = Integer.parseInt(districtKey.substring(0, 4));
         }
         super.onCreate(savedInstanceState);
+
+        mBinder.setExpandMode(ExpandableListViewBinder.MODE_EXPAND_NONE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Setup views & listeners
-        View view = inflater.inflate(R.layout.expandable_listview_with_spinner, null);
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.expandable_list);
-
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mBinder.mExpandableListView = listView;
-        mBinder.mProgressBar = progressBar;
-        listView.setSelector(R.drawable.transparent);
-        return view;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -73,5 +69,10 @@ public class TeamAtDistrictBreakdownFragment
     @Override
     protected Observable<DistrictTeam> getObservable() {
         return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_assignment_black_48dp, R.string.no_team_district_breakdown);
     }
 }

@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListvVewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
 
@@ -22,7 +22,7 @@ import rx.Observable;
  * File created by phil on 8/2/14.
  */
 public class MySubscriptionsFragment
-  extends ListvVewFragment<List<Subscription>, SubscriptionListSubscriber> {
+  extends ListViewFragment<List<Subscription>, SubscriptionListSubscriber> {
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;

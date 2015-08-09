@@ -162,9 +162,6 @@ public class Utilities {
                         intent = ViewMatchActivity.newInstance(c, urlParts.get(1));
                     }
                     break;
-                case "insights":
-                    intent = HomeActivity.newInstance(c, R.id.nav_item_insights);
-                    break;
                 case "gameday":
                     intent = GamedayActivity.newInstance(c);
                     break;

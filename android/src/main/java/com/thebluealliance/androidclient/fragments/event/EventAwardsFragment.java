@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListvVewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class EventAwardsFragment extends ListvVewFragment<List<Award>, AwardsListSubscriber> {
+public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsListSubscriber> {
     private static final String EVENT_KEY = "eventKey", TEAM_KEY = "teamKey";
 
     private String mEventKey, mTeamKey;

@@ -36,14 +36,6 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <View
-        android:id="@+id/team_info_divider"
-        android:layout_width="1dp"
-        android:layout_height="56dp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/item_detail"
-        android:background="?android:attr/dividerVertical" />
-
     <ImageView
         android:id="@id/item_detail"
         style="@style/ListItemButtonStyle"

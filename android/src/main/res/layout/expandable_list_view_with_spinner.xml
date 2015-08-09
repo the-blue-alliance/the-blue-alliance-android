@@ -7,8 +7,8 @@
 
     <com.thebluealliance.androidclient.views.ExpandableListView
         android:id="@+id/expandable_list"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ProgressBar
         android:id="@+id/progress"
@@ -19,10 +19,10 @@
         android:layout_centerVertical="true"
         android:visibility="visible" />
 
-    <TextView
+    <com.thebluealliance.androidclient.views.NoDataView
         android:id="@+id/no_data"
-        style="@style/NoDataFoundStyle"
-        android:singleLine="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone" />
 
 </RelativeLayout>

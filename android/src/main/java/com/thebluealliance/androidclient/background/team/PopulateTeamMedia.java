@@ -5,12 +5,11 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.LegacyRefreshableHostActivity;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
+import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
@@ -121,8 +120,8 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
     protected void onPostExecute(APIResponse.CODE code) {
         View view = fragment.getView();
         if (view != null && activity != null) {
-            ExpandableListAdapter adapter = new ExpandableListAdapter(activity, groups);
-            ExpandableListView media = (ExpandableListView) view.findViewById(R.id.team_media_list);
+            ExpandableListViewAdapter adapter = new ExpandableListViewAdapter(activity, groups);
+            ExpandableListView media = (ExpandableListView) view.findViewById(R.id.list);
 
             NoDataView noDataText = (NoDataView) view.findViewById(R.id.no_data);
 
@@ -152,7 +151,7 @@ public class PopulateTeamMedia extends AsyncTask<Object, Void, APIResponse.CODE>
 
             // Remove progress spinner and show content since we're done loading data.
             view.findViewById(R.id.progress).setVisibility(View.GONE);
-            view.findViewById(R.id.team_media_list).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.list).setVisibility(View.VISIBLE);
 
             AnalyticsHelper.sendTimingUpdate(activity, System.currentTimeMillis() - startTime, "team media", team);
         }

@@ -7,13 +7,13 @@ import android.widget.ProgressBar;
 
 import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
+import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
 import java.util.List;
 
-public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
+public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>> {
 
     public static final short
             MODE_EXPAND_NONE = 0,
@@ -26,7 +26,7 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
 
     private short mExpandMode;
 
-    public ExpandableListBinder() {
+    public ExpandableListViewBinder() {
         super();
         mExpandMode = MODE_EXPAND_NONE;
     }
@@ -47,7 +47,7 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
             return;
         }
 
-        ExpandableListAdapter adapter = newAdapter(ImmutableList.copyOf(data));
+        ExpandableListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
         mExpandableListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         mExpandableListView.setVisibility(View.VISIBLE);
@@ -62,8 +62,8 @@ public class ExpandableListBinder extends AbstractDataBinder<List<ListGroup>> {
         setDataBound(true);
     }
 
-    protected ExpandableListAdapter newAdapter(List<ListGroup> data) {
-        return new ExpandableListAdapter(mActivity, data);
+    protected ExpandableListViewAdapter newAdapter(List<ListGroup> data) {
+        return new ExpandableListViewAdapter(mActivity, data);
     }
 
     @Override

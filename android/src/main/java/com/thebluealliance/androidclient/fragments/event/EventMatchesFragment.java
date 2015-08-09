@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.binders.ExpandableListBinder;
+import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -58,14 +57,14 @@ public class EventMatchesFragment
 
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
-        mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ONLY);
+        mBinder.setExpandMode(ExpandableListViewBinder.MODE_EXPAND_ONLY);
         mBinder.setSelectedTeam(mTeamKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_event_results, null);
-        mListView = (ExpandableListView) v.findViewById(R.id.match_results);
+        View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, null);
+        mListView = (ExpandableListView) v.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
         mBinder.mExpandableListView = mListView;
         mBinder.mProgressBar = progressBar;
@@ -75,7 +74,6 @@ public class EventMatchesFragment
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mListView.setSelection(mFirstVisiblePosition);
-            Log.d("onCreateView", "using existing adapter");
             progressBar.setVisibility(View.GONE);
         }
         return v;
@@ -85,7 +83,6 @@ public class EventMatchesFragment
     public void onPause() {
         super.onPause();
         if (mListView != null) {
-            Log.d("onPause", "saving adapter");
             mAdapter = (MatchListAdapter) mListView.getExpandableListAdapter();
             mListState = mListView.onSaveInstanceState();
             mFirstVisiblePosition = mListView.getFirstVisiblePosition();
