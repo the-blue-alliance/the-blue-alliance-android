@@ -130,7 +130,7 @@ public class SubscriberModule {
     @Provides TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
       Database db,
       Gson gson) {
-        return new TeamAtDistrictBreakdownSubscriber(mActivity, db, gson);
+        return new TeamAtDistrictBreakdownSubscriber(mActivity.getResources(), db, gson);
     }
 
     @Provides MatchInfoSubscriber provideMatchInfoSubscriber(Gson gson, EventBus eventBus) {
