@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.interfaces.HasYearParam;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Event;
@@ -22,7 +23,8 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
+public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber>
+  implements HasYearParam {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
@@ -85,6 +87,12 @@ public class TeamEventsFragment extends ListviewFragment<List<Event>, EventListS
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
+        invalidate();
+    }
+
+    @Override
+    public int getYear() {
+        return mYear;
     }
 
     @Override

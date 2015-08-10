@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.ExpandableListBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.interfaces.HasYearParam;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
@@ -26,7 +27,8 @@ public class TeamMediaFragment extends DatafeedFragment<
   List<Media>,
   List<ListGroup>,
   MediaListSubscriber,
-  ExpandableListBinder> {
+  ExpandableListBinder>
+  implements HasYearParam {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
@@ -81,6 +83,12 @@ public class TeamMediaFragment extends DatafeedFragment<
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
+        invalidate();
+    }
+
+    @Override
+    public int getYear() {
+        return mYear;
     }
 
     @Override

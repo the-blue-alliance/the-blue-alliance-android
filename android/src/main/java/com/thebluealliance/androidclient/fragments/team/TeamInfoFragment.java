@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
-import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
@@ -26,7 +25,6 @@ import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class TeamInfoFragment
@@ -78,18 +76,6 @@ public class TeamInfoFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     public void onClick(View view) {
         PackageManager manager = getActivity().getPackageManager();
         if (view.getTag() != null) {
@@ -128,10 +114,6 @@ public class TeamInfoFragment
             container.setTag(mTeamKey + "@" + event.getEventKey());
             container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
         });
-    }
-
-    public void onEvent(YearChangedEvent event) {
-
     }
 
     public void onEvent(LiveEventEventUpdateEvent event) {

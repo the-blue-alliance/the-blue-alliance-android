@@ -52,4 +52,14 @@ public class ListviewBinder extends AbstractDataBinder<List<ListItem>> {
     public void onError(Throwable throwable) {
         Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
     }
+
+    @Override
+    public void unbind() {
+        if (listView != null) {
+            listView.setVisibility(View.GONE);
+        }
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
 }
