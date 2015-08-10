@@ -6,9 +6,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
@@ -153,11 +150,6 @@ public abstract class LegacyRefreshableHostActivity extends BaseActivity impleme
         setMenuProgressBarVisible(false);
         mRefreshInProgress = false;
         mRefreshed = true;
-
-        //update myTBA after content loads
-        if (AccountHelper.isAccountSelected(this)) {
-            new UpdateMyTBA(this, new RequestParams()).execute();
-        }
     }
 
     /*

@@ -2,13 +2,13 @@ package com.thebluealliance.androidclient.accounts;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 /**
  * Created by phil on 11/16/14.
@@ -71,7 +71,7 @@ public class PlusHelper {
         AccountHelper.enableMyTBA(activity, true);
         AccountHelper.setSelectedAccount(activity, PlusHelper.getAccountName());
         GCMHelper.registerGCMIfNeeded(activity);
-        new UpdateMyTBA(activity, new RequestParams(true, false)).execute();
+        activity.startService(new Intent(activity, MyTbaUpdateService.class));
 
         AccountHelper.registerSystemAccount(activity, accountName);
     }
