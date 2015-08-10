@@ -40,7 +40,7 @@ public class EventsTable extends ModelTable<Event> {
 
     private SQLiteDatabase mDb;
 
-    public EventsTable(SQLiteDatabase db){
+    public EventsTable(SQLiteDatabase db) {
         super(db);
         mDb = db;
     }
@@ -56,9 +56,9 @@ public class EventsTable extends ModelTable<Event> {
 
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
-              "Database.Events.KEY, Database.Events.YEAR");
+                    "Database.Events.KEY, Database.Events.YEAR");
         } catch (SQLiteException e) {
-            Log.w(Constants.LOG_TAG, "Trying to add a SearchEvent that already exists. "+event.getKey());
+            Log.w(Constants.LOG_TAG, "Trying to add a SearchEvent that already exists. " + event.getKey());
         }
     }
 
@@ -97,21 +97,21 @@ public class EventsTable extends ModelTable<Event> {
         return ModelInflater.inflateEvent(cursor);
     }
 
-    public void deleteAllSearchIndexes(){
+    public void deleteAllSearchIndexes() {
         mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
     }
 
-    public void deleteSearchIndex(Event event){
+    public void deleteSearchIndex(Event event) {
         deleteCallback(event);
     }
 
-    public void recreateAllSearchIndexes(List<Event> events){
+    public void recreateAllSearchIndexes(List<Event> events) {
         mDb.beginTransaction();
-        try{
-            for(Event e:events){
+        try {
+            for (Event e : events) {
                 insertCallback(e);
             }
-        }finally {
+        } finally {
             mDb.setTransactionSuccessful();
         }
         mDb.endTransaction();

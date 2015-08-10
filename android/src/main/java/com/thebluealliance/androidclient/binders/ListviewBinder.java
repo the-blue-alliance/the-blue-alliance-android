@@ -29,6 +29,8 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
             setDataBound(false);
             return;
         }
+        long startTime = System.currentTimeMillis();
+        Log.d(Constants.LOG_TAG, "BINDING DATA");
         ListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
         mListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -39,6 +41,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
         mListView.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
+        Log.d(Constants.LOG_TAG, "BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
     }
 

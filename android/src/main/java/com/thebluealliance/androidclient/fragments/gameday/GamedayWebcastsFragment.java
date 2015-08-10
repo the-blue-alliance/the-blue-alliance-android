@@ -27,8 +27,6 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
 
     private ListView mListView;
     private ListViewAdapter mAdapter;
-    private Parcelable mListState;
-    private int mFirstVisiblePosition;
     private int mYear;
     private int mWeek;
 
@@ -41,25 +39,6 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
         mYear = Utilities.getCurrentYear();
         mWeek = Utilities.getCurrentCompWeek();
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_carded, null);
-        mListView = (ListView) v.findViewById(R.id.list);
-        ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        mBinder.mListView = mListView;
-        mBinder.mProgressBar = progressBar;
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            mListView.setSelection(mFirstVisiblePosition);
-            Log.d("onCreateView", "using existing adapter");
-        } else {
-            mAdapter = new ListViewAdapter(getActivity(), new ArrayList<>());
-            mListView.setAdapter(mAdapter);
-        }
-        return v;
     }
 
     @Override

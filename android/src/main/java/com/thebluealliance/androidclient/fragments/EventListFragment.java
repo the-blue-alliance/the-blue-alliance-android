@@ -20,22 +20,31 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
     public static final String WEEK = "WEEK";
     public static final String MONTH = "MONTH";
     public static final String WEEK_HEADER = "HEADER";
+    public static final String SHOULD_BIND_IMMEDIATELY = "SHOULD_BIND_IMMEDIATELY";
 
     private int mYear;
     private int mWeek;
     private int mMonth;
 
-    public static EventListFragment newInstance(
-      int year,
-      int week,
-      int month,
-      String weekHeader) {
+    public static EventListFragment newInstance(int year, int week, int month, String weekHeader) {
         EventListFragment f = new EventListFragment();
         Bundle args = new Bundle();
         args.putInt(YEAR, year);
         args.putInt(WEEK, week);
         args.putInt(MONTH, month);
         args.putString(WEEK_HEADER, weekHeader);
+        f.setArguments(args);
+        return f;
+    }
+
+    public static EventListFragment newInstance(int year, int week, int month, String weekHeader, boolean shouldBindImmediately) {
+        EventListFragment f = new EventListFragment();
+        Bundle args = new Bundle();
+        args.putInt(YEAR, year);
+        args.putInt(WEEK, week);
+        args.putInt(MONTH, month);
+        args.putString(WEEK_HEADER, weekHeader);
+        args.putBoolean(SHOULD_BIND_IMMEDIATELY, shouldBindImmediately);
         f.setArguments(args);
         return f;
     }
@@ -51,6 +60,8 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
             mWeek = EventHelper.weekNumFromLabel(mYear, header);
         }
         super.onCreate(savedInstanceState);
+
+        setShouldBindImmediately(getArguments().getBoolean(SHOULD_BIND_IMMEDIATELY, true));
     }
 
     @Override
@@ -71,6 +82,12 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
             return mDatafeed.getCache().fetchEventsInMonth(mYear, mMonth);
         } else {
             return mDatafeed.getCache().fetchEventsInWeek(mYear, mWeek);
+        }
+    }
+
+    public void bind() {
+        if(mSubscriber != null) {
+            mSubscriber.bindData();
         }
     }
 }
