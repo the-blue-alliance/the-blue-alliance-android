@@ -60,11 +60,11 @@ public class TeamInfoFragment
             ViewGroup container,
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_team_info, container, false);
-        mBinder.mView = view;
-        mBinder.mContent = view.findViewById(R.id.content);
-        mBinder.mTeamName = (TextView) view.findViewById(R.id.team_name);
-        mBinder.mTeamLocationContainer = view.findViewById(R.id.team_location_container);
-        mBinder.mTeamLocation = (TextView) view.findViewById(R.id.team_location);
+        mBinder.view = view;
+        mBinder.content = view.findViewById(R.id.content);
+        mBinder.teamName = (TextView) view.findViewById(R.id.team_name);
+        mBinder.teamLocationContainer = view.findViewById(R.id.team_location_container);
+        mBinder.teamLocation = (TextView) view.findViewById(R.id.team_location);
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
 
         // Register this fragment as the callback for all clickable views

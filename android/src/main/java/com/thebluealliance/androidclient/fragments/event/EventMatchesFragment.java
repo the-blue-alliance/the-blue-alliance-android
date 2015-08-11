@@ -66,8 +66,8 @@ public class EventMatchesFragment
         View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, null);
         mListView = (ExpandableListView) v.findViewById(R.id.expandable_list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        mBinder.mExpandableListView = mListView;
-        mBinder.mProgressBar = progressBar;
+        mBinder.expandableListView = mListView;
+        mBinder.progressBar = progressBar;
         mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
 
         if (mAdapter != null) {

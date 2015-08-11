@@ -7,12 +7,10 @@ import com.thebluealliance.androidclient.interfaces.BindableFragmentPagerAdapter
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Nathan on 8/10/2015.
- */
 public class FragmentBinder implements ViewPager.OnPageChangeListener {
 
     int mSelectedPage = 0;
+    // TODO: fragments should track bound state internally
     List<Integer> boundPages = new ArrayList<>();
     private BindableFragmentPagerAdapter mFragmentAdapter;
 

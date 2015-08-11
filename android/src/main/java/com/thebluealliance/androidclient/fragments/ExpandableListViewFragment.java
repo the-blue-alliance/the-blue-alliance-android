@@ -10,7 +10,6 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
-import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
@@ -39,8 +38,8 @@ public abstract class ExpandableListViewFragment<T, S extends BaseAPISubscriber<
             mExpandableListView.setSelection(mFirstVisiblePosition);
             progressBar.setVisibility(View.GONE);
         }
-        mBinder.mExpandableListView = mExpandableListView;
-        mBinder.mProgressBar = progressBar;
+        mBinder.expandableListView = mExpandableListView;
+        mBinder.progressBar = progressBar;
 
         mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;

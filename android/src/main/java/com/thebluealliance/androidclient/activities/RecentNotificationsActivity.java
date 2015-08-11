@@ -13,7 +13,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
-import com.thebluealliance.androidclient.fragments.RecentNotificationsFragmentV2;
 import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.modules.components.FragmentComponent;
@@ -41,7 +40,7 @@ public class RecentNotificationsActivity extends BaseActivity implements HasFrag
         setSupportActionBar(toolbar);
         setupActionBar();
 
-        Fragment fragment = new RecentNotificationsFragmentV2();
+        Fragment fragment = new RecentNotificationsFragment();
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
     }
 

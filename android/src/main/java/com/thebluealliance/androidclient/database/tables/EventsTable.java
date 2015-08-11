@@ -108,8 +108,8 @@ public class EventsTable extends ModelTable<Event> {
     public void recreateAllSearchIndexes(List<Event> events) {
         mDb.beginTransaction();
         try {
-            for (Event e : events) {
-                insertCallback(e);
+            for (int i = 0; i < events.size(); i++) {
+                insertCallback(events.get(i));
             }
         } finally {
             mDb.setTransactionSuccessful();

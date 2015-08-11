@@ -35,8 +35,8 @@ public class MySubscriptionsFragment
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        mBinder.mListView = mListView;
-        mBinder.mProgressBar = progressBar;
+        mBinder.listView = mListView;
+        mBinder.progressBar = progressBar;
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);

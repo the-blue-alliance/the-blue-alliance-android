@@ -10,18 +10,17 @@ import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
 public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
-    public ListView mListView;
-    public ProgressBar mProgressBar;
+    public ListView listView;
+    public ProgressBar progressBar;
 
     @Override
     public void updateData(@Nullable List<ListItem> data) {
-        if (data == null || mListView == null) {
+        if (data == null || listView == null) {
             setDataBound(false);
             return;
         }
@@ -32,14 +31,14 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
         ListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
-        mListView.setAdapter(adapter);
+        listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
         }
 
-        mListView.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
         Log.d(Constants.LOG_TAG, "BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
@@ -51,8 +50,8 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void onComplete() {
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
         }
 
         if (!isDataBound()) {
@@ -74,8 +73,8 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
     private void bindNoDataView() {
         // Set up views for "no data" message
         try {
-            mListView.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,11 +83,11 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void unbind() {
-        if (mListView != null) {
-            mListView.setVisibility(View.GONE);
+        if (listView != null) {
+            listView.setVisibility(View.GONE);
         }
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
         }
     }
 }

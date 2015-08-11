@@ -19,7 +19,8 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
 
-        for (StoredNotification notification : mAPIData) {
+        for (int i = 0; i < mAPIData.size(); i++) {
+            StoredNotification notification = mAPIData.get(i);
             mDataToBind.add(new RecentNotificationListItem(notification.getTitle(), notification.getBody(), notification.getIntent()));
         }
     }

@@ -13,9 +13,6 @@ import android.support.annotation.*;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 6/2/2015.
- */
 public class NoDataView extends RelativeLayout {
     private ImageView mImageView;
     private TextView mTextView;
