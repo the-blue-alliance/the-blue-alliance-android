@@ -7,6 +7,8 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
@@ -34,6 +37,7 @@ import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 public abstract class FABNotificationSettingsActivity extends LegacyRefreshableHostActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
+    private CoordinatorLayout coordinator;
     private RelativeLayout notificationSettings;
     private FloatingActionButton openNotificationSettingsButton;
     private View openNotificationSettingsButtonContainer;
@@ -74,6 +78,8 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         super.onCreate(savedInstanceState);
 
         super.setContentView(R.layout.activity_fab_notification_settings);
+
+        coordinator = (CoordinatorLayout) findViewById(R.id.coordinator);
 
         notificationSettings = (RelativeLayout) findViewById(R.id.notification_settings);
         openNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.open_notification_settings_button);
@@ -405,7 +411,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
     @Override
     public void onSuccess() {
-        Toast.makeText(this, "Settings Updated", Toast.LENGTH_SHORT).show();
+        showSnackbar("Settings updated successfully");
 
         Integer colorFrom = getResources().getColor(R.color.accent);
         Integer colorTo = getResources().getColor(R.color.green);
@@ -433,7 +439,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
     @Override
     public void onNoOp() {
-        Toast.makeText(this, "No change", Toast.LENGTH_SHORT).show();
+        showSnackbar("Settings not changed");
         /*
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
@@ -449,8 +455,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
     @Override
     public void onError() {
-        Toast.makeText(this, "Error updating settings", Toast.LENGTH_SHORT).show();
-
+        showSnackbar("Error updating settings");
         // Something went wrong, restore the initial state
         settings.restoreInitialState();
 
@@ -486,5 +491,18 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
     public void onSettingsLoaded() {
         // Re-enable the submit button
         closeNotificationSettingsButton.setEnabled(true);
+    }
+
+    private void showSnackbar(int messageResId) {
+        showSnackbar(getResources().getString(messageResId));
+    }
+
+    private void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(coordinator, message, Snackbar.LENGTH_SHORT);
+        TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        if (text != null) {
+            text.setTextColor(getResources().getColor(R.color.white));
+        }
+        snackbar.show();
     }
 }
