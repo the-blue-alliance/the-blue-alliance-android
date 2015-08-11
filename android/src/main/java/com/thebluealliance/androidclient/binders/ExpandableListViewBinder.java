@@ -130,4 +130,14 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
                 break;
         }
     }
+
+    @Override
+    public void unbind() {
+        if (mExpandableListView != null) {
+            mExpandableListView.setVisibility(View.GONE);
+        }
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+    }
 }

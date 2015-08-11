@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 
 import javax.inject.Inject;
 
+import retrofit.RetrofitError;
 import retrofit.converter.ConversionException;
 import retrofit.converter.Converter;
 import retrofit.mime.MimeUtil;
@@ -41,6 +42,9 @@ public final class RetrofitConverter implements Converter {
         try {
             isr = new InputStreamReader(body.in(), charset);
             return mGson.fromJson(isr, type);
+        } catch (RetrofitError e) {
+            // ignored
+            return null;
         } catch (IOException | JsonParseException e) {
             throw new ConversionException(e);
         } finally {

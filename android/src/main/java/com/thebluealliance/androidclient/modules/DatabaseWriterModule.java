@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.database.writers.MediaListWriter;
 import com.thebluealliance.androidclient.database.writers.MediaWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamWriter;
+import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter;
 
 import javax.inject.Singleton;
 
@@ -104,5 +105,10 @@ public class DatabaseWriterModule {
     @Provides @Singleton
     public TeamWriter teamWriter(Database db) {
         return new TeamWriter(db);
+    }
+
+    @Provides @Singleton
+    public YearsParticipatedWriter yearsParticipatedWriter(Database db) {
+        return new YearsParticipatedWriter(db);
     }
 }

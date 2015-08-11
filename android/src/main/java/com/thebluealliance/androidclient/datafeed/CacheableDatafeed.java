@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
+import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -94,8 +95,11 @@ public class CacheableDatafeed implements APIv2 {
     }
 
     @Override
-    public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey) {
-        return null;
+    public Observable<JsonArray> fetchTeamYearsParticipated(String teamKey) {
+        Observable<JsonArray> apiData = mRetrofitAPI.fetchTeamYearsParticipated(teamKey);
+        apiData.map(new YearsParticipatedInfoMap(teamKey))
+          .subscribe(mWriter.yearsParticipatedWriter.get());
+        return mAPICache.fetchTeamYearsParticipated(teamKey).concatWith(apiData);
     }
 
     @Override

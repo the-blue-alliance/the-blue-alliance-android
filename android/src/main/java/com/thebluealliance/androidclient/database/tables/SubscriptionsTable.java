@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.Subscription;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SubscriptionsTable {
     public static final String KEY = "key",
@@ -34,7 +35,7 @@ public class SubscriptionsTable {
         return mDb.update(Database.TABLE_SUBSCRIPTIONS, in.getParams(), KEY + " = ?", new String[]{key});
     }
 
-    public void add(ArrayList<Subscription> in) {
+    public void add(List<Subscription> in) {
         mDb.beginTransaction();
         try {
             for (Subscription subscription : in) {

@@ -52,7 +52,7 @@ public interface APIv2 {
       );
 
     @GET("/team/{teamKey}/years_participated")
-    Observable<List<Integer>> fetchTeamYearsParticipated(
+    Observable<JsonArray> fetchTeamYearsParticipated(
       @Path("teamKey") String teamKey
       );
 

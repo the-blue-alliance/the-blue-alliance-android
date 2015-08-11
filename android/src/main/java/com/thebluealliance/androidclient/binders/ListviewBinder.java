@@ -81,4 +81,14 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void unbind() {
+        if (mListView != null) {
+            mListView.setVisibility(View.GONE);
+        }
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+    }
 }

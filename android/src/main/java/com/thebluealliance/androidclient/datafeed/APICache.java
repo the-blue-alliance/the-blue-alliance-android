@@ -84,8 +84,15 @@ public class APICache implements APIv2 {
     }
 
     @Override
-    public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey) {
-        return null;
+    public Observable<JsonArray> fetchTeamYearsParticipated(String teamKey) {
+        Team team = mDb.getTeamsTable().get(teamKey);
+        JsonArray years;
+        try {
+            years = team == null ? new JsonArray() : team.getYearsParticipated();
+        } catch (BasicModel.FieldNotDefinedException e) {
+            years = new JsonArray();
+        }
+        return Observable.just(years);
     }
 
     @Override

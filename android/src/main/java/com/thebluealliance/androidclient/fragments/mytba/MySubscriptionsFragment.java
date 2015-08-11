@@ -18,9 +18,6 @@ import java.util.List;
 
 import rx.Observable;
 
-/**
- * File created by phil on 8/2/14.
- */
 public class MySubscriptionsFragment
   extends ListViewFragment<List<Subscription>, SubscriptionListSubscriber> {
 

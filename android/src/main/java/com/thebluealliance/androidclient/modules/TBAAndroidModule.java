@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.database.writers.MediaListWriter;
 import com.thebluealliance.androidclient.database.writers.MediaWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamWriter;
+import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter;
 
 import javax.inject.Singleton;
 
@@ -78,9 +79,10 @@ public class TBAAndroidModule {
       Lazy<MediaWriter> media,
       Lazy<MediaListWriter> mediaList,
       Lazy<TeamWriter> team,
-      Lazy<TeamListWriter> teamList) {
+      Lazy<TeamListWriter> teamList,
+      Lazy<YearsParticipatedWriter> yearsParticipated) {
         return new DatabaseWriter(award, awardList, district, districtList, districtTeam,
           districtTeamList, event, eventList, eventTeam, eventTeamList, match, matchList, media,
-          mediaList, team, teamList);
+          mediaList, team, teamList, yearsParticipated);
     }
 }
