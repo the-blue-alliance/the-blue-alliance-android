@@ -44,39 +44,24 @@
 
         </RelativeLayout>
 
-        <FrameLayout
-            android:id="@+id/open_notification_settings_button_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right">
-
-            <com.melnykov.fab.FloatingActionButton
-                android:id="@+id/open_notification_settings_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_star_white_24dp"
-                app:fab_colorNormal="@color/accent"
-                app:fab_colorPressed="@color/accent_dark"
-                app:fab_colorRipple="@color/accent_dark_ripple" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/close_notification_settings_button_container"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/open_notification_settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:visibility="invisible">
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_star_white_24dp"
+            app:fabSize="normal" />
 
-            <com.melnykov.fab.FloatingActionButton
-                android:id="@+id/close_notification_settings_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_check_white_24dp"
-                app:fab_colorNormal="@color/accent"
-                app:fab_colorPressed="@color/accent_dark"
-                app:fab_colorRipple="@color/accent_dark_ripple" />
-        </FrameLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/close_notification_settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_check_white_24dp"
+            android:visibility="invisible"
+            app:fabSize="normal" />
+
     </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>
