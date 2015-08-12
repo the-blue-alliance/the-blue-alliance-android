@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 
 import rx.Observable;
@@ -65,5 +66,11 @@ public class TeamAtEventSummaryFragment
     @Override
     protected Observable[] getExtraObservables() {
         return new Observable[]{mDatafeed.fetchEvent(mEventKey)};
+    }
+
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_team_at_event_summary_data);
     }
 }

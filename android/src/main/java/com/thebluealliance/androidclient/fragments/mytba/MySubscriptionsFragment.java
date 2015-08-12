@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
 
@@ -62,5 +63,10 @@ public class MySubscriptionsFragment
     @Override
     protected Observable<List<Subscription>> getObservable() {
         return mDatafeed.getCache().fetchUserSubscriptions(getActivity());
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_notifications_black_48dp, R.string.no_subscription_data);
     }
 }

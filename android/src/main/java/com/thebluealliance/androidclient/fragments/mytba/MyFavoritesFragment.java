@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Favorite;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
 
 import java.util.List;
@@ -61,5 +62,10 @@ public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, Favori
     @Override
     protected Observable<List<Favorite>> getObservable() {
         return mDatafeed.getCache().fetchUserFavorites(getActivity());
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_star_black_48dp, R.string.no_favorites_data);
     }
 }
