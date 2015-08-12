@@ -13,8 +13,9 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import java.util.ArrayList;
@@ -22,12 +23,10 @@ import java.util.List;
 
 import rx.Observable;
 
-public class GamedayWebcastsFragment extends ListviewFragment<List<Event>, WebcastListSubscriber> {
+public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, WebcastListSubscriber> {
 
     private ListView mListView;
     private ListViewAdapter mAdapter;
-    private Parcelable mListState;
-    private int mFirstVisiblePosition;
     private int mYear;
     private int mWeek;
 
@@ -43,25 +42,6 @@ public class GamedayWebcastsFragment extends ListviewFragment<List<Event>, Webca
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_carded, null);
-        mListView = (ListView) v.findViewById(R.id.list);
-        ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        mBinder.listView = mListView;
-        mBinder.progressBar = progressBar;
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            mListView.setSelection(mFirstVisiblePosition);
-            Log.d("onCreateView", "using existing adapter");
-        } else {
-            mAdapter = new ListViewAdapter(getActivity(), new ArrayList<>());
-            mListView.setAdapter(mAdapter);
-        }
-        return v;
-    }
-
-    @Override
     protected void inject() {
         mComponent.inject(this);
     }
@@ -69,5 +49,10 @@ public class GamedayWebcastsFragment extends ListviewFragment<List<Event>, Webca
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchEventsInWeek(mYear, mWeek);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_videocam_black_48dp, R.string.no_webcast_data_found);
     }
 }

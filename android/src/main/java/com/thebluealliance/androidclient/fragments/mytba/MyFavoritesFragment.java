@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
 
@@ -18,7 +18,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class MyFavoritesFragment extends ListviewFragment<List<Favorite>, FavoriteListSubscriber> {
+public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, FavoriteListSubscriber> {
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;

@@ -3,7 +3,6 @@
     <item name="nav_item_events" type="id" />
     <item name="nav_item_districts" type="id" />
     <item name="nav_item_teams" type="id" />
-    <item name="nav_item_insights" type="id" />
     <item name="nav_item_settings" type="id" />
     <item name="nav_item_my_tba" type="id" />
     <item name="nav_item_notifications" type="id" />

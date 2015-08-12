@@ -6,15 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 
 import java.util.List;
 
 import rx.Observable;
 
-public class EventAwardsFragment extends ListviewFragment<List<Award>, AwardsListSubscriber> {
+public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsListSubscriber> {
     private static final String EVENT_KEY = "eventKey", TEAM_KEY = "teamKey";
 
     private String mEventKey, mTeamKey;
@@ -69,5 +70,10 @@ public class EventAwardsFragment extends ListviewFragment<List<Award>, AwardsLis
         } else {
             return mDatafeed.fetchTeamAtEventAwards(mTeamKey, mEventKey);
         }
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_trophy_black_48dp, R.string.no_awards_data);
     }
 }

@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationsTable {
     public static final String
@@ -36,7 +37,7 @@ public class NotificationsTable {
         mDb.endTransaction();
     }
 
-    public ArrayList<StoredNotification> get() {
+    public List<StoredNotification> get() {
         ArrayList<StoredNotification> out = new ArrayList<>();
         Cursor cursor = mDb.rawQuery("SELECT * FROM " + Database.TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC", null);
         if (cursor != null && cursor.moveToFirst()) {
@@ -48,7 +49,7 @@ public class NotificationsTable {
         return out;
     }
 
-    public ArrayList<StoredNotification> getActive() {
+    public List<StoredNotification> getActive() {
         ArrayList<StoredNotification> out = new ArrayList<>();
         Cursor cursor = mDb.query(Database.TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null);
         if (cursor != null && cursor.moveToFirst()) {

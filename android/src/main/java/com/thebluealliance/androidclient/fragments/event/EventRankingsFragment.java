@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.JsonArray;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 
 import rx.Observable;
@@ -23,7 +25,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
-public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsListSubscriber> {
+public class EventRankingsFragment extends ListViewFragment<JsonArray, RankingsListSubscriber> {
 
     private static final String KEY = "eventKey";
 
@@ -77,5 +79,10 @@ public class EventRankingsFragment extends ListviewFragment<JsonArray, RankingsL
     @Override
     protected Observable<JsonArray> getObservable() {
         return mDatafeed.fetchEventRankings(eventKey);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_ranking_data);
     }
 }

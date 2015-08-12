@@ -47,9 +47,9 @@ public class TeamsTable extends ModelTable<Team> {
             mDb.insert(Database.TABLE_SEARCH_TEAMS, null, cv);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:" +
-              "Database.Teams.KEY, Database.Teams.NUMBER");
+                    "Database.Teams.KEY, Database.Teams.NUMBER");
         } catch (SQLiteException e) {
-            Log.w(Constants.LOG_TAG, "Trying to add a SearchTeam that already exists. "+team.getKey());
+            Log.w(Constants.LOG_TAG, "Trying to add a SearchTeam that already exists. " + team.getKey());
         }
     }
 
@@ -69,8 +69,9 @@ public class TeamsTable extends ModelTable<Team> {
 
     @Override
     protected void deleteCallback(Team team) {
-            mDb.delete(Database.TABLE_SEARCH_TEAMS, Database.SearchTeam.KEY + " = ?", new String[]{team.getKey()});
+        mDb.delete(Database.TABLE_SEARCH_TEAMS, Database.SearchTeam.KEY + " = ?", new String[]{team.getKey()});
     }
+
     public String getTableName() {
         return Database.TABLE_TEAMS;
     }
@@ -103,21 +104,21 @@ public class TeamsTable extends ModelTable<Team> {
         return cursor;
     }
 
-    public void deleteAllSearchIndexes(){
+    public void deleteAllSearchIndexes() {
         mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
     }
 
-    public void deleteSearchIndex(Team team){
+    public void deleteSearchIndex(Team team) {
         deleteCallback(team);
     }
 
-    public void recreateAllSearchIndexes(List<Team> teams){
+    public void recreateAllSearchIndexes(List<Team> teams) {
         mDb.beginTransaction();
-        try{
-            for(Team t: teams){
-                insertCallback(t);
+        try {
+            for (int i = 0; i < teams.size(); i++) {
+                insertCallback(teams.get(i));
             }
-        }finally {
+        } finally {
             mDb.setTransactionSuccessful();
         }
         mDb.endTransaction();

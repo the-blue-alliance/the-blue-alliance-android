@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.fragments;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -14,11 +16,14 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
+import com.thebluealliance.androidclient.helpers.FragmentBinder;
+import com.thebluealliance.androidclient.interfaces.BindableFragmentPagerAdapter;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -26,7 +31,7 @@ import rx.Observable;
 import rx.android.internal.Preconditions;
 
 public class EventsByWeekFragment
-  extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
+        extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
 
     private static final String YEAR = "YEAR", TAB = "tab";
 
@@ -36,7 +41,7 @@ public class EventsByWeekFragment
     private int mSelectedTab;
     private ViewPager mViewPager;
     private SlidingTabs mTabs;
-
+    private FragmentBinder mFragmentBinder;
 
     public static EventsByWeekFragment newInstance(int year) {
         EventsByWeekFragment f = new EventsByWeekFragment();
@@ -72,21 +77,17 @@ public class EventsByWeekFragment
     }
 
     @Override
-    public View onCreateView(
-      LayoutInflater inflater,
-      ViewGroup container,
-      Bundle
-        savedInstanceState) {
-        final View view =
-          inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
         mTabs = (SlidingTabs) view.findViewById(R.id.event_pager_tabs);
         ViewCompat.setElevation(mTabs, getResources().getDimension(R.dimen.toolbar_elevation));
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
+        mFragmentBinder = new FragmentBinder();
+        mViewPager.addOnPageChangeListener(mFragmentBinder);
 
-        Log.d(Constants.LOG_TAG, "EventByWeekFragment view created!");
         return view;
     }
 
@@ -114,11 +115,10 @@ public class EventsByWeekFragment
         if (getView() != null) {
             getView().findViewById(R.id.tabs_progress).setVisibility(View.GONE);
         }
-        mFragmentAdapter = new EventsByWeekFragmentPagerAdapter(
-          getChildFragmentManager(),
-          mYear,
-          labels);
+        mFragmentAdapter = new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear, labels);
+        mFragmentBinder.setAdapter(mFragmentAdapter);
         mViewPager.setAdapter(mFragmentAdapter);
+        mViewPager.removeOnPageChangeListener(null);
         mTabs.setViewPager(mViewPager);
         if (mPagerState != null) {
             mViewPager.onRestoreInstanceState(mPagerState);
@@ -155,7 +155,7 @@ public class EventsByWeekFragment
 
         if (currentYear != mYear && week1Index > -1) {
             mViewPager.setCurrentItem(week1Index);
-        } else if(currentIndex < weekCount && currentIndex > -1) {
+        } else if (currentIndex < weekCount && currentIndex > -1) {
             mViewPager.setCurrentItem(currentIndex);
         } else {
             mViewPager.setCurrentItem(0);
@@ -165,14 +165,15 @@ public class EventsByWeekFragment
     /**
      * Finds the index in the adapter of the given week.
      * If the week is skipped over, return the next week (assumes sorted adapter items)
+     *
      * @return Adapter index containing the week, -1 if not found
      */
     private int getIndexForWeek(int week) {
         Preconditions.checkState(
-          mViewPager.getAdapter() instanceof EventsByWeekFragmentPagerAdapter,
-          "EventsByWeekFragment must use EventsByWeekFragmentPagerAdapter");
+                mViewPager.getAdapter() instanceof EventsByWeekFragmentPagerAdapter,
+                "EventsByWeekFragment must use EventsByWeekFragmentPagerAdapter");
         List<EventWeekTab> tabs = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter())
-          .getTabs();
+                .getTabs();
         for (int i = 0; i < tabs.size(); i++) {
             if (tabs.get(i).getWeek() >= week) {
                 return i;

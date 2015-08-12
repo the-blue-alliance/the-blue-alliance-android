@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.adapters.ExpandableListAdapter;
+import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 
 import java.util.List;
 
-public class MatchListBinder extends ExpandableListBinder {
+public class MatchListBinder extends ExpandableListViewBinder {
 
     private String mSelectedTeam;
 
@@ -15,7 +15,7 @@ public class MatchListBinder extends ExpandableListBinder {
     }
 
     @Override
-    protected ExpandableListAdapter newAdapter(List<ListGroup> data) {
+    protected ExpandableListViewAdapter newAdapter(List<ListGroup> data) {
         return new MatchListAdapter(mActivity, data, mSelectedTeam);
     }
 }

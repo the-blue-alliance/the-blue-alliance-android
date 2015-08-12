@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
@@ -21,7 +23,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSubscriber> {
+public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSubscriber> {
 
     private static final String KEY = "event_key";
 
@@ -67,5 +69,10 @@ public class EventTeamsFragment extends ListviewFragment<List<Team>, TeamListSub
     @Override
     protected Observable<List<Team>> getObservable() {
         return mDatafeed.fetchEventTeams(mEventKey);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_group_black_48dp, R.string.no_team_data);
     }
 }

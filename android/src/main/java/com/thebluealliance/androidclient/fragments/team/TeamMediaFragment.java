@@ -9,14 +9,16 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.binders.ExpandableListBinder;
+import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.interfaces.HasYearParam;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class TeamMediaFragment extends DatafeedFragment<
   List<Media>,
   List<ListGroup>,
   MediaListSubscriber,
-  ExpandableListBinder>
+  ExpandableListViewBinder>
   implements HasYearParam {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
@@ -58,14 +60,15 @@ public class TeamMediaFragment extends DatafeedFragment<
         }
         super.onCreate(savedInstanceState);
 
-        mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ALL);
+        mBinder.setExpandMode(ExpandableListViewBinder.MODE_EXPAND_ALL);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_team_media, container, false);
-        mBinder.expandableList = (ExpandableListView) v.findViewById(R.id.team_media_list);
+        View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, container, false);
+        mBinder.expandableListView = (ExpandableListView) v.findViewById(R.id.expandable_list);
         mBinder.progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;
     }
 
@@ -99,5 +102,10 @@ public class TeamMediaFragment extends DatafeedFragment<
     @Override
     protected Observable<List<Media>> getObservable() {
         return mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_photo_camera_black_48dp, R.string.no_media_data);
     }
 }
