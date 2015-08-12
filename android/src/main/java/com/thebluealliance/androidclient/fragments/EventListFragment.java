@@ -5,9 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
 import java.util.List;
@@ -89,5 +91,10 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
         if(mSubscriber != null) {
             mSubscriber.bindData();
         }
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_events_found);
     }
 }
