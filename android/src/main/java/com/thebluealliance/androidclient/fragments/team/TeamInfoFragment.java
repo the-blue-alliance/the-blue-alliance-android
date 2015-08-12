@@ -69,10 +69,10 @@ public class TeamInfoFragment
 
         // Register this fragment as the callback for all clickable views
         view.findViewById(R.id.team_location_container).setOnClickListener(this);
-        view.findViewById(R.id.team_twitter_button).setOnClickListener(this);
-        view.findViewById(R.id.team_cd_button).setOnClickListener(this);
-        view.findViewById(R.id.team_youtube_button).setOnClickListener(this);
-        view.findViewById(R.id.team_website_button).setOnClickListener(this);
+        view.findViewById(R.id.team_twitter_container).setOnClickListener(this);
+        view.findViewById(R.id.team_cd_container).setOnClickListener(this);
+        view.findViewById(R.id.team_youtube_container).setOnClickListener(this);
+        view.findViewById(R.id.team_website_container).setOnClickListener(this);
 
         return view;
     }

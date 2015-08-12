@@ -22,10 +22,15 @@
     <string name="districts_label">Districts</string>
 
     <!-- View Event -->
-    <string name="last_match">Last Match:</string>
-    <string name="next_match">Next Match:</string>
-    <string name="top_teams">Top Teams:</string>
-    <string name="top_opr">Top OPRs:</string>
+    <string name="view_event_website">View event\'s website</string>
+    <string name="find_event_on_google">Find event on Google</string>
+    <string name="view_event_twitter">View #%1$s on Twitter</string>
+    <string name="view_event_youtube">View %1$s on YouTube</string>
+    <string name="view_event_cd">View photos on Chief Delphi</string>
+    <string name="last_match">Last Match</string>
+    <string name="next_match">Next Match</string>
+    <string name="top_teams">Top Teams</string>
+    <string name="top_oprs">Top OPRs</string>
     <string name="opr">OPR:</string>
     <string name="dpr">DPR:</string>
     <string name="ccwm">CCWM:</string>
@@ -69,8 +74,15 @@
     <string name="no_team_at_event_summary_data">No info found</string>
 
     <!-- View Team -->
-    <string name="currently_competing">currently competing at</string>
-    <string name="team_actionbar_title">Team %s</string>
+    <string name="team_info">Team info</string>
+    <string name="social_media">Social media</string>
+    <string name="current_event">Current event</string>
+    <string name="team_actionbar_title">Team %1$s</string>
+    <string name="view_team_website">View team\'s website</string>
+    <string name="find_team_on_google">Find team on Google</string>
+    <string name="view_team_twitter">View #%1$s on Twitter</string>
+    <string name="view_team_youtube">View %1$s on YouTube</string>
+    <string name="view_team_cd">View photos on Chief Delphi</string>
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>
