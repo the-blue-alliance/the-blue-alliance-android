@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 
 import rx.Observable;
 
 public class TeamAtEventSummaryFragment
-  extends ListviewFragment<JsonArray, TeamAtEventSummarySubscriber> {
+  extends ListViewFragment<JsonArray, TeamAtEventSummarySubscriber> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 

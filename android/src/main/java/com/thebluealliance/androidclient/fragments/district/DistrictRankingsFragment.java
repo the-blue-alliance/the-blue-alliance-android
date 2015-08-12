@@ -2,9 +2,11 @@ package com.thebluealliance.androidclient.fragments.district;
 
 import android.os.Bundle;
 
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
 import rx.Observable;
 
 public class DistrictRankingsFragment
-  extends ListviewFragment<List<DistrictTeam>, DistrictRankingsSubscriber> {
+  extends ListViewFragment<List<DistrictTeam>, DistrictRankingsSubscriber> {
 
     public static final String KEY = "districtKey";
 
@@ -49,5 +51,10 @@ public class DistrictRankingsFragment
     @Override
     protected Observable<List<DistrictTeam>> getObservable() {
         return mDatafeed.fetchDistrictRankings(mShort, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_ranking_data);
     }
 }

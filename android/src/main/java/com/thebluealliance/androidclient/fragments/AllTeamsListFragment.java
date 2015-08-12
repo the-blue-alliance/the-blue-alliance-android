@@ -20,8 +20,7 @@ public class AllTeamsListFragment extends Fragment {
     private SlidingTabs mTabs;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_team_list_fragment_pager, container, false);
         mViewPager = (ViewPager) v.findViewById(R.id.team_pager);

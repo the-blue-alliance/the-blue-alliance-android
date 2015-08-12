@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -15,7 +16,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -34,13 +34,12 @@ public class GamedayActivity extends BaseActivity
 
     public static final String TAB = "tab";
 
-    private static final int FAB_ANIMATE_DURATION = 250;
+    private static final int FAB_ANIMATION_DURATION = 250;
 
     private FragmentComponent mComponent;
     private TextView mWarningMessage;
 
     FloatingActionButton mFab;
-    View mFabContainer;
     boolean mIsFabVisible = true;
     ValueAnimator mRunningFabAnimation;
 
@@ -68,7 +67,6 @@ public class GamedayActivity extends BaseActivity
         }
 
         mFab = (FloatingActionButton) findViewById(R.id.filter_button);
-        mFabContainer = findViewById(R.id.filter_button_container);
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
@@ -157,14 +155,14 @@ public class GamedayActivity extends BaseActivity
         fabScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mFabContainer.setVisibility(View.VISIBLE);
+                mFab.setVisibility(View.VISIBLE);
             }
         });
         fabScaleUp.addUpdateListener(animation -> {
             ViewCompat.setScaleX(mFab, (float) animation.getAnimatedValue());
             ViewCompat.setScaleY(mFab, (float) animation.getAnimatedValue());
         });
-        fabScaleUp.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleUp.setDuration(FAB_ANIMATION_DURATION);
         fabScaleUp.setInterpolator(new DecelerateInterpolator());
         fabScaleUp.start();
         mRunningFabAnimation = fabScaleUp;
@@ -183,7 +181,7 @@ public class GamedayActivity extends BaseActivity
         fabScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mFabContainer.setVisibility(View.VISIBLE);
+                mFab.setVisibility(View.VISIBLE);
             }
         });
         fabScaleDown.addUpdateListener(animation -> {
@@ -193,10 +191,10 @@ public class GamedayActivity extends BaseActivity
         fabScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mFabContainer.setVisibility(View.GONE);
+                mFab.setVisibility(View.GONE);
             }
         });
-        fabScaleDown.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleDown.setDuration(FAB_ANIMATION_DURATION);
         fabScaleDown.setInterpolator(new AccelerateInterpolator());
         fabScaleDown.start();
         mRunningFabAnimation = fabScaleDown;

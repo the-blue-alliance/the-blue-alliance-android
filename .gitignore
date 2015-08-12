@@ -44,3 +44,6 @@ proguard/
 
 # Windows thumbnail cache
 Thumbs.db
+
+# Logs captured from Device Monitor
+captures/

@@ -6,54 +6,47 @@
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="false"
-    android:padding="16dp">
+    android:paddingBottom="20dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="20dp">
 
-    <LinearLayout
-        android:id="@+id/team_number_container"
+    <TextView
+        android:id="@+id/team_number"
         android:layout_width="72dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_alignBaseline="@+id/team_name"
+        android:text="177"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/team_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="177"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/team_rank"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rank 1"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/team_name_and_points_container"
+    <TextView
+        android:id="@+id/team_rank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/team_number_container"
-        android:layout_toRightOf="@id/team_number_container"
-        android:orientation="vertical">
+        android:layout_below="@id/team_number"
+        android:text="Rank 1"
+        android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/team_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bobcat Robotics"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@id/team_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/team_number"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="Bobcat Robotics"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/total_points"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="303 Points"
-            android:textColor="@color/secondary_text_color"
-            android:textSize="14sp" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/total_points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/team_name"
+        android:layout_below="@id/team_name"
+        android:text="303 Points"
+        android:textColor="@color/secondary_text_color"
+        android:textSize="14sp" />
 
 </RelativeLayout>

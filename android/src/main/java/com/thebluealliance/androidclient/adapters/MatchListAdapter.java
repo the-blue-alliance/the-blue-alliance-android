@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * File created by phil on 4/22/14.
  */
-public class MatchListAdapter extends ExpandableListAdapter {
+public class MatchListAdapter extends ExpandableListViewAdapter {
 
     private String mTeamKey;
 

@@ -25,7 +25,6 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
-import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -184,9 +183,6 @@ public class HomeActivity extends LegacyRefreshableHostActivity implements HasFr
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
                 break;
-            case R.id.nav_item_insights:
-                fragment = new InsightsFragment();
-                break;
             case R.id.nav_item_my_tba:
                 fragment = new MyTBAFragment();
                 break;
@@ -239,10 +235,6 @@ public class HomeActivity extends LegacyRefreshableHostActivity implements HasFr
                 break;
             case R.id.nav_item_teams:
                 getSupportActionBar().setTitle("Teams");
-                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
-                break;
-            case R.id.nav_item_insights:
-                getSupportActionBar().setTitle("Insights");
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
             case R.id.nav_item_my_tba:

@@ -5,17 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.thebluealliance.androidclient.fragments.ListviewFragment;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
 import java.util.List;
 
 import rx.Observable;
 
-public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventListSubscriber> {
+public class DistrictEventsFragment extends ListViewFragment<List<Event>, EventListSubscriber> {
 
     public static final String KEY = "districtKey";
 
@@ -56,5 +58,10 @@ public class DistrictEventsFragment extends ListviewFragment<List<Event>, EventL
     @Override
     protected Observable<List<Event>> getObservable() {
         return mDatafeed.fetchDistrictEvents(mShort, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
     }
 }

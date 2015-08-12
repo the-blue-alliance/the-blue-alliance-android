@@ -43,6 +43,7 @@
     <color name="accent_dark_ripple">#cfad00</color>
     <color name="control_highlight">#c5cae9</color>
     <color name="snackbar_background">#323232</color>
+    <color name="icon_gray">#858585</color>
 
     <!-- Gameday ticker header colors -->
     <color name="gameday_ticker_alliance_selection_header">#f44336</color>

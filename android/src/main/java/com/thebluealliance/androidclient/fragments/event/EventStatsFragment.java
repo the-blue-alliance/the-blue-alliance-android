@@ -22,7 +22,9 @@ import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -128,6 +130,8 @@ public class EventStatsFragment
             mProgressBar.setVisibility(View.GONE);
         }
 
+        mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
+
         mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
             if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
@@ -180,6 +184,11 @@ public class EventStatsFragment
     @Override
     protected Observable<JsonObject> getObservable() {
         return mDatafeed.fetchEventStats(mEventKey);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_stats_data);
     }
 
     private String getSortTypeFromPosition(int position) {

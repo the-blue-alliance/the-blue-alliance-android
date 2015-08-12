@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
@@ -10,17 +9,14 @@ import com.thebluealliance.androidclient.models.EventWeekTab;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
+public class EventsByWeekFragmentPagerAdapter extends BindableFragmentPagerAdapter {
 
     private int mCount;
     private int mYear;
     private List<EventWeekTab> mThisYearsWeekTabs;
     private List<String> mLabels;
 
-    public EventsByWeekFragmentPagerAdapter(
-      FragmentManager fm,
-      int year,
-      List<EventWeekTab> labels) {
+    public EventsByWeekFragmentPagerAdapter(FragmentManager fm, int year, List<EventWeekTab> labels) {
         super(fm);
         mLabels = new ArrayList<>();
         mThisYearsWeekTabs = labels;
@@ -33,12 +29,6 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        /*String label = thisYearsWeekLabels.get(position);
-        if (mCurrent.equals(label)) {
-            return "Current Week";
-        } else {
-            return label;
-        }*/
         return mThisYearsWeekTabs.get(position).getLabel();
     }
 
@@ -50,11 +40,7 @@ public class EventsByWeekFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         EventWeekTab tab = mThisYearsWeekTabs.get(position);
-        return EventListFragment.newInstance(
-          mYear,
-          tab.getWeek(),
-          tab.getMonth(),
-          getPageTitle(position).toString());
+        return EventListFragment.newInstance(mYear, tab.getWeek(), tab.getMonth(), getPageTitle(position).toString(), false);
     }
 
     public List<String> getLabels() {

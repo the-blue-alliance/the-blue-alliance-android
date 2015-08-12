@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:minHeight="72dp"
-    android:paddingLeft="16dp">
+    android:minHeight="72dp">
 
     <TextView
         android:id="@+id/team_number"
         android:layout_width="72dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:paddingLeft="16dp"
         android:text="254"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -23,7 +23,9 @@
         android:layout_toLeftOf="@+id/team_info"
         android:layout_toRightOf="@id/team_number"
         android:orientation="vertical"
-        android:paddingRight="16dp">
+        android:paddingBottom="20dp"
+        android:paddingRight="16dp"
+        android:paddingTop="20dp">
 
         <TextView
             android:id="@+id/team_name"
@@ -39,6 +41,7 @@
             android:id="@+id/team_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:text="San Jose, CA"
             android:textColor="@color/secondary_text_color"
             android:textSize="14sp" />

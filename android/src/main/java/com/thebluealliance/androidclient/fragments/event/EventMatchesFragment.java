@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +9,15 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
-import com.thebluealliance.androidclient.binders.ExpandableListBinder;
+import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
@@ -56,22 +57,23 @@ public class EventMatchesFragment
 
         mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
-        mBinder.setExpandMode(ExpandableListBinder.MODE_EXPAND_ONLY);
+        mBinder.setExpandMode(ExpandableListViewBinder.MODE_EXPAND_ONLY);
         mBinder.setSelectedTeam(mTeamKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_event_results, null);
-        mListView = (ExpandableListView) v.findViewById(R.id.match_results);
+        View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, null);
+        mListView = (ExpandableListView) v.findViewById(R.id.expandable_list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        mBinder.expandableList = mListView;
+        mBinder.expandableListView = mListView;
         mBinder.progressBar = progressBar;
+        mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
+
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
             mListView.setSelection(mFirstVisiblePosition);
-            Log.d("onCreateView", "using existing adapter");
             progressBar.setVisibility(View.GONE);
         }
         return v;
@@ -81,7 +83,6 @@ public class EventMatchesFragment
     public void onPause() {
         super.onPause();
         if (mListView != null) {
-            Log.d("onPause", "saving adapter");
             mAdapter = (MatchListAdapter) mListView.getExpandableListAdapter();
             mListState = mListView.onSaveInstanceState();
             mFirstVisiblePosition = mListView.getFirstVisiblePosition();
@@ -100,5 +101,10 @@ public class EventMatchesFragment
         } else {
             return mDatafeed.fetchTeamAtEventMatches(mTeamKey, mEventKey);
         }
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_gamepad_variant_black_48dp, R.string.no_match_data);
     }
 }

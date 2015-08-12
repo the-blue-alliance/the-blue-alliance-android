@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFrag
  */
 public class ViewDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Events", "Standings"};
+    public final String[] TITLES = {"Events", "Rankings"};
 
     private String mDistrictKey;
 

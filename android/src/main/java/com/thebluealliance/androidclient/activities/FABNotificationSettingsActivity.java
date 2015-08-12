@@ -5,8 +5,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
@@ -19,9 +23,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -34,27 +37,26 @@ import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 public abstract class FABNotificationSettingsActivity extends LegacyRefreshableHostActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
-    private RelativeLayout mNotificationSettings;
-    private FloatingActionButton mOpenNotificationSettingsButton;
-    private View mOpenNotificationSettingsButtonContainer;
-    private FloatingActionButton mCloseNotificationSettingsButton;
-    private View mCloseNotificationSettingsButtonContainer;
-    private View mForegroundDim;
-    private boolean mIsMyTBAEnabled;
+    private CoordinatorLayout coordinator;
+    private RelativeLayout notificationSettings;
+    private FloatingActionButton openNotificationSettingsButton;
+    private FloatingActionButton closeNotificationSettingsButton;
+    private View foregroundDim;
 
-    private Toolbar mNotificationSettingsToolbar;
-    private Handler mFabHandler = new Handler();
+    private Toolbar notificationSettingsToolbar;
+    private Handler fabHandler = new Handler();
 
-    private NotificationSettingsFragment mSettingsFragment;
+    private NotificationSettingsFragment settings;
 
-    private UpdateUserModelSettingsTaskFragment mSaveSettingsTaskFragment;
+    private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
 
-    private boolean mIsSettingsPanelOpen = false;
+    private boolean isSettingsPanelOpen = false;
 
-    private boolean mSaveInProgress = false;
+    private boolean saveInProgress = false;
 
-    private boolean mFabVisible = true;
-    private ValueAnimator mRunningFabAnimation;
+    private boolean fabVisible = true;
+    private ValueAnimator runningFabAnimation;
+    private AnimatorSet runningPanelAnimation;
 
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
 
@@ -62,13 +64,14 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
     // In milliseconds
     private static final int ANIMATION_DURATION = 500;
-    private static final int FAB_ANIMATE_DURATION = 250;
+    private static final int FAB_ANIMATION_DURATION = 250;
+    private static final int FAB_COLOR_ANIMATION_DURATION = 250;
 
     private static final float UNDIMMED_ALPHA = 0.0f;
 
     private static final float DIMMED_ALPHA = 0.7f;
 
-    private Bundle mSavedPreferenceState;
+    private Bundle savedPreferenceState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,63 +79,61 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
         super.setContentView(R.layout.activity_fab_notification_settings);
 
-        mIsMyTBAEnabled = AccountHelper.isMyTBAEnabled(this);
+        coordinator = (CoordinatorLayout) findViewById(R.id.coordinator);
 
-        mNotificationSettings = (RelativeLayout) findViewById(R.id.notification_settings);
-        mOpenNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.open_notification_settings_button);
-        mOpenNotificationSettingsButton.setOnClickListener(this);
-        mOpenNotificationSettingsButtonContainer = findViewById(R.id.open_notification_settings_button_container);
+        notificationSettings = (RelativeLayout) findViewById(R.id.notification_settings);
+        openNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.open_notification_settings_button);
+        openNotificationSettingsButton.setOnClickListener(this);
 
-        mCloseNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
-        mCloseNotificationSettingsButton.setOnClickListener(this);
-        mCloseNotificationSettingsButtonContainer = findViewById(R.id.close_notification_settings_button_container);
+        closeNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
+        closeNotificationSettingsButton.setOnClickListener(this);
 
         // Hide the notification settings button if myTBA isn't enabled
         if (!AccountHelper.isMyTBAEnabled(this)) {
-            mNotificationSettings.setVisibility(View.INVISIBLE);
+            notificationSettings.setVisibility(View.INVISIBLE);
         }
 
-        mNotificationSettingsToolbar = (Toolbar) findViewById(R.id.notification_settings_toolbar);
-        mNotificationSettingsToolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
-        mNotificationSettingsToolbar.setTitle("Team Settings");
-        mNotificationSettingsToolbar.setNavigationOnClickListener(v -> onNotificationSettingsCloseButtonClick());
-        mNotificationSettingsToolbar.setNavigationContentDescription(R.string.close);
-        ViewCompat.setElevation(mNotificationSettingsToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        notificationSettingsToolbar = (Toolbar) findViewById(R.id.notification_settings_toolbar);
+        notificationSettingsToolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+        notificationSettingsToolbar.setTitle("Team Settings");
+        notificationSettingsToolbar.setNavigationOnClickListener(v -> onNotificationSettingsCloseButtonClick());
+        notificationSettingsToolbar.setNavigationContentDescription(R.string.close);
+        ViewCompat.setElevation(notificationSettingsToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
 
-        mForegroundDim = findViewById(R.id.activity_foreground_dim);
+        foregroundDim = findViewById(R.id.activity_foreground_dim);
 
         // Setup the settings menu
 
         Log.d(Constants.LOG_TAG, "Model: " + modelKey);
         if (savedInstanceState != null) {
-            mIsSettingsPanelOpen = savedInstanceState.getBoolean(SETTINGS_PANEL_OPEN);
-            if (mIsSettingsPanelOpen) {
-                mOpenNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                mCloseNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                mNotificationSettings.setVisibility(View.VISIBLE);
+            isSettingsPanelOpen = savedInstanceState.getBoolean(SETTINGS_PANEL_OPEN);
+            if (isSettingsPanelOpen) {
+                openNotificationSettingsButton.setVisibility(View.INVISIBLE);
+                closeNotificationSettingsButton.setVisibility(View.VISIBLE);
+                notificationSettings.setVisibility(View.VISIBLE);
                 if (Utilities.hasLApis()) {
                     getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
                 }
             } else {
-                mOpenNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
-                mCloseNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
-                mNotificationSettings.setVisibility(View.INVISIBLE);
+                openNotificationSettingsButton.setVisibility(View.VISIBLE);
+                closeNotificationSettingsButton.setVisibility(View.INVISIBLE);
+                notificationSettings.setVisibility(View.INVISIBLE);
             }
-            mSavedPreferenceState = savedInstanceState.getBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE);
+            savedPreferenceState = savedInstanceState.getBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE);
         }
 
-        mSaveSettingsTaskFragment = (UpdateUserModelSettingsTaskFragment) getSupportFragmentManager().findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
+        saveSettingsTaskFragment = (UpdateUserModelSettingsTaskFragment) getSupportFragmentManager().findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(SETTINGS_PANEL_OPEN, mIsSettingsPanelOpen);
+        outState.putBoolean(SETTINGS_PANEL_OPEN, isSettingsPanelOpen);
         // Only save the preference state if they've already been successfully loaded
         // Also, only save them if the settings panel is open. Otherwise, clear them on rotate
-        if (mSettingsFragment != null && mSettingsFragment.arePreferencesLoaded() && mIsSettingsPanelOpen) {
+        if (settings != null && settings.arePreferencesLoaded() && isSettingsPanelOpen) {
             Bundle b = new Bundle();
-            mSettingsFragment.writeStateToBundle(b);
+            settings.writeStateToBundle(b);
             outState.putBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE, b);
         }
     }
@@ -141,12 +142,12 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
     protected void setModelKey(String key, ModelHelper.MODELS modelType) {
         super.setModelKey(key, modelType);
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
-        mSettingsFragment = NotificationSettingsFragment.newInstance(modelKey, modelType, mSavedPreferenceState);
-        getFragmentManager().beginTransaction().replace(R.id.settings_list, mSettingsFragment).commit();
+        settings = NotificationSettingsFragment.newInstance(modelKey, modelType, savedPreferenceState);
+        getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
 
         // Disable the submit settings button so we can't hit it before the content is loaded
         // This prevents accidently wiping settings (see #317)
-        mCloseNotificationSettingsButton.setEnabled(false);
+        closeNotificationSettingsButton.setEnabled(false);
     }
 
     @Override
@@ -159,28 +160,25 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.open_notification_settings_button) {
-            if (!mSaveInProgress) {
+            if (!saveInProgress) {
                 openNotificationSettingsView();
             }
         } else if (v.getId() == R.id.close_notification_settings_button) {
             // The user wants to save the preferences
-            if (mSaveSettingsTaskFragment == null) {
-                mSaveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(mSettingsFragment.getSettings());
-                getSupportFragmentManager().beginTransaction().add(mSaveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
-                mSaveInProgress = true;
+            if (saveSettingsTaskFragment == null) {
+                saveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(settings.getSettings());
+                getSupportFragmentManager().beginTransaction().add(saveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
+                saveInProgress = true;
 
                 final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
                 final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
-                mFabHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeNotificationSettingsWindow();
-                        if (settingsFragment != null) {
-                            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
-                        }
-                        mSaveSettingsTaskFragment = null;
+                fabHandler.postDelayed(() -> {
+                    closeNotificationSettingsWindow();
+                    if (settingsFragment != null) {
+                        fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
                     }
-                }, 100);
+                    saveSettingsTaskFragment = null;
+                }, 1);
             }
         } else {
             Log.d(Constants.LOG_TAG, "Clicked id: " + v.getId() + " tag: " + v.getTag() + " view: " + v.toString());
@@ -190,46 +188,46 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
     private void onNotificationSettingsCloseButtonClick() {
         closeNotificationSettingsWindow();
         // Cancel any changes made by the user
-        mSettingsFragment.restoreInitialState();
+        settings.restoreInitialState();
     }
 
     private void openNotificationSettingsView() {
-        mSettingsFragment.restoreInitialState();
-        mCloseNotificationSettingsButton.setColorNormal(getResources().getColor(R.color.accent));
+        settings.restoreInitialState();
+        closeNotificationSettingsButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
 
         // this is the center of the button in relation to the main view. This provides the center of the clipping circle for the notification settings view.
-        int centerOfButtonOutsideX = (mOpenNotificationSettingsButtonContainer.getLeft() + mOpenNotificationSettingsButtonContainer.getRight()) / 2;
-        int centerOfButtonOutsideY = (mOpenNotificationSettingsButtonContainer.getTop() + mOpenNotificationSettingsButtonContainer.getBottom()) / 2;
+        int centerOfButtonOutsideX = (openNotificationSettingsButton.getLeft() + openNotificationSettingsButton.getRight()) / 2;
+        int centerOfButtonOutsideY = (openNotificationSettingsButton.getTop() + openNotificationSettingsButton.getBottom()) / 2;
 
-        float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - mNotificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - mNotificationSettings.getTop(), 2));
+        float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
 
         Animator settingsPanelAnimator;
         // Only show the circular reveal on API >= 5.0
-        mNotificationSettings.setVisibility(View.VISIBLE);
+        notificationSettings.setVisibility(View.VISIBLE);
         if (Utilities.hasLApis()) {
-            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(mNotificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
+            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
             settingsPanelAnimator.setInterpolator(new DecelerateInterpolator());
         } else {
             settingsPanelAnimator = ValueAnimator.ofFloat(1, 0);
-            final int notificationSettingsHeight = mNotificationSettings.getHeight();
-            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> mNotificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue()));
+            final int notificationSettingsHeight = notificationSettings.getHeight();
+            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue()));
             settingsPanelAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
         }
 
-        mOpenNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
+        openNotificationSettingsButton.setVisibility(View.INVISIBLE);
 
         ValueAnimator closeButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
         closeButtonScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mCloseNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+                closeNotificationSettingsButton.setVisibility(View.VISIBLE);
             }
         });
         closeButtonScaleUp.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mCloseNotificationSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mCloseNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
         closeButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
 
@@ -245,7 +243,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         colorAnimation.setDuration(ANIMATION_DURATION);
 
         ValueAnimator dimAnimation = ValueAnimator.ofFloat(UNDIMMED_ALPHA, DIMMED_ALPHA);
-        dimAnimation.addUpdateListener(animation -> mForegroundDim.setAlpha((float) animation.getAnimatedValue()));
+        dimAnimation.addUpdateListener(animation -> foregroundDim.setAlpha((float) animation.getAnimatedValue()));
         dimAnimation.setDuration(ANIMATION_DURATION);
 
         AnimatorSet animationSet = new AnimatorSet();
@@ -255,31 +253,39 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         animationSet.play(dimAnimation).with(settingsPanelAnimator);
         animationSet.start();
 
-        mIsSettingsPanelOpen = true;
+        runningPanelAnimation = animationSet;
+        animationSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                runningPanelAnimation = null;
+            }
+        });
+
+        isSettingsPanelOpen = true;
     }
 
     private void closeNotificationSettingsWindow() {
-        int centerOfButtonOutsideX = (mOpenNotificationSettingsButtonContainer.getLeft() + mOpenNotificationSettingsButtonContainer.getRight()) / 2;
-        int centerOfButtonOutsideY = (mOpenNotificationSettingsButtonContainer.getTop() + mOpenNotificationSettingsButtonContainer.getBottom()) / 2;
+        int centerOfButtonOutsideX = (openNotificationSettingsButton.getLeft() + openNotificationSettingsButton.getRight()) / 2;
+        int centerOfButtonOutsideY = (openNotificationSettingsButton.getTop() + openNotificationSettingsButton.getBottom()) / 2;
 
-        float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - mNotificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - mNotificationSettings.getTop(), 2));
+        float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - notificationSettings.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - notificationSettings.getTop(), 2));
 
         Animator settingsPanelAnimator;
         if (Utilities.hasLApis()) {
-            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(mNotificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
+            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(notificationSettings, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
             settingsPanelAnimator.addListener(new AnimatorListenerAdapter() {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mNotificationSettings.setVisibility(View.INVISIBLE);
+                    notificationSettings.setVisibility(View.INVISIBLE);
                 }
             });
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
             settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
         } else {
             settingsPanelAnimator = ValueAnimator.ofFloat(0, 1);
-            final int notificationSettingsHeight = mNotificationSettings.getHeight();
-            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> mNotificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue()));
+            final int notificationSettingsHeight = notificationSettings.getHeight();
+            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> notificationSettings.setTranslationY((float) notificationSettingsHeight * (float) animation.getAnimatedValue()));
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
             settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
             settingsPanelAnimator.start();
@@ -289,12 +295,12 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         closeButtonScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mCloseNotificationSettingsButtonContainer.setVisibility(View.INVISIBLE);
+                closeNotificationSettingsButton.setVisibility(View.INVISIBLE);
             }
         });
         closeButtonScaleDown.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mCloseNotificationSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mCloseNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleX(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(closeNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
         closeButtonScaleDown.setDuration(ANIMATION_DURATION / 2);
 
@@ -302,12 +308,12 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         openButtonScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mOpenNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+                openNotificationSettingsButton.setVisibility(View.VISIBLE);
             }
         });
         openButtonScaleUp.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mOpenNotificationSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mOpenNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
         openButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
 
@@ -324,7 +330,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
         // Undim the foreground
         ValueAnimator dimAnimation = ValueAnimator.ofFloat(DIMMED_ALPHA, UNDIMMED_ALPHA);
-        dimAnimation.addUpdateListener(animation -> mForegroundDim.setAlpha((float) animation.getAnimatedValue()));
+        dimAnimation.addUpdateListener(animation -> foregroundDim.setAlpha((float) animation.getAnimatedValue()));
         dimAnimation.setDuration(ANIMATION_DURATION);
 
         AnimatorSet animatorSet = new AnimatorSet();
@@ -335,151 +341,155 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         animatorSet.play(openButtonScaleUp).after(settingsPanelAnimator);
         animatorSet.start();
 
-        mIsSettingsPanelOpen = false;
+        runningPanelAnimation = animatorSet;
+        runningPanelAnimation.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                runningPanelAnimation = null;
+            }
+        });
+
+        isSettingsPanelOpen = false;
     }
 
     public void showFab(boolean animate) {
-        if (mFabVisible) {
+        if (fabVisible) {
             return;
         }
-        mFabVisible = true;
-        if (mRunningFabAnimation != null) {
-            mRunningFabAnimation.cancel();
+        fabVisible = true;
+        if (runningFabAnimation != null) {
+            runningFabAnimation.cancel();
         }
         if (!animate) {
-            mOpenNotificationSettingsButtonContainer.setVisibility(View.GONE);
+            openNotificationSettingsButton.setVisibility(View.GONE);
             return;
         }
         ValueAnimator fabScaleUp = ValueAnimator.ofFloat(0, 1);
         fabScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mOpenNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+                openNotificationSettingsButton.setVisibility(View.VISIBLE);
             }
         });
         fabScaleUp.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mOpenNotificationSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mOpenNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
-        fabScaleUp.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleUp.setDuration(FAB_ANIMATION_DURATION);
         fabScaleUp.setInterpolator(new DecelerateInterpolator());
         fabScaleUp.start();
-        mRunningFabAnimation = fabScaleUp;
+        runningFabAnimation = fabScaleUp;
     }
 
     public void hideFab(boolean animate) {
-        if (!mFabVisible) {
+        if (!fabVisible) {
             return;
         }
-        mFabVisible = false;
-        if (mRunningFabAnimation != null) {
-            mRunningFabAnimation.cancel();
+        fabVisible = false;
+        if (runningFabAnimation != null) {
+            runningFabAnimation.cancel();
         }
         if (!animate) {
-            mOpenNotificationSettingsButtonContainer.setVisibility(View.GONE);
+            openNotificationSettingsButton.setVisibility(View.GONE);
             return;
         }
         ValueAnimator fabScaleDown = ValueAnimator.ofFloat(1, 0);
         fabScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mOpenNotificationSettingsButtonContainer.setVisibility(View.VISIBLE);
+                openNotificationSettingsButton.setVisibility(View.VISIBLE);
             }
         });
         fabScaleDown.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mOpenNotificationSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mOpenNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleX(openNotificationSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(openNotificationSettingsButton, (float) animation.getAnimatedValue());
         });
         fabScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mOpenNotificationSettingsButtonContainer.setVisibility(View.GONE);
+                openNotificationSettingsButton.setVisibility(View.GONE);
             }
         });
-        fabScaleDown.setDuration(FAB_ANIMATE_DURATION);
+        fabScaleDown.setDuration(FAB_ANIMATION_DURATION);
         fabScaleDown.setInterpolator(new AccelerateInterpolator());
         fabScaleDown.start();
-        mRunningFabAnimation = fabScaleDown;
+        runningFabAnimation = fabScaleDown;
     }
 
     public void setSettingsToolbarTitle(String title) {
-        mNotificationSettingsToolbar.setTitle(title);
+        notificationSettingsToolbar.setTitle(title);
     }
 
     @Override
     public void onSuccess() {
-        Toast.makeText(this, "Settings Updated", Toast.LENGTH_SHORT).show();
+        Runnable runnable = () -> {
+            showSnackbar("Settings updated successfully");
 
-        Integer colorFrom = getResources().getColor(R.color.accent);
-        Integer colorTo = getResources().getColor(R.color.green);
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(animator -> mOpenNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
-        colorAnimation.setDuration(500);
+            Integer colorFrom = getResources().getColor(R.color.accent);
+            Integer colorTo = getResources().getColor(R.color.green);
 
-        Integer reverseColorFrom = getResources().getColor(R.color.green);
-        Integer reverseColorTo = getResources().getColor(R.color.accent);
-        ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
-        reverseColorAnimation.addUpdateListener(animator -> mOpenNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
-        reverseColorAnimation.setDuration(500);
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            colorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(colorAnimation);
-        animatorSet.play(reverseColorAnimation).after(2000);
-        animatorSet.start();
+            ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorTo, colorFrom);
+            reverseColorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            reverseColorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
-        // Tell the settings fragment to reload the now-updated
-        mSettingsFragment.refreshSettingsFromDatabase();
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.play(colorAnimation);
+            animatorSet.play(reverseColorAnimation).after(2000);
+            animatorSet.start();
+        };
+        runAfterNotificationSettingsPanelIsClosed(runnable);
+
+        // Tell the settings fragment to reload the now-updated settings
+        settings.refreshSettingsFromDatabase();
 
         // Save finished
-        mSaveInProgress = false;
+        saveInProgress = false;
     }
 
     @Override
     public void onNoOp() {
-        Toast.makeText(this, "No change", Toast.LENGTH_SHORT).show();
-        /*
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
-        closeNotificationSettingsWindow();
-        if(settingsFragment != null) {
-            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
-        }
-        saveSettingsTaskFragment = null;
-        */
+        Runnable runnable = () -> {
+            showSnackbar("Settings not changed");
+        };
+        runAfterNotificationSettingsPanelIsClosed(runnable);
 
-        mSaveInProgress = false;
+        saveInProgress = false;
     }
 
     @Override
     public void onError() {
-        Toast.makeText(this, "Error updating settings", Toast.LENGTH_SHORT).show();
+        Runnable runnable = () -> {
+            showSnackbar("Error updating settings");
+            // Something went wrong, restore the initial state
+            settings.restoreInitialState();
 
-        // Something went wrong, restore the initial state
-        mSettingsFragment.restoreInitialState();
+            Integer colorFrom = getResources().getColor(R.color.accent);
+            Integer colorTo = getResources().getColor(R.color.red);
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            colorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
-        Integer colorFrom = getResources().getColor(R.color.accent);
-        Integer colorTo = getResources().getColor(R.color.red);
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(animator -> mOpenNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
-        colorAnimation.setDuration(500);
+            ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorTo, colorFrom);
+            reverseColorAnimation.addUpdateListener(animator -> openNotificationSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            reverseColorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
-        Integer reverseColorFrom = getResources().getColor(R.color.red);
-        Integer reverseColorTo = getResources().getColor(R.color.accent);
-        ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
-        reverseColorAnimation.addUpdateListener(animator -> mOpenNotificationSettingsButton.setColorNormal((Integer) animator.getAnimatedValue()));
-        reverseColorAnimation.setDuration(500);
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.play(colorAnimation);
+            animatorSet.play(reverseColorAnimation).after(2000);
+            animatorSet.start();
+        };
+        runAfterNotificationSettingsPanelIsClosed(runnable);
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(colorAnimation);
-        animatorSet.play(reverseColorAnimation).after(2000);
-        animatorSet.start();
-
-        mSaveInProgress = false;
+        saveInProgress = false;
     }
 
     @Override
     public void onBackPressed() {
-        if (mIsSettingsPanelOpen) {
+        if (isSettingsPanelOpen) {
             closeNotificationSettingsWindow();
             return;
         }
@@ -488,6 +498,39 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
     public void onSettingsLoaded() {
         // Re-enable the submit button
-        mCloseNotificationSettingsButton.setEnabled(true);
+        closeNotificationSettingsButton.setEnabled(true);
+    }
+
+    private void showSnackbar(int messageResId) {
+        showSnackbar(getResources().getString(messageResId));
+    }
+
+    private void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(coordinator, message, 2000);
+        TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        if (text != null) {
+            text.setTextColor(getResources().getColor(R.color.white));
+        }
+        snackbar.show();
+    }
+
+    /**
+     * Used to defer an operation until after the notifications setting panel has finished animating closed.
+     *
+     * If the panel has already finished animating when this is called, the Runnable will be run immediately.
+     *
+     * @param runnable
+     */
+    private void runAfterNotificationSettingsPanelIsClosed(Runnable runnable) {
+        if (runningPanelAnimation == null) {
+            runnable.run();
+        } else {
+            runningPanelAnimation.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    runnable.run();
+                }
+            });
+        }
     }
 }
