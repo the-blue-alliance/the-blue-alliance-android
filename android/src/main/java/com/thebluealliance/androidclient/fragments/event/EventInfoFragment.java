@@ -55,18 +55,18 @@ public class EventInfoFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_info, null);
-        mBinder.setInflator(inflater);
-        mBinder.mView = view;
-        mBinder.mContent = view.findViewById(R.id.content);
-        mBinder.mEventName = (TextView) view.findViewById(R.id.event_name);
-        mBinder.mEventDate = (TextView) view.findViewById(R.id.event_date);
-        mBinder.mEventLoc = (TextView) view.findViewById(R.id.event_location);
-        mBinder.mEventVenue = (TextView) view.findViewById(R.id.event_venue);
-        mBinder.mTopTeamsContainer = view.findViewById(R.id.event_top_teams_container);
-        mBinder.mTopOprsContainer = view.findViewById(R.id.event_top_oprs_container);
-        mBinder.mTopTeams = (TextView) view.findViewById(R.id.event_top_teams);
-        mBinder.mTopOprs = (TextView) view.findViewById(R.id.event_top_oprs);
-        mBinder.mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mBinder.setInflater(inflater);
+        mBinder.view = view;
+        mBinder.content = view.findViewById(R.id.content);
+        mBinder.eventName = (TextView) view.findViewById(R.id.event_name);
+        mBinder.eventDate = (TextView) view.findViewById(R.id.event_date);
+        mBinder.eventLoc = (TextView) view.findViewById(R.id.event_location);
+        mBinder.eventVenue = (TextView) view.findViewById(R.id.event_venue);
+        mBinder.topTeamsContainer = view.findViewById(R.id.top_teams_container);
+        mBinder.topOprsContainer = view.findViewById(R.id.top_oprs_container);
+        mBinder.topTeams = (TextView) view.findViewById(R.id.top_teams);
+        mBinder.topOprs = (TextView) view.findViewById(R.id.top_oprs);
+        mBinder.progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
         return view;
     }
@@ -74,10 +74,10 @@ public class EventInfoFragment
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.event_top_teams_container) {
+        if (id == R.id.top_teams_container) {
             ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);  // Rankings
             return;
-        } else if (id == R.id.event_top_oprs_container) {
+        } else if (id == R.id.top_oprs_container) {
             ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);  // Stats
             return;
         } else if (id == R.id.event_date_container) {

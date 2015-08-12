@@ -223,8 +223,7 @@
                         <TextView
                             android:id="@+id/team_twitter_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_twitter_icon"
-                            android:text="View #frc21 on Twitter" />
+                            android:layout_toRightOf="@id/team_twitter_icon"/>
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />
@@ -245,8 +244,7 @@
                         <TextView
                             android:id="@+id/team_youtube_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_youtube_icon"
-                            android:text="View team's website" />
+                            android:layout_toRightOf="@id/team_youtube_icon" />
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />

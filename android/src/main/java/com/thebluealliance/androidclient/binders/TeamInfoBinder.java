@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -41,19 +42,26 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             teamLocation.setText(data.location);
 
             // Tag is used to create an ACTION_VIEW intent for a maps application
-            teamLocationContainer
-                    .setTag("geo:0,0?q=" + data.location.replace(" ", "+"));
+            teamLocationContainer.setTag("geo:0,0?q=" + Uri.encode(data.location));
         }
 
-        view.findViewById(R.id.team_twitter_button)
-                .setTag("https://twitter" + ".com/search?q=%23" + data.teamKey);
-        view.findViewById(R.id.team_youtube_button)
-                .setTag("https://www.youtube" + ".com/results?search_query=" + data.teamKey);
-        view.findViewById(R.id.team_cd_button)
-                .setTag("http://www.chiefdelphi" + ".com/media/photos/tags/" + data.teamKey);
-        view.findViewById(R.id.team_website_button)
-                .setTag(!data.website.isEmpty() ? data.website :
-                        "https://www.google" + ".com/search?q=" + data.teamKey);
+        // If the team doesn't have a defined website, create a Google search for the team name
+        if (data.website.isEmpty()) {
+            view.findViewById(R.id.team_website_container).setTag("https://www.google.com/search?q=" + Uri.encode(data.nickname));
+            ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.find_event_on_google);
+        } else {
+            view.findViewById(R.id.team_website_container).setTag(data.website);
+            ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.view_event_website);
+        }
+
+        view.findViewById(R.id.team_twitter_container).setTag("https://twitter.com/search?q=%23" + data.teamKey);
+        ((TextView) view.findViewById(R.id.team_twitter_title)).setText(mActivity.getString(R.string.view_team_twitter, data.teamKey));
+
+        view.findViewById(R.id.team_youtube_container).setTag("https://www.youtube.com/results?search_query=" + data.teamKey);
+        ((TextView) view.findViewById(R.id.team_youtube_title)).setText(mActivity.getString(R.string.view_team_youtube, data.teamKey));
+
+        view.findViewById(R.id.team_cd_container).setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.teamKey);
+
         if (data.fullName.isEmpty()) {
             // No full name specified, hide the view
             view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
@@ -80,11 +88,11 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Override
     public void onComplete() {
         View progressBar = view.findViewById(R.id.progress);
-        if(progressBar != null) {
+        if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
 
-        if(!isDataBound()) {
+        if (!isDataBound()) {
             bindNoDataView();
         }
     }
@@ -103,7 +111,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     private void bindNoDataView() {
         try {
             content.setVisibility(View.GONE);
-            view.findViewById(R.id.no_data).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.progress).setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
             e.printStackTrace();

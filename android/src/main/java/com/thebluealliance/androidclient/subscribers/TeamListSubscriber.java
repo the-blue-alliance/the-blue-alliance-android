@@ -12,11 +12,16 @@ import java.util.List;
 public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListItem>> {
 
     private TeamSortByNumberComparator mComparator;
+    private boolean mShowTeamInfoButton = false;
 
     public TeamListSubscriber() {
         super();
         mDataToBind = new ArrayList<>();
         mComparator = new TeamSortByNumberComparator();
+    }
+
+    public void setShowTeamInfoButton(boolean show) {
+        mShowTeamInfoButton = show;
     }
 
     @Override
@@ -28,7 +33,7 @@ public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListI
             if (team == null) {
                 continue;
             }
-            ListItem item = team.render();
+            ListItem item = team.render(mShowTeamInfoButton);
             if (item == null) {
                 continue;
             }
