@@ -6,16 +6,17 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.BaseActivity;
@@ -51,7 +52,6 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private TransitionDrawable fabDrawable;
 
     private View settingsListContainer;
-    private View fabContainer;
     private View greenContainer;
 
     public static Intent newInstance(Context context, String modelKey, ModelHelper.MODELS modelType) {
@@ -68,7 +68,6 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         setContentView(R.layout.activity_mytba_model_settings);
 
         settingsListContainer = findViewById(R.id.settings_list);
-        fabContainer = findViewById(R.id.close_notification_settings_button_container);
         greenContainer = findViewById(R.id.green_container);
 
         setSearchEnabled(false);
@@ -214,14 +213,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.green);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
-        });
+        colorAnimation.addUpdateListener(animator -> saveModelPreferencesFab.setBackgroundTintList(ColorStateList.valueOf((Integer)animator.getAnimatedValue())));
         colorAnimation.setDuration(500);
         colorAnimation.start();
 
@@ -246,7 +238,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(animator -> {
             fabDrawable.startTransition(500);
-            saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
+            saveModelPreferencesFab.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue()));
         });
         colorAnimation.setDuration(500);
 

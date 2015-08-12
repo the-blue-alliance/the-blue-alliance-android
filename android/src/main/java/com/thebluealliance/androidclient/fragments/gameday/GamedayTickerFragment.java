@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,6 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -195,6 +195,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
                     }
                     if (notificationsList.isEmpty()) {
                         // Show the "none found" warning
+                        // TODO: Switch to using NoDataView
                         mProgressBar.setVisibility(View.GONE);
                         getView().findViewById(R.id.no_notifications_found).setVisibility(View.VISIBLE);
                         mListView.setVisibility(View.GONE);
