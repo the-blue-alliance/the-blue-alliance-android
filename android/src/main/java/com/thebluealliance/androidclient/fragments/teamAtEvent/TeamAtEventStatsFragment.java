@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 
 import rx.Observable;
@@ -57,5 +58,10 @@ public class TeamAtEventStatsFragment extends ListViewFragment<JsonObject, TeamS
     @Override
     protected Observable<JsonObject> getObservable() {
         return mDatafeed.fetchTeamAtEventStats(mEventKey, mTeamKey);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_stats_data);
     }
 }
