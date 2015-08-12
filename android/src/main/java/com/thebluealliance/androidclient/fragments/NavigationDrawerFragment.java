@@ -80,7 +80,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     static {
         NAVIGATION_ITEMS.add(new SpacerListItem());
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, R.string.nav_drawer_mytba_title, R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, R.string.nav_drawer_mytba_title, R.drawable.ic_star_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_gameday, R.string.nav_drawer_gameday_title, R.drawable.ic_videocam_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, R.string.nav_drawer_events_title, R.drawable.ic_event_black_24dp, R.layout.nav_drawer_item));
         NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, R.string.nav_drawer_districts_title, R.drawable.ic_assignment_black_24dp, R.layout.nav_drawer_item));

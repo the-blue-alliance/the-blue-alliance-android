@@ -1,57 +1,31 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
-import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.mytba.PopulateUserFavorites;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.models.Favorite;
+import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
 
-/**
- * File created by phil on 8/2/14.
- */
-public class MyFavoritesFragment extends Fragment implements RefreshListener {
+import java.util.List;
 
-    private Activity parent;
+import rx.Observable;
+
+public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, FavoriteListSubscriber> {
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
     private ListView mListView;
 
-    private PopulateUserFavorites mTask;
-
     public static MyFavoritesFragment newInstance() {
         return new MyFavoritesFragment();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).restartRefresh(true);
-        }
     }
 
     @Override
@@ -59,6 +33,8 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mBinder.listView = mListView;
+        mBinder.progressBar = progressBar;
 
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
@@ -71,9 +47,6 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
         if (mListView != null) {
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
@@ -81,26 +54,12 @@ public class MyFavoritesFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading user favorites");
-        mTask = new PopulateUserFavorites(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateUserFavorites newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+    protected Observable<List<Favorite>> getObservable() {
+        return mDatafeed.getCache().fetchUserFavorites(getActivity());
     }
 }

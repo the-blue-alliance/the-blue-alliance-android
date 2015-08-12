@@ -1,5 +1,6 @@
 language: android
 jdk: oraclejdk8
+sudo: false
 
 android:
   components:
@@ -10,12 +11,12 @@ android:
     - extra-android-m2repository
     - extra-google-m2repository
     - extra-google-google_play_services
-    
+
 env:
   matrix:
     - ANDROID_TARGET=android-22  ANDROID_ABI=armeabi-v7a
-  
-script: ./gradlew test
+
+script: ./gradlew testDevDebug -i
 
 after_success:
 - ./gradlew jacocoTestReport coveralls

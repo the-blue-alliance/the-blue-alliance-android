@@ -1,14 +1,23 @@
 package com.thebluealliance.androidclient;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.facebook.stetho.Stetho;
+import com.thebluealliance.androidclient.modules.BinderModule;
+import com.thebluealliance.androidclient.modules.DatabaseWriterModule;
+import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.modules.TBAAndroidModule;
+import com.thebluealliance.androidclient.modules.components.ApplicationComponent;
+import com.thebluealliance.androidclient.modules.components.DaggerApplicationComponent;
 
-/**
- * File created by phil on 7/21/14.
- */
-public class TBAAndroid extends Application {
+public class TBAAndroid extends MultiDexApplication {
+
+    private ApplicationComponent mComponent;
+    private TBAAndroidModule mModule;
+    private DatafeedModule mDatafeedModule;
+    private BinderModule mBinderModule;
+    private DatabaseWriterModule mDatabaseWriterModule;
 
     @Override
     public void onCreate() {
@@ -21,5 +30,42 @@ public class TBAAndroid extends Application {
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build());
         }
+    }
+
+    public TBAAndroidModule getModule() {
+        if (mModule == null) {
+            mModule = new TBAAndroidModule(this);
+        }
+        return mModule;
+    }
+
+    public DatafeedModule getDatafeedModule() {
+        if (mDatafeedModule == null) {
+            mDatafeedModule = new DatafeedModule();
+        }
+        return mDatafeedModule;
+    }
+
+    public BinderModule getBinderModule() {
+        if (mBinderModule == null) {
+            mBinderModule = new BinderModule();
+        }
+        return mBinderModule;
+    }
+
+    public DatabaseWriterModule getDatabaseWriterModule() {
+        if (mDatabaseWriterModule == null) {
+            mDatabaseWriterModule = new DatabaseWriterModule();
+        }
+        return mDatabaseWriterModule;
+    }
+
+    public ApplicationComponent getComponent() {
+        if (mComponent == null) {
+            mComponent = DaggerApplicationComponent.builder()
+              .tBAAndroidModule(getModule())
+              .build();
+        }
+        return mComponent;
     }
 }

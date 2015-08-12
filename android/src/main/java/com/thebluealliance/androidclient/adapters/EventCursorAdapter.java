@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 
 import java.util.Date;
@@ -24,7 +24,7 @@ public class EventCursorAdapter extends CursorAdapter {
     public String getKey(int position) {
         Cursor c = getCursor();
         c.moveToPosition(position);
-        return c.getString(c.getColumnIndex(Database.Events.KEY));
+        return c.getString(c.getColumnIndex(EventsTable.KEY));
     }
 
     public EventCursorAdapter(Context context, Cursor c, int flags) {
@@ -41,19 +41,19 @@ public class EventCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView dates = (TextView) view.findViewById(R.id.event_dates);
         Date startDate = null, endDate = null;
-        Log.d(Constants.LOG_TAG, "Start: " + cursor.getString(cursor.getColumnIndex(Database.Events.START)));
+        Log.d(Constants.LOG_TAG, "Start: " + cursor.getString(cursor.getColumnIndex(EventsTable.START)));
         try {
-            startDate = new Date(cursor.getLong(cursor.getColumnIndex(Database.Events.START)));
-            endDate = new Date(cursor.getLong(cursor.getColumnIndex(Database.Events.END)));
+            startDate = new Date(cursor.getLong(cursor.getColumnIndex(EventsTable.START)));
+            endDate = new Date(cursor.getLong(cursor.getColumnIndex(EventsTable.END)));
         } catch (Exception e) {
             // Oops.
         }
         dates.setText(EventHelper.getDateString(startDate, endDate));
 
         TextView name = (TextView) view.findViewById(R.id.event_name);
-        name.setText(cursor.getString(cursor.getColumnIndex(Database.Events.NAME)));
+        name.setText(cursor.getString(cursor.getColumnIndex(EventsTable.NAME)));
 
         TextView location = (TextView) view.findViewById(R.id.event_location);
-        location.setText(cursor.getString(cursor.getColumnIndex(Database.Events.LOCATION)));
+        location.setText(cursor.getString(cursor.getColumnIndex(EventsTable.LOCATION)));
     }
 }

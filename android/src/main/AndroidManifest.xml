@@ -237,7 +237,10 @@
         </service>
         <service
             android:name="com.thebluealliance.androidclient.background.RecreateSearchIndexes"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name="com.thebluealliance.androidclient.mytba.MyTbaUpdateService"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -6,22 +6,20 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.models.Stat;
 
-/**
- * File created by phil on 4/23/14.
- */
 public class StatsListElement extends ListElement {
 
-    private String mTeamNumber;
-    private String mTeamName;
-    private String mTeamStat;
-    private Double opr, dpr, ccwm;
+    public final String teamNumber;
+    public final String teamName;
+    public final String teamStat;
+    public final Double opr, dpr, ccwm;
 
     public StatsListElement(String key, String number, String name, String stat, Double opr, Double dpr, Double ccwm) {
         super(key);
-        mTeamNumber = number;
-        mTeamName = name;
-        mTeamStat = stat;
+        teamNumber = number;
+        teamName = name;
+        teamStat = stat;
         this.opr = opr;
         this.dpr = dpr;
         this.ccwm = ccwm;
@@ -42,15 +40,15 @@ public class StatsListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.teamNumber.setText("" + mTeamNumber);
+        holder.teamNumber.setText("" + teamNumber);
 
-        if (!mTeamName.isEmpty()) {
-            holder.teamName.setText(mTeamName);
+        if (!teamName.isEmpty()) {
+            holder.teamName.setText(teamName);
         } else {
-            holder.teamName.setText("Team " + mTeamNumber);
+            holder.teamName.setText("Team " + teamNumber);
         }
 
-        holder.teamStat.setText(mTeamStat);
+        holder.teamStat.setText(teamStat);
 
         return convertView;
     }
@@ -61,19 +59,44 @@ public class StatsListElement extends ListElement {
         TextView teamStat;
     }
 
-    public String getTeamNumber() {
-        return mTeamNumber;
+    public int getTeamNumber() {
+        return Integer.parseInt(teamNumber);
     }
 
     public Double getOpr() {
         return opr;
     }
 
+    public String getFormattedOpr() {
+        return Stat.displayFormat.format(opr);
+    }
+
     public Double getDpr() {
         return dpr;
     }
 
+    public String getFormattedDpr() {
+        return Stat.displayFormat.format(dpr);
+    }
+
     public Double getCcwm() {
         return ccwm;
+    }
+
+    public String getFormattedCcwm() {
+        return Stat.displayFormat.format(ccwm);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StatsListElement)) {
+            return false;
+        }
+        StatsListElement element = (StatsListElement) o;
+        return teamName.equals(element.teamName) &&
+          teamNumber.equals(element.teamNumber) &&
+          opr.equals(element.opr) &&
+          dpr.equals(element.dpr) &&
+          ccwm.equals(element.ccwm);
     }
 }

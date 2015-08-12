@@ -13,18 +13,26 @@ import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
-/**
- * File created by phil on 5/31/14.
- */
 public class ImageListElement extends ListElement {
 
-    private String imageUrl, linkUrl;
-    private Boolean isVideo;
+    public final String imageUrl, linkUrl;
+    public final Boolean isVideo;
 
     public ImageListElement(String imageUrl, String linkUrl, Boolean isVideo) {
         this.imageUrl = imageUrl;
         this.linkUrl = linkUrl;
         this.isVideo = isVideo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ImageListElement)) {
+            return false;
+        }
+        ImageListElement element = (ImageListElement) o;
+        return imageUrl.equals(element.imageUrl) &&
+          linkUrl.equals(element.linkUrl) &&
+          isVideo == element.isVideo;
     }
 
     @Override

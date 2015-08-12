@@ -16,6 +16,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
@@ -131,7 +132,7 @@ public class GCMMessageHandler extends IntentService {
                 /* Store this notification for future access */
                 StoredNotification stored = notification.getStoredNotification();
                 if (stored != null) {
-                    Database.Notifications table = Database.getInstance(c).getNotificationsTable();
+                    NotificationsTable table = Database.getInstance(c).getNotificationsTable();
                     table.add(stored);
                     table.prune();
                 }

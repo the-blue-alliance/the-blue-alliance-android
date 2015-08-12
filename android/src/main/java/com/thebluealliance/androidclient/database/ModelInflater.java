@@ -4,7 +4,17 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.AwardsTable;
+import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
+import com.thebluealliance.androidclient.database.tables.DistrictsTable;
+import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.MatchesTable;
+import com.thebluealliance.androidclient.database.tables.MediasTable;
+import com.thebluealliance.androidclient.database.tables.NotificationsTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
+import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -34,22 +44,22 @@ public class ModelInflater {
         Award award = new Award();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Awards.EVENTKEY:
+                case AwardsTable.EVENTKEY:
                     award.setEventKey(data.getString(i));
                     break;
-                case Database.Awards.NAME:
+                case AwardsTable.NAME:
                     award.setName(data.getString(i));
                     break;
-                case Database.Awards.YEAR:
+                case AwardsTable.YEAR:
                     award.setYear(data.getInt(i));
                     break;
-                case Database.Awards.WINNERS:
+                case AwardsTable.WINNERS:
                     award.setWinners(data.getString(i));
                     break;
-                case Database.Awards.KEY:
+                case AwardsTable.KEY:
                     award.setKey(data.getString(i));
                     break;
-                case Database.Awards.ENUM:
+                case AwardsTable.ENUM:
                     award.setEnum(data.getInt(i));
                     break;
                 default:
@@ -68,61 +78,61 @@ public class ModelInflater {
         Event event = new Event();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Events.KEY:
+                case EventsTable.KEY:
                     event.setEventKey(data.getString(i));
                     break;
-                case Database.Events.NAME:
+                case EventsTable.NAME:
                     event.setEventName(data.getString(i));
                     break;
-                case Database.Events.SHORTNAME:
+                case EventsTable.SHORTNAME:
                     event.setEventShortName(data.getString(i));
                     break;
-                case Database.Events.LOCATION:
+                case EventsTable.LOCATION:
                     event.setLocation(data.getString(i));
                     break;
-                case Database.Events.VENUE:
+                case EventsTable.VENUE:
                     event.setVenue(data.getString(i));
                     break;
-                case Database.Events.WEBSITE:
+                case EventsTable.WEBSITE:
                     event.setWebsite(data.getString(i));
                     break;
-                case Database.Events.TYPE:
+                case EventsTable.TYPE:
                     event.setEventType(data.getInt(i));
                     break;
-                case Database.Events.DISTRICT:
+                case EventsTable.DISTRICT:
                     event.setDistrictEnum(data.getInt(i));
                     break;
-                case Database.Events.DISTRICT_STRING:
+                case EventsTable.DISTRICT_STRING:
                     event.setDistrictTitle(data.getString(i));
                     break;
-                case Database.Events.DISTRICT_POINTS:
+                case EventsTable.DISTRICT_POINTS:
                     event.setDistrictPoints(data.getString(i));
                     break;
-                case Database.Events.START:
+                case EventsTable.START:
                     event.setStartDate(new Date(data.getLong(i)));
                     break;
-                case Database.Events.END:
+                case EventsTable.END:
                     event.setEndDate(new Date(data.getLong(i)));
                     break;
-                case Database.Events.OFFICIAL:
+                case EventsTable.OFFICIAL:
                     event.setOfficial(data.getInt(i) == 1);
                     break;
-                case Database.Events.WEEK:
+                case EventsTable.WEEK:
                     event.setCompetitionWeek(data.getInt(i));
                     break;
-                case Database.Events.RANKINGS:
+                case EventsTable.RANKINGS:
                     event.setRankings(data.getString(i));
                     break;
-                case Database.Events.ALLIANCES:
+                case EventsTable.ALLIANCES:
                     event.setAlliances(data.getString(i));
                     break;
-                case Database.Events.STATS:
+                case EventsTable.STATS:
                     event.setStats(data.getString(i));
                     break;
-                case Database.Events.TEAMS:
+                case EventsTable.TEAMS:
                     event.setTeams(data.getString(i));
                     break;
-                case Database.Events.WEBCASTS:
+                case EventsTable.WEBCASTS:
                     event.setWebcasts(data.getString(i));
                     break;
                 default:
@@ -141,25 +151,25 @@ public class ModelInflater {
         Match match = new Match();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Matches.KEY:
+                case MatchesTable.KEY:
                     match.setKey(data.getString(i));
                     break;
-                case Database.Matches.TIMESTRING:
+                case MatchesTable.TIMESTRING:
                     match.setTimeString(data.getString(i));
                     break;
-                case Database.Matches.TIME:
+                case MatchesTable.TIME:
                     match.setTime(data.getLong(i));
                     break;
-                case Database.Matches.ALLIANCES:
+                case MatchesTable.ALLIANCES:
                     match.setAlliances(data.getString(i));
                     break;
-                case Database.Matches.VIDEOS:
+                case MatchesTable.VIDEOS:
                     match.setVideos(data.getString(i));
                     break;
-                case Database.Matches.MATCHNUM:
+                case MatchesTable.MATCHNUM:
                     match.setMatchNumber(data.getInt(i));
                     break;
-                case Database.Matches.SETNUM:
+                case MatchesTable.SETNUM:
                     match.setSetNumber(data.getInt(i));
                     break;
                 default:
@@ -178,16 +188,16 @@ public class ModelInflater {
         Media media = new Media();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Medias.TYPE:
+                case MediasTable.TYPE:
                     media.setMediaType(data.getString(i));
                     break;
-                case Database.Medias.FOREIGNKEY:
+                case MediasTable.FOREIGNKEY:
                     media.setForeignKey(data.getString(i));
                     break;
-                case Database.Medias.YEAR:
+                case MediasTable.YEAR:
                     media.setYear(data.getInt(i));
                     break;
-                case Database.Medias.DETAILS:
+                case MediasTable.DETAILS:
                     media.setDetails(data.getString(i));
                     break;
                 default:
@@ -206,25 +216,25 @@ public class ModelInflater {
         Team team = new Team();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Teams.KEY:
+                case TeamsTable.KEY:
                     team.setTeamKey(data.getString(i));
                     break;
-                case Database.Teams.NUMBER:
+                case TeamsTable.NUMBER:
                     team.setTeamNumber(data.getInt(i));
                     break;
-                case Database.Teams.SHORTNAME:
+                case TeamsTable.SHORTNAME:
                     team.setNickname(data.getString(i));
                     break;
-                case Database.Teams.NAME:
+                case TeamsTable.NAME:
                     team.setFullName(data.getString(i));
                     break;
-                case Database.Teams.LOCATION:
+                case TeamsTable.LOCATION:
                     team.setLocation(data.getString(i));
                     break;
-                case Database.Teams.WEBSITE:
+                case TeamsTable.WEBSITE:
                     team.setWebsite(data.getString(i));
                     break;
-                case Database.Teams.YEARS_PARTICIPATED:
+                case TeamsTable.YEARS_PARTICIPATED:
                     team.setYearsParticipated(data.getString(i));
                     break;
                 default:
@@ -243,19 +253,19 @@ public class ModelInflater {
         EventTeam eventTeam = new EventTeam();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.EventTeams.TEAMKEY:
+                case EventTeamsTable.TEAMKEY:
                     eventTeam.setTeamKey(data.getString(i));
                     break;
-                case Database.EventTeams.EVENTKEY:
+                case EventTeamsTable.EVENTKEY:
                     eventTeam.setEventKey(data.getString(i));
                     break;
-                case Database.EventTeams.YEAR:
+                case EventTeamsTable.YEAR:
                     eventTeam.setYear(data.getInt(i));
                     break;
-                case Database.EventTeams.COMPWEEK:
+                case EventTeamsTable.COMPWEEK:
                     eventTeam.setCompWeek(data.getInt(i));
                     break;
-                case Database.EventTeams.KEY:
+                case EventTeamsTable.KEY:
                     eventTeam.setKey(data.getString(i));
                     break;
                 default:
@@ -268,19 +278,19 @@ public class ModelInflater {
         District district = new District();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Districts.KEY:
+                case DistrictsTable.KEY:
                     district.setKey(data.getString(i));
                     break;
-                case Database.Districts.ABBREV:
+                case DistrictsTable.ABBREV:
                     district.setAbbreviation(data.getString(i));
                     break;
-                case Database.Districts.ENUM:
+                case DistrictsTable.ENUM:
                     district.setEnum(data.getInt(i));
                     break;
-                case Database.Districts.YEAR:
+                case DistrictsTable.YEAR:
                     district.setYear(data.getInt(i));
                     break;
-                case Database.Districts.NAME:
+                case DistrictsTable.NAME:
                     district.setName(data.getString(i));
                     break;
                 default:
@@ -293,49 +303,49 @@ public class ModelInflater {
         DistrictTeam districtTeam = new DistrictTeam();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.DistrictTeams.KEY:
+                case DistrictTeamsTable.KEY:
                     districtTeam.setKey(data.getString(i));
                     break;
-                case Database.DistrictTeams.TEAM_KEY:
+                case DistrictTeamsTable.TEAM_KEY:
                     districtTeam.setTeamKey(data.getString(i));
                     break;
-                case Database.DistrictTeams.DISTRICT_KEY:
+                case DistrictTeamsTable.DISTRICT_KEY:
                     districtTeam.setDistrictKey(data.getString(i));
                     break;
-                case Database.DistrictTeams.DISTRICT_ENUM:
+                case DistrictTeamsTable.DISTRICT_ENUM:
                     districtTeam.setDistrictEnum(data.getInt(i));
                     break;
-                case Database.DistrictTeams.YEAR:
+                case DistrictTeamsTable.YEAR:
                     districtTeam.setYear(data.getInt(i));
                     break;
-                case Database.DistrictTeams.RANK:
+                case DistrictTeamsTable.RANK:
                     districtTeam.setRank(data.getInt(i));
                     break;
-                case Database.DistrictTeams.EVENT1_KEY:
+                case DistrictTeamsTable.EVENT1_KEY:
                     districtTeam.setEvent1Key(data.getString(i));
                     break;
-                case Database.DistrictTeams.EVENT1_POINTS:
+                case DistrictTeamsTable.EVENT1_POINTS:
                     districtTeam.setEvent1Points(data.getInt(i));
                     break;
-                case Database.DistrictTeams.EVENT2_KEY:
+                case DistrictTeamsTable.EVENT2_KEY:
                     districtTeam.setEvent2Key(data.getString(i));
                     break;
-                case Database.DistrictTeams.EVENT2_POINTS:
+                case DistrictTeamsTable.EVENT2_POINTS:
                     districtTeam.setEvent2Points(data.getInt(i));
                     break;
-                case Database.DistrictTeams.CMP_KEY:
+                case DistrictTeamsTable.CMP_KEY:
                     districtTeam.setCmpKey(data.getString(i));
                     break;
-                case Database.DistrictTeams.CMP_POINTS:
+                case DistrictTeamsTable.CMP_POINTS:
                     districtTeam.setCmpPoints(data.getInt(i));
                     break;
-                case Database.DistrictTeams.ROOKIE_POINTS:
+                case DistrictTeamsTable.ROOKIE_POINTS:
                     districtTeam.setRookiePoints(data.getInt(i));
                     break;
-                case Database.DistrictTeams.TOTAL_POINTS:
+                case DistrictTeamsTable.TOTAL_POINTS:
                     districtTeam.setTotalPoints(data.getInt(i));
                     break;
-                case Database.DistrictTeams.JSON:
+                case DistrictTeamsTable.JSON:
                     districtTeam.setJson(data.getString(i));
                     break;
                 default:
@@ -348,13 +358,13 @@ public class ModelInflater {
         Favorite favorite = new Favorite();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Favorites.MODEL_KEY:
+                case FavoritesTable.MODEL_KEY:
                     favorite.setModelKey(data.getString(i));
                     break;
-                case Database.Favorites.USER_NAME:
+                case FavoritesTable.USER_NAME:
                     favorite.setUserName(data.getString(i));
                     break;
-                case Database.Favorites.MODEL_ENUM:
+                case FavoritesTable.MODEL_ENUM:
                     favorite.setModelEnum(data.getInt(i));
                     break;
                 default:
@@ -367,16 +377,16 @@ public class ModelInflater {
         Subscription subscription = new Subscription();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Subscriptions.MODEL_KEY:
+                case SubscriptionsTable.MODEL_KEY:
                     subscription.setModelKey(data.getString(i));
                     break;
-                case Database.Subscriptions.USER_NAME:
+                case SubscriptionsTable.USER_NAME:
                     subscription.setUserName(data.getString(i));
                     break;
-                case Database.Subscriptions.MODEL_ENUM:
+                case SubscriptionsTable.MODEL_ENUM:
                     subscription.setModelEnum(data.getInt(i));
                     break;
-                case Database.Subscriptions.NOTIFICATION_SETTINGS:
+                case SubscriptionsTable.NOTIFICATION_SETTINGS:
                     Log.d(Constants.LOG_TAG, "Settings: " + data.getString(i));
                     subscription.setNotificationSettings(data.getString(i));
                     break;
@@ -390,28 +400,28 @@ public class ModelInflater {
         StoredNotification storedNotification = new StoredNotification();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
-                case Database.Notifications.ID:
+                case NotificationsTable.ID:
                     storedNotification.setId(data.getInt(i));
                     break;
-                case Database.Notifications.TYPE:
+                case NotificationsTable.TYPE:
                     storedNotification.setType(data.getString(i));
                     break;
-                case Database.Notifications.TITLE:
+                case NotificationsTable.TITLE:
                     storedNotification.setTitle(data.getString(i));
                     break;
-                case Database.Notifications.BODY:
+                case NotificationsTable.BODY:
                     storedNotification.setBody(data.getString(i));
                     break;
-                case Database.Notifications.INTENT:
+                case NotificationsTable.INTENT:
                     storedNotification.setIntent(data.getString(i));
                     break;
-                case Database.Notifications.TIME:
+                case NotificationsTable.TIME:
                     storedNotification.setTime(new Date(data.getLong(i)));
                     break;
-                case Database.Notifications.SYSTEM_ID:
+                case NotificationsTable.SYSTEM_ID:
                     storedNotification.setSystemId(data.getInt(i));
                     break;
-                case Database.Notifications.ACTIVE:
+                case NotificationsTable.ACTIVE:
                     storedNotification.setActive(data.getInt(i));
                     break;
             }

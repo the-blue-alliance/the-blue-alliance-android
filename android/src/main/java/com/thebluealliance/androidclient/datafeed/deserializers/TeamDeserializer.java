@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.lang.reflect.Type;
 
-import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
 
 public class TeamDeserializer implements JsonDeserializer<Team> {

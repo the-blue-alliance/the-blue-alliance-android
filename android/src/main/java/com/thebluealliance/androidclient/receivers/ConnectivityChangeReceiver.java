@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 
 import de.greenrobot.event.EventBus;

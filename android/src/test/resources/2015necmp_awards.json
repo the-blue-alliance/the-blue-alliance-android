@@ -1,0 +1,66 @@
+[
+  {
+    "event_key": "2015necmp",
+    "award_type": 0,
+    "name": "Regional Chairman's Award",
+    "recipient_list": [
+      {
+        "awardee": null,
+        "team_number": 125
+      },
+      {
+        "awardee": null,
+        "team_number": 125
+      },
+      {
+        "awardee": null,
+        "team_number": 125
+      },
+      {
+        "awardee": null,
+        "team_number": 125
+      }
+    ],
+    "year": 2015
+  },
+  {
+    "event_key": "2015necmp",
+    "award_type": 5,
+    "name": "Volunteer of the Year",
+    "recipient_list": [
+      {
+        "team_number": 125,
+        "awardee": "Ty Tremblay"
+      }
+    ],
+    "year": 2015
+  },
+  {
+    "event_key": "2015necmp",
+    "award_type": 4,
+    "name": "FIRST Dean's List Finalist Award",
+    "recipient_list": [
+      {
+        "team_number": 125,
+        "awardee": "Drew  Bennett"
+      },
+      {
+        "team_number": 125,
+        "awardee": "Camilo Gonzalez"
+      },
+    ],
+    "year": 2015
+  },
+  {
+    "event_key": "2015necmp",
+    "award_type": 16,
+    "name": "Industrial Design Award sponsored by General Motors",
+    "recipient_list": [
+      {
+        "team_number": 125,
+        "awardee": null
+      }
+    ],
+    "year": 2015
+  }
+]

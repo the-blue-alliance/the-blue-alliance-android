@@ -37,6 +37,16 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="InfoItemCardStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">2dp</item>
+    </style>
+
     <style name="InfoItemLabelStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -70,20 +80,16 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
-    <style name="InfoItemNavigationArrowStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:layout_alignParentRight">true</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:src">@drawable/ic_action_forward</item>
-    </style>
-
     <style name="InfoItemDividerStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">72dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="InfoItemFullWidthDividerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 
@@ -104,12 +110,6 @@
         <item name="android:layout_marginLeft">72dp</item>
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingBottom">16dp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="NavDrawerSmallLabelStyle" parent="NavDrawerLabelStyle">
-        <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
-        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 

@@ -19,11 +19,10 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer, a search
@@ -143,8 +142,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
         GCMHelper.registerGCMIfNeeded(this);
-        new UpdateMyTBA(this, new RequestParams(true, false)).execute();
         setDrawerProfileInfo();
+        startService(new Intent(this, MyTbaUpdateService.class));
     }
 
     /**
