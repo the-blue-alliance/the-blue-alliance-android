@@ -66,6 +66,7 @@
     <string name="no_subscription_data">No subscriptions found</string>
     <string name="match_not_found">Match not found</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
+    <string name="no_team_at_event_summary_data">No info found</string>
 
     <!-- View Team -->
     <string name="currently_competing">currently competing at</string>
