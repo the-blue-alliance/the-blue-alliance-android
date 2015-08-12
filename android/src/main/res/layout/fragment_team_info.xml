@@ -197,7 +197,7 @@
                             android:id="@+id/team_website_icon"
                             style="@style/InfoItemImageStyle"
                             android:src="@drawable/ic_web_black_24dp"
-                            app:tintColor="@color/primary" />
+                            app:tintColor="@color/black" />
 
                         <TextView
                             android:id="@+id/team_website_title"
@@ -218,7 +218,7 @@
                             android:id="@+id/team_twitter_icon"
                             style="@style/InfoItemImageStyle"
                             android:src="@drawable/ic_twitter_black_24dp"
-                            app:tintColor="@color/primary" />
+                            app:tintColor="@color/twitter_blue" />
 
                         <TextView
                             android:id="@+id/team_twitter_title"
@@ -239,7 +239,7 @@
                             android:id="@+id/team_youtube_icon"
                             style="@style/InfoItemImageStyle"
                             android:src="@drawable/ic_youtube_play_black_24dp"
-                            app:tintColor="@color/primary" />
+                            app:tintColor="@color/youtube_red" />
 
                         <TextView
                             android:id="@+id/team_youtube_title"
@@ -260,7 +260,7 @@
                             android:id="@+id/team_cd_icon"
                             style="@style/InfoItemImageStyle"
                             android:src="@drawable/ic_photo_library_black_24dp"
-                            app:tintColor="@color/primary" />
+                            app:tintColor="@color/chief_delphi_orange" />
 
                         <TextView
                             android:id="@+id/team_cd_title"
