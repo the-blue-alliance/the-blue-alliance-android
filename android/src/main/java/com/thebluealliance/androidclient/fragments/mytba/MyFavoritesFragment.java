@@ -33,6 +33,8 @@ public class MyFavoritesFragment extends ListviewFragment<List<Favorite>, Favori
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
         mListView = (ListView) view.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mBinder.listView = mListView;
+        mBinder.progressBar = progressBar;
 
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
