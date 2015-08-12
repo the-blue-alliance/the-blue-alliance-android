@@ -126,7 +126,7 @@ public class ModelHelper {
         }
     }
 
-    public static ListItem renderModelFromKey(Context context, String key, MODELS type, boolean showSettingsButton) {
+    public static ListItem renderModelFromKey(Context context, String key, MODELS type) {
         try {
             String text;
             Database db = Database.getInstance(context);

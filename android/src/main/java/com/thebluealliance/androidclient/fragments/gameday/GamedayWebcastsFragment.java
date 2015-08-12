@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.fragments.gameday;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,59 +11,48 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.gameday.PopulateGameDayWebcasts;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by phil on 3/27/15.
- */
-public class GamedayWebcastsFragment extends Fragment {
+import rx.Observable;
 
-    private ListView listView;
-    private ProgressBar progressBar;
-    private ListViewAdapter adapter;
-    private Parcelable listState;
-    private int firstVisiblePosition;
+public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, WebcastListSubscriber> {
+
+    private ListView mListView;
+    private ListViewAdapter mAdapter;
+    private int mYear;
+    private int mWeek;
 
     public static GamedayWebcastsFragment newInstance() {
         return new GamedayWebcastsFragment();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_carded, null);
-        listView = (ListView) v.findViewById(R.id.list);
-        progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        if (adapter != null) {
-            listView.setAdapter(adapter);
-            listView.onRestoreInstanceState(listState);
-            listView.setSelection(firstVisiblePosition);
-            Log.d("onCreateView", "using existing adapter");
-        } else {
-            adapter = new ListViewAdapter(getActivity(), new ArrayList<>());
-            listView.setAdapter(adapter);
-        }
-        return v;
+    public void onCreate(Bundle savedInstanceState) {
+        mYear = Utilities.getCurrentYear();
+        mWeek = Utilities.getCurrentCompWeek();
+        super.onCreate(savedInstanceState);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (listView != null) {
-            Log.d("onPause", "saving adapter");
-            adapter = (ListViewAdapter) listView.getAdapter();
-            listState = listView.onSaveInstanceState();
-            firstVisiblePosition = listView.getFirstVisiblePosition();
-        }
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        new PopulateGameDayWebcasts(this, new RequestParams(true, false)).execute();
+    protected Observable<List<Event>> getObservable() {
+        return mDatafeed.fetchEventsInWeek(mYear, mWeek);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_videocam_black_48dp, R.string.no_webcast_data_found);
     }
 }

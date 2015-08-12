@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,7 +136,7 @@ public class MatchHelper {
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Next match
      */
-    public static Match getNextMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
+    public static Match getNextMatchPlayed(List<Match> matches) throws BasicModel.FieldNotDefinedException {
         for (Match m : matches) {
             if (!m.hasBeenPlayed()) {
                 return m;
@@ -151,7 +152,7 @@ public class MatchHelper {
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Last match played
      */
-    public static Match getLastMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
+    public static Match getLastMatchPlayed(List<Match> matches) throws BasicModel.FieldNotDefinedException {
         Match last = null;
         for (Match m : matches) {
             if (!m.hasBeenPlayed()) {
@@ -267,7 +268,7 @@ public class MatchHelper {
      * @param teamKey     key associated with team
      * @return alliance number for team, or -1 if not on an alliance
      */
-    public static int getAllianceForTeam(ArrayList<Match> teamMatches, String teamKey) {
+    public static int getAllianceForTeam(List<Match> teamMatches, String teamKey) {
         int alliance = -1;
         if (teamMatches == null) {
             return alliance;
@@ -328,7 +329,7 @@ public class MatchHelper {
      * @param teamKey key associated with team
      * @return team record for that event
      */
-    public static int[] getRecordForTeam(ArrayList<Match> matches, String teamKey) {
+    public static int[] getRecordForTeam(List<Match> matches, String teamKey) {
         int[] record = new int[3];
         for (Match match : matches) {
             match.addToRecord(teamKey, record);
@@ -344,7 +345,7 @@ public class MatchHelper {
      * @param teamKey     key associated with team
      * @return team's past/current event status
      */
-    public static EventStatus evaluateStatusOfTeam(Event e, ArrayList<Match> teamMatches, String teamKey) throws BasicModel.FieldNotDefinedException {
+    public static EventStatus evaluateStatusOfTeam(Event e, List<Match> teamMatches, String teamKey) throws BasicModel.FieldNotDefinedException {
 
         // There might be match info available,
         // but no alliance selection data (for old events)

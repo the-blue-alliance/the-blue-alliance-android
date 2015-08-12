@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -83,7 +83,7 @@ public class UpcomingMatchNotification extends BaseNotification {
     @Override
     public Notification buildNotification(Context context) {
         String scheduledStartTimeString;
-        if (JSONManager.isNull(matchTime)) {
+        if (JSONHelper.isNull(matchTime)) {
             scheduledStartTimeString = "";
         } else {
             long scheduledStartTimeUNIX = matchTime.getAsLong();
@@ -187,7 +187,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         holder.time.setText(getNotificationTimeString(c));
 
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
-        new MatchListElement(redTeams, blueTeams, matchKey, JSONManager.isNull(matchTime) ? -1 : matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
+        new MatchListElement(redTeams, blueTeams, matchKey, JSONHelper.isNull(matchTime) ? -1 : matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
 
         return convertView;
     }

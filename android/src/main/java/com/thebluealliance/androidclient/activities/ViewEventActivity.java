@@ -15,17 +15,21 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.modules.components.FragmentComponent;
+import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-/**
- * File created by phil on 4/20/14.
- */
-public class ViewEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
+public class ViewEventActivity extends FABNotificationSettingsActivity
+  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String EVENTKEY = "eventKey";
     public static final String TAB = "tab";
@@ -37,6 +41,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
+    private FragmentComponent mComponent;
 
     /**
      * Create new intent for ViewEventActivity
@@ -60,6 +65,9 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // disable legacy RefreshableHostActivity
+        setRefreshEnabled(false);
 
         MyTBAHelper.serializeIntent(getIntent());
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
@@ -130,7 +138,6 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
-        startRefresh();
     }
 
     public void updateDistrict(boolean isDistrict) {
@@ -151,6 +158,9 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
     }
 
     private void setupActionBar() {
+        if (getSupportActionBar() == null) {
+            return;
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // The title is empty now; the EventInfoFragment will set the appropriate title
         // once it is loaded.
@@ -243,12 +253,30 @@ public class ViewEventActivity extends FABNotificationSettingsActivity implement
         t.send(new HitBuilders.EventBuilder()
                 .setCategory("view_event-tabs")
                 .setAction("tab_change")
-                .setLabel(mEventKey+ " "+adapter.getPageTitle(position))
+                .setLabel(eventKey+ " "+adapter.getPageTitle(position))
                 .build());*/
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public void onEvent(ActionBarTitleEvent event) {
+        setActionBarTitle(event.getTitle());
+    }
+
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .build();
+        }
+        return mComponent;
     }
 }

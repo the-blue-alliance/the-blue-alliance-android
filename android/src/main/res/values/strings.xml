@@ -34,6 +34,7 @@
     <string name="opr">OPR:</string>
     <string name="dpr">DPR:</string>
     <string name="ccwm">CCWM:</string>
+    <string name="stats_format"> OPR: %1$s, DPR: %2$s, CCWM: %3$s</string>
     <string name="alliance_title">Alliance #%d:</string>
     <string name="team_rank">Rank %d</string>
     <string name="no_location_available">No location available</string>
@@ -52,22 +53,23 @@
     <string name="close_stats_help">Close</string>
 
     <!-- No Data -->
-    <string name="no_data">No data was found for this event.</string>
-    <string name="no_team_info">No data was found for this team.</string>
-    <string name="no_alliance_data">No alliance data was found for this event.</string>
-    <string name="no_team_data">No team list was found for this event.</string>
-    <string name="no_match_data">No match results were found for this event.</string>
-    <string name="no_team_match_data">No matches found.</string>
-    <string name="no_ranking_data">No rankings were found for this event.</string>
-    <string name="no_stats_data">No stats data was found for this event.</string>
-    <string name="no_awards_data">No awards list was found for this event.</string>
-    <string name="no_team_stats_data">No stats data found.</string>
-    <string name="no_team_awards_data">No awards found.</string>
-    <string name="no_event_data">No events were found.</string>
-    <string name="no_media_data">No media was found for this team.</string>
-    <string name="no_district_points">No district points were found for this event.</string>
-    <string name="no_team_list">Unable to load team list.</string>
-    <string name="match_not_found">Match not found.</string>
+    <string name="no_team_info">No team info found</string>
+    <string name="no_alliance_data">No alliance data found</string>
+    <string name="no_team_data">No team list found</string>
+    <string name="no_match_data">No match results found</string>
+    <string name="no_team_match_data">No matches found</string>
+    <string name="no_ranking_data">No rankings found</string>
+    <string name="no_stats_data">No stats found</string>
+    <string name="no_awards_data">No awards found</string>
+    <string name="no_team_stats_data">No stats data found</string>
+    <string name="no_event_data">No events found</string>
+    <string name="no_event_info">No event info found</string>
+    <string name="no_media_data">No media found</string>
+    <string name="no_district_points">No district points found</string>
+    <string name="no_team_list">Unable to load team list</string>
+    <string name="no_favorites_data">No favorites found</string>
+    <string name="no_subscription_data">No subscriptions found</string>
+    <string name="match_not_found">Match not found</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
 
     <!-- View Team -->
@@ -103,8 +105,6 @@
     <string name="yt_header">YouTube Videos</string>
 
     <!-- My TBA -->
-    <string name="no_favorite_data">No favorites found.</string>
-    <string name="no_subscription_data">No subscriptions found</string>
     <string name="mytba_error">Error code %1$d: %2$s</string>
     <string name="cannot_find_match_title">Could not find match title</string>
 
@@ -135,7 +135,7 @@
     <string name="mytba_error_io_token">IO Exception while fetching account token</string>
     <string name="mytba_error_auth">Unable to authenticate Google Account</string>
     <string name="title_activity_notification_dashboard">Notification Dashboard</string>
-    <string name="no_recent_notifications">You do not have any recent notifications.</string>
+    <string name="no_recent_notifications">No recent notifications</string>
     <string name="recent_notifications_title">Recent Notifications</string>
 
 </resources>

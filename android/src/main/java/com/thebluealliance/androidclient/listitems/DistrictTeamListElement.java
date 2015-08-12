@@ -8,13 +8,13 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.TeamAtDistrictClickListener;
 
-/**
- * Created by phil on 7/24/14.
- */
 public class DistrictTeamListElement extends ListElement {
 
-    private String teamKey, districtKey, teamName;
-    private int totalPoints, teamRank;
+    public final String teamKey;
+    public final String districtKey;
+    public final String teamName;
+    public final int totalPoints;
+    public final int teamRank;
 
     public DistrictTeamListElement(String teamKey, String districtKey, String teamName, int rank, int points) {
         super();
@@ -63,6 +63,19 @@ public class DistrictTeamListElement extends ListElement {
             convertView.setBackgroundResource(R.drawable.transparent);
         }
         return convertView;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (! (o  instanceof DistrictTeamListElement)) {
+            return false;
+        }
+        DistrictTeamListElement element = (DistrictTeamListElement) o;
+        return teamKey.equals(element.teamKey) &&
+          districtKey.equals(element.districtKey) &&
+          teamName.equals(element.teamName) &&
+          totalPoints == element.totalPoints &&
+          teamRank == element.teamRank;
     }
 
     private static class ViewHolder {

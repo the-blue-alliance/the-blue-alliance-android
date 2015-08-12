@@ -1,49 +1,40 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventInfo;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.eventbus.EventInfoLoadedEvent;
-import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.binders.EventInfoBinder;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
-/**
- * File created by phil on 4/22/14.
- */
-public class EventInfoFragment extends Fragment implements RefreshListener, View.OnClickListener {
+public class EventInfoFragment
+  extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder>
+  implements View.OnClickListener {
+
+    private static final String KEY = "eventKey";
 
     private String mEventKey;
-    private static final String KEY = "eventKey";
-    private PopulateEventInfo mTask;
-    private Activity mActivity;
-    private Event mEvent;
 
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
@@ -55,80 +46,45 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
-        mActivity = getActivity();
-
-        if (mActivity instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mActivity).registerRefreshListener(this);
-        }
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_info, null);
-        view.findViewById(R.id.event_venue_container).setOnClickListener(this);
-        view.findViewById(R.id.event_website_container).setOnClickListener(this);
-        view.findViewById(R.id.event_twitter_container).setOnClickListener(this);
-        view.findViewById(R.id.event_youtube_container).setOnClickListener(this);
-        view.findViewById(R.id.event_cd_container).setOnClickListener(this);
-        view.findViewById(R.id.top_teams).setOnClickListener(this);
-        view.findViewById(R.id.top_oprs).setOnClickListener(this);
+        mBinder.setInflator(inflater);
+        mBinder.mView = view;
+        mBinder.mContent = view.findViewById(R.id.content);
+        mBinder.mEventName = (TextView) view.findViewById(R.id.event_name);
+        mBinder.mEventDate = (TextView) view.findViewById(R.id.event_date);
+        mBinder.mEventLoc = (TextView) view.findViewById(R.id.event_location);
+        mBinder.mEventVenue = (TextView) view.findViewById(R.id.event_venue);
+        mBinder.mTopTeamsContainer = view.findViewById(R.id.event_top_teams_container);
+        mBinder.mTopOprsContainer = view.findViewById(R.id.event_top_oprs_container);
+        mBinder.mTopTeams = (TextView) view.findViewById(R.id.event_top_teams);
+        mBinder.mTopOprs = (TextView) view.findViewById(R.id.event_top_oprs);
+        mBinder.mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (mActivity instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) mActivity).startRefresh(this);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " info");
-        mTask = new PopulateEventInfo(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventInfo newTask) {
-        mTask = newTask;
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.top_teams) {
-            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);
+        if (id == R.id.event_top_teams_container) {
+            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);  // Rankings
             return;
-        } else if (id == R.id.top_oprs) {
-            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);
+        } else if (id == R.id.event_top_oprs_container) {
+            ((ViewEventActivity) getActivity()).scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);  // Stats
+            return;
+        } else if (id == R.id.event_date_container) {
+            //TODO intent to add to calendar
             return;
         }
 
-        // Clickable social media views have their tags set to the information needed to construct an intent
         if (v.getTag() != null || !v.getTag().toString().isEmpty()) {
             String uri = v.getTag().toString();
 
@@ -149,53 +105,29 @@ public class EventInfoFragment extends Fragment implements RefreshListener, View
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((RefreshableHostActivity) mActivity).unregisterRefreshListener(this);
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(mBinder);
     }
 
-    protected void showLastMatch(MatchListElement match) {
-        ViewGroup lastMatchContainer = (ViewGroup) getView().findViewById(R.id.last_match_container);
-        FrameLayout lastMatchView = (FrameLayout) getView().findViewById(R.id.last_match_view);
-        lastMatchContainer.setVisibility(View.VISIBLE);
-        lastMatchView.removeAllViews();
-        lastMatchView.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(mBinder);
     }
 
-    protected void hideLastMatch() {
-        getView().findViewById(R.id.last_match_container).setVisibility(View.GONE);
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
     }
 
-    protected void showNextMatch(MatchListElement match) {
-        ViewGroup nextMatchContainer = (ViewGroup) getView().findViewById(R.id.next_match_container);
-        FrameLayout nextMatchView = (FrameLayout) getView().findViewById(R.id.next_match_view);
-        nextMatchContainer.setVisibility(View.VISIBLE);
-        nextMatchView.removeAllViews();
-        nextMatchView.addView(match.getView(getActivity(), getActivity().getLayoutInflater(), null));
+    @Override
+    protected Observable<Event> getObservable() {
+        return mDatafeed.fetchEvent(mEventKey);
     }
 
-    protected void hideNextMatch() {
-        getView().findViewById(R.id.next_match_container).setVisibility(View.GONE);
-    }
-
-    public void onEvent(LiveEventMatchUpdateEvent event) {
-        if (event.getLastMatch() != null) {
-            Log.d(Constants.LOG_TAG, "showing last match");
-            showLastMatch(event.getLastMatch().render());
-        } else {
-            hideLastMatch();
-        }
-
-        if (event.getNextMatch() != null) {
-            Log.d(Constants.LOG_TAG, "showing next match");
-            showNextMatch(event.getNextMatch().render());
-        } else {
-            hideNextMatch();
-        }
-    }
-
-    // Called when the event has been loaded. We use this to set up the calendar stuff.
-    public void onEvent(EventInfoLoadedEvent eventEvent) {
-        this.mEvent = eventEvent.getEvent();
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_event_info);
     }
 }
