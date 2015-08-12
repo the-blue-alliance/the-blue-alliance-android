@@ -6,4 +6,6 @@
     <dimen name="border_stroke">2dip</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
 
+    <dimen name="fab_margin">0dp</dimen>
+
 </resources>
