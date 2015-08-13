@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -12,9 +16,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.BuildConfig;
@@ -22,7 +28,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
+import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
+import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -31,6 +38,8 @@ import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import me.relex.circleindicator.CircleIndicator;
 
 /**
  * Created by Nathan on 5/25/2014.
@@ -46,6 +55,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
     protected DisableSwipeViewPager viewPager;
 
     private TextView loadingMessage;
+    private ProgressBar loadingProgressBar;
+    private View continueToEndButton;
 
     private String currentLoadingMessage = "";
 
@@ -97,8 +108,16 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
         viewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
         viewPager.setSwipeEnabled(false);
         viewPager.setOffscreenPageLimit(2);
-        viewPager.setAdapter(new FirstLaunchFragmentAdapter(this));
+        viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
         loadingMessage = (TextView) findViewById(R.id.message);
+        loadingProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        continueToEndButton = findViewById(R.id.continue_to_end);
+        continueToEndButton.setOnClickListener(this);
+
+        ViewPager myTBAViewPager = (ViewPager) findViewById(R.id.mytba_view_pager);
+        myTBAViewPager.setAdapter(new MyTBAOnboardingPagerAdapter(myTBAViewPager));
+        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.mytba_pager_indicator);
+        indicator.setViewPager(myTBAViewPager);
 
         // If the activity is being recreated after a config change, restore the message that was
         // being shown when the last activity was destroyed
@@ -190,6 +209,9 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             case R.id.welcome_next_page:
                 beginLoadingIfConnected();
                 break;
+            case R.id.continue_to_end:
+                viewPager.advanceToNextPage();
+                break;
             case R.id.finish:
                 authenticate();
                 break;
@@ -212,8 +234,8 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                         beginLoadingIfConnected();
                         dialog.dismiss();
                     }).setNegativeButton(getString(R.string.cancel), (dialog, id) -> {
-                        finish();
-                    });
+                finish();
+            });
 
             // Create alert dialog
             AlertDialog alertDialog = alertDialogBuilder.create();
@@ -303,12 +325,36 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
             loadingMessage.setText(currentLoadingMessage);
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_FINISHED) {
             loadingFinished();
-            if (viewPager != null) {
-                viewPager.advanceToNextPage();
-            } else {
-                // Pager is null, skipping to HomeActivity
-                startActivity(HomeActivity.newInstance(this, R.id.nav_item_events));
-            }
+
+            loadingMessage.setText("Loading complete");
+
+            // After two seconds, fade out the message and spinner and fade in the "continue" button
+            loadingMessage.postDelayed(() -> {
+                ValueAnimator fadeOutAnimation = ValueAnimator.ofFloat(1.0f, 0.0f);
+                fadeOutAnimation.addUpdateListener(animation -> {
+                    loadingMessage.setAlpha((float) animation.getAnimatedValue());
+                    loadingProgressBar.setAlpha((float) animation.getAnimatedValue());
+                });
+                fadeOutAnimation.setDuration(250);
+
+                ValueAnimator fadeInAnimation = ValueAnimator.ofFloat(0.0f, 1.0f);
+                fadeInAnimation.addUpdateListener(animation -> {
+                    continueToEndButton.setAlpha((float) animation.getAnimatedValue());
+                });
+                fadeInAnimation.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        continueToEndButton.setAlpha(0.0f);
+                        continueToEndButton.setVisibility(View.VISIBLE);
+                    }
+                });
+                fadeInAnimation.setDuration(250);
+
+                AnimatorSet animationSet = new AnimatorSet();
+                animationSet.play(fadeOutAnimation);
+                animationSet.play(fadeInAnimation).after(fadeOutAnimation);
+                animationSet.start();
+            }, 2000);
         } else if (info.state == LoadAllData.LoadProgressInfo.STATE_ERROR) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(ALL_DATA_LOADED, false).commit();
             errorLoadingData(info.message);

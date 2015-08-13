@@ -84,7 +84,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator);
 
         mNotificationSettings = (RelativeLayout) findViewById(R.id.notification_settings);
-        mOpenNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.open_notification_settings_button);
+        mOpenNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.example_fab);
         mOpenNotificationSettingsButton.setOnClickListener(this);
 
         mCloseNotificationSettingsButton = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
@@ -169,7 +169,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.open_notification_settings_button) {
+        if (v.getId() == R.id.example_fab) {
             if (!mSaveInProgress) {
                 openNotificationSettingsView();
             }

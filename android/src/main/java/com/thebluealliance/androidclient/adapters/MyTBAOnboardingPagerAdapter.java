@@ -1,22 +1,18 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.app.Activity;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 4/22/2014.
- */
-public class FirstLaunchFragmentAdapter extends PagerAdapter {
+public class MyTBAOnboardingPagerAdapter extends PagerAdapter {
 
     private int mCount = 3;
-    private Activity activity;
+    private ViewGroup mView;
 
-    public FirstLaunchFragmentAdapter(Activity activity) {
-        this.activity = activity;
+    public MyTBAOnboardingPagerAdapter(ViewGroup view) {
+        mView = view;
     }
 
     @Override
@@ -24,21 +20,22 @@ public class FirstLaunchFragmentAdapter extends PagerAdapter {
         return mCount;
     }
 
+    @Override
     public Object instantiateItem(ViewGroup collection, int position) {
 
         int resId = 0;
         switch (position) {
             case 0:
-                resId = R.id.welcome_page;
+                resId = R.id.page_one;
                 break;
             case 1:
-                resId = R.id.loading_page;
+                resId = R.id.page_two;
                 break;
             case 2:
-                resId = R.id.load_finished_page;
+                resId = R.id.page_three;
                 break;
         }
-        return activity.findViewById(resId);
+        return mView.findViewById(resId);
     }
 
     @Override

@@ -1,140 +1,310 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.thebluealliance.androidclient.views.DisableSwipeViewPager
-    android:id="@+id/view_pager"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/welcome_page"
+    <com.thebluealliance.androidclient.views.DisableSwipeViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/primary">
 
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/welcome_next_page"
-            android:layout_alignParentTop="true">
+        <RelativeLayout
+            android:id="@+id/welcome_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:id="@+id/welcome_message_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/welcome_next_page_container">
 
                 <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/welcome_title_prefix"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/welcome_prefix"
+                    android:textColor="@color/white"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/welcome_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/welcome_title_prefix"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
                     android:gravity="center_horizontal"
                     android:text="@string/welcome"
-                    android:textSize="35sp" />
+                    android:textColor="@color/white"
+                    android:textSize="36sp" />
 
                 <ImageView
                     android:id="@+id/welcome_logo"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/textView"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_launcher_ultrahires_noshadow" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/welcome_message"
+                    android:layout_below="@id/welcome_title"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_tba_lamp" />
 
                 <TextView
-                    android:id="@+id/welcome_message"
+                    android:id="@id/welcome_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/welcome_logo"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="16dp"
                     android:gravity="center_horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
                     android:text="@string/welcome_message"
+                    android:textColor="@color/white"
                     android:textSize="20sp" />
             </RelativeLayout>
-        </ScrollView>
-
-        <Button
-            android:id="@+id/welcome_next_page"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/next" />
-
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/loading_page"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:id="@id/welcome_next_page_container"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/primary_dark">
+
+                <LinearLayout
+                    android:id="@+id/welcome_next_page"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="NEXT"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_chevron_right_white_24dp" />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/loading_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/mytba_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/mytba_pager_indicator">
+
+                <RelativeLayout
+                    android:id="@+id/page_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:gravity="center_horizontal"
+                            android:text="While you wait, why not check out myTBA?"
+                            android:textColor="@color/white"
+                            android:textSize="36sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:gravity="center_horizontal"
+                            android:text="myTBA lets you track your favorite things in FRC and receive notifications for score updates, event winners, and more."
+                            android:textColor="@color/white"
+                            android:textSize="24sp" />
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/page_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/example_fab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_margin="@dimen/fab_margin"
+                        android:src="@drawable/ic_star_white_24dp"
+                        app:fabSize="normal" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/example_fab"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="32dp"
+                        android:gravity="center_horizontal"
+                        android:text="Anywhere you see this yellow button, you can use myTBA."
+                        android:textColor="@color/white"
+                        android:textSize="24sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/page_three"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></RelativeLayout>
+            </android.support.v4.view.ViewPager>
+
+            <me.relex.circleindicator.CircleIndicator
+                android:id="@id/mytba_pager_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_above="@+id/loading_status_container" />
+
+            <RelativeLayout
+                android:id="@id/loading_status_container"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/primary_dark">
 
                 <ProgressBar
                     android:id="@+id/progress_bar"
                     android:layout_width="wrap_content"
-                    android:layout_height="108dp"
-                    android:layout_centerHorizontal="true"
-                    android:minWidth="108dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="12dp"
+                    android:indeterminate="true" />
 
                 <TextView
                     android:id="@+id/message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/progress_bar"
-                    android:gravity="center_horizontal"
-                    android:textSize="40sp" />
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/progress_bar"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/continue_to_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="CONTINUE"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_chevron_right_white_24dp" />
+                </LinearLayout>
             </RelativeLayout>
-        </ScrollView>
-    </RelativeLayout>
+        </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/load_finished_page"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ScrollView
+        <RelativeLayout
+            android:id="@+id/load_finished_page"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/finish">
+            android:layout_height="match_parent">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_above="@+id/finish_container">
 
                 <ImageView
                     android:id="@+id/finished_logo"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_alignParentTop="true"
+                    android:layout_height="200dp"
+                    android:layout_centerInParent="true"
                     android:layout_marginBottom="20dp"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_launcher_ultrahires_noshadow" />
+                    android:src="@drawable/ic_tba_lamp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/finished_logo"
+                    android:layout_margin="16dp"
                     android:gravity="center_horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
                     android:text="@string/load_finished_message"
+                    android:textColor="@color/white"
                     android:textSize="20sp" />
             </RelativeLayout>
-        </ScrollView>
 
-        <Button
-            android:id="@+id/finish"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/finish" />
-    </RelativeLayout>
+            <RelativeLayout
+                android:id="@id/finish_container"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/primary_dark">
 
-</com.thebluealliance.androidclient.views.DisableSwipeViewPager>
+                <LinearLayout
+                    android:id="@+id/finish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="FINISH"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_chevron_right_white_24dp" />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </com.thebluealliance.androidclient.views.DisableSwipeViewPager>
+</RelativeLayout>
