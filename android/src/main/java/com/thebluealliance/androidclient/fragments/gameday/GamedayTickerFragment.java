@@ -144,7 +144,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     private ListViewAdapter createFilterListAdapter() {
         List<ListItem> listItems = new ArrayList<>();
 
-        // Start with all notificaitons enabled
+        // Start with all notifications enabled
         listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_upcoming_match, "Upcoming Matches", NotificationTypes.UPCOMING_MATCH, true));
         listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_match_results, "Match Results", NotificationTypes.MATCH_SCORE, true));
         listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_schedule_updated, "Schedule Updated", NotificationTypes.SCHEDULE_UPDATED, true));

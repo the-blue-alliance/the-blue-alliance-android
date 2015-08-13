@@ -43,6 +43,7 @@ public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSub
             mEventKey = getArguments().getString(KEY, "");
         }
         super.onCreate(savedInstanceState);
+        mSubscriber.setShowTeamInfoButton(true);
     }
 
     @Override

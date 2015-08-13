@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.net.Uri;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -26,87 +27,91 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     private LayoutInflater mInflater;
     private boolean mIsLive;
 
-    public View mView;
-    public View mContent;
-    public TextView mEventName;
-    public TextView mEventDate;
-    public TextView mEventLoc;
-    public TextView mEventVenue;
-    public TextView mTopTeams;
-    public TextView mTopOprs;
-    public View mTopTeamsContainer;
-    public View mTopOprsContainer;
-    public ProgressBar mProgressBar;
+    public View view;
+    public View content;
+    public TextView eventName;
+    public TextView eventDate;
+    public TextView eventLoc;
+    public TextView eventVenue;
+    public TextView topTeams;
+    public TextView topOprs;
+    public View topTeamsContainer;
+    public View topOprsContainer;
+    public ProgressBar progressBar;
 
-    public void setInflator(LayoutInflater inflator) {
-        mInflater = inflator;
+    public void setInflater(LayoutInflater inflater) {
+        mInflater = inflater;
     }
 
     //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override
     public void updateData(@Nullable Model data) {
-        if (data == null || mView == null) {
+        if (data == null || view == null) {
             setDataBound(false);
             return;
         }
 
         mIsLive = data.isLive;
-        mEventName.setText(data.nameString);
+        eventName.setText(data.nameString);
         if (data.dateString.isEmpty()) {
-            mView.findViewById(R.id.event_date_container).setVisibility(View.GONE);
+            view.findViewById(R.id.event_date_container).setVisibility(View.GONE);
         } else {
-            mEventDate.setText(data.dateString);
+            eventDate.setText(data.dateString);
         }
 
         // Show a venue if it is available, otherwise show just the location. If neither is available, hide
         if (!data.venueString.isEmpty()) {
-            mEventVenue.setText(data.venueString);
+            eventVenue.setText(data.venueString);
         } else if (!data.locationString.isEmpty()) {
-            mEventVenue.setText(data.locationString);
+            eventVenue.setText(data.locationString);
         } else {
-            mEventVenue.setText(R.string.no_location_available);
-            mView.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
+            eventVenue.setText(R.string.no_location_available);
+            view.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
         }
 
         // setup social media intents
         // Default to showing the nav arrow in the venue view and the venue view being clickable
         // We need to set these again even though they're defined in XML in case we gain a location
         // or venue on a refresh and we're reusing the same view.
-        mView.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.VISIBLE);
-        mView.setFocusable(true);
-        mView.setClickable(true);
+
+        View eventVenueContainer = view.findViewById(R.id.event_venue_container);
+        eventVenueContainer.setFocusable(true);
+        eventVenueContainer.setClickable(true);
 
         if (!data.venueString.isEmpty()) {
             // Set the tag to the event venue if it is available
-            mView.findViewById(R.id.event_venue_container).setTag(
-                    "geo:0,0?q=" + data.venueString.replace(" ", "+"));
+            eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.venueString));
         } else if (!data.locationString.isEmpty()) {
             // Otherwise, use the location
-            mView.findViewById(R.id.event_venue_container).setTag(
-                    "geo:0,0?q=" + data.locationString.replace(" ", "+"));
+            eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.locationString));
         } else {
             // If neither location nor venue are available, hide the nav arrow, remove the tag,
             // and set the view to not clickable so the user cannot interact with it.
             // It will contain the text "No location available".
-            mView.findViewById(R.id.event_venue_container).setTag(null);
-            mView.findViewById(R.id.event_venue_nav_arrow).setVisibility(View.GONE);
-            mView.setFocusable(false);
-            mView.setClickable(false);
+            eventVenueContainer.setTag(null);
+            eventVenueContainer.setFocusable(false);
+            eventVenueContainer.setClickable(false);
         }
 
-        mView.findViewById(R.id.event_website_button).setTag(
-                !data.eventWebsite.isEmpty()
-                        ? data.eventWebsite
-                        : "https://www.google.com/search?q=" + data.nameString);
-        mView.findViewById(R.id.event_twitter_button).setTag(
-                "https://twitter.com/search?q=%23" + data.eventKey);
-        mView.findViewById(R.id.event_youtube_button).setTag(
-                "https://www.youtube.com/results?search_query=" + data.eventKey);
-        mView.findViewById(R.id.event_cd_button).setTag(
-                "http://www.chiefdelphi.com/media/photos/tags/" + data.eventKey);
+        // If the event doesn't have a defined website, create a Google search for the event name
+        if (data.eventWebsite.isEmpty()) {
+            view.findViewById(R.id.event_website_container).setTag("https://www.google.com/search?q=" + Uri.encode(data.nameString));
+            ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.find_event_on_google);
+        } else {
+            view.findViewById(R.id.event_website_container).setTag(data.eventWebsite);
+            ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.view_event_website);
+        }
 
-        mContent.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.GONE);
+        view.findViewById(R.id.event_twitter_container).setTag("https://twitter.com/search?q=%23" + data.eventKey);
+        ((TextView) view.findViewById(R.id.event_twitter_title)).setText(mActivity.getString(R.string.view_event_twitter, data.eventKey));
+
+        view.findViewById(R.id.event_youtube_container).setTag("https://www.youtube.com/results?search_query=" + data.eventKey);
+        ((TextView) view.findViewById(R.id.event_youtube_title)).setText(mActivity.getString(R.string.view_event_youtube, data.eventKey));
+
+        view.findViewById(R.id.event_cd_container).setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.eventKey);
+
+        content.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
 
         EventBus.getDefault().post(new ActionBarTitleEvent(data.titleString));
         //EventBus.getDefault().post(new EventInfoLoadedEvent());
@@ -117,11 +122,11 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Override
     public void onComplete() {
-        if(mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
         }
 
-        if(!isDataBound()) {
+        if (!isDataBound()) {
             bindNoDataView();
         }
     }
@@ -139,8 +144,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     private void bindNoDataView() {
         try {
-            mContent.setVisibility(View.GONE);
-            mView.findViewById(R.id.no_data).setVisibility(View.GONE);
+            content.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,21 +165,17 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     protected void showLastMatch(MatchListElement match) {
-        LinearLayout lastLayout = (LinearLayout) mView.findViewById(R.id.event_last_match_container);
-        lastLayout.setVisibility(View.VISIBLE);
-        if (lastLayout.getChildCount() > 1) {
-            lastLayout.removeViewAt(1);
-        }
-        lastLayout.addView(match.getView(mActivity, mInflater, null));
+        FrameLayout matchView = (FrameLayout) view.findViewById(R.id.last_match_view);
+        matchView.setVisibility(View.VISIBLE);
+        matchView.removeAllViews();
+        matchView.addView(match.getView(mActivity, mInflater, null));
     }
 
     protected void showNextMatch(MatchListElement match) {
-        LinearLayout nextLayout = (LinearLayout) mView.findViewById(R.id.event_next_match_container);
-        nextLayout.setVisibility(View.VISIBLE);
-        if (nextLayout.getChildCount() > 1) {
-            nextLayout.removeViewAt(1);
-        }
-        nextLayout.addView(match.getView(mActivity, mInflater, null));
+        FrameLayout matchView = (FrameLayout) view.findViewById(R.id.next_match_view);
+        matchView.setVisibility(View.VISIBLE);
+        matchView.removeAllViews();
+        matchView.addView(match.getView(mActivity, mInflater, null));
     }
 
     public void onEvent(LiveEventMatchUpdateEvent event) {
@@ -192,15 +193,15 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     public void onEvent(EventRankingsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            mTopTeamsContainer.setVisibility(View.VISIBLE);
-            mTopTeams.setText(Html.fromHtml(event.getRankString()));
+            topTeamsContainer.setVisibility(View.VISIBLE);
+            topTeams.setText(Html.fromHtml(event.getRankString()));
         });
     }
 
     public void onEvent(EventStatsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            mTopOprsContainer.setVisibility(View.VISIBLE);
-            mTopOprs.setText(Html.fromHtml(event.getStatString()));
+            topOprsContainer.setVisibility(View.VISIBLE);
+            topOprs.setText(Html.fromHtml(event.getStatString()));
         });
     }
 }
