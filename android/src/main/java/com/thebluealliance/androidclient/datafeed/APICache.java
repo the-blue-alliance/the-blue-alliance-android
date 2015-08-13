@@ -34,7 +34,7 @@ import javax.inject.Singleton;
 import rx.Observable;
 
 @Singleton
-public class APICache implements APIv2 {
+public class APICache implements Datafeed {
 
     private Database mDb;
 
@@ -99,7 +99,7 @@ public class APICache implements APIv2 {
     public Observable<List<Media>> fetchTeamMediaInYear(String teamKey, int year) {
         String where = MediasTable.TEAMKEY + " = ? AND " + MediasTable.YEAR + " = ?";
         return Observable.just(mDb.getMediasTable().getForQuery(null, where, new String[]{teamKey,
-                Integer.toString(year)}));
+          Integer.toString(year)}));
     }
 
     @Override
@@ -133,7 +133,7 @@ public class APICache implements APIv2 {
         String where =
                 String.format("%1$s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.WEEK);
         return Observable.just(mDb.getEventsTable()
-                .getForQuery(null, where, new String[]{Integer.toString(year), Integer.toString(week)}));
+          .getForQuery(null, where, new String[]{Integer.toString(year), Integer.toString(week)}));
     }
 
     public Observable<List<Event>> fetchEventsInMonth(int year, int month) {
@@ -149,7 +149,7 @@ public class APICache implements APIv2 {
                 EventsTable.START,
                 EventsTable.END);
         return Observable.just(mDb.getEventsTable()
-                .getForQuery(null, where, new String[]{start, end}));
+          .getForQuery(null, where, new String[]{start, end}));
     }
 
     @Override
@@ -182,7 +182,7 @@ public class APICache implements APIv2 {
     public Observable<List<Match>> fetchEventMatches(String eventKey) {
         String where = String.format("%1$s = ?", MatchesTable.EVENT);
         return Observable.just(
-                mDb.getMatchesTable().getForQuery(null, where, new String[]{eventKey}));
+          mDb.getMatchesTable().getForQuery(null, where, new String[]{eventKey}));
     }
 
     @Override
@@ -203,7 +203,7 @@ public class APICache implements APIv2 {
     public Observable<List<Award>> fetchEventAwards(String eventKey) {
         String where = String.format("%1$s = ?", AwardsTable.EVENTKEY);
         return Observable.just(
-                mDb.getAwardsTable().getForQuery(null, where, new String[]{eventKey}));
+          mDb.getAwardsTable().getForQuery(null, where, new String[]{eventKey}));
     }
 
     @Override
@@ -220,7 +220,7 @@ public class APICache implements APIv2 {
     public Observable<List<District>> fetchDistrictList(int year) {
         String where = String.format("%1$s = ?", DistrictsTable.YEAR);
         return Observable.just(
-                mDb.getDistrictsTable().getForQuery(null, where, new String[]{Integer.toString(year)}));
+          mDb.getDistrictsTable().getForQuery(null, where, new String[]{Integer.toString(year)}));
     }
 
     @Override
@@ -229,9 +229,9 @@ public class APICache implements APIv2 {
                 String.format("$1%s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.DISTRICT);
         int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtShort).ordinal();
         return Observable.just(mDb.getEventsTable().getForQuery(
-                null,
-                where,
-                new String[]{Integer.toString(year), Integer.toString(districtEnum)}));
+          null,
+          where,
+          new String[]{Integer.toString(year), Integer.toString(districtEnum)}));
     }
 
     @Override
@@ -242,9 +242,9 @@ public class APICache implements APIv2 {
                 DistrictTeamsTable.DISTRICT_ENUM);
         int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtShort).ordinal();
         return Observable.just(mDb.getDistrictTeamsTable().getForQuery(
-                null,
-                where,
-                new String[]{Integer.toString(year), Integer.toString(districtEnum)}));
+          null,
+          where,
+          new String[]{Integer.toString(year), Integer.toString(districtEnum)}));
     }
 
     @Override

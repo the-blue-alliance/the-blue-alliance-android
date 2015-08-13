@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datafeed;
+package com.thebluealliance.androidclient.datafeed.retrofit;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.List;
 
+import retrofit.Response;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import rx.Observable;
@@ -24,80 +25,80 @@ public interface APIv2 {
     String TBA_URL = "http://www.thebluealliance.com/";
 
     @GET("/api/v2/teams/{pageNum}")
-    Observable<List<Team>> fetchTeamPage(@Path("pageNum") int pageNum);
+    Observable<Response<List<Team>>> fetchTeamPage(@Path("pageNum") int pageNum);
 
     @GET("/api/v2/team/{teamKey}")
-    Observable<Team> fetchTeam(@Path("teamKey") String teamKey);
+    Observable<Response<Team>> fetchTeam(@Path("teamKey") String teamKey);
 
     @GET("/api/v2/team/{teamKey}/{year}/events")
-    Observable<List<Event>> fetchTeamEvents(
+    Observable<Response<List<Event>>> fetchTeamEvents(
       @Path("teamKey") String teamKey,
       @Path("year") int year);
 
     @GET("/api/v2/team/{teamKey}/event/{eventKey}/awards")
-    Observable<List<Award>> fetchTeamAtEventAwards(
+    Observable<Response<List<Award>>> fetchTeamAtEventAwards(
       @Path("teamKey") String teamKey,
       @Path("eventKey") String eventKey);
 
     @GET("/api/v2/team/{teamKey}/event/{eventKey}/matches")
-    Observable<List<Match>> fetchTeamAtEventMatches(
+    Observable<Response<List<Match>>> fetchTeamAtEventMatches(
       @Path("teamKey") String teamKey,
       @Path("eventKey") String eventKey);
 
     @GET("/api/v2/team/{teamKey}/years_participated")
-    Observable<JsonArray> fetchTeamYearsParticipated(@Path("teamKey") String teamKey);
+    Observable<Response<JsonArray>> fetchTeamYearsParticipated(@Path("teamKey") String teamKey);
 
     @GET("/api/v2/team/{teamKey}/{year}/media")
-    Observable<List<Media>> fetchTeamMediaInYear(
+    Observable<Response<List<Media>>> fetchTeamMediaInYear(
       @Path("teamKey") String teamKey,
       @Path("year") int year);
 
     @GET("/api/v2/team/{teamKey}/history/events")
-    Observable<List<Event>> fetchTeamEventHistory(
+    Observable<Response<List<Event>>> fetchTeamEventHistory(
       @Path("teamKey") String teamKey);
 
     @GET("/api/v2/team/{teamKey}/history/awards")
-    Observable<List<Award>> fetchTeamEventAwards(
+    Observable<Response<List<Award>>> fetchTeamEventAwards(
       @Path("teamKey") String teamKey);
 
     @GET("/api/v2/events/{year}")
-    Observable<List<Event>> fetchEventsInYear(@Path("year") int year);
+    Observable<Response<List<Event>>> fetchEventsInYear(@Path("year") int year);
 
     @GET("/api/v2/event/{eventKey}")
-    Observable<Event> fetchEvent(@Path("eventKey") String eventKey);
+    Observable<Response<Event>> fetchEvent(@Path("eventKey") String eventKey);
 
     @GET("/api/v2/event/{eventKey}/teams")
-    Observable<List<Team>> fetchEventTeams(@Path("eventKey") String eventKey);
+    Observable<Response<List<Team>>> fetchEventTeams(@Path("eventKey") String eventKey);
 
     @GET("/api/v2/event/{eventKey}/rankings")
-    Observable<JsonArray> fetchEventRankings(@Path("eventKey") String eventKey);
+    Observable<Response<JsonArray>> fetchEventRankings(@Path("eventKey") String eventKey);
 
     @GET("/api/v2/event/{eventKey}/matches")
-    Observable<List<Match>> fetchEventMatches(@Path("eventKey") String eventKey);
+    Observable<Response<List<Match>>> fetchEventMatches(@Path("eventKey") String eventKey);
 
     @GET("/api/v2/event/{eventKey}/stats")
-    Observable<JsonObject> fetchEventStats(@Path("eventKey") String eventKey);
+    Observable<Response<JsonObject>> fetchEventStats(@Path("eventKey") String eventKey);
 
     @GET("/api/v2/event/{eventKey}/awards")
-    Observable<List<Award>> fetchEventAwards(@Path("eventKey") String eventKey);
+    Observable<Response<List<Award>>> fetchEventAwards(@Path("eventKey") String eventKey);
 
     @GET("/api/v2/event/{eventKey}/district_points")
-    Observable<JsonObject> fetchEventDistrictPoints(@Path("eventKey") String eventKey);
+    Observable<Response<JsonObject>> fetchEventDistrictPoints(@Path("eventKey") String eventKey);
 
     @GET("/api/v2/districts/{year}")
-    Observable<List<District>> fetchDistrictList(@Path("year") int year);
+    Observable<Response<List<District>>> fetchDistrictList(@Path("year") int year);
 
     @GET("/api/v2/district/{districtShort}/{year}/events")
-    Observable<List<Event>> fetchDistrictEvents(
+    Observable<Response<List<Event>>> fetchDistrictEvents(
       @Path("districtShort") String districtShort,
       @Path("year") int year);
 
     @GET("/api/v2/district/{districtShort}/{year}/rankings")
-    Observable<List<DistrictTeam>> fetchDistrictRankings(
+    Observable<Response<List<DistrictTeam>>> fetchDistrictRankings(
       @Path("districtShort") String districtShort,
       @Path("year") int year);
 
     @GET("/api/v2/match/{matchKey}")
-    Observable<Match> fetchMatch(
+    Observable<Response<Match>> fetchMatch(
       @Path("matchKey") String matchKey);
 }
