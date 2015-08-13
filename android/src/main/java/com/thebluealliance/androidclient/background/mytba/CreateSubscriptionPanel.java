@@ -11,6 +11,8 @@ import android.preference.PreferenceScreen;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
@@ -39,8 +41,8 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         String modelKey = params[0];
 
-        Database.Favorites favTable = Database.getInstance(context).getFavoritesTable();
-        Database.Subscriptions subTable = Database.getInstance(context).getSubscriptionsTable();
+        FavoritesTable favTable = Database.getInstance(context).getFavoritesTable();
+        SubscriptionsTable subTable = Database.getInstance(context).getSubscriptionsTable();
 
         String currentUser = AccountHelper.getSelectedAccount(context);
         String myKey = MyTBAHelper.createKey(currentUser, modelKey);

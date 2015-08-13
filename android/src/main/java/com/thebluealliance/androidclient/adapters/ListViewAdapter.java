@@ -27,19 +27,8 @@ public class ListViewAdapter extends ArrayAdapter<ListItem> {
         mInflater = LayoutInflater.from(context);
     }
 
-    public void removeAt(int index) {
-        if (index >= 0) {
-            values.remove(index);
-        }
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         return getItem(position).getView(getContext(), mInflater, convertView);
     }
-
-    public void updateListData() {
-        notifyDataSetChanged();
-    }
-
 }

@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
+import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
@@ -61,24 +61,33 @@ public class DistrictPointBreakdown implements RenderableModel {
         this.totalPoints = totalPoints;
     }
 
-    public RenderableModel renderQualPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_qual_points), String.format(c.getString(R.string.district_points_format), qualPoints));
+    public RenderableModel renderQualPoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_qual_points),
+          String.format(resources.getString(R.string.district_points_format), qualPoints));
     }
 
-    public RenderableModel renderElimPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_elim_points), String.format(c.getString(R.string.district_points_format), elimPoints));
+    public RenderableModel renderElimPoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_elim_points),
+          String.format(resources.getString(R.string.district_points_format), elimPoints));
     }
 
-    public RenderableModel renderAlliancePoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_alliance_points), String.format(c.getString(R.string.district_points_format), alliancePoints));
+    public RenderableModel renderAlliancePoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_alliance_points),
+          String.format(resources.getString(R.string.district_points_format), alliancePoints));
     }
 
-    public RenderableModel renderAwardPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_award_points), String.format(c.getString(R.string.district_points_format), awardPoints));
+    public RenderableModel renderAwardPoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_award_points),
+          String.format(resources.getString(R.string.district_points_format), awardPoints));
     }
 
-    public RenderableModel renderTotalPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.total_district_points), String.format(c.getString(R.string.district_points_format), totalPoints));
+    public RenderableModel renderTotalPoints(Resources resources) {
+        return new BreakdownItem(resources.getString(R.string.total_district_points),
+          String.format(resources.getString(R.string.district_points_format), totalPoints));
     }
 
     public String getTeamKey() {

@@ -28,23 +28,15 @@
             android:layout_height="match_parent"
             android:layout_below="@id/tabs" />
 
-        <FrameLayout
-            android:id="@+id/filter_button_container"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/filter_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true">
-
-            <com.melnykov.fab.FloatingActionButton
-                android:id="@+id/filter_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_filter_list_white_24dp"
-                app:fab_colorNormal="@color/accent"
-                app:fab_colorPressed="@color/accent_dark"
-                app:fab_colorRipple="@color/accent_dark_ripple" />
-        </FrameLayout>
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_filter_list_white_24dp"
+            app:fabSize="normal" />
     </RelativeLayout>
 
     <LinearLayout

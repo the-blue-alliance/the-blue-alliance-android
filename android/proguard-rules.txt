@@ -43,3 +43,14 @@ public static *** d(...);
     public ** get*();
 }
 -keepattributes *Annotation*,EnclosingMethod
+
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn org.w3c.dom.bootstrap.DOMImplementationRegistry
+-dontwarn java.nio.**
+-dontwarn android.support.**
+-dontwarn sun.misc.Unsafe
+-dontwarn java.lang.invoke**
+-dontwarn retrofit.**
+-keep class retrofit.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions

@@ -25,7 +25,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchFragmentAdapter;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadAllData;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
@@ -159,9 +159,6 @@ public class LaunchActivity extends Activity implements View.OnClickListener, Lo
                         redownload = true;
                         getIntent().putExtra(LaunchActivity.DATA_TO_REDOWNLOAD, new short[]{LoadAllDataTaskFragment.LOAD_EVENTS});
                         getIntent().putExtra(LaunchActivity.REDOWNLOAD, true);
-                        break;
-                    case 43: //bugfix: extra 2015 CMP division. Remove its cached response so it'll get downloaded again
-                        Database.getInstance(this).getResponseTable().deleteResponse("http://www.thebluealliance.com/api/v2/events/2015");
                         break;
                     case 46: //recreate search indexes to contain foreign keys
                         RecreateSearchIndexes.startActionRecreateSearchIndexes(this);

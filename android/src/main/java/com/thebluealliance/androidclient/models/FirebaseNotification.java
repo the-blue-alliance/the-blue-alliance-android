@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -56,13 +56,13 @@ public class FirebaseNotification {
 
     public String convertToJson() {
         if (jsonString.isEmpty()) {
-            jsonString = JSONManager.getGson().toJson(payload);
+            jsonString = JSONHelper.getGson().toJson(payload);
         }
         return jsonString;
     }
 
     public String getNotificationType() {
-        JsonObject message = JSONManager.getasJsonObject(convertToJson());
+        JsonObject message = JSONHelper.getasJsonObject(convertToJson());
         return message.get("message_type").getAsString();
     }
 
@@ -70,7 +70,7 @@ public class FirebaseNotification {
         if (notification != null) {
             return notification;
         }
-        JsonObject message = JSONManager.getasJsonObject(convertToJson());
+        JsonObject message = JSONHelper.getasJsonObject(convertToJson());
         String messageType = message.get("message_type").getAsString();
         String messageData = message.get("message_data").toString();
         Date date = null;

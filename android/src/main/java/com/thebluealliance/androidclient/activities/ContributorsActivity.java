@@ -13,14 +13,14 @@ import android.widget.ListView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.PopulateContributors;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * Created by Nathan on 6/20/2014.
  */
-public class ContributorsActivity extends RefreshableHostActivity implements RefreshListener {
+public class ContributorsActivity extends LegacyRefreshableHostActivity implements RefreshListener {
 
     Toolbar toolbar;
 

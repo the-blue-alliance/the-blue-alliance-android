@@ -11,33 +11,43 @@ import com.thebluealliance.androidclient.models.Event;
 
 import java.io.Serializable;
 
-/**
- * File created by phil on 4/23/14.
- */
 public class EventListElement extends ListElement implements Serializable {
 
-    private String mEventName;
-    private String mEventDates;
-    private String mEventLocation;
-    private String mEventKey;
+    public final String eventName;
+    public final String eventDates;
+    public final String eventLocation;
+    public final String eventKey;
 
     public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
         super(event.getKey());
-        mEventName = event.getEventName();
-        mEventDates = event.getDateString();
-        mEventLocation = event.getLocation();
+        eventKey = "";
+        eventName = event.getEventName();
+        eventDates = event.getDateString();
+        eventLocation = event.getLocation();
     }
 
     public EventListElement(String key, String name, String dates, String location) {
         super(key);
-        mEventKey = key;
-        mEventName = name;
-        mEventDates = dates;
-        mEventLocation = location;
+        eventKey = key;
+        eventName = name;
+        eventDates = dates;
+        eventLocation = location;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof EventListElement)) {
+            return false;
+        }
+        EventListElement element = ((EventListElement) o);
+        return eventName.equals(element.eventName) &&
+          eventDates.equals(element.eventDates) &&
+          eventLocation.equals(element.eventLocation) &&
+          eventKey.equals(element.eventKey);
     }
 
     public String getEventKey() {
-        return mEventKey;
+        return eventKey;
     }
 
     @Override
@@ -55,9 +65,9 @@ public class EventListElement extends ListElement implements Serializable {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.name.setText(mEventName);
-        holder.dates.setText(mEventDates);
-        holder.location.setText(mEventLocation);
+        holder.name.setText(eventName);
+        holder.dates.setText(eventDates);
+        holder.location.setText(eventLocation);
 
         return convertView;
     }

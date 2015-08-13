@@ -8,12 +8,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
@@ -69,71 +70,71 @@ public class Media extends BasicModel<Media> {
     }
 
     public Media.TYPE getMediaType() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Medias.TYPE) && fields.get(Database.Medias.TYPE) instanceof String) {
-            return TYPE.fromString((String) fields.get(Database.Medias.TYPE));
+        if (fields.containsKey(MediasTable.TYPE) && fields.get(MediasTable.TYPE) instanceof String) {
+            return TYPE.fromString((String) fields.get(MediasTable.TYPE));
         }
         throw new FieldNotDefinedException("Field Database.Medias.TYPE is not defined");
     }
 
     public void setMediaType(String typeString) {
-        fields.put(Database.Medias.TYPE, typeString);
+        fields.put(MediasTable.TYPE, typeString);
     }
 
     public void setMediaType(Media.TYPE mediaType) {
-        fields.put(Database.Medias.TYPE, mediaType.toString());
+        fields.put(MediasTable.TYPE, mediaType.toString());
     }
 
     public String getForeignKey() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Medias.FOREIGNKEY) && fields.get(Database.Medias.FOREIGNKEY) instanceof String) {
-            return (String) fields.get(Database.Medias.FOREIGNKEY);
+        if (fields.containsKey(MediasTable.FOREIGNKEY) && fields.get(MediasTable.FOREIGNKEY) instanceof String) {
+            return (String) fields.get(MediasTable.FOREIGNKEY);
         }
         throw new FieldNotDefinedException("Field Database.Medias.FOREIGNKEY is not defined");
     }
 
     public void setForeignKey(String foreignKey) {
-        fields.put(Database.Medias.FOREIGNKEY, foreignKey);
+        fields.put(MediasTable.FOREIGNKEY, foreignKey);
     }
 
     public String getTeamKey() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Medias.TEAMKEY) && fields.get(Database.Medias.TEAMKEY) instanceof String) {
-            return (String) fields.get(Database.Medias.TEAMKEY);
+        if (fields.containsKey(MediasTable.TEAMKEY) && fields.get(MediasTable.TEAMKEY) instanceof String) {
+            return (String) fields.get(MediasTable.TEAMKEY);
         }
         throw new FieldNotDefinedException("Field Database.MEDIAS.TEAMKEY is not defined");
     }
 
     public void setTeamKey(String teamKey) {
-        fields.put(Database.Medias.TEAMKEY, teamKey);
+        fields.put(MediasTable.TEAMKEY, teamKey);
     }
 
     public JsonObject getDetails() throws FieldNotDefinedException {
         if (details != null) {
             return details;
         }
-        if (fields.containsKey(Database.Medias.DETAILS) && fields.get(Database.Medias.DETAILS) instanceof String) {
-            details = JSONManager.getasJsonObject((String) fields.get(Database.Medias.DETAILS));
+        if (fields.containsKey(MediasTable.DETAILS) && fields.get(MediasTable.DETAILS) instanceof String) {
+            details = JSONHelper.getasJsonObject((String) fields.get(MediasTable.DETAILS));
             return details;
         }
         throw new FieldNotDefinedException("Field Database.Medias.TEAMKEY is not defined");
     }
 
     public void setDetails(JsonObject details) {
-        fields.put(Database.Medias.DETAILS, details.toString());
+        fields.put(MediasTable.DETAILS, details.toString());
         this.details = details;
     }
 
     public void setDetails(String detailsJson) {
-        fields.put(Database.Medias.DETAILS, detailsJson);
+        fields.put(MediasTable.DETAILS, detailsJson);
     }
 
     public int getYear() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Medias.YEAR) && fields.get(Database.Medias.YEAR) instanceof Integer) {
-            return (Integer) fields.get(Database.Medias.DETAILS);
+        if (fields.containsKey(MediasTable.YEAR) && fields.get(MediasTable.YEAR) instanceof Integer) {
+            return (Integer) fields.get(MediasTable.DETAILS);
         }
         throw new FieldNotDefinedException("Field Database.Medias.YEAR is not defined");
     }
 
     public void setYear(int year) {
-        fields.put(Database.Medias.YEAR, year);
+        fields.put(MediasTable.YEAR, year);
     }
 
     @Override
@@ -162,7 +163,7 @@ public class Media extends BasicModel<Media> {
 
     public static APIResponse<Media> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        Database.Medias table = Database.getInstance(c).getMediasTable();
+        MediasTable table = Database.getInstance(c).getMediasTable();
         Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Media media;
         if (cursor != null && cursor.moveToFirst()) {
@@ -175,9 +176,9 @@ public class Media extends BasicModel<Media> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Media updatedMedia = JSONManager.getGson().fromJson(response.getData(), Media.class);
+                Media updatedMedia = JSONHelper.getGson().fromJson(response.getData(), Media.class);
                 media.merge(updatedMedia);
                 changed = true;
             }
@@ -193,7 +194,7 @@ public class Media extends BasicModel<Media> {
 
     public static APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        Database.Medias table = Database.getInstance(c).getMediasTable();
+        MediasTable table = Database.getInstance(c).getMediasTable();
         Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Media> medias = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
@@ -206,12 +207,12 @@ public class Media extends BasicModel<Media> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray mediaList = JSONManager.getasJsonArray(response.getData());
+                JsonArray mediaList = JSONHelper.getasJsonArray(response.getData());
                 medias = new ArrayList<>();
                 for (JsonElement m : mediaList) {
-                    Media media = JSONManager.getGson().fromJson(m, Media.class);
+                    Media media = JSONHelper.getGson().fromJson(m, Media.class);
                     media.setTeamKey(teamKey);
                     media.setYear(year);
                     medias.add(media);

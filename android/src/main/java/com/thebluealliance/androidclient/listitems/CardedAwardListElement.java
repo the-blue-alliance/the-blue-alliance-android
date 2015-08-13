@@ -11,35 +11,38 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
-import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Created by Nathan on 11/13/2014.
- */
 public class CardedAwardListElement extends ListElement {
 
-    private String mAwardName, mEventKey, mSelectedTeamNum;
-    private JsonArray mAwardWinners;
-    private HashMap<String, Team> mAwardTeams;
+    public final String awardName;
+    public final String eventKey;
+    public final String selectedTeamNum;
+    public final JsonArray awardWinners;
+    private final Map<String, Team> mAwardTeams;
 
     public CardedAwardListElement(String name, JsonArray winners) {
         super();
-        mAwardName = name;
-        mAwardWinners = winners;
+        awardName = name;
+        awardWinners = winners;
         mAwardTeams = null;
+        eventKey = "";
+        selectedTeamNum = "";
     }
 
-    public CardedAwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams, String selectedTeamKey) {
+    public CardedAwardListElement(String name, String eventKey, JsonArray winners, Map<String, Team> teams, String selectedTeamKey) {
         super();
-        mAwardName = name;
-        mEventKey = eventKey;
-        mAwardWinners = winners;
-        mAwardTeams = teams;
-        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4) ? "" : selectedTeamKey.substring(3);
+        this.awardName = name;
+        this.eventKey = eventKey;
+        this.awardWinners = winners;
+        this.mAwardTeams = teams;
+        this.selectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4)
+          ? "" 
+          : selectedTeamKey.substring(3);
     }
 
     @Override
@@ -57,26 +60,26 @@ public class CardedAwardListElement extends ListElement {
             holder.awardRecipients.removeAllViews();
         }
 
-        holder.awardName.setText(mAwardName);
+        holder.awardName.setText(awardName);
 
-        for (JsonElement mAwardWinner : mAwardWinners) {
+        for (JsonElement mAwardWinner : awardWinners) {
             JsonObject winner = mAwardWinner.getAsJsonObject();
             View winnerView = inflater.inflate(R.layout.list_item_award_recipient, null);
 
             String teamNumber;
             String awardee;
-            if (JSONManager.isNull(winner.get("team_number"))) {
+            if (JSONHelper.isNull(winner.get("team_number"))) {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
-                if (!mSelectedTeamNum.equals(teamNumber)) {
+                if (!selectedTeamNum.equals(teamNumber)) {
                     winnerView.setOnClickListener(new TeamAtEventClickListener(context));
                 } else {
                     winnerView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));  // disable touch feedback
                 }
-                winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
+                winnerView.setTag("frc" + teamNumber + "@" + eventKey);
             }
-            if (JSONManager.isNull(winner.get("awardee"))) {
+            if (JSONHelper.isNull(winner.get("awardee"))) {
                 awardee = "";
             } else {
                 awardee = winner.get("awardee").getAsString();

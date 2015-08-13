@@ -16,7 +16,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
@@ -40,7 +40,7 @@ public class CompLevelStartingNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        jsonData = JSONManager.getasJsonObject(messageData);
+        jsonData = JSONHelper.getasJsonObject(messageData);
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
@@ -61,7 +61,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         String compLevel = getCompLevelNameFromAbbreviation(context, compLevelAbbrev);
         String scheduledStartTimeString;
         JsonElement scheduledTime = jsonData.get("scheduled_time");
-        if (JSONManager.isNull(scheduledTime)) {
+        if (JSONHelper.isNull(scheduledTime)) {
             scheduledStartTimeString = "";
         } else {
             long scheduledStartTimeUNIX = scheduledTime.getAsLong();

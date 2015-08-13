@@ -5,16 +5,16 @@
     android:layout_height="match_parent">
 
     <ScrollView
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/event_info_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="88dp"
-            android:visibility="gone">
+            android:paddingBottom="88dp">
 
             <RelativeLayout
                 android:id="@+id/event_name_container"
@@ -99,7 +99,7 @@
                     style="@style/InfoItemButtonBarImageStyle"
                     android:background="@drawable/internet_blue_selector"
                     android:padding="4dp"
-                    android:src="@drawable/ic_action_web_site" />
+                    android:src="@drawable/ic_language_white_24dp" />
 
                 <ImageView
                     android:id="@+id/event_twitter_button"
@@ -223,9 +223,9 @@
         android:layout_centerVertical="true"
         android:visibility="visible" />
 
-    <TextView
+    <com.thebluealliance.androidclient.views.NoDataView
         android:id="@+id/no_data"
-        style="@style/NoDataFoundStyle"
-        android:singleLine="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone" />
 </RelativeLayout>

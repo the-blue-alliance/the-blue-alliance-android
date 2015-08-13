@@ -8,15 +8,16 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * File created by phil on 4/20/14.
  */
 public class MatchListElement extends ListElement implements Serializable {
 
-    private String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
-    long time;
-    private boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
+    public final String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
+    public final long time;
+    public final boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
 
     // utility constructor for rendering UpcomingMatchNotification
     public MatchListElement(String[] redTeams, String[] blueTeams, String matchKey, long time, String selectedTeamKey) {
@@ -66,5 +67,29 @@ public class MatchListElement extends ListElement implements Serializable {
         match.setClickToShowDetails(clickable);
         match.showMatchTitle(showMatchTitle);
         return match;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MatchListElement)) {
+            return false;
+        }
+        MatchListElement element = (MatchListElement) o;
+
+        return videoKey.equals(element.videoKey) &&
+          matchTitle.equals(element.matchTitle) &&
+          Arrays.equals(redTeams, element.redTeams) &&
+          Arrays.equals(blueTeams, element.blueTeams) &&
+          redScore.equals(element.redScore) &&
+          blueScore.equals(element.blueScore) &&
+          matchKey.equals(element.matchKey) &&
+          selectedTeamKey == null
+            ? element.selectedTeamKey == null
+            : selectedTeamKey.equals(element.selectedTeamKey) &&
+          time == element.time &&
+          showVideoIcon == element.showVideoIcon &&
+          showColumnHeaders == element.showColumnHeaders &&
+          showMatchTitle == element.showMatchTitle &&
+          clickable == element.clickable;
     }
 }

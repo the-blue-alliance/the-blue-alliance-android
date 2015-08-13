@@ -9,7 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
 
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class MyTBAHelper {
     }
 
     public static Intent deserializeIntent(String input) {
-        JsonObject data = JSONManager.getasJsonObject(input);
+        JsonObject data = JSONHelper.getasJsonObject(input);
         Intent intent = new Intent();
         String pack = data.get(INTENT_PACKAGE).getAsString();
         String cls = data.get(INTENT_CLASS).getAsString();
