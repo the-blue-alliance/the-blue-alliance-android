@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.modules.DatafeedModule;
 
 import org.junit.Before;
-
-import retrofit.client.OkClient;
 
 public abstract class AbstractAPIv2Test {
 
@@ -13,6 +12,8 @@ public abstract class AbstractAPIv2Test {
 
     @Before
     public void setup() {
-        mApi = DatafeedModule.getRestAdapter(new OkClient()).create(APIv2.class);
+        mApi = DatafeedModule
+          .getRetrofit(DatafeedModule.getGson(), new OkHttpClient())
+          .create(APIv2.class);
     }
 }
