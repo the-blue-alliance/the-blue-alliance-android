@@ -105,7 +105,7 @@ public class SubscriberModule {
     }
 
     @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {
-        return new TeamStatsSubscriber(mActivity);
+        return new TeamStatsSubscriber(mActivity.getResources());
     }
 
     @Provides TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(Database db) {

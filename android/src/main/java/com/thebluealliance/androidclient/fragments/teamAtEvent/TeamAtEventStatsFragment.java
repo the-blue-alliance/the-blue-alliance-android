@@ -37,8 +37,6 @@ public class TeamAtEventStatsFragment extends ListViewFragment<JsonObject, TeamS
         mTeamKey = getArguments().getString(TEAM_KEY);
         mEventKey = getArguments().getString(EVENT_KEY);
         super.onCreate(savedInstanceState);
-
-        mSubscriber.setTeamKey(mTeamKey);
     }
 
     @Override
