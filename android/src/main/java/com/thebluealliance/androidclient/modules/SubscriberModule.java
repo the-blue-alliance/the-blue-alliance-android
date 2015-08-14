@@ -109,7 +109,7 @@ public class SubscriberModule {
     }
 
     @Provides TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(Database db) {
-        return new TeamAtEventSummarySubscriber(mActivity, db);
+        return new TeamAtEventSummarySubscriber(mActivity.getResources());
     }
 
     @Provides EventTabSubscriber provideEventTabsSubscriber() {
