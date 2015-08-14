@@ -1,46 +1,30 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-@Ignore
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class EventTest {
     Event mEvent;
 
     @Before
     public void readJsonData(){
-        BufferedReader eventReader;
-        Gson gson = JSONHelper.getGson();
-        String basePath = new File("").getAbsolutePath();
-        try {
-            eventReader = new BufferedReader(
-                new FileReader(basePath + "/android/src/test/java/com/thebluealliance/" +
-                    "androidclient/test/models/event_2015cthar.json"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            assertTrue(false);
-            return;
-        }
-
-        mEvent = gson.fromJson(eventReader, Event.class);
+       mEvent = ModelMaker.getModel(Event.class, "2015cthar");
     }
 
     @Test
@@ -49,8 +33,8 @@ public class EventTest {
         assertEquals(mEvent.getKey(), "2015cthar");
         assertEquals(mEvent.getWebsite(), "http://www.nefirst.org/");
         assertTrue(mEvent.isOfficial());
-        assertEquals(mEvent.getStartDate(), "2015-03-27");
-        assertEquals(mEvent.getEndDate(), "2015-03-29");
+        assertEquals(mEvent.getStartDate().getTime(), 1427428800000l);
+        assertEquals(mEvent.getEndDate().getTime(), 1427601600000l);
         assertEquals(mEvent.getEventName(), "NE District - Hartford Event");
         assertEquals(mEvent.getEventShortName(), "Hartford");
         assertEquals(mEvent.getDistrictEnum(),
