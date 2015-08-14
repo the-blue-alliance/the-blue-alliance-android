@@ -1,49 +1,29 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-@Ignore
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class AwardTest {
     Award mTeamAward;
     Award mIndividualAward;
 
     @Before
     public void readJsonData(){
-        BufferedReader individualReader;
-        BufferedReader teamReader;
-        Gson gson = JSONHelper.getGson();
-        String basePath = new File("").getAbsolutePath();
-        try {
-            individualReader = new BufferedReader(
-                new FileReader(basePath +  "/android/src/test/java/com/thebluealliance/" +
-                    "androidclient/test/models/award_individual.json"));
-            teamReader = new BufferedReader(
-                new FileReader(basePath +  "/android/src/test/java/com/thebluealliance/" +
-                    "androidclient/test/models/award_team.json"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            assertTrue(false);
-            return;
-        }
-
-        mIndividualAward = gson.fromJson(individualReader, Award.class);
-        mTeamAward = gson.fromJson(teamReader, Award.class);
+        mIndividualAward = ModelMaker.getModel(Award.class, "award_individual");
+        mTeamAward = ModelMaker.getModel(Award.class, "award_team");
     }
 
     @Test
