@@ -220,6 +220,10 @@ def coverageSourceDirs = [
         'src/main/java'
 ]
 
+coveralls {
+    files(coverageSourceDirs).files.absolutePath
+}
+
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
