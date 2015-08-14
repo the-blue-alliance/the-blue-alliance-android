@@ -34,8 +34,8 @@ public class GCMAuthHelper {
         return prefs.getString(PROPERTY_GCM_REG_ID, "");
     }
 
-    public static void registerInBackground(Activity activity) {
-        new RegisterGCM(activity).execute();
+    public static void registerInBackground(Context context) {
+        new RegisterGCM(context).execute();
     }
 
     public static void storeRegistrationId(Context context, String id) {
@@ -43,9 +43,9 @@ public class GCMAuthHelper {
         prefs.edit().putString(PROPERTY_GCM_REG_ID, id).apply();
     }
 
-    public static boolean sendRegistrationToBackend(Activity activity, String gcmId) {
+    public static boolean sendRegistrationToBackend(Context context, String gcmId) {
         Log.i(Constants.LOG_TAG, "Registering gcmId " + gcmId);
-        GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(activity);
+        GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
         try {
             String token = currentCredential.getToken();
         } catch (IOException e) {
@@ -60,7 +60,7 @@ public class GCMAuthHelper {
         request.setMobileId(gcmId);
         request.setOperatingSystem(OS_ANDROID);
         request.setName(Build.MANUFACTURER + " " + Build.MODEL);
-        request.setDeviceUuid(Utilities.getDeviceUUID(activity));
+        request.setDeviceUuid(Utilities.getDeviceUUID(context));
 
         try {
             ModelsMobileApiMessagesBaseResponse response = service.register(request).execute();

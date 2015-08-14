@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
@@ -33,7 +34,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public static class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public static class DevSettingsFragment extends PreferenceFragment {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -106,26 +107,6 @@ public class DevSettingsActivity extends AppCompatActivity {
                     return false;
                 }
             });
-        }
-
-        @Override
-        public void onConnected(Bundle bundle) {
-            GCMAuthHelper.registerInBackground(getActivity());
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-
-        }
-
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), getActivity(), 0).show();
-            Preference redownload = findPreference("redownload_data");
-            Intent redownloadIntent = new Intent(getActivity(), LaunchActivity.class);
-            redownloadIntent.putExtra(LaunchActivity.REDOWNLOAD, true);
-            redownload.setIntent(redownloadIntent);
-
         }
 
         @Override

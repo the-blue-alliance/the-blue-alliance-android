@@ -32,13 +32,18 @@ import java.util.Arrays;
 /**
  * File created by phil on 4/20/14.
  */
-public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, Void> {
+public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, Void> {
 
-    private LoadAllDataCallbacks callbacks;
+    public static final String DATA_TO_LOAD = "data_to_load";
+    public static final short LOAD_TEAMS = 0,
+            LOAD_EVENTS = 1,
+            LOAD_DISTRICTS = 2;
+
+    private LoadTBADataCallbacks callbacks;
     private Context context;
     private long startTime;
 
-    public LoadAllData(LoadAllDataCallbacks callbacks, Context c) {
+    public LoadTBAData(LoadTBADataCallbacks callbacks, Context c) {
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
         this.startTime = System.currentTimeMillis();
@@ -54,9 +59,9 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
 
         Short[] dataToLoad;
         if (params == null) {
-            dataToLoad = new Short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS,
-                    LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS,
-                    LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS};
+            dataToLoad = new Short[]{LOAD_TEAMS,
+                    LOAD_EVENTS,
+                    LOAD_DISTRICTS};
         } else {
             dataToLoad = params;
         }
@@ -75,7 +80,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             ArrayList<District> districts = new ArrayList<>();
             int maxPageNum = 0;
 
-            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LOAD_TEAMS) != -1) {
                 // First we will load all the teams
                 for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
                     if (isCancelled()) {
@@ -100,7 +105,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 }
             }
 
-            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LOAD_EVENTS) != -1) {
                 // Now we load all events
                 for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                     if (isCancelled()) {
@@ -134,7 +139,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 }
             }
 
-            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LOAD_DISTRICTS) != -1) {
                 //load all districts
                 for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                     if (isCancelled()) {
@@ -233,7 +238,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
 
     }
 
-    public interface LoadAllDataCallbacks {
+    public interface LoadTBADataCallbacks {
         public void onProgressUpdate(LoadProgressInfo info);
     }
 }

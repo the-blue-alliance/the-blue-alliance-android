@@ -36,20 +36,20 @@ public class AccountHelper {
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
 
-    public static void enableMyTBA(Activity activity, boolean enabled) {
+    public static void enableMyTBA(Context context, boolean enabled) {
         Log.d(Constants.LOG_TAG, "Enabling myTBA: " + enabled);
         if (enabled) {
             // enable myTBA
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
         } else {
             //disabled myTBA.
-            String currentUser = getSelectedAccount(activity);
+            String currentUser = getSelectedAccount(context);
             if (!currentUser.isEmpty()) {
                 Log.d(Constants.LOG_TAG, "removing: " + currentUser);
                 //Remove all local content and deregister from GCM
-                new DisableMyTBA(activity).execute(currentUser);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                new DisableMyTBA(context).execute(currentUser);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 prefs.edit()
                         .putBoolean(PREF_MYTBA_ENABLED, false).apply();
             }

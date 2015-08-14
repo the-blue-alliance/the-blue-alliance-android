@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.R;
 
 public class MyTBAOnboardingPagerAdapter extends PagerAdapter {
 
-    private int mCount = 3;
+    private int mCount = 5;
     private ViewGroup mView;
 
     public MyTBAOnboardingPagerAdapter(ViewGroup view) {
@@ -33,6 +33,12 @@ public class MyTBAOnboardingPagerAdapter extends PagerAdapter {
                 break;
             case 2:
                 resId = R.id.page_three;
+                break;
+            case 3:
+                resId = R.id.page_four;
+                break;
+            case 4:
+                resId = R.id.page_five;
                 break;
         }
         return mView.findViewById(resId);
