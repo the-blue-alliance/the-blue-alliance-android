@@ -12,7 +12,7 @@ public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.M
         if (mAPIData == null) {
             return;
         }
-        
+
         mDataToBind.teamKey = mAPIData.getKey();
         mDataToBind.fullName = mAPIData.getFullName();
         mDataToBind.nickname = mAPIData.getNickname();
