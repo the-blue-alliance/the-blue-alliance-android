@@ -221,7 +221,7 @@ def coverageSourceDirs = [
 ]
 
 coveralls {
-    files(coverageSourceDirs).files.absolutePath
+    sourceDirs = files(coverageSourceDirs).files.absolutePath
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
