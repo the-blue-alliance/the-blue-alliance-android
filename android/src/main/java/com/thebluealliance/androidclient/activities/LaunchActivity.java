@@ -93,31 +93,29 @@ public class LaunchActivity extends AppCompatActivity {
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
         if (prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
-            //we are updating the app. Do stuffs. Start from the next version
-            lastVersion++;
-            while (lastVersion <= BuildConfig.VERSION_CODE) {
-                Log.v(Constants.LOG_TAG, "Updating app to version " + lastVersion);
-                switch (lastVersion) {
-                    case 14: //addition of districts. Download the required data
-                        redownload = true;
-                        intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_DISTRICTS});
-                        break;
-                    case 16: //addition of myTBA - Prompt the user for an account
-                        redownload = true;
-                        intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
-                        break;
-                    case 21: //redownload to get event short names
-                        redownload = true;
-                        intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
-                        break;
-                    case 46: //recreate search indexes to contain foreign keys
-                        redownload = false;
-                        RecreateSearchIndexes.startActionRecreateSearchIndexes(this);
-                        break;
-                    default:
-                        break;
-                }
-                lastVersion++;
+            // We are updating the app. Do stuffs, if necessary.
+            if (lastVersion < 14) {
+                // addition of districts. Download the required data
+                redownload = true;
+                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_DISTRICTS});
+            }
+
+            if (lastVersion < 16) {
+                //addition of myTBA - Prompt the user for an account
+                redownload = true;
+                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
+            }
+
+            if (lastVersion < 21) {
+                //redownload to get event short names
+                redownload = true;
+                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
+            }
+
+            if (lastVersion < 46) {
+                //recreate search indexes to contain foreign keys
+                redownload = false;
+                RecreateSearchIndexes.startActionRecreateSearchIndexes(this);
             }
         }
         // Store the current version key
