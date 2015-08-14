@@ -105,11 +105,11 @@ public class SubscriberModule {
     }
 
     @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {
-        return new TeamStatsSubscriber(mActivity);
+        return new TeamStatsSubscriber(mActivity.getResources());
     }
 
     @Provides TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(Database db) {
-        return new TeamAtEventSummarySubscriber(mActivity, db);
+        return new TeamAtEventSummarySubscriber(mActivity.getResources());
     }
 
     @Provides EventTabSubscriber provideEventTabsSubscriber() {
@@ -124,8 +124,10 @@ public class SubscriberModule {
         return new DistrictRankingsSubscriber(db);
     }
 
-    @Provides TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(Database db) {
-        return new TeamAtDistrictSummarySubscriber(db, mActivity.getResources());
+    @Provides TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(
+      Database db,
+      EventBus eventBus) {
+        return new TeamAtDistrictSummarySubscriber(db, mActivity.getResources(), eventBus);
     }
 
     @Provides TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(

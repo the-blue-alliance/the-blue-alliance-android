@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -185,8 +186,8 @@ public class MatchHelper {
             this.descriptionId = descriptionId;
         }
 
-        public String getDescriptionString(Context c) {
-            return c.getResources().getString(descriptionId);
+        public String getDescriptionString(Resources resources) {
+            return resources.getString(descriptionId);
         }
     }
 
@@ -353,7 +354,7 @@ public class MatchHelper {
         int year = 2014;
 
         boolean inAlliance = false;
-        if (alliances.size() == 0) {
+        if (alliances == null || alliances.size() == 0) {
             // We don't have alliance data. Try to determine from matches.
             inAlliance = MatchHelper.getAllianceForTeam(teamMatches, teamKey) != -1;
         } else {

@@ -1,49 +1,32 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.Gson;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 
-@Ignore
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class DistrictTest {
     District district;
 
     @Before
     public void readJsonData() {
-        BufferedReader districtReader;
-        Gson gson = JSONHelper.getGson();
-        String basePath = new File("").getAbsolutePath();
-        try {
-            districtReader = new BufferedReader(
-                new FileReader(basePath +
-                    "/android/src/test/java/com/thebluealliance/" +
-                    "androidclient/test/models/data/district_ne.json"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            assertTrue(false);
-            return;
-        }
-
-        district = gson.fromJson(districtReader,
-                                 District.class);
+        district = ModelMaker.getModel(District.class, "district_ne");
     }
 
     @Test
     public void testDistrictModel() throws BasicModel.FieldNotDefinedException {
         assertNotNull(district);
         assertEquals(district.getName(), "New England");
-        assertEquals(district.getKey(), "ne");
+        assertEquals(district.getAbbreviation(), "ne");
+        assertEquals(district.getEnum(), DistrictHelper.DISTRICTS.NEW_ENGLAND.ordinal());
     }
 }

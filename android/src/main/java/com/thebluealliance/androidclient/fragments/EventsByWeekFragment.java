@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.fragments;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -11,24 +9,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.common.base.Preconditions;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
-import com.thebluealliance.androidclient.interfaces.BindableFragmentPagerAdapter;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import rx.Observable;
-import rx.android.internal.Preconditions;
 
 public class EventsByWeekFragment
         extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
@@ -170,8 +166,8 @@ public class EventsByWeekFragment
      */
     private int getIndexForWeek(int week) {
         Preconditions.checkState(
-                mViewPager.getAdapter() instanceof EventsByWeekFragmentPagerAdapter,
-                "EventsByWeekFragment must use EventsByWeekFragmentPagerAdapter");
+          mViewPager.getAdapter() instanceof EventsByWeekFragmentPagerAdapter,
+          "EventsByWeekFragment must use EventsByWeekFragmentPagerAdapter");
         List<EventWeekTab> tabs = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter())
                 .getTabs();
         for (int i = 0; i < tabs.size(); i++) {

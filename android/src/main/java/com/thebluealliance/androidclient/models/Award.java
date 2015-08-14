@@ -64,7 +64,7 @@ public class Award extends BasicModel<Award> {
     }
 
     public int getEnum() throws FieldNotDefinedException {
-        if (fields.containsKey(AwardsTable.ENUM) && fields.get(AwardsTable.ENUM) instanceof String) {
+        if (fields.containsKey(AwardsTable.ENUM) && fields.get(AwardsTable.ENUM) instanceof Integer) {
             return (Integer) fields.get(AwardsTable.ENUM);
         }
         throw new FieldNotDefinedException("Field Database.Awards.ENUM is not defined");

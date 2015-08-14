@@ -11,15 +11,12 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
 
-/**
- * Created by phil on 3/27/15.
- */
 public class WebcastListElement extends ListElement {
 
-    private String eventKey;
-    private String eventName;
-    private JsonObject webcast;
-    private int number;
+    public final String eventKey;
+    public final String eventName;
+    public final JsonObject webcast;
+    public final int number;
 
     public WebcastListElement(String eventKey, String eventName, JsonObject webcast, int number) {
         super();
@@ -67,5 +64,17 @@ public class WebcastListElement extends ListElement {
         TextView label;
         TextView value;
         LinearLayout container;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof WebcastListElement)) {
+            return false;
+        }
+        WebcastListElement element = (WebcastListElement) o;
+        return eventKey.equals(element.eventKey) &&
+          eventName.equals(element.eventName) &&
+          webcast.equals(element.webcast) &&
+          number == element.number;
     }
 }

@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -8,7 +8,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
-import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
@@ -33,8 +32,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
 
     private String mEventKey;
     private String mTeamKey;
-    private Database mDb;
-    private Context mContext;
+    private Resources mResources;
     private boolean mIsMatchListLoaded;
     private boolean mIsEventLoaded;
 
@@ -42,10 +40,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
     private List<Match> mMatches;
     private Event mEvent;
 
-    public TeamAtEventSummarySubscriber(Context context, Database db) {
+    public TeamAtEventSummarySubscriber(Resources resources) {
         super();
-        mContext = context;
-        mDb = db;
+        mResources = resources;
         mIsMatchListLoaded = false;
         mIsEventLoaded = false;
         mDataToBind = new ArrayList<>();
@@ -76,7 +73,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
         int year = mEvent.getEventYear();
         boolean activeEvent = mEvent.isHappeningNow();
         String actionBarTitle =
-          String.format(mContext.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
+          String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
         String actionBarSubtitle = String.format("@ %1$d %2$s", year, mEvent.getEventShortName());
         EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
@@ -89,7 +86,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
         JsonArray alliances = mEvent.getAlliances();
         int allianceNumber = 0, alliancePick = 0;
 
-        if (alliances.size() == 0) {
+        if (alliances == null || alliances.size() == 0) {
             // We don't have alliance data. Try to determine from matches.
             allianceNumber = MatchHelper.getAllianceForTeam(mMatches, mTeamKey);
         } else {
@@ -133,14 +130,14 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
             // Rank
             if (rank > 0) {
                 mDataToBind.add(new LabelValueListItem(
-                  mContext.getString(R.string.team_at_event_rank),
+                  mResources.getString(R.string.team_at_event_rank),
                   rank + Utilities.getOrdinalFor(rank)));
             }
             // Record
             /* Don't show for 2015 events, because no wins and such */
             if (year != 2015 && !recordString.equals("0-0-0")) {
                 mDataToBind.add(new LabelValueListItem(
-                  mContext.getString(R.string.team_at_event_record),
+                  mResources.getString(R.string.team_at_event_record),
                   recordString));
             }
 
@@ -148,9 +145,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
               status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 mDataToBind.add(new LabelValueListItem(
-                  mContext.getString(R.string.team_at_event_alliance),
+                  mResources.getString(R.string.team_at_event_alliance),
                   EventHelper.generateAllianceSummary(
-                    mContext.getResources(),
+                    mResources,
                     allianceNumber,
                     alliancePick)));
             }
@@ -158,8 +155,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
             // Status
             if (status != MatchHelper.EventStatus.NOT_PICKED) {
                 mDataToBind.add(new LabelValueListItem(
-                  mContext.getString(R.string.team_at_event_status),
-                  status.getDescriptionString(mContext)));
+                  mResources.getString(R.string.team_at_event_status),
+                  status.getDescriptionString(mResources)));
             }
 
             // Ranking Breakdown
@@ -169,12 +166,12 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
 
             if (lastMatch != null) {
                 mDataToBind.add(new LabelValueListItem
-                  (mContext.getString(R.string.title_last_match),
+                  (mResources.getString(R.string.title_last_match),
                     lastMatch.render()));
             }
             if (nextMatch != null) {
                 mDataToBind.add(new LabelValueListItem(
-                  mContext.getString(R.string.title_next_match),
+                  mResources.getString(R.string.title_next_match),
                   nextMatch.render()));
             }
 
