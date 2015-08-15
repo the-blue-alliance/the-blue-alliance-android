@@ -22,7 +22,7 @@ public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, Favori
     }
 
     @Override
-    protected Observable<List<Favorite>> getObservable() {
+    protected Observable<List<Favorite>> getObservable(String tbaCacheHeader) {
         return mDatafeed.getCache().fetchUserFavorites(getActivity());
     }
 

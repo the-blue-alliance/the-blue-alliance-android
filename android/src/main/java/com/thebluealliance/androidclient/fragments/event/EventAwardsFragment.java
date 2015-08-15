@@ -64,11 +64,11 @@ public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsLis
     }
 
     @Override
-    protected Observable<List<Award>> getObservable() {
+    protected Observable<List<Award>> getObservable(String tbaCacheHeader) {
         if (mTeamKey == null || mTeamKey.isEmpty()) {
-            return mDatafeed.fetchEventAwards(mEventKey);
+            return mDatafeed.fetchEventAwards(mEventKey, tbaCacheHeader);
         } else {
-            return mDatafeed.fetchTeamAtEventAwards(mTeamKey, mEventKey);
+            return mDatafeed.fetchTeamAtEventAwards(mTeamKey, mEventKey, tbaCacheHeader);
         }
     }
 

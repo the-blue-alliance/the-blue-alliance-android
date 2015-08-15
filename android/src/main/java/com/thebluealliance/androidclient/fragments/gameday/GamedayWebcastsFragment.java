@@ -1,14 +1,7 @@
 package com.thebluealliance.androidclient.fragments.gameday;
 
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -18,7 +11,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -47,8 +39,8 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
     }
 
     @Override
-    protected Observable<List<Event>> getObservable() {
-        return mDatafeed.fetchEventsInWeek(mYear, mWeek);
+    protected Observable<List<Event>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventsInWeek(mYear, mWeek, tbaCacheHeader);
     }
 
     @Override

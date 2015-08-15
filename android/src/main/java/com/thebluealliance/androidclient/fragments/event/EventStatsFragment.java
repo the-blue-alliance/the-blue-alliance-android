@@ -182,8 +182,8 @@ public class EventStatsFragment
     }
 
     @Override
-    protected Observable<JsonObject> getObservable() {
-        return mDatafeed.fetchEventStats(mEventKey);
+    protected Observable<JsonObject> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventStats(mEventKey, tbaCacheHeader);
     }
 
     @Override

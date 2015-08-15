@@ -59,13 +59,13 @@ public class TeamAtEventSummaryFragment
     }
 
     @Override
-    protected Observable<JsonArray> getObservable() {
-        return mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey);
+    protected Observable<JsonArray> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey, tbaCacheHeader);
     }
 
     @Override
-    protected Observable[] getExtraObservables() {
-        return new Observable[]{mDatafeed.fetchEvent(mEventKey)};
+    protected Observable[] getExtraObservables(String tbaCacheHeader) {
+        return new Observable[]{mDatafeed.fetchEvent(mEventKey, tbaCacheHeader)};
     }
 
 

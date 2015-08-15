@@ -139,7 +139,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        getComponent().datafeed().fetchTeamYearsParticipated(mTeamKey)
+        getComponent().datafeed().fetchTeamYearsParticipated(mTeamKey, null)
           .subscribeOn(Schedulers.io())
           .observeOn(Schedulers.computation())
           .subscribe(new YearsParticipatedDropdownSubscriber(this));
