@@ -11,10 +11,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.PlusManager;
-import com.thebluealliance.androidclient.accounts.PlusManagerCallbacks;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
-public class MyTBAOnboardingActivity extends AppCompatActivity implements View.OnClickListener, PlusManagerCallbacks, MyTBAOnboardingViewPager.MyTBAOnboardingFragmentCallbacks {
+public class MyTBAOnboardingActivity extends AppCompatActivity implements View.OnClickListener, PlusManager.Callbacks, MyTBAOnboardingViewPager.Callbacks {
 
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
 

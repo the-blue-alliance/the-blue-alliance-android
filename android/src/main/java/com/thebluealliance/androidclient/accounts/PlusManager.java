@@ -7,9 +7,6 @@ import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-/**
- * Created by Nathan on 8/13/2015.
- */
 public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // A magic number we will use to know that our sign-in error resolution activity has completed
@@ -26,10 +23,10 @@ public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
 
-    private PlusManagerCallbacks mCallbacks;
+    private Callbacks mCallbacks;
     private Activity mActivity;
 
-    public PlusManager(Activity activity, PlusManagerCallbacks callbacks) {
+    public PlusManager(Activity activity, Callbacks callbacks) {
         mCallbacks = callbacks;
         mActivity = activity;
     }
@@ -200,5 +197,23 @@ public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+    public interface Callbacks {
+
+        /**
+         * Called when the PlusClient is successfully connected.
+         */
+        void onPlusClientSignIn();
+
+
+        void onPlusClientBlockingUI(boolean show);
+
+        /**
+         * Called when there is a change in connection state.  If you have "Sign in"/ "Connect", "Sign
+         * out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states need to
+         * be updated.
+         */
+        void updateConnectButtonState();
     }
 }

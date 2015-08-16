@@ -55,7 +55,7 @@ public class Utilities {
 
     public static String exceptionStacktraceToString(Exception e) {
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(new StringWriter());
+        PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
     }

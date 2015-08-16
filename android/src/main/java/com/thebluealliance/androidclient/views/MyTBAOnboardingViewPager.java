@@ -24,7 +24,7 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
     private final TextView myTBATitle;
     private final TextView myTBASubtitle;
 
-    private MyTBAOnboardingFragmentCallbacks mCallbacks;
+    private Callbacks mCallbacks;
 
     public MyTBAOnboardingViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -45,7 +45,7 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         mSignInButton.setOnClickListener(this);
     }
 
-    public void setCallbacks(MyTBAOnboardingFragmentCallbacks callbacks) {
+    public void setCallbacks(Callbacks callbacks) {
         mCallbacks = callbacks;
     }
 
@@ -105,7 +105,7 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         mSignInButton.setVisibility(View.GONE);
     }
 
-    public interface MyTBAOnboardingFragmentCallbacks {
+    public interface Callbacks {
         void onSignInButtonClicked();
     }
 }

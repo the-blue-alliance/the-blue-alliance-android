@@ -23,7 +23,6 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.PlusManager;
-import com.thebluealliance.androidclient.accounts.PlusManagerCallbacks;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
@@ -34,7 +33,7 @@ import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 /**
  * Created by Nathan on 8/13/2015.
  */
-public class OnboardingActivity extends AppCompatActivity implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManagerCallbacks, MyTBAOnboardingViewPager.MyTBAOnboardingFragmentCallbacks {
+public class OnboardingActivity extends AppCompatActivity implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks, MyTBAOnboardingViewPager.Callbacks {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
