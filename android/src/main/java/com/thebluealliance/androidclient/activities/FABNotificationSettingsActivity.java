@@ -156,7 +156,7 @@ public abstract class FABNotificationSettingsActivity extends LegacyRefreshableH
         getFragmentManager().beginTransaction().replace(R.id.settings_list, mSettingsFragment).commit();
 
         // Disable the submit settings button so we can't hit it before the content is loaded
-        // This prevents accidently wiping settings (see #317)
+        // This prevents accidentally wiping settings (see #317)
         mCloseNotificationSettingsButton.setEnabled(false);
     }
 

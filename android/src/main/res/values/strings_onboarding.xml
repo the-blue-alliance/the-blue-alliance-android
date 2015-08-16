@@ -4,11 +4,14 @@
     <string name="welcome_prefix">Welcome to</string>
     <string name="welcome">The Blue Alliance</string>
     <string name="sign_in_with_google">SIGN IN WITH GOOGLE</string>
-    <string name="next">NEXT</string>
-    <string name="continue_string">CONTINUE</string>
-    <string name="finish">FINISH</string>
+    <string name="next_caps">NEXT</string>
+    <string name="continue_caps">CONTINUE</string>
+    <string name="finish_caps">FINISH</string>
+    <string name="cancel_caps">CANCEL</string>
+    <string name="skip_intro_caps">SKIP INTRO</string>
     <string name="welcome_message">Click \"Next\" to download initial data.</string>
     <string name="check_out_mytba">While you wait, why not check out myTBA?</string>
+    <string name="what_is_mytba">What is myTBA?</string>
     <string name="check_out_mytba_description">myTBA lets you track your favorite things in FRC and receive notifications for match scores, event winners, and more.</string>
     <string name="mytba_favorites_description">You can mark teams, events, matches, and more as favorites for easy access.</string>
     <string name="mytba_subscriptions_description">You can subscribe to a variety of notifications, such as upcoming matches for a team or the winners of an event.</string>

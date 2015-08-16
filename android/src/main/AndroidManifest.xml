@@ -74,6 +74,10 @@
             android:theme="@style/LaunchTheme" />
 
         <activity
+            android:name="com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity"
+            android:theme="@style/LaunchTheme" />
+
+        <activity
             android:name="com.thebluealliance.androidclient.activities.RedownloadActivity"
             android:theme="@style/LaunchTheme" />
 
@@ -204,10 +208,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
         </activity>
-        <activity
-            android:name=".activities.AuthenticatorActivity"
-            android:label="@string/title_activity_authenticator"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <receiver android:name="com.thebluealliance.androidclient.receivers.ConnectivityChangeReceiver">
             <intent-filter>

@@ -50,8 +50,7 @@ public class AccountHelper {
                 //Remove all local content and deregister from GCM
                 new DisableMyTBA(context).execute(currentUser);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                prefs.edit()
-                        .putBoolean(PREF_MYTBA_ENABLED, false).apply();
+                prefs.edit().putBoolean(PREF_MYTBA_ENABLED, false).apply();
             }
         }
     }

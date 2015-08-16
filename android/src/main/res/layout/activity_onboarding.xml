@@ -90,7 +90,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="@string/next"
+                        android:text="@string/next_caps"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
@@ -108,198 +108,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v4.view.ViewPager
+            <com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager
                 android:id="@+id/mytba_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/mytba_pager_indicator">
-
-                <RelativeLayout
-                    android:id="@+id/page_one"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:gravity="center_horizontal"
-                            android:text="@string/check_out_mytba"
-                            android:textColor="@color/white"
-                            android:textSize="36sp" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:gravity="center_horizontal"
-                            android:text="@string/check_out_mytba_description"
-                            android:textColor="@color/white"
-                            android:textSize="24sp" />
-                    </LinearLayout>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/page_two"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/star"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="@dimen/fab_margin"
-                        android:src="@drawable/ic_star_white_48dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/star"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="32dp"
-                        android:gravity="center_horizontal"
-                        android:text="@string/mytba_favorites_description"
-                        android:textColor="@color/white"
-                        android:textSize="24sp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/page_three"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/notification"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="@dimen/fab_margin"
-                        android:src="@drawable/ic_notifications_white_48dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/notification"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="32dp"
-                        android:gravity="center_horizontal"
-                        android:text="@string/mytba_subscriptions_description"
-                        android:textColor="@color/white"
-                        android:textSize="24sp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/page_four"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/example_fab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_margin="@dimen/fab_margin"
-                        android:src="@drawable/ic_star_white_24dp"
-                        app:fabSize="normal" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/example_fab"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="32dp"
-                        android:gravity="center_horizontal"
-                        android:text="@string/mytba_yellow_button_description"
-                        android:textColor="@color/white"
-                        android:textSize="24sp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/page_five"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:id="@+id/mytba_call_to_action"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="16dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/mytba_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:gravity="center_horizontal"
-                            android:text="@string/mytba_get_started_title"
-                            android:textColor="@color/white"
-                            android:textSize="36sp" />
-
-                        <TextView
-                            android:id="@+id/mytba_subtitle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:gravity="center_horizontal"
-                            android:text="@string/mytba_login_prompt"
-                            android:textColor="@color/white"
-                            android:textSize="24sp" />
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/google_sign_in_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_margin="16dp"
-                        android:background="@drawable/google_sign_in_button_background"
-                        android:clickable="true"
-                        android:focusable="true">
-
-                        <ImageView
-                            android:id="@+id/google_logo"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_centerVertical="true"
-                            android:layout_margin="4dp"
-                            android:src="@drawable/google_logo_red" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@id/google_logo"
-                            android:gravity="center_horizontal"
-                            android:text="@string/sign_in_with_google"
-                            android:textColor="@color/google_sign_in_button_text"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-                    </RelativeLayout>
-                </RelativeLayout>
-            </android.support.v4.view.ViewPager>
-
-            <me.relex.circleindicator.CircleIndicator
-                android:id="@id/mytba_pager_indicator"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
                 android:layout_above="@+id/loading_status_container" />
 
             <RelativeLayout
@@ -343,7 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="@string/continue_string"
+                        android:text="@string/continue_caps"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
@@ -409,7 +221,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="@string/finish"
+                        android:text="@string/finish_caps"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 

@@ -10,14 +10,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -27,18 +25,16 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.PlusManager;
 import com.thebluealliance.androidclient.accounts.PlusManagerCallbacks;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
-import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
-
-import me.relex.circleindicator.CircleIndicator;
+import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 /**
  * Created by Nathan on 8/13/2015.
  */
-public class OnboardingActivity extends AppCompatActivity implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManagerCallbacks {
+public class OnboardingActivity extends AppCompatActivity implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManagerCallbacks, MyTBAOnboardingViewPager.MyTBAOnboardingFragmentCallbacks {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
@@ -46,12 +42,10 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
 
     private DisableSwipeViewPager viewPager;
-    private ViewPager myTBAViewPager;
+    private MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
     private TextView loadingMessage;
     private ProgressBar loadingProgressBar;
     private View continueToEndButton;
-    private TextView myTBATitle, myTBASubtitle;
-    private View mSignInButton;
 
     private String currentLoadingMessage = "";
 
@@ -70,28 +64,18 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
 
         setContentView(R.layout.activity_onboarding);
 
-        myTBATitle = (TextView) findViewById(R.id.mytba_title);
-        myTBASubtitle = (TextView) findViewById(R.id.mytba_subtitle);
-
         viewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
         viewPager.setSwipeEnabled(false);
         viewPager.setOffscreenPageLimit(10);
         viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
 
+        mMyTBAOnboardingViewPager = (MyTBAOnboardingViewPager) findViewById(R.id.mytba_view_pager);
+        mMyTBAOnboardingViewPager.setCallbacks(this);
+
         loadingMessage = (TextView) findViewById(R.id.loading_message);
         loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progress_bar);
         continueToEndButton = findViewById(R.id.continue_to_end);
         continueToEndButton.setOnClickListener(this);
-
-        myTBAViewPager = (ViewPager) findViewById(R.id.mytba_view_pager);
-        myTBAViewPager.setAdapter(new MyTBAOnboardingPagerAdapter(myTBAViewPager));
-        myTBAViewPager.setOffscreenPageLimit(10);
-
-        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.mytba_pager_indicator);
-        indicator.setViewPager(myTBAViewPager);
-
-        mSignInButton = findViewById(R.id.google_sign_in_button);
-        mSignInButton.setOnClickListener(v -> mPlusManager.signIn());
 
         // If the activity is being recreated after a config change, restore the message that was
         // being shown when the last activity was destroyed
@@ -139,11 +123,11 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
         }
 
         if (isMyTBALoginComplete) {
-            setUpForLoginSuccess();
+            mMyTBAOnboardingViewPager.setUpForLoginSuccess();
         } else if (!supportsGooglePlayServices()) {
-            setUpForNoPlayServices();
+            mMyTBAOnboardingViewPager.setUpForNoPlayServices();
         } else {
-            setUpForLoginPrompt();
+            mMyTBAOnboardingViewPager.setUpForLoginPrompt();
         }
     }
 
@@ -333,7 +317,7 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onPlusClientSignIn() {
-        setUpForLoginSuccess();
+        mMyTBAOnboardingViewPager.setUpForLoginSuccess();
         isMyTBALoginComplete = true;
     }
 
@@ -347,32 +331,6 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    private void setUpForNoPlayServices() {
-        myTBATitle.setVisibility(View.VISIBLE);
-        myTBATitle.setText(R.string.mytba_no_play_services);
-
-        myTBASubtitle.setVisibility(View.VISIBLE);
-        myTBASubtitle.setText(R.string.mytba_no_play_services_subtitle);
-    }
-
-    private void setUpForLoginPrompt() {
-        myTBATitle.setVisibility(View.VISIBLE);
-        myTBATitle.setText(R.string.mytba_get_started_title);
-
-        myTBASubtitle.setVisibility(View.VISIBLE);
-        myTBASubtitle.setText(R.string.mytba_login_prompt);
-    }
-
-    private void setUpForLoginSuccess() {
-        myTBATitle.setVisibility(View.VISIBLE);
-        myTBATitle.setText(R.string.mytba_login_success);
-
-        myTBASubtitle.setVisibility(View.VISIBLE);
-        myTBASubtitle.setText(R.string.mytba_login_success_subtitle);
-
-        mSignInButton.setVisibility(View.GONE);
-    }
-
     /**
      * Check if the device supports Google Play Services.  It's best practice to check first rather
      * than handling this as an error case.
@@ -380,7 +338,11 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
      * @return whether the device supports Google Play Services
      */
     private boolean supportsGooglePlayServices() {
-        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) ==
-                ConnectionResult.SUCCESS;
+        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
+    }
+
+    @Override
+    public void onSignInButtonClicked() {
+        mPlusManager.signIn();
     }
 }
