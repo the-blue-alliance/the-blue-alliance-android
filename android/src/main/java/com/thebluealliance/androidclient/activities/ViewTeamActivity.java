@@ -220,6 +220,9 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     }
 
     private void updateTeamYearSelector(int selectedPosition) {
+        if (selectedPosition < 0 || selectedPosition >= mYearsParticipated.length) {
+            return;
+        }
         mYearSelectorSubtitle.setText(mYearsParticipated[selectedPosition]);
     }
 
