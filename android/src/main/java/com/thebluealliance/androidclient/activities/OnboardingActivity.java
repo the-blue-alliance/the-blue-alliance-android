@@ -152,7 +152,26 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
                 beginLoadingIfConnected();
                 break;
             case R.id.continue_to_end:
-                viewPager.setCurrentItem(2);
+                // If myTBA hasn't been activated yet, prompt the user one last time to sign in
+                if (!mMyTBAOnboardingViewPager.isOnLoginPage()) {
+                    mMyTBAOnboardingViewPager.scrollToLoginPage();
+                } else if (!isMyTBALoginComplete) {
+                    new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.mytba_prompt_title))
+                            .setMessage(getString(R.string.mytba_prompt_message))
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.mytba_prompt_yes, (dialog, dialogId) -> {
+                                // Scroll to the last page
+                                viewPager.setCurrentItem(2);
+                                dialog.dismiss();
+                            })
+                            .setNegativeButton(R.string.mytba_prompt_cancel, (dialog, dialogId) -> {
+                                // Do nothing; allow user to enable myTBA
+                                dialog.dismiss();
+                            }).create().show();
+                } else if (isMyTBALoginComplete) {
+                    viewPager.setCurrentItem(2);
+                }
                 break;
             case R.id.finish:
                 startActivity(new Intent(this, HomeActivity.class));
