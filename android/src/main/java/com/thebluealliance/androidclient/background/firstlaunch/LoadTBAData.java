@@ -170,12 +170,26 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             // If no exception has been thrown at this point, we have all the data. We can now
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
+            Database db = Database.getInstance(context);
+
+            // First, wipe all relevant data from the database
+            if(Arrays.binarySearch(dataToLoad, LOAD_TEAMS) != -1) {
+                db.getTeamsTable().deleteAllRows();
+            }
+            if(Arrays.binarySearch(dataToLoad, LOAD_EVENTS) != -1) {
+                db.getEventsTable().deleteAllRows();
+            }
+            if(Arrays.binarySearch(dataToLoad, LOAD_DISTRICTS) != -1) {
+                db.getDistrictsTable().deleteAllRows();
+            }
+
+            // Now, insert the newly loaded data
             Log.d(Constants.LOG_TAG, "storing teams");
-            Database.getInstance(context).getTeamsTable().add(teams);
+            db.getTeamsTable().add(teams);
             Log.d(Constants.LOG_TAG, "storing events");
-            Database.getInstance(context).getEventsTable().add(events);
+            db.getEventsTable().add(events);
             Log.d(Constants.LOG_TAG, "storing districts");
-            Database.getInstance(context).getDistrictsTable().add(districts);
+            db.getDistrictsTable().add(districts);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
@@ -189,7 +203,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                 editor.putBoolean(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
-            editor.putInt(LaunchActivity.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
+            editor.putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
             editor.apply();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));
         } catch (DataManager.NoDataException e) {

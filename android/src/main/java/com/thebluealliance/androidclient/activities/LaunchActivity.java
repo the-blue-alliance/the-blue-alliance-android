@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,7 +11,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
@@ -28,9 +26,6 @@ import java.util.regex.Pattern;
 
 public class LaunchActivity extends AppCompatActivity {
 
-    public static final String ALL_DATA_LOADED = "all_data_loaded";
-    public static final String APP_VERSION_KEY = "app_version";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +34,7 @@ public class LaunchActivity extends AppCompatActivity {
         // Create intent to launch data download activity
         Intent redownloadIntent = new Intent(this, RedownloadActivity.class);
         boolean redownload = checkDataRedownload(redownloadIntent);
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ALL_DATA_LOADED, false) && !redownload) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.ALL_DATA_LOADED_KEY, false) && !redownload) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
@@ -83,17 +78,18 @@ public class LaunchActivity extends AppCompatActivity {
 
     private boolean checkDataRedownload(Intent intent) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int lastVersion = prefs.getInt(APP_VERSION_KEY, -1);
+        int lastVersion = prefs.getInt(Constants.APP_VERSION_KEY, -1);
 
-        if (lastVersion == -1 && !prefs.getBoolean(ALL_DATA_LOADED, false)) {
+        if (lastVersion == -1 && !prefs.getBoolean(Constants.ALL_DATA_LOADED_KEY, false)) {
             // on a clean install, don't think we're updating
             return false;
         }
 
         boolean redownload = false;
-        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(APP_VERSION_KEY));
-        if (prefs.contains(APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(Constants.APP_VERSION_KEY));
+        if (prefs.contains(Constants.APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
             // We are updating the app. Do stuffs, if necessary.
+            // TODO: make sure to modify changelog.txt with any recent changes
             if (lastVersion < 14) {
                 // addition of districts. Download the required data
                 redownload = true;
@@ -101,25 +97,28 @@ public class LaunchActivity extends AppCompatActivity {
             }
 
             if (lastVersion < 16) {
-                //addition of myTBA - Prompt the user for an account
+                // addition of myTBA - Prompt the user for an account
                 redownload = true;
                 intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
             }
 
             if (lastVersion < 21) {
-                //redownload to get event short names
+                // redownload to get event short names
                 redownload = true;
                 intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
             }
 
             if (lastVersion < 46) {
-                //recreate search indexes to contain foreign keys
+                // recreate search indexes to contain foreign keys
                 redownload = false;
                 RecreateSearchIndexes.startActionRecreateSearchIndexes(this);
             }
         }
-        // Store the current version key
-        prefs.edit().putInt(APP_VERSION_KEY, BuildConfig.VERSION_CODE).apply();
+        // If we don't have to redownload, store the version code here. Otherwise, let the
+        // RedownloadActivity store the version code upcn completion
+        if (!redownload) {
+            prefs.edit().putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE).apply();
+        }
         return redownload;
     }
 

@@ -14,9 +14,6 @@ import com.thebluealliance.androidclient.accounts.PlusManager;
 import com.thebluealliance.androidclient.accounts.PlusManagerCallbacks;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
-/**
- * Created by Nathan on 8/13/2015.
- */
 public class MyTBAOnboardingActivity extends AppCompatActivity implements View.OnClickListener, PlusManagerCallbacks, MyTBAOnboardingViewPager.MyTBAOnboardingFragmentCallbacks {
 
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";

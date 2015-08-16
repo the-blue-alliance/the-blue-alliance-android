@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
@@ -23,13 +24,16 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
             throw new IllegalStateException("LoadTBADataTaskFragment must be hosted by an activity that implements LoadTBADataCallbacks");
         }
 
-        if (getArguments() != null && getArguments().containsKey(LoadTBAData.DATA_TO_LOAD)) {
-            short[] inData = getArguments().getShortArray(LoadTBAData.DATA_TO_LOAD);
-            dataToLoad = new Short[inData.length];
-            for (int i = 0; i < dataToLoad.length; i++) {
-                dataToLoad[i] = inData[i];
+        Bundle args = getArguments();
+        if (args != null && args.containsKey(LoadTBAData.DATA_TO_LOAD)) {
+            short[] inData = args.getShortArray(LoadTBAData.DATA_TO_LOAD);
+            if (inData != null) {
+                dataToLoad = new Short[inData.length];
+                for (int i = 0; i < dataToLoad.length; i++) {
+                    dataToLoad[i] = inData[i];
+                }
             }
-        } else if (getArguments() != null) {
+        } else if (args != null) {
             // Don't load any data
         } else {
             // Load all data

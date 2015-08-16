@@ -211,7 +211,7 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void onError(final String stacktrace) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(LaunchActivity.ALL_DATA_LOADED, false).commit();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.ALL_DATA_LOADED_KEY, false).commit();
 
         // Return to the first page
         viewPager.setCurrentItem(0);
@@ -243,7 +243,7 @@ public class OnboardingActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void onLoadFinished() {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(LaunchActivity.ALL_DATA_LOADED, true).commit();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.ALL_DATA_LOADED_KEY, true).commit();
 
         isDataFinishedLoading = true;
 

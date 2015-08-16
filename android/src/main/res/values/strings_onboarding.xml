@@ -22,7 +22,8 @@
     <string name="mytba_login_success_subtitle">Enjoy using myTBA.</string>
     <string name="mytba_no_play_services">Uh oh...</string>
     <string name="mytba_no_play_services_subtitle">Your device is missing Google Play Services, so myTBA is not supported.</string>
-    <string name="update_message">The Blue Alliance for Android has been updated to a new version. I need to update some data from our servers before it\'s ready to use. Please make sure you have a good network connection and press \"Next\" when ready.</string>
+    <string name="update_message">The app has been updated to a new version. Click \"Next\" to download some important new data.</string>
+    <string name="please_read_changelog">While you wait, check out some of the recent improvements to the app.</string>
     <string name="load_finished_message">You\'re all set! Enjoy the app.</string>
 
     <!-- No Connection Dialog -->

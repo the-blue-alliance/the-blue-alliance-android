@@ -79,7 +79,8 @@
 
         <activity
             android:name="com.thebluealliance.androidclient.activities.RedownloadActivity"
-            android:theme="@style/LaunchTheme" />
+            android:theme="@style/LaunchTheme"
+            android:exported="true"/>
 
         <activity
             android:name="com.thebluealliance.androidclient.activities.HomeActivity"
