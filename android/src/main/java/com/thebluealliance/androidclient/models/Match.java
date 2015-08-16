@@ -9,12 +9,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
@@ -50,8 +51,8 @@ public class Match extends BasicModel<Match> {
     }
 
     public String getKey() {
-        if (fields.containsKey(Database.Matches.KEY) && fields.get(Database.Matches.KEY) instanceof String) {
-            return (String) fields.get(Database.Matches.KEY);
+        if (fields.containsKey(MatchesTable.KEY) && fields.get(MatchesTable.KEY) instanceof String) {
+            return (String) fields.get(MatchesTable.KEY);
         }
         return "";
     }
@@ -59,34 +60,34 @@ public class Match extends BasicModel<Match> {
     public void setKey(String key) {
         if (!MatchHelper.validateMatchKey(key))
             throw new IllegalArgumentException("Invalid match key: " + key);
-        fields.put(Database.Matches.KEY, key);
-        fields.put(Database.Matches.EVENT, key.split("_")[0]);
+        fields.put(MatchesTable.KEY, key);
+        fields.put(MatchesTable.EVENT, key.split("_")[0]);
 
         this.year = Integer.parseInt(key.substring(0, 4));
         this.type = MatchHelper.TYPE.fromKey(key);
     }
 
     public String getEventKey() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Matches.EVENT) && fields.get(Database.Matches.EVENT) instanceof String) {
-            return (String) fields.get(Database.Matches.EVENT);
+        if (fields.containsKey(MatchesTable.EVENT) && fields.get(MatchesTable.EVENT) instanceof String) {
+            return (String) fields.get(MatchesTable.EVENT);
         }
         throw new FieldNotDefinedException("Field Database.Matches.EVENT is not defined");
     }
 
     public String getTimeString() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Matches.TIMESTRING) && fields.get(Database.Matches.TIMESTRING) instanceof String) {
-            return (String) fields.get(Database.Matches.TIMESTRING);
+        if (fields.containsKey(MatchesTable.TIMESTRING) && fields.get(MatchesTable.TIMESTRING) instanceof String) {
+            return (String) fields.get(MatchesTable.TIMESTRING);
         }
         throw new FieldNotDefinedException("Field Database.Matches.TIMESTRING is not defined");
     }
 
     public void setTimeString(String timeString) {
-        fields.put(Database.Matches.TIMESTRING, timeString);
+        fields.put(MatchesTable.TIMESTRING, timeString);
     }
 
     public Date getTime() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Matches.TIME) && fields.get(Database.Matches.TIME) instanceof Long) {
-            return new Date((Long) fields.get(Database.Matches.TIME));
+        if (fields.containsKey(MatchesTable.TIME) && fields.get(MatchesTable.TIME) instanceof Long) {
+            return new Date((Long) fields.get(MatchesTable.TIME));
         }
         throw new FieldNotDefinedException("Field Database.Matches.TIME is not defined");
     }
@@ -96,11 +97,11 @@ public class Match extends BasicModel<Match> {
     }
 
     public void setTime(Date time) {
-        fields.put(Database.Matches.TIME, time.getTime());
+        fields.put(MatchesTable.TIME, time.getTime());
     }
 
     public void setTime(long timestamp) {
-        fields.put(Database.Matches.TIME, timestamp);
+        fields.put(MatchesTable.TIME, timestamp);
     }
 
     public MatchHelper.TYPE getType() throws FieldNotDefinedException {
@@ -122,20 +123,20 @@ public class Match extends BasicModel<Match> {
         if (alliances != null) {
             return alliances;
         }
-        if (fields.containsKey(Database.Matches.ALLIANCES) && fields.get(Database.Matches.ALLIANCES) instanceof String) {
-            alliances = JSONManager.getasJsonObject((String) fields.get(Database.Matches.ALLIANCES));
+        if (fields.containsKey(MatchesTable.ALLIANCES) && fields.get(MatchesTable.ALLIANCES) instanceof String) {
+            alliances = JSONHelper.getasJsonObject((String) fields.get(MatchesTable.ALLIANCES));
             return alliances;
         }
         throw new FieldNotDefinedException("Field Database.Matches.ALLIANCES is not defined");
     }
 
     public void setAlliances(JsonObject alliances) {
-        fields.put(Database.Matches.ALLIANCES, alliances.toString());
+        fields.put(MatchesTable.ALLIANCES, alliances.toString());
         this.alliances = alliances;
     }
 
     public void setAlliances(String allianceJson) {
-        fields.put(Database.Matches.ALLIANCES, allianceJson);
+        fields.put(MatchesTable.ALLIANCES, allianceJson);
     }
 
     public static JsonObject getRedAlliance(JsonObject alliances) {
@@ -173,20 +174,20 @@ public class Match extends BasicModel<Match> {
         if (videos != null) {
             return videos;
         }
-        if (fields.containsKey(Database.Matches.VIDEOS) && fields.get(Database.Matches.VIDEOS) instanceof String) {
-            videos = JSONManager.getasJsonArray((String) fields.get(Database.Matches.VIDEOS));
+        if (fields.containsKey(MatchesTable.VIDEOS) && fields.get(MatchesTable.VIDEOS) instanceof String) {
+            videos = JSONHelper.getasJsonArray((String) fields.get(MatchesTable.VIDEOS));
             return videos;
         }
         throw new FieldNotDefinedException("Field Database.Matches.VIDEOS is not defined");
     }
 
     public void setVideos(JsonArray videos) {
-        fields.put(Database.Matches.VIDEOS, videos.toString());
+        fields.put(MatchesTable.VIDEOS, videos.toString());
         this.videos = videos;
     }
 
     public void setVideos(String videosJson) {
-        fields.put(Database.Matches.VIDEOS, videosJson);
+        fields.put(MatchesTable.VIDEOS, videosJson);
     }
 
     public int getYear() throws FieldNotDefinedException {
@@ -197,25 +198,25 @@ public class Match extends BasicModel<Match> {
     }
 
     public int getMatchNumber() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Matches.MATCHNUM) && fields.get(Database.Matches.MATCHNUM) instanceof Integer) {
-            return (Integer) fields.get(Database.Matches.MATCHNUM);
+        if (fields.containsKey(MatchesTable.MATCHNUM) && fields.get(MatchesTable.MATCHNUM) instanceof Integer) {
+            return (Integer) fields.get(MatchesTable.MATCHNUM);
         }
         throw new FieldNotDefinedException("Field Database.Matches.MATCHNUM is not defined");
     }
 
     public void setMatchNumber(int matchNumber) {
-        fields.put(Database.Matches.MATCHNUM, matchNumber);
+        fields.put(MatchesTable.MATCHNUM, matchNumber);
     }
 
     public int getSetNumber() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Matches.SETNUM) && fields.get(Database.Matches.SETNUM) instanceof Integer) {
-            return (Integer) fields.get(Database.Matches.SETNUM);
+        if (fields.containsKey(MatchesTable.SETNUM) && fields.get(MatchesTable.SETNUM) instanceof Integer) {
+            return (Integer) fields.get(MatchesTable.SETNUM);
         }
         throw new FieldNotDefinedException("Field Database.Matches.MATCHNUM is not defined");
     }
 
     public void setSetNumber(int setNumber) {
-        fields.put(Database.Matches.SETNUM, setNumber);
+        fields.put(MatchesTable.SETNUM, setNumber);
     }
 
     public String getTitle(boolean lineBreak) {
@@ -426,7 +427,7 @@ public class Match extends BasicModel<Match> {
 
     public static APIResponse<Match> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
-        Database.Matches table = Database.getInstance(c).getMatchesTable();
+        MatchesTable table = Database.getInstance(c).getMatchesTable();
         Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Match match;
         if (cursor != null && cursor.moveToFirst()) {
@@ -440,14 +441,14 @@ public class Match extends BasicModel<Match> {
         ArrayList<Match> allMatches = new ArrayList<>();
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Match updatedMatch = new Match();
                 if (url.contains("event") && url.contains("matches")) {
                     /* We're requesting the matches for the whole event (there isn't a single match endpoint */
-                    JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                    JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                     for (JsonElement m : matchList) {
-                        Match inflated = JSONManager.getGson().fromJson(m, Match.class);
+                        Match inflated = JSONHelper.getGson().fromJson(m, Match.class);
                         if (m.getAsJsonObject().get("key").getAsString().equals(key)) {
                             updatedMatch = inflated;
                             //this match will be added to the list below
@@ -456,7 +457,7 @@ public class Match extends BasicModel<Match> {
                         }
                     }
                 } else {
-                    updatedMatch = JSONManager.getGson().fromJson(response.getData(), Match.class);
+                    updatedMatch = JSONHelper.getGson().fromJson(response.getData(), Match.class);
                 }
                 match.merge(updatedMatch);
                 changed = true;
@@ -475,7 +476,7 @@ public class Match extends BasicModel<Match> {
 
     public static APIResponse<ArrayList<Match>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
-        Database.Matches table = Database.getInstance(c).getMatchesTable();
+        MatchesTable table = Database.getInstance(c).getMatchesTable();
         Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         ArrayList<Match> allMatches = new ArrayList<>(),
                 storedMatches = new ArrayList<>();
@@ -491,14 +492,14 @@ public class Match extends BasicModel<Match> {
 
         for (String url : apiUrls) {
             /* Hit each API URL requested */
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
 
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 /* If we get back data, parse it */
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                 allMatches = new ArrayList<>();
                 for (JsonElement m : matchList) {
-                    Match match = JSONManager.getGson().fromJson(m, Match.class);
+                    Match match = JSONHelper.getGson().fromJson(m, Match.class);
                     allMatches.add(match);
                 }
                 changed = true;
@@ -508,7 +509,7 @@ public class Match extends BasicModel<Match> {
 
         if (changed) {
             /* Add the new matches to the local db, after deleting the old ones */
-            Database.Matches matchTable = Database.getInstance(c).getMatchesTable();
+            MatchesTable matchTable = Database.getInstance(c).getMatchesTable();
             int deleted = matchTable.delete(whereClause, whereArgs);
             matchTable.add(allMatches);
 

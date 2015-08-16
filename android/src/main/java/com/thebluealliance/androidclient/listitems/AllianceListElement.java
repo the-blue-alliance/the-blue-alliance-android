@@ -94,4 +94,15 @@ public class AllianceListElement extends ListElement implements RenderableModel 
     public ListElement render() {
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AllianceListElement)) {
+            return false;
+        }
+        AllianceListElement other = (AllianceListElement) o;
+        return number == other.number
+          && teams.equals(other.teams)
+          && eventKey.equals(other.eventKey);
+    }
 }

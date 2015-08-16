@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
-import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 
 import java.util.Date;
 
@@ -88,12 +88,12 @@ public class StoredNotification {
 
     public ContentValues getParams() {
         ContentValues params = new ContentValues();
-        params.put(Database.Notifications.TYPE, type);
-        params.put(Database.Notifications.TITLE, title);
-        params.put(Database.Notifications.BODY, body);
-        params.put(Database.Notifications.INTENT, intent);
-        params.put(Database.Notifications.TIME, time.getTime());
-        params.put(Database.Notifications.SYSTEM_ID, systemId);
+        params.put(NotificationsTable.TYPE, type);
+        params.put(NotificationsTable.TITLE, title);
+        params.put(NotificationsTable.BODY, body);
+        params.put(NotificationsTable.INTENT, intent);
+        params.put(NotificationsTable.TIME, time.getTime());
+        params.put(NotificationsTable.SYSTEM_ID, systemId);
         return params;
     }
 }

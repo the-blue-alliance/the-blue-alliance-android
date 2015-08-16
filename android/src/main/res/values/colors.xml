@@ -43,6 +43,7 @@
     <color name="accent_dark_ripple">#cfad00</color>
     <color name="control_highlight">#c5cae9</color>
     <color name="snackbar_background">#323232</color>
+    <color name="icon_gray">#858585</color>
 
     <!-- Gameday ticker header colors -->
     <color name="gameday_ticker_alliance_selection_header">#f44336</color>
@@ -52,6 +53,11 @@
     <color name="gameday_ticker_level_starting_header">#9c27b0</color>
     <color name="gameday_ticker_awards_header">#4caf50</color>
     <color name="gameday_ticker_time_footer">#ECECEC</color>
+
+    <!-- Google sign in button colors -->
+    <color name="google_sign_in_button">#ffffff</color>
+    <color name="google_sign_in_button_pressed">#eeeeee</color>
+    <color name="google_sign_in_button_text">#555555</color>
 
 
 </resources>

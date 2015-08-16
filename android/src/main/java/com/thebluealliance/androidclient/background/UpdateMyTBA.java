@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
 
@@ -30,7 +32,7 @@ public class UpdateMyTBA extends AsyncTask<Short, Void, Void> {
     protected Void doInBackground(Short... params) {
 
         List<Short> toUpdate;
-        if (params.length > 0) {
+        if (params.length > 0) {TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
             toUpdate = Arrays.asList(params);
         } else {
             toUpdate = Arrays.asList(UPDATE_FAVORITES, UPDATE_SUBSCRIPTION);

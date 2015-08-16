@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -65,7 +65,7 @@ public class AwardListElement extends ListElement {
 
             String teamNumber = "";
             String awardee = "";
-            if (JSONManager.isNull(winner.get("team_number"))) {
+            if (JSONHelper.isNull(winner.get("team_number"))) {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
@@ -76,7 +76,7 @@ public class AwardListElement extends ListElement {
                 }
                 winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
             }
-            if (JSONManager.isNull(winner.get("awardee"))) {
+            if (JSONHelper.isNull(winner.get("awardee"))) {
                 awardee = "";
             } else {
                 awardee = winner.get("awardee").getAsString();

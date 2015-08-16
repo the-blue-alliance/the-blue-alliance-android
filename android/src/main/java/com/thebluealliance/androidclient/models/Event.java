@@ -9,16 +9,19 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
 import java.text.ParseException;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class Event extends BasicModel<Event> {
@@ -56,106 +60,106 @@ public class Event extends BasicModel<Event> {
         if (alliances != null) {
             return alliances;
         }
-        if (fields.containsKey(Database.Events.ALLIANCES) && fields.get(Database.Events.ALLIANCES) instanceof String) {
-            alliances = JSONManager.getasJsonArray((String) fields.get(Database.Events.ALLIANCES));
+        if (fields.containsKey(EventsTable.ALLIANCES) && fields.get(EventsTable.ALLIANCES) instanceof String) {
+            alliances = JSONHelper.getasJsonArray((String) fields.get(EventsTable.ALLIANCES));
             return alliances;
         }
         throw new FieldNotDefinedException("Field Database.Events.ALLIANCES is not defined");
     }
 
     public void setAlliances(JsonArray alliances) {
-        fields.put(Database.Events.ALLIANCES, alliances.toString());
+        fields.put(EventsTable.ALLIANCES, alliances.toString());
         this.alliances = alliances;
     }
 
     public void setAlliances(String allianceJson) {
-        fields.put(Database.Events.ALLIANCES, allianceJson);
+        fields.put(EventsTable.ALLIANCES, allianceJson);
     }
 
     public String getWebsite() {
-        if (fields.containsKey(Database.Events.WEBSITE) && fields.get(Database.Events.WEBSITE) instanceof String) {
-            return (String) fields.get(Database.Events.WEBSITE);
+        if (fields.containsKey(EventsTable.WEBSITE) && fields.get(EventsTable.WEBSITE) instanceof String) {
+            return (String) fields.get(EventsTable.WEBSITE);
         }
         return "";
     }
 
     public int getEventYear() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.YEAR) && fields.get(Database.Events.YEAR) instanceof Integer) {
-            return (Integer) fields.get(Database.Events.YEAR);
+        if (fields.containsKey(EventsTable.YEAR) && fields.get(EventsTable.YEAR) instanceof Integer) {
+            return (Integer) fields.get(EventsTable.YEAR);
         } else {
             return Integer.parseInt(getKey().substring(0, 4));
         }
     }
 
     public void setWebsite(String website) {
-        fields.put(Database.Events.WEBSITE, website);
+        fields.put(EventsTable.WEBSITE, website);
     }
 
     public JsonArray getRankings() throws FieldNotDefinedException {
         if (rankings != null) {
             return rankings;
         }
-        if (fields.containsKey(Database.Events.RANKINGS) && fields.get(Database.Events.RANKINGS) instanceof String) {
-            rankings = JSONManager.getasJsonArray((String) fields.get(Database.Events.RANKINGS));
+        if (fields.containsKey(EventsTable.RANKINGS) && fields.get(EventsTable.RANKINGS) instanceof String) {
+            rankings = JSONHelper.getasJsonArray((String) fields.get(EventsTable.RANKINGS));
             return rankings;
         }
         throw new FieldNotDefinedException("Field Database.Events.RANKINGS is not defined");
     }
 
     public void setRankings(JsonArray rankings) {
-        fields.put(Database.Events.RANKINGS, rankings.toString());
+        fields.put(EventsTable.RANKINGS, rankings.toString());
         this.rankings = rankings;
     }
 
     public void setRankings(String rankingsJson) {
-        fields.put(Database.Events.RANKINGS, rankingsJson);
+        fields.put(EventsTable.RANKINGS, rankingsJson);
     }
 
     public JsonArray getWebcasts() throws FieldNotDefinedException {
         if (webcasts != null) {
             return webcasts;
         }
-        if (fields.containsKey(Database.Events.WEBCASTS) && fields.get(Database.Events.WEBCASTS) instanceof String) {
-            webcasts = JSONManager.getasJsonArray((String) fields.get(Database.Events.WEBCASTS));
+        if (fields.containsKey(EventsTable.WEBCASTS) && fields.get(EventsTable.WEBCASTS) instanceof String) {
+            webcasts = JSONHelper.getasJsonArray((String) fields.get(EventsTable.WEBCASTS));
             return webcasts;
         }
         throw new FieldNotDefinedException("Field Database.Events.WEBCASTS is not defined");
     }
 
     public void setWebcasts(JsonArray webcasts) {
-        fields.put(Database.Events.WEBCASTS, webcasts.toString());
+        fields.put(EventsTable.WEBCASTS, webcasts.toString());
         this.webcasts = webcasts;
     }
 
     public void setWebcasts(String webcastJson) {
-        fields.put(Database.Events.WEBCASTS, webcastJson);
+        fields.put(EventsTable.WEBCASTS, webcastJson);
     }
 
     public JsonObject getStats() throws FieldNotDefinedException {
         if (stats != null) {
             return stats;
         }
-        if (fields.containsKey(Database.Events.STATS) && fields.get(Database.Events.STATS) instanceof String) {
-            stats = JSONManager.getasJsonObject((String) fields.get(Database.Events.STATS));
+        if (fields.containsKey(EventsTable.STATS) && fields.get(EventsTable.STATS) instanceof String) {
+            stats = JSONHelper.getasJsonObject((String) fields.get(EventsTable.STATS));
             return stats;
         }
         throw new FieldNotDefinedException("Field Database.Events.STATS is not defined");
     }
 
     public void setStats(JsonObject stats) {
-        fields.put(Database.Events.STATS, stats.toString());
+        fields.put(EventsTable.STATS, stats.toString());
         this.stats = stats;
     }
 
     public void setStats(String statsJson) {
-        fields.put(Database.Events.STATS, statsJson);
+        fields.put(EventsTable.STATS, statsJson);
     }
 
 
     @Override
     public String getKey() {
-        if (fields.containsKey(Database.Events.KEY) && fields.get(Database.Events.KEY) instanceof String) {
-            return (String) fields.get(Database.Events.KEY);
+        if (fields.containsKey(EventsTable.KEY) && fields.get(EventsTable.KEY) instanceof String) {
+            return (String) fields.get(EventsTable.KEY);
         }
         return "";
     }
@@ -172,24 +176,24 @@ public class Event extends BasicModel<Event> {
     public void setEventKey(String eventKey) {
         if (!EventHelper.validateEventKey(eventKey))
             throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
-        fields.put(Database.Events.KEY, eventKey);
-        fields.put(Database.Events.YEAR, Integer.parseInt(eventKey.substring(0, 4)));
+        fields.put(EventsTable.KEY, eventKey);
+        fields.put(EventsTable.YEAR, Integer.parseInt(eventKey.substring(0, 4)));
     }
 
     public String getEventName() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.NAME) && fields.get(Database.Events.NAME) instanceof String) {
-            return (String) fields.get(Database.Events.NAME);
+        if (fields.containsKey(EventsTable.NAME) && fields.get(EventsTable.NAME) instanceof String) {
+            return (String) fields.get(EventsTable.NAME);
         }
         throw new FieldNotDefinedException("Field Database.Events.NAME is not defined");
     }
 
     public void setEventName(String eventName) {
-        fields.put(Database.Events.NAME, eventName);
+        fields.put(EventsTable.NAME, eventName);
     }
 
     public String getEventShortName() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.SHORTNAME) && fields.get(Database.Events.SHORTNAME) instanceof String) {
-            String shortName = (String) fields.get(Database.Events.SHORTNAME);
+        if (fields.containsKey(EventsTable.SHORTNAME) && fields.get(EventsTable.SHORTNAME) instanceof String) {
+            String shortName = (String) fields.get(EventsTable.SHORTNAME);
             if (shortName != null && !shortName.isEmpty()) {
                 return shortName;
             }
@@ -198,96 +202,96 @@ public class Event extends BasicModel<Event> {
     }
 
     public void setEventShortName(String eventShortName) {
-        fields.put(Database.Events.SHORTNAME, eventShortName);
+        fields.put(EventsTable.SHORTNAME, eventShortName);
     }
 
     public String getLocation() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.LOCATION) && fields.get(Database.Events.LOCATION) instanceof String) {
-            return (String) fields.get(Database.Events.LOCATION);
+        if (fields.containsKey(EventsTable.LOCATION) && fields.get(EventsTable.LOCATION) instanceof String) {
+            return (String) fields.get(EventsTable.LOCATION);
         }
         throw new FieldNotDefinedException("Field Database.Events.LOCATION is not defined");
     }
 
     public void setLocation(String location) {
-        fields.put(Database.Events.LOCATION, location);
+        fields.put(EventsTable.LOCATION, location);
     }
 
     public String getVenue() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.VENUE) && fields.get(Database.Events.VENUE) instanceof String) {
-            return (String) fields.get(Database.Events.VENUE);
+        if (fields.containsKey(EventsTable.VENUE) && fields.get(EventsTable.VENUE) instanceof String) {
+            return (String) fields.get(EventsTable.VENUE);
         }
         throw new FieldNotDefinedException("Field Database.Events.VENUE is not defined");
     }
 
     public void setVenue(String venue) {
-        fields.put(Database.Events.VENUE, venue);
+        fields.put(EventsTable.VENUE, venue);
     }
 
     public EventHelper.TYPE getEventType() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.TYPE) && fields.get(Database.Events.TYPE) instanceof Integer) {
-            return EventHelper.TYPE.fromInt((Integer) fields.get(Database.Events.TYPE));
+        if (fields.containsKey(EventsTable.TYPE) && fields.get(EventsTable.TYPE) instanceof Integer) {
+            return EventHelper.TYPE.fromInt((Integer) fields.get(EventsTable.TYPE));
         }
         throw new FieldNotDefinedException("Field Database.Events.TYPE is not defined");
     }
 
     public void setEventType(EventHelper.TYPE eventType) {
-        fields.put(Database.Events.TYPE, eventType.ordinal());
+        fields.put(EventsTable.TYPE, eventType.ordinal());
     }
 
     public void setEventType(String typeString) {
-        fields.put(Database.Events.TYPE, EventHelper.TYPE.fromString(typeString).ordinal());
+        fields.put(EventsTable.TYPE, EventHelper.TYPE.fromString(typeString).ordinal());
     }
 
     public void setEventType(int num) {
-        fields.put(Database.Events.TYPE, num);
+        fields.put(EventsTable.TYPE, num);
     }
 
     public int getDistrictEnum() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.DISTRICT) && fields.get(Database.Events.DISTRICT) instanceof Integer) {
-            return (Integer) fields.get(Database.Events.DISTRICT);
+        if (fields.containsKey(EventsTable.DISTRICT) && fields.get(EventsTable.DISTRICT) instanceof Integer) {
+            return (Integer) fields.get(EventsTable.DISTRICT);
         }
         throw new FieldNotDefinedException("Field Database.Events.DISTRICT is not defined");
     }
 
     public void setDistrictEnum(int districtEnum) {
-        fields.put(Database.Events.DISTRICT, districtEnum);
+        fields.put(EventsTable.DISTRICT, districtEnum);
     }
 
     public String getDistrictTitle() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.DISTRICT_STRING) && fields.get(Database.Events.DISTRICT_STRING) instanceof String) {
-            return (String) fields.get(Database.Events.DISTRICT_STRING);
+        if (fields.containsKey(EventsTable.DISTRICT_STRING) && fields.get(EventsTable.DISTRICT_STRING) instanceof String) {
+            return (String) fields.get(EventsTable.DISTRICT_STRING);
         }
         throw new FieldNotDefinedException("Field Database.Events.DISTRICT_STRING is not defined");
     }
 
     public void setDistrictTitle(String districtTitle) {
-        fields.put(Database.Events.DISTRICT_STRING, districtTitle);
+        fields.put(EventsTable.DISTRICT_STRING, districtTitle);
     }
 
     public JsonObject getDistrictPoints() throws FieldNotDefinedException {
         if (districtPoints != null) {
             return districtPoints;
         }
-        if (fields.containsKey(Database.Events.DISTRICT_POINTS) && fields.get(Database.Events.DISTRICT_POINTS) instanceof String) {
-            districtPoints = JSONManager.getasJsonObject((String) fields.get(Database.Events.DISTRICT_POINTS));
+        if (fields.containsKey(EventsTable.DISTRICT_POINTS) && fields.get(EventsTable.DISTRICT_POINTS) instanceof String) {
+            districtPoints = JSONHelper.getasJsonObject((String) fields.get(EventsTable.DISTRICT_POINTS));
             return districtPoints;
         }
         throw new FieldNotDefinedException("Field Database.Events.DISTRICT_POINTS is not defined");
     }
 
     public void setDistrictPoints(String districtPoints) {
-        fields.put(Database.Events.DISTRICT_POINTS, districtPoints);
+        fields.put(EventsTable.DISTRICT_POINTS, districtPoints);
     }
 
     public Date getStartDate() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.START) && fields.get(Database.Events.START) instanceof Long) {
-            return new Date((Long) fields.get(Database.Events.START));
+        if (fields.containsKey(EventsTable.START) && fields.get(EventsTable.START) instanceof Long) {
+            return new Date((Long) fields.get(EventsTable.START));
         }
         throw new FieldNotDefinedException("Field Database.Events.START is not defined");
     }
 
     public void setStartDate(Date startDate) {
-        fields.put(Database.Events.START, startDate.getTime());
+        fields.put(EventsTable.START, startDate.getTime());
     }
 
     public void setStartDate(String startString) {
@@ -295,27 +299,39 @@ public class Event extends BasicModel<Event> {
             return;
         }
         try {
-            Date start = EventHelper.eventDateFormat.parse(startString);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(start);
-            fields.put(Database.Events.START, start.getTime());
-            int week = Integer.parseInt(EventHelper.weekFormat.format(start)) - Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
-            setCompetitionWeek(week);
+            Date start = ThreadSafeFormatters.parseEventDate(startString);
+            fields.put(EventsTable.START, start.getTime());
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
         }
     }
 
+    public void setCompetitionWeekFromStartDate() {
+        Date start;
+        try {
+            start = getStartDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(start.getTime());
+            int eventWeek = cal.get(Calendar.WEEK_OF_YEAR);
+            int firstWeek = Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+            int week = eventWeek - firstWeek;
+            setCompetitionWeek(week);
+        } catch (FieldNotDefinedException e) {
+            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "Can't set week, no start date");
+        }
+    }
+
     public Date getEndDate() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.END) && fields.get(Database.Events.END) instanceof Long) {
-            return new Date((Long) fields.get(Database.Events.END));
+        if (fields.containsKey(EventsTable.END) && fields.get(EventsTable.END) instanceof Long) {
+            return new Date((Long) fields.get(EventsTable.END));
         }
         throw new FieldNotDefinedException("Field Database.Events.END is not defined");
     }
 
     public void setEndDate(Date endDate) {
-        fields.put(Database.Events.END, endDate.getTime());
+        fields.put(EventsTable.END, endDate.getTime());
     }
 
     public void setEndDate(String endString) {
@@ -323,7 +339,9 @@ public class Event extends BasicModel<Event> {
             return;
         }
         try {
-            fields.put(Database.Events.END, EventHelper.eventDateFormat.parse(endString).getTime());
+            fields.put(
+              EventsTable.END,
+              ThreadSafeFormatters.parseEventDate(endString).getTime());
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
@@ -331,15 +349,15 @@ public class Event extends BasicModel<Event> {
     }
 
     public int getCompetitionWeek() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.WEEK) && fields.get(Database.Events.WEEK) instanceof Integer) {
-            return (Integer) fields.get(Database.Events.WEEK);
+        if (fields.containsKey(EventsTable.WEEK) && fields.get(EventsTable.WEEK) instanceof Integer) {
+            return (Integer) fields.get(EventsTable.WEEK);
         }
         throw new FieldNotDefinedException("Field Database.Events.WEEK is not defined");
     }
 
     public void setCompetitionWeek(int week) {
         //all preseason events are week 0
-        fields.put(Database.Events.WEEK, Math.max(0, week));
+        fields.put(EventsTable.WEEK, Math.max(0, week));
     }
 
     public JsonArray getMatches() {
@@ -392,31 +410,31 @@ public class Event extends BasicModel<Event> {
     }
 
     public boolean isOfficial() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Events.OFFICIAL) && fields.get(Database.Events.OFFICIAL) instanceof Integer) {
-            return (Integer) fields.get(Database.Events.OFFICIAL) == 1;
+        if (fields.containsKey(EventsTable.OFFICIAL) && fields.get(EventsTable.OFFICIAL) instanceof Integer) {
+            return (Integer) fields.get(EventsTable.OFFICIAL) == 1;
         }
         throw new FieldNotDefinedException("Field Database.Events.OFFICIAL is not defined");
     }
 
     public void setOfficial(boolean official) {
-        fields.put(Database.Events.OFFICIAL, official ? 1 : 0);
+        fields.put(EventsTable.OFFICIAL, official ? 1 : 0);
     }
 
     public void setTeams(JsonArray teams) {
-        fields.put(Database.Events.TEAMS, teams.toString());
+        fields.put(EventsTable.TEAMS, teams.toString());
         this.teams = teams;
     }
 
     public void setTeams(String teamsJson) {
-        fields.put(Database.Events.TEAMS, teamsJson);
+        fields.put(EventsTable.TEAMS, teamsJson);
     }
 
     public JsonArray getTeams() throws FieldNotDefinedException {
         if (teams != null) {
             return teams;
         }
-        if (fields.containsKey(Database.Events.TEAMS) && fields.get(Database.Events.TEAMS) instanceof String) {
-            teams = JSONManager.getasJsonArray((String) fields.get(Database.Events.TEAMS));
+        if (fields.containsKey(EventsTable.TEAMS) && fields.get(EventsTable.TEAMS) instanceof String) {
+            teams = JSONHelper.getasJsonArray((String) fields.get(EventsTable.TEAMS));
             return teams;
         }
         throw new FieldNotDefinedException("Field Database.Events.TEAMS is not defined");
@@ -428,9 +446,10 @@ public class Event extends BasicModel<Event> {
                     endDate = getEndDate();
             if (startDate == null || endDate == null) return "";
             if (startDate.equals(endDate)) {
-                return EventHelper.renderDateFormat.format(startDate);
+                return ThreadSafeFormatters.renderEventDate(startDate);
             }
-            return EventHelper.shortRenderDateFormat.format(startDate) + " to " + EventHelper.renderDateFormat.format(endDate);
+            return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
+              ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
                     "Required fields: Database.Events.START, Database.Events.END");
@@ -467,23 +486,27 @@ public class Event extends BasicModel<Event> {
         return webcasts;
     }
 
-    public ArrayList<AllianceListElement> renderAlliances() {
-        ArrayList<AllianceListElement> output = new ArrayList<>();
+    public ArrayList<ListItem> renderAlliances() {
+        ArrayList<ListItem> output = new ArrayList<>();
+        renderAlliances(output);
+        return output;
+    }
+
+    public void renderAlliances(List<ListItem> destList) {
         try {
             JsonArray alliances = getAlliances();
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                output.add(new AllianceListElement(getKey(), counter, teams));
+                destList.add(new AllianceListElement(getKey(), counter, teams));
                 counter++;
             }
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
-                    "Required field: Database.Events.ALLIANCES");
+              "Required field: Database.Events.ALLIANCES");
         } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }
-        return output;
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {
@@ -492,7 +515,7 @@ public class Event extends BasicModel<Event> {
 
     public static APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
         Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        Database.Events table = Database.getInstance(c).getEventsTable();
+        EventsTable table = Database.getInstance(c).getEventsTable();
         Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
         Event event;
         if (cursor != null && cursor.moveToFirst()) {
@@ -505,7 +528,7 @@ public class Event extends BasicModel<Event> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
                 Event updatedEvent;
                 if (url.substring(url.lastIndexOf("/")).equals(eventKey)) {
@@ -513,7 +536,7 @@ public class Event extends BasicModel<Event> {
                      * Here, the last url parameter is the event key
                      * All other endpoints have something else after that
                      */
-                    updatedEvent = JSONManager.getGson().fromJson(response.getData(), Event.class);
+                    updatedEvent = JSONHelper.getGson().fromJson(response.getData(), Event.class);
                     if (updatedEvent == null) {
                         // Error parsing the json
                         code = APIResponse.CODE.NODATA;
@@ -547,19 +570,19 @@ public class Event extends BasicModel<Event> {
         APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
         boolean changed = false;
         for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
+            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
             if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONManager.getasJsonArray(response.getData());
+                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
                 events = new ArrayList<>();
                 for (JsonElement m : matchList) {
-                    events.add(JSONManager.getGson().fromJson(m, Event.class));
+                    events.add(JSONHelper.getGson().fromJson(m, Event.class));
                 }
                 changed = true;
             }
             code = APIResponse.mergeCodes(code, response.getCode());
         }
 
-        Database.Events eventsTable = Database.getInstance(c).getEventsTable();
+        EventsTable eventsTable = Database.getInstance(c).getEventsTable();
         if (changed) {
             eventsTable.delete(whereClause, whereArgs);
             eventsTable.add(events);

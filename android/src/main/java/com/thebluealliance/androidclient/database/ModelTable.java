@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.VisibleForTesting;
 
 import com.thebluealliance.androidclient.models.BasicModel;
 
@@ -148,6 +149,21 @@ public abstract class ModelTable<T extends BasicModel> {
         return mDb.query(getTableName(), columns, selection, selectionArgs, groupBy, having, orderBy, limit);
     }
 
+    public final List<T> getForQuery (
+      String[] columns,
+      String selection,
+      String[] selectionArgs) {
+        Cursor cursor = query(columns, selection, selectionArgs, null, null, null, null);
+        List<T> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
+        if (cursor == null || !cursor.moveToFirst()) {
+            return models;
+        }
+        do {
+            models.add(inflate(cursor));
+        } while (cursor.moveToNext());
+        return models;
+    }
+
     /**
      * Fetches all rows from the table
      * Equivalent to SELECT * FROM {@link #getTableName()}
@@ -218,12 +234,36 @@ public abstract class ModelTable<T extends BasicModel> {
      * Delete from the table with a provided WHERE clause
      * DOES NOT CALL {@link #deleteCallback(BasicModel)} - can't make the types work :(
      * @param whereClause SQL WHERE clause to use in deletion
-     * @param whereArgs Substitution rguments for the clause
+     * @param whereArgs Substitution arguments for the clause
      * @return Value from {@link SQLiteDatabase#delete(String, String, String[])}
      * (number of rows affected)
      */
     public final int delete(String whereClause, String[] whereArgs) {
         return mDb.delete(getTableName(), whereClause, whereArgs);
+    }
+
+    /**
+     * Deletes all rows from this table.
+     */
+    public final void deleteAllRows() {
+        mDb.execSQL("delete from " + getTableName());
+    }
+
+    /**
+     * Updates given fields in the model with the given key
+     * @param key Model key to fetch and update
+     * @param values A {@link ContentValues} object mapping the column names to be updated to values
+     * @return Numbe of rows affected by the query
+     */
+    public final int updateField(String key, ContentValues values) {
+        int returnVal = 0;
+        mDb.beginTransaction();
+        try {
+            returnVal = mDb.update(getTableName(), values, getKeyColumn() + " = ?", new String[]{key});
+        } finally {
+            mDb.endTransaction();
+        }
+        return returnVal;
     }
 
     /**
@@ -257,12 +297,14 @@ public abstract class ModelTable<T extends BasicModel> {
     /**
      * @return a String containing the same of the backing SQL table
      */
-    protected abstract String getTableName();
+    @VisibleForTesting
+    public abstract String getTableName();
 
     /**
      * @return a String containing the column name of the primary key in the backing table
      */
-    protected abstract String getKeyColumn();
+    @VisibleForTesting
+    public abstract String getKeyColumn();
 
     /**
      * Inflates a cursor row from the db to a model class

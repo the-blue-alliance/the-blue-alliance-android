@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
+import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
@@ -31,12 +31,11 @@ public class MyTBAFragment extends Fragment {
         if (!AccountHelper.isMyTBAEnabled(getActivity())) {
             //show a dialog to reenable myTBA
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            final Intent authIntent = AuthenticatorActivity.newInstance(getActivity(), false);
+            final Intent loginIntent = new Intent(getActivity(), MyTBAOnboardingActivity.class);
             builder.setTitle("myTBA is Disabled");
             builder.setMessage("Do you want to enable myTBA?").
                     setPositiveButton("Yes", (dialog, which) -> {
-                        getActivity().startActivity(authIntent);
-                        getActivity().finish();
+                        getActivity().startActivity(loginIntent);
                         dialog.cancel();
                     }).
                     setNegativeButton("No", (dialog, which) -> {

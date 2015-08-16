@@ -15,6 +15,8 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 
 import java.io.IOException;
@@ -34,10 +36,10 @@ public class DisableMyTBA extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         String user = params[0];
 
-        Database.Favorites favorites = Database.getInstance(context).getFavoritesTable();
+        FavoritesTable favorites = Database.getInstance(context).getFavoritesTable();
         favorites.recreate(user);
 
-        Database.Subscriptions subscriptions = Database.getInstance(context).getSubscriptionsTable();
+        SubscriptionsTable subscriptions = Database.getInstance(context).getSubscriptionsTable();
         subscriptions.recreate(user);
 
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();

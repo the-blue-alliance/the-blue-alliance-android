@@ -11,14 +11,11 @@ import com.thebluealliance.androidclient.listeners.DistrictClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
-/**
- * Created by phil on 7/24/14.
- */
 public class DistrictListElement extends ListElement {
 
-    private DistrictHelper.DISTRICTS type;
-    private int numEvents;
-    private String key;
+    public final DistrictHelper.DISTRICTS type;
+    public final int numEvents;
+    public final String key;
 
     public DistrictListElement(District district, int numEvents) throws BasicModel.FieldNotDefinedException {
         super(district.getKey());
@@ -52,6 +49,17 @@ public class DistrictListElement extends ListElement {
         convertView.setOnClickListener(new DistrictClickListener(c, key));
 
         return convertView;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DistrictListElement)) {
+            return false;
+        }
+        DistrictListElement element = (DistrictListElement) o;
+        return type == element.type
+          && numEvents == element.numEvents
+          && key.equals(element.key);
     }
 
     private static class ViewHolder {
