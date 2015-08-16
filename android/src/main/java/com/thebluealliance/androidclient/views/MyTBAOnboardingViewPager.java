@@ -14,9 +14,6 @@ import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
 
 import me.relex.circleindicator.CircleIndicator;
 
-/**
- * Created by Nathan on 8/16/2015.
- */
 public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnClickListener {
 
     private final ViewPager mViewPager;

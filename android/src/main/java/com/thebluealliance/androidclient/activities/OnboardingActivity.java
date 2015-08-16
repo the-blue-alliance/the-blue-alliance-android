@@ -30,9 +30,6 @@ import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
-/**
- * Created by Nathan on 8/13/2015.
- */
 public class OnboardingActivity extends AppCompatActivity implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks, MyTBAOnboardingViewPager.Callbacks {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";

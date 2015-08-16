@@ -29,9 +29,6 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * File created by phil on 4/20/14.
- */
 public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, Void> {
 
     public static final String DATA_TO_LOAD = "data_to_load";
