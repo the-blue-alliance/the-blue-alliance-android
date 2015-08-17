@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.datafeed.maps.TeamPageCombiner;
+import com.thebluealliance.androidclient.datafeed.combiners.TeamPageCombiner;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;

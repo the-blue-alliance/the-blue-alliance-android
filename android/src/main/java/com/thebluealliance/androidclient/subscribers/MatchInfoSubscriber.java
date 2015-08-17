@@ -15,12 +15,23 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-public class MatchInfoSubscriber extends BaseAPISubscriber<Match, List<ListItem>> {
+import static com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
+
+public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>> {
+
+    public static class Model {
+        public final Match match;
+        public final Event event;
+
+        public Model(Match match, Event event) {
+            this.match = match;
+            this.event = event;
+        }
+    }
 
     private Gson mGson;
     private EventBus mEventBus;
     private String mMatchTitle;
-    private String mEventName;
     private String mMatchKey;
 
     public MatchInfoSubscriber(Gson gson, EventBus eventBus) {
@@ -29,22 +40,21 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Match, List<ListItem>
         mGson = gson;
         mEventBus = eventBus;
         mMatchTitle = null;
-        mEventName = null;
         mMatchKey = null;
     }
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null) {
+        if (mAPIData == null || mAPIData.event == null || mAPIData.match == null) {
             return;
         }
 
-        mDataToBind.add(mAPIData.render(false, true, false, false));
+        mDataToBind.add(mAPIData.match.render(false, true, false, false));
 
-        mMatchTitle = mAPIData.getTitle();
-        mMatchKey = mAPIData.getKey();
-        JsonArray matchVideos = mAPIData.getVideos();
+        mMatchTitle = mAPIData.match.getTitle();
+        mMatchKey = mAPIData.match.getKey();
+        JsonArray matchVideos = mAPIData.match.getVideos();
         for (int i = 0; i < matchVideos.size(); i++) {
             JsonElement video = matchVideos.get(i);
             if (Media.TYPE.fromString(video.getAsJsonObject().get("type").getAsString()) !=
@@ -53,25 +63,12 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Match, List<ListItem>
             }
         }
 
-        updateActionBarTitle();
+        updateActionBarTitle(mAPIData.event.getEventShortName());
     }
 
-    /**
-     * So we can load event data
-     */
-    @SuppressWarnings(value = "unused")
-    public void onEventAsync(Event event) {
-        try {
-            mEventName = event.getEventShortName();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            mEventName = null;
-        }
-        updateActionBarTitle();
-    }
-
-    private void updateActionBarTitle() {
-        if (mEventName != null && mMatchTitle != null && mMatchKey != null) {
-            String subtitle = "@ " + mMatchKey.substring(0, 4) + " " + mEventName;
+    private void updateActionBarTitle(String eventName) {
+        if (eventName != null && mMatchTitle != null && mMatchKey != null) {
+            String subtitle = "@ " + mMatchKey.substring(0, 4) + " " + eventName;
             mEventBus.post(new ActionBarTitleEvent(mMatchTitle, subtitle));
         }
     }

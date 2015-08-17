@@ -5,16 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
+import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 
 import rx.Observable;
 
 public class TeamAtEventSummaryFragment
-  extends ListViewFragment<JsonArray, TeamAtEventSummarySubscriber> {
+  extends ListViewFragment<Model, TeamAtEventSummarySubscriber> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -40,7 +41,6 @@ public class TeamAtEventSummaryFragment
         mEventKey = getArguments().getString(EVENT_KEY);
         super.onCreate(savedInstanceState);
 
-        mSubscriber.setEventKey(mEventKey);
         mSubscriber.setTeamKey(mTeamKey);
     }
 
@@ -59,15 +59,17 @@ public class TeamAtEventSummaryFragment
     }
 
     @Override
-    protected Observable<JsonArray> getObservable() {
-        return mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey);
+    protected Observable<Model> getObservable() {
+        return Observable.zip(
+          mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey),
+          mDatafeed.fetchEvent(mEventKey),
+          new TeamAtEventSummaryCombiner());
     }
 
     @Override
-    protected Observable[] getExtraObservables() {
-        return new Observable[]{mDatafeed.fetchEvent(mEventKey)};
+    protected boolean shouldRegisterSubscriberToEventBus() {
+        return true;
     }
-
 
     @Override
     protected NoDataViewParams getNoDataParams() {

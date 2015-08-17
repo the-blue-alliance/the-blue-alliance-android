@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,16 +29,17 @@ public class TeamAtEventSummarySubscriberTest {
     @Mock EventMatchesEvent mMatchesEvent;
 
     TeamAtEventSummarySubscriber mSubscriber;
-    JsonArray mData;
+    Model mData;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         when(mResources.getString(anyInt())).thenReturn("");
         mSubscriber = new TeamAtEventSummarySubscriber(mResources);
-        mSubscriber.setEventKey("2015necmp");
         mSubscriber.setTeamKey("frc1519");
-        mData = ModelMaker.getModel(JsonArray.class, "2015necmp_rankings");
+        mData = new Model(
+          ModelMaker.getModel(JsonArray.class, "2015necmp_rankings"),
+          ModelMaker.getModel(Event.class, "2015necmp"));
     }
 
     @Test
@@ -47,7 +49,6 @@ public class TeamAtEventSummarySubscriberTest {
 
     @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.onEventAsync(mEvent);
         mSubscriber.onEventAsync(mMatchesEvent);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mData);
     }

@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
-import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -28,28 +27,32 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, List<ListItem>> {
+import static com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 
-    private String mEventKey;
+public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<ListItem>> {
+
+    public static class Model {
+        public final JsonArray teamAtEventRank;
+        public final Event event;
+
+        public Model(JsonArray teamAtEventRank, Event event) {
+            this.teamAtEventRank = teamAtEventRank;
+            this.event = event;
+        }
+    }
+
     private String mTeamKey;
     private Resources mResources;
     private boolean mIsMatchListLoaded;
-    private boolean mIsEventLoaded;
 
     // Data loaded from other sources
     private List<Match> mMatches;
-    private Event mEvent;
 
     public TeamAtEventSummarySubscriber(Resources resources) {
         super();
         mResources = resources;
         mIsMatchListLoaded = false;
-        mIsEventLoaded = false;
         mDataToBind = new ArrayList<>();
-    }
-
-    public void setEventKey(String eventKey) {
-        mEventKey = eventKey;
     }
 
     public void setTeamKey(String teamKey) {
@@ -59,7 +62,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
     @Override
     public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (!mIsMatchListLoaded || !mIsEventLoaded || mAPIData == null || mAPIData.size() == 0) {
+        if (!mIsMatchListLoaded || mAPIData == null ||
+          mAPIData.event == null || mAPIData.teamAtEventRank == null) {
             return;
         }
 
@@ -70,11 +74,12 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
         String recordString =
           String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
 
-        int year = mEvent.getEventYear();
-        boolean activeEvent = mEvent.isHappeningNow();
+        Event event = mAPIData.event;
+        int year = event.getEventYear();
+        boolean activeEvent = event.isHappeningNow();
         String actionBarTitle =
           String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
-        String actionBarSubtitle = String.format("@ %1$d %2$s", year, mEvent.getEventShortName());
+        String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getEventShortName());
         EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
         if (activeEvent) {
@@ -83,7 +88,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
         }
 
         // Search for team in alliances
-        JsonArray alliances = mEvent.getAlliances();
+        JsonArray alliances = event.getAlliances();
         int allianceNumber = 0, alliancePick = 0;
 
         if (alliances == null || alliances.size() == 0) {
@@ -101,7 +106,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
             }
         }
 
-        JsonArray rankData = mAPIData;
+        JsonArray rankData = mAPIData.teamAtEventRank;
         int rank = 0;
         String rankingString = "";
         if (rankData.size() > 0) {
@@ -119,7 +124,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
 
         MatchHelper.EventStatus status;
         try {
-            status = MatchHelper.evaluateStatusOfTeam(mEvent, mMatches, mTeamKey);
+            status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: "
               + Arrays.toString(e.getStackTrace()));
@@ -190,25 +195,6 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<JsonArray, L
         }
         mIsMatchListLoaded = true;
         mMatches = new ArrayList<>(matches.getMatches());
-        try {
-            parseData();
-            bindData();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Load event data
-     * Posted by {@link TeamAtEventSummaryFragment}, as an extra Observable
-     */
-    @SuppressWarnings(value = "unused")
-    public void onEventAsync(Event event) {
-        if (event == null) {
-            return;
-        }
-        mIsEventLoaded = true;
-        mEvent = event;
         try {
             parseData();
             bindData();

@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datafeed.maps;
+package com.thebluealliance.androidclient.datafeed.combiners;
 
 import com.thebluealliance.androidclient.models.Team;
 
