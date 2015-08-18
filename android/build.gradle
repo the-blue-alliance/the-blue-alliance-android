@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
+apply from: "../jacoco.gradle"
+
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
 apply plugin: 'com.github.ben-manes.versions'
@@ -177,53 +179,4 @@ dependencies {
     // testing
     testCompile 'org.robolectric:robolectric:3.0-rc2'
     testCompile 'junit:junit:4.12'
-}
-
-apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
-
-jacoco {
-    // I have only tried 0.7.x
-    toolVersion = "0.7.1.201405082137"
-}
-
-def coverageSourceDirs = [
-        'src/main/java'
-]
-
-task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
-    reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
-        html.enabled = true
-
-        xml.destination = "build/reports/jacoco/test/jacocoTestReport.xml";
-    }
-    // class R is used, but usage will not be covered, so ignore this class from report
-    // This differs per plugin version (0.10 -> 0.11)
-    // have very different fileTrees.
-    // I have added rules to Ignore Dagger/Butterknife
-    classDirectories = fileTree(
-            dir: './build/intermediates/classes/debug',
-            excludes: ['com/thebluealliance/androidclient/R*.class',
-                       '**/*$InjectAdapter.class',
-                       '**/*$ModuleAdapter.class',
-                       '**/*$ViewInjector*.class'
-            ])
-    sourceDirectories = files(coverageSourceDirs)
-    executionData = files('build/jacoco/testDevDebug.exec')
-    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
-    // We iterate through the compiled .class tree and rename $$ to $.
-    doFirst {
-        new File('android/build/intermediates/classes/').eachFileRecurse { file ->
-            if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
-            }
-        }
-    }
-    afterEvaluate {
-        // just clean up coveralls dashboard, following reports are not of interest
-        testDevDebug.reports.junitXml.enabled = false
-    }
 }
