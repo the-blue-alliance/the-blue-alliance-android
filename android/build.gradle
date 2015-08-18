@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
-apply from: "../jacoco.gradle"
+apply from: "../code_coverage.gradle"
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report

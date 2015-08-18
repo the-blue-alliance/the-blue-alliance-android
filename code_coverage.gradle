@@ -5,6 +5,11 @@ jacoco {
     toolVersion "0.7.1.201405082137"
 }
 
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+}
+
 def coverageSourceDirs = [
         "$projectDir/src/main/java",
 ]
