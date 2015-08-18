@@ -7,15 +7,12 @@ import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 4/22/2014.
- */
-public class FirstLaunchFragmentAdapter extends PagerAdapter {
+public class FirstLaunchPagerAdapter extends PagerAdapter {
 
     private int mCount = 3;
     private Activity activity;
 
-    public FirstLaunchFragmentAdapter(Activity activity) {
+    public FirstLaunchPagerAdapter(Activity activity) {
         this.activity = activity;
     }
 
@@ -24,6 +21,7 @@ public class FirstLaunchFragmentAdapter extends PagerAdapter {
         return mCount;
     }
 
+    @Override
     public Object instantiateItem(ViewGroup collection, int position) {
 
         int resId = 0;

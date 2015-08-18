@@ -201,6 +201,7 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.3.1'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxjava-math:1.0.0'
+    compile 'me.relex:circleindicator:1.1.5@aar'
 
     // testing
     testCompile 'org.robolectric:robolectric:3.0'

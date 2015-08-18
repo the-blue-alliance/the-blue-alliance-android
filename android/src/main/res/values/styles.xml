@@ -11,6 +11,13 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <!-- Ensures that the entire screen is blue while the layout is being inflated -->
+    <style name="LaunchTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/primary</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!-- on v21 or later, this lets us draw the status bar background. on < v21,
     this is the same as simply not showing the action bar. -->
     <style name="AppThemeNoActionBarTranslucentStatus" parent="AppTheme">
@@ -21,11 +28,6 @@
     <style name="AppThemeNoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="InvertedPrimaryAndAccentTheme" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/accent</item>
-        <item name="colorAccent">@color/primary</item>
     </style>
 
     <style name="InfoItemStyle">

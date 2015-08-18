@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General strings -->
+    <string name="welcome_prefix">Welcome to</string>
+    <string name="welcome">The Blue Alliance</string>
+    <string name="sign_in_with_google">SIGN IN WITH GOOGLE</string>
+    <string name="next_caps">NEXT</string>
+    <string name="continue_caps">CONTINUE</string>
+    <string name="finish_caps">FINISH</string>
+    <string name="cancel_caps">CANCEL</string>
+    <string name="skip_intro_caps">SKIP INTRO</string>
+    <string name="welcome_message">Click \"Next\" to download initial data.</string>
+    <string name="check_out_mytba">While you wait, why not check out myTBA?</string>
+    <string name="what_is_mytba">What is myTBA?</string>
+    <string name="check_out_mytba_description">myTBA lets you track your favorite things in FRC and receive notifications for match scores, event winners, and more.</string>
+    <string name="mytba_favorites_description">You can mark teams, events, matches, and more as favorites for easy access.</string>
+    <string name="mytba_subscriptions_description">You can subscribe to a variety of notifications, such as upcoming matches for a team or the winners of an event.</string>
+    <string name="mytba_yellow_button_description">You can use myTBA anywhere you see this yellow button.</string>
+    <string name="mytba_get_started_title">Ready to get started with myTBA?</string>
+    <string name="mytba_login_prompt">Sign in with your Google account so we can save and sync your data.</string>
+    <string name="mytba_login_success">Success!</string>
+    <string name="mytba_login_success_subtitle">Enjoy using myTBA.</string>
+    <string name="mytba_no_play_services">Uh oh...</string>
+    <string name="mytba_no_play_services_subtitle">Your device is missing Google Play Services, so myTBA is not supported.</string>
+    <string name="update_message">The app has been updated to a new version. Click \"Next\" to download some important new data.</string>
+    <string name="please_read_changelog">While you wait, check out some of the recent improvements to the app.</string>
+    <string name="load_finished_message">You\'re all set! Enjoy the app.</string>
+
+    <!-- No Connection Dialog -->
+    <string name="check_connection_title">Check connection</string>
+    <string name="warning_no_internet_connection">No internet connection was found. Check your connection and try again.</string>
+    <string name="retry">Retry</string>
+    <string name="connection_lost_title">Connection lost</string>
+    <string name="connection_lost">Your internet connection was interrupted. Check your connection and try again.</string>
+    <string name="ok">OK</string>
+
+    <!-- Fatal Error Dialog -->
+    <string name="fatal_error">Fatal Error</string>
+    <string name="fatal_error_message">Well, this is really bad. We don\'t know what happened. If you want, you can contact the developer with the error information.</string>
+    <string name="contact_developer">Contact Developer</string>
+    <string name="send_email">Send email&#8230;</string>
+
+    <!-- myTBA prompt dialog -->
+    <string name="mytba_prompt_title">Are you sure you don\'t want to enable myTBA?</string>
+    <string name="mytba_prompt_message">You can always enable it later in Settings.</string>
+    <string name="mytba_prompt_yes">Yes</string>
+    <string name="mytba_prompt_cancel">Cancel</string>
+
+    <!-- Status Messages -->
+    <string name="loading_teams" formatted="false">Loading teams from %1$d to %2$d</string>
+    <string name="loading_events">Loading %s events</string>
+    <string name="loading_districts">Loading %d districts</string>
+    <string name="loading_almost_finished">Finishing setup…</string>
+    <string name="loading_finished">Loading complete</string>
+</resources>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.thebluealliance.androidclient"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.thebluealliance.androidclient">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -37,7 +36,8 @@
 
         <activity
             android:name="com.thebluealliance.androidclient.activities.LaunchActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/LaunchTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,6 +68,19 @@
                 <data android:pathPattern="/match/.*" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.thebluealliance.androidclient.activities.OnboardingActivity"
+            android:theme="@style/LaunchTheme" />
+
+        <activity
+            android:name="com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity"
+            android:theme="@style/LaunchTheme" />
+
+        <activity
+            android:name="com.thebluealliance.androidclient.activities.RedownloadActivity"
+            android:theme="@style/LaunchTheme"/>
+
         <activity
             android:name="com.thebluealliance.androidclient.activities.HomeActivity"
             android:launchMode="singleTop"
@@ -195,10 +208,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
         </activity>
-        <activity
-            android:name=".activities.AuthenticatorActivity"
-            android:label="@string/title_activity_authenticator"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <receiver android:name="com.thebluealliance.androidclient.receivers.ConnectivityChangeReceiver">
             <intent-filter>

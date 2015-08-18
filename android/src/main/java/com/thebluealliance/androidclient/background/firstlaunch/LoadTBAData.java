@@ -29,16 +29,18 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * File created by phil on 4/20/14.
- */
-public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, Void> {
+public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, Void> {
 
-    private LoadAllDataCallbacks callbacks;
+    public static final String DATA_TO_LOAD = "data_to_load";
+    public static final short LOAD_TEAMS = 0,
+            LOAD_EVENTS = 1,
+            LOAD_DISTRICTS = 2;
+
+    private LoadTBADataCallbacks callbacks;
     private Context context;
     private long startTime;
 
-    public LoadAllData(LoadAllDataCallbacks callbacks, Context c) {
+    public LoadTBAData(LoadTBADataCallbacks callbacks, Context c) {
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
         this.startTime = System.currentTimeMillis();
@@ -54,9 +56,9 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
 
         Short[] dataToLoad;
         if (params == null) {
-            dataToLoad = new Short[]{LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS,
-                    LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS,
-                    LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS};
+            dataToLoad = new Short[]{LOAD_TEAMS,
+                    LOAD_EVENTS,
+                    LOAD_DISTRICTS};
         } else {
             dataToLoad = params;
         }
@@ -75,7 +77,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             ArrayList<District> districts = new ArrayList<>();
             int maxPageNum = 0;
 
-            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_TEAMS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LOAD_TEAMS) != -1) {
                 // First we will load all the teams
                 for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
                     if (isCancelled()) {
@@ -100,7 +102,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 }
             }
 
-            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_EVENTS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LOAD_EVENTS) != -1) {
                 // Now we load all events
                 for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                     if (isCancelled()) {
@@ -134,7 +136,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
                 }
             }
 
-            if (Arrays.binarySearch(dataToLoad, LaunchActivity.LoadAllDataTaskFragment.LOAD_DISTRICTS) != -1) {
+            if (Arrays.binarySearch(dataToLoad, LOAD_DISTRICTS) != -1) {
                 //load all districts
                 for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                     if (isCancelled()) {
@@ -165,12 +167,26 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             // If no exception has been thrown at this point, we have all the data. We can now
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
+            Database db = Database.getInstance(context);
+
+            // First, wipe all relevant data from the database
+            if(Arrays.binarySearch(dataToLoad, LOAD_TEAMS) != -1) {
+                db.getTeamsTable().deleteAllRows();
+            }
+            if(Arrays.binarySearch(dataToLoad, LOAD_EVENTS) != -1) {
+                db.getEventsTable().deleteAllRows();
+            }
+            if(Arrays.binarySearch(dataToLoad, LOAD_DISTRICTS) != -1) {
+                db.getDistrictsTable().deleteAllRows();
+            }
+
+            // Now, insert the newly loaded data
             Log.d(Constants.LOG_TAG, "storing teams");
-            Database.getInstance(context).getTeamsTable().add(teams);
+            db.getTeamsTable().add(teams);
             Log.d(Constants.LOG_TAG, "storing events");
-            Database.getInstance(context).getEventsTable().add(events);
+            db.getEventsTable().add(events);
             Log.d(Constants.LOG_TAG, "storing districts");
-            Database.getInstance(context).getDistrictsTable().add(districts);
+            db.getDistrictsTable().add(districts);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
@@ -184,7 +200,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
             for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
                 editor.putBoolean(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
-            editor.putInt(LaunchActivity.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
+            editor.putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
             editor.apply();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));
         } catch (DataManager.NoDataException e) {
@@ -233,7 +249,7 @@ public class LoadAllData extends AsyncTask<Short, LoadAllData.LoadProgressInfo, 
 
     }
 
-    public interface LoadAllDataCallbacks {
+    public interface LoadTBADataCallbacks {
         public void onProgressUpdate(LoadProgressInfo info);
     }
 }

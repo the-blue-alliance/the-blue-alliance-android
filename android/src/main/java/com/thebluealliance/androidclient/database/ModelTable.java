@@ -234,12 +234,19 @@ public abstract class ModelTable<T extends BasicModel> {
      * Delete from the table with a provided WHERE clause
      * DOES NOT CALL {@link #deleteCallback(BasicModel)} - can't make the types work :(
      * @param whereClause SQL WHERE clause to use in deletion
-     * @param whereArgs Substitution rguments for the clause
+     * @param whereArgs Substitution arguments for the clause
      * @return Value from {@link SQLiteDatabase#delete(String, String, String[])}
      * (number of rows affected)
      */
     public final int delete(String whereClause, String[] whereArgs) {
         return mDb.delete(getTableName(), whereClause, whereArgs);
+    }
+
+    /**
+     * Deletes all rows from this table.
+     */
+    public final void deleteAllRows() {
+        mDb.execSQL("delete from " + getTableName());
     }
 
     /**
