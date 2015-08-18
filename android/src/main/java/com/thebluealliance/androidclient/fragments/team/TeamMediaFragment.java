@@ -100,8 +100,8 @@ public class TeamMediaFragment extends DatafeedFragment<
     }
 
     @Override
-    protected Observable<List<Media>> getObservable() {
-        return mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear);
+    protected Observable<List<Media>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear, tbaCacheHeader);
     }
 
     @Override

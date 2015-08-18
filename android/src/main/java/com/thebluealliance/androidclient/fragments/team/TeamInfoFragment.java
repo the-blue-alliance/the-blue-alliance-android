@@ -130,8 +130,8 @@ public class TeamInfoFragment
     }
 
     @Override
-    protected Observable<Team> getObservable() {
-        return mDatafeed.fetchTeam(mTeamKey);
+    protected Observable<Team> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchTeam(mTeamKey, tbaCacheHeader);
     }
 
     @Override

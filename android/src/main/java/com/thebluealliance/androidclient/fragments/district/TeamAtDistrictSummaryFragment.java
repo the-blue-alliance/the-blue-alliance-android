@@ -65,8 +65,8 @@ public class TeamAtDistrictSummaryFragment
     }
 
     @Override
-    protected Observable<DistrictTeam> getObservable() {
-        return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear);
+    protected Observable<DistrictTeam> getObservable(String cacheHeader) {
+        return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear, cacheHeader);
     }
 
     @Override

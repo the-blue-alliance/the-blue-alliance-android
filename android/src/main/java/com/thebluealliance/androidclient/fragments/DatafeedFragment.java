@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.modules.components.FragmentComponent;
@@ -102,7 +103,7 @@ public abstract class DatafeedFragment
      */
     private void getNewObservables() {
         if (mSubscriber != null) {
-            mObservable = getObservable();
+            mObservable = getObservable(null);
             if (mObservable != null) {
                 mObservable.subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
@@ -126,8 +127,10 @@ public abstract class DatafeedFragment
     /**
      * For child to make a call to return the Observable containing the main data model
      * Called in {@link #onResume()}
+     * @param tbaCacheHeader String param to tell the datafeed how to load the data. Use
+     * {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code null} for regular usage
      */
-    protected abstract Observable<T> getObservable();
+    protected abstract Observable<T> getObservable(String tbaCacheHeader);
 
     protected NoDataViewParams getNoDataParams() {
         return null;

@@ -33,7 +33,7 @@ import javax.inject.Singleton;
 import rx.Observable;
 
 @Singleton
-public class APICache implements APIv2 {
+public class APICache {
 
     private Database mDb;
 
@@ -42,7 +42,6 @@ public class APICache implements APIv2 {
         mDb = db;
     }
 
-    @Override
     public Observable<List<Team>> fetchTeamPage(int pageNum) {
         String where = String.format("%1$s >= ? AND %1$s <= ?", TeamsTable.NUMBER);
         int startNum = 500 * pageNum;
@@ -59,7 +58,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<Team> fetchTeam(String teamKey) {
         return Observable.create((observer) -> {
             try {
@@ -72,7 +70,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Event>> fetchTeamEvents(String teamKey, int year) {
         return Observable.create((observer) -> {
             try {
@@ -85,7 +82,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Award>> fetchTeamAtEventAwards(String teamKey, String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -97,7 +93,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Match>> fetchTeamAtEventMatches(String teamKey, String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -109,7 +104,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<JsonArray> fetchTeamYearsParticipated(String teamKey) {
         return Observable.create((observer) -> {
             try {
@@ -122,7 +116,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Media>> fetchTeamMediaInYear(String teamKey, int year) {
         return Observable.create((observer) -> {
             try {
@@ -138,17 +131,14 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Event>> fetchTeamEventHistory(String teamKey) {
         return null;
     }
 
-    @Override
     public Observable<List<Award>> fetchTeamEventAwards(String teamKey) {
         return null;
     }
 
-    @Override
     public Observable<List<Event>> fetchEventsInYear(int year) {
         return Observable.create((observer) -> {
             try {
@@ -205,7 +195,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<Event> fetchEvent(String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -218,7 +207,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Team>> fetchEventTeams(String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -231,7 +219,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<JsonArray> fetchEventRankings(String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -245,7 +232,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Match>> fetchEventMatches(String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -260,7 +246,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<JsonObject> fetchEventStats(String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -274,7 +259,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Award>> fetchEventAwards(String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -289,7 +273,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<JsonObject> fetchEventDistrictPoints(String eventKey) {
         return Observable.create((observer) -> {
             try {
@@ -302,7 +285,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<District>> fetchDistrictList(int year) {
         return Observable.create((observer) -> {
             try {
@@ -317,7 +299,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<Event>> fetchDistrictEvents(String districtShort, int year) {
         return Observable.create((observer) -> {
             try {
@@ -336,7 +317,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<List<DistrictTeam>> fetchDistrictRankings(String districtShort, int year) {
         return Observable.create((observer) -> {
             try {
@@ -357,7 +337,6 @@ public class APICache implements APIv2 {
         });
     }
 
-    @Override
     public Observable<Match> fetchMatch(String matchKey) {
         return Observable.create((observer) -> {
             try {

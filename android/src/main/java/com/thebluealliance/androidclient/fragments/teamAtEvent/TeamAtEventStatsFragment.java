@@ -54,8 +54,8 @@ public class TeamAtEventStatsFragment extends ListViewFragment<JsonObject, TeamS
     }
 
     @Override
-    protected Observable<JsonObject> getObservable() {
-        return mDatafeed.fetchTeamAtEventStats(mEventKey, mTeamKey);
+    protected Observable<JsonObject> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchTeamAtEventStats(mEventKey, mTeamKey, tbaCacheHeader);
     }
 
     @Override

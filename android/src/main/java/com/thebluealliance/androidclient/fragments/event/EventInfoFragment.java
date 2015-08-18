@@ -122,8 +122,8 @@ public class EventInfoFragment
     }
 
     @Override
-    protected Observable<Event> getObservable() {
-        return mDatafeed.fetchEvent(mEventKey);
+    protected Observable<Event> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEvent(mEventKey, tbaCacheHeader);
     }
 
     @Override

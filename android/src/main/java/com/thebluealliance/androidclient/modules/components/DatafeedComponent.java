@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.datafeed.RetrofitConverter;
+import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.modules.DatafeedModule;
 import com.thebluealliance.androidclient.modules.TBAAndroidModule;
 
@@ -20,11 +20,11 @@ import dagger.Component;
 public interface DatafeedComponent {
     void inject(CacheableDatafeed datafeed);
     void inject(DatafeedModule module);
-    void inject(RetrofitConverter converter);
     void inject(Fragment fragment);
     void inject(APICache cache);
 
     APICache cache();
     CacheableDatafeed datafeed();
     DatabaseWriter databaseWriter();
+    RetrofitResponseMap retrofitResponseMap();
 }

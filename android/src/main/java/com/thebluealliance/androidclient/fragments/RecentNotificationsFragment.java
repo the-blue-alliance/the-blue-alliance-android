@@ -8,9 +8,14 @@ import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscrib
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
-public class RecentNotificationsFragment extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
+public class RecentNotificationsFragment
+  extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
+
+    @Inject Database mDb;
 
     @Override
     protected void inject() {
@@ -18,8 +23,15 @@ public class RecentNotificationsFragment extends ListViewFragment<List<StoredNot
     }
 
     @Override
-    protected Observable<List<StoredNotification>> getObservable() {
-        return Observable.just(Database.getInstance(getActivity()).getNotificationsTable().get());
+    protected Observable<List<StoredNotification>> getObservable(String tbaCacheHeader) {
+        return Observable.create((observer) -> {
+            try {
+                observer.onNext(mDb.getNotificationsTable().get());
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
     }
 
     @Override

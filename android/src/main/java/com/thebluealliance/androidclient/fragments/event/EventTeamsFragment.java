@@ -68,8 +68,8 @@ public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSub
     }
 
     @Override
-    protected Observable<List<Team>> getObservable() {
-        return mDatafeed.fetchEventTeams(mEventKey);
+    protected Observable<List<Team>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventTeams(mEventKey, tbaCacheHeader);
     }
 
     @Override

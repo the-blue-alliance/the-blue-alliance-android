@@ -95,11 +95,11 @@ public class EventMatchesFragment
     }
 
     @Override
-    protected Observable<List<Match>> getObservable() {
+    protected Observable<List<Match>> getObservable(String tbaCacheHeader) {
         if (mTeamKey == null || mTeamKey.isEmpty()) {
-            return mDatafeed.fetchEventMatches(mEventKey);
+            return mDatafeed.fetchEventMatches(mEventKey, tbaCacheHeader);
         } else {
-            return mDatafeed.fetchTeamAtEventMatches(mTeamKey, mEventKey);
+            return mDatafeed.fetchTeamAtEventMatches(mTeamKey, mEventKey, tbaCacheHeader);
         }
     }
 

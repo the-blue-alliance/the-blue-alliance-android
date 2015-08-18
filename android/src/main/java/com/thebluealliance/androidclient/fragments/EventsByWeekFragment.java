@@ -133,8 +133,8 @@ public class EventsByWeekFragment
     }
 
     @Override
-    protected Observable<List<Event>> getObservable() {
-        return mDatafeed.fetchEventsInYear(mYear);
+    protected Observable<List<Event>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventsInYear(mYear, tbaCacheHeader);
     }
 
     /**
