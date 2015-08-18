@@ -43,10 +43,10 @@ public class MatchInfoFragment extends ListViewFragment<Model, MatchInfoSubscrib
     }
 
     @Override
-    protected Observable<Model> getObservable() {
+    protected Observable<Model> getObservable(String cacheHeader) {
         return Observable.zip(
-          mDatafeed.fetchMatch(mMatchKey),
-          mDatafeed.fetchEvent(mEventKey),
+          mDatafeed.fetchMatch(mMatchKey, cacheHeader),
+          mDatafeed.fetchEvent(mEventKey, cacheHeader),
           new MatchInfoCombiner());
     }
 }

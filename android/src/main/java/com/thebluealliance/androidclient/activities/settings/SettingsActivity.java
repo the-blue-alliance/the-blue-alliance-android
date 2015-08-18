@@ -17,8 +17,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
+import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -104,8 +104,7 @@ public class SettingsActivity extends AppCompatActivity {
                     boolean enabled = AccountHelper.isMyTBAEnabled(activity);
                     Log.d(Constants.LOG_TAG, "myTBA is: " + enabled);
                     if (!enabled) {
-                        Intent authIntent = AuthenticatorActivity.newInstance(activity, false);
-                        activity.startActivity(authIntent);
+                        activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
                     } else {
                         AccountHelper.enableMyTBA(activity, false);
                     }

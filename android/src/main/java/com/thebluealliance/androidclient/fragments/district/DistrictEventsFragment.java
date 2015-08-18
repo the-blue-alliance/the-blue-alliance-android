@@ -56,8 +56,8 @@ public class DistrictEventsFragment extends ListViewFragment<List<Event>, EventL
     }
 
     @Override
-    protected Observable<List<Event>> getObservable() {
-        return mDatafeed.fetchDistrictEvents(mShort, mYear);
+    protected Observable<List<Event>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchDistrictEvents(mShort, mYear, tbaCacheHeader);
     }
 
     @Override

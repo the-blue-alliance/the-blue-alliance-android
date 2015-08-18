@@ -54,5 +54,10 @@
     <color name="gameday_ticker_awards_header">#4caf50</color>
     <color name="gameday_ticker_time_footer">#ECECEC</color>
 
+    <!-- Google sign in button colors -->
+    <color name="google_sign_in_button">#ffffff</color>
+    <color name="google_sign_in_button_pressed">#eeeeee</color>
+    <color name="google_sign_in_button_text">#555555</color>
+
 
 </resources>

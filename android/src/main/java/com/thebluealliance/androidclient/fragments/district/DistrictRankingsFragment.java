@@ -49,8 +49,8 @@ public class DistrictRankingsFragment
     }
 
     @Override
-    protected Observable<List<DistrictTeam>> getObservable() {
-        return mDatafeed.fetchDistrictRankings(mShort, mYear);
+    protected Observable<List<DistrictTeam>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchDistrictRankings(mShort, mYear, tbaCacheHeader);
     }
 
     @Override

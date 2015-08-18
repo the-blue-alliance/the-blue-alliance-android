@@ -71,8 +71,8 @@ public class TeamListFragment extends ListViewFragment<List<Team>, TeamListSubsc
     }
 
     @Override
-    protected Observable<List<Team>> getObservable() {
-        return mDatafeed.fetchTeamPage(mPageStart)
-                .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1), mCombiner);
+    protected Observable<List<Team>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchTeamPage(mPageStart, tbaCacheHeader)
+                .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1, tbaCacheHeader), mCombiner);
     }
 }

@@ -4,21 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.fragments.ExpandableListViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
-import com.thebluealliance.androidclient.views.ExpandableListView;
-import com.thebluealliance.androidclient.views.NoDataView;
-
-import java.util.List;
 
 import rx.Observable;
 
@@ -67,8 +60,8 @@ public class TeamAtDistrictBreakdownFragment
     }
 
     @Override
-    protected Observable<DistrictTeam> getObservable() {
-        return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear);
+    protected Observable<DistrictTeam> getObservable(String cacheHeader) {
+        return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear, cacheHeader);
     }
 
     @Override

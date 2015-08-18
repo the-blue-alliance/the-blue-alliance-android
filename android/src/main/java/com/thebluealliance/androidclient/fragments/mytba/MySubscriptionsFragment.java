@@ -23,7 +23,7 @@ public class MySubscriptionsFragment
     }
 
     @Override
-    protected Observable<List<Subscription>> getObservable() {
+    protected Observable<List<Subscription>> getObservable(String tbaCacheHeader) {
         return mDatafeed.getCache().fetchUserSubscriptions(getActivity());
     }
 

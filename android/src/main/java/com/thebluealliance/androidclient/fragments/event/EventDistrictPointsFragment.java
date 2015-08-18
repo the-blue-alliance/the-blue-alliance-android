@@ -78,8 +78,8 @@ public class EventDistrictPointsFragment
     }
 
     @Override
-    protected Observable<JsonObject> getObservable() {
-        return mDatafeed.fetchEventDistrictPoints(mEventKey);
+    protected Observable<JsonObject> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventDistrictPoints(mEventKey, tbaCacheHeader);
     }
 
     @Override

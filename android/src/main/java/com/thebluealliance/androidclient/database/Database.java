@@ -378,7 +378,7 @@ public class Database extends SQLiteOpenHelper {
         }
 
         PreferenceManager.getDefaultSharedPreferences(context).edit().
-                remove(LaunchActivity.ALL_DATA_LOADED).commit();
+                remove(Constants.ALL_DATA_LOADED_KEY).commit();
 
         onCreate(db);
     }

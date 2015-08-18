@@ -12,6 +12,11 @@ public class Constants {
     public static final String DATAMANAGER_LOG = LOG_TAG + ":dataManager";
     public static final String REFRESH_LOG = LOG_TAG + ":refresh";
 
+    // Keys for shared prefs
+    // !!!!DO NOT MODIFY!!!!
+    public static final String ALL_DATA_LOADED_KEY = "all_data_loaded";
+    public static final String APP_VERSION_KEY = "app_version";
+
     public static final HashMap<String, String> MATCH_LEVELS;
     public static final HashMap<Media.TYPE, String> MEDIA_IMG_URL_PATTERN,
             MEDIA_LINK_URL_PATTERN;

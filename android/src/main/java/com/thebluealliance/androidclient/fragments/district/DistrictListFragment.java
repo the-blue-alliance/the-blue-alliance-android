@@ -1,20 +1,10 @@
 package com.thebluealliance.androidclient.fragments.district;
 
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.ListViewBinder;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
@@ -52,8 +42,8 @@ public class DistrictListFragment
     }
 
     @Override
-    protected Observable<List<District>> getObservable() {
-        return mDatafeed.fetchDistrictList(mYear);
+    protected Observable<List<District>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchDistrictList(mYear, tbaCacheHeader);
     }
 
     @Override

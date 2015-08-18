@@ -79,7 +79,7 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
     }
 
     @Override
-    protected Observable<List<Event>> getObservable() {
+    protected Observable<List<Event>> getObservable(String tbaCacheHeader) {
         if (mMonth != -1) {
             return mDatafeed.getCache().fetchEventsInMonth(mYear, mMonth);
         } else {

@@ -77,8 +77,8 @@ public class EventRankingsFragment extends ListViewFragment<JsonArray, RankingsL
     }
 
     @Override
-    protected Observable<JsonArray> getObservable() {
-        return mDatafeed.fetchEventRankings(eventKey);
+    protected Observable<JsonArray> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventRankings(eventKey, tbaCacheHeader);
     }
 
     @Override

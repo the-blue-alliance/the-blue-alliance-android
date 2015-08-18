@@ -59,10 +59,10 @@ public class TeamAtEventSummaryFragment
     }
 
     @Override
-    protected Observable<Model> getObservable() {
+    protected Observable<Model> getObservable(String cacheHeader) {
         return Observable.zip(
-          mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey),
-          mDatafeed.fetchEvent(mEventKey),
+          mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey, cacheHeader),
+          mDatafeed.fetchEvent(mEventKey, cacheHeader),
           new TeamAtEventSummaryCombiner());
     }
 

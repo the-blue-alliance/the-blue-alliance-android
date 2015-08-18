@@ -9,11 +9,8 @@ import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.datafeed.APIv2;
-import com.thebluealliance.androidclient.datafeed.APIv2ErrorHandler;
 import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.datafeed.RetrofitConverter;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
@@ -22,6 +19,9 @@ import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserialize
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
+import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
@@ -36,29 +36,24 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
+import retrofit.ObservableCallAdapterFactory;
+import retrofit.Retrofit;
 
 @Module(includes = TBAAndroidModule.class)
 public class DatafeedModule {
 
-    public static int CACHE_SIZE = 1024;
+    public static int CACHE_SIZE = 10 * 1024 * 1024;
 
     public DatafeedModule() {}
 
+    @Provides @Singleton
+    public Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
+        return getRetrofit(gson, okHttpClient);
+    }
+
     @Provides @Singleton @Named("retrofit")
-    public APIv2 provideRetrofitAPI(RestAdapter restAdapter) {
-        return restAdapter.create(APIv2.class);
-    }
-
-    @Provides @Singleton
-    public OkClient provideOkClient(OkHttpClient okHttp) {
-        return new OkClient(okHttp);
-    }
-
-    @Provides @Singleton
-    public RestAdapter provideRestAdapter(OkClient okClient) {
-        return getRestAdapter(okClient);
+    public APIv2 provideRetrofitAPI(Retrofit retrofit) {
+        return retrofit.create(APIv2.class);
     }
 
     @Provides @Singleton
@@ -88,14 +83,10 @@ public class DatafeedModule {
     public CacheableDatafeed provideDatafeed(
       @Named("retrofit") APIv2 retrofit,
       APICache cache,
-      DatabaseWriter writer) {
-        return new CacheableDatafeed(retrofit, cache, writer);
+      DatabaseWriter writer,
+      RetrofitResponseMap responseMap) {
+        return new CacheableDatafeed(retrofit, cache, writer, responseMap);
     }
-
-    //  @Provides
-    //  public RefreshManager provideRefreshManager(){
-    //      return new RefreshManager();
-    //  }
 
     public static Gson getGson() {
         GsonBuilder builder = new GsonBuilder();
@@ -110,12 +101,12 @@ public class DatafeedModule {
         return builder.create();
     }
 
-    public static RestAdapter getRestAdapter(OkClient okClient) {
-        return new RestAdapter.Builder()
-            .setEndpoint(APIv2.TBA_APIv2_URL)
-            .setConverter(new RetrofitConverter(getGson()))
-            .setErrorHandler(new APIv2ErrorHandler())
-            .setClient(okClient)
-            .build();
+    public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient) {
+        return new Retrofit.Builder()
+          .baseUrl(APIv2.TBA_URL)
+          .client(okHttpClient)
+          .converterFactory(LenientGsonConverterFactory.create(gson))
+          .callAdapterFactory(ObservableCallAdapterFactory.create())
+          .build();
     }
 }
