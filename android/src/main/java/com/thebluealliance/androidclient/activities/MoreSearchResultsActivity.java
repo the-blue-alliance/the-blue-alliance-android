@@ -139,14 +139,14 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getTeamsForTeamQuery(preparedQuery);
+                        return Database.getInstance(MoreSearchResultsActivity.this).getMatchesForTeamQuery(preparedQuery);
                     }
                 };
             case EVENT_RESULTS:
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getEventsForQuery(preparedQuery);
+                        return Database.getInstance(MoreSearchResultsActivity.this).getMatchesForEventQuery(preparedQuery);
                     }
                 };
         }
