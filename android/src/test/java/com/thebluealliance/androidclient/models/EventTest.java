@@ -33,8 +33,8 @@ public class EventTest {
         assertEquals(mEvent.getKey(), "2015cthar");
         assertEquals(mEvent.getWebsite(), "http://www.nefirst.org/");
         assertTrue(mEvent.isOfficial());
-        assertEquals(mEvent.getStartDate().getTime(), 1427414400000l);
-        assertEquals(mEvent.getEndDate().getTime(), 1427587200000l);
+        assertEquals(mEvent.getStartDate().getTime(), 1427428800000l);
+        assertEquals(mEvent.getEndDate().getTime(), 1427601600000l);
         assertEquals(mEvent.getCompetitionWeek(), 5);
         assertEquals(mEvent.getEventName(), "NE District - Hartford Event");
         assertEquals(mEvent.getEventShortName(), "Hartford");
