@@ -66,7 +66,9 @@ public abstract class DatafeedFragment
         super.onPause();
         if (mSubscriber != null) {
             mSubscriber.unsubscribe();
-            mEventBus.unregister(mSubscriber);
+            if (shouldRegisterSubscriberToEventBus()) {
+                mEventBus.unregister(mSubscriber);
+            }
         }
     }
 
@@ -107,14 +109,8 @@ public abstract class DatafeedFragment
                         .observeOn(Schedulers.computation())
                         .subscribe(mSubscriber);
             }
-            Observable[] extras = getExtraObservables(null);
-            if (shouldRegisterSubscriberToEventBus() || (extras != null && extras.length > 0)) {
+            if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.register(mSubscriber);
-                for (int i = 0; extras != null && i < extras.length; i++) {
-                    extras[i].subscribeOn(Schedulers.io())
-                            .observeOn(Schedulers.computation())
-                            .subscribe(mEventBusSubscriber.get());
-                }
             }
         }
     }
@@ -137,13 +133,6 @@ public abstract class DatafeedFragment
     protected abstract Observable<T> getObservable(String tbaCacheHeader);
 
     protected NoDataViewParams getNoDataParams() {
-        return null;
-    }
-
-    /**
-     * In case there are other endpoints that need to be hit
-     */
-    protected Observable[] getExtraObservables(String tbaCacheHeader) {
         return null;
     }
 

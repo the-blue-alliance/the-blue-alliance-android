@@ -2,14 +2,15 @@ package com.thebluealliance.androidclient.fragments.match;
 
 import android.os.Bundle;
 
+import com.thebluealliance.androidclient.datafeed.combiners.MatchInfoCombiner;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
+import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 
 import rx.Observable;
 
-public class MatchInfoFragment extends ListViewFragment<Match, MatchInfoSubscriber> {
+public class MatchInfoFragment extends ListViewFragment<Model, MatchInfoSubscriber> {
 
     private static final String KEY = "key";
 
@@ -42,12 +43,10 @@ public class MatchInfoFragment extends ListViewFragment<Match, MatchInfoSubscrib
     }
 
     @Override
-    protected Observable<Match> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchMatch(mMatchKey, tbaCacheHeader);
-    }
-
-    @Override
-    protected Observable[] getExtraObservables(String tbaCacheHeader) {
-        return new Observable[]{mDatafeed.fetchEvent(mEventKey, tbaCacheHeader)};
+    protected Observable<Model> getObservable(String cacheHeader) {
+        return Observable.zip(
+          mDatafeed.fetchMatch(mMatchKey, cacheHeader),
+          mDatafeed.fetchEvent(mEventKey, cacheHeader),
+          new MatchInfoCombiner());
     }
 }
