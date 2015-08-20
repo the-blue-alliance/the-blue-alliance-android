@@ -32,7 +32,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
 
     private String mMatchKey;
     private TextView mWarningMessage;
-    private FragmentComponent mComponent;
+
 
     public static Intent newInstance(Context context, String matchKey) {
         Intent intent = new Intent(context, ViewMatchActivity.class);

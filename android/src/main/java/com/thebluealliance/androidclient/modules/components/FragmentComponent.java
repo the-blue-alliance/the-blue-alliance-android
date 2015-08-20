@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.modules.components;
 
+import com.thebluealliance.androidclient.activities.DatafeedActivity;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
@@ -79,9 +80,9 @@ public interface FragmentComponent {
     void inject(MatchInfoFragment matchInfoFragment);
 
     void inject(GamedayWebcastsFragment gamedayWebcastsFragment);
-
     void inject(RecentNotificationsFragment recentNotificationsFragment);
 
     void inject(MySubscriptionsFragment mySubscriptionsFragment);
     void inject(MyFavoritesFragment myFavoritesFragment);
+    void inject(DatafeedActivity activity);
 }

@@ -7,8 +7,9 @@ import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import de.greenrobot.event.EventBus;
@@ -30,6 +31,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     DataConsumer<BindType> mConsumer;
     APIType mAPIData;
     BindType mDataToBind;
+    RefreshController mRefreshController;
     boolean shouldBindImmediately;
 
     public BaseAPISubscriber() {
@@ -42,6 +44,10 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     public void setConsumer(DataConsumer<BindType> consumer) {
         mConsumer = consumer;
+    }
+
+    public void setRefreshController(RefreshController refreshController) {
+        mRefreshController = refreshController;
     }
 
     @Override
@@ -61,6 +67,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onCompleted() {
+        //TODO notify refresh controller somehow
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 try {

@@ -32,7 +32,7 @@ import com.thebluealliance.androidclient.modules.components.FragmentComponent;
 import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-public class TeamAtDistrictActivity extends LegacyRefreshableHostActivity
+public class TeamAtDistrictActivity extends DatafeedActivity
   implements HasFragmentComponent {
 
     public static final String DISTRICT_KEY = "districtKey";

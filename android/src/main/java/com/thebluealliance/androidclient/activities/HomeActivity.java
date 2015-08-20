@@ -33,11 +33,10 @@ import com.thebluealliance.androidclient.modules.SubscriberModule;
 import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.modules.components.FragmentComponent;
 import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 import java.util.Calendar;
 
-public class HomeActivity extends LegacyRefreshableHostActivity implements HasFragmentComponent {
+public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
 
     /**
      * Saved instance state key representing the last select navigajjjjtion drawer item

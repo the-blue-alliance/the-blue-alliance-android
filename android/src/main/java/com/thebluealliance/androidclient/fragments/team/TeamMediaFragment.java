@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.interfaces.HasYearParam;
@@ -86,7 +87,7 @@ public class TeamMediaFragment extends DatafeedFragment<
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-        invalidate();
+        onRefreshStart(RefreshController.NOT_REQUESTED_BY_USER);
     }
 
     @Override
