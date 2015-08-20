@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.datafeed.framework;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

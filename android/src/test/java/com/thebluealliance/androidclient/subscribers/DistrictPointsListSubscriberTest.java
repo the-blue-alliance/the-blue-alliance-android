@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 
 import org.junit.Before;
 import org.junit.Test;

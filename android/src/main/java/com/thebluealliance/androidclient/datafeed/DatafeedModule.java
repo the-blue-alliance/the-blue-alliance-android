@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.modules;
+package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
 
@@ -8,9 +8,6 @@ import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
-import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
@@ -30,6 +27,7 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
