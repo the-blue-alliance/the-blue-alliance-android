@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 
 /**
  * File created by phil on 4/20/14.
+ * Anirudh Kantareddy
  */
 public class ViewEventActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
 
