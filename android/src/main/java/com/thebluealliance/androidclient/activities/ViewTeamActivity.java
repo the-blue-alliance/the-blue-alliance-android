@@ -124,8 +124,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
         mPager = (ViewPager) findViewById(R.id.view_pager);
         mPager.setOffscreenPageLimit(3);
-        mPager.setPageMargin(Utilities.getPixelsFromDp(this,
-                16));
+        mPager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
         // We will notify the fragments of the year later
         mAdapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mYear);
         mPager.setAdapter(mAdapter);
