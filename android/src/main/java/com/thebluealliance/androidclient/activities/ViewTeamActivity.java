@@ -198,7 +198,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     private Dialog makeDialogForYearSelection(@StringRes int titleResId, int[] dropdownItems) {
         // Create an array of strings from the int years
         String[] years = new String[dropdownItems.length];
-        for(int i = 0; i < years.length; i++) {
+        for (int i = 0; i < years.length; i++) {
             years[i] = String.valueOf(dropdownItems[i]);
         }
 
