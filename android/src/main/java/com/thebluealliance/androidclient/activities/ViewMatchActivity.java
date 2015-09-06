@@ -48,7 +48,6 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setRefreshEnabled(false);
         setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
         setContentView(R.layout.activity_view_match);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -169,5 +168,10 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
               .build();
         }
         return mComponent;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 }

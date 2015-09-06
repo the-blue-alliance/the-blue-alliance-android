@@ -75,4 +75,9 @@ public class TeamListFragment extends ListViewFragment<List<Team>, TeamListSubsc
         return mDatafeed.fetchTeamPage(mPageStart, tbaCacheHeader)
                 .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1, tbaCacheHeader), mCombiner);
     }
+
+    @Override
+    protected String getRefreshTag() {
+        return String.format("teamList_%1$d", mPageStart);
+    }
 }

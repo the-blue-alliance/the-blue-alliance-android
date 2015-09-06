@@ -70,6 +70,11 @@ public class TeamAtDistrictSummaryFragment
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("teamAtDistrictSummary_%1$s_%2$s_%3$d", mTeamKey, mDistrictShort, mYear);
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_assignment_black_48dp, R.string.no_district_summary);
     }

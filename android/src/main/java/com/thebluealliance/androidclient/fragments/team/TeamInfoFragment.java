@@ -135,6 +135,11 @@ public class TeamInfoFragment
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("teamInfo_%1$s", mTeamKey);
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_team_info);
     }

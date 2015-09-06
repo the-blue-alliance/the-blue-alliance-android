@@ -89,9 +89,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
-        // disable legacy RefreshableHostActivity
-        setRefreshEnabled(false);
-
         setModelKey(mTeamKey, ModelHelper.MODELS.TEAM);
         setContentView(R.layout.activity_view_team);
 
@@ -322,5 +319,10 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
               .build();
         }
         return mComponent;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 }

@@ -44,6 +44,11 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("gamedayWebcasts_%1$d_%2$d", mYear, mWeek);
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_videocam_black_48dp, R.string.no_webcast_data_found);
     }

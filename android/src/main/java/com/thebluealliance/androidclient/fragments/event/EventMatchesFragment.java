@@ -104,6 +104,11 @@ public class EventMatchesFragment
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("eventMatches_%1$s_%2$s", mEventKey, mTeamKey);
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_gamepad_variant_black_48dp, R.string.no_match_data);
     }

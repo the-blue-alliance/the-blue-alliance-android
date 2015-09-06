@@ -1,7 +1,14 @@
 package com.thebluealliance.androidclient.modules.components;
 
-import com.thebluealliance.androidclient.activities.DatafeedActivity;
+import com.thebluealliance.androidclient.activities.HomeActivity;
+import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
+import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
+import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
@@ -50,6 +57,7 @@ public interface FragmentComponent {
 
     CacheableDatafeed datafeed();
     EventBusSubscriber eventBusSubscriber();
+    RefreshController refreshController();
 
     void inject(TeamInfoFragment fragment);
     void inject(TeamEventsFragment fragment);
@@ -84,5 +92,12 @@ public interface FragmentComponent {
 
     void inject(MySubscriptionsFragment mySubscriptionsFragment);
     void inject(MyFavoritesFragment myFavoritesFragment);
-    void inject(DatafeedActivity activity);
+
+    void inject(HomeActivity activity);
+    void inject(TeamAtDistrictActivity activity);
+    void inject(TeamAtEventActivity activity);
+    void inject(ViewDistrictActivity activity);
+    void inject(ViewMatchActivity activity);
+    void inject(ViewTeamActivity activity);
+    void inject(ViewEventActivity activity);
 }

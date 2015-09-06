@@ -55,6 +55,11 @@ public class EventAlliancesFragment extends ListViewFragment<Event, AllianceList
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("eventAlliances_%1$s", mEventKey);
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_handshake_black_48dp, R.string.no_alliance_data);
     }

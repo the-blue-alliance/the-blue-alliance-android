@@ -45,6 +45,7 @@ public abstract class DatafeedFragment
     protected CacheableDatafeed mDatafeed;
     protected Observable<T> mObservable;
     protected FragmentComponent mComponent;
+    protected String mRefreshTag;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,9 +54,11 @@ public abstract class DatafeedFragment
             mComponent = ((HasFragmentComponent) getActivity()).getComponent();
         }
         inject();
+        mRefreshTag = getRefreshTag();
         mDatafeed = mComponent.datafeed();
         mSubscriber.setConsumer(mBinder);
         mSubscriber.setRefreshController(mRefreshController);
+        mSubscriber.setRefreshTag(mRefreshTag);
         mBinder.setActivity(getActivity());
         mBinder.setNoDataBinder(mNoDataBinder);
         mBinder.setNoDataParams(getNoDataParams());
@@ -65,13 +68,13 @@ public abstract class DatafeedFragment
     public void onResume() {
         super.onResume();
         getNewObservables(RefreshController.NOT_REQUESTED_BY_USER);
-        mRefreshController.registerRefreshable(this);
+        mRefreshController.registerRefreshable(mRefreshTag, this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mRefreshController.unregisterRefreshable(this);
+        mRefreshController.unregisterRefreshable(mRefreshTag);
         if (mSubscriber != null) {
             mSubscriber.unsubscribe();
             if (shouldRegisterSubscriberToEventBus()) {
@@ -105,7 +108,7 @@ public abstract class DatafeedFragment
                 ? APIv2.TBA_CACHE_WEB
                 : null);
             if (mObservable != null) {
-                mRefreshController.notifyRefreshingStateChanged(this, true);
+                mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
                 mObservable.subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
                         .subscribe(mSubscriber);
@@ -140,6 +143,11 @@ public abstract class DatafeedFragment
      * {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code null} for regular usage
      */
     protected abstract Observable<T> getObservable(String tbaCacheHeader);
+
+    /**
+     * @return A string identifying what data this fragment is loading
+     */
+    protected abstract String getRefreshTag();
 
     protected NoDataViewParams getNoDataParams() {
         return null;

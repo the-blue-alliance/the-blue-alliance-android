@@ -70,7 +70,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
@@ -83,7 +83,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);
 
-        setRefreshEnabled(false);
         hideWarningMessage();
 
         handler = new Handler();
@@ -375,6 +374,11 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         }
         transaction.commit();
         mCurrentSelectedYearPosition = position;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 
     public FragmentComponent getComponent() {

@@ -28,6 +28,11 @@ public class MySubscriptionsFragment
     }
 
     @Override
+    protected String getRefreshTag() {
+        return "mySubscriptions";
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_notifications_black_48dp, R.string.no_subscription_data);
     }

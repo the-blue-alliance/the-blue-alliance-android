@@ -50,7 +50,6 @@ public class PopulateContributors extends AsyncTask<String, Void, Void> {
         Parcelable state = contributors.onSaveInstanceState();
         contributors.setAdapter(adapter);
         contributors.onRestoreInstanceState(state);
-        activity.notifyRefreshComplete(activity);
     }
 
 }

@@ -12,15 +12,12 @@ import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateContributors;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 /**
  * Created by Nathan on 6/20/2014.
  */
-public class ContributorsActivity extends DatafeedActivity implements RefreshListener {
+public class ContributorsActivity extends DatafeedActivity {
 
     Toolbar toolbar;
 
@@ -45,20 +42,12 @@ public class ContributorsActivity extends DatafeedActivity implements RefreshLis
             }
         });
 
-        registerRefreshListener(this);
-
         setSearchEnabled(false);
     }
 
     @Override
     public void onCreateNavigationDrawer() {
         setNavigationDrawerEnabled(false);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        startRefresh(this);
     }
 
     private void setupActionBar() {
@@ -90,20 +79,7 @@ public class ContributorsActivity extends DatafeedActivity implements RefreshLis
 
     }
 
-    @Override
-    public void onRefreshStart(boolean actionItemPressed) {
-        if (ConnectionDetector.isConnectedToInternet(this)) {
-            new PopulateContributors(this).execute();
-        } else {
-            findViewById(android.R.id.list).setVisibility(View.GONE);
-            findViewById(R.id.no_data).setVisibility(View.VISIBLE);
-            findViewById(R.id.progress).setVisibility(View.GONE);
-            notifyRefreshComplete(this);
-        }
-    }
-
-    @Override
-    public void onRefreshStop() {
+    public void inject() {
 
     }
 }

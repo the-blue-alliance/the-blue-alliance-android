@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,8 +28,16 @@ public abstract class DatafeedActivity extends BaseActivity
     protected FragmentComponent mComponent;
     protected Menu mOptionsMenu;
 
+    private boolean mRefreshEnabled;
+
     public DatafeedActivity() {
-        getComponent().inject(this);
+        mRefreshEnabled = true;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        inject();
     }
 
     @Override
@@ -40,14 +49,20 @@ public abstract class DatafeedActivity extends BaseActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.refresh_menu, menu);
-        mRefreshController.bindToMenuItem(menu.findItem(R.id.refresh));
+        if (mRefreshEnabled) {
+            getMenuInflater().inflate(R.menu.refresh_menu, menu);
+            mRefreshController.bindToMenuItem(menu.findItem(R.id.refresh));
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mRefreshController.onOptionsItemSelected(item);
+    }
+
+    public void setRefreshEnabled(boolean enabled) {
+        mRefreshEnabled = enabled;
     }
 
     @Override
@@ -70,6 +85,8 @@ public abstract class DatafeedActivity extends BaseActivity
             showWarningMessage(getString(R.string.warning_no_internet_connection));
         }
     }
+
+    public abstract void inject();
 
     @Override
     public FragmentComponent getComponent() {

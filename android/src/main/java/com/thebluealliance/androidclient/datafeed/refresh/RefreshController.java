@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.refresh;
 
 import android.support.annotation.IntDef;
+import android.support.v4.util.ArrayMap;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
@@ -9,9 +10,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Collection;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Provides an easy way to manage a collection of {@link Refreshable} objects. {@link Refreshable}
@@ -28,7 +29,7 @@ import javax.inject.Inject;
  * {@link android.app.Activity#onOptionsItemSelected(MenuItem)} calls through to this class, it will
  * automatically start a refresh when the bound {@link MenuItem} is clicked.
  */
-//TODO fix DI so this can be a context-scoped singleton (e.g. one per Activity)
+@Singleton
 public class RefreshController {
 
     /**
@@ -41,9 +42,9 @@ public class RefreshController {
     public static final int NOT_REQUESTED_BY_USER = 1;
 
     /**
-     * Maps {@link Refreshable} objects to their current refreshing state
+     * Maps refresh tags to {@link Refreshable} objects and their current refreshing state
      */
-    private Map<Refreshable, Boolean> mRefreshableStates;
+    private Map<String, RefreshWrapper> mRefreshableStates;
 
     /**
      * Optional listener that will receive a callback when the refreshing state changes
@@ -62,7 +63,7 @@ public class RefreshController {
 
     @Inject
     public RefreshController() {
-        mRefreshableStates = new WeakHashMap<>();
+        mRefreshableStates = new ArrayMap<>();
     }
 
     /**
@@ -106,13 +107,13 @@ public class RefreshController {
         return false;
     }
 
-    public void registerRefreshable(Refreshable refreshable) {
+    public void registerRefreshable(String refreshTag, Refreshable refreshable) {
         // Default to "not refreshing"
-        mRefreshableStates.put(refreshable, false);
+        mRefreshableStates.put(refreshTag, new RefreshWrapper(refreshable, false));
     }
 
-    public void unregisterRefreshable(Refreshable refreshable) {
-        mRefreshableStates.remove(refreshable);
+    public void unregisterRefreshable(String refreshTag) {
+        mRefreshableStates.remove(refreshTag);
     }
 
     /**
@@ -120,7 +121,8 @@ public class RefreshController {
      * Refreshable}s.
      */
     public void startRefresh(@RefreshType int refreshType) {
-        for (Refreshable refreshable : mRefreshableStates.keySet()) {
+        for (RefreshWrapper wrapper: mRefreshableStates.values()) {
+            Refreshable refreshable = wrapper.getRefreshable();
             if (refreshable != null) {
                 refreshable.onRefreshStart(refreshType);
             }
@@ -132,12 +134,16 @@ public class RefreshController {
      * that this will also register the {@link Refreshable} for future refresh start callbacks if it
      * was not already registered.
      *
-     * @param refreshable  the {@link Refreshable} object whose state has changed
+     * @param refreshKey the String linking to the {@link Refreshable} object being updated
      * @param isRefreshing true if the {@link Refreshable} is currently refreshing, false if it is
      *                     not
      */
-    public void notifyRefreshingStateChanged(Refreshable refreshable, boolean isRefreshing) {
-        mRefreshableStates.put(refreshable, isRefreshing);
+    public void notifyRefreshingStateChanged(String refreshKey, boolean isRefreshing) {
+        RefreshWrapper wrapper = mRefreshableStates.get(refreshKey);
+        if (wrapper == null) {
+            return;
+        }
+        wrapper.setRefreshState(isRefreshing);
         boolean oldRefreshingState = mIsRefreshing;
 
         updateRefreshingState();
@@ -158,15 +164,15 @@ public class RefreshController {
      * @return returns the value of {@code mIsRefreshing} for convenience
      */
     private boolean updateRefreshingState() {
-        Collection<Boolean> refreshingStates = mRefreshableStates.values();
-        if (refreshingStates.contains(true)) {
-            // Something is still refreshing
-            mIsRefreshing = true;
-        } else {
-            mIsRefreshing = false;
+        Collection<RefreshWrapper> refreshingStates = mRefreshableStates.values();
+        for (RefreshWrapper wrapper: refreshingStates) {
+            if (wrapper.getRefreshState()) {
+                mIsRefreshing = true;
+                return true;
+            }
         }
-
-        return mIsRefreshing;
+        mIsRefreshing = false;
+        return false;
     }
 
     /**

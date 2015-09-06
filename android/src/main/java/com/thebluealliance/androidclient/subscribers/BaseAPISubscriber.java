@@ -31,7 +31,8 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     DataConsumer<BindType> mConsumer;
     APIType mAPIData;
     BindType mDataToBind;
-    RefreshController mRefreshController;
+    RefreshController mRefreshController; //TODO hook up to DI
+    String mRefreshTag;
     boolean shouldBindImmediately;
 
     public BaseAPISubscriber() {
@@ -48,6 +49,16 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     public void setRefreshController(RefreshController refreshController) {
         mRefreshController = refreshController;
+    }
+
+    public void setRefreshTag(String refreshTag) {
+        mRefreshTag = refreshTag;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
     }
 
     @Override
@@ -67,7 +78,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onCompleted() {
-        //TODO notify refresh controller somehow
+        mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 try {
@@ -83,6 +94,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onError(Throwable throwable) {
+        mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 mConsumer.onError(throwable);

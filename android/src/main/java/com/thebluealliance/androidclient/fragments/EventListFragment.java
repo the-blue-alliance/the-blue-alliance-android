@@ -87,6 +87,11 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
         }
     }
 
+    @Override
+    protected String getRefreshTag() {
+        return String.format("eventList_%1$d_%2$d_%3$d", mYear, mWeek, mMonth);
+    }
+
     public void bind() {
         if(mSubscriber != null) {
             mSubscriber.bindData();

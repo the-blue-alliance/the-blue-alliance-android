@@ -67,6 +67,11 @@ public class TeamAtEventSummaryFragment
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("teamAtEventSummary_%1$s_%2$s", mTeamKey, mEventKey);
+    }
+
+    @Override
     protected boolean shouldRegisterSubscriberToEventBus() {
         return true;
     }

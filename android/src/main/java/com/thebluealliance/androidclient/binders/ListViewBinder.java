@@ -83,6 +83,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void unbind() {
+        setDataBound(false);
         if (listView != null) {
             listView.setVisibility(View.GONE);
         }

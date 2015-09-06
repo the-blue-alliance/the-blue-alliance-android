@@ -29,7 +29,7 @@ public class EventRankingsFragment extends ListViewFragment<JsonArray, RankingsL
 
     private static final String KEY = "eventKey";
 
-    private String eventKey;
+    private String mEventKey;
 
     /**
      * Creates new rankings fragment for an event
@@ -49,7 +49,7 @@ public class EventRankingsFragment extends ListViewFragment<JsonArray, RankingsL
     public void onCreate(Bundle savedInstanceState) {
         // Reload key if returning from another activity/fragment
         if (getArguments() != null) {
-            eventKey = getArguments().getString(KEY, "");
+            mEventKey = getArguments().getString(KEY, "");
         }
         super.onCreate(savedInstanceState);
     }
@@ -60,11 +60,11 @@ public class EventRankingsFragment extends ListViewFragment<JsonArray, RankingsL
         mListView.setOnItemClickListener((adapterView, view, position, id) -> {
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter())
               .getItem(position)).getKey();
-            Intent intent = TeamAtEventActivity.newInstance(getActivity(), eventKey, teamKey);
+            Intent intent = TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey);
 
              /* Track the call */
             AnalyticsHelper.sendClickUpdate(
-              getActivity(), "team@event_click", "EventRankingsFragment", eventKey);
+              getActivity(), "team@event_click", "EventRankingsFragment", mEventKey);
 
             startActivity(intent);
         });
@@ -78,7 +78,12 @@ public class EventRankingsFragment extends ListViewFragment<JsonArray, RankingsL
 
     @Override
     protected Observable<JsonArray> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchEventRankings(eventKey, tbaCacheHeader);
+        return mDatafeed.fetchEventRankings(mEventKey, tbaCacheHeader);
+    }
+
+    @Override
+    protected String getRefreshTag() {
+        return String.format("eventRankings_%1$s", mEventKey);
     }
 
     @Override
