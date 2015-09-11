@@ -36,7 +36,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.ObservableCallAdapterFactory;
+import retrofit.RxJavaCallAdapterFactory;
 import retrofit.Retrofit;
 
 @Module(includes = TBAAndroidModule.class)
@@ -105,8 +105,8 @@ public class DatafeedModule {
         return new Retrofit.Builder()
           .baseUrl(APIv2.TBA_URL)
           .client(okHttpClient)
-          .converterFactory(LenientGsonConverterFactory.create(gson))
-          .callAdapterFactory(ObservableCallAdapterFactory.create())
+          .addConverterFactory(LenientGsonConverterFactory.create(gson))
+          .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
           .build();
     }
 }
