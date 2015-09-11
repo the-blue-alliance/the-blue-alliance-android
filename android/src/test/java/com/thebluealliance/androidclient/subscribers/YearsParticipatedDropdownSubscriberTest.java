@@ -36,7 +36,7 @@ public class YearsParticipatedDropdownSubscriberTest {
 
     @Test
     public void testParsedData() {
-        int[] expected = {2012, 2013, 2014, 2015};
+        int[] expected = {2015, 2014, 2013, 2012};
         mSubscriber.call(mYearsParticipated);
         verify(mCallback).updateYearsParticipated(expected);
     }
