@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
+
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -22,38 +23,36 @@ public class DistrictHelper {
         MID_ATLANTIC,
         NEW_ENGLAND,
         PACIFIC_NORTHWEST,
-        INDIANA;
+        INDIANA,
+        CHESAPEAKE,
+        NORTH_CAROLINA,
+        GEORGIA;
 
         public static DISTRICTS fromEnum(int districtEnum) {
             switch (districtEnum) {
                 default:
-                case 0:
-                    return NO_DISTRICT;
-                case 1:
-                    return MICHIGAN;
-                case 2:
-                    return MID_ATLANTIC;
-                case 3:
-                    return NEW_ENGLAND;
-                case 4:
-                    return PACIFIC_NORTHWEST;
-                case 5:
-                    return INDIANA;
+                case 0: return NO_DISTRICT;
+                case 1: return MICHIGAN;
+                case 2: return MID_ATLANTIC;
+                case 3: return NEW_ENGLAND;
+                case 4: return PACIFIC_NORTHWEST;
+                case 5: return INDIANA;
+                case 6: return CHESAPEAKE;
+                case 7: return NORTH_CAROLINA;
+                case 8: return GEORGIA;
             }
         }
 
         public static DISTRICTS fromAbbreviation(String abbrev) {
             switch (abbrev) {
-                case "fim":
-                    return MICHIGAN;
-                case "mar":
-                    return MID_ATLANTIC;
-                case "ne":
-                    return NEW_ENGLAND;
-                case "pnw":
-                    return PACIFIC_NORTHWEST;
-                case "in":
-                    return INDIANA;
+                case "fim": return MICHIGAN;
+                case "mar": return MID_ATLANTIC;
+                case "ne":  return NEW_ENGLAND;
+                case "pnw": return PACIFIC_NORTHWEST;
+                case "in":  return INDIANA;
+                case "chs": return CHESAPEAKE;
+                case "nc":  return NORTH_CAROLINA;
+                case "pch": return GEORGIA;
                 default:
                     return NO_DISTRICT;
             }
@@ -74,6 +73,12 @@ public class DistrictHelper {
                     return "Pacific Northwest";
                 case INDIANA:
                     return "Indiana";
+                case CHESAPEAKE:
+                    return "Chesapeake";
+                case NORTH_CAROLINA:
+                    return "North Carolina";
+                case GEORGIA:
+                    return "Georgia";
             }
         }
 
@@ -92,6 +97,12 @@ public class DistrictHelper {
                     return "pnw";
                 case INDIANA:
                     return "in";
+                case CHESAPEAKE:
+                    return "chs";
+                case NORTH_CAROLINA:
+                    return "nc";
+                case GEORGIA:
+                    return "pch";
             }
         }
 
