@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import de.greenrobot.event.EventBus;
-import rx.Subscriber;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -25,8 +25,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * @param <BindType> Datatype to be returned for binding to views
  */
 public abstract class BaseAPISubscriber<APIType, BindType>
-        extends Subscriber<APIType>
-        implements APISubscriber<BindType> {
+        implements Observer<APIType>, APISubscriber<BindType> {
 
     DataConsumer<BindType> mConsumer;
     APIType mAPIData;
@@ -55,9 +54,10 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         mRefreshTag = refreshTag;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    /**
+     * Called when a refresh begins
+     */
+    public void onRefreshStart() {
         mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
     }
 
@@ -78,8 +78,8 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onCompleted() {
-        mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
             if (mConsumer != null) {
                 try {
                     mConsumer.onComplete();

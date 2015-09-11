@@ -76,7 +76,6 @@ public abstract class DatafeedFragment
         super.onPause();
         mRefreshController.unregisterRefreshable(mRefreshTag);
         if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
             if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.unregister(mSubscriber);
             }
@@ -108,7 +107,6 @@ public abstract class DatafeedFragment
                 ? APIv2.TBA_CACHE_WEB
                 : null);
             if (mObservable != null) {
-                mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
                 mObservable.subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
                         .subscribe(mSubscriber);
@@ -124,6 +122,8 @@ public abstract class DatafeedFragment
         if (mSubscriber != null && mBinder != null) {
             mBinder.unbind();
             getNewObservables(RefreshController.REQUESTED_BY_USER);
+            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
+            mSubscriber.onRefreshStart();
         }
     }
 

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.refresh;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.UiThread;
 import android.support.v4.util.ArrayMap;
 import android.view.MenuItem;
 
@@ -138,6 +139,7 @@ public class RefreshController {
      * @param isRefreshing true if the {@link Refreshable} is currently refreshing, false if it is
      *                     not
      */
+    @UiThread
     public void notifyRefreshingStateChanged(String refreshKey, boolean isRefreshing) {
         RefreshWrapper wrapper = mRefreshableStates.get(refreshKey);
         if (wrapper == null) {
@@ -155,6 +157,14 @@ public class RefreshController {
                 mListener.onRefreshStateChanged(mIsRefreshing);
             }
         }
+    }
+
+    /**
+     * Resets the state of the instance
+     */
+    public void reset() {
+        mIsRefreshing = false;
+        mRefreshableStates.clear();
     }
 
     /**

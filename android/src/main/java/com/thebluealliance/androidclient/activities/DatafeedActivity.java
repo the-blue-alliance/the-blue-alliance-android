@@ -38,6 +38,7 @@ public abstract class DatafeedActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         inject();
+        mRefreshController.reset();
     }
 
     @Override
