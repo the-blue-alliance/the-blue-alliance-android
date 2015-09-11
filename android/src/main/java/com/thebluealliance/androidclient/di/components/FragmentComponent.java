@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.modules.components;
+package com.thebluealliance.androidclient.di.components;
 
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
@@ -35,10 +35,10 @@ import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
-import com.thebluealliance.androidclient.modules.BinderModule;
-import com.thebluealliance.androidclient.modules.DatabaseWriterModule;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
-import com.thebluealliance.androidclient.modules.SubscriberModule;
+import com.thebluealliance.androidclient.binders.BinderModule;
+import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 
 import javax.inject.Singleton;

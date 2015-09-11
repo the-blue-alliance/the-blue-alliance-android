@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.modules;
+package com.thebluealliance.androidclient.binders;
 
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.binders.EventTabBinder;

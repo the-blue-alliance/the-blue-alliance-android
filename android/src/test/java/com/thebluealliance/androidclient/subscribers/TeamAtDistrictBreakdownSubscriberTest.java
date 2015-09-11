@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 
 import org.junit.Before;
 import org.junit.Test;

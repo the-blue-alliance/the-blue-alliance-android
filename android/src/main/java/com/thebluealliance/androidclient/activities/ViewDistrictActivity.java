@@ -20,10 +20,10 @@ import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapt
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.modules.SubscriberModule;
-import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.modules.components.FragmentComponent;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class ViewDistrictActivity extends FABNotificationSettingsActivity

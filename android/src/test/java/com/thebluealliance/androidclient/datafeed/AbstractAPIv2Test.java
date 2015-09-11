@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
 
 import org.junit.Before;
 

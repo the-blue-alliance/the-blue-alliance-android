@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.modules;
+package com.thebluealliance.androidclient.di;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

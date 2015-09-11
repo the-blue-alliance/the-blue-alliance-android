@@ -4,12 +4,12 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.facebook.stetho.Stetho;
-import com.thebluealliance.androidclient.modules.BinderModule;
-import com.thebluealliance.androidclient.modules.DatabaseWriterModule;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
-import com.thebluealliance.androidclient.modules.TBAAndroidModule;
-import com.thebluealliance.androidclient.modules.components.ApplicationComponent;
-import com.thebluealliance.androidclient.modules.components.DaggerApplicationComponent;
+import com.thebluealliance.androidclient.binders.BinderModule;
+import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
+import com.thebluealliance.androidclient.di.components.ApplicationComponent;
+import com.thebluealliance.androidclient.di.components.DaggerApplicationComponent;
 
 public class TBAAndroid extends MultiDexApplication {
 

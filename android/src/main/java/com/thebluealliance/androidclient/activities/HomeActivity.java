@@ -23,16 +23,16 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
-import com.thebluealliance.androidclient.modules.SubscriberModule;
-import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.modules.components.FragmentComponent;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import java.util.Calendar;
 
