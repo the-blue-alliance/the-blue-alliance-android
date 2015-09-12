@@ -51,7 +51,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.find_event_on_google);
         } else {
             view.findViewById(R.id.team_website_container).setTag(data.website);
-            ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.view_event_website);
+            ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.view_team_website);
         }
 
         view.findViewById(R.id.team_twitter_container).setTag("https://twitter.com/search?q=%23" + data.teamKey);
