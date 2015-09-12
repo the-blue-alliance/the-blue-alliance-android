@@ -29,11 +29,10 @@ import com.thebluealliance.androidclient.fragments.district.DistrictListFragment
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
-import com.thebluealliance.androidclient.modules.SubscriberModule;
-import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.modules.components.FragmentComponent;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 
 import java.util.Calendar;
 

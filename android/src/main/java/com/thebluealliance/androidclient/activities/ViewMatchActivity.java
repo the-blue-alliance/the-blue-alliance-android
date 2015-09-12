@@ -20,10 +20,10 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.modules.SubscriberModule;
-import com.thebluealliance.androidclient.modules.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.modules.components.FragmentComponent;
-import com.thebluealliance.androidclient.modules.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 
 public class ViewMatchActivity extends FABNotificationSettingsActivity
   implements HasFragmentComponent {

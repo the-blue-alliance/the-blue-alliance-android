@@ -1,8 +1,8 @@
-package com.thebluealliance.androidclient.modules.components;
+package com.thebluealliance.androidclient.di.components;
 
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.modules.SubscriberModule;
-import com.thebluealliance.androidclient.modules.TBAAndroidModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import dagger.Component;
 

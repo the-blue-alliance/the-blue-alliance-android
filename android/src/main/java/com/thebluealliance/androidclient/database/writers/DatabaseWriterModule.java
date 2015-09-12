@@ -1,23 +1,7 @@
-package com.thebluealliance.androidclient.modules;
+package com.thebluealliance.androidclient.database.writers;
 
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.writers.AwardListWriter;
-import com.thebluealliance.androidclient.database.writers.AwardWriter;
-import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
-import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter;
-import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
-import com.thebluealliance.androidclient.database.writers.DistrictWriter;
-import com.thebluealliance.androidclient.database.writers.EventListWriter;
-import com.thebluealliance.androidclient.database.writers.EventTeamListWriter;
-import com.thebluealliance.androidclient.database.writers.EventTeamWriter;
-import com.thebluealliance.androidclient.database.writers.EventWriter;
-import com.thebluealliance.androidclient.database.writers.MatchListWriter;
-import com.thebluealliance.androidclient.database.writers.MatchWriter;
-import com.thebluealliance.androidclient.database.writers.MediaListWriter;
-import com.thebluealliance.androidclient.database.writers.MediaWriter;
-import com.thebluealliance.androidclient.database.writers.TeamListWriter;
-import com.thebluealliance.androidclient.database.writers.TeamWriter;
-import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Singleton;
 

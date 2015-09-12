@@ -11,7 +11,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 
 import org.junit.Before;

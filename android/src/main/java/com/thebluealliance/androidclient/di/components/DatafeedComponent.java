@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.modules.components;
+package com.thebluealliance.androidclient.di.components;
 
 import android.support.v4.app.Fragment;
 
@@ -6,8 +6,8 @@ import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
-import com.thebluealliance.androidclient.modules.DatafeedModule;
-import com.thebluealliance.androidclient.modules.TBAAndroidModule;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Singleton;
 

@@ -1,33 +1,10 @@
-package com.thebluealliance.androidclient.modules;
+package com.thebluealliance.androidclient.subscribers;
 
 import android.app.Activity;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
-import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
-import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
-import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
-import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
-import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
-import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
-import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
-import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
-import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
-import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
-import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
-import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
-import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
-import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
-import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
-import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
-import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import dagger.Module;
 import dagger.Provides;
