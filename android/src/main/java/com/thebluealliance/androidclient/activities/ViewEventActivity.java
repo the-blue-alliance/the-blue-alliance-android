@@ -66,9 +66,6 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // disable legacy RefreshableHostActivity
-        setRefreshEnabled(false);
-
         MyTBAHelper.serializeIntent(getIntent());
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
             mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
@@ -278,5 +275,10 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
               .build();
         }
         return mComponent;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 }

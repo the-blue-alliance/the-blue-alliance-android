@@ -1,4 +1,6 @@
-package com.thebluealliance.androidclient.datafeed;
+package com.thebluealliance.androidclient.datafeed.refresh;
+
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 
 /**
  * An interface for an object that can be considered refreshable (it can be signaled to start
@@ -10,9 +12,6 @@ public interface Refreshable {
 
     /**
      * Indicates that this object should start refreshing its content.
-     *
-     * @param requestedByUser true if this refresh was explicitly requested by the user; for
-     *                        instance, if they clicked a refresh button
      */
-    void onRefreshStart(boolean requestedByUser);
+    void onRefreshStart(@RefreshType int refreshType);
 }

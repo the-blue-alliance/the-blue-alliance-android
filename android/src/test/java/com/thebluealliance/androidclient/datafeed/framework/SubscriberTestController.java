@@ -2,11 +2,13 @@ package com.thebluealliance.androidclient.datafeed.framework;
 
 import com.google.common.base.Preconditions;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 
 import javax.annotation.Nullable;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 public class SubscriberTestController<API, VIEW> {
@@ -32,6 +34,7 @@ public class SubscriberTestController<API, VIEW> {
     public SubscriberTestController<API, VIEW> forSubscriber(
       BaseAPISubscriber<API, VIEW> subscriber) {
         mSubscriber = spy(subscriber);
+        mSubscriber.setRefreshController(mock(RefreshController.class));
         return this;
     }
 

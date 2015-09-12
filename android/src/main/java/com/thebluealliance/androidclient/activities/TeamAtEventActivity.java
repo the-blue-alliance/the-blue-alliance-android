@@ -57,9 +57,6 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // disable legacy RefreshableHostActivity
-        setRefreshEnabled(false);
-
         Bundle extras = getIntent().getExtras();
         if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
             mTeamKey = extras.getString(TEAM);
@@ -96,8 +93,6 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
         }
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
-
-        startRefresh();
 
         setSettingsToolbarTitle("Team at Event Settings");
     }
@@ -208,5 +203,9 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
               .build();
         }
         return mComponent;
+    }
+
+    public void inject() {
+        getComponent().inject(this);
     }
 }

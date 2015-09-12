@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserialize
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.models.Award;
@@ -34,8 +35,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.RxJavaCallAdapterFactory;
 import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
 
 @Module(includes = TBAAndroidModule.class)
 public class DatafeedModule {
@@ -84,6 +85,11 @@ public class DatafeedModule {
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {
         return new CacheableDatafeed(retrofit, cache, writer, responseMap);
+    }
+
+    @Provides @Singleton
+    public RefreshController provideRefreshController() {
+        return new RefreshController();
     }
 
     public static Gson getGson() {

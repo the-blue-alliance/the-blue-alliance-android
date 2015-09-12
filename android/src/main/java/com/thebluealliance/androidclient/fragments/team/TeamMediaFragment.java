@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.interfaces.HasYearParam;
@@ -86,7 +87,7 @@ public class TeamMediaFragment extends DatafeedFragment<
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-        invalidate();
+        onRefreshStart(RefreshController.NOT_REQUESTED_BY_USER);
     }
 
     @Override
@@ -102,6 +103,11 @@ public class TeamMediaFragment extends DatafeedFragment<
     @Override
     protected Observable<List<Media>> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchTeamMediaInYear(mTeamKey, mYear, tbaCacheHeader);
+    }
+
+    @Override
+    protected String getRefreshTag() {
+        return String.format("teamMedia_%1$s_%2$d", mTeamKey, mYear);
     }
 
     @Override

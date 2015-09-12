@@ -23,6 +23,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
@@ -30,13 +33,10 @@ import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 
 import java.util.Calendar;
 
-public class HomeActivity extends LegacyRefreshableHostActivity implements HasFragmentComponent {
+public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
 
     /**
      * Saved instance state key representing the last select navigajjjjtion drawer item
@@ -70,7 +70,7 @@ public class HomeActivity extends LegacyRefreshableHostActivity implements HasFr
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
@@ -83,7 +83,6 @@ public class HomeActivity extends LegacyRefreshableHostActivity implements HasFr
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);
 
-        setRefreshEnabled(false);
         hideWarningMessage();
 
         handler = new Handler();
@@ -375,6 +374,11 @@ public class HomeActivity extends LegacyRefreshableHostActivity implements HasFr
         }
         transaction.commit();
         mCurrentSelectedYearPosition = position;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 
     public FragmentComponent getComponent() {

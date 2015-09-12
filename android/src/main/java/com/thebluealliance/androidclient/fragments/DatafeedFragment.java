@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
+import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
@@ -29,17 +32,20 @@ import rx.schedulers.Schedulers;
  * @param <B> {@link AbstractDataBinder} that will take prepared data -> view
  */
 public abstract class DatafeedFragment
-  <T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>> extends Fragment {
+  <T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>>
+  extends Fragment implements Refreshable {
 
     @Inject protected S mSubscriber;
     @Inject protected B mBinder;
     @Inject protected EventBus mEventBus;
     @Inject protected Lazy<EventBusSubscriber> mEventBusSubscriber;
     @Inject protected NoDataBinder mNoDataBinder;
+    @Inject protected RefreshController mRefreshController;
 
     protected CacheableDatafeed mDatafeed;
     protected Observable<T> mObservable;
     protected FragmentComponent mComponent;
+    protected String mRefreshTag;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,8 +54,11 @@ public abstract class DatafeedFragment
             mComponent = ((HasFragmentComponent) getActivity()).getComponent();
         }
         inject();
+        mRefreshTag = getRefreshTag();
         mDatafeed = mComponent.datafeed();
         mSubscriber.setConsumer(mBinder);
+        mSubscriber.setRefreshController(mRefreshController);
+        mSubscriber.setRefreshTag(mRefreshTag);
         mBinder.setActivity(getActivity());
         mBinder.setNoDataBinder(mNoDataBinder);
         mBinder.setNoDataParams(getNoDataParams());
@@ -58,28 +67,18 @@ public abstract class DatafeedFragment
     @Override
     public void onResume() {
         super.onResume();
-        getNewObservables();
+        getNewObservables(RefreshController.NOT_REQUESTED_BY_USER);
+        mRefreshController.registerRefreshable(mRefreshTag, this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        mRefreshController.unregisterRefreshable(mRefreshTag);
         if (mSubscriber != null) {
-            mSubscriber.unsubscribe();
             if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.unregister(mSubscriber);
             }
-        }
-    }
-
-    /**
-     * Unbinds current data, fetches new observables, and reparses/binds
-     *
-     */
-    public void invalidate() {
-        if (mSubscriber != null && mBinder != null) {
-            mBinder.unbind();
-            getNewObservables();
         }
     }
 
@@ -101,9 +100,12 @@ public abstract class DatafeedFragment
     /**
      * Registers and subscribes new observables
      */
-    private void getNewObservables() {
+    private void getNewObservables(@RefreshType int refreshType) {
         if (mSubscriber != null) {
-            mObservable = getObservable(null);
+            mObservable = getObservable(
+              refreshType == RefreshController.REQUESTED_BY_USER
+                ? APIv2.TBA_CACHE_WEB
+                : null);
             if (mObservable != null) {
                 mObservable.subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
@@ -112,6 +114,16 @@ public abstract class DatafeedFragment
             if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.register(mSubscriber);
             }
+        }
+    }
+
+    @Override
+    public void onRefreshStart(@RefreshType int refreshType) {
+        if (mSubscriber != null && mBinder != null) {
+            mBinder.unbind();
+            getNewObservables(RefreshController.REQUESTED_BY_USER);
+            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
+            mSubscriber.onRefreshStart();
         }
     }
 
@@ -131,6 +143,11 @@ public abstract class DatafeedFragment
      * {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code null} for regular usage
      */
     protected abstract Observable<T> getObservable(String tbaCacheHeader);
+
+    /**
+     * @return A string identifying what data this fragment is loading
+     */
+    protected abstract String getRefreshTag();
 
     protected NoDataViewParams getNoDataParams() {
         return null;

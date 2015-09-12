@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.interfaces.HasYearParam;
@@ -88,7 +89,7 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
 
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-        invalidate();
+        onRefreshStart(RefreshController.NOT_REQUESTED_BY_USER);
     }
 
     @Override
@@ -104,6 +105,11 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
     @Override
     protected Observable<List<Event>> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchTeamEvents(mTeamKey, mYear, tbaCacheHeader);
+    }
+
+    @Override
+    protected String getRefreshTag() {
+        return String.format("teamEvents_%1$s_%2$d", mTeamKey, mYear);
     }
 
     @Override

@@ -137,6 +137,11 @@ public class EventsByWeekFragment
         return mDatafeed.fetchEventsInYear(mYear, tbaCacheHeader);
     }
 
+    @Override
+    protected String getRefreshTag() {
+        return String.format("eventsByWeek_%1$d", mYear);
+    }
+
     /**
      * Set the default selected pager tab
      * If the user isn't viewing this year's events, default to Week 1

@@ -187,6 +187,11 @@ public class EventStatsFragment
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("eventStats_%1$s", mEventKey);
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_stats_data);
     }

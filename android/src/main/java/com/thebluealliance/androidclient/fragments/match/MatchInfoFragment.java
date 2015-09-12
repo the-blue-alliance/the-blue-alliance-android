@@ -49,4 +49,9 @@ public class MatchInfoFragment extends ListViewFragment<Model, MatchInfoSubscrib
           mDatafeed.fetchEvent(mEventKey, cacheHeader),
           new MatchInfoCombiner());
     }
+
+    @Override
+    protected String getRefreshTag() {
+        return String.format("matchInfo_%1$s", mMatchKey);
+    }
 }

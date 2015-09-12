@@ -32,7 +32,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-public class TeamAtDistrictActivity extends LegacyRefreshableHostActivity
+public class TeamAtDistrictActivity extends DatafeedActivity
   implements HasFragmentComponent {
 
     public static final String DISTRICT_KEY = "districtKey";
@@ -58,7 +58,6 @@ public class TeamAtDistrictActivity extends LegacyRefreshableHostActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_at_district);
-        setRefreshEnabled(false);
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_KEY)) {
             mDistrictKey = getIntent().getExtras().getString(DISTRICT_KEY, "");
             if (!DistrictHelper.validateDistrictKey(mDistrictKey)) {
@@ -184,5 +183,9 @@ public class TeamAtDistrictActivity extends LegacyRefreshableHostActivity
               .build();
         }
         return mComponent;
+    }
+
+    public void inject() {
+        getComponent().inject(this);
     }
 }

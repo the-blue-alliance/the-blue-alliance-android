@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -102,7 +102,7 @@ public class TeamInfoFragment
 
     public void showCurrentEvent(final EventListElement event) {
 
-        final LinearLayout eventLayout = (LinearLayout) getView()
+        final FrameLayout eventLayout = (FrameLayout) getView()
                 .findViewById(R.id.team_current_event);
         final RelativeLayout container = (RelativeLayout) getView()
                 .findViewById(R.id.team_current_event_container);
@@ -132,6 +132,11 @@ public class TeamInfoFragment
     @Override
     protected Observable<Team> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchTeam(mTeamKey, tbaCacheHeader);
+    }
+
+    @Override
+    protected String getRefreshTag() {
+        return String.format("teamInfo_%1$s", mTeamKey);
     }
 
     @Override

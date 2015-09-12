@@ -7,12 +7,13 @@ import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import de.greenrobot.event.EventBus;
-import rx.Subscriber;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -24,12 +25,13 @@ import rx.android.schedulers.AndroidSchedulers;
  * @param <BindType> Datatype to be returned for binding to views
  */
 public abstract class BaseAPISubscriber<APIType, BindType>
-        extends Subscriber<APIType>
-        implements APISubscriber<BindType> {
+        implements Observer<APIType>, APISubscriber<BindType> {
 
     DataConsumer<BindType> mConsumer;
     APIType mAPIData;
     BindType mDataToBind;
+    RefreshController mRefreshController; //TODO hook up to DI
+    String mRefreshTag;
     boolean shouldBindImmediately;
 
     public BaseAPISubscriber() {
@@ -42,6 +44,21 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     public void setConsumer(DataConsumer<BindType> consumer) {
         mConsumer = consumer;
+    }
+
+    public void setRefreshController(RefreshController refreshController) {
+        mRefreshController = refreshController;
+    }
+
+    public void setRefreshTag(String refreshTag) {
+        mRefreshTag = refreshTag;
+    }
+
+    /**
+     * Called when a refresh begins
+     */
+    public void onRefreshStart() {
+        mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
     }
 
     @Override
@@ -62,6 +79,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     @Override
     public void onCompleted() {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
             if (mConsumer != null) {
                 try {
                     mConsumer.onComplete();
@@ -76,6 +94,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onError(Throwable throwable) {
+        mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 mConsumer.onError(throwable);

@@ -35,6 +35,11 @@ public class RecentNotificationsFragment
     }
 
     @Override
+    protected String getRefreshTag() {
+        return "recentNotifications";
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_notifications_black_48dp, R.string.no_recent_notifications);
     }

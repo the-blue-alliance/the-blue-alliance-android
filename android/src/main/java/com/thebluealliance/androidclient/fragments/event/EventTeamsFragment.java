@@ -73,6 +73,11 @@ public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSub
     }
 
     @Override
+    protected String getRefreshTag() {
+        return String.format("eventTeams_%1$s", mEventKey);
+    }
+
+    @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_group_black_48dp, R.string.no_team_data);
     }
