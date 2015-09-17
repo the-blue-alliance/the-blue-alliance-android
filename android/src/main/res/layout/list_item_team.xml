@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:minHeight="72dp">
+    android:minHeight="72dp"
+    android:paddingEnd="16dp">
 
     <TextView
         android:id="@+id/team_number"
