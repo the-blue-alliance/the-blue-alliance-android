@@ -25,7 +25,7 @@ import rx.Observable;
  */
 public interface APIv2 {
 
-    String TBA_URL = "http://www.thebluealliance.com/";
+    String TBA_URL = "https://www.thebluealliance.com/";
 
     /**
      * Here's how we can force data to be loaded from either the cache or the web
