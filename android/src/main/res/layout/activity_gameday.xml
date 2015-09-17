@@ -32,15 +32,6 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/tabs" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/filter_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_margin="@dimen/fab_margin"
-                android:src="@drawable/ic_filter_list_white_24dp"
-                app:fabSize="normal" />
         </RelativeLayout>
 
         <LinearLayout
@@ -58,4 +49,13 @@
                 android:visibility="gone" />
         </LinearLayout>
     </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/filter_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_filter_list_white_24dp"
+        app:fabSize="normal" />
 </android.support.design.widget.CoordinatorLayout>

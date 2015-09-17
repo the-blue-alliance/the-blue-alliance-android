@@ -23,16 +23,6 @@
             android:layout_below="@id/toolbar"
             android:orientation="vertical" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/close_notification_settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_check_white_24dp"
-            app:fabSize="normal" />
-
         <FrameLayout
             android:id="@+id/green_container"
             android:layout_width="match_parent"
@@ -40,4 +30,13 @@
             android:background="@color/accent"
             android:visibility="invisible" />
     </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/close_notification_settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_check_white_24dp"
+        app:fabSize="normal" />
 </android.support.design.widget.CoordinatorLayout>
