@@ -22,6 +22,7 @@ import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
@@ -272,6 +273,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;

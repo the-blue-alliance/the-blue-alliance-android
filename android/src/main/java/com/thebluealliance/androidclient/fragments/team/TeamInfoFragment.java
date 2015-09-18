@@ -1,9 +1,5 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +7,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -25,17 +20,18 @@ import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
-import java.util.List;
+import javax.inject.Inject;
 
 import rx.Observable;
 
 public class TeamInfoFragment
-        extends DatafeedFragment<Team, TeamInfoBinder.Model, TeamInfoSubscriber, TeamInfoBinder>
-        implements View.OnClickListener {
+        extends DatafeedFragment<Team, TeamInfoBinder.Model, TeamInfoSubscriber, TeamInfoBinder> {
 
     private static final String TEAM_KEY = "team_key";
 
     private String mTeamKey;
+
+    @Inject SocialClickListener mSocialClickListener;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -52,6 +48,7 @@ public class TeamInfoFragment
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
         super.onCreate(savedInstanceState);
+        mSocialClickListener.setModelKey(mTeamKey);
     }
 
     @Override
@@ -68,36 +65,13 @@ public class TeamInfoFragment
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
 
         // Register this fragment as the callback for all clickable views
-        view.findViewById(R.id.team_location_container).setOnClickListener(this);
-        view.findViewById(R.id.team_twitter_container).setOnClickListener(this);
-        view.findViewById(R.id.team_cd_container).setOnClickListener(this);
-        view.findViewById(R.id.team_youtube_container).setOnClickListener(this);
-        view.findViewById(R.id.team_website_container).setOnClickListener(this);
+        view.findViewById(R.id.team_location_container).setOnClickListener(mSocialClickListener);
+        view.findViewById(R.id.team_twitter_container).setOnClickListener(mSocialClickListener);
+        view.findViewById(R.id.team_cd_container).setOnClickListener(mSocialClickListener);
+        view.findViewById(R.id.team_youtube_container).setOnClickListener(mSocialClickListener);
+        view.findViewById(R.id.team_website_container).setOnClickListener(mSocialClickListener);
 
         return view;
-    }
-
-    @Override
-    public void onClick(View view) {
-        PackageManager manager = getActivity().getPackageManager();
-        if (view.getTag() != null) {
-
-            String uri = view.getTag().toString();
-
-            //social button was clicked. Track the call
-            AnalyticsHelper.sendSocialUpdate(getActivity(), uri, mTeamKey);
-
-            Intent i = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-            List<ResolveInfo> handlers = manager.queryIntentActivities(i, 0);
-            if (!handlers.isEmpty()) {
-                // There is an application to handle this intent intent
-                startActivity(i);
-            } else {
-                // No application can handle this intent
-                Toast.makeText(getActivity(), "No app can handle that request", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        }
     }
 
     public void showCurrentEvent(final EventListElement event) {

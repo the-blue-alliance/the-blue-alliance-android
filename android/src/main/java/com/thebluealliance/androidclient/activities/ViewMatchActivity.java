@@ -17,13 +17,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
-import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 public class ViewMatchActivity extends FABNotificationSettingsActivity
   implements HasFragmentComponent {
@@ -165,6 +166,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;

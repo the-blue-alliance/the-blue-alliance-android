@@ -20,14 +20,15 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Arrays;
@@ -200,6 +201,7 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;

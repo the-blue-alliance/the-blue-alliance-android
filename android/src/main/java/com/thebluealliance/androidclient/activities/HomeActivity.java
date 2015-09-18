@@ -31,6 +31,7 @@ import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
@@ -390,6 +391,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;

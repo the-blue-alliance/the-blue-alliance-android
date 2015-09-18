@@ -7,7 +7,10 @@ import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.binders.BinderModule;
+import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
@@ -35,11 +38,9 @@ import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
-import com.thebluealliance.androidclient.binders.BinderModule;
-import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import javax.inject.Singleton;
 
@@ -51,7 +52,8 @@ import dagger.Component;
     SubscriberModule.class,
     BinderModule.class,
     DatafeedModule.class,
-    DatabaseWriterModule.class},
+    DatabaseWriterModule.class,
+    ClickListenerModule.class},
   dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
 
