@@ -59,7 +59,7 @@ public abstract class DatafeedActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mRefreshController.onOptionsItemSelected(item);
+        return mRefreshController.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     public void setRefreshEnabled(boolean enabled) {
