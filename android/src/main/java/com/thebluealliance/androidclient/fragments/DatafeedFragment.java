@@ -69,6 +69,9 @@ public abstract class DatafeedFragment
         super.onResume();
         getNewObservables(RefreshController.NOT_REQUESTED_BY_USER);
         mRefreshController.registerRefreshable(mRefreshTag, this);
+        if (shouldRegisterSubscriberToEventBus()) {
+            mEventBus.register(mSubscriber);
+        }
     }
 
     @Override
@@ -111,9 +114,7 @@ public abstract class DatafeedFragment
                         .observeOn(Schedulers.computation())
                         .subscribe(mSubscriber);
             }
-            if (shouldRegisterSubscriberToEventBus()) {
-                mEventBus.register(mSubscriber);
-            }
+
         }
     }
 
