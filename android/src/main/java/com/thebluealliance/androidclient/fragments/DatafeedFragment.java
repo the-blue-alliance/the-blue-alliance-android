@@ -43,7 +43,7 @@ public abstract class DatafeedFragment
     @Inject protected RefreshController mRefreshController;
 
     protected CacheableDatafeed mDatafeed;
-    protected Observable<T> mObservable;
+    protected Observable<? extends T> mObservable;
     protected FragmentComponent mComponent;
     protected String mRefreshTag;
 
@@ -143,7 +143,7 @@ public abstract class DatafeedFragment
      * @param tbaCacheHeader String param to tell the datafeed how to load the data. Use
      * {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code null} for regular usage
      */
-    protected abstract Observable<T> getObservable(String tbaCacheHeader);
+    protected abstract Observable<? extends T> getObservable(String tbaCacheHeader);
 
     /**
      * @return A string identifying what data this fragment is loading

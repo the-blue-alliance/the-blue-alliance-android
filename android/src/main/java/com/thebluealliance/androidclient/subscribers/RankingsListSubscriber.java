@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 
-public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, List<ListItem>> {
+public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
 
     private Database mDb;
     private EventBus mEventBus;
@@ -31,12 +32,14 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, List<Li
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null || mAPIData.size() == 0) {
+        if (mAPIData == null || !mAPIData.isJsonArray()) {
             return;
         }
-        JsonArray headerRow = mAPIData.get(0).getAsJsonArray();
-        for (int i = 1; i < mAPIData.size(); i++) {
-            JsonArray row = mAPIData.get(i).getAsJsonArray();
+        JsonArray rankingsData = mAPIData.getAsJsonArray();
+        if (rankingsData.size() == 0) return;
+        JsonArray headerRow = rankingsData.get(0).getAsJsonArray();
+        for (int i = 1; i < rankingsData.size(); i++) {
+            JsonArray row = rankingsData.get(i).getAsJsonArray();
             /* Assume that the list of lists has rank first and team # second, always */
             String teamKey = "frc" + row.get(1).getAsString();
             String rankingString;
@@ -82,17 +85,17 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonArray, List<Li
                 record,
                 rankingString));
         }
-        mEventBus.post(new EventRankingsEvent(generateTopRanksString()));
+        mEventBus.post(new EventRankingsEvent(generateTopRanksString(rankingsData)));
     }
 
-    private String generateTopRanksString() {
+    private String generateTopRanksString(JsonArray rankingsData) {
         String rankString = "";
-        if (mAPIData.size() <= 1) {
+        if (rankingsData.size() <= 1) {
             return rankString;
         }
-        for (int i = 1; i < Math.min(EventRankingsEvent.SIZE + 1, mAPIData.size()); i++) {
-            rankString += ((i) + ". <b>" + mAPIData.get(i).getAsJsonArray().get(1).getAsString()) + "</b>";
-            if (i < Math.min(6, mAPIData.size()) - 1) {
+        for (int i = 1; i < Math.min(EventRankingsEvent.SIZE + 1, rankingsData.size()); i++) {
+            rankString += ((i) + ". <b>" + rankingsData.get(i).getAsJsonArray().get(1).getAsString()) + "</b>";
+            if (i < Math.min(6, rankingsData.size()) - 1) {
                 rankString += "<br>";
             }
         }

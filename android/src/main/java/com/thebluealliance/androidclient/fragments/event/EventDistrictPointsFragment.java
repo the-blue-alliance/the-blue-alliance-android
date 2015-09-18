@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
@@ -16,7 +17,7 @@ import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscribe
 import rx.Observable;
 
 public class EventDistrictPointsFragment
-        extends ListViewFragment<JsonObject, DistrictPointsListSubscriber> {
+        extends ListViewFragment<JsonElement, DistrictPointsListSubscriber> {
     private static final String KEY = "event_key";
 
     private String mEventKey;

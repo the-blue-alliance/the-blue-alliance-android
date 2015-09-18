@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -39,7 +40,7 @@ import rx.Observable;
  * @author Nathan Walters
  */
 public class EventStatsFragment
-  extends DatafeedFragment<JsonObject, List<ListItem>, StatsListSubscriber, StatsListBinder> {
+  extends DatafeedFragment<JsonElement, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
     private static final String KEY = "eventKey", SORT = "sort";
 

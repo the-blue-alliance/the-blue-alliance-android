@@ -50,6 +50,11 @@ public class DistrictPointsListSubscriberTest {
     }
 
     @Test
+    public void testParseJsonNull() throws BasicModel.FieldNotDefinedException {
+        DatafeedTestDriver.parseJsonNull(mSubscriber);
+    }
+
+    @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mPoints);
     }

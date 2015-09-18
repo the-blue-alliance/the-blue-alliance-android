@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -25,7 +26,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
-public class EventRankingsFragment extends ListViewFragment<JsonArray, RankingsListSubscriber> {
+public class EventRankingsFragment extends ListViewFragment<JsonElement, RankingsListSubscriber> {
 
     private static final String KEY = "eventKey";
 

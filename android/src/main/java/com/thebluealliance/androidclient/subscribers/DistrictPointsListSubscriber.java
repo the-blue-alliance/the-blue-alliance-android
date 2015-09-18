@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonObject, List<ListItem>> {
+public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
 
     private Database mDb;
     private String mEventKey;
@@ -37,13 +37,15 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonObject, 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null) {
+        if (mAPIData == null || !mAPIData.isJsonObject()) {
             return;
         }
-        if (!mAPIData.has("points")) {
+
+        JsonObject rankingsData = mAPIData.getAsJsonObject();
+        if (!rankingsData.has("points")) {
             return;
         }
-        JsonObject points = mAPIData.get("points").getAsJsonObject();
+        JsonObject points = rankingsData.get("points").getAsJsonObject();
         String districtKey = "";
         Event event = mDb.getEventsTable().get(mEventKey);
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
@@ -13,7 +14,7 @@ import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 
 import rx.Observable;
 
-public class TeamAtEventStatsFragment extends ListViewFragment<JsonObject, TeamStatsSubscriber> {
+public class TeamAtEventStatsFragment extends ListViewFragment<JsonElement, TeamStatsSubscriber> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
