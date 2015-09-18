@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.di.components;
 
+import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -102,4 +103,5 @@ public interface FragmentComponent {
     void inject(ViewMatchActivity activity);
     void inject(ViewTeamActivity activity);
     void inject(ViewEventActivity activity);
+    void inject(ContributorsActivity contributorsActivity);
 }
