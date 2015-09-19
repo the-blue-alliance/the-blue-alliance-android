@@ -19,6 +19,7 @@ public class WebcastHelper {
         LIVESTREAM,
         IFRAME,
         HTML5,
+        STEMTV,
         NONE;
 
         public String render(Context context) {
@@ -35,6 +36,8 @@ public class WebcastHelper {
                     return context.getString(R.string.webcast_type_gameday); // watch on web GameDay
                 case HTML5:
                     return context.getString(R.string.webcast_type_html5);
+                case STEMTV:
+                    return context.getString(R.string.webcast_type_stemtv);
                 default:
                     return "";
             }
@@ -55,6 +58,8 @@ public class WebcastHelper {
                 return TYPE.IFRAME;
             case "html5":
                 return TYPE.HTML5;
+            case "stemtv":
+                return TYPE.STEMTV;
             default:
                 return TYPE.NONE;
         }
@@ -72,6 +77,8 @@ public class WebcastHelper {
                 return getWebIntentForUrl(context.getString(R.string.webcast_livestream_embed_pattern, params.get("channel").getAsString(), params.get("file").getAsString()));
             case HTML5:
                 return new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(params.get("channel").getAsString()), "video/*");
+            case STEMTV:
+                return new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(context.getString(R.string.webcast_stemtv_embed_pattern, params.get("channel").getAsString())), "video/*");
             default:
             case IFRAME:
                 return getWebIntentForUrl(context.getString(R.string.webcast_gameday_pattern, eventKey, number));
