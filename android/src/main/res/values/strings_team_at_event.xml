@@ -16,7 +16,7 @@
     <string name="team_at_event_rank">Rank</string>
     <string name="team_at_event_record">Record</string>
     <string name="team_at_event_alliance">Alliance</string>
-    <string name="team_at_event_status">Elimination Status</string>
+    <string name="team_at_event_status">Team Status</string>
 
     <!-- possible statuses -->
     <string name="playing_in_quals">Playing in the qualification matches</string>
