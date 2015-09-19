@@ -55,6 +55,8 @@ public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsLis
         //disable touch feedback (you can't click the elements here...)
         mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
         mListView.setSelector(R.drawable.transparent);
+        mListView.setPadding(0, (int) (8 * getResources().getDisplayMetrics().density), 0, 0);
+        mListView.setDivider(null);
         return view;
     }
 
