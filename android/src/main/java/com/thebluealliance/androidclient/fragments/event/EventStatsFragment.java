@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
@@ -183,7 +182,7 @@ public class EventStatsFragment
     }
 
     @Override
-    protected Observable<JsonObject> getObservable(String tbaCacheHeader) {
+    protected Observable<? extends JsonElement> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchEventStats(mEventKey, tbaCacheHeader);
     }
 

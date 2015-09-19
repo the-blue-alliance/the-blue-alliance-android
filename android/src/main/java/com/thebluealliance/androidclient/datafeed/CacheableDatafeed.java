@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
@@ -167,14 +168,14 @@ public class CacheableDatafeed {
         return mAPICache.fetchEventMatches(eventKey).concatWith(apiData);
     }
 
-    public Observable<JsonObject> fetchEventStats(String eventKey, String cacheHeader) {
+    public Observable<? extends JsonElement> fetchEventStats(String eventKey, String cacheHeader) {
         //TODO write the response to the db
         Observable<JsonObject> apiData = mResponseMap.getResponseBody(
           mRetrofitAPI.fetchEventStats(eventKey, cacheHeader));
         return mAPICache.fetchEventStats(eventKey).concatWith(apiData);
     }
 
-    public Observable<JsonObject> fetchTeamAtEventStats(
+    public Observable<? extends JsonElement> fetchTeamAtEventStats(
       String eventKey,
       String teamKey,
       String cacheHeader) {
