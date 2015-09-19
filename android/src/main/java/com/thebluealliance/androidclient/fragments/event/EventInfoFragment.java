@@ -69,7 +69,7 @@ public class EventInfoFragment
         // Set click listeners
         mBinder.topTeamsContainer.setOnClickListener(mInfoClickListener);
         mBinder.topOprsContainer.setOnClickListener(mInfoClickListener);
-        mBinder.eventVenue.setOnClickListener(mInfoClickListener);
+        view.findViewById(R.id.event_venue_container).setOnClickListener(mSocialClickListener);
         view.findViewById(R.id.event_twitter_container).setOnClickListener(mSocialClickListener);
         view.findViewById(R.id.event_cd_container).setOnClickListener(mSocialClickListener);
         view.findViewById(R.id.event_youtube_container).setOnClickListener(mSocialClickListener);
