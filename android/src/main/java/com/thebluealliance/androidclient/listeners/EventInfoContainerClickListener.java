@@ -29,8 +29,6 @@ public class EventInfoContainerClickListener implements View.OnClickListener {
             mActivity.scrollToTab(ViewEventFragmentPagerAdapter.TAB_RANKINGS);  // Rankings
         } else if (id == R.id.top_oprs_container) {
             mActivity.scrollToTab(ViewEventFragmentPagerAdapter.TAB_STATS);  // Stats
-        } else if (id == R.id.event_date_container) {
-            //TODO intent to add to calendar
         }
     }
 }
