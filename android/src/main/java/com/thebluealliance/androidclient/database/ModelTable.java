@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -32,7 +33,10 @@ public abstract class ModelTable<T extends BasicModel> {
      * {@link SQLiteDatabase#update(String, ContentValues, String, String[])} if an existing row
      * was updated (number of affected rows)
      */
-    public final long add(T in) {
+    public final long add(@Nullable T in) {
+        if (in == null) {
+            return -1;
+        }
         mDb.beginTransaction();
         long ret = -1;
         try {
@@ -55,13 +59,19 @@ public abstract class ModelTable<T extends BasicModel> {
      * Adds a List of items to the database via {@link #add(BasicModel)}
      * @param inList List of models to be added
      */
-    public final void add(List<T> inList){
-        mDb.beginTransaction();
-        for (T in: inList) {
-            add(in);
+    public final void add(@Nullable List<T> inList){
+        if (inList == null) {
+            return;
         }
-        mDb.setTransactionSuccessful();
-        mDb.endTransaction();
+        try {
+            mDb.beginTransaction();
+            for (T in : inList) {
+                add(in);
+            }
+            mDb.setTransactionSuccessful();
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     /**
@@ -72,8 +82,11 @@ public abstract class ModelTable<T extends BasicModel> {
      * @return Value from {@link SQLiteDatabase#update(String, ContentValues, String, String[])},
      * or number of rows affected by the query
      */
-    public final int update(T in){
+    public final int update(@Nullable T in){
         int affectedRows;
+        if (in == null) {
+            return -1;
+        }
         mDb.beginTransaction();
         try {
             affectedRows = mDb.update(

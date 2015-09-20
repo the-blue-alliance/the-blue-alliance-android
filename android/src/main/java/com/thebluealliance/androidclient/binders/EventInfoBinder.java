@@ -53,16 +53,16 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
         mIsLive = data.isLive;
         eventName.setText(data.nameString);
-        if (data.dateString.isEmpty()) {
+        if (data.dateString == null || data.dateString.isEmpty()) {
             view.findViewById(R.id.event_date_container).setVisibility(View.GONE);
         } else {
             eventDate.setText(data.dateString);
         }
 
         // Show a venue if it is available, otherwise show just the location. If neither is available, hide
-        if (!data.venueString.isEmpty()) {
+        if (data.venueString != null && !data.venueString.isEmpty()) {
             eventVenue.setText(data.venueString);
-        } else if (!data.locationString.isEmpty()) {
+        } else if (data.locationString != null && !data.locationString.isEmpty()) {
             eventVenue.setText(data.locationString);
         } else {
             eventVenue.setText(R.string.no_location_available);
@@ -78,10 +78,10 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         eventVenueContainer.setFocusable(true);
         eventVenueContainer.setClickable(true);
 
-        if (!data.venueString.isEmpty()) {
+        if (data.venueString != null && !data.venueString.isEmpty()) {
             // Set the tag to the event venue if it is available
             eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.venueString));
-        } else if (!data.locationString.isEmpty()) {
+        } else if (data.locationString != null && !data.locationString.isEmpty()) {
             // Otherwise, use the location
             eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.locationString));
         } else {
@@ -94,7 +94,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         }
 
         // If the event doesn't have a defined website, create a Google search for the event name
-        if (data.eventWebsite.isEmpty()) {
+        if (data.eventWebsite != null && data.eventWebsite.isEmpty()) {
             view.findViewById(R.id.event_website_container).setTag("https://www.google.com/search?q=" + Uri.encode(data.nameString));
             ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.find_event_on_google);
         } else {
