@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
@@ -30,7 +30,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         }
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
-        ListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
+        ListViewAdapter adapter = newAdapter(new ArrayList<>(data));
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
