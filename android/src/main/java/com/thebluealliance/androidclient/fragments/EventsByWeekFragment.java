@@ -24,6 +24,8 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class EventsByWeekFragment
@@ -31,13 +33,14 @@ public class EventsByWeekFragment
 
     private static final String YEAR = "YEAR", TAB = "tab";
 
+    @Inject FragmentBinder mFragmentBinder;
+
     private int mYear;
     private EventsByWeekFragmentPagerAdapter mFragmentAdapter;
     private Parcelable mPagerState, mAdapterState;
     private int mSelectedTab;
     private ViewPager mViewPager;
     private SlidingTabs mTabs;
-    private FragmentBinder mFragmentBinder;
 
     public static EventsByWeekFragment newInstance(int year) {
         EventsByWeekFragment f = new EventsByWeekFragment();
@@ -81,7 +84,6 @@ public class EventsByWeekFragment
         mTabs = (SlidingTabs) view.findViewById(R.id.event_pager_tabs);
         ViewCompat.setElevation(mTabs, getResources().getDimension(R.dimen.toolbar_elevation));
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
-        mFragmentBinder = new FragmentBinder();
         mViewPager.addOnPageChangeListener(mFragmentBinder);
 
         return view;
@@ -114,7 +116,6 @@ public class EventsByWeekFragment
         mFragmentAdapter = new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear, labels);
         mFragmentBinder.setAdapter(mFragmentAdapter);
         mViewPager.setAdapter(mFragmentAdapter);
-        mViewPager.removeOnPageChangeListener(null);
         mTabs.setViewPager(mViewPager);
         if (mPagerState != null) {
             mViewPager.onRestoreInstanceState(mPagerState);
@@ -125,6 +126,8 @@ public class EventsByWeekFragment
         if (mSelectedTab != -1) {
             mViewPager.setCurrentItem(mSelectedTab);
         }
+
+        mFragmentAdapter.setAutoBindOnceAtPosition(mViewPager.getCurrentItem(), true);
     }
 
     @Override

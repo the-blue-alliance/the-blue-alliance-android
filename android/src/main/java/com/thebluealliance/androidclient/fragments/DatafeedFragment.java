@@ -100,6 +100,12 @@ public abstract class DatafeedFragment
         }
     }
 
+    public void setShouldBindOnce(boolean shouldBind) {
+        if (mSubscriber != null) {
+            mSubscriber.setShouldBindOnce(shouldBind);
+        }
+    }
+
     /**
      * Registers and subscribes new observables
      */

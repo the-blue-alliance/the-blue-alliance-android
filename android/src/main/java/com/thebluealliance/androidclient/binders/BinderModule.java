@@ -1,19 +1,17 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.binders.EventInfoBinder;
-import com.thebluealliance.androidclient.binders.EventTabBinder;
-import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
-import com.thebluealliance.androidclient.binders.ListViewBinder;
-import com.thebluealliance.androidclient.binders.MatchListBinder;
-import com.thebluealliance.androidclient.binders.NoDataBinder;
-import com.thebluealliance.androidclient.binders.StatsListBinder;
-import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.helpers.FragmentBinder;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module
 public class BinderModule {
+
+    @Provides
+    public FragmentBinder provideFragmentBinder() {
+        return new FragmentBinder();
+    }
 
     @Provides
     public EventInfoBinder provideEventInfoBinder() {

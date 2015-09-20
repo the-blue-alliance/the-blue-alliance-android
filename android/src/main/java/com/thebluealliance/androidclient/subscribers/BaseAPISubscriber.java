@@ -33,6 +33,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     RefreshController mRefreshController; //TODO hook up to DI
     String mRefreshTag;
     boolean shouldBindImmediately;
+    boolean shouldBindOnce;
 
     public BaseAPISubscriber() {
         shouldBindImmediately = true;
@@ -40,6 +41,13 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     public void setShouldBindImmediately(boolean shouldBind) {
         shouldBindImmediately = shouldBind;
+    }
+
+    /**
+     * If set, bind immediately once until onComplete is called
+     */
+    public void setShouldBindOnce(boolean shouldBind) {
+        shouldBindOnce = shouldBind;
     }
 
     public void setConsumer(DataConsumer<BindType> consumer) {
@@ -68,7 +76,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         postToEventBus(EventBus.getDefault());
         try {
             parseData();
-            if (shouldBindImmediately) {
+            if (shouldBindImmediately || shouldBindOnce) {
                 bindData();
             }
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -78,6 +86,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onCompleted() {
+        shouldBindOnce = false;
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
             if (mConsumer != null) {

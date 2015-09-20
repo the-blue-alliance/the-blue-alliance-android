@@ -29,6 +29,19 @@ public abstract class BindableFragmentPagerAdapter extends FragmentPagerAdapter 
         return createdFragment;
     }
 
+    /**
+     * Binds now (if there's data) and auto-binds until the Observable completes
+     */
+    @Override
+    public void setAutoBindOnceAtPosition(int position, boolean autoBind) {
+        Fragment f = mFragments.get(getItemId(position)).get();
+        if (f != null && f instanceof DatafeedFragment) {
+            DatafeedFragment df = (DatafeedFragment) f;
+            df.setShouldBindOnce(autoBind);
+            df.bind();
+        }
+    }
+
     @Override
     public void bindFragmentAtPosition(int position) {
         Fragment f = mFragments.get(getItemId(position)).get();
