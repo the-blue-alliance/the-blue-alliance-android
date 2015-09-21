@@ -113,6 +113,12 @@ public class LaunchActivity extends AppCompatActivity {
                 redownload = false;
                 RecreateSearchIndexes.startActionRecreateSearchIndexes(this);
             }
+
+            if (lastVersion < 3000000) {
+                // v3.0 - Reload everything to warm okhttp caches
+                redownload = true;
+                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+            }
         }
         // If we don't have to redownload, store the version code here. Otherwise, let the
         // RedownloadActivity store the version code upcn completion
