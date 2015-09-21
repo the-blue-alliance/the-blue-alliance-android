@@ -468,7 +468,7 @@ public class Match extends BasicModel<Match> {
         allMatches.add(match);
 
         if (changed) {
-            Database.getInstance(c).getMatchesTable().add(allMatches);
+            //Database.getInstance(c).getMatchesTable().add(allMatches);
         }
         Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
         return new APIResponse<>(match, code);
@@ -511,7 +511,7 @@ public class Match extends BasicModel<Match> {
             /* Add the new matches to the local db, after deleting the old ones */
             MatchesTable matchTable = Database.getInstance(c).getMatchesTable();
             int deleted = matchTable.delete(whereClause, whereArgs);
-            matchTable.add(allMatches);
+            //matchTable.add(allMatches);
 
             Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted " + deleted);
             return new APIResponse<>(allMatches, code);

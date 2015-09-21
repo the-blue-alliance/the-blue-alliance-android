@@ -312,7 +312,7 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         }
 
         if (changed) {
-            Database.getInstance(c).getDistrictTeamsTable().add(districtTeams);
+            //Database.getInstance(c).getDistrictTeamsTable().add(districtTeams);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + districtTeams.size() + " districtTeams, updated in db? " + changed);
         return new APIResponse<>(districtTeams, code);

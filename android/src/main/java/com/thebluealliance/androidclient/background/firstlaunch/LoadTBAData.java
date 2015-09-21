@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,14 +15,13 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APIResponse;
 import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
+import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -182,11 +182,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
 
             // Now, insert the newly loaded data
             Log.d(Constants.LOG_TAG, "storing teams");
-            db.getTeamsTable().add(teams);
+            db.getTeamsTable().add(ImmutableList.copyOf(teams));
             Log.d(Constants.LOG_TAG, "storing events");
-            db.getEventsTable().add(events);
+            db.getEventsTable().add(ImmutableList.copyOf(events));
             Log.d(Constants.LOG_TAG, "storing districts");
-            db.getDistrictsTable().add(districts);
+            db.getDistrictsTable().add(ImmutableList.copyOf(districts));
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {

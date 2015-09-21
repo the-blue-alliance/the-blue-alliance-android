@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Media;
 
@@ -20,6 +21,7 @@ public class MediaListWriter implements Action1<List<Media>> {
 
     @Override
     public void call(List<Media> medias) {
-        Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(medias));
+        Schedulers.io().createWorker()
+          .schedule(() -> mDb.getMediasTable().add(ImmutableList.copyOf(medias)));
     }
 }

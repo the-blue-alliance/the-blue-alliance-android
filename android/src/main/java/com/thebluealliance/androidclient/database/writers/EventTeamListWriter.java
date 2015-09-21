@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.EventTeam;
 
@@ -21,6 +22,6 @@ public class EventTeamListWriter implements Action1<List<EventTeam>> {
     @Override
     public void call(List<EventTeam> eventTeams) {
         Schedulers.io().createWorker()
-          .schedule(() -> mDb.getEventTeamsTable().add(eventTeams));
+          .schedule(() -> mDb.getEventTeamsTable().add(ImmutableList.copyOf(eventTeams)));
     }
 }

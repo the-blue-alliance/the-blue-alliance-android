@@ -102,7 +102,7 @@ public class DataManager {
 
                 ArrayList<Team> teams = LegacyAPIHelper.getTeamList(teamListResponse.getData());
                 if (teamListResponse.getCode() == APIResponse.CODE.WEBLOAD || teamListResponse.getCode() == APIResponse.CODE.UPDATED && teams.size() > 0) {
-                    Database.getInstance(c).getTeamsTable().add(teams);
+                    //Database.getInstance(c).getTeamsTable().add(teams);
                 }
             }
             cursor = Database.getInstance(c).getTeamsTable().getCursorForTeamsInRange(lowerBound, upperBound);

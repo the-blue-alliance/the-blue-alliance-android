@@ -585,7 +585,7 @@ public class Event extends BasicModel<Event> {
         EventsTable eventsTable = Database.getInstance(c).getEventsTable();
         if (changed) {
             eventsTable.delete(whereClause, whereArgs);
-            eventsTable.add(events);
+            //eventsTable.add(events);
         }
 
         // Fetch from db after web, see #372

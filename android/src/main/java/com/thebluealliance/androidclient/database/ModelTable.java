@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * Adds a List of items to the database via {@link #add(BasicModel)}
      * @param inList List of models to be added
      */
-    public final void add(@Nullable List<T> inList){
+    public final void add(@Nullable ImmutableList<T> inList){
         if (inList == null) {
             return;
         }

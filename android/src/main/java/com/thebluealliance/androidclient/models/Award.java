@@ -215,7 +215,7 @@ public class Award extends BasicModel<Award> {
 
         if (changed) {
             allAwards.addAll(awards);
-            Database.getInstance(c).getAwardsTable().add(allAwards);
+            //Database.getInstance(c).getAwardsTable().add(allAwards);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + awards.size() + " awards, updated in db? " + changed);
         return new APIResponse<>(awards, code);

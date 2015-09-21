@@ -223,7 +223,7 @@ public class Media extends BasicModel<Media> {
         }
 
         if (changed) {
-            Database.getInstance(c).getMediasTable().add(medias);
+            //Database.getInstance(c).getMediasTable().add(medias);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + medias.size() + " medias, updated in db? " + changed);
         return new APIResponse<>(medias, code);

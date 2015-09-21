@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.District;
 
@@ -20,6 +21,7 @@ public class DistrictListWriter implements Action1<List<District>> {
 
     @Override
     public void call(List<District> districts) {
-        Schedulers.io().createWorker().schedule(() -> mDb.getDistrictsTable().add(districts));
+        Schedulers.io().createWorker()
+          .schedule(() -> mDb.getDistrictsTable().add(ImmutableList.copyOf(districts)));
     }
 }

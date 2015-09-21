@@ -150,8 +150,8 @@ public class EventTeam extends BasicModel<EventTeam> {
         }
 
         if (changed) {
-            Database.getInstance(c).getEventTeamsTable().add(eventTeams);
-            Database.getInstance(c).getEventsTable().add(events);
+            //Database.getInstance(c).getEventTeamsTable().add(eventTeams);
+            //Database.getInstance(c).getEventsTable().add(events);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events and, updated in db? " + changed);
         return new APIResponse<>(eventTeams, code);

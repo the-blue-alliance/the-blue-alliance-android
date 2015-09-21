@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Award;
 
@@ -20,6 +21,7 @@ public class AwardListWriter implements Action1<List<Award>> {
 
     @Override
     public void call(List<Award> awards) {
-        Schedulers.io().createWorker().schedule(() -> mDb.getAwardsTable().add(awards));
+        Schedulers.io().createWorker()
+          .schedule(() -> mDb.getAwardsTable().add(ImmutableList.copyOf(awards)));
     }
 }

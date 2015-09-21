@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -20,6 +21,7 @@ public class MatchListWriter implements Action1<List<Match>> {
 
     @Override
     public void call(List<Match> matches) {
-        Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(matches));
+        Schedulers.io().createWorker()
+          .schedule(() -> mDb.getMatchesTable().add(ImmutableList.copyOf(matches)));
     }
 }

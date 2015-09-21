@@ -171,7 +171,7 @@ public class District extends BasicModel<District> {
         }
 
         if (changed) {
-            Database.getInstance(c).getDistrictsTable().add(districts);
+            //Database.getInstance(c).getDistrictsTable().add(districts);
         }
         Log.d(Constants.DATAMANAGER_LOG, "Found " + districts.size() + " districts, updated in db? " + changed);
         return new APIResponse<>(districts, code);
