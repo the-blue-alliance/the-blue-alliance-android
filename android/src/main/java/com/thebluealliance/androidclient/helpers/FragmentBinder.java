@@ -2,26 +2,23 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.support.v4.view.ViewPager;
 
-import com.thebluealliance.androidclient.interfaces.BindableFragmentPagerAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.thebluealliance.androidclient.interfaces.BindableAdapter;
 
 import javax.inject.Inject;
 
 public class FragmentBinder implements ViewPager.OnPageChangeListener {
 
-    int mSelectedPage = 0;
-    // TODO: fragments should track bound state internally
-    List<Integer> boundPages = new ArrayList<>();
-    private BindableFragmentPagerAdapter mFragmentAdapter;
+    int mSelectedPage;
+    int mLastSelectedPage;
+    private BindableAdapter mFragmentAdapter;
 
     @Inject
     public FragmentBinder() {
-
+        mSelectedPage = 0;
+        mLastSelectedPage = -1;
     }
 
-    public void setAdapter(BindableFragmentPagerAdapter adapter) {
+    public void setAdapter(BindableAdapter adapter) {
         mFragmentAdapter = adapter;
     }
 
@@ -35,10 +32,16 @@ public class FragmentBinder implements ViewPager.OnPageChangeListener {
         if (mFragmentAdapter == null) {
             return;
         }
+        mLastSelectedPage = mSelectedPage;
         mSelectedPage = position;
-        if (!boundPages.contains(position)) {
+
+        // Tell the current fragment it's visible
+        mFragmentAdapter.setFragmentVisibleAtPosition(mLastSelectedPage, false);
+        mFragmentAdapter.setFragmentVisibleAtPosition(mSelectedPage, true);
+
+        // Bind current page if it hasn't been bound yet
+        if (!mFragmentAdapter.isFragmentAtPositionBound(mSelectedPage)) {
             mFragmentAdapter.bindFragmentAtPosition(mSelectedPage);
-            boundPages.add(position);
         }
     }
 
@@ -48,13 +51,13 @@ public class FragmentBinder implements ViewPager.OnPageChangeListener {
             return;
         }
         if (state == ViewPager.SCROLL_STATE_IDLE) {
-            if (mSelectedPage - 1 >= 0 && !boundPages.contains(mSelectedPage - 1)) {
+            if (mSelectedPage - 1 >= 0
+              && !mFragmentAdapter.isFragmentAtPositionBound(mSelectedPage - 1)) {
                 mFragmentAdapter.bindFragmentAtPosition(mSelectedPage - 1);
-                boundPages.add(mSelectedPage - 1);
             }
-            if (mSelectedPage + 1 < mFragmentAdapter.getCount() && !boundPages.contains(mSelectedPage + 1)) {
+            if (mSelectedPage + 1 < mFragmentAdapter.getCount()
+              && !mFragmentAdapter.isFragmentAtPositionBound(mSelectedPage + 1)) {
                 mFragmentAdapter.bindFragmentAtPosition(mSelectedPage + 1);
-                boundPages.add(mSelectedPage + 1);
             }
         }
     }

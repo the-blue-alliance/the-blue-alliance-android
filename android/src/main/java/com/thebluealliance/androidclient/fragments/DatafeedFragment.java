@@ -46,6 +46,7 @@ public abstract class DatafeedFragment
     protected Observable<? extends T> mObservable;
     protected FragmentComponent mComponent;
     protected String mRefreshTag;
+    protected boolean isCurrentlyVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public abstract class DatafeedFragment
             mComponent = ((HasFragmentComponent) getActivity()).getComponent();
         }
         inject();
+        isCurrentlyVisible = false;
         mRefreshTag = getRefreshTag();
         mDatafeed = mComponent.datafeed();
         mSubscriber.setConsumer(mBinder);
@@ -94,6 +96,10 @@ public abstract class DatafeedFragment
         }
     }
 
+    public boolean isBound() {
+        return mBinder != null && mBinder.isDataBound();
+    }
+
     public void setShouldBindImmediately(boolean shouldBind) {
         if (mSubscriber != null) {
             mSubscriber.setShouldBindImmediately(shouldBind);
@@ -104,6 +110,10 @@ public abstract class DatafeedFragment
         if (mSubscriber != null) {
             mSubscriber.setShouldBindOnce(shouldBind);
         }
+    }
+
+    public void setIsCurrentlyVisible(boolean visible) {
+        isCurrentlyVisible = visible;
     }
 
     /**
@@ -128,6 +138,7 @@ public abstract class DatafeedFragment
     public void onRefreshStart(@RefreshType int refreshType) {
         if (mSubscriber != null && mBinder != null) {
             mBinder.unbind();
+            setShouldBindOnce(isCurrentlyVisible);
             getNewObservables(RefreshController.REQUESTED_BY_USER);
             mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
             mSubscriber.onRefreshStart();
