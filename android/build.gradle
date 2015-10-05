@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'gitsemver'
+apply plugin: 'com.github.triplet.play'
 
 apply from: "../code_coverage.gradle"
 
@@ -121,6 +122,12 @@ android {
             debuggable true
         }
     }
+
+}
+
+play {
+    serviceAccountEmail = 'some-email-address'
+    track = 'beta'
 }
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
@@ -136,6 +143,9 @@ task loadProperties << {
         android.signingConfigs.release.storePassword = config["release.key.password"]
         android.signingConfigs.release.keyAlias = config["release.key.alias"]
         android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
+
+        play.serviceAccountEmail = config['play.serviceEmail']
+        //play.pk12File = file(config['play.serviceKey'])
     }
 
     // check to make sure that an analytics key is defined
@@ -149,7 +159,12 @@ task loadProperties << {
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("packageDevRelease") || theTask.name.equals("packageProdRelease")) {
+    if (theTask.name.equals("packageDevRelease")
+            || theTask.name.equals("packageProdRelease")
+            || theTask.name.equals("publishProdRelease")
+            || theTask.name.equals("bootstrapProdReleasePlayResources")
+            || theTask.name.equals("publishListingProdRelease")
+            || theTask.name.equals("publishApkProdRelease")) {
         theTask.dependsOn "loadProperties"
     }
 }
