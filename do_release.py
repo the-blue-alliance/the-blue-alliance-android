@@ -53,7 +53,7 @@ def update_whatsnew():
     subprocess.call(["cp", CHANGELOG_PATH, INAPP_CHANGELOG])
 
     # Fix line breaks
-    subprocess.call(["sed", "-ibak", "-e", "s/{}/{}/g".format("\\n", "<br\\/>\\n"), INAPP_CHANGELOG])
+    subprocess.call(["sed", "-i", "'s/$/<br>/'", INAPP_CHANGELOG])
     subprocess.call(["rm", "-f", "{}{}".format(INAPP_CHANGELOG, "bak")])
 
 
