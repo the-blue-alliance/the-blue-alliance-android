@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.support.annotation.Nullable;
+
 /**
  * Helper class used to verify team keys.
  *
@@ -15,7 +17,7 @@ public class TeamHelper {
      * @param key the team key to check
      * @return true if key is valid
      */
-    public static boolean validateTeamKey(String key) {
+    public static boolean validateTeamKey(@Nullable String key) {
         return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,4}$");
     }
 
@@ -29,7 +31,17 @@ public class TeamHelper {
      * @param key the team key to check
      * @return true if key is valid
      */
-    public static boolean validateMultiTeamKey(String key) {
+    public static boolean validateMultiTeamKey(@Nullable String key) {
         return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,4}[a-zA-Z]$");
+    }
+
+    /**
+     * Extract the team number from a given key
+     * @param key A team key. Assumed to be valid
+     * @return the team number in the key, -1 if error
+     */
+    public static int getTeamNumber(@Nullable String key) {
+        if (key == null) return -1;
+        return Integer.parseInt(key.substring(3));
     }
 }

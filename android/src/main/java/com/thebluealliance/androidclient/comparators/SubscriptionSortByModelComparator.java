@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.comparators;
 
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.Subscription;
 
 import java.util.Comparator;
@@ -11,7 +13,11 @@ public class SubscriptionSortByModelComparator implements Comparator<Subscriptio
     @Override
     public int compare(Subscription lhs, Subscription rhs) {
         if (lhs.getModelEnum() == rhs.getModelEnum()) {
-            return rhs.getModelKey().compareTo(lhs.getModelKey());
+            if (lhs.getModelType() == ModelHelper.MODELS.TEAM) {
+                return Integer.compare(TeamHelper.getTeamNumber(lhs.getModelKey()),
+                  TeamHelper.getTeamNumber(rhs.getModelKey()));
+            }
+            return lhs.getModelKey().compareTo(rhs.getModelKey());
         } else {
             return ((Integer) lhs.getModelEnum()).compareTo(rhs.getModelEnum());
         }
