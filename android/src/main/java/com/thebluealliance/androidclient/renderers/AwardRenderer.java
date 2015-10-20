@@ -55,7 +55,7 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
                       args.teams,
                       args.selectedTeamKey);
                 case RENDER_NONCARDED:
-                    return new AwardListElement(award.getName(), award.getWinners());
+                    return new AwardListElement(mDatafeed, award.getName(), award.getWinners());
             }
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to render award: " + award.getKey());

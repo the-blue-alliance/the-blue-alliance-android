@@ -223,12 +223,8 @@ public class Award extends BasicModel<Award> {
 
     @Override
     public AwardListElement render() {
-        try {
-            return new AwardListElement(getName(), getWinners());
-        } catch (FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Missing fields for rendering award");
-            return null;
-        }
+        /* See AwardRenderer class */
+        return null;
     }
 
     @Override
