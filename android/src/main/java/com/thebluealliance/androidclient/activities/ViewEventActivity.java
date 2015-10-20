@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
@@ -81,7 +81,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
             currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
         }
 
-        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
+        setModelKey(mEventKey, ModelType.MODELS.EVENT);
         setContentView(R.layout.activity_view_event);
 
         infoMessage = (TextView) findViewById(R.id.info_container);
@@ -125,7 +125,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
-        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
+        setModelKey(mEventKey, ModelType.MODELS.EVENT);
         adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();

@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.comparators.SubscriptionSortByModelComparator;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Subscription;
+import com.thebluealliance.androidclient.renderers.ModelRenderer;
+import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,12 +16,12 @@ import java.util.List;
 public class SubscriptionListSubscriber
   extends BaseAPISubscriber<List<Subscription>, List<ListItem>> {
 
-    private Context mContext;
+    private ModelRenderer mRenderer;
     private Comparator<Subscription> mComparator;
 
-    public SubscriptionListSubscriber(Context context) {
+    public SubscriptionListSubscriber(MyTbaModelRenderer renderer) {
         mDataToBind = new ArrayList<>();
-        mContext = context;
+        mRenderer = renderer;
         mComparator = new SubscriptionSortByModelComparator();
     }
 
@@ -37,10 +36,8 @@ public class SubscriptionListSubscriber
         int lastModel = -1;
         for (int i = 0; i < mAPIData.size(); i++) {
             Subscription subscription = mAPIData.get(i);
-            ListItem item = ModelHelper.renderModelFromKey(
-              mContext,
-              subscription.getModelKey(),
-              subscription.getModelType());
+            ListItem item = mRenderer
+              .renderFromKey(subscription.getModelKey(), subscription.getModelType());
             if (item != null) {
                 if (lastModel != subscription.getModelEnum()) {
                     mDataToBind.add(new EventTypeHeader(subscription.getModelType().getTitle()));

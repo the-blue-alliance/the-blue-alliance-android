@@ -25,7 +25,7 @@ import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
@@ -89,7 +89,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
-        setModelKey(mTeamKey, ModelHelper.MODELS.TEAM);
+        setModelKey(mTeamKey, ModelType.MODELS.TEAM);
         setContentView(R.layout.activity_view_team);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -16,18 +16,10 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.DistrictsTable;
-import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
-import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
-import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Favorite;
-import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -58,48 +50,15 @@ public class DataManager {
                 return Database.getInstance(c).getTeamsTable().get(teamKey);
             }
         }
-
-        public static APIResponse<Team> getTeam(Context c, String teamKey, RequestParams requestParams) throws NoDataException {
-            final String URL = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.TEAM), teamKey);
-            final String sqlWhere = TeamsTable.KEY + " = ?";
-            return Team.query(c, requestParams, null, sqlWhere, new String[]{teamKey}, new String[]{URL});
-        }
-
     }
 
     public static class Events {
         public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
-
-        public static APIResponse<Event> getEvent(Context c, String key, RequestParams requestParams) throws NoDataException {
-            final String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_INFO), key);
-            String sqlWhere = EventsTable.KEY + " = ?";
-            return Event.query(c, key, requestParams, null, sqlWhere, new String[]{key}, new String[]{apiUrl});
-        }
-    }
-
-    public static class Matches {
-
-        public static APIResponse<Match> getMatch(Context c, String matchKey, RequestParams requestParams) throws NoDataException {
-            if (!MatchHelper.validateMatchKey(matchKey)) {
-                throw new NoDataException("Invalid match key");
-            }
-            String eventKey = matchKey.substring(0, matchKey.indexOf("_"));
-            String apiUrl = String.format(LegacyAPIHelper.getTBAApiUrl(c, LegacyAPIHelper.QUERY.EVENT_MATCHES), eventKey);
-            String sqlWhere = MatchesTable.KEY + " = ?";
-            return Match.query(c, matchKey, requestParams, null, sqlWhere, new String[]{matchKey}, new String[]{apiUrl});
-        }
-
     }
 
     public static class Districts {
 
         public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
-
-        public static APIResponse<District> getDistrict(Context c, String districtKey) throws NoDataException {
-            String sqlWhere = DistrictsTable.KEY + " = ?";
-            String[] whereArgs = new String[]{districtKey};
-            return District.query(c, new RequestParams(true, false), null, sqlWhere, whereArgs, new String[]{});
-        }
     }
 
     public static class MyTBA {

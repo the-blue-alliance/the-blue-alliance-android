@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
 /**
  * File created by phil on 8/13/14.
@@ -14,9 +15,9 @@ public class ModelClickListener implements View.OnClickListener {
 
     private Context context;
     private String key;
-    private ModelHelper.MODELS type;
+    private ModelType.MODELS type;
 
-    public ModelClickListener(Context context, String key, ModelHelper.MODELS type) {
+    public ModelClickListener(Context context, String key, ModelType.MODELS type) {
         this.key = key;
         this.context = context;
         this.type = type;

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -8,19 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.LaunchActivity;
-import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.models.Favorite;
 
 public class DevSettingsActivity extends AppCompatActivity {
@@ -57,7 +50,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                     Favorite fav = new Favorite();
                     fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
                     fav.setModelKey("frc111");
-                    fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
+                    fav.setModelEnum(ModelType.MODELS.TEAM.getEnum());
                     Database.getInstance(getActivity()).getFavoritesTable().add(fav);
                     return true;
                 }

@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
 /**
@@ -27,10 +28,10 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     private boolean favExists;
     private NotificationSettingsFragment fragment;
     private Bundle savedState;
-    private ModelHelper.MODELS type;
+    private ModelType.MODELS type;
     private String currentSettings;
 
-    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelHelper.MODELS type) {
+    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelType.MODELS type) {
         this.context = context;
         this.fragment = preferenceFragment;
         this.savedState = savedState;

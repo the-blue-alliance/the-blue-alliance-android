@@ -31,7 +31,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
@@ -149,7 +149,7 @@ public abstract class FABNotificationSettingsActivity extends DatafeedActivity i
     }
 
     @Override
-    protected void setModelKey(String key, ModelHelper.MODELS modelType) {
+    protected void setModelKey(String key, ModelType.MODELS modelType) {
         super.setModelKey(key, modelType);
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
         mSettingsFragment = NotificationSettingsFragment.newInstance(modelKey, modelType, savedPreferenceState);

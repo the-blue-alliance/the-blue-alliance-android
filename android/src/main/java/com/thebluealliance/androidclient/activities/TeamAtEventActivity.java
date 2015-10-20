@@ -26,7 +26,7 @@ import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
@@ -67,7 +67,7 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
         }
 
         String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
-        setModelKey(eventTeamKey, ModelHelper.MODELS.EVENTTEAM);
+        setModelKey(eventTeamKey, ModelType.MODELS.EVENTTEAM);
         setContentView(R.layout.activity_team_at_event);
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);

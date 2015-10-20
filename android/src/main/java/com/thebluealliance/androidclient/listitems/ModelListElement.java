@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listeners.ModelClickListener;
 
 /**
@@ -18,9 +18,9 @@ public class ModelListElement extends ListElement {
 
     private String text;
     private String key;
-    private ModelHelper.MODELS type;
+    private ModelType.MODELS type;
 
-    public ModelListElement(String text, String key, ModelHelper.MODELS type) {
+    public ModelListElement(String text, String key, ModelType.MODELS type) {
         this.text = text;
         this.key = key;
         this.type = type;
