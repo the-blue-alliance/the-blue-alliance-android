@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.support.annotation.Nullable;
+
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.DistrictHelper.DISTRICTS;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelType;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
@@ -25,9 +26,9 @@ public class MyTbaModelRenderer implements ModelRenderer {
         mDatafeed = datafeed;
     }
 
-    @Override
-    public ListItem renderFromKey(String key, ModelType.MODELS type) {
-            String text;
+    @Override @Nullable
+    public ModelListElement renderFromKey(String key, ModelType.MODELS type) {
+        String text;
         try {
             switch (type) {
                 case EVENT:

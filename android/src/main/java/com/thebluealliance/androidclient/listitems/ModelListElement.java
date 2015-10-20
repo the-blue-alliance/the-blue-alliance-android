@@ -26,6 +26,18 @@ public class ModelListElement extends ListElement {
         this.type = type;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public ModelType.MODELS getType() {
+        return type;
+    }
+
     @Override
     public View getView(final Context context, LayoutInflater inflater, View convertView) {
         ViewHolder holder;
