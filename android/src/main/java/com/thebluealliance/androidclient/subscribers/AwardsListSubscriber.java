@@ -3,11 +3,12 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.renderers.AwardRenderer;
+import com.thebluealliance.androidclient.renderers.ModelRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,12 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
 
     private String mTeamKey;
     private Database mDb;
+    private ModelRenderer<Award, AwardRenderer.RenderArgs> mRenderer;
 
-    public AwardsListSubscriber(Database db) {
+    public AwardsListSubscriber(Database db, ModelRenderer<Award, AwardRenderer.RenderArgs> renderer) {
         super();
         mDataToBind = new ArrayList<>();
+        mRenderer = renderer;
         mDb = db;
     }
 
@@ -45,12 +48,8 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
                     teams.put(teamKey, team);
                 }
             }
-            mDataToBind.add(new CardedAwardListElement(
-              award.getName(),
-              award.getEventKey(),
-              award.getWinners(),
-              teams,
-              mTeamKey));
+            AwardRenderer.RenderArgs args = new AwardRenderer.RenderArgs(teams, mTeamKey);
+            mDataToBind.add(mRenderer.renderFromModel(award, args));
         }
     }
 }

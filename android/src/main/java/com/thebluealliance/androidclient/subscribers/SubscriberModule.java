@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
+import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
@@ -79,8 +80,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public AwardsListSubscriber provideAwardsListSubscriber(Database db) {
-        return new AwardsListSubscriber(db);
+    public AwardsListSubscriber provideAwardsListSubscriber(Database db, AwardRenderer renderer) {
+        return new AwardsListSubscriber(db, renderer);
     }
 
     @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {

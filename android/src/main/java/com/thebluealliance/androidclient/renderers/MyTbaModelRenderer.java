@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.DistrictHelper.DISTRICTS;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
@@ -17,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MyTbaModelRenderer implements ModelRenderer {
+public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
 
     private APICache mDatafeed;
 
@@ -86,6 +87,11 @@ public class MyTbaModelRenderer implements ModelRenderer {
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    public @Nullable ListItem renderFromModel(Void aVoid, Void a2void) {
         return null;
     }
 }

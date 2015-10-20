@@ -21,7 +21,6 @@ import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
-import com.thebluealliance.androidclient.models.Team;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,12 +43,6 @@ public class DataManager {
 
     public static class Teams {
         public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_";
-
-        public static Team getTeamFromDB(Context c, String teamKey) {
-            synchronized (Database.getInstance(c)) {
-                return Database.getInstance(c).getTeamsTable().get(teamKey);
-            }
-        }
     }
 
     public static class Events {

@@ -15,4 +15,9 @@ public class RendererModule {
     public MyTbaModelRenderer provideMyTbaModelRenderer(APICache cache) {
         return new MyTbaModelRenderer(cache);
     }
+
+    @Provides @Singleton
+    public AwardRenderer provideAwardRenderer(APICache cache) {
+        return new AwardRenderer(cache);
+    }
 }
