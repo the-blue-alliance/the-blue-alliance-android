@@ -1,27 +1,19 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.database.tables.MatchesTable;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
+import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 
@@ -423,102 +415,6 @@ public class Match extends BasicModel<Match> {
         return new MatchListElement(youTubeVideoKey, getTitle(true),
                 redAlliance, blueAlliance,
                 redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
-    }
-
-    public static APIResponse<Match> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
-        MatchesTable table = Database.getInstance(c).getMatchesTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        Match match;
-        if (cursor != null && cursor.moveToFirst()) {
-            match = table.inflate(cursor);
-            cursor.close();
-        } else {
-            match = new Match();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        ArrayList<Match> allMatches = new ArrayList<>();
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Match updatedMatch = new Match();
-                if (url.contains("event") && url.contains("matches")) {
-                    /* We're requesting the matches for the whole event (there isn't a single match endpoint */
-                    JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
-                    for (JsonElement m : matchList) {
-                        Match inflated = JSONHelper.getGson().fromJson(m, Match.class);
-                        if (m.getAsJsonObject().get("key").getAsString().equals(key)) {
-                            updatedMatch = inflated;
-                            //this match will be added to the list below
-                        } else {
-                            allMatches.add(inflated);
-                        }
-                    }
-                } else {
-                    updatedMatch = JSONHelper.getGson().fromJson(response.getData(), Match.class);
-                }
-                match.merge(updatedMatch);
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        allMatches.add(match);
-
-        if (changed) {
-            //Database.getInstance(c).getMatchesTable().add(allMatches);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(match, code);
-    }
-
-    public static APIResponse<ArrayList<Match>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying matches table: " + whereClause + Arrays.toString(whereArgs));
-        MatchesTable table = Database.getInstance(c).getMatchesTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<Match> allMatches = new ArrayList<>(),
-                storedMatches = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                storedMatches.add(table.inflate(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-
-        for (String url : apiUrls) {
-            /* Hit each API URL requested */
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                /* If we get back data, parse it */
-                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
-                allMatches = new ArrayList<>();
-                for (JsonElement m : matchList) {
-                    Match match = JSONHelper.getGson().fromJson(m, Match.class);
-                    allMatches.add(match);
-                }
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            /* Add the new matches to the local db, after deleting the old ones */
-            MatchesTable matchTable = Database.getInstance(c).getMatchesTable();
-            int deleted = matchTable.delete(whereClause, whereArgs);
-            //matchTable.add(allMatches);
-
-            Log.d(Constants.DATAMANAGER_LOG, "Downloaded " + allMatches.size() + " matches, deleted " + deleted);
-            return new APIResponse<>(allMatches, code);
-        } else {
-            Log.d(Constants.DATAMANAGER_LOG, "No new matches.");
-            return new APIResponse<>(new ArrayList<>(storedMatches), code);
-        }
     }
 
     @Override
