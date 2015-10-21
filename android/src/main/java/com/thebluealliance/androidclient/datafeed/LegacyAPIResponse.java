@@ -11,7 +11,8 @@ import java.util.Date;
 /**
  * File created by phil on 5/11/14.
  */
-public class APIResponse<A> {
+@Deprecated
+public class LegacyAPIResponse<A> {
 
     public static String JSON_VERSION = "version",
             JSON_DATA = "data";
@@ -39,7 +40,7 @@ public class APIResponse<A> {
     Date lastHit;
     int version;
 
-    public APIResponse(A data, CODE code, String lastUpdate, Date lastHit) {
+    public LegacyAPIResponse(A data, CODE code, String lastUpdate, Date lastHit) {
         this.lastUpdate = lastUpdate;
         this.data = data;
         this.code = code;
@@ -48,7 +49,7 @@ public class APIResponse<A> {
         this.version = -1;
     }
 
-    public APIResponse(A data, CODE code, String lastUpdate) {
+    public LegacyAPIResponse(A data, CODE code, String lastUpdate) {
         this.lastUpdate = lastUpdate;
         this.data = data;
         this.code = code;
@@ -57,7 +58,7 @@ public class APIResponse<A> {
         this.version = -1;
     }
 
-    public APIResponse(A data, CODE code) {
+    public LegacyAPIResponse(A data, CODE code) {
         this.code = code;
         this.data = data;
         this.lastUpdate = "";
@@ -65,12 +66,12 @@ public class APIResponse<A> {
         this.version = -1;
     }
 
-    public APIResponse(A data, CODE code, int version) {
+    public LegacyAPIResponse(A data, CODE code, int version) {
         this(data, code);
         this.version = version;
     }
 
-    public APIResponse(A data, String errorMessage) {
+    public LegacyAPIResponse(A data, String errorMessage) {
         this.code = CODE.ERROR;
         this.data = data;
         this.lastUpdate = "";
@@ -86,7 +87,7 @@ public class APIResponse<A> {
         return code;
     }
 
-    public APIResponse<A> updateCode(CODE code) {
+    public LegacyAPIResponse<A> updateCode(CODE code) {
         this.code = code;
         return this;
     }
@@ -119,14 +120,14 @@ public class APIResponse<A> {
         this.version = version;
     }
 
-    public static JSONObject getVersionedJsonObject(APIResponse<String> response) throws JSONException {
+    public static JSONObject getVersionedJsonObject(LegacyAPIResponse<String> response) throws JSONException {
         JSONObject object = new JSONObject();
         object.put(JSON_VERSION, response.getVersion());
         object.put(JSON_DATA, JSONHelper.getasJsonObject(response.getData()));
         return object;
     }
 
-    public static JSONObject getVersionedJsonArray(APIResponse<String> response) throws JSONException {
+    public static JSONObject getVersionedJsonArray(LegacyAPIResponse<String> response) throws JSONException {
         JSONObject object = new JSONObject();
         object.put(JSON_VERSION, response.getVersion());
         object.put(JSON_DATA, JSONHelper.getasJsonArray(response.getData()));

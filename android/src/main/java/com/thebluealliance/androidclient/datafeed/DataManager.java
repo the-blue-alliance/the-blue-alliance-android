@@ -26,34 +26,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by Nathan on 4/30/2014.
- */
+@Deprecated
 public class DataManager {
-
-    public static class NoDataException extends Exception {
-        public NoDataException(String message) {
-            super(message);
-        }
-
-        public NoDataException(String message, Throwable t) {
-            super(message, t);
-        }
-    }
-
-    public static class Teams {
-        public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_";
-    }
-
-    public static class Events {
-        public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
-    }
-
-    public static class Districts {
-
-        public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
-    }
-
+    @Deprecated
     public static class MyTBA {
 
         /**
@@ -65,7 +40,8 @@ public class DataManager {
         public static final String LAST_FAVORITES_UPDATE = "last_mytba_favorites_update_%s";
         public static final String LAST_SUBSCRIPTIONS_UPDATE = "last_mytba_subscriptions_update_%s";
 
-        public static APIResponse<ArrayList<Favorite>> updateUserFavorites(final Context context, RequestParams requestParams) {
+        @Deprecated
+        public static LegacyAPIResponse<ArrayList<Favorite>> updateUserFavorites(final Context context, RequestParams requestParams) {
             String currentUser = AccountHelper.getSelectedAccount(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String prefString = String.format(LAST_FAVORITES_UPDATE, currentUser);
@@ -77,11 +53,11 @@ public class DataManager {
             if (!requestParams.forceFromWeb && now.before(futureTime)) {
                 //don't hit the API too often.
                 Log.d(Constants.LOG_TAG, "Not updating myTBA favorites. Too soon since last update");
-                return new APIResponse<>(null, APIResponse.CODE.CACHED304);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.CACHED304);
             }
 
             if (!ConnectionDetector.isConnectedToInternet(context)) {
-                return new APIResponse<>(null, APIResponse.CODE.OFFLINECACHE);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.OFFLINECACHE);
             }
 
             Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
@@ -95,7 +71,7 @@ public class DataManager {
                         Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
                     }
                 });
-                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.NODATA);
             }
             ModelsMobileApiMessagesFavoriteCollection favoriteCollection;
             try {
@@ -103,7 +79,7 @@ public class DataManager {
             } catch (IOException e) {
                 Log.w(Constants.LOG_TAG, "Unable to update myTBA favorites");
                 e.printStackTrace();
-                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.NODATA);
             }
 
             FavoritesTable favorites = Database.getInstance(context).getFavoritesTable();
@@ -117,10 +93,11 @@ public class DataManager {
             }
 
             prefs.edit().putLong(prefString, new Date().getTime()).apply();
-            return new APIResponse<>(favoriteModels, APIResponse.CODE.WEBLOAD);
+            return new LegacyAPIResponse<>(favoriteModels, LegacyAPIResponse.CODE.WEBLOAD);
         }
 
-        public static APIResponse<ArrayList<Subscription>> updateUserSubscriptions(final Context context, RequestParams requestParams) {
+        @Deprecated
+        public static LegacyAPIResponse<ArrayList<Subscription>> updateUserSubscriptions(final Context context, RequestParams requestParams) {
             String currentUser = AccountHelper.getSelectedAccount(context);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String prefString = String.format(LAST_SUBSCRIPTIONS_UPDATE, currentUser);
@@ -132,11 +109,11 @@ public class DataManager {
             if (!requestParams.forceFromWeb && now.before(futureTime)) {
                 //don't hit the API too often.
                 Log.d(Constants.LOG_TAG, "Not updating myTBA subscriptions. Too soon since last update");
-                return new APIResponse<>(null, APIResponse.CODE.CACHED304);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.CACHED304);
             }
 
             if (!ConnectionDetector.isConnectedToInternet(context)) {
-                return new APIResponse<>(null, APIResponse.CODE.OFFLINECACHE);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.OFFLINECACHE);
             }
 
             Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
@@ -150,7 +127,7 @@ public class DataManager {
                         Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
                     }
                 });
-                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.NODATA);
             }
             ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection;
             try {
@@ -158,7 +135,7 @@ public class DataManager {
             } catch (IOException e) {
                 Log.w(Constants.LOG_TAG, "Unable to update myTBA subscriptions");
                 e.printStackTrace();
-                return new APIResponse<>(null, APIResponse.CODE.NODATA);
+                return new LegacyAPIResponse<>(null, LegacyAPIResponse.CODE.NODATA);
             }
 
             SubscriptionsTable subscriptions = Database.getInstance(context).getSubscriptionsTable();
@@ -172,7 +149,7 @@ public class DataManager {
 
             Log.d(Constants.LOG_TAG, "Added " + subscriptionCollection.size() + " subscriptions");
             prefs.edit().putLong(prefString, new Date().getTime()).apply();
-            return new APIResponse<>(subscriptionModels, APIResponse.CODE.WEBLOAD);
+            return new LegacyAPIResponse<>(subscriptionModels, LegacyAPIResponse.CODE.WEBLOAD);
         }
     }
 }

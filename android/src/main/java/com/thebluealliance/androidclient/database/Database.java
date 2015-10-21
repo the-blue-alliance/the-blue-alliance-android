@@ -21,12 +21,15 @@ import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 
 import java.util.Map;
 
 
 public class Database extends SQLiteOpenHelper {
+
+    public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_";
+    public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
+    public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
     private static final int DATABASE_VERSION = 25;
     private Context context;
@@ -368,9 +371,9 @@ public class Database extends SQLiteOpenHelper {
         // Clear the data-related shared prefs
         Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            if (entry.getKey().contains(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
-                    entry.getKey().contains(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE) ||
-                    entry.getKey().contains(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
+            if (entry.getKey().contains(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
+                    entry.getKey().contains(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE) ||
+                    entry.getKey().contains(ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().
                         remove(entry.getKey()).commit();
             }

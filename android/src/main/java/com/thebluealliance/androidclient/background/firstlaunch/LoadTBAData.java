@@ -12,8 +12,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
@@ -119,7 +117,6 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
                     List<District> districtListResponse;
-                    String url = String.format(LegacyAPIHelper.getTBAApiUrl(context, LegacyAPIHelper.QUERY.DISTRICT_LIST), year);
                     districtListResponse = datafeed.fetchDistrictList(year, null).toBlocking().last();
                     if (districtListResponse == null) {
                         continue;
@@ -139,15 +136,15 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
-                editor.putBoolean(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
+                editor.putBoolean(Database.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
             }
             // Loop through all years
             for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
-                editor.putBoolean(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
+                editor.putBoolean(Database.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             // Loop through years for districts
             for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
-                editor.putBoolean(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
+                editor.putBoolean(Database.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
             editor.apply();
