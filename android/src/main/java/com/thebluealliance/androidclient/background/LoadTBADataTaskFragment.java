@@ -6,14 +6,14 @@ import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
 import javax.inject.Inject;
 
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
-    FragmentComponent mComponent;
+    DatafeedComponent mComponent;
     @Inject CacheableDatafeed mDatafeed;
 
     LoadTBAData.LoadTBADataCallbacks callback;
@@ -25,8 +25,8 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (getActivity() instanceof HasFragmentComponent) {
-            mComponent = ((HasFragmentComponent) getActivity()).getComponent();
+        if (getActivity() instanceof HasDatafeedComponent) {
+            mComponent = ((HasDatafeedComponent) getActivity()).getComponent();
         }
         mDatafeed = mComponent.datafeed();
 

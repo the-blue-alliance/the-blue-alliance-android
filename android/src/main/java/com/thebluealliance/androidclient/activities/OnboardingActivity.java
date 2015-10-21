@@ -27,25 +27,23 @@ import com.thebluealliance.androidclient.accounts.PlusManager;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 public class OnboardingActivity extends AppCompatActivity
   implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks,
-  MyTBAOnboardingViewPager.Callbacks, HasFragmentComponent {
+  MyTBAOnboardingViewPager.Callbacks, HasDatafeedComponent {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
 
-    private FragmentComponent mComponent;
+    private DatafeedComponent mComponent;
     private DisableSwipeViewPager viewPager;
     private MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
     private TextView loadingMessage;
@@ -370,16 +368,12 @@ public class OnboardingActivity extends AppCompatActivity
         mPlusManager.signIn();
     }
 
-    public FragmentComponent getComponent() {
+    public DatafeedComponent getComponent() {
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
+            mComponent = DaggerDatafeedComponent.builder()
               .applicationComponent(application.getComponent())
               .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;
