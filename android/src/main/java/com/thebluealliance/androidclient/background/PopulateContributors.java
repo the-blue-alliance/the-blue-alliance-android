@@ -9,7 +9,6 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.ContributorListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
@@ -29,7 +28,7 @@ public class PopulateContributors extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
         ArrayList<ListItem> list = new ArrayList<>();
-        JsonArray data = JSONHelper.getasJsonArray(HTTP.GET("https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/contributors"));
+        JsonArray data = new JsonArray();//JSONHelper.getasJsonArray(HTTP.GET("https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/contributors"));
 
         for (int i = 0; i < data.size(); i++) {
             list.add(new ContributorListElement(data.get(i).getAsJsonObject().get("login").getAsString(), data.get(i).getAsJsonObject().get("avatar_url").getAsString()));

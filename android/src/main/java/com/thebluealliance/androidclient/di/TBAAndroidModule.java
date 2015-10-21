@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.di;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
@@ -53,6 +55,12 @@ public class TBAAndroidModule {
     @Singleton
     public Database provideDatabase() {
         return Database.getInstance(mApp);
+    }
+
+    @Provides
+    @Singleton
+    public SharedPreferences provideSharedPrefs(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @Provides
