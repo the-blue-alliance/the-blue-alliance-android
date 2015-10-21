@@ -5,8 +5,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+
+import javax.inject.Inject;
 
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
+
+    FragmentComponent mComponent;
+    @Inject CacheableDatafeed mDatafeed;
 
     LoadTBAData.LoadTBADataCallbacks callback;
     private LoadTBAData task;
@@ -17,6 +25,10 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (getActivity() instanceof HasFragmentComponent) {
+            mComponent = ((HasFragmentComponent) getActivity()).getComponent();
+        }
+        mDatafeed = mComponent.datafeed();
 
         if (activity instanceof LoadTBAData.LoadTBADataCallbacks) {
             callback = (LoadTBAData.LoadTBADataCallbacks) activity;
@@ -41,7 +53,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         }
 
         if (task == null) {
-            task = new LoadTBAData(this, getActivity());
+            task = new LoadTBAData(mDatafeed, this, getActivity());
             task.execute(dataToLoad);
         }
     }

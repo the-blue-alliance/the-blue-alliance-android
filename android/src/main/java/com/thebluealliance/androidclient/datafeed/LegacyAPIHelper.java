@@ -5,19 +5,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.squareup.okhttp.Response;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Team;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -92,29 +84,6 @@ public class LegacyAPIHelper {
             }
         }
         return host + API_URL.get(query);
-    }
-
-    public static ArrayList<Event> getEventList(String json) {
-        ArrayList<Event> events = new ArrayList<>();
-        JsonArray data = JSONHelper.getasJsonArray(json);
-        for (JsonElement aData : data) {
-            events.add(JSONHelper.getGson().fromJson(aData, Event.class));
-        }
-        return events;
-    }
-
-    public static ArrayList<Team> getTeamList(String json) {
-        ArrayList<Team> teams = new ArrayList<>();
-        JsonArray data = JSONHelper.getasJsonArray(json);
-        for (JsonElement aData : data) {
-            teams.add(JSONHelper.getGson().fromJson(aData, Team.class));
-        }
-        return teams;
-    }
-
-    public static ArrayList<District> getDistrictList(String json, String url, int version) {
-        JsonArray data = JSONHelper.getasJsonArray(json);
-        return DistrictHelper.buildVersionedDistrictList(data, url, version);
     }
 
     /**

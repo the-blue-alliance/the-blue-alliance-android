@@ -22,21 +22,29 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class RedownloadActivity extends AppCompatActivity implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks {
+public class RedownloadActivity extends AppCompatActivity
+  implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, HasFragmentComponent {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
 
+    private FragmentComponent mComponent;
     private DisableSwipeViewPager viewPager;
     private TextView loadingMessage;
     private ProgressBar loadingProgressBar;
@@ -318,5 +326,20 @@ public class RedownloadActivity extends AppCompatActivity implements View.OnClic
                 onError(info.message);
                 break;
         }
+    }
+
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
+              .build();
+        }
+        return mComponent;
     }
 }
