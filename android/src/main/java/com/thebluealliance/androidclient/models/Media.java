@@ -1,25 +1,15 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.database.tables.MediasTable;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class Media extends BasicModel<Media> {
@@ -159,74 +149,6 @@ public class Media extends BasicModel<Media> {
                     "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");
             return null;
         }
-    }
-
-    public static APIResponse<Media> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        MediasTable table = Database.getInstance(c).getMediasTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        Media media;
-        if (cursor != null && cursor.moveToFirst()) {
-            media = table.inflate(cursor);
-            cursor.close();
-        } else {
-            media = new Media();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Media updatedMedia = JSONHelper.getGson().fromJson(response.getData(), Media.class);
-                media.merge(updatedMedia);
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            media.write(c);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(media, code);
-    }
-
-    public static APIResponse<ArrayList<Media>> queryList(Context c, String teamKey, int year, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying medias table: " + whereClause + Arrays.toString(whereArgs));
-        MediasTable table = Database.getInstance(c).getMediasTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<Media> medias = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                medias.add(table.inflate(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray mediaList = JSONHelper.getasJsonArray(response.getData());
-                medias = new ArrayList<>();
-                for (JsonElement m : mediaList) {
-                    Media media = JSONHelper.getGson().fromJson(m, Media.class);
-                    media.setTeamKey(teamKey);
-                    media.setYear(year);
-                    medias.add(media);
-                }
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            //Database.getInstance(c).getMediasTable().add(medias);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "Found " + medias.size() + " medias, updated in db? " + changed);
-        return new APIResponse<>(medias, code);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -8,19 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.LaunchActivity;
-import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.models.Favorite;
 
 public class DevSettingsActivity extends AppCompatActivity {
@@ -57,25 +49,25 @@ public class DevSettingsActivity extends AppCompatActivity {
                     Favorite fav = new Favorite();
                     fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
                     fav.setModelKey("frc111");
-                    fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
+                    fav.setModelEnum(ModelType.MODELS.TEAM.getEnum());
                     Database.getInstance(getActivity()).getFavoritesTable().add(fav);
                     return true;
                 }
             });
 
             Preference testUpcomingMatchNotification = findPreference("test_upcoming_match_notification");
-            testUpcomingMatchNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /*testUpcomingMatchNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     String data = "{\"match_key\":\"2014ilch_f1m2\",\"event_name\":\"Midwest Regional\",\"team_keys\":[\"frc111\",\"frc118\",\"frc254\",\"frc496\",\"frc1114\",\"frc2056\"],\"scheduled_time\":12345,\"predicted_time\":123456}";
                     GCMMessageHandler.handleMessage(getActivity(), "upcoming_match", data);
                     return true;
                 }
-            });
+            });*/
 
 
             Preference testScoreNotification = findPreference("test_score_notification");
-            testScoreNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /*testScoreNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     // Comment out different strings to see different types of notifications.
@@ -96,7 +88,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                     GCMMessageHandler.handleMessage(getActivity(), "score", data);
                     return true;
                 }
-            });
+            });*/
 
             Preference gcmRegister = findPreference("select_account");
             gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

@@ -1,25 +1,13 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
-import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
+import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by phil on 7/23/14.
@@ -224,97 +212,5 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static APIResponse<DistrictTeam> query(Context c, String key, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
-        DistrictTeamsTable table = Database.getInstance(c).getDistrictTeamsTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        DistrictTeam team;
-        if (cursor != null && cursor.moveToFirst()) {
-            team = table.inflate(cursor);
-            cursor.close();
-        } else {
-            team = new DistrictTeam();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        ArrayList<DistrictTeam> allTeams = null;
-        boolean changed = false;
-        allTeams = new ArrayList<>();
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                DistrictTeam updatedTeam = new DistrictTeam();
-                if (url.contains("district") && url.contains("rankings")) {
-                    /* We're requesting the rankings for an entire district (there isn't yet a single endpoint for this) */
-                    JsonArray teamList = JSONHelper.getasJsonArray(response.getData());
-                    for (JsonElement t : teamList) {
-                        DistrictTeam inflated = JSONHelper.getGson().fromJson(t, DistrictTeam.class);
-                        DistrictTeamHelper.addFieldsFromKey(inflated, key);
-
-                        if (inflated.getKey().equals(key)) {
-                            updatedTeam = inflated;
-                            //this match will be added to the list below
-                        } else {
-                            allTeams.add(inflated);
-                        }
-                    }
-                } else {
-                    updatedTeam = JSONHelper.getGson().fromJson(response.getData(), DistrictTeam.class);
-                }
-                team.merge(updatedTeam);
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        allTeams.add(team);
-
-        if (changed) {
-            team.write(c);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(team, requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304);
-    }
-
-    public static APIResponse<ArrayList<DistrictTeam>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying districtTeams table: " + whereClause + Arrays.toString(whereArgs));
-        DistrictTeamsTable table = Database.getInstance(c).getDistrictTeamsTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<DistrictTeam> districtTeams = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                districtTeams.add(table.inflate(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray districtList = JSONHelper.getasJsonArray(response.getData());
-                districtTeams = new ArrayList<>();
-                for (JsonElement d : districtList) {
-                    DistrictTeam next = JSONHelper.getGson().fromJson(d, DistrictTeam.class);
-                    try {
-                        DistrictTeamHelper.addFieldsFromAPIUrl(next, next.getTeamKey(), url);
-                        districtTeams.add(next);
-                    } catch (FieldNotDefinedException e) {
-                        Log.e(Constants.LOG_TAG, "Unable to complete generation of districtTeam");
-                    }
-                }
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            //Database.getInstance(c).getDistrictTeamsTable().add(districtTeams);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "Found " + districtTeams.size() + " districtTeams, updated in db? " + changed);
-        return new APIResponse<>(districtTeams, code);
     }
 }

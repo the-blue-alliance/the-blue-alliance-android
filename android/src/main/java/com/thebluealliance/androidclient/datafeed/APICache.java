@@ -285,6 +285,18 @@ public class APICache {
         });
     }
 
+    public Observable<District> fetchDistrict(String districtKey) {
+        return Observable.create((observer) -> {
+            try {
+                District district = mDb.getDistrictsTable().get(districtKey);
+                observer.onNext(district);
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
+    }
+
     public Observable<List<District>> fetchDistrictList(int year) {
         return Observable.create((observer) -> {
             try {

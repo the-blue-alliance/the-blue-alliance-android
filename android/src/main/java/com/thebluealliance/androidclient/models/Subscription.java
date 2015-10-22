@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +81,8 @@ public class Subscription {
         return modelEnum;
     }
 
-    public ModelHelper.MODELS getModelType() {
-        return ModelHelper.MODELS.values()[modelEnum];
+    public ModelType.MODELS getModelType() {
+        return ModelType.MODELS.values()[modelEnum];
     }
 
     public void setModelEnum(int modelEnum) {

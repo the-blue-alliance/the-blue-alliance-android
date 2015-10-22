@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -11,10 +10,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
@@ -26,7 +21,6 @@ import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -511,95 +505,6 @@ public class Event extends BasicModel<Event> {
 
     public String getSearchTitles() throws FieldNotDefinedException {
         return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
-    }
-
-    public static APIResponse<Event> query(Context c, String eventKey, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        EventsTable table = Database.getInstance(c).getEventsTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        Event event;
-        if (cursor != null && cursor.moveToFirst()) {
-            event = table.inflate(cursor);
-            cursor.close();
-        } else {
-            event = new Event();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Event updatedEvent;
-                if (url.substring(url.lastIndexOf("/")).equals(eventKey)) {
-                    /* event info request - inflate the event
-                     * Here, the last url parameter is the event key
-                     * All other endpoints have something else after that
-                     */
-                    updatedEvent = JSONHelper.getGson().fromJson(response.getData(), Event.class);
-                    if (updatedEvent == null) {
-                        // Error parsing the json
-                        code = APIResponse.CODE.NODATA;
-                        continue;
-                    }
-                } else {
-                    /* We're getting one of the other endpoints which don't contain event data.
-                     * Add them to the model based on which URL we hit
-                     */
-                    updatedEvent = new Event();
-                    updatedEvent.setEventKey(eventKey);
-                    EventHelper.addFieldByAPIUrl(updatedEvent, url, response.getData());
-                }
-                event.merge(updatedEvent);
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            event.write(c);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(event, code);
-    }
-
-    public static APIResponse<ArrayList<Event>> queryList(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying events table: " + whereClause + Arrays.toString(whereArgs));
-        ArrayList<Event> events = new ArrayList<>();
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
-                events = new ArrayList<>();
-                for (JsonElement m : matchList) {
-                    events.add(JSONHelper.getGson().fromJson(m, Event.class));
-                }
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        EventsTable eventsTable = Database.getInstance(c).getEventsTable();
-        if (changed) {
-            eventsTable.delete(whereClause, whereArgs);
-            //eventsTable.add(events);
-        }
-
-        // Fetch from db after web, see #372
-        // Allows us to do whereClause filtering again
-        Cursor cursor = eventsTable.query(fields, whereClause, whereArgs, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            events.clear();
-            do {
-                events.add(eventsTable.inflate(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events, updated in db? " + changed);
-        return new APIResponse<>(events, code);
     }
 
     @Override

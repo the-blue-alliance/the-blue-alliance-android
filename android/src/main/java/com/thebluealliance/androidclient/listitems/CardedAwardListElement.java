@@ -10,7 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.DataManager;
+import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.models.Team;
@@ -18,24 +18,16 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.Map;
 
 public class CardedAwardListElement extends ListElement {
-
     public final String awardName;
     public final String eventKey;
     public final String selectedTeamNum;
     public final JsonArray awardWinners;
     private final Map<String, Team> mAwardTeams;
+    private final APICache mDatafeed;
 
-    public CardedAwardListElement(String name, JsonArray winners) {
+    public CardedAwardListElement(APICache datafeed, String name, String eventKey, JsonArray winners, Map<String, Team> teams, String selectedTeamKey) {
         super();
-        awardName = name;
-        awardWinners = winners;
-        mAwardTeams = null;
-        eventKey = "";
-        selectedTeamNum = "";
-    }
-
-    public CardedAwardListElement(String name, String eventKey, JsonArray winners, Map<String, Team> teams, String selectedTeamKey) {
-        super();
+        mDatafeed = datafeed;
         this.awardName = name;
         this.eventKey = eventKey;
         this.awardWinners = winners;
@@ -95,7 +87,7 @@ public class CardedAwardListElement extends ListElement {
             } else {
                 Team team;
                 if (mAwardTeams == null) {
-                    team = DataManager.Teams.getTeamFromDB(context, "frc" + teamNumber);
+                    team = mDatafeed.fetchTeam("frc" + teamNumber).toBlocking().first();
                 } else {
                     team = mAwardTeams.get("frc" + teamNumber);
                 }

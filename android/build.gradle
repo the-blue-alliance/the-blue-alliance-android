@@ -21,6 +21,13 @@ retrolambda {
 
 version semverVersion()
 
+tasks.withType(Test) {
+    testLogging {
+        events "passed", "skipped", "failed"
+        quiet.events = ["passed", "failed"]
+    }
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion '22.0.1'
@@ -95,12 +102,10 @@ android {
     }
 
     android.applicationVariants.all { variant ->
-        println "*********" + variant.description + "**********";
         variant.outputs.each { output ->
             def apkName = "tba-android-";
             apkName += "v" + version.tagName;
             apkName += "-" + variant.buildType.name + ".apk";
-            println "*********" + "$project.buildDir/apk/" + apkName + "**********";
             output.outputFile = file("$project.buildDir/apk/" + apkName)
         }
     }

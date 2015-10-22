@@ -22,7 +22,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
@@ -70,7 +70,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
         }
 
         mDistrictKey = DistrictHelper.generateKey(districtAbbrev, mYear);
-        setModelKey(mDistrictKey, ModelHelper.MODELS.DISTRICT);
+        setModelKey(mDistrictKey, ModelType.MODELS.DISTRICT);
         setContentView(R.layout.activity_view_district);
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);

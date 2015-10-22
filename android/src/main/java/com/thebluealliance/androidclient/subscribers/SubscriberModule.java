@@ -5,6 +5,9 @@ import android.app.Activity;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
+import com.thebluealliance.androidclient.renderers.AwardRenderer;
+import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
+import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import dagger.Module;
 import dagger.Provides;
@@ -15,7 +18,7 @@ import de.greenrobot.event.EventBus;
  * Each of these are annotated as @Singleton, so references are shared within their component
  * (e.g. unique references per activity)
  */
-@Module(includes = {TBAAndroidModule.class})
+@Module(includes = {TBAAndroidModule.class, RendererModule.class})
 public class SubscriberModule {
 
     private Activity mActivity;
@@ -77,8 +80,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public AwardsListSubscriber provideAwardsListSubscriber(Database db) {
-        return new AwardsListSubscriber(db);
+    public AwardsListSubscriber provideAwardsListSubscriber(Database db, AwardRenderer renderer) {
+        return new AwardsListSubscriber(db, renderer);
     }
 
     @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {
@@ -126,11 +129,13 @@ public class SubscriberModule {
         return new RecentNotificationsSubscriber();
     }
 
-    @Provides SubscriptionListSubscriber provideSubscriptionListSubscriber() {
-        return new SubscriptionListSubscriber(mActivity);
+    @Provides
+    SubscriptionListSubscriber provideSubscriptionListSubscriber(MyTbaModelRenderer renderer) {
+        return new SubscriptionListSubscriber(renderer);
     }
 
-    @Provides FavoriteListSubscriber provideFavoriteListSubscriber() {
-        return new FavoriteListSubscriber(mActivity);
+    @Provides
+    FavoriteListSubscriber provideFavoriteListSubscriber(MyTbaModelRenderer renderer) {
+        return new FavoriteListSubscriber(renderer);
     }
 }

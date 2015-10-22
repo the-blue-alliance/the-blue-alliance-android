@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -90,6 +91,11 @@ public class DatafeedModule {
     @Provides @Singleton
     public RefreshController provideRefreshController() {
         return new RefreshController();
+    }
+
+    @Provides @Singleton
+    public MyTbaDatafeed provideMyTbaDatafeed(Context context, SharedPreferences prefs, Database db) {
+        return new MyTbaDatafeed(context, context.getResources(), prefs, db);
     }
 
     public static Gson getGson() {

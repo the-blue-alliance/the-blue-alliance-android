@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
@@ -104,4 +105,6 @@ public interface FragmentComponent {
     void inject(ViewTeamActivity activity);
     void inject(ViewEventActivity activity);
     void inject(ContributorsActivity contributorsActivity);
+
+    void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
 }
