@@ -158,7 +158,8 @@ public class OnboardingActivity extends AppCompatActivity
                 // If myTBA hasn't been activated yet, prompt the user one last time to sign in
                 if (!mMyTBAOnboardingViewPager.isOnLoginPage()) {
                     mMyTBAOnboardingViewPager.scrollToLoginPage();
-                } else if (!isMyTBALoginComplete) {
+                } else if (!isMyTBALoginComplete && supportsGooglePlayServices()) {
+                    // Only show this dialog if play services are actually available
                     new AlertDialog.Builder(this)
                             .setTitle(getString(R.string.mytba_prompt_title))
                             .setMessage(getString(R.string.mytba_prompt_message))
@@ -172,7 +173,7 @@ public class OnboardingActivity extends AppCompatActivity
                                 // Do nothing; allow user to enable myTBA
                                 dialog.dismiss();
                             }).create().show();
-                } else if (isMyTBALoginComplete) {
+                } else if (isMyTBALoginComplete || !supportsGooglePlayServices()) {
                     viewPager.setCurrentItem(2);
                 }
                 break;
