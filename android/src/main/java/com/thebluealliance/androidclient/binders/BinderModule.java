@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
 
 import dagger.Module;
@@ -7,6 +9,12 @@ import dagger.Provides;
 
 @Module
 public class BinderModule {
+
+    private final Resources mResources;
+
+    public BinderModule(Resources resources) {
+        mResources = resources;
+    }
 
     @Provides
     public FragmentBinder provideFragmentBinder() {
@@ -46,6 +54,11 @@ public class BinderModule {
     @Provides
     public EventTabBinder provideEventTabBinder() {
         return new EventTabBinder();
+    }
+
+    @Provides
+    public DistrictPointsListBinder provideDistrictPointsListBinder() {
+        return new DistrictPointsListBinder(mResources);
     }
 
     @Provides

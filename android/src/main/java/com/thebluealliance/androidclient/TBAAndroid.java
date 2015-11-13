@@ -48,7 +48,7 @@ public class TBAAndroid extends MultiDexApplication {
 
     public BinderModule getBinderModule() {
         if (mBinderModule == null) {
-            mBinderModule = new BinderModule();
+            mBinderModule = new BinderModule(getResources());
         }
         return mBinderModule;
     }

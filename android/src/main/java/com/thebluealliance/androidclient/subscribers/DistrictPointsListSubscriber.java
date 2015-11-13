@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
@@ -17,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
+public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>>{
 
     private Database mDb;
     private String mEventKey;
@@ -27,7 +28,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
         super();
         mDb = db;
         mGson = gson;
-        mDataToBind = new ArrayList<>();
+        mDataToBind = new Type();
     }
 
     public void setEventKey(String eventKey) {
@@ -52,6 +53,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
         if (event != null) {
             DistrictHelper.DISTRICTS type = DistrictHelper.DISTRICTS.fromEnum(event.getDistrictEnum());
             boolean isDistrict = type != DistrictHelper.DISTRICTS.NO_DISTRICT;
+            ((Type)mDataToBind).isDistrict = isDistrict;
             if (isDistrict) {
                 districtKey = mEventKey.substring(0, 4) + type.getAbbreviation();
             }
@@ -74,6 +76,19 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
         for (int i = 0; i < pointBreakdowns.size(); i++) {
             pointBreakdowns.get(i).setRank(i + 1);
             mDataToBind.add(pointBreakdowns.get(i).render());
+        }
+    }
+
+    /**
+     * Custom bind datatype, extend List<ListItem> in order to use {@link ListViewBinder} within
+     * the fragment.
+     */
+    public static class Type extends ArrayList<ListItem> {
+        public boolean isDistrict;
+
+        public Type() {
+            super();
+            this.isDistrict = false;
         }
     }
 }

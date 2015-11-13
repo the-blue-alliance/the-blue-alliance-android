@@ -60,6 +60,12 @@ public class DistrictPointsListSubscriberTest {
     }
 
     @Test
+    public void testCorrectParsedType() throws BasicModel.FieldNotDefinedException {
+        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mPoints);
+        assertTrue(data instanceof DistrictPointsListSubscriber.Type);
+    }
+
+    @Test
     public void testParseInvalidJson() throws BasicModel.FieldNotDefinedException {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, new JsonObject());
 
