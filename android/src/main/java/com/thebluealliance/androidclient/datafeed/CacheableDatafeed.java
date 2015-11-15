@@ -3,7 +3,10 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
+import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
@@ -78,7 +81,8 @@ public class CacheableDatafeed {
         WeekEventsExtractor extractor = new WeekEventsExtractor(week);
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventsInYear(year, cacheHeader),
-          mWriter.eventListWriter.get());
+          mWriter.eventListWriter.get(),
+          Database.TABLE_EVENTS, EventsTable.WEEK + " = ?", new String[]{Integer.toString(week)});
         return mAPICache.fetchEventsInWeek(year, week).concatWith(apiData.map(extractor));
     }
 
@@ -164,7 +168,8 @@ public class CacheableDatafeed {
     public Observable<List<Match>> fetchEventMatches(String eventKey, String cacheHeader) {
         Observable<List<Match>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventMatches(eventKey, cacheHeader),
-          mWriter.matchListWriter.get());
+          mWriter.matchListWriter.get(),
+          Database.TABLE_MATCHES, MatchesTable.EVENT + " = ?", new String[]{eventKey});
         return mAPICache.fetchEventMatches(eventKey).concatWith(apiData);
     }
 

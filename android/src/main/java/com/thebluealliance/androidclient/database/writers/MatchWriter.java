@@ -1,23 +1,21 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import android.support.annotation.WorkerThread;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Match;
 
 import javax.inject.Inject;
 
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-
-public class MatchWriter implements Action1<Match> {
-    private Database mDb;
-
+public class MatchWriter extends BaseDbWriter<Match> {
     @Inject
     public MatchWriter(Database db) {
-        mDb = db;
+        super(db);
     }
 
     @Override
-    public void call(Match match) {
-        Schedulers.io().createWorker().schedule(() -> mDb.getMatchesTable().add(match));
+    @WorkerThread
+    public void write(Match match) {
+        mDb.getMatchesTable().add(match);
     }
 }
