@@ -159,10 +159,13 @@ public class EventsByWeekFragment
 
         if (currentYear != mYear && week1Index > -1) {
             mViewPager.setCurrentItem(week1Index);
+            mFragmentBinder.onPageSelected(week1Index);
         } else if (currentIndex < weekCount && currentIndex > -1) {
             mViewPager.setCurrentItem(currentIndex);
+            mFragmentBinder.onPageSelected(currentIndex);
         } else {
             mViewPager.setCurrentItem(0);
+            mFragmentBinder.onPageSelected(0);
         }
     }
 
