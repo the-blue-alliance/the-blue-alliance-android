@@ -157,11 +157,13 @@ public class NavigationDrawerFragment extends Fragment {
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
         if (AccountHelper.isMyTBAEnabled(getActivity())) {
+            Log.d("NavDrawerFragment", "MyTBA enabled; configuring navigation drawer");
             accountDetailsContainer.setVisibility(View.VISIBLE);
             profilePicture.setVisibility(View.VISIBLE);
             profileName.setVisibility(View.VISIBLE);
             setDrawerProfileInfo();
         } else {
+            Log.d("NavDrawerFragment", "MyTBA not enabled; hiding profile in nav drawer");
             accountDetailsContainer.setVisibility(View.GONE);
         }
 
