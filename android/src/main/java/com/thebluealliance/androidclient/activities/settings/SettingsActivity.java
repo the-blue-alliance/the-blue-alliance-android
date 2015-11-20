@@ -131,6 +131,15 @@ public class SettingsActivity extends AppCompatActivity {
                 listView.setPadding(0, 0, 0, 0);
             }
         }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            // Enable might have failed; update the state of the switch when we resume
+            SwitchPreference enable_mytba = (SwitchPreference) findPreference("mytba_enabled");
+            enable_mytba.setChecked(AccountHelper.isMyTBAEnabled(getActivity()));
+        }
     }
 
     @Override
