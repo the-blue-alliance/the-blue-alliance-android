@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MatchType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -123,7 +124,7 @@ public class ScoreNotification extends BaseNotification {
 
         boolean useSpecial2015Format;
         try {
-            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchHelper.TYPE.FINAL;
+            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchType.FINAL;
         } catch (BasicModel.FieldNotDefinedException e) {
             useSpecial2015Format = false;
             Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");

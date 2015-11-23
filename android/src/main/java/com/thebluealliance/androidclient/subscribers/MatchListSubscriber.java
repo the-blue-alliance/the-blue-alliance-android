@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MatchType;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -74,7 +74,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
 
         ListGroup currentGroup = mQualMatches;
-        MatchHelper.TYPE lastType = null;
+        MatchType lastType = null;
         Match previousIteration = null;
         boolean lastMatchPlayed = false;
         if (mAPIData.size() > 0) {
@@ -82,7 +82,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
         for (int i = 0; i < mAPIData.size(); i++) {
             Match match = mAPIData.get(i);
-            MatchHelper.TYPE currentType = match.getType();
+            MatchType currentType = match.getType();
             if (lastType != currentType) {
                 switch (match.getType()) {
                     case QUAL:

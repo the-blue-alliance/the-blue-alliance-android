@@ -30,91 +30,35 @@ import java.util.regex.Pattern;
  */
 public class MatchHelper {
 
-    public enum TYPE {
-        NONE,
-        QUAL {
-            @Override
-            public TYPE previous() {
-                return null; // see below for options for this line
-            }
-        },
-        QUARTER,
-        SEMI,
-        FINAL {
-            @Override
-            public TYPE next() {
-                return null; // see below for options for this line
-            }
-        };
-
-        public TYPE next() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() + 1];
-        }
-
-        public TYPE previous() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() - 1];
-        }
-
-        public TYPE get(String str) {
-            return valueOf(str);
-        }
-
-        public static TYPE fromShortType(String str) {
-            switch (str) {
-                case "qm":
-                    return QUAL;
-                case "ef":
-                case "qf":
-                    return QUARTER;
-                case "sf":
-                    return SEMI;
-                case "f":
-                    return FINAL;
-                default:
-                    throw new IllegalArgumentException("Invalid short type");
-            }
-        }
-
-        public static TYPE fromKey(String key) {
-            if (key.contains("_qm")) return QUAL;
-            if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
-            if (key.contains("_sf")) return SEMI;
-            if (key.contains("_f")) return FINAL;
-            return NONE;
-        }
-    }
-
-    public static final HashMap<TYPE, String> SHORT_TYPES;
-    public static final HashMap<TYPE, String> LONG_TYPES;
-    public static final HashMap<TYPE, String> ABBREV_TYPES;
-    public static final HashMap<TYPE, Integer> PLAY_ORDER;
+    public static final HashMap<MatchType, String> SHORT_TYPES;
+    public static final HashMap<MatchType, String> LONG_TYPES;
+    public static final HashMap<MatchType, String> ABBREV_TYPES;
+    public static final HashMap<MatchType, Integer> PLAY_ORDER;
 
     static {
         SHORT_TYPES = new HashMap<>();
-        SHORT_TYPES.put(MatchHelper.TYPE.QUAL, "qm");
-        SHORT_TYPES.put(MatchHelper.TYPE.QUARTER, "qf");
-        SHORT_TYPES.put(MatchHelper.TYPE.SEMI, "sf");
-        SHORT_TYPES.put(MatchHelper.TYPE.FINAL, "f");
+        SHORT_TYPES.put(MatchType.QUAL, "qm");
+        SHORT_TYPES.put(MatchType.QUARTER, "qf");
+        SHORT_TYPES.put(MatchType.SEMI, "sf");
+        SHORT_TYPES.put(MatchType.FINAL, "f");
 
         LONG_TYPES = new HashMap<>(); // TODO: I18N
-        LONG_TYPES.put(MatchHelper.TYPE.QUAL, "Quals");
-        LONG_TYPES.put(MatchHelper.TYPE.QUARTER, "Quarters");
-        LONG_TYPES.put(MatchHelper.TYPE.SEMI, "Semis");
-        LONG_TYPES.put(MatchHelper.TYPE.FINAL, "Finals");
+        LONG_TYPES.put(MatchType.QUAL, "Quals");
+        LONG_TYPES.put(MatchType.QUARTER, "Quarters");
+        LONG_TYPES.put(MatchType.SEMI, "Semis");
+        LONG_TYPES.put(MatchType.FINAL, "Finals");
 
         PLAY_ORDER = new HashMap<>();
-        PLAY_ORDER.put(MatchHelper.TYPE.QUAL, 1);
-        PLAY_ORDER.put(MatchHelper.TYPE.QUARTER, 2);
-        PLAY_ORDER.put(MatchHelper.TYPE.SEMI, 3);
-        PLAY_ORDER.put(MatchHelper.TYPE.FINAL, 4);
+        PLAY_ORDER.put(MatchType.QUAL, 1);
+        PLAY_ORDER.put(MatchType.QUARTER, 2);
+        PLAY_ORDER.put(MatchType.SEMI, 3);
+        PLAY_ORDER.put(MatchType.FINAL, 4);
 
         ABBREV_TYPES = new HashMap<>(); // TODO: I18N
-        ABBREV_TYPES.put(MatchHelper.TYPE.QUAL, "Q");
-        ABBREV_TYPES.put(MatchHelper.TYPE.QUARTER, "QF");
-        ABBREV_TYPES.put(MatchHelper.TYPE.SEMI, "SF");
-        ABBREV_TYPES.put(MatchHelper.TYPE.FINAL, "F");
+        ABBREV_TYPES.put(MatchType.QUAL, "Q");
+        ABBREV_TYPES.put(MatchType.QUARTER, "QF");
+        ABBREV_TYPES.put(MatchType.SEMI, "SF");
+        ABBREV_TYPES.put(MatchType.FINAL, "F");
     }
 
     public static boolean validateMatchKey(String key) {
@@ -207,7 +151,7 @@ public class MatchHelper {
         ListGroup finalMatches = new ListGroup(c.getString(R.string.finals_header));
 
         ListGroup currentGroup = qualMatches;
-        TYPE lastType = null;
+        MatchType lastType = null;
         for (Match match : matches) {
 
             if (lastType != match.getType()) {
@@ -276,7 +220,7 @@ public class MatchHelper {
         }
         for (Match match : teamMatches) {
             try {
-                if (match.getType() == TYPE.QUARTER) {
+                if (match.getType() == MatchType.QUARTER) {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = Match.getRedTeams(matchAlliances);
                     Boolean isRed = Match.hasTeam(redTeams, teamKey);
@@ -373,7 +317,7 @@ public class MatchHelper {
         ArrayList<Match> finalMatches = new ArrayList<>();
 
         ArrayList<Match> currentGroup = qualMatches;
-        TYPE lastType = null;
+        MatchType lastType = null;
 
         // Team might be a no-show/drop out last minute at an event,
         // and might not play any matches as a result.
@@ -605,7 +549,7 @@ public class MatchHelper {
 
             String set = null, number;
             String typeCode = m.group(1);
-            TYPE type = TYPE.fromShortType(typeCode);
+            MatchType type = MatchType.fromShortType(typeCode);
             String typeName = (abbrev ? ABBREV_TYPES : LONG_TYPES).get(type);
 
             // If the match key looks like AA##, then the numbers correspond to the match number.
@@ -642,15 +586,15 @@ public class MatchHelper {
         return getMatchTitleFromMatchKey(context, matchKey, true);
     }
 
-    public static TYPE getMatchTypeFromKey(String matchKey) {
+    public static MatchType getMatchTypeFromKey(String matchKey) {
         String keyWithoutEvent = matchKey.replaceAll(".*_", "");
         Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
             String typeCode = m.group(1);
-            return TYPE.fromShortType(typeCode);
+            return MatchType.fromShortType(typeCode);
         } else {
-            return TYPE.NONE;
+            return MatchType.NONE;
         }
     }
 }

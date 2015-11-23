@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MatchType;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -132,7 +132,7 @@ public class TBAApiTest {
             assertEquals(match.getEventKey(), "2014ctgro");
             assertEquals(match.getMatchNumber(), 1);
             assertEquals(match.getSetNumber(), 1);
-            assertEquals(match.getType(), MatchHelper.TYPE.FINAL);
+            assertEquals(match.getType(), MatchType.FINAL);
             assertEquals(match.getAlliances(), JSONHelper.getasJsonObject("{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}"));
             assertEquals(match.getTimeString(), "3:36 PM");
             assertEquals(match.getTime(), new Date(1394393760));

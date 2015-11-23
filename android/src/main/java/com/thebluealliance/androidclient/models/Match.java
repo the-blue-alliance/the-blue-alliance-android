@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MatchType;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.Date;
@@ -26,19 +27,19 @@ public class Match extends BasicModel<Match> {
 
     private String selectedTeam;
     private int year;
-    private MatchHelper.TYPE type;
+    private MatchType type;
     private JsonObject alliances;
     private JsonArray videos;
 
     public Match() {
         super(Database.TABLE_MATCHES);
         year = -1;
-        type = MatchHelper.TYPE.NONE;
+        type = MatchType.NONE;
         alliances = null;
         videos = null;
     }
 
-    public Match(String key, MatchHelper.TYPE type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonArray videos, long last_updated) {
+    public Match(String key, MatchType type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonArray videos, long last_updated) {
         super(Database.TABLE_MATCHES);
     }
 
@@ -56,7 +57,7 @@ public class Match extends BasicModel<Match> {
         fields.put(MatchesTable.EVENT, key.split("_")[0]);
 
         this.year = Integer.parseInt(key.substring(0, 4));
-        this.type = MatchHelper.TYPE.fromKey(key);
+        this.type = MatchType.fromKey(key);
     }
 
     public String getEventKey() throws FieldNotDefinedException {
@@ -96,19 +97,19 @@ public class Match extends BasicModel<Match> {
         fields.put(MatchesTable.TIME, timestamp);
     }
 
-    public MatchHelper.TYPE getType() throws FieldNotDefinedException {
-        if (type == MatchHelper.TYPE.NONE) {
+    public MatchType getType() throws FieldNotDefinedException {
+        if (type == MatchType.NONE) {
             throw new FieldNotDefinedException("Field Database.Matches.KEY is not defined");
         }
         return type;
     }
 
-    public void setType(MatchHelper.TYPE type) {
+    public void setType(MatchType type) {
         this.type = type;
     }
 
     public void setTypeFromShort(String type) {
-        this.type = MatchHelper.TYPE.fromShortType(type);
+        this.type = MatchType.fromShortType(type);
     }
 
     public JsonObject getAlliances() throws FieldNotDefinedException {
@@ -215,8 +216,8 @@ public class Match extends BasicModel<Match> {
         try {
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
-            if (type == MatchHelper.TYPE.QUAL) {
-                return MatchHelper.LONG_TYPES.get(MatchHelper.TYPE.QUAL) + (lineBreak ? "\n" : " ") + matchNumber;
+            if (type == MatchType.QUAL) {
+                return MatchHelper.LONG_TYPES.get(MatchType.QUAL) + (lineBreak ? "\n" : " ") + matchNumber;
             } else {
                 return MatchHelper.LONG_TYPES.get(type) + (lineBreak ? "\n" : " ") + setNumber + " - " + matchNumber;
             }
