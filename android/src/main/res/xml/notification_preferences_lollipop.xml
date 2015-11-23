@@ -2,13 +2,6 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pref_header_privacy">
-        <ListPreference
-            android:defaultValue="private"
-            android:entries="@array/notification_visibility"
-            android:entryValues="@array/notification_visibility_values"
-            android:key="notification_visibility"
-            android:summary="@string/pref_notification_lockscreen_summary"
-            android:title="@string/pref_notification_lockscreen" />
         <SwitchPreference
             android:defaultValue="true"
             android:key="notification_headsup"

@@ -53,6 +53,11 @@ public class GCMMessageHandler extends IntentService {
 
     public GCMMessageHandler(String name) {
         super(name);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         getComponenet();
         mComponenet.inject(this);
     }
@@ -198,20 +203,7 @@ public class GCMMessageHandler extends IntentService {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                String pref = PreferenceManager.getDefaultSharedPreferences(c).getString("notification_visibility", "private");
-                switch (pref) {
-                    case "public":
-                        built.visibility = Notification.VISIBILITY_PUBLIC;
-                        break;
-                    default:
-                    case "private":
-                        built.visibility = Notification.VISIBILITY_PRIVATE;
-                        break;
-                    case "secret":
-                        built.visibility = Notification.VISIBILITY_SECRET;
-                        break;
-                }
-
+                built.visibility = Notification.VISIBILITY_PUBLIC;
                 built.category = Notification.CATEGORY_SOCIAL;
             }
         }
