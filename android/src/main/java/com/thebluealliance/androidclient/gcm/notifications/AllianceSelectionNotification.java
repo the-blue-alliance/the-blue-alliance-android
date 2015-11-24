@@ -68,6 +68,7 @@ public class AllianceSelectionNotification extends BaseNotification {
         String title = r.getString(R.string.notification_alliances_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 

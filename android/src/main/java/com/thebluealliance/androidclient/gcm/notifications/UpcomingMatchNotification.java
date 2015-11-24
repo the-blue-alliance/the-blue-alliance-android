@@ -137,6 +137,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         String notificationTitle = context.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 

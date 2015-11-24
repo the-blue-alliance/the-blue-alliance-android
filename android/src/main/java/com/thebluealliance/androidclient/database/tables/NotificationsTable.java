@@ -20,7 +20,8 @@ public class NotificationsTable {
             INTENT = "intent",
             TIME = "time",
             SYSTEM_ID = "system_id",
-            ACTIVE = "active";
+            ACTIVE = "active",
+            MSG_DATA = "msg_data";
 
     private SQLiteDatabase mDb;
 
@@ -74,17 +75,22 @@ public class NotificationsTable {
     // Only allow 50 notifications to be stored
     public void prune() {
         mDb.beginTransaction();
-        Cursor cursor = mDb.query(Database.TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
-        if (cursor != null && cursor.moveToFirst()) {
-            for (int i = cursor.getCount(); i > 50; i--) {
-                mDb.delete(Database.TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
-                if (!cursor.moveToNext()) {
-                    break;
+        try {
+            Cursor cursor = mDb.query(Database.TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    for (int i = cursor.getCount(); i > 50; i--) {
+                        mDb.delete(Database.TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
+                        if (!cursor.moveToNext()) {
+                            break;
+                        }
+                    }
                 }
+                cursor.close();
             }
+            mDb.setTransactionSuccessful();
+        } finally {
+            mDb.endTransaction();
         }
-        cursor.close();
-        mDb.setTransactionSuccessful();
-        mDb.endTransaction();
     }
 }

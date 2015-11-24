@@ -424,6 +424,9 @@ public class ModelInflater {
                 case NotificationsTable.ACTIVE:
                     storedNotification.setActive(data.getInt(i));
                     break;
+                case NotificationsTable.MSG_DATA:
+                    storedNotification.setMessageData(data.getString(i));
+                    break;
             }
         }
         return storedNotification;

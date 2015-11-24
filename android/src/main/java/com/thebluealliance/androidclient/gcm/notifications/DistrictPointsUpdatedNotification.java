@@ -51,6 +51,7 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         String title = r.getString(R.string.notification_district_points_title, districtCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 

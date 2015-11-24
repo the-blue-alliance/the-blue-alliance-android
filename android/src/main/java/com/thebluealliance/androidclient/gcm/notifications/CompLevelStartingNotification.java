@@ -87,6 +87,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         String title = r.getString(R.string.notification_level_starting_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 

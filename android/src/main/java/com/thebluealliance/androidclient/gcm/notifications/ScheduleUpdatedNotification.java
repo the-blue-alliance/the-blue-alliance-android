@@ -80,6 +80,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         String title = context.getString(R.string.notification_schedule_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 

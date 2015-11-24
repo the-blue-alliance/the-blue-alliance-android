@@ -20,7 +20,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -42,10 +42,13 @@ public abstract class BaseNotification extends ListElement {
     StoredNotification stored;
     protected Date notificationTime;
 
+    /**
+     * Constructor to create from incoming gcm/firebase (json blob of data)
+     */
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
-        this.gson = JSONHelper.getGson();
+        this.gson = DatafeedModule.getGson();
         this.logTag = null;
         this.display = true;
         this.stored = null;

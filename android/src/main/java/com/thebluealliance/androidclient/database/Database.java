@@ -31,7 +31,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    private static final int DATABASE_VERSION = 25;
+    private static final int DATABASE_VERSION = 28;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database";
     public static final @Deprecated String TABLE_API = "api";
@@ -172,7 +172,8 @@ public class Database extends SQLiteOpenHelper {
             NotificationsTable.INTENT + " TEXT DEFAULT '', " +
             NotificationsTable.TIME + " TIMESTAMP, " +
             NotificationsTable.SYSTEM_ID + " INTEGER NOT NULL, " +
-            NotificationsTable.ACTIVE + " INTEGER DEFAULT 1 )";
+            NotificationsTable.ACTIVE + " INTEGER DEFAULT 1, " +
+            NotificationsTable.MSG_DATA + " TEXT DEFAULT '')";
 
     protected SQLiteDatabase mDb;
     private static Database sDatabaseInstance;
@@ -346,6 +347,17 @@ public class Database extends SQLiteOpenHelper {
                 case 25:
                     // delete deprecated responses table
                     db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
+                    break;
+                case 28:
+                    // recreate stored notifications table
+                    db.beginTransaction();
+                    try {
+                        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
+                        db.execSQL(CREATE_NOTIFICATIONS);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
                     break;
             }
             upgradeTo++;

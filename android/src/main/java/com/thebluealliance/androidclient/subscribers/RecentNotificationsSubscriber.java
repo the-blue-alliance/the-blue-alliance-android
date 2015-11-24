@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.RecentNotificationListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
@@ -21,7 +21,11 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
 
         for (int i = 0; i < mAPIData.size(); i++) {
             StoredNotification notification = mAPIData.get(i);
-            mDataToBind.add(new RecentNotificationListItem(notification.getTitle(), notification.getBody(), notification.getIntent()));
+            BaseNotification renderable = notification.getNotification();
+            if (renderable != null) {
+                renderable.parseMessageData();
+                mDataToBind.add(renderable);
+            }
         }
     }
 }

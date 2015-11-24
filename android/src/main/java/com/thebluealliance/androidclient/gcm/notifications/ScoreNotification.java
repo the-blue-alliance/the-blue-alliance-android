@@ -41,7 +41,7 @@ public class ScoreNotification extends BaseNotification {
     private Match match;
 
     public ScoreNotification(String messageData) {
-        super("score", messageData);
+        super(NotificationTypes.MATCH_SCORE, messageData);
     }
 
     @Override
@@ -190,6 +190,7 @@ public class ScoreNotification extends BaseNotification {
         stored.setBody(notificationString);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setMessageData(messageData);
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
