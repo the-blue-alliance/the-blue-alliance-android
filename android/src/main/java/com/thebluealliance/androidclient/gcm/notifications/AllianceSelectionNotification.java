@@ -25,9 +25,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by phil on 11/21/14.
- */
 public class AllianceSelectionNotification extends BaseNotification {
 
     private Event event;
@@ -37,6 +34,14 @@ public class AllianceSelectionNotification extends BaseNotification {
         super(NotificationTypes.ALLIANCE_SELECTION, messageData);
     }
 
+    public Event getEvent() {
+        return event;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
     @Override
     public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
@@ -44,6 +49,7 @@ public class AllianceSelectionNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not have an 'event' object");
         }
         event = gson.fromJson(jsonData.get("event"), Event.class);
+        eventKey = event.getKey();
     }
 
     @Override
@@ -58,8 +64,7 @@ public class AllianceSelectionNotification extends BaseNotification {
             return null;
         }
 
-        eventKey = event.getKey();
-        String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
+        String contentText = r.getString(R.string.notification_alliances_updated, eventName);
         Intent instance = getIntent(context);
 
         stored = new StoredNotification();

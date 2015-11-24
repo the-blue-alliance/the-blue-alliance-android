@@ -32,9 +32,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by Nathan on 7/24/2014.
- */
 public class ScoreNotification extends BaseNotification {
 
     private String eventName, eventKey, matchKey;
@@ -42,6 +39,22 @@ public class ScoreNotification extends BaseNotification {
 
     public ScoreNotification(String messageData) {
         super(NotificationTypes.MATCH_SCORE, messageData);
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public String getMatchKey() {
+        return matchKey;
+    }
+
+    public Match getMatch() {
+        return match;
     }
 
     @Override

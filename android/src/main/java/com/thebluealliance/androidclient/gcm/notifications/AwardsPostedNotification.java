@@ -41,6 +41,18 @@ public class AwardsPostedNotification extends BaseNotification {
         awards = new ArrayList<>();
     }
 
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public List<Award> getAwards() {
+        return awards;
+    }
+
     @Override
     public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONHelper.getasJsonObject(messageData);

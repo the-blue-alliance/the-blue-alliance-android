@@ -1,52 +1,73 @@
 package com.thebluealliance.androidclient.notifications;
 
-import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
+import android.content.Context;
+import android.content.Intent;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
-/**
- * Created by phil on 2/7/15.
- */
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class ScoreNotificationTest {
-    BaseNotification notification;
-    String messageData = "{ \"event_name\" : \"New England FRC Region Championship\",\n" +
-            "  \"match\" : { \"alliances\" : { \"blue\" : { \"score\" : 154,\n" +
-            "              \"teams\" : [ \"frc177\",\n" +
-            "                  \"frc230\",\n" +
-            "                  \"frc4055\"\n" +
-            "                ]\n" +
-            "            },\n" +
-            "          \"red\" : { \"score\" : 78,\n" +
-            "              \"teams\" : [ \"frc195\",\n" +
-            "                  \"frc558\",\n" +
-            "                  \"frc5122\"\n" +
-            "                ]\n" +
-            "            }\n" +
-            "        },\n" +
-            "      \"comp_level\" : \"f\",\n" +
-            "      \"event_key\" : \"2014necmp\",\n" +
-            "      \"key\" : \"2014necmp_f1m1\",\n" +
-            "      \"match_number\" : 1,\n" +
-            "      \"score_breakdown\" : null,\n" +
-            "      \"set_number\" : 1,\n" +
-            "      \"time\" : \"1397330280\",\n" +
-            "      \"time_string\" : \"3:18 PM\",\n" +
-            "      \"videos\" : [  ]\n" +
-            "    }\n" +
-            "}";
-    
+    private Context mContext;
+    private ScoreNotification mNotification;
+    private JsonObject mData;
+
     @Before
-    public void setupNotification(){
-        notification = new ScoreNotification(messageData);
+    public void setUp() {
+        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mData = ModelMaker.getModel(JsonObject.class, "notification_match_score");
+        mNotification = new ScoreNotification(mData.toString());
     }
-    
+
     @Test
-    public void testParseJson(){
-        notification.parseMessageData();
+    public void testParseData() {
+        mNotification.parseMessageData();
+
+        assertEquals(mNotification.getEventKey(), "2014necmp");
+        assertEquals(mNotification.getEventName(), "New England FRC Region Championship");
+        assertEquals(mNotification.getMatchKey(), "2014necmp_f1m1");
+        assertNotNull(mNotification.getMatch());
     }
+
+    @Test(expected = JsonParseException.class)
+    public void testParseNoMatch() {
+        mData.remove("match");
+        mNotification = new ScoreNotification(mData.toString());
+        mNotification.parseMessageData();
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void testParseNoEventName() {
+        mData.remove("event_name");
+        mNotification = new ScoreNotification(mData.toString());
+        mNotification.parseMessageData();
+    }
+
+    @Test
+    public void testGetIntent() {
+        mNotification.parseMessageData();
+        Intent intent = mNotification.getIntent(mContext);
+        assertNotNull(intent);
+        assertEquals(intent.getComponent().getClassName(), "com.thebluealliance.androidclient.activities.ViewMatchActivity");
+        assertEquals(intent.getStringExtra(ViewMatchActivity.MATCH_KEY), mNotification.getMatchKey());
+    }
+
+    //TODO need to test built notification
+    //Waiting until we have a better way to deal with resources
+    //Too many possibilities/individual things to mock individually
 }

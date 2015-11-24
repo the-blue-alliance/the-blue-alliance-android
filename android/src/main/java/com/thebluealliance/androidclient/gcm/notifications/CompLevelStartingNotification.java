@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,16 +32,32 @@ import java.util.Date;
  */
 public class CompLevelStartingNotification extends BaseNotification {
 
-    private JsonObject jsonData;
+    private @Nullable JsonElement scheduledTime;
     private String eventName, eventKey, compLevelAbbrev;
 
     public CompLevelStartingNotification(String messageData) {
         super(NotificationTypes.LEVEL_STARTING, messageData);
     }
 
+    public @Nullable JsonElement getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public String getCompLevelAbbrev() {
+        return compLevelAbbrev;
+    }
+
     @Override
     public void parseMessageData() throws JsonParseException {
-        jsonData = JSONHelper.getasJsonObject(messageData);
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
         if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name'");
         }
@@ -53,6 +70,8 @@ public class CompLevelStartingNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'comp_level'");
         }
         compLevelAbbrev = jsonData.get("comp_level").getAsString();
+
+        scheduledTime = jsonData.get("scheduled_time");
     }
 
     @Override
@@ -60,7 +79,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         Resources r = context.getResources();
         String compLevel = getCompLevelNameFromAbbreviation(context, compLevelAbbrev);
         String scheduledStartTimeString;
-        JsonElement scheduledTime = jsonData.get("scheduled_time");
+
         if (JSONHelper.isNull(scheduledTime)) {
             scheduledStartTimeString = "";
         } else {
@@ -71,12 +90,11 @@ public class CompLevelStartingNotification extends BaseNotification {
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
-        String eventShortName = EventHelper.shortName(eventName);
         String contentText;
         if (scheduledStartTimeString.isEmpty()) {
-            contentText = String.format(r.getString(R.string.notification_level_starting), eventName, compLevel);
+            contentText = r.getString(R.string.notification_level_starting, eventName, compLevel);
         } else {
-            contentText = String.format(r.getString(R.string.notification_level_starting_with_time), eventName, compLevel, scheduledStartTimeString);
+            contentText = r.getString(R.string.notification_level_starting_with_time, eventName, compLevel, scheduledStartTimeString);
         }
 
         Intent instance = getIntent(context);
@@ -140,7 +158,7 @@ public class CompLevelStartingNotification extends BaseNotification {
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + jsonData.get("event_key").getAsString()).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
     }
 
     @Override

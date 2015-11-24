@@ -25,9 +25,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by phil on 11/21/14.
- */
 public class ScheduleUpdatedNotification extends BaseNotification {
 
     private String eventName, eventKey;
@@ -35,6 +32,18 @@ public class ScheduleUpdatedNotification extends BaseNotification {
 
     public ScheduleUpdatedNotification(String messageData) {
         super(NotificationTypes.SCHEDULE_UPDATED, messageData);
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public JsonElement getMatchTime() {
+        return matchTime;
     }
 
     @Override
