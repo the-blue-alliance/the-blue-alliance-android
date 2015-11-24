@@ -1,0 +1,17 @@
+{
+  "event_name": "New England FRC Region Championship",
+  "event_key": "2014necmp",
+  "awards": [
+    {
+      "award_type": 0,
+      "name": "Regional Chairman's Award",
+      "recipient_list": [
+        {"team_number": 2067, "awardee": None},
+        {"team_number": 78, "awardee": None},
+        {"team_number": 811, "awardee": None},
+        {"team_number": 2648, "awardee": None}
+      ],
+      "year": 2014
+    }
+  ]
+}

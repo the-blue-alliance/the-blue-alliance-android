@@ -127,27 +127,28 @@ public class StoredNotification {
      */
     public @Nullable BaseNotification getNotification() {
         BaseNotification notification;
+        String data = getMessageData();
         switch (getType()) {
             case NotificationTypes.MATCH_SCORE:
-                notification = new ScoreNotification(messageData);
+                notification = new ScoreNotification(data);
                 break;
             case NotificationTypes.UPCOMING_MATCH:
-                notification = new UpcomingMatchNotification(messageData);
+                notification = new UpcomingMatchNotification(data);
                 break;
             case NotificationTypes.ALLIANCE_SELECTION:
-                notification = new AllianceSelectionNotification(messageData);
+                notification = new AllianceSelectionNotification(data);
                 break;
             case NotificationTypes.LEVEL_STARTING:
-                notification = new CompLevelStartingNotification(messageData);
+                notification = new CompLevelStartingNotification(data);
                 break;
             case NotificationTypes.SCHEDULE_UPDATED:
-                notification = new ScheduleUpdatedNotification(messageData);
+                notification = new ScheduleUpdatedNotification(data);
                 break;
             case NotificationTypes.AWARDS:
-                notification = new AwardsPostedNotification(messageData);
+                notification = new AwardsPostedNotification(data);
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
-                notification = new DistrictPointsUpdatedNotification(messageData);
+                notification = new DistrictPointsUpdatedNotification(data);
                 break;
             default:
                 return null;
