@@ -447,7 +447,7 @@ public class Event extends BasicModel<Event> {
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
                     "Required fields: Database.Events.START, Database.Events.END");
-            return null;
+            return "";
         }
     }
 
