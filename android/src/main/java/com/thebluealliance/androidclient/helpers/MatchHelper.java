@@ -2,13 +2,13 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -77,36 +77,45 @@ public class MatchHelper {
 
     /**
      * Returns the match object of the match next to be played
+     * Iterate backwards to account for data gaps
      *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Next match
      */
-    public static Match getNextMatchPlayed(List<Match> matches) throws BasicModel.FieldNotDefinedException {
-        for (Match m : matches) {
-            if (!m.hasBeenPlayed()) {
-                return m;
+    public static @Nullable Match getNextMatchPlayed(List<Match> matches)
+      throws BasicModel.FieldNotDefinedException {
+        if (matches == null || matches.isEmpty()) return null;
+
+        Match last = null;
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            Match m = matches.get(i);
+            if (m.hasBeenPlayed()) {
+                return last;
             }
+            last = m;
         }
-        //all matches have been played
-        return null;
+
+        // no matches played
+        return matches.get(0);
     }
 
     /**
      * Returns the match object of the last match played
+     * Iterate backwards to account for data gaps
      *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Last match played
      */
-    public static Match getLastMatchPlayed(List<Match> matches) throws BasicModel.FieldNotDefinedException {
-        Match last = null;
-        for (Match m : matches) {
-            if (!m.hasBeenPlayed()) {
-                break;
-            } else {
-                last = m;
+    public static @Nullable Match getLastMatchPlayed(List<Match> matches)
+      throws BasicModel.FieldNotDefinedException {
+        if (matches == null || matches.isEmpty()) return null;
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            Match m = matches.get(i);
+            if (m.hasBeenPlayed()) {
+                return m;
             }
         }
-        return last;
+        return null;
     }
 
     /**
@@ -133,76 +142,6 @@ public class MatchHelper {
         public String getDescriptionString(Resources resources) {
             return resources.getString(descriptionId);
         }
-    }
-
-    /**
-     * Constructs a match list for a team competing at an event
-     *
-     * @param c       activity
-     * @param matches list of matches
-     * @return match list
-     */
-    public static ArrayList<ListGroup> constructMatchList(Context c, ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
-
-        ArrayList<ListGroup> groups = new ArrayList<>();
-        ListGroup qualMatches = new ListGroup(c.getString(R.string.quals_header));
-        ListGroup quarterMatches = new ListGroup(c.getString(R.string.quarters_header));
-        ListGroup semiMatches = new ListGroup(c.getString(R.string.semis_header));
-        ListGroup finalMatches = new ListGroup(c.getString(R.string.finals_header));
-
-        ListGroup currentGroup = qualMatches;
-        MatchType lastType = null;
-        for (Match match : matches) {
-
-            if (lastType != match.getType()) {
-                switch (match.getType()) {
-                    case QUAL:
-                        currentGroup = qualMatches;
-                        break;
-                    case QUARTER:
-                        currentGroup = quarterMatches;
-                        break;
-                    case SEMI:
-                        currentGroup = semiMatches;
-                        break;
-                    case FINAL:
-                        currentGroup = finalMatches;
-                        break;
-                }
-            }
-
-            currentGroup.children.add(match);
-        }
-
-        if (!qualMatches.children.isEmpty()) {
-            groups.add(qualMatches);
-        }
-
-        if (!quarterMatches.children.isEmpty()) {
-            groups.add(quarterMatches);
-        }
-        if (!semiMatches.children.isEmpty()) {
-            groups.add(semiMatches);
-        }
-        if (!finalMatches.children.isEmpty()) {
-            groups.add(finalMatches);
-        }
-        return groups;
-    }
-
-    public static ArrayList<Match> getMatchesForTeam(ArrayList<Match> matches, String teamKey) {
-        ArrayList<Match> teamMatches = new ArrayList<>();
-        for (Match match : matches) {
-            try {
-                if (match.getAlliances().toString().contains(teamKey + "\"")) {
-                    teamMatches.add(match);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
-                continue;
-            }
-        }
-        return teamMatches;
     }
 
     /**
