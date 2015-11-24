@@ -93,6 +93,8 @@ public class CompLevelStartingNotificationTest {
           .thenReturn("Finals Matches are scheduled to start at 15:18:00");
         when(res.getString(R.string.notification_level_starting_title, "HIHO"))
           .thenReturn("Competition Level Starting HIHO");
+        when(res.getString(R.string.notification_level_starting, mNotification.getEventName(), "Finals Matches"))
+          .thenReturn("Finals Matches starting");
         Notification notification = mNotification.buildNotification(mContext);
         assertNotNull(notification);
 
@@ -100,7 +102,6 @@ public class CompLevelStartingNotificationTest {
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.LEVEL_STARTING);
         assertEquals(stored.getTitle(), "Competition Level Starting HIHO");
-        assertEquals(stored.getBody(), "Finals Matches are scheduled to start at 15:18:00");
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());

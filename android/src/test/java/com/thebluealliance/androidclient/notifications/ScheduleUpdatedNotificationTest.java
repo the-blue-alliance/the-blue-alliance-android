@@ -76,6 +76,8 @@ public class ScheduleUpdatedNotificationTest {
     public void testBuildNotification() {
         mNotification.parseMessageData();
         when(mContext.getString(R.string.notification_schedule_updated_with_time, "Australia", "15:18:00"))
+          .thenReturn("The match schedule at Australia has been updated.");
+        when(mContext.getString(R.string.notification_schedule_updated_without_time, "Australia"))
           .thenReturn("The match schedule at Australia has been updated. The next match starts at 15:18:00");
         when(mContext.getString(R.string.notification_schedule_updated_title, "AUSY"))
           .thenReturn("Event Schedule Updated AUSY");
@@ -86,7 +88,6 @@ public class ScheduleUpdatedNotificationTest {
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.SCHEDULE_UPDATED);
         assertEquals(stored.getTitle(), "Event Schedule Updated AUSY");
-        assertEquals(stored.getBody(), "The match schedule at Australia has been updated. The next match starts at 15:18:00");
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());
