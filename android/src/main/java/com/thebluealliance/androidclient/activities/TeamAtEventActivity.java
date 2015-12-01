@@ -28,6 +28,7 @@ import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
@@ -160,6 +161,14 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+    }
+
+    @Override
+    protected void onTbaStatusUpdate(APIStatus newStatus) {
+        super.onTbaStatusUpdate(newStatus);
+        if (newStatus.getDownEvents().contains(mEventKey)) {
+            showWarningMessage(getText(R.string.event_not_updating_warning));
+        }
     }
 
     @Override
