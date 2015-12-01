@@ -62,7 +62,6 @@ public class Constants {
                     7, 9, 9, 9, 9, 9, 9};          // 2010 -
 
 
-    public static final int MAX_COMP_YEAR = 2016;
     public static final int FIRST_COMP_YEAR = 1992;
     public static final int FIRST_DISTRICT_YEAR = 2009;
 

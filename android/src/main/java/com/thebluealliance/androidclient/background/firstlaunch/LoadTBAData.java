@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
@@ -30,12 +31,14 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
     private CacheableDatafeed datafeed;
     private LoadTBADataCallbacks callbacks;
     private Context context;
+    private TBAStatusController controller;
     private long startTime;
 
-    public LoadTBAData(CacheableDatafeed datafeed, LoadTBADataCallbacks callbacks, Context c) {
+    public LoadTBAData(CacheableDatafeed datafeed, LoadTBADataCallbacks callbacks, Context c, TBAStatusController controller) {
         this.datafeed = datafeed;
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
+        this.controller = controller;
         this.startTime = System.currentTimeMillis();
     }
 
@@ -64,6 +67,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
          * database and insert all the new teams and events.        *
          */
 
+        int maxCompYear = controller.getMaxCompYear();
         try {
             int maxPageNum = 0;
 
@@ -94,7 +98,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             if (Arrays.binarySearch(dataToLoad, LOAD_EVENTS) != -1) {
                 db.getEventsTable().deleteAllRows();
                 // Now we load all events
-                for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
+                for (int year = Constants.FIRST_COMP_YEAR; year <= maxCompYear; year++) {
                     if (isCancelled()) {
                         return null;
                     }
@@ -111,7 +115,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             if (Arrays.binarySearch(dataToLoad, LOAD_DISTRICTS) != -1) {
                 db.getDistrictsTable().deleteAllRows();
                 //load all districts
-                for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
+                for (int year = Constants.FIRST_DISTRICT_YEAR; year <= maxCompYear; year++) {
                     if (isCancelled()) {
                         return null;
                     }
@@ -139,11 +143,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                 editor.putBoolean(Database.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);
             }
             // Loop through all years
-            for (int year = Constants.FIRST_COMP_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
+            for (int year = Constants.FIRST_COMP_YEAR; year <= maxCompYear; year++) {
                 editor.putBoolean(Database.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             // Loop through years for districts
-            for (int year = Constants.FIRST_DISTRICT_YEAR; year <= Constants.MAX_COMP_YEAR; year++) {
+            for (int year = Constants.FIRST_DISTRICT_YEAR; year <= maxCompYear; year++) {
                 editor.putBoolean(Database.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR + year, true);
             }
             editor.putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE);

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
@@ -15,6 +16,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
 
     DatafeedComponent mComponent;
     @Inject CacheableDatafeed mDatafeed;
+    @Inject TBAStatusController mStatusController;
 
     LoadTBAData.LoadTBADataCallbacks callback;
     private LoadTBAData task;
@@ -53,7 +55,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         }
 
         if (task == null) {
-            task = new LoadTBAData(mDatafeed, this, getActivity());
+            task = new LoadTBAData(mDatafeed, this, getActivity(), mStatusController);
             task.execute(dataToLoad);
         }
     }

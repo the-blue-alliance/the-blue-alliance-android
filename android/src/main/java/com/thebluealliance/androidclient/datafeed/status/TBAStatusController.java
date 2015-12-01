@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.models.APIStatus;
 
+import java.util.Calendar;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -49,6 +51,15 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
         String statusJson = mPrefs.getString(STATUS_PREF_KEY, "");
         return mGson.fromJson(statusJson, APIStatus.class);
+    }
+
+    public int getMaxCompYear() {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
+            Calendar cal = Calendar.getInstance();
+            return cal.get(Calendar.YEAR);
+        }
+        return status.getMaxSeason();
     }
 
     @Override
