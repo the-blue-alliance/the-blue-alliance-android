@@ -62,7 +62,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
 
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
-        ModelType.MODELS modelType = settings.modelType;
+        ModelType modelType = settings.modelType;
 
         ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
         request.setModelKey(modelKey);

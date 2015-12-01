@@ -17,9 +17,9 @@ import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
  */
 public class AllianceListElement extends ListElement implements RenderableModel {
 
-    private int number;
-    private JsonArray teams;
-    private String eventKey;
+    public final int number;
+    public final JsonArray teams;
+    public final String eventKey;
 
     public AllianceListElement(String eventKey, int number, JsonArray teams) {
         if (teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");

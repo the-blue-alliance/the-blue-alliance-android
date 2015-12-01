@@ -92,7 +92,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
-        setModelKey(mTeamKey, ModelType.MODELS.TEAM);
+        setModelKey(mTeamKey, ModelType.TEAM);
         setContentView(R.layout.activity_view_team);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

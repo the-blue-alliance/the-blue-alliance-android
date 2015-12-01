@@ -22,11 +22,11 @@ import com.thebluealliance.androidclient.models.Team;
  */
 public class ModelHelper {
 
-    public static ModelType.MODELS getModelFromEnum(int model_enum) {
-        return ModelType.MODELS.values()[model_enum];
+    public static ModelType getModelFromEnum(int model_enum) {
+        return ModelType.values()[model_enum];
     }
 
-    public static String[] getNotificationTypes(ModelType.MODELS type) {
+    public static String[] getNotificationTypes(ModelType type) {
         Log.d(Constants.LOG_TAG, "getting notifications for: " + type);
         switch (type) {
             case EVENT:
@@ -44,7 +44,7 @@ public class ModelHelper {
         }
     }
 
-    public static Intent getIntentFromKey(Context context, String key, ModelType.MODELS type) {
+    public static Intent getIntentFromKey(Context context, String key, ModelType type) {
         if (type == null) {
             return null;
         }

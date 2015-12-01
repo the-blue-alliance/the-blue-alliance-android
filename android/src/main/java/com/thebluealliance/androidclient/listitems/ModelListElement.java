@@ -18,9 +18,9 @@ public class ModelListElement extends ListElement {
 
     private String text;
     private String key;
-    private ModelType.MODELS type;
+    private ModelType type;
 
-    public ModelListElement(String text, String key, ModelType.MODELS type) {
+    public ModelListElement(String text, String key, ModelType type) {
         this.text = text;
         this.key = key;
         this.type = type;
@@ -34,7 +34,7 @@ public class ModelListElement extends ListElement {
         return key;
     }
 
-    public ModelType.MODELS getType() {
+    public ModelType getType() {
         return type;
     }
 

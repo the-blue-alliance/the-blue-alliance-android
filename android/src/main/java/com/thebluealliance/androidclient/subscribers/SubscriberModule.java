@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
+import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
@@ -33,8 +34,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public EventListSubscriber provideEventListSubscriber() {
-        return new EventListSubscriber();
+    public EventListSubscriber provideEventListSubscriber(EventRenderer renderer) {
+        return new EventListSubscriber(renderer);
     }
 
     @Provides
@@ -63,8 +64,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public AllianceListSubscriber provideAllianceListSubscriber() {
-        return new AllianceListSubscriber();
+    public AllianceListSubscriber provideAllianceListSubscriber(EventRenderer renderer) {
+        return new AllianceListSubscriber(renderer);
     }
 
     @Provides
@@ -120,8 +121,8 @@ public class SubscriberModule {
         return new MatchInfoSubscriber(gson, eventBus);
     }
 
-    @Provides WebcastListSubscriber provideWebcastListSubscriber() {
-        return new WebcastListSubscriber();
+    @Provides WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
+        return new WebcastListSubscriber(renderer);
     }
 
     @Provides

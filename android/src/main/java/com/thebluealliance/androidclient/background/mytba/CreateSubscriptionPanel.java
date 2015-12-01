@@ -28,10 +28,10 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     private boolean favExists;
     private NotificationSettingsFragment fragment;
     private Bundle savedState;
-    private ModelType.MODELS type;
+    private ModelType type;
     private String currentSettings;
 
-    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelType.MODELS type) {
+    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelType type) {
         this.context = context;
         this.fragment = preferenceFragment;
         this.savedState = savedState;

@@ -13,7 +13,7 @@ public class FavoriteSortByModelComparator implements Comparator<Favorite> {
     @Override
     public int compare(Favorite lhs, Favorite rhs) {
         if (lhs.getModelEnum() == rhs.getModelEnum()) {
-            if (lhs.getModelType() == ModelType.MODELS.TEAM) {
+            if (lhs.getModelType() == ModelType.TEAM) {
                 return Integer.compare(TeamHelper.getTeamNumber(lhs.getModelKey()),
                   TeamHelper.getTeamNumber(rhs.getModelKey()));
             }

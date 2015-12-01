@@ -82,7 +82,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
             currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
         }
 
-        setModelKey(mEventKey, ModelType.MODELS.EVENT);
+        setModelKey(mEventKey, ModelType.EVENT);
         setContentView(R.layout.activity_view_event);
 
         infoMessage = (TextView) findViewById(R.id.info_container);
@@ -126,7 +126,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
-        setModelKey(mEventKey, ModelType.MODELS.EVENT);
+        setModelKey(mEventKey, ModelType.EVENT);
         adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();

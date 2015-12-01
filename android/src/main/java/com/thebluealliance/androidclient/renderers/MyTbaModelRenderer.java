@@ -21,14 +21,16 @@ import javax.inject.Singleton;
 public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
 
     private APICache mDatafeed;
+    private EventRenderer mEventRenderer;
 
     @Inject
-    public MyTbaModelRenderer(APICache datafeed) {
+    public MyTbaModelRenderer(APICache datafeed, EventRenderer eventRenderer) {
         mDatafeed = datafeed;
+        mEventRenderer = eventRenderer;
     }
 
     @WorkerThread @Override
-    public @Nullable ListItem renderFromKey(String key, ModelType.MODELS type) {
+    public @Nullable ListItem renderFromKey(String key, ModelType type) {
         String text;
         try {
             switch (type) {
@@ -37,7 +39,7 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     if (event == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return event.render();
+                    return mEventRenderer.renderFromModel(event, null);
                 case TEAM:
                     Team team = mDatafeed.fetchTeam(key).toBlocking().first();
                     if (team == null) {

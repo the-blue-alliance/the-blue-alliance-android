@@ -42,7 +42,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private FloatingActionButton saveModelPreferencesFab;
 
     private String modelKey;
-    private ModelType.MODELS modelType;
+    private ModelType modelType;
 
     private NotificationSettingsFragment settings;
     private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
@@ -54,7 +54,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private View settingsListContainer;
     private View greenContainer;
 
-    public static Intent newInstance(Context context, String modelKey, ModelType.MODELS modelType) {
+    public static Intent newInstance(Context context, String modelKey, ModelType modelType) {
         Intent intent = new Intent(context, MyTBAModelSettingsActivity.class);
         intent.putExtra(EXTRA_MODEL_KEY, modelKey);
         intent.putExtra(EXTRA_MODEL_TYPE, modelType.getEnum());

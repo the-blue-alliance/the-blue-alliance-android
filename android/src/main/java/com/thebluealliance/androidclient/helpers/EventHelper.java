@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.renderers.ModelRenderer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -351,8 +352,8 @@ public class EventHelper {
      * @param events a list of events to render
      * @param output list to render events into
      */
-    public static void renderEventListForTeam(List<Event> events, List<ListItem> output) {
-        renderEventListWithComparator(events, output, new EventSortByTypeAndDateComparator());
+    public static void renderEventListForTeam(List<Event> events, List<ListItem> output, ModelRenderer<Event, ?> renderer) {
+        renderEventListWithComparator(events, output, new EventSortByTypeAndDateComparator(), renderer);
     }
 
     /**
@@ -362,14 +363,15 @@ public class EventHelper {
      * @param events a list of events to render
      * @param output list to render events into
      */
-    public static void renderEventListForWeek(List<Event> events, List<ListItem> output) {
-        renderEventListWithComparator(events,output, new EventSortByTypeAndDateComparator());
+    public static void renderEventListForWeek(List<Event> events, List<ListItem> output, ModelRenderer<Event, ?> renderer) {
+        renderEventListWithComparator(events,output, new EventSortByTypeAndDateComparator(), renderer);
     }
 
     private static void renderEventListWithComparator(
       List<Event> events,
       List<ListItem> output,
-      Comparator<Event> comparator) {
+      Comparator<Event> comparator,
+      ModelRenderer<Event, ?> renderer) {
         Collections.sort(events, comparator);
         EventHelper.TYPE lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
@@ -387,7 +389,7 @@ public class EventHelper {
                         output.add(new EventTypeHeader(currentType.toString()));
                     }
                 }
-                output.add(event.render());
+                output.add(renderer.renderFromModel(event, null));
 
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
@@ -405,7 +407,8 @@ public class EventHelper {
 
     public static void renderEventListForDistrict(
       List<Event> events,
-      List<ListItem> output) {
+      List<ListItem> output,
+      ModelRenderer<Event, ?> renderer) {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
@@ -414,7 +417,7 @@ public class EventHelper {
                 if (!currentHeader.equals(lastHeader)) {
                     output.add(new EventTypeHeader(currentHeader + " Events"));
                 }
-                output.add(event.render());
+                output.add(renderer.renderFromModel(event, null));
 
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up

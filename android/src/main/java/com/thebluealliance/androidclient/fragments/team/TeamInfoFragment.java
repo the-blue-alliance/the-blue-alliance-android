@@ -17,11 +17,13 @@ import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import javax.inject.Inject;
 
+import dagger.Lazy;
 import rx.Observable;
 
 public class TeamInfoFragment
@@ -32,6 +34,7 @@ public class TeamInfoFragment
     private String mTeamKey;
 
     @Inject SocialClickListener mSocialClickListener;
+    @Inject Lazy<EventRenderer> mEventRenderer;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -92,9 +95,10 @@ public class TeamInfoFragment
         });
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(LiveEventEventUpdateEvent event) {
         if (event.getEvent() != null) {
-            showCurrentEvent(event.getEvent().render());
+            showCurrentEvent(mEventRenderer.get().renderFromModel(event.getEvent(), null));
         }
     }
 

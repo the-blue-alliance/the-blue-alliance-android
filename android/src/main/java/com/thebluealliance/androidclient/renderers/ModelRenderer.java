@@ -16,7 +16,7 @@ public interface ModelRenderer<MODEL, ARGS> {
      * @return A ListItem of the rendered model
      */
     @WorkerThread
-    @Nullable ListItem renderFromKey(String key, ModelType.MODELS type);
+    @Nullable ListItem renderFromKey(String key, ModelType type);
 
     @WorkerThread
     @Nullable ListItem renderFromModel(MODEL model, ARGS args);
