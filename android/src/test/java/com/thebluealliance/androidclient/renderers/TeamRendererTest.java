@@ -53,8 +53,14 @@ public class TeamRendererTest {
     }
 
     @Test
-    public void testRenderFromModel() {
-        TeamListElement element = mRenderer.renderFromModel(mTeam, true);
+    public void testRenderFromModelBasic() {
+        TeamListElement element = mRenderer.renderFromModel(mTeam, TeamRenderer.RENDER_BASIC);
+        assertTeamElement(element, false);
+    }
+
+    @Test
+    public void testRenderFromModelDetails() {
+        TeamListElement element = mRenderer.renderFromModel(mTeam, TeamRenderer.RENDER_DETAILS_BUTTON);
         assertTeamElement(element, true);
     }
 

@@ -82,7 +82,7 @@ public class MyTbaModelRendererTest {
         when(mDatafeed.fetchTeam(TEAM_KEY)).thenReturn(Observable.just(team));
 
         mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM);
-        verify(mTeamRenderer).renderFromModel(team, false);
+        verify(mTeamRenderer).renderFromModel(team, TeamRenderer.RENDER_BASIC);
     }
 
     @Test

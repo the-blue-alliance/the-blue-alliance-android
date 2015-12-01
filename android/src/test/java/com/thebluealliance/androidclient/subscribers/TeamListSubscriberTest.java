@@ -46,21 +46,21 @@ public class TeamListSubscriberTest {
 
     @Test
     public void testParsedDataNoButton() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setShowTeamInfoButton(false);
+        mSubscriber.setRenderMode(TeamRenderer.RENDER_BASIC);
         DatafeedTestDriver.getParsedData(mSubscriber, mTeams);
 
         for (int i = 0; i < mTeams.size(); i++) {
-            verify(mRenderer).renderFromModel(mTeams.get(i), false);
+            verify(mRenderer).renderFromModel(mTeams.get(i), TeamRenderer.RENDER_BASIC);
         }
     }
 
     @Test
     public void testParsedDataButton() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setShowTeamInfoButton(true);
+        mSubscriber.setRenderMode(TeamRenderer.RENDER_DETAILS_BUTTON);
         DatafeedTestDriver.getParsedData(mSubscriber, mTeams);
 
         for (int i = 0; i < mTeams.size(); i++) {
-            verify(mRenderer).renderFromModel(mTeams.get(i), true);
+            verify(mRenderer).renderFromModel(mTeams.get(i), TeamRenderer.RENDER_DETAILS_BUTTON);
         }
     }
 }

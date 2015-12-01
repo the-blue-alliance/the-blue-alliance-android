@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.renderers.TeamRenderer;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSub
             mEventKey = getArguments().getString(KEY, "");
         }
         super.onCreate(savedInstanceState);
-        mSubscriber.setShowTeamInfoButton(true);
+        mSubscriber.setRenderMode(TeamRenderer.RENDER_DETAILS_BUTTON);
     }
 
     @Override
