@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,10 +13,12 @@ import java.util.List;
 public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListItem>> {
 
     private TeamSortByNumberComparator mComparator;
+    private TeamRenderer mRenderer;
     private boolean mShowTeamInfoButton = false;
 
-    public TeamListSubscriber() {
+    public TeamListSubscriber(TeamRenderer renderer) {
         super();
+        mRenderer = renderer;
         mDataToBind = new ArrayList<>();
         mComparator = new TeamSortByNumberComparator();
     }
@@ -36,7 +39,7 @@ public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListI
             if (team == null) {
                 continue;
             }
-            ListItem item = team.render(mShowTeamInfoButton);
+            ListItem item = mRenderer.renderFromModel(team, mShowTeamInfoButton);
             if (item == null) {
                 continue;
             }

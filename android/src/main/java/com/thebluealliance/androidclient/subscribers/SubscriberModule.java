@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
+import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import dagger.Module;
 import dagger.Provides;
@@ -49,8 +50,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public TeamListSubscriber provideTeamListSubscriber() {
-        return new TeamListSubscriber();
+    public TeamListSubscriber provideTeamListSubscriber(TeamRenderer renderer) {
+        return new TeamListSubscriber(renderer);
     }
 
     @Provides

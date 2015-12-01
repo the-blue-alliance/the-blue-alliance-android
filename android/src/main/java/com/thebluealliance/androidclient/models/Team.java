@@ -134,20 +134,13 @@ public class Team extends BasicModel<Team> {
         }
     }
 
+    /**
+     * @deprecated in favor of {@link com.thebluealliance.androidclient.renderers.TeamRenderer}
+     */
     @Override
     public TeamListElement render() {
         try {
-            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation());
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
-            return null;
-        }
-    }
-
-    public TeamListElement render(boolean showTeamInfoButton) {
-        try {
-            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
+            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation(), false);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
                     "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");

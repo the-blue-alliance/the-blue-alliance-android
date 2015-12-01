@@ -22,11 +22,16 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
 
     private APICache mDatafeed;
     private EventRenderer mEventRenderer;
+    private TeamRenderer mTeamRenderer;
 
     @Inject
-    public MyTbaModelRenderer(APICache datafeed, EventRenderer eventRenderer) {
+    public MyTbaModelRenderer(
+      APICache datafeed,
+      EventRenderer eventRenderer,
+      TeamRenderer teamRenderer) {
         mDatafeed = datafeed;
         mEventRenderer = eventRenderer;
+        mTeamRenderer = teamRenderer;
     }
 
     @WorkerThread @Override
@@ -45,7 +50,7 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     if (team == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return team.render();
+                    return mTeamRenderer.renderFromModel(team, false);
                 case MATCH:
                     Match match = mDatafeed.fetchMatch(key).toBlocking().first();
                     if (match == null) {

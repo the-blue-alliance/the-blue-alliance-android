@@ -14,8 +14,11 @@ public class RendererModule {
     private static EventRenderer sEventRenderer;
 
     @Provides @Singleton
-    public MyTbaModelRenderer provideMyTbaModelRenderer(APICache cache, EventRenderer eventRenderer) {
-        return new MyTbaModelRenderer(cache, eventRenderer);
+    public MyTbaModelRenderer provideMyTbaModelRenderer(
+      APICache cache,
+      EventRenderer eventRenderer,
+      TeamRenderer teamRenderer) {
+        return new MyTbaModelRenderer(cache, eventRenderer, teamRenderer);
     }
 
     @Provides @Singleton
@@ -26,5 +29,10 @@ public class RendererModule {
     @Provides @Singleton
     public AwardRenderer provideAwardRenderer(APICache cache) {
         return new AwardRenderer(cache);
+    }
+
+    @Provides @Singleton
+    public TeamRenderer provideTeamRenderer(APICache cache) {
+        return new TeamRenderer(cache);
     }
 }

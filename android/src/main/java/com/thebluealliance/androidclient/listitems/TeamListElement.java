@@ -18,23 +18,17 @@ import com.thebluealliance.androidclient.models.Team;
  */
 public class TeamListElement extends ListElement {
 
-    private int mTeamNumber;
-    private String mTeamName;
-    private String mTeamLocation;
-    private boolean mShowLinkToTeamDetails = false;
+    public final int mTeamNumber;
+    public final String mTeamName;
+    public final String mTeamLocation;
+    public final boolean mShowLinkToTeamDetails;
 
     public TeamListElement(Team team) throws BasicModel.FieldNotDefinedException {
         super(team.getKey());
         mTeamNumber = team.getTeamNumber();
         mTeamName = team.getNickname();
         mTeamLocation = team.getLocation();
-    }
-
-    public TeamListElement(String key, int number, String name, String location) {
-        super(key);
-        mTeamNumber = number;
-        mTeamName = name;
-        mTeamLocation = location;
+        mShowLinkToTeamDetails = false;
     }
 
     public TeamListElement(String key, int number, String name, String location, boolean showLinkToTeamDetails) {
