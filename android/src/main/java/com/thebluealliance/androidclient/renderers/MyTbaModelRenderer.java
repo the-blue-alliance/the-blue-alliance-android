@@ -23,15 +23,18 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
     private APICache mDatafeed;
     private EventRenderer mEventRenderer;
     private TeamRenderer mTeamRenderer;
+    private MatchRenderer mMatchRenderer;
 
     @Inject
     public MyTbaModelRenderer(
       APICache datafeed,
       EventRenderer eventRenderer,
-      TeamRenderer teamRenderer) {
+      TeamRenderer teamRenderer,
+      MatchRenderer matchRenderer) {
         mDatafeed = datafeed;
         mEventRenderer = eventRenderer;
         mTeamRenderer = teamRenderer;
+        mMatchRenderer = matchRenderer;
     }
 
     @WorkerThread @Override
@@ -56,7 +59,7 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     if (match == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return match.render();
+                    return mMatchRenderer.renderFromModel(match, MatchRenderer.RENDER_DEFAULT);
                 case EVENTTEAM:
                     String teamKey = EventTeamHelper.getTeamKey(key);
                     String eventKey = EventTeamHelper.getEventKey(key);

@@ -342,6 +342,9 @@ public class Match extends BasicModel<Match> {
         }
     }
 
+    /**
+     * @deprecated in favor of {@link com.thebluealliance.androidclient.renderers.MatchRenderer}
+     */
     public MatchListElement render() {
         return render(true, false, true, true);
     }
@@ -349,7 +352,7 @@ public class Match extends BasicModel<Match> {
     /**
      * Renders a MatchListElement for displaying this match. ASSUMES 3v3 match structure with
      * red/blue alliances Use different render methods for other structures
-     *
+     * @deprecated In favor of {@link com.thebluealliance.androidclient.renderers.MatchRenderer}
      * @return A MatchListElement to be used to display this match
      */
     public MatchListElement render(boolean showVideo, boolean showHeaders, boolean showMatchTitle, boolean clickable) {

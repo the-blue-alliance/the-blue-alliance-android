@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +32,16 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
 
     private Gson mGson;
     private EventBus mEventBus;
+    private MatchRenderer mRenderer;
     private String mMatchTitle;
     private String mMatchKey;
 
-    public MatchInfoSubscriber(Gson gson, EventBus eventBus) {
+    public MatchInfoSubscriber(Gson gson, EventBus eventBus, MatchRenderer renderer) {
         super();
         mDataToBind = new ArrayList<>();
         mGson = gson;
         mEventBus = eventBus;
+        mRenderer = renderer;
         mMatchTitle = null;
         mMatchKey = null;
     }
@@ -50,7 +53,7 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
             return;
         }
 
-        mDataToBind.add(mAPIData.match.render(false, true, false, false));
+        mDataToBind.add(mRenderer.renderFromModel(mAPIData.match, MatchRenderer.RENDER_MATCH_INFO));
 
         mMatchTitle = mAPIData.match.getTitle();
         mMatchKey = mAPIData.match.getKey();

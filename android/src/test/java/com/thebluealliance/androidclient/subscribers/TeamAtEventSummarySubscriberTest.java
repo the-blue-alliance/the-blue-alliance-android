@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 
 import org.junit.Before;
@@ -27,6 +28,7 @@ public class TeamAtEventSummarySubscriberTest {
     @Mock Resources mResources;
     @Mock Event mEvent;
     @Mock EventMatchesEvent mMatchesEvent;
+    @Mock MatchRenderer mMatchRenderer;
 
     TeamAtEventSummarySubscriber mSubscriber;
     Model mData;
@@ -35,7 +37,7 @@ public class TeamAtEventSummarySubscriberTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         when(mResources.getString(anyInt())).thenReturn("");
-        mSubscriber = new TeamAtEventSummarySubscriber(mResources);
+        mSubscriber = new TeamAtEventSummarySubscriber(mResources, mMatchRenderer);
         mSubscriber.setTeamKey("frc1519");
         mData = new Model(
           ModelMaker.getModel(JsonArray.class, "2015necmp_rankings"),

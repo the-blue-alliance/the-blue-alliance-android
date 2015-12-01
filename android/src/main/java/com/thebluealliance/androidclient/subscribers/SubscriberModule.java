@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
@@ -90,8 +91,9 @@ public class SubscriberModule {
         return new TeamStatsSubscriber(mActivity.getResources());
     }
 
-    @Provides TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(Database db) {
-        return new TeamAtEventSummarySubscriber(mActivity.getResources());
+    @Provides
+    TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
+        return new TeamAtEventSummarySubscriber(mActivity.getResources(), renderer);
     }
 
     @Provides EventTabSubscriber provideEventTabsSubscriber() {
@@ -118,8 +120,12 @@ public class SubscriberModule {
         return new TeamAtDistrictBreakdownSubscriber(mActivity.getResources(), db, gson);
     }
 
-    @Provides MatchInfoSubscriber provideMatchInfoSubscriber(Gson gson, EventBus eventBus) {
-        return new MatchInfoSubscriber(gson, eventBus);
+    @Provides
+    MatchInfoSubscriber provideMatchInfoSubscriber(
+      Gson gson,
+      EventBus eventBus,
+      MatchRenderer renderer) {
+        return new MatchInfoSubscriber(gson, eventBus, renderer);
     }
 
     @Provides WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {

@@ -3,11 +3,13 @@ package com.thebluealliance.androidclient.binders;
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module
+@Module(includes = RendererModule.class)
 public class BinderModule {
 
     private final Resources mResources;
@@ -22,8 +24,8 @@ public class BinderModule {
     }
 
     @Provides
-    public EventInfoBinder provideEventInfoBinder() {
-        return new EventInfoBinder();
+    public EventInfoBinder provideEventInfoBinder(MatchRenderer renderer) {
+        return new EventInfoBinder(renderer);
     }
 
     @Provides

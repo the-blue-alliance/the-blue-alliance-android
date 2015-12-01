@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
@@ -42,6 +41,7 @@ public class MyTbaModelRendererTest {
     @Mock APICache mDatafeed;
     @Mock EventRenderer mEventRenderer;
     @Mock TeamRenderer mTeamRenderer;
+    @Mock MatchRenderer mMatchRenderer;
 
     private MyTbaModelRenderer mRenderer;
 
@@ -51,7 +51,7 @@ public class MyTbaModelRendererTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mRenderer = new MyTbaModelRenderer(mDatafeed, mEventRenderer, mTeamRenderer);
+        mRenderer = new MyTbaModelRenderer(mDatafeed, mEventRenderer, mTeamRenderer, mMatchRenderer);
     }
 
     @Test
@@ -101,10 +101,9 @@ public class MyTbaModelRendererTest {
     public void testRenderMatch() {
         Match match = ModelMaker.getModel(Match.class, MATCH_KEY);
         when(mDatafeed.fetchMatch(MATCH_KEY)).thenReturn(Observable.just(match));
-        ListItem item = mRenderer.renderFromKey(MATCH_KEY, ModelType.MATCH);
 
-        assertNotNull(item);
-        assertTrue(item instanceof MatchListElement);
+        mRenderer.renderFromKey(MATCH_KEY, ModelType.MATCH);
+        verify(mMatchRenderer).renderFromModel(match, MatchRenderer.RENDER_DEFAULT);
     }
 
     @Test
