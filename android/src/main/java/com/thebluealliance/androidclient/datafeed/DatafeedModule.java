@@ -22,6 +22,7 @@ import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
@@ -98,6 +99,11 @@ public class DatafeedModule {
     @Provides @Singleton
     public MyTbaDatafeed provideMyTbaDatafeed(Context context, SharedPreferences prefs, Database db) {
         return new MyTbaDatafeed(context, context.getResources(), prefs, db);
+    }
+
+    @Provides @Singleton
+    public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson) {
+        return new TBAStatusController(prefs, gson);
     }
 
     public static Gson getGson() {

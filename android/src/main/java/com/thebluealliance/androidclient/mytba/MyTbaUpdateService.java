@@ -18,6 +18,8 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
+import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
@@ -41,7 +43,7 @@ public class MyTbaUpdateService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mDb = ((TBAAndroid) getApplication()).getModule().provideDatabase();
+        getComponenet().inject(this);
     }
 
     @Override
@@ -120,5 +122,13 @@ public class MyTbaUpdateService extends IntentService {
         }
         subscriptions.add(subscriptionModels);
         Log.d(Constants.LOG_TAG, "Added " + subscriptionModels.size() + " subscriptions");
+    }
+
+    private DatafeedComponent getComponenet() {
+        TBAAndroid application = ((TBAAndroid) getApplication());
+        return DaggerDatafeedComponent.builder()
+          .applicationComponent(application.getComponent())
+          .datafeedModule(application.getDatafeedModule())
+          .build();
     }
 }

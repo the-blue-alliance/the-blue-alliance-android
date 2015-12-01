@@ -250,6 +250,9 @@
         <service
             android:name="com.thebluealliance.androidclient.mytba.MyTbaUpdateService"
             android:exported="false" />
+        <service
+            android:name="com.thebluealliance.androidclient.datafeed.status.StatusRefreshService"
+            android:exported="false" />
     </application>
 
 </manifest>

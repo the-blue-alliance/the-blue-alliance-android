@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.CacheControl;
 import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
+import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -146,4 +147,7 @@ public interface APIv2 {
     Observable<Response<Match>> fetchMatch(
       @Path("matchKey") String matchKey,
       @Header(TBA_CACHE_HEADER) String cacheHeader);
+
+    @GET("/api/v2/status")
+    Observable<Response<APIStatus>> status();
 }
