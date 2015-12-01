@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.models.APIStatus;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import de.greenrobot.event.EventBus;
 import retrofit.Response;
 import rx.schedulers.Schedulers;
 
@@ -26,6 +27,7 @@ public class StatusRefreshService extends IntentService {
 
     @Inject @Named("retrofit") APIv2 mRetrofitAPI;
     @Inject SharedPreferences mPrefs;
+    @Inject EventBus mEventBus;
 
     public StatusRefreshService() {
         super("API Status Refresh");
@@ -52,9 +54,13 @@ public class StatusRefreshService extends IntentService {
         }
         APIStatus status = response.body();
 
+        /* Write the new data to shared prefs */
         mPrefs.edit()
           .putString(TBAStatusController.STATUS_PREF_KEY, status.getJsonBlob())
           .apply();
+
+        /* Post the update to the EventBus */
+        mEventBus.post(status);
     }
 
     private DatafeedComponent getComponenet() {

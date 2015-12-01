@@ -115,8 +115,8 @@ public class GamedayActivity extends BaseActivity
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        mWarningMessage.setText(message);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
         mWarningMessage.setVisibility(View.VISIBLE);
     }
 

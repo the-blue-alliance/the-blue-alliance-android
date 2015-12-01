@@ -22,6 +22,8 @@ import javax.inject.Singleton;
 public class TBAStatusController implements Application.ActivityLifecycleCallbacks {
 
     public static final String STATUS_PREF_KEY = "tba_status";
+
+    /* 15 minutes in nanoseconds */
     private static final double UPDATE_TIMEOUT_NS = 9e+11;
 
     private SharedPreferences mPrefs;

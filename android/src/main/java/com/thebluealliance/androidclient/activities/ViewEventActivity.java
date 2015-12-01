@@ -212,9 +212,9 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        this.warningMessage.setText(warningMessage);
+        this.warningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override

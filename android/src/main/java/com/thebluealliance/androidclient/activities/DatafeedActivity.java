@@ -7,11 +7,13 @@ import android.view.MenuItem;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.interfaces.InvalidateHost;
+import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import javax.inject.Inject;
@@ -25,6 +27,9 @@ public abstract class DatafeedActivity extends BaseActivity
   implements HasFragmentComponent, InvalidateHost {
 
     @Inject RefreshController mRefreshController;
+    @Inject TBAStatusController mStatusController;
+    @Inject EventBus mEventBus;
+
     protected FragmentComponent mComponent;
     protected Menu mOptionsMenu;
 
@@ -69,15 +74,32 @@ public abstract class DatafeedActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        mEventBus.register(this);
+        APIStatus status = mStatusController.fetchApiStatus();
+        if (status != null) {
+            if (status.isFmsApiDown()) {
+                showWarningMessage(getText(R.string.first_datafeed_down_warning));
+            } else {
+                onTbaStatusUpdate(status);
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        mEventBus.unregister(this);
     }
 
+    /**
+     * Extending activities can override this method to respond to TBA status updates
+     * @param newStatus The new API Status
+     */
+    protected void onTbaStatusUpdate(APIStatus newStatus) {
+        // Default to do nothing
+    }
+
+    @SuppressWarnings("unused")
     public void onEvent(ConnectivityChangeEvent event) {
         if (event.getConnectivityChangeType() == ConnectivityChangeEvent.CONNECTION_FOUND) {
             hideWarningMessage();
@@ -85,6 +107,21 @@ public abstract class DatafeedActivity extends BaseActivity
         } else {
             showWarningMessage(getString(R.string.warning_no_internet_connection));
         }
+    }
+
+    /**
+     * Receive a notification for an to TBA status
+     */
+    @SuppressWarnings("unused")
+    public void onEvent(APIStatus tbaStatus) {
+        if (tbaStatus.isFmsApiDown()) {
+            /* Everything is broken */
+            showWarningMessage(getText(R.string.first_datafeed_down_warning));
+            return;
+        }
+
+        /* Otherwise, let extending classes check their own event keys */
+        onTbaStatusUpdate(tbaStatus);
     }
 
     public abstract void inject();

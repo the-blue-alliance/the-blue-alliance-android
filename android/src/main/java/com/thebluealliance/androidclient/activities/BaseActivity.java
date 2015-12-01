@@ -100,7 +100,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
         // Do nothing by default
     }
 
