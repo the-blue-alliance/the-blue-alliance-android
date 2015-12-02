@@ -56,6 +56,9 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
       @Nullable String sqlWhere,
       @Nullable String[] whereArgs,
       T newModels) {
+        if (newModels == null) {
+            return;
+        }
         Schedulers.io().createWorker().schedule(() -> {
             mDb.getWritableDatabase().beginTransaction();
             try {

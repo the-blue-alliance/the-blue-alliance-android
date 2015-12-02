@@ -3,19 +3,22 @@ package com.thebluealliance.androidclient.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
 
-/**
- * Created by Nathan on 4/22/2014.
- */
 public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    //TODO: don't hardcode this, use value from database
-    private int mCount = 6;
+    private static final int TEAMS_PER_TAB = 1000;
 
-    public TeamListFragmentPagerAdapter(FragmentManager fm) {
+    private int mCount;
+
+    public TeamListFragmentPagerAdapter(FragmentManager fm, int largestTeamNumber) {
         super(fm);
+        mCount = (largestTeamNumber / TEAMS_PER_TAB) + 1;
+        Log.d(Constants.LOG_TAG, "LARGEST TEAM: " + largestTeamNumber);
+        Log.d(Constants.LOG_TAG, "USING " + mCount + " PAGES");
     }
 
     @Override
