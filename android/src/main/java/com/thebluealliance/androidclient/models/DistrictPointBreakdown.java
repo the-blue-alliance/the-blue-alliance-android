@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 
 /**
  * File created by phil on 7/26/14.
@@ -122,6 +123,9 @@ public class DistrictPointBreakdown implements RenderableModel {
         this.districtKey = districtKey;
     }
 
+    /**
+     * @deprecated in favor of {@link DistrictPointBreakdownRenderer}
+     */
     @Override
     public DistrictTeamListElement render() {
         return new DistrictTeamListElement(teamKey, districtKey, teamName, rank, totalPoints);

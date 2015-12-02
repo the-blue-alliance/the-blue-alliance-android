@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,11 +24,13 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
     private Database mDb;
     private String mEventKey;
     private Gson mGson;
+    private DistrictPointBreakdownRenderer mRenderer;
 
-    public DistrictPointsListSubscriber(Database db, Gson gson) {
+    public DistrictPointsListSubscriber(Database db, Gson gson, DistrictPointBreakdownRenderer renderer) {
         super();
         mDb = db;
         mGson = gson;
+        mRenderer = renderer;
         mDataToBind = new Type();
     }
 
@@ -75,7 +78,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
 
         for (int i = 0; i < pointBreakdowns.size(); i++) {
             pointBreakdowns.get(i).setRank(i + 1);
-            mDataToBind.add(pointBreakdowns.get(i).render());
+            mDataToBind.add(mRenderer.renderFromModel(pointBreakdowns.get(i), null));
         }
     }
 

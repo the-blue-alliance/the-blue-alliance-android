@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
+import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -75,8 +76,9 @@ public class SubscriberModule {
     @Provides
     public DistrictPointsListSubscriber provideDistrictPointsListSubscriber(
       Database db,
-      Gson gson) {
-        return new DistrictPointsListSubscriber(db, gson);
+      Gson gson,
+      DistrictPointBreakdownRenderer renderer) {
+        return new DistrictPointsListSubscriber(db, gson, renderer);
     }
 
     @Provides

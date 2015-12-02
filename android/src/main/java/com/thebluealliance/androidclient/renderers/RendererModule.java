@@ -52,4 +52,9 @@ public class RendererModule {
     public MediaRenderer provideMediaRenderer() {
         return new MediaRenderer();
     }
+
+    @Provides @Singleton
+    public DistrictPointBreakdownRenderer provideDistrictPointBreakdownRenderer() {
+        return new DistrictPointBreakdownRenderer();
+    }
 }
