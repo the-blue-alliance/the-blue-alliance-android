@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.helpers.MediaType;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -60,8 +61,8 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
         JsonArray matchVideos = mAPIData.match.getVideos();
         for (int i = 0; i < matchVideos.size(); i++) {
             JsonElement video = matchVideos.get(i);
-            if (Media.TYPE.fromString(video.getAsJsonObject().get("type").getAsString()) !=
-              Media.TYPE.NONE) {
+            if (MediaType.fromString(video.getAsJsonObject().get("type").getAsString()) !=
+              MediaType.NONE) {
                 mDataToBind.add(mGson.fromJson(video, Media.class).render());
             }
         }
