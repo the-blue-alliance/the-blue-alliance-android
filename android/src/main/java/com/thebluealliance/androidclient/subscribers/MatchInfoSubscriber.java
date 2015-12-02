@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.renderers.MediaRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +35,17 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
     private Gson mGson;
     private EventBus mEventBus;
     private MatchRenderer mRenderer;
+    private MediaRenderer mMediaRenderer;
     private String mMatchTitle;
     private String mMatchKey;
 
-    public MatchInfoSubscriber(Gson gson, EventBus eventBus, MatchRenderer renderer) {
+    public MatchInfoSubscriber(Gson gson, EventBus eventBus, MatchRenderer renderer, MediaRenderer mediaRenderer) {
         super();
         mDataToBind = new ArrayList<>();
         mGson = gson;
         mEventBus = eventBus;
         mRenderer = renderer;
+        mMediaRenderer = mediaRenderer;
         mMatchTitle = null;
         mMatchKey = null;
     }
@@ -63,7 +66,8 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
             JsonElement video = matchVideos.get(i);
             if (MediaType.fromString(video.getAsJsonObject().get("type").getAsString()) !=
               MediaType.NONE) {
-                mDataToBind.add(mGson.fromJson(video, Media.class).render());
+                Media media = mGson.fromJson(video, Media.class);
+                mDataToBind.add(mMediaRenderer.renderFromModel(media, null));
             }
         }
 

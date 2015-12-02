@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 
 import org.junit.Before;
@@ -45,13 +46,15 @@ public class MatchInfoSubscriberTest {
     private Gson mGson;
     private Model mData;
     private MatchRenderer mRenderer;
+    private MediaRenderer mMediaRenderer;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mGson = DatafeedModule.getGson();
         mRenderer = spy(new MatchRenderer(mCache));
-        mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer);
+        mMediaRenderer = spy(new MediaRenderer());
+        mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer, mMediaRenderer);
         mData = new Model(
           ModelMaker.getModel(Match.class, "2015necmp_f1m1"),
           ModelMaker.getModel(Event.class, "2015necmp"));
@@ -80,6 +83,6 @@ public class MatchInfoSubscriberTest {
         ImageListElement video = (ImageListElement) data.get(1);
 
         verify(mRenderer).renderFromModel(mData.match, MatchRenderer.RENDER_MATCH_INFO);
-        assertEquals(videoItem.render(), video);
+        assertTrue(video.equals(mMediaRenderer.renderFromModel(videoItem, null)));
     }
 }

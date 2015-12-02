@@ -99,6 +99,9 @@ public class Media extends BasicModel<Media> {
         fields.put(MediasTable.YEAR, year);
     }
 
+    /**
+     * @deprecated in favor of {@link com.thebluealliance.androidclient.renderers.MediaRenderer}
+     */
     @Override
     public ListElement render() {
         String imageUrl;

@@ -47,4 +47,9 @@ public class RendererModule {
     public DistrictRenderer provideDistrictRenderer(APICache cache) {
         return new DistrictRenderer(cache);
     }
+
+    @Provides @Singleton
+    public MediaRenderer provideMediaRenderer() {
+        return new MediaRenderer();
+    }
 }
