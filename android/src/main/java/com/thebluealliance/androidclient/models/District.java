@@ -97,6 +97,9 @@ public class District extends BasicModel<District> {
         return numEvents;
     }
 
+    /**
+     * @deprecated in favor of {@link com.thebluealliance.androidclient.renderers.DistrictRenderer}
+     */
     @Override
     public DistrictListElement render() {
         try {

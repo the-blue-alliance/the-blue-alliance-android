@@ -18,8 +18,9 @@ public class RendererModule {
       APICache cache,
       EventRenderer eventRenderer,
       TeamRenderer teamRenderer,
-      MatchRenderer matchRenderer) {
-        return new MyTbaModelRenderer(cache, eventRenderer, teamRenderer, matchRenderer);
+      MatchRenderer matchRenderer,
+      DistrictRenderer districtRenderer) {
+        return new MyTbaModelRenderer(cache, eventRenderer, teamRenderer, matchRenderer, districtRenderer);
     }
 
     @Provides @Singleton
@@ -40,5 +41,10 @@ public class RendererModule {
     @Provides @Singleton
     public MatchRenderer provideMatchRenderer(APICache cache) {
         return new MatchRenderer(cache);
+    }
+
+    @Provides @Singleton
+    public DistrictRenderer provideDistrictRenderer(APICache cache) {
+        return new DistrictRenderer(cache);
     }
 }

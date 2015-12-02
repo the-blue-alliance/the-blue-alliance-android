@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictType;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -334,7 +334,7 @@ public class APICache {
             try {
                 String where =
                   String.format("$1%s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.DISTRICT);
-                int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtShort).ordinal();
+                int districtEnum = DistrictType.fromAbbreviation(districtShort).ordinal();
                 List<Event> events = mDb.getEventsTable().getForQuery(
                   null,
                   where,
@@ -354,7 +354,7 @@ public class APICache {
                   "%1$s = ? AND %2$s = ?",
                   DistrictTeamsTable.YEAR,
                   DistrictTeamsTable.DISTRICT_ENUM);
-                int districtEnum = DistrictHelper.DISTRICTS.fromAbbreviation(districtShort).ordinal();
+                int districtEnum = DistrictType.fromAbbreviation(districtShort).ordinal();
                 List<DistrictTeam> districtTeams = mDb.getDistrictTeamsTable().getForQuery(
                   null,
                   where,

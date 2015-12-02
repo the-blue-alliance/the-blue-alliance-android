@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.renderers;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.ModelType;
-import com.thebluealliance.androidclient.listitems.DistrictListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.District;
@@ -42,6 +41,7 @@ public class MyTbaModelRendererTest {
     @Mock EventRenderer mEventRenderer;
     @Mock TeamRenderer mTeamRenderer;
     @Mock MatchRenderer mMatchRenderer;
+    @Mock DistrictRenderer mDistrictRenderer;
 
     private MyTbaModelRenderer mRenderer;
 
@@ -51,7 +51,7 @@ public class MyTbaModelRendererTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mRenderer = new MyTbaModelRenderer(mDatafeed, mEventRenderer, mTeamRenderer, mMatchRenderer);
+        mRenderer = new MyTbaModelRenderer(mDatafeed, mEventRenderer, mTeamRenderer, mMatchRenderer, mDistrictRenderer);
     }
 
     @Test
@@ -153,8 +153,7 @@ public class MyTbaModelRendererTest {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(district));
 
         ListItem item = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT);
-        assertNotNull(item);
-        assertTrue(item instanceof DistrictListElement);
+        verify(mDistrictRenderer).renderFromKey(DISTRICT_KEY, ModelType.DISTRICT);
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
+import com.thebluealliance.androidclient.renderers.DistrictRenderer;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
@@ -100,8 +101,9 @@ public class SubscriberModule {
         return new EventTabSubscriber();
     }
 
-    @Provides DistrictListSubscriber provideDistrictListSubscriber(Database db) {
-        return new DistrictListSubscriber(db);
+    @Provides
+    DistrictListSubscriber provideDistrictListSubscriber(Database db, DistrictRenderer renderer) {
+        return new DistrictListSubscriber(db, renderer);
     }
 
     @Provides DistrictRankingsSubscriber provideDistrictRankingsSubscriber(Database db) {

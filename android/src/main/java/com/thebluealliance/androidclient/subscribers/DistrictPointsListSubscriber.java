@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictType;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
@@ -51,8 +51,8 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
         Event event = mDb.getEventsTable().get(mEventKey);
 
         if (event != null) {
-            DistrictHelper.DISTRICTS type = DistrictHelper.DISTRICTS.fromEnum(event.getDistrictEnum());
-            boolean isDistrict = type != DistrictHelper.DISTRICTS.NO_DISTRICT;
+            DistrictType type = DistrictType.fromEnum(event.getDistrictEnum());
+            boolean isDistrict = type != DistrictType.NO_DISTRICT;
             ((Type)mDataToBind).isDistrict = isDistrict;
             if (isDistrict) {
                 districtKey = mEventKey.substring(0, 4) + type.getAbbreviation();

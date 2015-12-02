@@ -6,10 +6,10 @@ import android.support.annotation.WorkerThread;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.listitems.DistrictListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
@@ -24,17 +24,20 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
     private EventRenderer mEventRenderer;
     private TeamRenderer mTeamRenderer;
     private MatchRenderer mMatchRenderer;
+    private DistrictRenderer mDistrictRenderer;
 
     @Inject
     public MyTbaModelRenderer(
       APICache datafeed,
       EventRenderer eventRenderer,
       TeamRenderer teamRenderer,
-      MatchRenderer matchRenderer) {
+      MatchRenderer matchRenderer,
+      DistrictRenderer districtRenderer) {
         mDatafeed = datafeed;
         mEventRenderer = eventRenderer;
         mTeamRenderer = teamRenderer;
         mMatchRenderer = matchRenderer;
+        mDistrictRenderer = districtRenderer;
     }
 
     @WorkerThread @Override
@@ -75,11 +78,11 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                       eEvent.getEventShortName());
                     return new ModelListElement(text, key, type);
                 case DISTRICT:
-                    District district = mDatafeed.fetchDistrict(key).toBlocking().first();
-                    if (district == null) {
+                    DistrictListElement element = mDistrictRenderer.renderFromKey(key, ModelType.DISTRICT);
+                    if (element == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return district.render();
+                    return element;
                 default:
                     return null;
             }
