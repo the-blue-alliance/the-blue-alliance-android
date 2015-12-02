@@ -11,15 +11,22 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
+import com.thebluealliance.androidclient.database.writers.EventListWriter;
+import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import rx.schedulers.Schedulers;
 
 public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, Void> {
 
@@ -33,13 +40,22 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
     private Context context;
     private TBAStatusController controller;
     private long startTime;
+    private Database mDb;
+    private TeamListWriter mTeamWriter;
+    private EventListWriter mEventWriter;
+    private DistrictListWriter mDistrictWriter;
 
-    public LoadTBAData(CacheableDatafeed datafeed, LoadTBADataCallbacks callbacks, Context c, TBAStatusController controller) {
+    public LoadTBAData(CacheableDatafeed datafeed, LoadTBADataCallbacks callbacks, Context c, TBAStatusController controller,
+                       Database db, TeamListWriter teamWriter, EventListWriter eventWriter, DistrictListWriter districtWriter) {
         this.datafeed = datafeed;
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
         this.controller = controller;
         this.startTime = System.currentTimeMillis();
+        this.mDb = db;
+        this.mTeamWriter = teamWriter;
+        this.mEventWriter = eventWriter;
+        this.mDistrictWriter = districtWriter;
     }
 
     @Override
@@ -72,10 +88,10 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             int maxPageNum = 0;
 
             // First, wipe all relevant data from the database
-            Database db = Database.getInstance(context);
 
+            List<Team> allTeams = new ArrayList<>();
             if (Arrays.binarySearch(dataToLoad, LOAD_TEAMS) != -1) {
-                db.getTeamsTable().deleteAllRows();
+                mDb.getTeamsTable().deleteAllRows();
                 // First we will load all the teams
                 for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
                     if (isCancelled()) {
@@ -86,17 +102,19 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     start = start == 0 ? 1 : start;
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
                     List<Team> teamListResponse;
-                    teamListResponse = datafeed.fetchTeamPage(pageNum, null).toBlocking().last();
-                    if (teamListResponse != null && teamListResponse.size() == 0) {
+                    teamListResponse = datafeed.fetchTeamPage(pageNum, APIv2.TBA_CACHE_WEB).toBlocking().last();
+                    if (teamListResponse == null || teamListResponse.size() == 0) {
                         // No teams found for a page; we are done
                         break;
                     }
+                    allTeams.addAll(teamListResponse);
                     maxPageNum = Math.max(maxPageNum, pageNum);
                 }
             }
 
+            List<Event> allEvents = new ArrayList<>();
             if (Arrays.binarySearch(dataToLoad, LOAD_EVENTS) != -1) {
-                db.getEventsTable().deleteAllRows();
+                mDb.getEventsTable().deleteAllRows();
                 // Now we load all events
                 for (int year = Constants.FIRST_COMP_YEAR; year <= maxCompYear; year++) {
                     if (isCancelled()) {
@@ -104,16 +122,18 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
                     List<Event> eventListResponse;
-                    eventListResponse = datafeed.fetchEventsInYear(year, null).toBlocking().last();
+                    eventListResponse = datafeed.fetchEventsInYear(year, APIv2.TBA_CACHE_WEB).toBlocking().last();
                     if (eventListResponse == null) {
                         continue;
                     }
+                    allEvents.addAll(eventListResponse);
                     Log.i(Constants.LOG_TAG, String.format("Loaded %1$d events in %2$d", eventListResponse.size(), year));
                 }
             }
 
+            List<District> allDistricts = new ArrayList<>();
             if (Arrays.binarySearch(dataToLoad, LOAD_DISTRICTS) != -1) {
-                db.getDistrictsTable().deleteAllRows();
+                mDb.getDistrictsTable().deleteAllRows();
                 //load all districts
                 for (int year = Constants.FIRST_DISTRICT_YEAR; year <= maxCompYear; year++) {
                     if (isCancelled()) {
@@ -121,10 +141,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
                     List<District> districtListResponse;
-                    districtListResponse = datafeed.fetchDistrictList(year, null).toBlocking().last();
+                    districtListResponse = datafeed.fetchDistrictList(year, APIv2.TBA_CACHE_WEB).toBlocking().last();
                     if (districtListResponse == null) {
                         continue;
                     }
+                    allDistricts.addAll(districtListResponse);
                     Log.i(Constants.LOG_TAG, String.format("Loaded %1$d districts in %2$d", districtListResponse.size(), year));
                 }
             }
@@ -136,6 +157,12 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
 
+            Log.i(Constants.LOG_TAG, "Writing " + allTeams.size() + " teams");
+            Schedulers.io().createWorker().schedule(() -> mTeamWriter.write(allTeams));
+            Log.i(Constants.LOG_TAG, "Writing " + allEvents.size() + " events");
+            Schedulers.io().createWorker().schedule(() -> mEventWriter.write(allEvents));
+            Log.i(Constants.LOG_TAG, "Writing " + allDistricts.size() + " districts");
+            Schedulers.io().createWorker().schedule(() -> mDistrictWriter.write(allDistricts));
 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             // Loop through all pages

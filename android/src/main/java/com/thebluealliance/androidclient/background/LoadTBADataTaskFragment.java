@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
+import com.thebluealliance.androidclient.database.writers.EventListWriter;
+import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
@@ -16,6 +20,10 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
 
     DatafeedComponent mComponent;
     @Inject CacheableDatafeed mDatafeed;
+    @Inject Database mDb;
+    @Inject TeamListWriter mTeamWriter;
+    @Inject EventListWriter mEventWriter;
+    @Inject DistrictListWriter mDistrictWriter;
     @Inject TBAStatusController mStatusController;
 
     LoadTBAData.LoadTBADataCallbacks callback;
@@ -30,6 +38,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         if (getActivity() instanceof HasDatafeedComponent) {
             mComponent = ((HasDatafeedComponent) getActivity()).getComponent();
         }
+        mComponent.inject(this);
         mDatafeed = mComponent.datafeed();
 
         if (activity instanceof LoadTBAData.LoadTBADataCallbacks) {
@@ -55,7 +64,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         }
 
         if (task == null) {
-            task = new LoadTBAData(mDatafeed, this, getActivity(), mStatusController);
+            task = new LoadTBAData(mDatafeed, this, getActivity(), mStatusController, mDb, mTeamWriter, mEventWriter, mDistrictWriter);
             task.execute(dataToLoad);
         }
     }

@@ -24,9 +24,7 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
@@ -37,8 +35,6 @@ import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
-
-import java.util.Calendar;
 
 import javax.inject.Inject;
 
@@ -82,7 +78,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        getComponenet().inject(this);
+        inject();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -125,11 +121,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             } else {
-                if (Calendar.getInstance().get(Calendar.YEAR) == mMaxCompYear) {
-                    mCurrentSelectedYearPosition = 0;
-                } else {
-                    mCurrentSelectedYearPosition = 1;
-                }
+                mCurrentSelectedYearPosition = 0;
             }
 
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
@@ -139,11 +131,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 switchToModeForId(R.id.nav_item_events);
             }
         } else {
-            if (Calendar.getInstance().get(Calendar.YEAR) == mMaxCompYear) {
-                mCurrentSelectedYearPosition = 0;
-            } else {
-                mCurrentSelectedYearPosition = 1;
-            }
+            mCurrentSelectedYearPosition = 0;
             switchToModeForId(initNavId);
         }
 
@@ -404,13 +392,5 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
               .build();
         }
         return mComponent;
-    }
-
-    private DatafeedComponent getComponenet() {
-        TBAAndroid application = ((TBAAndroid) getApplication());
-        return DaggerDatafeedComponent.builder()
-          .applicationComponent(application.getComponent())
-          .datafeedModule(application.getDatafeedModule())
-          .build();
     }
 }

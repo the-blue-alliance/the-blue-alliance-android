@@ -16,6 +16,7 @@ public class Constants {
     // !!!!DO NOT MODIFY!!!!
     public static final String ALL_DATA_LOADED_KEY = "all_data_loaded";
     public static final String APP_VERSION_KEY = "app_version";
+    public static final String LAST_YEAR_KEY = "last_season";
 
     public static final HashMap<String, String> MATCH_LEVELS;
     public static final HashMap<Media.TYPE, String> MEDIA_IMG_URL_PATTERN,
