@@ -26,6 +26,7 @@ import rx.Observable;
  */
 public interface APIv2 {
 
+    String DEV_TBA_PREF_KEY = "tba_host";
     String TBA_URL = "https://www.thebluealliance.com/";
 
     /**

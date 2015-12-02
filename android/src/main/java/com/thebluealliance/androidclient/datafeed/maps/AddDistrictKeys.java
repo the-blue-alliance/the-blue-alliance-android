@@ -20,6 +20,9 @@ public class AddDistrictKeys implements Func1<List<District>, List<District>> {
 
     @Override
     public List<District> call(List<District> districts) {
+        if (districts == null) {
+            return null;
+        }
         for (int i = 0; i < districts.size(); i++) {
             District district = districts.get(i);
             try {

@@ -2,11 +2,14 @@ package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
@@ -23,6 +26,7 @@ import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
@@ -32,7 +36,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -50,8 +53,8 @@ public class DatafeedModule {
     public DatafeedModule() {}
 
     @Provides @Singleton
-    public Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
-        return getRetrofit(gson, okHttpClient);
+    public Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
+        return getRetrofit(gson, okHttpClient, prefs);
     }
 
     @Provides @Singleton @Named("retrofit")
@@ -120,9 +123,13 @@ public class DatafeedModule {
         return builder.create();
     }
 
-    public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient) {
+    public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
+        String baseUrl = Utilities.isDebuggable()
+          ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
+          : APIv2.TBA_URL;
+        Log.d(Constants.LOG_TAG, "Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
-          .baseUrl(APIv2.TBA_URL)
+          .baseUrl(baseUrl)
           .client(okHttpClient)
           .addConverterFactory(LenientGsonConverterFactory.create(gson))
           .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
