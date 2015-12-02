@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
-import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
@@ -35,7 +35,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             LOAD_EVENTS = 1,
             LOAD_DISTRICTS = 2;
 
-    private CacheableDatafeed datafeed;
+    private APIv2 datafeed;
     private LoadTBADataCallbacks callbacks;
     private Context context;
     private TBAStatusController controller;
@@ -45,7 +45,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
     private EventListWriter mEventWriter;
     private DistrictListWriter mDistrictWriter;
 
-    public LoadTBAData(CacheableDatafeed datafeed, LoadTBADataCallbacks callbacks, Context c, TBAStatusController controller,
+    public LoadTBAData(APIv2 datafeed, LoadTBADataCallbacks callbacks, Context c, TBAStatusController controller,
                        Database db, TeamListWriter teamWriter, EventListWriter eventWriter, DistrictListWriter districtWriter) {
         this.datafeed = datafeed;
         this.callbacks = callbacks;
@@ -102,7 +102,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     start = start == 0 ? 1 : start;
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
                     List<Team> teamListResponse;
-                    teamListResponse = datafeed.fetchTeamPage(pageNum, APIv2.TBA_CACHE_WEB).toBlocking().last();
+                    teamListResponse = datafeed.fetchTeamPage(pageNum, APIv2.TBA_CACHE_WEB).toBlocking().first().body();
                     if (teamListResponse == null || teamListResponse.size() == 0) {
                         // No teams found for a page; we are done
                         break;
@@ -122,7 +122,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
                     List<Event> eventListResponse;
-                    eventListResponse = datafeed.fetchEventsInYear(year, APIv2.TBA_CACHE_WEB).toBlocking().last();
+                    eventListResponse = datafeed.fetchEventsInYear(year, APIv2.TBA_CACHE_WEB).toBlocking().first().body();
                     if (eventListResponse == null) {
                         continue;
                     }
@@ -141,7 +141,9 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
                     List<District> districtListResponse;
-                    districtListResponse = datafeed.fetchDistrictList(year, APIv2.TBA_CACHE_WEB).toBlocking().last();
+                    AddDistrictKeys keyAdder = new AddDistrictKeys(year);
+                    districtListResponse = datafeed.fetchDistrictList(year, APIv2.TBA_CACHE_WEB).toBlocking().first().body();
+                    keyAdder.call(districtListResponse);
                     if (districtListResponse == null) {
                         continue;
                     }

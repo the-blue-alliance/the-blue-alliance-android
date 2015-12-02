@@ -9,17 +9,18 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
-import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
     DatafeedComponent mComponent;
-    @Inject CacheableDatafeed mDatafeed;
+    @Inject @Named("retrofit") APIv2 mDatafeed;
     @Inject Database mDb;
     @Inject TeamListWriter mTeamWriter;
     @Inject EventListWriter mEventWriter;
@@ -39,7 +40,6 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
             mComponent = ((HasDatafeedComponent) getActivity()).getComponent();
         }
         mComponent.inject(this);
-        mDatafeed = mComponent.datafeed();
 
         if (activity instanceof LoadTBAData.LoadTBADataCallbacks) {
             callback = (LoadTBAData.LoadTBADataCallbacks) activity;
