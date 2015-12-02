@@ -65,8 +65,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         APIStatus status = fetchApiStatus();
         if (status == null) {
             Calendar cal = Calendar.getInstance();
-            return 2016;
-            //return cal.get(Calendar.YEAR);
+            return cal.get(Calendar.YEAR);
         }
         return status.getMaxSeason();
     }
