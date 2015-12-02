@@ -43,6 +43,7 @@ public class StatusRefreshService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(Constants.LOG_TAG, "Updating TBA Status");
         Schedulers.io().createWorker().schedule(this::updateTbaStatus);
     }
 

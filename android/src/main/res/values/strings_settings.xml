@@ -27,6 +27,9 @@
     <string name="pref_select_account">Select Account</string>
     <string name="pref_redownload_data">Redownload data</string>
     <string name="pref_redownload_data_detail">Returns to Launch Activity for data download</string>
+    <string name="pref_update_status">Update TBA API Status</string>
+    <string name="pref_update_status_detail">Update API Status, includes max season and down events</string>
+    <string name="update_status_launched">Status Update Enqueued. Restart your app in 1 minute to apply</string>
 
     <!-- Settings -->
     <string name="settings_build_info_label">Build Info</string>

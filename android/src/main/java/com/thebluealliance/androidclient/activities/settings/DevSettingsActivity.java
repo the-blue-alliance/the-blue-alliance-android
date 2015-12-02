@@ -7,6 +7,7 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.Analytics;
@@ -15,6 +16,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.models.Favorite;
 
@@ -63,6 +65,15 @@ public class DevSettingsActivity extends AppCompatActivity {
                 Intent redownloadIntent = new Intent(getActivity(), RedownloadActivity.class);
                 redownloadIntent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
                 startActivity(redownloadIntent);
+                return true;
+            });
+
+            Preference updateStatus = findPreference("update_api_status");
+            updateStatus.setOnPreferenceClickListener(preference -> {
+                Intent serviceIntent = new Intent(getActivity(), StatusRefreshService.class);
+                getActivity().startService(serviceIntent);
+                Toast.makeText(getActivity(), R.string.update_status_launched, Toast.LENGTH_SHORT)
+                  .show();
                 return true;
             });
 

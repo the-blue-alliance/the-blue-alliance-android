@@ -13,6 +13,12 @@
             android:key="tba_host"
             android:summary="@string/pref_tba_host_detail"
             android:title="@string/pref_tba_host" />
+        <Preference
+            android:key="update_api_status"
+            android:persistent="false"
+            android:selectable="true"
+            android:summary="@string/pref_update_status_detail"
+            android:title="@string/pref_update_status" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="analytics_debug_key"
