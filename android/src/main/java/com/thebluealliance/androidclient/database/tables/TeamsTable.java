@@ -72,6 +72,11 @@ public class TeamsTable extends ModelTable<Team> {
         mDb.delete(Database.TABLE_SEARCH_TEAMS, Database.SearchTeam.KEY + " = ?", new String[]{team.getKey()});
     }
 
+    @Override
+    protected void deleteAllCallback() {
+        mDb.execSQL("delete from " + Database.TABLE_SEARCH_TEAMS);
+    }
+
     public String getTableName() {
         return Database.TABLE_TEAMS;
     }

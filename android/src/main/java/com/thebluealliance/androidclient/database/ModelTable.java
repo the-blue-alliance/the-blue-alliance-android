@@ -261,6 +261,7 @@ public abstract class ModelTable<T extends BasicModel> {
      */
     public final void deleteAllRows() {
         mDb.execSQL("delete from " + getTableName());
+        deleteAllCallback();
     }
 
     /**
@@ -305,6 +306,14 @@ public abstract class ModelTable<T extends BasicModel> {
      * @param model Model that wasa deleted
      */
     protected void deleteCallback(T model){
+        // default to no op
+    }
+
+    /**
+     * Called after deleting all rows in the table
+     * Override to let extendors do something else they need to
+     */
+    protected void deleteAllCallback() {
         // default to no op
     }
 
