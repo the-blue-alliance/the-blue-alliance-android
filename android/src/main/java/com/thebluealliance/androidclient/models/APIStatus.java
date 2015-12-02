@@ -6,6 +6,7 @@ public class APIStatus {
     private int maxSeason;
     private boolean fmsApiDown;
     private int minAppVersion;
+    private int latestAppersion;
     private List<String> downEvents;
     private String jsonBlob;
 
@@ -35,6 +36,14 @@ public class APIStatus {
 
     public void setMinAppVersion(int minAppVersion) {
         this.minAppVersion = minAppVersion;
+    }
+
+    public int getLatestAppersion() {
+        return latestAppersion;
+    }
+
+    public void setLatestAppersion(int latestAppersion) {
+        this.latestAppersion = latestAppersion;
     }
 
     public List<String> getDownEvents() {

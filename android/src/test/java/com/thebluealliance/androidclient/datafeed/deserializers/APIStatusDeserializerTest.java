@@ -46,6 +46,7 @@ public class APIStatusDeserializerTest {
         assertNotNull(mStatus);
         assertEquals(mStatus.getMaxSeason(), 2015);
         assertEquals(mStatus.getMinAppVersion(), 123456);
+        assertEquals(mStatus.getLatestAppersion(), 123488);
         assertEquals(mStatus.isFmsApiDown(), false);
         assertEquals(mStatus.getJsonBlob(), mJsonData.toString());
 
@@ -121,6 +122,20 @@ public class APIStatusDeserializerTest {
     public void testBadMinVersion() {
         mJsonData.get(APIStatusDeserializer.ANDROID_SETTINGS_TAG).getAsJsonObject()
           .add(APIStatusDeserializer.MIN_APP_VERSION_TAG, new JsonArray());
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void testNoLatestVersion() {
+        mJsonData.get(APIStatusDeserializer.ANDROID_SETTINGS_TAG).getAsJsonObject()
+          .remove(APIStatusDeserializer.LATEST_APP_VERSION_TAG);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void testBadLatestVersion() {
+        mJsonData.get(APIStatusDeserializer.ANDROID_SETTINGS_TAG).getAsJsonObject()
+          .add(APIStatusDeserializer.LATEST_APP_VERSION_TAG, new JsonArray());
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
     }
 }

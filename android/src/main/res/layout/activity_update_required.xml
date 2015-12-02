@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary">
+
+    <TextView
+        android:id="@+id/update_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcome_title_prefix"
+        android:layout_margin="16dp"
+        android:gravity="center_horizontal"
+        android:text="@string/update_required_title"
+        android:textColor="@color/white"
+        android:textSize="36sp"/>
+
+    <ImageView
+        android:id="@+id/welcome_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/update_message"
+        android:layout_below="@id/update_title"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_tba_lamp"/>
+
+    <TextView
+        android:id="@id/update_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/update_google_play_button"
+        android:layout_margin="16dp"
+        android:gravity="center_horizontal"
+        android:text="@string/update_required_text"
+        android:textColor="@color/white"
+        android:textSize="20sp"/>
+    
+    <ImageButton
+        android:id="@+id/update_google_play_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/update_google_play_badge"
+        android:background="@drawable/transparent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+</RelativeLayout>

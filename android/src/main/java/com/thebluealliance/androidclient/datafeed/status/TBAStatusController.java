@@ -1,14 +1,20 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.models.APIStatus;
 
 import java.util.Calendar;
@@ -31,13 +37,15 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private SharedPreferences mPrefs;
     private Gson mGson;
 
-    long mLastUpdateTime;
+    private long mLastUpdateTime;
+    private long mLastDialogTime;
 
     @Inject
     public TBAStatusController(SharedPreferences prefs, Gson gson) {
         mPrefs = prefs;
         mGson = gson;
-        mLastUpdateTime = -1;
+        mLastUpdateTime = Long.MIN_VALUE;
+        mLastDialogTime = Long.MIN_VALUE;
     }
 
     public void scheduleStatusUpdate(Context context) {
@@ -62,6 +70,24 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         return status.getMaxSeason();
     }
 
+    public int getMinAppVersion() {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
+            /* Default to the current version */
+            return BuildConfig.VERSION_CODE;
+        }
+        return status.getMinAppVersion();
+    }
+
+    public int getLatestAppVersion() {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
+            /* Default to the current version */
+            return BuildConfig.VERSION_CODE;
+        }
+        return status.getLatestAppersion();
+    }
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
 
@@ -77,8 +103,36 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         /* Update myTBA Status */
         if (mLastUpdateTime + UPDATE_TIMEOUT_NS < System.nanoTime()) {
             scheduleStatusUpdate(activity);
+            mLastUpdateTime = System.nanoTime();
         }
-        mLastUpdateTime = System.nanoTime();
+
+        if (BuildConfig.VERSION_CODE < getMinAppVersion()){
+            activity.startActivity(new Intent(activity, UpdateRequiredActivity.class));
+        } else if (BuildConfig.VERSION_CODE < getLatestAppVersion()
+          && mLastDialogTime + UPDATE_TIMEOUT_NS < System.nanoTime()) {
+            /* Show an app update dialog */
+            new AlertDialog.Builder(activity)
+              .setTitle(R.string.update_dialog_title)
+              .setMessage(R.string.update_dialog_text)
+              .setPositiveButton(R.string.update_dialog_action, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      /* Open Play Store page */
+                      dialog.dismiss();
+                      Intent i = new Intent(Intent.ACTION_VIEW);
+                      i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient"));
+                      activity.startActivity(i);
+                  }
+              })
+              .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      dialog.dismiss();
+                  }
+              })
+              .show();
+            mLastDialogTime = System.nanoTime();
+        }
     }
 
     @Override

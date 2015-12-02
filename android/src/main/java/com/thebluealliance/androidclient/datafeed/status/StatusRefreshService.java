@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
@@ -61,6 +63,10 @@ public class StatusRefreshService extends IntentService {
 
         /* Post the update to the EventBus */
         mEventBus.post(status);
+
+        if (BuildConfig.VERSION_CODE < status.getMinAppVersion()) {
+            startActivity(new Intent(this, UpdateRequiredActivity.class));
+        }
     }
 
     private DatafeedComponent getComponenet() {

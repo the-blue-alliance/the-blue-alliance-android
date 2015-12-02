@@ -18,6 +18,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
     public static final String DOWN_EVENTS_TAG = "down_events";
     public static final String ANDROID_SETTINGS_TAG = "android";
     public static final String MIN_APP_VERSION_TAG = "min_app_version";
+    public static final String LATEST_APP_VERSION_TAG = "latest_app_version";
 
     @Override
     public APIStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -64,6 +65,12 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             throw new JsonParseException("Min App Version not found");
         }
         status.setMinAppVersion(minAppVersion.getAsInt());
+
+        JsonElement latestAppVersion = androidSettings.get(LATEST_APP_VERSION_TAG);
+        if (latestAppVersion == null || !latestAppVersion.isJsonPrimitive()) {
+            throw new JsonParseException("Latest app version not found");
+        }
+        status.setLatestAppersion(latestAppVersion.getAsInt());
 
         status.setJsonBlob(json.toString());
         return status;

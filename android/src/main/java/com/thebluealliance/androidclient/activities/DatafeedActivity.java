@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -76,19 +77,26 @@ public abstract class DatafeedActivity extends BaseActivity
         super.onResume();
         mEventBus.register(this);
         APIStatus status = mStatusController.fetchApiStatus();
-        if (status != null) {
-            if (status.isFmsApiDown()) {
-                showWarningMessage(getText(R.string.first_datafeed_down_warning));
-            } else {
-                onTbaStatusUpdate(status);
-            }
-        }
+        commonStatusUpdate(status);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mEventBus.unregister(this);
+    }
+
+    private void commonStatusUpdate(@Nullable APIStatus newStatus) {
+        if (newStatus == null) {
+            return;
+        }
+
+        if (newStatus.isFmsApiDown()) {
+            /* Everything is broken */
+            showWarningMessage(getText(R.string.first_datafeed_down_warning));
+        }
+
+        onTbaStatusUpdate(newStatus);
     }
 
     /**
@@ -114,14 +122,7 @@ public abstract class DatafeedActivity extends BaseActivity
      */
     @SuppressWarnings("unused")
     public void onEvent(APIStatus tbaStatus) {
-        if (tbaStatus.isFmsApiDown()) {
-            /* Everything is broken */
-            showWarningMessage(getText(R.string.first_datafeed_down_warning));
-            return;
-        }
-
-        /* Otherwise, let extending classes check their own event keys */
-        onTbaStatusUpdate(tbaStatus);
+        commonStatusUpdate(tbaStatus);
     }
 
     public abstract void inject();

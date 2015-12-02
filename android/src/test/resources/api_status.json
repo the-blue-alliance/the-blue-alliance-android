@@ -2,7 +2,8 @@
   "max_season": 2015,
   "is_datafeed_down": false,
   "android": {
-    "min_app_version": 123456
+    "min_app_version": 123456,
+    "latest_app_version": 123488
   },
   "ios": {
     "min_app_version": 1243
