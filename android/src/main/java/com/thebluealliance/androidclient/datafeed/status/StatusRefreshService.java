@@ -49,7 +49,14 @@ public class StatusRefreshService extends IntentService {
 
     @WorkerThread
     private void updateTbaStatus() {
-        Response<APIStatus> response = mRetrofitAPI.status().toBlocking().first();
+        Response<APIStatus> response = null;
+        try {
+             response = mRetrofitAPI.status().toBlocking().first();
+        } catch(Exception ex) {
+            Log.w(Constants.LOG_TAG, "Error updating TBA status");
+            ex.printStackTrace();
+            return;
+        }
         if (!response.isSuccess()) {
             Log.w(Constants.LOG_TAG, "Unable to update myTBA Status\n"+
               response.code() + " " +response.message());

@@ -127,6 +127,7 @@ public class DatafeedModule {
         String baseUrl = Utilities.isDebuggable()
           ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
           : APIv2.TBA_URL;
+        baseUrl = baseUrl.isEmpty() ? APIv2.TBA_URL : baseUrl;
         Log.d(Constants.LOG_TAG, "Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
           .baseUrl(baseUrl)
