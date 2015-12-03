@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
@@ -32,7 +33,7 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-import java.util.Calendar;
+import javax.inject.Inject;
 
 import rx.schedulers.Schedulers;
 
@@ -54,6 +55,8 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             mSelectedTab = -1;
 
     private int[] mYearsParticipated;
+
+    @Inject TBAStatusController mStatusController;
 
     // Should come in the format frc####
     private String mTeamKey;
@@ -111,10 +114,11 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
                 mYear = savedInstanceState.getInt(SELECTED_YEAR);
             }
         } else {
+            int maxYear = mStatusController.getMaxCompYear();
             if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_YEAR)) {
-                mYear = getIntent().getIntExtra(TEAM_YEAR, Calendar.getInstance().get(Calendar.YEAR));
+                mYear = getIntent().getIntExtra(TEAM_YEAR, maxYear);
             } else {
-                mYear = Calendar.getInstance().get(Calendar.YEAR);
+                mYear = maxYear;
             }
             mSelectedTab = 0;
         }
@@ -218,7 +222,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     @Override
     public void updateYearsParticipated(int[] years) {
         mYearsParticipated = years;
-        String[] dropdownItems = new String[years.length];
 
         // If we received a desired year in the intent, find the index of that year if it exists
         int requestedYearIndex = 0;
@@ -226,7 +229,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             if (years[i] == mYear) {
                 requestedYearIndex = i;
             }
-            dropdownItems[i] = String.valueOf(years[i]);
         }
 
         // Refresh action bar; this will the year subtitle if there are no valid ones
@@ -276,8 +278,8 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        mWarningMessage.setText(message);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
         mWarningMessage.setVisibility(View.VISIBLE);
     }
 

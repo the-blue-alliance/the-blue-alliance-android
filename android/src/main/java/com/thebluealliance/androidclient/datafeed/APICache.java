@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -64,6 +65,23 @@ public class APICache {
                 Team team = mDb.getTeamsTable().get(teamKey);
                 observer.onNext(team);
                 observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
+    }
+
+    public Observable<Integer> fetchLargestTeamNumber() {
+        return Observable.create((observer) -> {
+            try {
+                Cursor cursor = mDb.getTeamsTable().query(new String[]{TeamsTable.KEY, TeamsTable.NUMBER}, null, null, null, null, TeamsTable.NUMBER + " DESC", "1");
+                if (!observer.isUnsubscribed()) {
+                    if (cursor == null || !cursor.moveToFirst()) {
+                        observer.onNext(0);
+                    } else {
+                        observer.onNext(cursor.getInt(cursor.getColumnIndex(TeamsTable.NUMBER)));
+                    }
+                }
             } catch (Exception e) {
                 observer.onError(e);
             }

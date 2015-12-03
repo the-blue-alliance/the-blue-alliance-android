@@ -83,6 +83,11 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     @Override
+    protected void deleteAllCallback() {
+        mDb.execSQL("delete from " + Database.TABLE_SEARCH_EVENTS);
+    }
+
+    @Override
     public String getTableName() {
         return Database.TABLE_EVENTS;
     }

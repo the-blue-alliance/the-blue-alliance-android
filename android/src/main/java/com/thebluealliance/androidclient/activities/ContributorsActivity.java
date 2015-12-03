@@ -82,7 +82,7 @@ public class ContributorsActivity extends DatafeedActivity {
     }
 
     @Override
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
 
     }
 

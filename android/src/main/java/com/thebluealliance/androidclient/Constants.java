@@ -16,6 +16,7 @@ public class Constants {
     // !!!!DO NOT MODIFY!!!!
     public static final String ALL_DATA_LOADED_KEY = "all_data_loaded";
     public static final String APP_VERSION_KEY = "app_version";
+    public static final String LAST_YEAR_KEY = "last_season";
 
     public static final HashMap<String, String> MATCH_LEVELS;
     public static final HashMap<Media.TYPE, String> MEDIA_IMG_URL_PATTERN,
@@ -62,7 +63,6 @@ public class Constants {
                     7, 9, 9, 9, 9, 9, 9};          // 2010 -
 
 
-    public static final int MAX_COMP_YEAR = 2016;
     public static final int FIRST_COMP_YEAR = 1992;
     public static final int FIRST_DISTRICT_YEAR = 2009;
 

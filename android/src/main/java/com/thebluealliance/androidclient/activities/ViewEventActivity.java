@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
@@ -202,7 +203,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         }
     }
 
-    public void showInfoMessage(String message) {
+    public void showInfoMessage(CharSequence message) {
         infoMessage.setText(message);
         infoMessage.setVisibility(View.VISIBLE);
     }
@@ -212,14 +213,22 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        this.warningMessage.setText(warningMessage);
+        this.warningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
         warningMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onTbaStatusUpdate(APIStatus newStatus) {
+        super.onTbaStatusUpdate(newStatus);
+        if (newStatus.getDownEvents().contains(mEventKey)) {
+            showWarningMessage(getText(R.string.event_not_updating_warning));
+        }
     }
 
     @Override

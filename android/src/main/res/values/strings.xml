@@ -138,5 +138,6 @@
     <string name="title_activity_notification_dashboard">Notification Dashboard</string>
     <string name="no_recent_notifications">No recent notifications</string>
     <string name="recent_notifications_title">Recent Notifications</string>
+    <string name="title_activity_update_required">UpdateRequiredActivity</string>
 
 </resources>

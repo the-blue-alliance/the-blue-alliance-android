@@ -33,6 +33,8 @@
     <string name="connection_lost_title">Connection lost</string>
     <string name="connection_lost">Your internet connection was interrupted. Check your connection and try again.</string>
     <string name="ok">OK</string>
+    <string name="first_datafeed_down_warning"><i>FIRST</i> is currently experiencing technical difficulties updating data, please check back later.</string>
+    <string name="event_not_updating_warning">This event does not currently have live data available. Please check back later.</string>
 
     <!-- Fatal Error Dialog -->
     <string name="fatal_error">Fatal Error</string>

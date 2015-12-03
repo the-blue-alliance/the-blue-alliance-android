@@ -5,16 +5,27 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
-import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
+import com.thebluealliance.androidclient.database.writers.EventListWriter;
+import com.thebluealliance.androidclient.database.writers.TeamListWriter;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
     DatafeedComponent mComponent;
-    @Inject CacheableDatafeed mDatafeed;
+    @Inject @Named("retrofit") APIv2 mDatafeed;
+    @Inject Database mDb;
+    @Inject TeamListWriter mTeamWriter;
+    @Inject EventListWriter mEventWriter;
+    @Inject DistrictListWriter mDistrictWriter;
+    @Inject TBAStatusController mStatusController;
 
     LoadTBAData.LoadTBADataCallbacks callback;
     private LoadTBAData task;
@@ -28,7 +39,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         if (getActivity() instanceof HasDatafeedComponent) {
             mComponent = ((HasDatafeedComponent) getActivity()).getComponent();
         }
-        mDatafeed = mComponent.datafeed();
+        mComponent.inject(this);
 
         if (activity instanceof LoadTBAData.LoadTBADataCallbacks) {
             callback = (LoadTBAData.LoadTBADataCallbacks) activity;
@@ -53,7 +64,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         }
 
         if (task == null) {
-            task = new LoadTBAData(mDatafeed, this, getActivity());
+            task = new LoadTBAData(mDatafeed, this, getActivity(), mStatusController, mDb, mTeamWriter, mEventWriter, mDistrictWriter);
             task.execute(dataToLoad);
         }
     }

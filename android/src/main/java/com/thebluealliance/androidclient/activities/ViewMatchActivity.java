@@ -98,9 +98,9 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
     }
 
     @Override
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
         if (mWarningMessage != null) {
-            mWarningMessage.setText(message);
+            mWarningMessage.setText(warningMessage);
             mWarningMessage.setVisibility(View.VISIBLE);
         }
     }

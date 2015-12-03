@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
@@ -35,7 +36,7 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-import java.util.Calendar;
+import javax.inject.Inject;
 
 public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
 
@@ -54,6 +55,8 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
+    @Inject TBAStatusController mStatusController;
+
     private boolean mFromSavedInstance = false;
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
@@ -63,6 +66,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     private View mYearSelectorContainer;
     private TextView mYarSelectorTitle;
     private FragmentComponent mComponent;
+    private int mMaxCompYear;
 
     public static Intent newInstance(Context context, int requestedMode) {
         Intent i = new Intent(context, HomeActivity.class);
@@ -73,8 +77,8 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_home);
+        inject();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -87,15 +91,16 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         hideWarningMessage();
 
         handler = new Handler();
+        mMaxCompYear = mStatusController.getMaxCompYear();
 
-        mEventsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
+        mEventsDropdownItems = new String[mMaxCompYear - Constants.FIRST_COMP_YEAR + 1];
         for (int i = 0; i < mEventsDropdownItems.length; i++) {
-            mEventsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+            mEventsDropdownItems[i] = Integer.toString(mMaxCompYear - i);
         }
 
-        mDistrictsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_DISTRICT_YEAR + 1];
+        mDistrictsDropdownItems = new String[mMaxCompYear - Constants.FIRST_DISTRICT_YEAR + 1];
         for (int i = 0; i < mDistrictsDropdownItems.length; i++) {
-            mDistrictsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+            mDistrictsDropdownItems[i] = Integer.toString(mMaxCompYear - i);
         }
 
         int initNavId = R.id.nav_item_events;
@@ -116,11 +121,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             } else {
-                if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
-                    mCurrentSelectedYearPosition = 0;
-                } else {
-                    mCurrentSelectedYearPosition = 1;
-                }
+                mCurrentSelectedYearPosition = 0;
             }
 
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
@@ -130,11 +131,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 switchToModeForId(R.id.nav_item_events);
             }
         } else {
-            if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
-                mCurrentSelectedYearPosition = 0;
-            } else {
-                mCurrentSelectedYearPosition = 1;
-            }
+            mCurrentSelectedYearPosition = 0;
             switchToModeForId(initNavId);
         }
 
@@ -174,10 +171,10 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = EventsByWeekFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
+                fragment = EventsByWeekFragment.newInstance(mMaxCompYear- mCurrentSelectedYearPosition);
                 break;
             case R.id.nav_item_districts:
-                fragment = DistrictListFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
+                fragment = DistrictListFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
@@ -320,8 +317,8 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        mWarningMessage.setText(message);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
         mWarningMessage.setVisibility(View.VISIBLE);
     }
 
@@ -364,7 +361,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         if (position == mCurrentSelectedYearPosition) {
             return;
         }
-        int selectedYear = Constants.MAX_COMP_YEAR - position;
+        int selectedYear = mMaxCompYear - position;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support);
         if (mCurrentSelectedNavigationItemId == R.id.nav_item_events) {
             transaction = transaction.replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);

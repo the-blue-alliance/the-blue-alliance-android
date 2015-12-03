@@ -17,10 +17,11 @@ import java.util.Hashtable;
  */
 public abstract class BindableFragmentPagerAdapter extends FragmentPagerAdapter implements BindableAdapter {
 
-    private Hashtable<Long, WeakReference<Fragment>> mFragments = new Hashtable<>();
+    private Hashtable<Long, WeakReference<Fragment>> mFragments;
 
     public BindableFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
+        mFragments = new Hashtable<>();
     }
 
     @Override
@@ -35,7 +36,11 @@ public abstract class BindableFragmentPagerAdapter extends FragmentPagerAdapter 
      */
     @Override
     public void setAutoBindOnceAtPosition(int position, boolean autoBind) {
-        Fragment f = mFragments.get(getItemId(position)).get();
+        WeakReference<Fragment> ref = mFragments.get(getItemId(position));
+        if (ref == null) {
+            return;
+        }
+        Fragment f = ref.get();
         if (f != null && f instanceof DatafeedFragment) {
             DatafeedFragment df = (DatafeedFragment) f;
             df.setShouldBindOnce(autoBind);
@@ -45,6 +50,10 @@ public abstract class BindableFragmentPagerAdapter extends FragmentPagerAdapter 
 
     @Override
     public void bindFragmentAtPosition(int position) {
+        WeakReference<Fragment> ref = mFragments.get(getItemId(position));
+        if (ref == null) {
+            return;
+        }
         Fragment f = mFragments.get(getItemId(position)).get();
         if (f != null && f instanceof DatafeedFragment) {
             ((DatafeedFragment) f).bind();
@@ -53,7 +62,11 @@ public abstract class BindableFragmentPagerAdapter extends FragmentPagerAdapter 
 
     @Override
     public void setFragmentVisibleAtPosition(int position, boolean visible) {
-        Fragment f = mFragments.get(getItemId(position)).get();
+        WeakReference<Fragment> ref = mFragments.get(getItemId(position));
+        if (ref == null) {
+            return;
+        }
+        Fragment f = ref.get();
         if (f != null && f instanceof DatafeedFragment) {
             ((DatafeedFragment) f).setIsCurrentlyVisible(visible);
         }
@@ -61,6 +74,10 @@ public abstract class BindableFragmentPagerAdapter extends FragmentPagerAdapter 
 
     @Override
     public boolean isFragmentAtPositionBound(int position) {
+        WeakReference<Fragment> ref = mFragments.get(getItemId(position));
+        if (ref == null) {
+            return false;
+        }
         Fragment f = mFragments.get(getItemId(position)).get();
         return f != null && f instanceof DatafeedFragment && ((DatafeedFragment) f).isBound();
     }
