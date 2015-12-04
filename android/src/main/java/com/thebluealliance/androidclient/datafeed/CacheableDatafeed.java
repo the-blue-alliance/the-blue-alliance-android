@@ -140,7 +140,8 @@ public class CacheableDatafeed {
     public Observable<List<Event>> fetchEventsInYear(int year, String cacheHeader) {
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventsInYear(year, cacheHeader),
-          mWriter.eventListWriter.get());
+          mWriter.eventListWriter.get(),
+          Database.TABLE_EVENTS, EventsTable.YEAR + " = ?", new String[]{Integer.toString(year)});
         return mAPICache.fetchEventsInYear(year).concatWith(apiData);
     }
 
