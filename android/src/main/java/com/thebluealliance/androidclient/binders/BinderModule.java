@@ -3,11 +3,14 @@ package com.thebluealliance.androidclient.binders;
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
+import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module
+@Module(includes = RendererModule.class)
 public class BinderModule {
 
     private final Resources mResources;
@@ -22,8 +25,8 @@ public class BinderModule {
     }
 
     @Provides
-    public EventInfoBinder provideEventInfoBinder() {
-        return new EventInfoBinder();
+    public EventInfoBinder provideEventInfoBinder(MatchRenderer renderer) {
+        return new EventInfoBinder(renderer);
     }
 
     @Provides
@@ -37,8 +40,8 @@ public class BinderModule {
     }
 
     @Provides
-    public ExpandableListViewBinder provideExpandableListBinder() {
-        return new ExpandableListViewBinder();
+    public ExpandableListViewBinder provideExpandableListBinder(ModelRendererSupplier supplier) {
+        return new ExpandableListViewBinder(supplier);
     }
 
     @Provides
@@ -47,8 +50,8 @@ public class BinderModule {
     }
 
     @Provides
-    public MatchListBinder provideMatchListBinder() {
-        return new MatchListBinder();
+    public MatchListBinder provideMatchListBinder(ModelRendererSupplier supplier) {
+        return new MatchListBinder(supplier);
     }
 
     @Provides

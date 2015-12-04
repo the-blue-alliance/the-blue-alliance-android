@@ -3,14 +3,14 @@ package com.thebluealliance.androidclient.models;
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
-/**
- * File created by phil on 7/26/14.
- */
 public class DistrictPointBreakdown implements RenderableModel {
 
     private int qualPoints, elimPoints, alliancePoints, awardPoints, totalPoints;
@@ -123,8 +123,10 @@ public class DistrictPointBreakdown implements RenderableModel {
     }
 
     @Override
-    public DistrictTeamListElement render() {
-        return new DistrictTeamListElement(teamKey, districtKey, teamName, rank, totalPoints);
+    public DistrictTeamListElement render(ModelRendererSupplier supplier) {
+        DistrictPointBreakdownRenderer renderer =
+          (DistrictPointBreakdownRenderer)supplier.getRendererForType(ModelType.DISTRICTPOINTS);
+        return renderer != null ? renderer.renderFromModel(this, null) : null;
     }
 
     private class BreakdownItem implements RenderableModel {
@@ -137,7 +139,7 @@ public class DistrictPointBreakdown implements RenderableModel {
         }
 
         @Override
-        public ListElement render() {
+        public ListElement render(ModelRendererSupplier supplier) {
             return new LabelValueListItem(key, value);
         }
     }

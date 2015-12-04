@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.listitems.TeamListElement;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
 public class Team extends BasicModel<Team> {
 
@@ -24,7 +24,7 @@ public class Team extends BasicModel<Team> {
     private JsonArray yearsParticipated;
 
     public Team() {
-        super(Database.TABLE_TEAMS);
+        super(Database.TABLE_TEAMS, ModelType.TEAM);
         yearsParticipated = null;
     }
 
@@ -130,27 +130,6 @@ public class Team extends BasicModel<Team> {
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n" +
                     "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
-            return null;
-        }
-    }
-
-    @Override
-    public TeamListElement render() {
-        try {
-            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation());
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
-            return null;
-        }
-    }
-
-    public TeamListElement render(boolean showTeamInfoButton) {
-        try {
-            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
             return null;
         }
     }

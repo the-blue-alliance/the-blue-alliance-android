@@ -149,7 +149,7 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
     }
 
     @Override
-    protected void setModelKey(String key, ModelType.MODELS modelType) {
+    protected void setModelKey(String key, ModelType modelType) {
         super.setModelKey(key, modelType);
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
         mSettingsFragment = NotificationSettingsFragment.newInstance(modelKey, modelType, savedPreferenceState);

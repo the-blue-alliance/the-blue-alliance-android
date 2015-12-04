@@ -48,8 +48,8 @@ public class Favorite {
         return modelEnum;
     }
 
-    public ModelType.MODELS getModelType() {
-        return ModelType.MODELS.values()[modelEnum];
+    public ModelType getModelType() {
+        return ModelType.values()[modelEnum];
     }
 
     public void setModelEnum(int modelEnum) {

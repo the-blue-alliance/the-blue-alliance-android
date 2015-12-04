@@ -70,7 +70,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
         }
 
         mDistrictKey = DistrictHelper.generateKey(districtAbbrev, mYear);
-        setModelKey(mDistrictKey, ModelType.MODELS.DISTRICT);
+        setModelKey(mDistrictKey, ModelType.DISTRICT);
         setContentView(R.layout.activity_view_district);
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);

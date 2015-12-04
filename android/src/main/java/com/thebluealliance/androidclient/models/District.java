@@ -1,16 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
-import com.thebluealliance.androidclient.listitems.DistrictListElement;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
-/**
- * Created by phil on 7/23/14.
- */
 public class District extends BasicModel<District> {
 
     public static final String[] NOTIFICATION_TYPES = {
@@ -20,7 +15,7 @@ public class District extends BasicModel<District> {
     private int numEvents;
 
     public District() {
-        super(Database.TABLE_DISTRICTS);
+        super(Database.TABLE_DISTRICTS, ModelType.DISTRICT);
         numEvents = -1;
     }
 
@@ -95,17 +90,6 @@ public class District extends BasicModel<District> {
 
     public int getNumEvents() {
         return numEvents;
-    }
-
-    @Override
-    public DistrictListElement render() {
-        try {
-            return new DistrictListElement(this, numEvents);
-        } catch (FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to render district");
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }

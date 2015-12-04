@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.renderers.DistrictRenderer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,13 +21,14 @@ import org.robolectric.annotation.Config;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class DistrictListSubscriberTest {
 
     @Mock public Database mDb;
+    @Mock public DistrictRenderer mRenderer;
 
     private DistrictListSubscriber mSubscriber;
     private List<District> mDistricts;
@@ -36,7 +38,7 @@ public class DistrictListSubscriberTest {
         MockitoAnnotations.initMocks(this);
         DatabaseMocker.mockEventsTable(mDb);
         AddDistrictKeys keyAdder = new AddDistrictKeys(2015);
-        mSubscriber = new DistrictListSubscriber(mDb);
+        mSubscriber = new DistrictListSubscriber(mDb, mRenderer);
         mDistricts = ModelMaker.getModelList(District.class, "2015_districts");
         keyAdder.call(mDistricts);
     }
@@ -57,7 +59,7 @@ public class DistrictListSubscriberTest {
 
         assertEquals(data.size(), 5);
         for (int i = 0; i < data.size(); i++) {
-            assertTrue(data.get(i).equals(mDistricts.get(i).render()));
+            verify(mRenderer).renderFromModel(mDistricts.get(i), 0);
         }
     }
 }

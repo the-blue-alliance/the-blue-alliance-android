@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
@@ -38,12 +38,12 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
     }
 
     @Override
-    public @Nullable ListItem renderFromKey(String key, ModelType.MODELS type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type) {
         return null;
     }
 
     @Override
-    public @Nullable ListItem renderFromModel(Award award, RenderArgs args) {
+    public @Nullable ListElement renderFromModel(Award award, RenderArgs args) {
         try {
             switch (args.renderType) {
                 case RENDER_CARDED:

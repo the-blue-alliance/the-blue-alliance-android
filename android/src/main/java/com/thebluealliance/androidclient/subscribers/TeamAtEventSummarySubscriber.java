@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,14 +44,16 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
     private String mTeamKey;
     private Resources mResources;
+    private MatchRenderer mMatchRenderer;
     private boolean mIsMatchListLoaded;
 
     // Data loaded from other sources
     private List<Match> mMatches;
 
-    public TeamAtEventSummarySubscriber(Resources resources) {
+    public TeamAtEventSummarySubscriber(Resources resources, MatchRenderer matchRenderer) {
         super();
         mResources = resources;
+        mMatchRenderer = matchRenderer;
         mIsMatchListLoaded = false;
         mDataToBind = new ArrayList<>();
     }
@@ -172,12 +175,12 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             if (lastMatch != null) {
                 mDataToBind.add(new LabelValueListItem
                   (mResources.getString(R.string.title_last_match),
-                    lastMatch.render()));
+                    mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
             }
             if (nextMatch != null) {
                 mDataToBind.add(new LabelValueListItem(
                   mResources.getString(R.string.title_next_match),
-                  nextMatch.render()));
+                  mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
             }
 
             mDataToBind.add(new EmptyListElement(""));

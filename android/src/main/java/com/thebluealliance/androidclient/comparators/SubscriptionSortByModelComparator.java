@@ -13,7 +13,7 @@ public class SubscriptionSortByModelComparator implements Comparator<Subscriptio
     @Override
     public int compare(Subscription lhs, Subscription rhs) {
         if (lhs.getModelEnum() == rhs.getModelEnum()) {
-            if (lhs.getModelType() == ModelType.MODELS.TEAM) {
+            if (lhs.getModelType() == ModelType.TEAM) {
                 return Integer.compare(TeamHelper.getTeamNumber(lhs.getModelKey()),
                   TeamHelper.getTeamNumber(rhs.getModelKey()));
             }

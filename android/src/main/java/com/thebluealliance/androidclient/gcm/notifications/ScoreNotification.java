@@ -253,6 +253,7 @@ public class ScoreNotification extends BaseNotification {
         holder.title.setText(c.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
         holder.time.setText(getNotificationTimeString(c));
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
+        /** TODO Move to {@link com.thebluealliance.androidclient.renderers.MatchRenderer} */
         match.render(false, false, false, true).getView(c, inflater, holder.matchView);
 
         return convertView;

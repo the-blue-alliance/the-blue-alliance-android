@@ -6,20 +6,20 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.helpers.DistrictType;
 import com.thebluealliance.androidclient.listeners.DistrictClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
 public class DistrictListElement extends ListElement {
 
-    public final DistrictHelper.DISTRICTS type;
+    public final DistrictType type;
     public final int numEvents;
     public final String key;
 
     public DistrictListElement(District district, int numEvents) throws BasicModel.FieldNotDefinedException {
         super(district.getKey());
-        type = DistrictHelper.DISTRICTS.fromEnum(district.getEnum());
+        type = DistrictType.fromEnum(district.getEnum());
         key = district.getKey();
         this.numEvents = numEvents;
     }

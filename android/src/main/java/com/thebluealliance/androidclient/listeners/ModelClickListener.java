@@ -15,9 +15,9 @@ public class ModelClickListener implements View.OnClickListener {
 
     private Context context;
     private String key;
-    private ModelType.MODELS type;
+    private ModelType type;
 
-    public ModelClickListener(Context context, String key, ModelType.MODELS type) {
+    public ModelClickListener(Context context, String key, ModelType type) {
         this.key = key;
         this.context = context;
         this.type = type;

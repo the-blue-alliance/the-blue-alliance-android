@@ -35,7 +35,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     String beamUri;
     boolean searchEnabled = true;
     String modelKey = "";
-    ModelType.MODELS modelType;
+    ModelType modelType;
 
     /**
      * If this Activity was triggered by tapping a system notification, dismiss the "active" stored
@@ -127,7 +127,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         invalidateOptionsMenu();
     }
 
-    protected void setModelKey(String key, ModelType.MODELS type) {
+    protected void setModelKey(String key, ModelType type) {
         modelKey = key;
         modelType = type;
     }

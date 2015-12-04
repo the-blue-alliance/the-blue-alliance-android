@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.renderers;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.helpers.DistrictHelper.DISTRICTS;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelType;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.DistrictListElement;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
@@ -21,41 +21,48 @@ import javax.inject.Singleton;
 public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
 
     private APICache mDatafeed;
+    private EventRenderer mEventRenderer;
+    private TeamRenderer mTeamRenderer;
+    private MatchRenderer mMatchRenderer;
+    private DistrictRenderer mDistrictRenderer;
 
     @Inject
-    public MyTbaModelRenderer(APICache datafeed) {
+    public MyTbaModelRenderer(
+      APICache datafeed,
+      EventRenderer eventRenderer,
+      TeamRenderer teamRenderer,
+      MatchRenderer matchRenderer,
+      DistrictRenderer districtRenderer) {
         mDatafeed = datafeed;
+        mEventRenderer = eventRenderer;
+        mTeamRenderer = teamRenderer;
+        mMatchRenderer = matchRenderer;
+        mDistrictRenderer = districtRenderer;
     }
 
-    @Override @Nullable
-    public ModelListElement renderFromKey(String key, ModelType.MODELS type) {
+    @WorkerThread @Override
+    public @Nullable ListElement renderFromKey(String key, ModelType type) {
         String text;
         try {
             switch (type) {
                 case EVENT:
                     Event event = mDatafeed.fetchEvent(key).toBlocking().first();
                     if (event == null) {
-                        text = key;
-                        break;
+                        return new ModelListElement(key, key, type);
                     }
-                    text = event.getEventYear() + " " + event.getEventShortName();
-                    break;
+                    return mEventRenderer.renderFromModel(event, null);
                 case TEAM:
                     Team team = mDatafeed.fetchTeam(key).toBlocking().first();
                     if (team == null) {
-                        text = key;
-                        break;
+                        return new ModelListElement(key, key, type);
                     }
-                    text = team.getNickname();
-                    break;
+                    return mTeamRenderer.renderFromModel(team, TeamRenderer.RENDER_BASIC);
                 case MATCH:
                     Match match = mDatafeed.fetchMatch(key).toBlocking().first();
                     if (match == null) {
-                        text = key;
-                        break;
+                        return new ModelListElement(key, key, type);
                     }
-                    text = match.getEventKey() + " " + match.getTitle();
-                    break;
+                    return mMatchRenderer.renderFromModel(match, MatchRenderer.RENDER_DEFAULT);
                 case EVENTTEAM:
                     String teamKey = EventTeamHelper.getTeamKey(key);
                     String eventKey = EventTeamHelper.getEventKey(key);
@@ -63,35 +70,33 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     Event eEvent = mDatafeed.fetchEvent(eventKey).toBlocking().first();
                     if (eTeam == null || eEvent == null) {
                         text = String.format("%1$s @ %2$s", teamKey, eventKey);
-                        break;
+                        return new ModelListElement(text, key, type);
                     }
                     text = String.format("%1$s @ %2$d %3$s",
                       eTeam.getNickname(),
                       eEvent.getEventYear(),
                       eEvent.getEventShortName());
-                    break;
+                    return new ModelListElement(text, key, type);
                 case DISTRICT:
-                    District district = mDatafeed.fetchDistrict(key).toBlocking().first();
-                    if (district == null) {
-                        text = key;
-                        break;
+                    DistrictListElement element = mDistrictRenderer.renderFromKey(key, ModelType.DISTRICT);
+                    if (element == null) {
+                        return new ModelListElement(key, key, type);
                     }
-                    String districtName = DISTRICTS.fromAbbreviation(district.getAbbreviation())
-                      .getName();
-                    text = String.format("%1$d %2$s", district.getYear(), districtName);
-                    break;
+                    return element;
                 default:
                     return null;
             }
-            return new ModelListElement(text, key, type);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Not needed for mytba
+     */
     @Override
-    public @Nullable ListItem renderFromModel(Void aVoid, Void a2void) {
+    public @Nullable ListElement renderFromModel(Void aVoid, Void a2void) {
         return null;
     }
 }

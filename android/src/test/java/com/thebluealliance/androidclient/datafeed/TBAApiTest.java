@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchType;
+import com.thebluealliance.androidclient.helpers.MediaType;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -110,10 +111,10 @@ public class TBAApiTest {
         Media yt = medias.get(1);
         try {
             assertEquals(cd.getForeignKey(), "39894");
-            assertEquals(cd.getMediaType(), Media.TYPE.CD_PHOTO_THREAD);
+            assertEquals(cd.getMediaType(), MediaType.CD_PHOTO_THREAD);
             assertEquals(cd.getDetails(), JSONHelper.getasJsonObject("{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"}"));
 
-            assertEquals(yt.getMediaType(), Media.TYPE.YOUTUBE);
+            assertEquals(yt.getMediaType(), MediaType.YOUTUBE);
             assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
             assertEquals(yt.getDetails(), new JsonObject());
         } catch (BasicModel.FieldNotDefinedException e) {

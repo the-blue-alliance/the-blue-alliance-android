@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class ModelNotificationFavoriteSettings {
     public String modelKey = "";
-    public ModelType.MODELS modelType = null;
+    public ModelType modelType = null;
     public boolean isFavorite = false;
     public ArrayList<String> enabledNotifications = new ArrayList<>();
 

@@ -16,15 +16,20 @@ import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
 
+import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
+
 public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     private LayoutInflater mInflater;
+    private MatchRenderer mMatchRenderer;
     private boolean mIsLive;
 
     public View view;
@@ -39,9 +44,15 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     public View topOprsContainer;
     public ProgressBar progressBar;
 
+    @Inject
+    public EventInfoBinder(MatchRenderer renderer) {
+        mMatchRenderer = renderer;
+    }
+
     public void setInflater(LayoutInflater inflater) {
         mInflater = inflater;
     }
+
 
     //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override
@@ -178,19 +189,21 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         matchView.addView(match.getView(mActivity, mInflater, null));
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(LiveEventMatchUpdateEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mIsLive && event.getLastMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing last match");
-                showLastMatch(event.getLastMatch().render());
+                showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
             }
             if (mIsLive && event.getNextMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing next match");
-                showNextMatch(event.getNextMatch().render());
+                showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
             }
         });
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(EventRankingsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             topTeamsContainer.setVisibility(View.VISIBLE);
@@ -198,6 +211,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         });
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(EventStatsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             topOprsContainer.setVisibility(View.VISIBLE);

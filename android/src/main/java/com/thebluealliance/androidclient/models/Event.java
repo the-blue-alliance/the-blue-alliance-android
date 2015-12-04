@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
@@ -13,17 +12,12 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.listitems.AllianceListElement;
-import com.thebluealliance.androidclient.listitems.EventListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.WebcastListElement;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 
 public class Event extends BasicModel<Event> {
@@ -42,7 +36,7 @@ public class Event extends BasicModel<Event> {
     private JsonObject stats, districtPoints;
 
     public Event() {
-        super(Database.TABLE_EVENTS);
+        super(Database.TABLE_EVENTS, ModelType.EVENT);
         alliances = null;
         rankings = null;
         webcasts = null;
@@ -448,58 +442,6 @@ public class Event extends BasicModel<Event> {
             Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
                     "Required fields: Database.Events.START, Database.Events.END");
             return "";
-        }
-    }
-
-    @Override
-    public EventListElement render() {
-        try {
-            return new EventListElement(getKey(), getEventShortName(), getDateString(), getLocation());
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
-                    "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
-            return null;
-        }
-    }
-
-    public ArrayList<WebcastListElement> renderWebcasts() {
-        ArrayList<WebcastListElement> webcasts = new ArrayList<>();
-        try {
-            int i = 1;
-            for (JsonElement webcast : getWebcasts()) {
-                try {
-                    webcasts.add(new WebcastListElement(getKey(), getEventShortName(), webcast.getAsJsonObject(), i));
-                    i++;
-                } catch (FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
-                }
-            }
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to get event webcasts");
-        }
-        return webcasts;
-    }
-
-    public ArrayList<ListItem> renderAlliances() {
-        ArrayList<ListItem> output = new ArrayList<>();
-        renderAlliances(output);
-        return output;
-    }
-
-    public void renderAlliances(List<ListItem> destList) {
-        try {
-            JsonArray alliances = getAlliances();
-            int counter = 1;
-            for (JsonElement alliance : alliances) {
-                JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                destList.add(new AllianceListElement(getKey(), counter, teams));
-                counter++;
-            }
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
-              "Required field: Database.Events.ALLIANCES");
-        } catch (IllegalArgumentException e) {
-            Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }
     }
 

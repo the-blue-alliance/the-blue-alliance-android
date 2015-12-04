@@ -32,12 +32,12 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     private Bundle savedStateBundle;
     private Bundle initialStateBundle;
     private String modelKey;
-    private ModelType.MODELS modelType;
+    private ModelType modelType;
     private LoadModelSettingsCallback loadCallback;
 
     private boolean preferencesLoaded = false;
 
-    public static NotificationSettingsFragment newInstance(String modelKey, ModelType.MODELS modelType, Bundle savedStateBundle) {
+    public static NotificationSettingsFragment newInstance(String modelKey, ModelType modelType, Bundle savedStateBundle) {
         NotificationSettingsFragment fragment = new NotificationSettingsFragment();
         Bundle args = new Bundle();
         args.putString(MODEL_KEY, modelKey);

@@ -1,21 +1,15 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
-import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
-/**
- * Created by phil on 7/23/14.
- */
 public class DistrictTeam extends BasicModel<DistrictTeam> {
 
     public DistrictTeam() {
-        super(Database.TABLE_DISTRICTTEAMS);
+        super(Database.TABLE_DISTRICTTEAMS, ModelType.DISTRICTTEAM);
     }
 
     public void setKey(String key) {
@@ -203,14 +197,4 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         Database.getInstance(c).getDistrictTeamsTable().add(this);
     }
 
-    @Override
-    public ListElement render() {
-        try {
-            return new DistrictTeamListElement(getTeamKey(), getDistrictKey(), getRank(), getTotalPoints());
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Unable to render districtTeam. Missing fields");
-            e.printStackTrace();
-            return null;
-        }
-    }
 }
