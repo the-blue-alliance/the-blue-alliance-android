@@ -3,11 +3,14 @@ package com.thebluealliance.androidclient.listitems;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.DistrictType;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listeners.DistrictClickListener;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
@@ -16,12 +19,15 @@ public class DistrictListElement extends ListElement {
     public final DistrictType type;
     public final int numEvents;
     public final String key;
+    public final boolean showMyTba;
 
-    public DistrictListElement(District district, int numEvents) throws BasicModel.FieldNotDefinedException {
+    public DistrictListElement(District district, int numEvents, boolean showMyTba)
+      throws BasicModel.FieldNotDefinedException {
         super(district.getKey());
         type = DistrictType.fromEnum(district.getEnum());
         key = district.getKey();
         this.numEvents = numEvents;
+        this.showMyTba = showMyTba;
     }
 
     @Override
@@ -33,20 +39,27 @@ public class DistrictListElement extends ListElement {
             holder = new ViewHolder();
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.events = (TextView) convertView.findViewById(R.id.num_events);
+            holder.myTbaSettings = (ImageView) convertView.findViewById(R.id.model_settings);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.title.setText(type.getName() + " District");
+        holder.title.setText(String.format("%1$s District", type.getName()));
         if (numEvents != -1) {
             holder.events.setVisibility(View.VISIBLE);
-            holder.events.setText(numEvents + " Events");
+            holder.events.setText(String.format("%1$d Events", numEvents));
         } else {
             holder.events.setVisibility(View.GONE);
         }
 
         convertView.setOnClickListener(new DistrictClickListener(c, key));
+
+        holder.myTbaSettings.setVisibility(showMyTba ? View.VISIBLE : View.GONE);
+        if (showMyTba) {
+            holder.myTbaSettings.setOnClickListener(new ModelSettingsClickListener(c, key, ModelType.DISTRICT));
+            holder.title.setTextAppearance(c, R.style.normalText);
+        }
 
         return convertView;
     }
@@ -65,5 +78,6 @@ public class DistrictListElement extends ListElement {
     private static class ViewHolder {
         TextView title;
         TextView events;
+        ImageView myTbaSettings;
     }
 }

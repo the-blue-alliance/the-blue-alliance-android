@@ -34,7 +34,7 @@ public class FavoriteListSubscriber extends BaseAPISubscriber<List<Favorite>, Li
         Collections.sort(mAPIData, mComparator);
         for (int i = 0; i < mAPIData.size(); i++) {
             Favorite favorite = mAPIData.get(i);
-            ListItem item = mRenderer.renderFromKey(favorite.getModelKey(), favorite.getModelType());
+            ListItem item = mRenderer.renderFromKey(favorite.getModelKey(), favorite.getModelType(), null);
             if (item != null) {
                 if (lastModel != favorite.getModelEnum()) {
                     mDataToBind.add(new EventTypeHeader(favorite.getModelType().getTitle()));

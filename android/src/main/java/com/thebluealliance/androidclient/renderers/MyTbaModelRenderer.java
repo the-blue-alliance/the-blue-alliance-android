@@ -41,7 +41,7 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
     }
 
     @WorkerThread @Override
-    public @Nullable ListElement renderFromKey(String key, ModelType type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type, Void args) {
         String text;
         try {
             switch (type) {
@@ -50,13 +50,13 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     if (event == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return mEventRenderer.renderFromModel(event, null);
+                    return mEventRenderer.renderFromModel(event, true);
                 case TEAM:
                     Team team = mDatafeed.fetchTeam(key).toBlocking().first();
                     if (team == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return mTeamRenderer.renderFromModel(team, TeamRenderer.RENDER_BASIC);
+                    return mTeamRenderer.renderFromModel(team, TeamRenderer.RENDER_MYTBA_DETAILS);
                 case MATCH:
                     Match match = mDatafeed.fetchMatch(key).toBlocking().first();
                     if (match == null) {
@@ -78,7 +78,10 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                       eEvent.getEventShortName());
                     return new ModelListElement(text, key, type);
                 case DISTRICT:
-                    DistrictListElement element = mDistrictRenderer.renderFromKey(key, ModelType.DISTRICT);
+                    DistrictListElement element = mDistrictRenderer.renderFromKey(
+                      key,
+                      ModelType.DISTRICT,
+                      new DistrictRenderer.RenderArgs(0, true));
                     if (element == null) {
                         return new ModelListElement(key, key, type);
                     }

@@ -21,6 +21,8 @@ import org.robolectric.annotation.Config;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
@@ -59,7 +61,7 @@ public class DistrictListSubscriberTest {
 
         assertEquals(data.size(), 5);
         for (int i = 0; i < data.size(); i++) {
-            verify(mRenderer).renderFromModel(mDistricts.get(i), 0);
+            verify(mRenderer).renderFromModel(eq(mDistricts.get(i)), anyObject());
         }
     }
 }

@@ -37,7 +37,7 @@ public class SubscriptionListSubscriber
         for (int i = 0; i < mAPIData.size(); i++) {
             Subscription subscription = mAPIData.get(i);
             ListItem item = mRenderer
-              .renderFromKey(subscription.getModelKey(), subscription.getModelType());
+              .renderFromKey(subscription.getModelKey(), subscription.getModelType(), null);
             if (item != null) {
                 if (lastModel != subscription.getModelEnum()) {
                     mDataToBind.add(new EventTypeHeader(subscription.getModelType().getTitle()));

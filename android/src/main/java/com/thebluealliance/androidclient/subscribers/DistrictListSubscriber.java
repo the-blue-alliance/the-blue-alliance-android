@@ -37,7 +37,8 @@ public class DistrictListSubscriber extends BaseAPISubscriber<List<District>, Li
             District district = mAPIData.get(i);
             int numEvents = getNumEventsForDistrict(district.getKey());
             district.setNumEvents(numEvents);
-            mDataToBind.add(mRenderer.renderFromModel(district, numEvents));
+            DistrictRenderer.RenderArgs args = new DistrictRenderer.RenderArgs(numEvents, false);
+            mDataToBind.add(mRenderer.renderFromModel(district, args));
         }
     }
 

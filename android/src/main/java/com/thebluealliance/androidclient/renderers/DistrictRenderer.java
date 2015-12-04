@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class DistrictRenderer implements ModelRenderer<District, Integer> {
+public class DistrictRenderer implements ModelRenderer<District, DistrictRenderer.RenderArgs> {
 
     APICache mDatafeed;
 
@@ -26,9 +26,12 @@ public class DistrictRenderer implements ModelRenderer<District, Integer> {
         mDatafeed = datafeed;
     }
 
+    /**
+     * Only {@code showMyTba} is preserved from args param
+     */
     @WorkerThread
     @Override
-    public @Nullable DistrictListElement renderFromKey(String key, ModelType type) {
+    public @Nullable DistrictListElement renderFromKey(String key, ModelType type, RenderArgs args) {
         District district = mDatafeed.fetchDistrict(key).toBlocking().first();
         if (district == null) {
             return null;
@@ -36,17 +39,31 @@ public class DistrictRenderer implements ModelRenderer<District, Integer> {
         int year = DistrictHelper.extractYearFromKey(key);
         String districtShort = DistrictHelper.extractAbbrevFromKey(key);
         List<Event> events = mDatafeed.fetchDistrictEvents(districtShort, year).toBlocking().first();
-        return renderFromModel(district, events != null ? events.size() : 0);
+        RenderArgs newArgs = new RenderArgs(events != null ? events.size() : 0, args != null && args.showMyTba);
+        return renderFromModel(district, newArgs);
     }
 
     @WorkerThread
     @Override
-    public @Nullable DistrictListElement renderFromModel(District district, Integer numEvents) {
+    public @Nullable DistrictListElement renderFromModel(District district, RenderArgs args) {
         try {
-            return new DistrictListElement(district, numEvents);
+            return new DistrictListElement(
+              district,
+              args != null ? args.numEvents : 0,
+              args != null && args.showMyTba);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static class RenderArgs {
+        public final int numEvents;
+        public final boolean showMyTba;
+
+        public RenderArgs(int numEvents, boolean showMyTba) {
+            this.numEvents = numEvents;
+            this.showMyTba = showMyTba;
         }
     }
 }

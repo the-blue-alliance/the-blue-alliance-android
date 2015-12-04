@@ -38,7 +38,7 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
     }
 
     @Override
-    public @Nullable ListElement renderFromKey(String key, ModelType type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type, RenderArgs args) {
         return null;
     }
 

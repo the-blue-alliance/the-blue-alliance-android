@@ -38,7 +38,7 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
 
     @WorkerThread
     @Override
-    public @Nullable MatchListElement renderFromKey(String key, ModelType type) {
+    public @Nullable MatchListElement renderFromKey(String key, ModelType type, Integer args) {
         Match match = mDatafeed.fetchMatch(key).toBlocking().first();
         if (match == null) {
             return null;

@@ -7,13 +7,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listeners.ModelClickListener;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 
-/**
- * Created by Phil on 8/13/2014.
- */
 public class ModelListElement extends ListElement {
 
     private String text;
@@ -54,12 +51,7 @@ public class ModelListElement extends ListElement {
 
         holder.text.setText(text);
 
-        holder.settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                context.startActivity(MyTBAModelSettingsActivity.newInstance(context, key, type));
-            }
-        });
+        holder.settingsButton.setOnClickListener(new ModelSettingsClickListener(context, key, type));
 
         if (!key.isEmpty()) {
             convertView.setOnClickListener(new ModelClickListener(context, key, type));

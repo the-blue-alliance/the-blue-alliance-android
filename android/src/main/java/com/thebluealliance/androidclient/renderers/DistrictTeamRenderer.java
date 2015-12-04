@@ -23,7 +23,7 @@ public class DistrictTeamRenderer implements ModelRenderer<DistrictTeam, Void> {
 
     @Nullable
     @Override
-    public ListElement renderFromKey(String key, ModelType type) {
+    public ListElement renderFromKey(String key, ModelType type, Void args) {
         return null;
     }
 
