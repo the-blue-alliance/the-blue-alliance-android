@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
+import com.thebluealliance.androidclient.helpers.WebcastType;
 
 public class WebcastListElement extends ListElement {
 
@@ -44,7 +45,7 @@ public class WebcastListElement extends ListElement {
 
         holder.label.setText(String.format(c.getString(R.string.webcast_event_format), eventName, number));
         final String service = webcast.get("type").getAsString();
-        final WebcastHelper.TYPE type = WebcastHelper.getType(service);
+        final WebcastType type = WebcastHelper.getType(service);
         if (holder.container.getChildCount() > 2) {
             holder.container.removeViewAt(2);
         }
