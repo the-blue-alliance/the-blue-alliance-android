@@ -24,7 +24,7 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
     }
 
     @Override
-    public @Nullable ListElement renderFromKey(String key, ModelType type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type, Void args) {
         /* Not implemented yet */
         return null;
     }

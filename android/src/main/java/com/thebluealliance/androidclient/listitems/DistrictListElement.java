@@ -8,7 +8,9 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.DistrictType;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listeners.DistrictClickListener;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
@@ -55,7 +57,8 @@ public class DistrictListElement extends ListElement {
 
         holder.myTbaSettings.setVisibility(showMyTba ? View.VISIBLE : View.GONE);
         if (showMyTba) {
-            holder.myTbaSettings.setOnClickListener(new DistrictClickListener(c, key));
+            holder.myTbaSettings.setOnClickListener(new ModelSettingsClickListener(c, key, ModelType.DISTRICT));
+            holder.title.setTextAppearance(c, R.style.normalText);
         }
 
         return convertView;

@@ -37,7 +37,7 @@ public class TeamRenderer implements ModelRenderer<Team, Integer> {
 
     @WorkerThread
     @Override
-    public @Nullable TeamListElement renderFromKey(String key, ModelType type) {
+    public @Nullable TeamListElement renderFromKey(String key, ModelType type, Integer args) {
         Team team = mDatafeed.fetchTeam(key).toBlocking().first();
         if (team == null) {
             return null;

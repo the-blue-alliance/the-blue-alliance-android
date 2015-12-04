@@ -19,7 +19,7 @@ public class DistrictPointBreakdownRenderer implements ModelRenderer<DistrictPoi
     }
 
     @Override
-    public @Nullable ListElement renderFromKey(String key, ModelType type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type, Void args) {
         /* Not used */
         return null;
     }

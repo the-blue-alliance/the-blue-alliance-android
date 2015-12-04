@@ -13,10 +13,11 @@ public interface ModelRenderer<MODEL, ARGS> {
      * TODO eventually move this to rendering regular items
      * @param key Key of the model to render
      * @param type Enum type of which model to render
+     * @param args
      * @return A ListItem of the rendered model
      */
     @WorkerThread
-    @Nullable ListElement renderFromKey(String key, ModelType type);
+    @Nullable ListElement renderFromKey(String key, ModelType type, ARGS args);
 
     @WorkerThread
     @Nullable ListElement renderFromModel(MODEL model, @Nullable ARGS args);

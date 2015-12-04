@@ -7,6 +7,7 @@
     android:clickable="true"
     android:focusable="false"
     android:minHeight="72dp"
+    android:paddingEnd="16dp"
     android:paddingTop="16dp">
 
     <TextView

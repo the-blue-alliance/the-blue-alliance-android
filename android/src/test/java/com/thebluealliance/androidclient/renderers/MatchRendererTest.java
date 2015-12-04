@@ -63,7 +63,7 @@ public class MatchRendererTest {
     @Test
     public void testRenderFromKey() {
         when(mDatafeed.fetchMatch(mMatchKey)).thenReturn(Observable.just(mMatch));
-        MatchListElement element = mRenderer.renderFromKey(mMatchKey, ModelType.MATCH);
+        MatchListElement element = mRenderer.renderFromKey(mMatchKey, ModelType.MATCH, );
         RenderArgs expectedArgs = MatchRenderer.argsFromMode(RENDER_DEFAULT);
         assertMatch(element, mMatch, expectedArgs);
     }
@@ -71,7 +71,7 @@ public class MatchRendererTest {
     @Test
     public void testNullRenderFromKey() {
         when(mDatafeed.fetchMatch(mMatchKey)).thenReturn(Observable.just(null));
-        MatchListElement element = mRenderer.renderFromKey(mMatchKey, ModelType.MATCH);
+        MatchListElement element = mRenderer.renderFromKey(mMatchKey, ModelType.MATCH, );
         assertNull(element);
     }
 

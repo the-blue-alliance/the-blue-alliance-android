@@ -41,14 +41,14 @@ public class TeamRendererTest {
     @Test
     public void testRenderFromKey() {
         when(mDatafeed.fetchTeam(TEAM_KEY)).thenReturn(Observable.just(mTeam));
-        TeamListElement element = mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM);
+        TeamListElement element = mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM, );
         assertTeamElement(element, false);
     }
 
     @Test
     public void testNullRenderFromKey() {
         when(mDatafeed.fetchTeam(TEAM_KEY)).thenReturn(Observable.just(null));
-        TeamListElement element = mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM);
+        TeamListElement element = mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM, );
         assertNull(element);
     }
 

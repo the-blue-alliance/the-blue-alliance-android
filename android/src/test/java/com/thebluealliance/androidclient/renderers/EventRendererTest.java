@@ -51,7 +51,7 @@ public class EventRendererTest  {
     @Test
     public void testRenderFromKey() {
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(mEvent));
-        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT);
+        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, );
         assertNotNull(element);
         assertEquals(element.getEventKey(), EVENT_KEY);
     }
@@ -59,7 +59,7 @@ public class EventRendererTest  {
     @Test
     public void testNullRenderFromKey() {
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(null));
-        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT);
+        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, );
         assertNull(element);
     }
 

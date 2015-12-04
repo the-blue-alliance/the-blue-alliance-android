@@ -32,7 +32,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
 
     @WorkerThread
     @Override
-    public @Nullable EventListElement renderFromKey(String key, ModelType type) {
+    public @Nullable EventListElement renderFromKey(String key, ModelType type, Boolean args) {
         Event event = mDatafeed.fetchEvent(key).toBlocking().first();
         if (event == null) {
             return null;

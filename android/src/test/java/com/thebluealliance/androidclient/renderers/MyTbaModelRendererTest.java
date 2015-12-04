@@ -58,7 +58,7 @@ public class MyTbaModelRendererTest {
     public void testRenderEvent() {
         Event event = ModelMaker.getModel(Event.class, EVENT_KEY);
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(event));
-        mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT);
+        mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, );
 
         verify(mEventRenderer).renderFromModel(event, null);
     }
@@ -66,7 +66,7 @@ public class MyTbaModelRendererTest {
     @Test
     public void testNullEvent() {
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(null));
-        ListItem item = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT);
+        ListItem item = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, );
 
         verifyZeroInteractions(mEventRenderer);
         assertNotNull(item);
@@ -81,14 +81,14 @@ public class MyTbaModelRendererTest {
         Team team = ModelMaker.getModel(Team.class, TEAM_KEY);
         when(mDatafeed.fetchTeam(TEAM_KEY)).thenReturn(Observable.just(team));
 
-        mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM);
+        mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM, );
         verify(mTeamRenderer).renderFromModel(team, TeamRenderer.RENDER_BASIC);
     }
 
     @Test
     public void testNullTeam() {
         when(mDatafeed.fetchTeam(TEAM_KEY)).thenReturn(Observable.just(null));
-        ListItem item = mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM);
+        ListItem item = mRenderer.renderFromKey(TEAM_KEY, ModelType.TEAM, );
 
         assertNotNull(item);
         assertTrue(item instanceof ModelListElement);
@@ -102,14 +102,14 @@ public class MyTbaModelRendererTest {
         Match match = ModelMaker.getModel(Match.class, MATCH_KEY);
         when(mDatafeed.fetchMatch(MATCH_KEY)).thenReturn(Observable.just(match));
 
-        mRenderer.renderFromKey(MATCH_KEY, ModelType.MATCH);
+        mRenderer.renderFromKey(MATCH_KEY, ModelType.MATCH, );
         verify(mMatchRenderer).renderFromModel(match, MatchRenderer.RENDER_DEFAULT);
     }
 
     @Test
     public void testNullMatch() {
         when(mDatafeed.fetchMatch(MATCH_KEY)).thenReturn(Observable.just(null));
-        ListItem item = mRenderer.renderFromKey(MATCH_KEY, ModelType.MATCH);
+        ListItem item = mRenderer.renderFromKey(MATCH_KEY, ModelType.MATCH, );
 
         assertNotNull(item);
         assertTrue(item instanceof ModelListElement);
@@ -125,7 +125,7 @@ public class MyTbaModelRendererTest {
         when(mDatafeed.fetchTeam(TEAM_KEY)).thenReturn(Observable.just(team));
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(event));
 
-        ListItem item = mRenderer.renderFromKey(EVENT_TEAM_KEY, ModelType.EVENTTEAM);
+        ListItem item = mRenderer.renderFromKey(EVENT_TEAM_KEY, ModelType.EVENTTEAM, );
         assertNotNull(item);
         assertTrue(item instanceof ModelListElement);
         assertEquals(((ModelListElement)item).getText(), "UberBots @ 2015 Hartford");
@@ -138,7 +138,7 @@ public class MyTbaModelRendererTest {
         when(mDatafeed.fetchTeam(TEAM_KEY)).thenReturn(Observable.just(null));
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(null));
 
-        ListItem item = mRenderer.renderFromKey(EVENT_TEAM_KEY, ModelType.EVENTTEAM);
+        ListItem item = mRenderer.renderFromKey(EVENT_TEAM_KEY, ModelType.EVENTTEAM, );
         assertNotNull(item);
         assertTrue(item instanceof ModelListElement);
         assertEquals(((ModelListElement)item).getText(), "frc1124 @ 2015cthar");
@@ -152,15 +152,15 @@ public class MyTbaModelRendererTest {
         district.setYear(2015);
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(district));
 
-        ListItem item = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT);
-        verify(mDistrictRenderer).renderFromKey(DISTRICT_KEY, ModelType.DISTRICT);
+        ListItem item = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, );
+        verify(mDistrictRenderer).renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, );
     }
 
     @Test
     public void testNullDistrict() {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(null));
 
-        ListItem item = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT);
+        ListItem item = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, );
         assertNotNull(item);
         assertTrue(item instanceof ModelListElement);
         assertEquals(((ModelListElement)item).getText(), DISTRICT_KEY);
