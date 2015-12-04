@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 import javax.inject.Singleton;
@@ -22,7 +21,6 @@ public interface DatafeedComponent {
 
     CacheableDatafeed datafeed();
 
-    void inject(GCMMessageHandler gcmMessageHandler);
     void inject(StatusRefreshService statusRefreshService);
     void inject(MyTbaUpdateService myTbaUpdateService);
 

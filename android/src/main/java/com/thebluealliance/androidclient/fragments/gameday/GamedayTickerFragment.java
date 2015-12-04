@@ -22,6 +22,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.firebase.BufferedChildEventListener;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -34,6 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -43,6 +48,8 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
 
     private static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/notifications/";
     private static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
+
+    @Inject DatabaseWriter mWriter;
 
     private ListView mListView;
     private ListView mFilterListView;
@@ -54,6 +61,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     private int mFirstVisiblePosition;
     private List<FirebaseNotification> mAllNotifications = new ArrayList<>();
     private BufferedChildEventListener mChildEventListener;
+    private FragmentComponent mComponent;
 
     private boolean mChildHasBeenAdded = false;
     private String mFirebaseUrl;
@@ -66,6 +74,10 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getActivity() instanceof HasFragmentComponent) {
+            mComponent = ((HasFragmentComponent) getActivity()).getComponent();
+        }
+        mComponent.inject(this);
         loadFirebaseParams();
         mChildEventListener = new BufferedChildEventListener(this);
         // Delivery will be resumed once the view hierarchy is created
@@ -228,6 +240,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         Log.d(Constants.LOG_TAG, "Adding ticker item with key " + dataSnapshot.getKey());
         mProgressBar.setVisibility(View.GONE);
         FirebaseNotification notification = dataSnapshot.getValue(FirebaseNotification.class);
+        notification.setDatabaseWriter(mWriter);
         mAllNotifications.add(0, notification);
         Log.d(Constants.LOG_TAG, "Json: " + notification.convertToJson());
         // Normally we would call updateList() to update the list

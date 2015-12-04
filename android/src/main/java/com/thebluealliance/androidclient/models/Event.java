@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -449,8 +448,4 @@ public class Event extends BasicModel<Event> {
         return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getEventsTable().add(this);
-    }
 }

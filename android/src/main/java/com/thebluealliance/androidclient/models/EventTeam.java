@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -86,11 +84,6 @@ public class EventTeam extends BasicModel<EventTeam> {
             return (Integer) fields.get(EventTeamsTable.COMPWEEK);
         }
         throw new FieldNotDefinedException("Field Database.EventTeams.COMPWEEK is not defined");
-    }
-
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getEventTeamsTable().add(this);
     }
 
 }

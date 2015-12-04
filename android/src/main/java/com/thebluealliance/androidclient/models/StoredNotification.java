@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -125,18 +126,18 @@ public class StoredNotification {
      * You can immediately call {@link BaseNotification#getView(Context, LayoutInflater, View)}
      * @return Appropriate BaseNotification
      */
-    public @Nullable BaseNotification getNotification() {
+    public @Nullable BaseNotification getNotification(DatabaseWriter writer) {
         BaseNotification notification;
         String data = getMessageData();
         switch (getType()) {
             case NotificationTypes.MATCH_SCORE:
-                notification = new ScoreNotification(data);
+                notification = new ScoreNotification(data, writer.matchWriter.get());
                 break;
             case NotificationTypes.UPCOMING_MATCH:
                 notification = new UpcomingMatchNotification(data);
                 break;
             case NotificationTypes.ALLIANCE_SELECTION:
-                notification = new AllianceSelectionNotification(data);
+                notification = new AllianceSelectionNotification(data, writer.eventWriter.get());
                 break;
             case NotificationTypes.LEVEL_STARTING:
                 notification = new CompLevelStartingNotification(data);
@@ -145,7 +146,7 @@ public class StoredNotification {
                 notification = new ScheduleUpdatedNotification(data);
                 break;
             case NotificationTypes.AWARDS:
-                notification = new AwardsPostedNotification(data);
+                notification = new AwardsPostedNotification(data, writer.awardListWriter.get());
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(data);

@@ -177,7 +177,7 @@ public class UpcomingMatchNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         /* This notification has no data that we can store locally */
     }
 

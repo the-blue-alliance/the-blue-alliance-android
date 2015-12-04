@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
@@ -96,8 +94,4 @@ public class Media extends BasicModel<Media> {
         fields.put(MediasTable.YEAR, year);
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getMediasTable().add(this);
-    }
 }

@@ -15,6 +15,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.database.writers.EventWriter;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -27,11 +28,13 @@ import java.util.Date;
 
 public class AllianceSelectionNotification extends BaseNotification {
 
+    private final EventWriter mWriter;
     private Event event;
     private String eventKey;
 
-    public AllianceSelectionNotification(String messageData) {
+    public AllianceSelectionNotification(String messageData, EventWriter writer) {
         super(NotificationTypes.ALLIANCE_SELECTION, messageData);
+        mWriter = writer;
     }
 
     public Event getEvent() {
@@ -93,9 +96,9 @@ public class AllianceSelectionNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         if (event != null) {
-            event.write(c);
+            mWriter.write(event);
         }
     }
 

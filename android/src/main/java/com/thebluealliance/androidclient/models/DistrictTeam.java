@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.helpers.ModelType;
@@ -190,11 +188,6 @@ public class DistrictTeam extends BasicModel<DistrictTeam> {
         } else {
             throw new FieldNotDefinedException("Field Database.DistrictTeams.JSON is not defined");
         }
-    }
-
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getDistrictTeamsTable().add(this);
     }
 
 }

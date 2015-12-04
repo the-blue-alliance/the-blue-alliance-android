@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.helpers.ModelType;
@@ -77,11 +75,6 @@ public class District extends BasicModel<District> {
 
     public void setName(String name) {
         fields.put(DistrictsTable.NAME, name);
-    }
-
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getDistrictsTable().add(this);
     }
 
     public void setNumEvents(int events) {

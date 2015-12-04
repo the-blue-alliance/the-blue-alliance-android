@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
-import android.content.Context;
 
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
@@ -9,9 +8,6 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
-/**
- * File created by phil on 4/28/14.
- */
 public abstract class BasicModel<T extends BasicModel> implements RenderableModel {
 
     /* Map of the requested fields for this object
@@ -46,8 +42,6 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
     }
 
     public abstract String getKey();
-
-    public abstract void write(Context c);
 
     @Override
     @SuppressWarnings("unchecked")

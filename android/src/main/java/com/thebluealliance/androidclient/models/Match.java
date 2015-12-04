@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -411,8 +410,4 @@ public class Match extends BasicModel<Match> {
                 redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getMatchesTable().add(this);
-    }
 }
