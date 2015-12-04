@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.comparators;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.EventType;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
@@ -31,7 +31,7 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
                 }
             } else {
                 int typeCompare = event.getEventType().compareTo(event2.getEventType());
-                if (typeCompare == 0 && event.getEventType() == EventHelper.TYPE.DISTRICT) {
+                if (typeCompare == 0 && event.getEventType() == EventType.DISTRICT) {
                     return ((Integer) event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
                 } else {
                     return typeCompare;

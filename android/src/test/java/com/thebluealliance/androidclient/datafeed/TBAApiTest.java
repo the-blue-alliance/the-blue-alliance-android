@@ -6,8 +6,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.helpers.EventType;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchType;
 import com.thebluealliance.androidclient.helpers.MediaType;
 import com.thebluealliance.androidclient.models.Award;
@@ -45,7 +45,7 @@ public class TBAApiTest {
             assertEquals(event.getEventShortName(), "Groton");
             assertEquals(event.isOfficial(), true);
             assertEquals(event.getLocation(), "Groton, CT, USA");
-            assertEquals(event.getEventType(), EventHelper.TYPE.DISTRICT);
+            assertEquals(event.getEventType(), EventType.DISTRICT);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to get event fields");
             e.printStackTrace();

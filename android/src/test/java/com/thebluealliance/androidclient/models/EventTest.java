@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.DistrictType;
-import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.EventType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class EventTest {
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
         assertEquals(mEvent.getEventYear(), 2015);
         assertEquals(mEvent.getEventType(),
-                     EventHelper.TYPE.DISTRICT);
+                     EventType.DISTRICT);
         assertFalse(mEvent.getWebcasts().isJsonNull());
         assertTrue(mEvent.getWebcasts().isJsonArray());
         assertFalse(mEvent.getAlliances().isJsonNull());
