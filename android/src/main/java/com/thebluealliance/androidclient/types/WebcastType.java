@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.helpers;
+package com.thebluealliance.androidclient.types;
 
 import android.content.Context;
 

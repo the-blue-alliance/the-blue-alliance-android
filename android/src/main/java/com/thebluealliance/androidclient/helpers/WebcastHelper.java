@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.WebcastType;
 
 public class WebcastHelper {
 

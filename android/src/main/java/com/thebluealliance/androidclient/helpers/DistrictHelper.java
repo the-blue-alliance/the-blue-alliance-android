@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.helpers;
 
 
+import com.thebluealliance.androidclient.types.DistrictType;
+
 public class DistrictHelper {
 
     public static boolean validateDistrictKey(String key) {

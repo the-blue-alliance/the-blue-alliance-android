@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.DistrictType;
+import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;

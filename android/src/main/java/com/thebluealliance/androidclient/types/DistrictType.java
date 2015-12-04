@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.helpers;
+package com.thebluealliance.androidclient.types;
 
 /* DO NOT CHANGE ORDER. */
 public enum DistrictType {

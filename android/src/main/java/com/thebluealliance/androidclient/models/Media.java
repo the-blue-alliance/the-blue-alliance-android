@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.MediaType;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.MediaType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 
 public class Media extends BasicModel<Media> {

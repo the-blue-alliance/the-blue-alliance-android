@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.helpers.MatchType;
+import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.listeners.MatchClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 

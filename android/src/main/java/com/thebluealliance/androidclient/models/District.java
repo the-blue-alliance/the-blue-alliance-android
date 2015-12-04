@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public class District extends BasicModel<District> {
 

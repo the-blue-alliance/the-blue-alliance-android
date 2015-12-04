@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.models;
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;

@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
+import com.thebluealliance.androidclient.types.EventType;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -183,7 +184,7 @@ public class EventHelper {
      * @param output list to render events into
      */
     public static void renderEventListForWeek(List<Event> events, List<ListItem> output, ModelRenderer<Event, ?> renderer) {
-        renderEventListWithComparator(events,output, new EventSortByTypeAndDateComparator(), renderer);
+        renderEventListWithComparator(events, output, new EventSortByTypeAndDateComparator(), renderer);
     }
 
     private static void renderEventListWithComparator(

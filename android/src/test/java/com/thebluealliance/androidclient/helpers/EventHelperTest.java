@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.types.EventType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

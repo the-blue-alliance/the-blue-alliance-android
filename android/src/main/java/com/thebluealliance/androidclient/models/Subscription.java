@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import java.util.ArrayList;
 import java.util.List;

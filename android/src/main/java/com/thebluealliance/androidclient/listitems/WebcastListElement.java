@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
-import com.thebluealliance.androidclient.helpers.WebcastType;
+import com.thebluealliance.androidclient.types.WebcastType;
 
 public class WebcastListElement extends ListElement {
 

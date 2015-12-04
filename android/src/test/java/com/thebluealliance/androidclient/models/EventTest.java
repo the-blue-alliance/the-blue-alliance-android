@@ -3,8 +3,8 @@ package com.thebluealliance.androidclient.models;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.helpers.DistrictType;
-import com.thebluealliance.androidclient.helpers.EventType;
+import com.thebluealliance.androidclient.types.DistrictType;
+import com.thebluealliance.androidclient.types.EventType;
 
 import org.junit.Before;
 import org.junit.Test;

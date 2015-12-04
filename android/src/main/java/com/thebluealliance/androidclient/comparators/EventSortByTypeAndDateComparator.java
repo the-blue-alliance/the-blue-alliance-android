@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.comparators;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.helpers.EventType;
+import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 

@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.DistrictType;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.DistrictType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listeners.DistrictClickListener;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
