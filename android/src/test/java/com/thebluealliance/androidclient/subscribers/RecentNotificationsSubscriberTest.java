@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
@@ -28,9 +29,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import dagger.Lazy;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +42,7 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricTestRunner.class)
 public class RecentNotificationsSubscriberTest {
 
-    @Mock public Database mDb;
+    @Mock Database mDb;
 
     private RecentNotificationsSubscriber mSubscriber;
     private List<StoredNotification> mNotifications;
@@ -47,7 +51,8 @@ public class RecentNotificationsSubscriberTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         DatabaseMocker.mockNotificationsTable(mDb);
-        mSubscriber = new RecentNotificationsSubscriber();
+        DatabaseWriter writer = mockDatabaseWriter();
+        mSubscriber = new RecentNotificationsSubscriber(writer);
         List<JsonObject> notificationData = ModelMaker.getMultiModelList(JsonObject.class,
           "notification_alliance_selection",
           "notification_awards_posted",
@@ -107,5 +112,13 @@ public class RecentNotificationsSubscriberTest {
             notifications.add(notification);
         }
         return notifications;
+    }
+
+    private static DatabaseWriter mockDatabaseWriter() {
+        return new DatabaseWriter(
+          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
+          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
+          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
+          mock(Lazy.class), mock(Lazy.class));
     }
 }

@@ -9,6 +9,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.database.writers.AwardListWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -19,6 +20,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -28,21 +30,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class AwardsPostedNotificationTest {
 
-    private Context mContext;
+    @Mock private Context mContext;
+    @Mock private AwardListWriter mWriter;
     private AwardsPostedNotification mNotification;
     private JsonObject mData;
 
     @Before
     public void setUp() {
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mWriter = mock(AwardListWriter.class);
         mData = ModelMaker.getModel(JsonObject.class, "notification_awards_posted");
-        mNotification = new AwardsPostedNotification(mData.toString());
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
     }
 
     @Test
@@ -57,24 +62,33 @@ public class AwardsPostedNotificationTest {
         assertEquals(awards.size(), 1);
     }
 
+    @Test
+    public void testDbWrite() {
+        mNotification.parseMessageData();
+        mNotification.updateDataLocally();
+
+        List<Award> awards = mNotification.getAwards();
+        verify(mWriter).write(awards);
+    }
+
     @Test(expected = JsonParseException.class)
     public void testNoEventKey() {
         mData.remove("event_key");
-        mNotification = new AwardsPostedNotification(mData.toString());
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
         mNotification.parseMessageData();
     }
 
     @Test(expected = JsonParseException.class)
     public void testNoEventName() {
         mData.remove("event_name");
-        mNotification = new AwardsPostedNotification(mData.toString());
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
         mNotification.parseMessageData();
     }
 
     @Test(expected = JsonParseException.class)
     public void testNoAwards() {
         mData.remove("awards");
-        mNotification = new AwardsPostedNotification(mData.toString());
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
         mNotification.parseMessageData();
     }
 

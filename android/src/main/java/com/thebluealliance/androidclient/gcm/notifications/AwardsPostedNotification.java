@@ -111,7 +111,6 @@ public class AwardsPostedNotification extends BaseNotification {
                     award.setKey(AwardHelper.createAwardKey(award.getEventKey(), award.getEnum()));
                 } catch (BasicModel.FieldNotDefinedException e) {
                     /* Can't write without a key */
-                    awards.remove(award);
                 }
             }
             mWriter.write(awards);

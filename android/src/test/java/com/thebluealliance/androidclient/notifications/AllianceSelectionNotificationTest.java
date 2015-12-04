@@ -10,6 +10,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.database.writers.EventWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -20,6 +21,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -27,21 +29,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class AllianceSelectionNotificationTest {
 
-    private Context mContext;
+    @Mock private Context mContext;
+    @Mock private EventWriter mWriter;
     private AllianceSelectionNotification mNotification;
     private JsonObject mData;
 
     @Before
     public void setUp() {
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mWriter = mock(EventWriter.class);
         mData = ModelMaker.getModel(JsonObject.class, "notification_alliance_selection");
-        mNotification = new AllianceSelectionNotification(mData.toString());
+        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter);
     }
 
     @Test
@@ -54,10 +59,19 @@ public class AllianceSelectionNotificationTest {
         assertNotNull(event);
     }
 
+    @Test
+    public void testDbWrite() {
+        mNotification.parseMessageData();
+        mNotification.updateDataLocally();
+
+        Event event = mNotification.getEvent();
+        verify(mWriter).write(event);
+    }
+
     @Test(expected = JsonParseException.class)
     public void testNoEvent() {
         mData.remove("event");
-        mNotification = new AllianceSelectionNotification(mData.toString());
+        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter);
         mNotification.parseMessageData();
     }
 
