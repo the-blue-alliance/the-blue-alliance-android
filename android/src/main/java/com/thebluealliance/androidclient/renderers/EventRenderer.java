@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class EventRenderer implements ModelRenderer<Event, Void> {
+public class EventRenderer implements ModelRenderer<Event, Boolean> {
 
     private APICache mDatafeed;
 
@@ -38,29 +38,31 @@ public class EventRenderer implements ModelRenderer<Event, Void> {
             return null;
         }
 
-        return renderFromModel(event, null);
+        return renderFromModel(event, false);
     }
 
     @WorkerThread
     @Override
-    public @Nullable EventListElement renderFromModel(Event event, Void aVoid) {
-       try {
+    public @Nullable EventListElement renderFromModel(Event event, Boolean showMyTbaSettings) {
+        boolean safeMyTba = showMyTbaSettings == null ? false : showMyTbaSettings;
+        try {
             return new EventListElement(
               event.getKey(),
               event.getEventShortName(),
               event.getDateString(),
-              event.getLocation());
+              event.getLocation(),
+              safeMyTba);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
             Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
               "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
-           return null;
+            return null;
         }
     }
 
     @WorkerThread
     public List<WebcastListElement> renderWebcasts(Event event) {
-       List<WebcastListElement> webcasts = new ArrayList<>();
+        List<WebcastListElement> webcasts = new ArrayList<>();
         try {
             int i = 1;
             for (JsonElement webcast : event.getWebcasts()) {

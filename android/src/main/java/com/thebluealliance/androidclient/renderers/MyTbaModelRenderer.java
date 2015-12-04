@@ -50,7 +50,7 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     if (event == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return mEventRenderer.renderFromModel(event, null);
+                    return mEventRenderer.renderFromModel(event, true);
                 case TEAM:
                     Team team = mDatafeed.fetchTeam(key).toBlocking().first();
                     if (team == null) {
