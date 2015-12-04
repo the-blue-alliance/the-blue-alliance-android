@@ -8,7 +8,8 @@ public enum ModelType {
     DISTRICT,
     DISTRICTTEAM,
     AWARD,
-    MEDIA;
+    MEDIA,
+    DISTRICTPOINTS;
 
     public String getTitle() {
         switch (this) {

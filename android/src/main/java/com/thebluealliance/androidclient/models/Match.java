@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MatchType;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.Date;
@@ -32,15 +33,11 @@ public class Match extends BasicModel<Match> {
     private JsonArray videos;
 
     public Match() {
-        super(Database.TABLE_MATCHES);
+        super(Database.TABLE_MATCHES, ModelType.MATCH);
         year = -1;
         type = MatchType.NONE;
         alliances = null;
         videos = null;
-    }
-
-    public Match(String key, MatchType type, int matchNumber, int setNumber, JsonObject alliances, String timeString, long timestamp, JsonArray videos, long last_updated) {
-        super(Database.TABLE_MATCHES);
     }
 
     public String getKey() {
@@ -340,13 +337,6 @@ public class Match extends BasicModel<Match> {
                     "Required: Database.Matches.ALLIANCES");
             return false;
         }
-    }
-
-    /**
-     * @deprecated in favor of {@link com.thebluealliance.androidclient.renderers.MatchRenderer}
-     */
-    public MatchListElement render() {
-        return render(true, false, true, true);
     }
 
     /**

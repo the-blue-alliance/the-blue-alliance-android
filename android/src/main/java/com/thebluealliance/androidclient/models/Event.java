@@ -12,8 +12,8 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.listitems.EventListElement;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -36,7 +36,7 @@ public class Event extends BasicModel<Event> {
     private JsonObject stats, districtPoints;
 
     public Event() {
-        super(Database.TABLE_EVENTS);
+        super(Database.TABLE_EVENTS, ModelType.EVENT);
         alliances = null;
         rankings = null;
         webcasts = null;
@@ -442,18 +442,6 @@ public class Event extends BasicModel<Event> {
             Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
                     "Required fields: Database.Events.START, Database.Events.END");
             return "";
-        }
-    }
-
-    @Deprecated
-    @Override
-    public EventListElement render() {
-        try {
-            return new EventListElement(getKey(), getEventShortName(), getDateString(), getLocation());
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
-                    "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
-            return null;
         }
     }
 

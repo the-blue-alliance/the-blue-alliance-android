@@ -11,8 +11,6 @@ import dagger.Provides;
 @Module(includes = DatafeedModule.class)
 public class RendererModule {
 
-    private static EventRenderer sEventRenderer;
-
     @Provides @Singleton
     public MyTbaModelRenderer provideMyTbaModelRenderer(
       APICache cache,
@@ -57,4 +55,31 @@ public class RendererModule {
     public DistrictPointBreakdownRenderer provideDistrictPointBreakdownRenderer() {
         return new DistrictPointBreakdownRenderer();
     }
+
+    @Provides @Singleton
+    public DistrictTeamRenderer provideDistrictTeamRenderer() {
+        return new DistrictTeamRenderer();
+    }
+
+    @Provides @Singleton
+    public ModelRendererSupplier provideModelRendererSupplier(
+      AwardRenderer awardRenderer,
+      DistrictPointBreakdownRenderer districtPointBreakdownRenderer,
+      DistrictTeamRenderer districtTeamRenderer,
+      EventRenderer eventRenderer,
+      TeamRenderer teamRenderer,
+      MatchRenderer matchRenderer,
+      MediaRenderer mediaRenderer,
+      DistrictRenderer districtRenderer) {
+        return new ModelRendererSupplier(
+          awardRenderer,
+          districtPointBreakdownRenderer,
+          districtTeamRenderer,
+          districtRenderer,
+          eventRenderer,
+          matchRenderer,
+          mediaRenderer,
+          teamRenderer);
+    }
+
 }

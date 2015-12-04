@@ -7,14 +7,14 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.listitems.AwardListElement;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
 public class Award extends BasicModel<Award> {
 
     private JsonArray winners;
 
     public Award() {
-        super(Database.TABLE_AWARDS);
+        super(Database.TABLE_AWARDS, ModelType.AWARD);
         winners = null;
     }
 
@@ -114,12 +114,6 @@ public class Award extends BasicModel<Award> {
 
     public void setEventKey(String eventKey) {
         fields.put(AwardsTable.EVENTKEY, eventKey);
-    }
-
-    @Override
-    public AwardListElement render() {
-        /* See AwardRenderer class */
-        return null;
     }
 
     @Override

@@ -133,8 +133,9 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
     }
 
     @VisibleForTesting
-    public static RenderArgs argsFromMode(@RenderType int type) {
-        switch (type) {
+    public static RenderArgs argsFromMode(@RenderType Integer type) {
+        int nullSafeValue = type == null ? -1 : type;
+        switch (nullSafeValue) {
             default:
             case RENDER_DEFAULT:
                 /* Video icon, no header, yes title, yes clickable */

@@ -7,7 +7,7 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -41,7 +41,7 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
     }
 
     @WorkerThread @Override
-    public @Nullable ListItem renderFromKey(String key, ModelType type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type) {
         String text;
         try {
             switch (type) {
@@ -92,8 +92,11 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
         return null;
     }
 
+    /**
+     * Not needed for mytba
+     */
     @Override
-    public @Nullable ListItem renderFromModel(Void aVoid, Void a2void) {
+    public @Nullable ListElement renderFromModel(Void aVoid, Void a2void) {
         return null;
     }
 }

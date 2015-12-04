@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import com.thebluealliance.androidclient.helpers.ModelType;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.ListElement;
 
 public interface ModelRenderer<MODEL, ARGS> {
 
@@ -16,8 +16,8 @@ public interface ModelRenderer<MODEL, ARGS> {
      * @return A ListItem of the rendered model
      */
     @WorkerThread
-    @Nullable ListItem renderFromKey(String key, ModelType type);
+    @Nullable ListElement renderFromKey(String key, ModelType type);
 
     @WorkerThread
-    @Nullable ListItem renderFromModel(MODEL model, ARGS args);
+    @Nullable ListElement renderFromModel(MODEL model, @Nullable ARGS args);
 }

@@ -9,9 +9,12 @@ import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>> {
 
@@ -25,9 +28,12 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     public ProgressBar progressBar;
 
     private short mExpandMode;
+    protected ModelRendererSupplier mRendererSupplier;
 
-    public ExpandableListViewBinder() {
+    @Inject
+    public ExpandableListViewBinder(ModelRendererSupplier supplier) {
         super();
+        mRendererSupplier = supplier;
         mExpandMode = MODE_EXPAND_NONE;
     }
 
@@ -63,7 +69,7 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     }
 
     protected ExpandableListViewAdapter newAdapter(List<ListGroup> data) {
-        return new ExpandableListViewAdapter(mActivity, data);
+        return new ExpandableListViewAdapter(mActivity, mRendererSupplier, data);
     }
 
     @Override

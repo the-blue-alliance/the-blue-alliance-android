@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 
 import javax.inject.Inject;
@@ -19,7 +19,7 @@ public class DistrictPointBreakdownRenderer implements ModelRenderer<DistrictPoi
     }
 
     @Override
-    public @Nullable ListItem renderFromKey(String key, ModelType type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type) {
         /* Not used */
         return null;
     }

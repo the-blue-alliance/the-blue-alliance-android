@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.helpers.MediaType;
 import com.thebluealliance.androidclient.helpers.ModelType;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
 
@@ -24,7 +24,7 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
     }
 
     @Override
-    public @Nullable ListItem renderFromKey(String key, ModelType type) {
+    public @Nullable ListElement renderFromKey(String key, ModelType type) {
         /* Not implemented yet */
         return null;
     }

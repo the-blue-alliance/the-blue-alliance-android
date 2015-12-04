@@ -1,16 +1,13 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MediaType;
-import com.thebluealliance.androidclient.listitems.ImageListElement;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
 
 public class Media extends BasicModel<Media> {
@@ -18,7 +15,7 @@ public class Media extends BasicModel<Media> {
     private JsonObject details;
 
     public Media() {
-        super(Database.TABLE_MEDIAS);
+        super(Database.TABLE_MEDIAS, ModelType.MEDIA);
         details = null;
     }
 
@@ -97,33 +94,6 @@ public class Media extends BasicModel<Media> {
 
     public void setYear(int year) {
         fields.put(MediasTable.YEAR, year);
-    }
-
-    /**
-     * @deprecated in favor of {@link com.thebluealliance.androidclient.renderers.MediaRenderer}
-     */
-    @Override
-    public ListElement render() {
-        String imageUrl;
-        try {
-            MediaType mediaType = getMediaType();
-            String foreignKey = getForeignKey();
-            if (mediaType == MediaType.CD_PHOTO_THREAD) {
-                JsonObject details = getDetails();
-                imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
-            } else if (mediaType == MediaType.YOUTUBE) {
-                imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
-            } else {
-                imageUrl = "";
-            }
-            Boolean isVideo = mediaType == MediaType.YOUTUBE;
-            return new ImageListElement(imageUrl,
-                    String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey), isVideo);
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
-                    "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");
-            return null;
-        }
     }
 
     @Override

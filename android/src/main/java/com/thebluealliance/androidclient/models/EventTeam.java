@@ -6,11 +6,8 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.helpers.ModelType;
 
-/**
- * Created by phil on 7/1/14.
- */
 public class EventTeam extends BasicModel<EventTeam> {
 
     public static final String[] NOTIFICATION_TYPES = {
@@ -22,7 +19,7 @@ public class EventTeam extends BasicModel<EventTeam> {
     };
 
     public EventTeam() {
-        super(Database.TABLE_EVENTTEAMS);
+        super(Database.TABLE_EVENTTEAMS, ModelType.EVENTTEAM);
     }
 
     public void setKey(String newKey) {
@@ -94,11 +91,6 @@ public class EventTeam extends BasicModel<EventTeam> {
     @Override
     public void write(Context c) {
         Database.getInstance(c).getEventTeamsTable().add(this);
-    }
-
-    @Override
-    public ListElement render() {
-        return null;
     }
 
 }
