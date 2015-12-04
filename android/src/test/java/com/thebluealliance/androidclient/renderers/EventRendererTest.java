@@ -51,15 +51,16 @@ public class EventRendererTest  {
     @Test
     public void testRenderFromKey() {
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(mEvent));
-        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, );
+        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, null);
         assertNotNull(element);
         assertEquals(element.getEventKey(), EVENT_KEY);
+        assertEquals(element.showMyTba, false);
     }
 
     @Test
     public void testNullRenderFromKey() {
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(null));
-        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, );
+        EventListElement element = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, null);
         assertNull(element);
     }
 

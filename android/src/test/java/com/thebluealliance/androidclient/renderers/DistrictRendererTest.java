@@ -46,15 +46,15 @@ public class DistrictRendererTest {
     public void testRenderFromKey() {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(mDistrict));
         when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(new ArrayList<>()));
-        DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, );
-        assertDistrictItem(element, 0);
+        DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
+        assertDistrictItem(element, 0, false);
     }
 
     @Test
     public void testNullRenderFromKey(){
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(null));
         when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(new ArrayList<>()));
-        DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, );
+        DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
         assertNull(element);
     }
 
@@ -62,20 +62,21 @@ public class DistrictRendererTest {
     public void testRenderFromKeyNullEvents() {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(mDistrict));
         when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(null));
-        DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, );
-        assertDistrictItem(element, 0);
+        DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
+        assertDistrictItem(element, 0, false);
     }
 
     @Test
     public void testRenderFromModel() {
-        DistrictListElement element = mRenderer.renderFromModel(mDistrict, 12);
-        assertDistrictItem(element, 12);
+        DistrictListElement element = mRenderer.renderFromModel(mDistrict, new DistrictRenderer.RenderArgs(12, true));
+        assertDistrictItem(element, 12, true);
     }
 
-    private void assertDistrictItem(DistrictListElement element, int numEvents) {
+    private void assertDistrictItem(DistrictListElement element, int numEvents, boolean showMyTba) {
         assertNotNull(element);
         assertEquals(element.key, DISTRICT_KEY);
         assertEquals(element.numEvents, numEvents);
         assertEquals(element.type, DistrictType.NEW_ENGLAND);
+        assertEquals(element.showMyTba, showMyTba);
     }
 }
