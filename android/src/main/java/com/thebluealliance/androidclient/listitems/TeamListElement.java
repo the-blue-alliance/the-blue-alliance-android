@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.listitems;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -22,6 +22,7 @@ public class TeamListElement extends ListElement {
     public final String mTeamName;
     public final String mTeamLocation;
     public final boolean mShowLinkToTeamDetails;
+    public final boolean mShowMyTbaDetails;
 
     public TeamListElement(Team team) throws BasicModel.FieldNotDefinedException {
         super(team.getKey());
@@ -29,14 +30,22 @@ public class TeamListElement extends ListElement {
         mTeamName = team.getNickname();
         mTeamLocation = team.getLocation();
         mShowLinkToTeamDetails = false;
+        mShowMyTbaDetails = false;
     }
 
-    public TeamListElement(String key, int number, String name, String location, boolean showLinkToTeamDetails) {
+    public TeamListElement(
+      String key,
+      int number,
+      String name,
+      String location,
+      boolean showLinkToTeamDetails,
+      boolean showMyTbaDetails) {
         super(key);
         mTeamNumber = number;
         mTeamName = name;
         mTeamLocation = location;
         mShowLinkToTeamDetails = showLinkToTeamDetails;
+        mShowMyTbaDetails = showMyTbaDetails;
     }
 
     @Override
@@ -50,15 +59,16 @@ public class TeamListElement extends ListElement {
             holder.teamName = (TextView) convertView.findViewById(R.id.team_name);
             holder.teamLocation = (TextView) convertView.findViewById(R.id.team_location);
             holder.teamInfo = (ImageView) convertView.findViewById(R.id.team_info);
+            holder.myTbaSettings = (ImageView) convertView.findViewById(R.id.model_settings);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.teamNumber.setText("" + mTeamNumber);
+        holder.teamNumber.setText(String.format("%1$d", mTeamNumber));
 
         if (mTeamName.isEmpty()) {
-            holder.teamName.setText("Team " + mTeamNumber);
+            holder.teamName.setText(String.format("Team %1$s", mTeamNumber));
         } else {
             holder.teamName.setText(mTeamName);
         }
@@ -67,17 +77,17 @@ public class TeamListElement extends ListElement {
 
         if (mShowLinkToTeamDetails) {
             holder.teamInfo.setVisibility(View.VISIBLE);
-            holder.teamInfo.setOnClickListener(view -> {
-                String teamKey = "frc" + mTeamNumber;
-                Intent intent = ViewTeamActivity.newInstance(context, teamKey);
-
-                /* Track the call */
-                AnalyticsHelper.sendClickUpdate(context, "team_click", "TeamListElement", "");
-
-                context.startActivity(intent);
-            });
+            holder.teamInfo.setOnClickListener(new TeamClickListener(context, getKey()));
         } else {
             holder.teamInfo.setVisibility(View.GONE);
+        }
+
+        if (mShowMyTbaDetails) {
+            holder.myTbaSettings.setVisibility(View.VISIBLE);
+            holder.myTbaSettings.setOnClickListener(new ModelSettingsClickListener(context, getKey(), ModelType.TEAM));
+            convertView.setOnClickListener(new TeamClickListener(context, getKey()));
+        } else {
+            holder.myTbaSettings.setVisibility(View.GONE);
         }
 
         return convertView;
@@ -88,5 +98,6 @@ public class TeamListElement extends ListElement {
         TextView teamName;
         TextView teamLocation;
         ImageView teamInfo;
+        ImageView myTbaSettings;
     }
 }

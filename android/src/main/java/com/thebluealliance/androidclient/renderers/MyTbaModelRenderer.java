@@ -56,7 +56,7 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     if (team == null) {
                         return new ModelListElement(key, key, type);
                     }
-                    return mTeamRenderer.renderFromModel(team, TeamRenderer.RENDER_BASIC);
+                    return mTeamRenderer.renderFromModel(team, TeamRenderer.RENDER_MYTBA_DETAILS);
                 case MATCH:
                     Match match = mDatafeed.fetchMatch(key).toBlocking().first();
                     if (match == null) {

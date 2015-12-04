@@ -55,4 +55,12 @@
         android:layout_centerVertical="true"
         android:src="@drawable/ic_info_outline_black_24dp" />
 
+    <ImageView
+        android:id="@+id/model_settings"
+        style="@style/ListItemButtonStyle"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:src="@drawable/ic_settings_black_24dp" />
+
 </RelativeLayout>

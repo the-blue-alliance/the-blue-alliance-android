@@ -22,10 +22,11 @@ import javax.inject.Singleton;
 public class TeamRenderer implements ModelRenderer<Team, Integer> {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({RENDER_BASIC, RENDER_DETAILS_BUTTON})
+    @IntDef({RENDER_BASIC, RENDER_DETAILS_BUTTON, RENDER_MYTBA_DETAILS})
     public @interface RenderType{}
     public static final int RENDER_BASIC = 0;
     public static final int RENDER_DETAILS_BUTTON = 1;
+    public static final int RENDER_MYTBA_DETAILS = 2;
 
     APICache mDatafeed;
 
@@ -47,13 +48,15 @@ public class TeamRenderer implements ModelRenderer<Team, Integer> {
     @WorkerThread
     @Override
     public @Nullable TeamListElement renderFromModel(Team team, @RenderType Integer renderType) {
+        int safeRenderType = renderType == null ? RENDER_BASIC : renderType;
         try {
             return new TeamListElement(
               team.getKey(),
               team.getTeamNumber(),
               team.getNickname(),
               team.getLocation(),
-              renderType == RENDER_DETAILS_BUTTON);
+              safeRenderType == RENDER_DETAILS_BUTTON,
+              safeRenderType == RENDER_MYTBA_DETAILS);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
               "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");

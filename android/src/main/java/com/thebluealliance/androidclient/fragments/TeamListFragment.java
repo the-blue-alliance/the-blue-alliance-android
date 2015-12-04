@@ -1,15 +1,13 @@
 package com.thebluealliance.androidclient.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamPageCombiner;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 
@@ -45,19 +43,7 @@ public class TeamListFragment extends ListViewFragment<List<Team>, TeamListSubsc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
-            List<Team> teams = mSubscriber.getApiData();
-            if (teams == null) {
-                return;
-            }
-            String teamKey = teams.get(position).getKey();
-            Intent i = new Intent(getActivity(), ViewTeamActivity.class);
-            i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
-
-            AnalyticsHelper.sendClickUpdate(getActivity(), "team_click", i.getDataString(), teamKey);
-
-            startActivity(i);
-        });
+        mListView.setOnItemClickListener(new TeamClickListener(getActivity(), mSubscriber));
 
         // Enable fast scrolling
         mListView.setFastScrollEnabled(true);
