@@ -133,4 +133,15 @@ public class Team extends BasicModel<Team> {
         }
     }
 
+    public String getMotto() throws FieldNotDefinedException {
+        if (fields.containsKey(TeamsTable.MOTTO) && fields.get(TeamsTable.MOTTO) instanceof String) {
+            return (String) fields.get(TeamsTable.MOTTO);
+        }
+        throw new FieldNotDefinedException("Field Database.Teams.MOTTO is not defined");
+    }
+
+    public void setMotto(String motto) {
+        fields.put(TeamsTable.MOTTO, motto);
+    }
+
 }

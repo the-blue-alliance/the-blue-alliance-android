@@ -31,7 +31,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    private static final int DATABASE_VERSION = 28;
+    private static final int DATABASE_VERSION = 29;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database";
     public static final @Deprecated String TABLE_API = "api";
@@ -57,7 +57,8 @@ public class Database extends SQLiteOpenHelper {
             + TeamsTable.SHORTNAME + " TEXT DEFAULT '', "
             + TeamsTable.LOCATION + " TEXT DEFAULT '',"
             + TeamsTable.WEBSITE + " TEXT DEFAULT '', "
-            + TeamsTable.YEARS_PARTICIPATED + " TEXT DEFAULT '' "
+            + TeamsTable.YEARS_PARTICIPATED + " TEXT DEFAULT '', "
+            + TeamsTable.MOTTO + " TEXT DEFAULT '' "
             + ")";
     String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + EventsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
@@ -359,6 +360,19 @@ public class Database extends SQLiteOpenHelper {
                         db.endTransaction();
                     }
                     break;
+                case 29:
+                    // Add team motto
+                    db.beginTransaction();
+                    Cursor motto = null;
+                    try {
+                        motto = db.rawQuery("SELECT * FROM " + TABLE_TEAMS + " LIMIT 0,1", null);
+                        if (motto.getColumnIndex(TeamsTable.MOTTO) == -1) {
+                            db.execSQL("ALTER TABLE " + TABLE_TEAMS + " ADD COLUMN " + TeamsTable.MOTTO + " TEXT DEFAULT '' ");
+                        }
+                    } finally {
+                        motto.close();
+                        break;
+                    }
             }
             upgradeTo++;
         }
