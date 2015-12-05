@@ -11,9 +11,13 @@ import javax.inject.Inject;
 import static com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter.YearsParticipatedInfo;
 
 public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo> {
+
+    private final TeamWriter mTeamWriter;
+
     @Inject
-    public YearsParticipatedWriter(Database db) {
+    public YearsParticipatedWriter(Database db, TeamWriter teamWriter) {
         super(db);
+        mTeamWriter = teamWriter;
     }
 
     @Override
@@ -22,7 +26,7 @@ public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo>
         Team team = mDb.getTeamsTable().get(yearsParticipatedInfo.teamKey);
         if (team != null) {
             team.setYearsParticipated(yearsParticipatedInfo.yearsParticipated);
-            mDb.getTeamsTable().add(team);
+            mTeamWriter.write(team);
         }
     }
 

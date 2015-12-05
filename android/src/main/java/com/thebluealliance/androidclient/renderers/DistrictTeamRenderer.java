@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.BasicModel;

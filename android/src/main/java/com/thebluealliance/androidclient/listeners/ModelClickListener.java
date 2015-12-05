@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 /**
  * File created by phil on 8/13/14.

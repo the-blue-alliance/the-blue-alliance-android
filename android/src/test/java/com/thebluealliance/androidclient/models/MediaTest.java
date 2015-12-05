@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.helpers.MediaType;
+import com.thebluealliance.androidclient.types.MediaType;
 
 import org.junit.Before;
 import org.junit.Test;

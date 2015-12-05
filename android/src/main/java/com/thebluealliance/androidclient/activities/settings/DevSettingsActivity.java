@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.models.Favorite;
 
 public class DevSettingsActivity extends AppCompatActivity {

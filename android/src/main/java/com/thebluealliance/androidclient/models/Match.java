@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -12,8 +11,8 @@ import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.helpers.MatchType;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 
 import java.util.Date;
@@ -411,8 +410,4 @@ public class Match extends BasicModel<Match> {
                 redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getMatchesTable().add(this);
-    }
 }

@@ -92,7 +92,7 @@ public class DatabaseWriterModule {
     }
 
     @Provides @Singleton
-    public YearsParticipatedWriter yearsParticipatedWriter(Database db) {
-        return new YearsParticipatedWriter(db);
+    public YearsParticipatedWriter yearsParticipatedWriter(Database db, TeamWriter teamWriter) {
+        return new YearsParticipatedWriter(db, teamWriter);
     }
 }

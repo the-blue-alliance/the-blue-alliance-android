@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.comparators;
 
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.Favorite;
 

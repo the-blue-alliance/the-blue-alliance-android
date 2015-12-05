@@ -29,7 +29,7 @@ public class AddDistrictTeamKey implements Func1<List<DistrictTeam>, List<Distri
                 dtKey = DistrictTeamHelper.generateKey(dt.getTeamKey(), districtKey);
                 dt.setKey(dtKey);
                 dt.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
-                dt.setYear(Integer.parseInt(districtKey.substring(0, 4)));
+                dt.setYear(mYear);
                 dt.setDistrictKey(districtKey);
             } catch (BasicModel.FieldNotDefinedException e) {
                 e.printStackTrace();

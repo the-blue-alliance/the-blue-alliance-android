@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -9,7 +8,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public class Team extends BasicModel<Team> {
 
@@ -134,8 +133,4 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getTeamsTable().add(this);
-    }
 }

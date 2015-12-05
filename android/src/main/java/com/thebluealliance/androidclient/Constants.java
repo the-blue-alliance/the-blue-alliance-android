@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import com.thebluealliance.androidclient.helpers.MediaType;
+import com.thebluealliance.androidclient.types.MediaType;
 
 import java.util.HashMap;
 

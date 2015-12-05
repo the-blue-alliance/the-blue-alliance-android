@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.helpers.MediaType;
+import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.models.Media;
 

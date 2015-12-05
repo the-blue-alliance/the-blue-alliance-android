@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -11,8 +10,9 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 
 import java.text.ParseException;
@@ -215,19 +215,19 @@ public class Event extends BasicModel<Event> {
         fields.put(EventsTable.VENUE, venue);
     }
 
-    public EventHelper.TYPE getEventType() throws FieldNotDefinedException {
+    public EventType getEventType() throws FieldNotDefinedException {
         if (fields.containsKey(EventsTable.TYPE) && fields.get(EventsTable.TYPE) instanceof Integer) {
-            return EventHelper.TYPE.fromInt((Integer) fields.get(EventsTable.TYPE));
+            return EventType.fromInt((Integer) fields.get(EventsTable.TYPE));
         }
         throw new FieldNotDefinedException("Field Database.Events.TYPE is not defined");
     }
 
-    public void setEventType(EventHelper.TYPE eventType) {
+    public void setEventType(EventType eventType) {
         fields.put(EventsTable.TYPE, eventType.ordinal());
     }
 
     public void setEventType(String typeString) {
-        fields.put(EventsTable.TYPE, EventHelper.TYPE.fromString(typeString).ordinal());
+        fields.put(EventsTable.TYPE, EventType.fromString(typeString).ordinal());
     }
 
     public void setEventType(int num) {
@@ -449,8 +449,4 @@ public class Event extends BasicModel<Event> {
         return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getEventsTable().add(this);
-    }
 }

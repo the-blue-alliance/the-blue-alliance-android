@@ -17,10 +17,11 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DaggerNotificationComponent;
+import com.thebluealliance.androidclient.di.components.NotificationComponent;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -44,8 +45,9 @@ public class GCMMessageHandler extends IntentService {
     public static final String GROUP_KEY = "tba-android";
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
+    @Inject DatabaseWriter mWriter;
 
-    private DatafeedComponent mComponenet;
+    private NotificationComponent mComponenet;
 
     public GCMMessageHandler() {
         this("GCMMessageHandler");
@@ -65,9 +67,10 @@ public class GCMMessageHandler extends IntentService {
     private void getComponenet() {
         if (mComponenet == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
-            mComponenet = DaggerDatafeedComponent.builder()
+            mComponenet = DaggerNotificationComponent.builder()
               .applicationComponent(application.getComponent())
               .datafeedModule(application.getDatafeedModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
               .build();
         }
     }
@@ -110,13 +113,13 @@ public class GCMMessageHandler extends IntentService {
                     break;
                 case NotificationTypes.MATCH_SCORE:
                 case "score":
-                    notification = new ScoreNotification(messageData);
+                    notification = new ScoreNotification(messageData, mWriter.matchWriter.get());
                     break;
                 case NotificationTypes.UPCOMING_MATCH:
                     notification = new UpcomingMatchNotification(messageData);
                     break;
                 case NotificationTypes.ALLIANCE_SELECTION:
-                    notification = new AllianceSelectionNotification(messageData);
+                    notification = new AllianceSelectionNotification(messageData, mWriter.eventWriter.get());
                     break;
                 case NotificationTypes.LEVEL_STARTING:
                     notification = new CompLevelStartingNotification(messageData);
@@ -125,7 +128,7 @@ public class GCMMessageHandler extends IntentService {
                     notification = new ScheduleUpdatedNotification(messageData);
                     break;
                 case NotificationTypes.AWARDS:
-                    notification = new AwardsPostedNotification(messageData);
+                    notification = new AwardsPostedNotification(messageData, mWriter.awardListWriter.get());
                     break;
                 case NotificationTypes.DISTRICT_POINTS_UPDATED:
                     notification = new DistrictPointsUpdatedNotification(messageData);
@@ -150,7 +153,7 @@ public class GCMMessageHandler extends IntentService {
                 if (built == null) return;
 
                 /* Update the data coming from this notification in the local db */
-                notification.updateDataLocally(c);
+                notification.updateDataLocally();
 
                 /* Store this notification for future access */
                 StoredNotification stored = notification.getStoredNotification();

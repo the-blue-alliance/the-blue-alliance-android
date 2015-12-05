@@ -22,7 +22,7 @@ import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 

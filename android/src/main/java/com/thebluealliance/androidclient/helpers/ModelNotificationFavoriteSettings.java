@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.os.Bundle;
 
+import com.thebluealliance.androidclient.types.ModelType;
+
 import java.util.ArrayList;
 
 /**

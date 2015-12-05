@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.renderers;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
 public interface ModelRenderer<MODEL, ARGS> {

@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
@@ -138,9 +139,8 @@ public class SubscriberModule {
         return new WebcastListSubscriber(renderer);
     }
 
-    @Provides
-    RecentNotificationsSubscriber provideRecentNotificationsSubscriber() {
-        return new RecentNotificationsSubscriber();
+    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
+        return new RecentNotificationsSubscriber(writer);
     }
 
     @Provides

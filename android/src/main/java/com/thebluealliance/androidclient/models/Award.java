@@ -1,13 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public class Award extends BasicModel<Award> {
 
@@ -116,8 +114,4 @@ public class Award extends BasicModel<Award> {
         fields.put(AwardsTable.EVENTKEY, eventKey);
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getAwardsTable().add(this);
-    }
 }

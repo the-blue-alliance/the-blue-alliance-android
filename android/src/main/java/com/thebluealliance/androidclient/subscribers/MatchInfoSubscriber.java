@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
-import com.thebluealliance.androidclient.helpers.MediaType;
+import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;

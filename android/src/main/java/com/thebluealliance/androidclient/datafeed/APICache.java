@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-import com.thebluealliance.androidclient.helpers.DistrictType;
+import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;

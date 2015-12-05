@@ -15,7 +15,6 @@ import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,7 +79,7 @@ public class SummaryNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         /* Nothing to store */
     }
 

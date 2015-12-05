@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
@@ -39,7 +40,7 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
             int competitionWeek = event.getCompetitionWeek();
             int month = cal.get(Calendar.MONTH);
 
-            boolean isOffseason = event.getEventType() == EventHelper.TYPE.OFFSEASON;
+            boolean isOffseason = event.getEventType() == EventType.OFFSEASON;
 
             if (isOffseason ? lastEventMonth != month : lastEventWeek != competitionWeek) {
                 mDataToBind.add(new EventWeekTab(

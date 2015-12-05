@@ -29,9 +29,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.text.DateFormat;
 import java.util.Date;
 
-/**
- * Created by Nathan on 7/24/2014.
- */
 public abstract class BaseNotification extends ListElement {
 
     String messageData;
@@ -70,7 +67,7 @@ public abstract class BaseNotification extends ListElement {
 
     public abstract void parseMessageData() throws JsonParseException;
 
-    public abstract void updateDataLocally(Context c);
+    public abstract void updateDataLocally();
 
     public abstract int getNotificationId();
 

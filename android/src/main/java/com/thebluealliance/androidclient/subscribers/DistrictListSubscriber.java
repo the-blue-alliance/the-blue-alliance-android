@@ -5,7 +5,7 @@ import android.database.Cursor;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
-import com.thebluealliance.androidclient.helpers.DistrictType;
+import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity;
-import com.thebluealliance.androidclient.helpers.ModelType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public class ModelSettingsClickListener implements View.OnClickListener {
 

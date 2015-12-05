@@ -17,10 +17,11 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.database.writers.MatchWriter;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.helpers.MatchType;
+import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -34,11 +35,13 @@ import java.util.Date;
 
 public class ScoreNotification extends BaseNotification {
 
+    private final MatchWriter mWriter;
     private String eventName, eventKey, matchKey;
     private Match match;
 
-    public ScoreNotification(String messageData) {
+    public ScoreNotification(String messageData, MatchWriter writer) {
         super(NotificationTypes.MATCH_SCORE, messageData);
+        mWriter = writer;
     }
 
     public String getEventName() {
@@ -216,9 +219,9 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         if (match != null) {
-            match.write(c);
+            mWriter.write(match);
         }
     }
 

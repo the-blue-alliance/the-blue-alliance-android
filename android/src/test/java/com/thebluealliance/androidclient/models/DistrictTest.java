@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.helpers.DistrictType;
+import com.thebluealliance.androidclient.types.DistrictType;
 
 import org.junit.Before;
 import org.junit.Test;
