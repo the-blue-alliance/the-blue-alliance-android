@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ScrollView
@@ -92,6 +92,27 @@
                                 tools:text="Event Full Name Goes Here" />
                         </RelativeLayout>
                     </FrameLayout>
+
+                    <!-- This is wrapped in a FrameLayout so that the divider will
+                    hide when the container is hidden -->
+                    <FrameLayout
+                        android:id="@+id/team_motto_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View style="@style/InfoItemDividerStyle" />
+
+                        <RelativeLayout
+                            style="@style/InfoItemStyle"
+                            android:clickable="true">
+
+                            <TextView
+                                android:id="@+id/team_motto"
+                                style="@style/InfoItemTextStyle"
+                                tools:text="Team motto Goes Here" />
+                        </RelativeLayout>
+                    </FrameLayout>
+
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
