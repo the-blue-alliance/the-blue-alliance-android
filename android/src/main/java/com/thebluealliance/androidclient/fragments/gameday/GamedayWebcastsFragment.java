@@ -1,11 +1,9 @@
 package com.thebluealliance.androidclient.fragments.gameday;
 
 import android.os.Bundle;
-import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -17,8 +15,6 @@ import rx.Observable;
 
 public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, WebcastListSubscriber> {
 
-    private ListView mListView;
-    private ListViewAdapter mAdapter;
     private int mYear;
     private int mWeek;
 
