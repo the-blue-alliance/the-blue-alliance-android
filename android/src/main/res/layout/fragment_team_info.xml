@@ -40,7 +40,7 @@
                             android:id="@+id/team_name"
                             style="@style/InfoItemTextStyle"
                             android:layout_toRightOf="@id/team_name_icon"
-                            android:text="Team Name Goes Here" />
+                            tools:text="Team Name Goes Here" />
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />
@@ -61,7 +61,7 @@
                         <TextView
                             android:id="@+id/team_location"
                             style="@style/InfoItemTextStyle"
-                            android:text="Event Location Goes Here" />
+                            tools:text="Event Location Goes Here" />
 
                     </RelativeLayout>
 
@@ -89,7 +89,7 @@
                                 android:id="@+id/team_full_name"
                                 style="@style/InfoItemTextStyle"
                                 android:layout_toRightOf="@id/team_full_name_icon"
-                                android:text="Event Full Name Goes Here" />
+                                tools:text="Event Full Name Goes Here" />
                         </RelativeLayout>
                     </FrameLayout>
                 </LinearLayout>
@@ -203,7 +203,8 @@
                         <TextView
                             android:id="@+id/team_website_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_website_icon" />
+                            android:layout_toRightOf="@id/team_website_icon"
+                            tools:text="google link goes here"/>
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />
@@ -224,7 +225,8 @@
                         <TextView
                             android:id="@+id/team_twitter_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_twitter_icon"/>
+                            android:layout_toRightOf="@id/team_twitter_icon"
+                            tools:text="Twitter link goes here"/>
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />
@@ -245,7 +247,8 @@
                         <TextView
                             android:id="@+id/team_youtube_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_youtube_icon" />
+                            android:layout_toRightOf="@id/team_youtube_icon"
+                            tools:text="YouTube link goes here"/>
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />
@@ -267,7 +270,7 @@
                             android:id="@+id/team_cd_title"
                             style="@style/InfoItemTextStyle"
                             android:layout_toRightOf="@id/team_cd_icon"
-                            android:text="@string/view_team_cd" />
+                            tools:text="@string/view_team_cd" />
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
