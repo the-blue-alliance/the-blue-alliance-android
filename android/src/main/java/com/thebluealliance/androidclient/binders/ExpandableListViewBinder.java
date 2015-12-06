@@ -7,6 +7,7 @@ import android.widget.ProgressBar;
 
 import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
@@ -16,6 +17,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>> {
 
     public static final short
@@ -24,8 +28,11 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             MODE_EXPAND_ONLY = 2,
             MODE_EXPAND_ALL = 3;
 
-    public ExpandableListView expandableListView;
-    public ProgressBar progressBar;
+    @Bind(R.id.expandable_list) ExpandableListView expandableListView;
+    @Bind(R.id.progress) ProgressBar progressBar;
+
+    //public ExpandableListView expandableListView;
+    //public ProgressBar progressBar;
 
     private short mExpandMode;
     protected ModelRendererSupplier mRendererSupplier;
@@ -39,6 +46,11 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
 
     public void setExpandMode(short mode) {
         mExpandMode = mode;
+    }
+
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
     }
 
     @Override

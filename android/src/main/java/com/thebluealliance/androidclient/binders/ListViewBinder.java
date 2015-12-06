@@ -7,16 +7,25 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
-    public ListView listView;
-    public ProgressBar progressBar;
+    @Bind(R.id.list) ListView listView;
+    @Bind(R.id.progress) ProgressBar progressBar;
+
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
+    }
 
     @Override
     public void updateData(@Nullable List<ListItem> data) {

@@ -62,6 +62,7 @@ public class EventDistrictPointsFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mBinder.setRootView(v);
         mListView = (ListView) v.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
         TextView nonDistrictWarning = (TextView) v.findViewById(R.id.info_container);
@@ -70,8 +71,6 @@ public class EventDistrictPointsFragment
             mListView.onRestoreInstanceState(mListState);
             progressBar.setVisibility(View.GONE);
         }
-        mBinder.listView = mListView;
-        mBinder.progressBar = progressBar;
         mBinder.nonDistrictWarning = nonDistrictWarning;
 
         mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));

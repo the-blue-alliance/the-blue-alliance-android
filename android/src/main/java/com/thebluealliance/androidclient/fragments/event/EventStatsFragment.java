@@ -117,11 +117,10 @@ public class EventStatsFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mBinder.setRootView(view);
         mListView = (ListView) view.findViewById(R.id.list);
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mBinder.listView = mListView;
-        mBinder.progressBar = mProgressBar;
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.
         if (mAdapter != null) {

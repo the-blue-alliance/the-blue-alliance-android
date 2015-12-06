@@ -9,6 +9,8 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
+
 public class TeamTabBinder extends AbstractDataBinder<Integer> {
 
     public ViewPager viewPager;
@@ -36,6 +38,11 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     @Override
     public void onComplete() {
 
+    }
+
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
     }
 
     @Override
