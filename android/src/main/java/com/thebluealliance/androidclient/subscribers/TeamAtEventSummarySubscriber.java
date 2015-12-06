@@ -125,6 +125,15 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             rankingString = EventHelper.createRankingBreakdown(rankingElements);
         }
 
+        // Rank
+        if (rank > 0) {
+            mDataToBind.add(new LabelValueListItem(
+              mResources.getString(R.string.team_at_event_rank),
+              rank + Utilities.getOrdinalFor(rank)));
+        }
+
+        LabelValueListItem rankBreakdownItem = new LabelValueListItem("Ranking Breakdown", rankingString);
+
         MatchHelper.EventStatus status;
         try {
             status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
@@ -135,12 +144,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
-            // Rank
-            if (rank > 0) {
-                mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_rank),
-                  rank + Utilities.getOrdinalFor(rank)));
-            }
+
             // Record
             /* Don't show for 2015 events, because no wins and such */
             if (year != 2015 && !recordString.equals("0-0-0")) {
@@ -169,7 +173,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
             // Ranking Breakdown
             if (rankingString != null && !rankingString.isEmpty()) {
-                mDataToBind.add(new LabelValueListItem("Ranking Breakdown", rankingString));
+                mDataToBind.add(rankBreakdownItem);
             }
 
             if (lastMatch != null) {
@@ -182,9 +186,11 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                   mResources.getString(R.string.title_next_match),
                   mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
             }
-
-            mDataToBind.add(new EmptyListElement(""));
+        } else {
+            mDataToBind.add(rankBreakdownItem);
         }
+
+        mDataToBind.add(new EmptyListElement(""));
     }
 
     /**
