@@ -291,7 +291,7 @@
                             android:id="@+id/team_cd_title"
                             style="@style/InfoItemTextStyle"
                             android:layout_toRightOf="@id/team_cd_icon"
-                            tools:text="@string/view_team_cd" />
+                            android:text="@string/view_team_cd" />
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
