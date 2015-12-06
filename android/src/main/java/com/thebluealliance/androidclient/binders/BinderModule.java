@@ -3,6 +3,9 @@ package com.thebluealliance.androidclient.binders;
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
+import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.renderers.RendererModule;
@@ -10,7 +13,7 @@ import com.thebluealliance.androidclient.renderers.RendererModule;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = RendererModule.class)
+@Module(includes = {RendererModule.class, ClickListenerModule.class})
 public class BinderModule {
 
     private final Resources mResources;
@@ -25,8 +28,8 @@ public class BinderModule {
     }
 
     @Provides
-    public EventInfoBinder provideEventInfoBinder(MatchRenderer renderer) {
-        return new EventInfoBinder(renderer);
+    public EventInfoBinder provideEventInfoBinder(MatchRenderer renderer, SocialClickListener socialClickListener, EventInfoContainerClickListener eventInfoContainerClickListener) {
+        return new EventInfoBinder(renderer, socialClickListener, eventInfoContainerClickListener);
     }
 
     @Provides

@@ -29,9 +29,6 @@ public class EventInfoFragment
 
     private String mEventKey;
 
-    @Inject SocialClickListener mSocialClickListener;
-    @Inject EventInfoContainerClickListener mInfoClickListener;
-
     public static EventInfoFragment newInstance(String eventKey) {
         EventInfoFragment f = new EventInfoFragment();
         Bundle data = new Bundle();
@@ -46,34 +43,15 @@ public class EventInfoFragment
             mEventKey = getArguments().getString(KEY, "");
         }
         super.onCreate(savedInstanceState);
-        mSocialClickListener.setModelKey(mEventKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_info, null);
         mBinder.setInflater(inflater);
-        mBinder.view = view;
-        mBinder.content = view.findViewById(R.id.content);
-        mBinder.eventName = (TextView) view.findViewById(R.id.event_name);
-        mBinder.eventDate = (TextView) view.findViewById(R.id.event_date);
-        mBinder.eventLoc = (TextView) view.findViewById(R.id.event_location);
-        mBinder.eventVenue = (TextView) view.findViewById(R.id.event_venue);
-        mBinder.topTeamsContainer = view.findViewById(R.id.top_teams_container);
-        mBinder.topOprsContainer = view.findViewById(R.id.top_oprs_container);
-        mBinder.topTeams = (TextView) view.findViewById(R.id.top_teams);
-        mBinder.topOprs = (TextView) view.findViewById(R.id.top_oprs);
-        mBinder.progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mBinder.setRootView(view);
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
 
-        // Set click listeners
-        mBinder.topTeamsContainer.setOnClickListener(mInfoClickListener);
-        mBinder.topOprsContainer.setOnClickListener(mInfoClickListener);
-        view.findViewById(R.id.event_venue_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.event_twitter_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.event_cd_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.event_youtube_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.event_website_container).setOnClickListener(mSocialClickListener);
         return view;
     }
 
