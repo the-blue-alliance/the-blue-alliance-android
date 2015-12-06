@@ -29,6 +29,7 @@ public abstract class ListViewFragment<T, S extends BaseAPISubscriber<T, List<Li
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mBinder.setRootView(v);
         mListView = (ListView) v.findViewById(R.id.list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mAdapter != null) {
@@ -36,8 +37,6 @@ public abstract class ListViewFragment<T, S extends BaseAPISubscriber<T, List<Li
             mListView.onRestoreInstanceState(mListState);
             progressBar.setVisibility(View.GONE);
         }
-        mBinder.listView = mListView;
-        mBinder.progressBar = progressBar;
 
         mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;
