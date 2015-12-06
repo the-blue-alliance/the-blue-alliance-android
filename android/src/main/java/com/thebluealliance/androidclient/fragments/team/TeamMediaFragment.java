@@ -67,8 +67,7 @@ public class TeamMediaFragment extends DatafeedFragment<
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, container, false);
-        mBinder.expandableListView = (ExpandableListView) v.findViewById(R.id.expandable_list);
-        mBinder.progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        mBinder.setRootView(v);
         mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;
     }
