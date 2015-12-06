@@ -65,6 +65,8 @@ public class TeamInfoFragment
         mBinder.teamName = (TextView) view.findViewById(R.id.team_name);
         mBinder.teamLocationContainer = view.findViewById(R.id.team_location_container);
         mBinder.teamLocation = (TextView) view.findViewById(R.id.team_location);
+        mBinder.teamMotto = (TextView) view.findViewById(R.id.team_motto);
+        mBinder.teamMottoContainer = view.findViewById(R.id.team_motto_container);
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
 
         // Register this fragment as the callback for all clickable views
@@ -72,7 +74,6 @@ public class TeamInfoFragment
         view.findViewById(R.id.team_twitter_container).setOnClickListener(mSocialClickListener);
         view.findViewById(R.id.team_cd_container).setOnClickListener(mSocialClickListener);
         view.findViewById(R.id.team_youtube_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.team_website_container).setOnClickListener(mSocialClickListener);
 
         return view;
     }

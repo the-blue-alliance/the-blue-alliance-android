@@ -237,6 +237,9 @@ public class ModelInflater {
                 case TeamsTable.YEARS_PARTICIPATED:
                     team.setYearsParticipated(data.getString(i));
                     break;
+                case TeamsTable.MOTTO:
+                    team.setMotto(data.getString(i));
+                    break;
                 default:
             }
         }
