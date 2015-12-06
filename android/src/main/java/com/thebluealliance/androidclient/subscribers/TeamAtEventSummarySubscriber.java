@@ -186,11 +186,17 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                   mResources.getString(R.string.title_next_match),
                   mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
             }
-        } else {
+        } else if (rank > 0) {
+            // Only show ranking breakdown if rankings are available
             mDataToBind.add(rankBreakdownItem);
         }
 
-        mDataToBind.add(new EmptyListElement(""));
+        if (mDataToBind.size() > 0) {
+            // If there is data to add, then add an empty item next to it so we can scroll
+            // all the way down and not have the FAB overlap with anything
+            mDataToBind.add(new EmptyListElement(""));
+        }
+
     }
 
     /**
