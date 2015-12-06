@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.team;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
 import dagger.Lazy;
 import rx.Observable;
 
@@ -60,12 +62,7 @@ public class TeamInfoFragment
             ViewGroup container,
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_team_info, container, false);
-        mBinder.view = view;
-        mBinder.content = view.findViewById(R.id.content);
-        mBinder.teamName = (TextView) view.findViewById(R.id.team_name);
-        mBinder.teamLocationContainer = view.findViewById(R.id.team_location_container);
-        mBinder.teamLocation = (TextView) view.findViewById(R.id.team_location);
-        mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
+        mBinder.setRootView(view);
 
         // Register this fragment as the callback for all clickable views
         view.findViewById(R.id.team_location_container).setOnClickListener(mSocialClickListener);

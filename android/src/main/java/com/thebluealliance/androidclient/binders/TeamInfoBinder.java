@@ -12,21 +12,34 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 
+import org.w3c.dom.Text;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
-    public TextView teamName;
-    public TextView teamLocation;
+    @Bind(R.id.content) View content;
+    @Bind(R.id.team_name) TextView teamName;
+    @Bind(R.id.team_location_container) View teamLocationContainer;
+    @Bind(R.id.team_location) TextView teamLocation;
 
-    public View view;
-    public View content;
-    public View teamLocationContainer;
+    @Bind(R.id.team_website_container) View teamWebsiteContainer;
+    @Bind(R.id.team_website_title) TextView teamWebsiteTitle;
+    @Bind(R.id.team_twitter_container) View teamTwitterContainer;
+    @Bind(R.id.team_twitter_title) TextView teamTwitterTitle;
+    @Bind(R.id.team_youtube_container) View teamYoutubeContainer;
+    @Bind(R.id.team_youtube_title) TextView teamYoutubeTitle;
+    @Bind(R.id.team_cd_container) View teamCdContainer;
+    @Bind(R.id.team_full_name_container) View teamFullNameContainer;
+    @Bind(R.id.team_full_name) TextView teamFullName;
+    @Bind(R.id.team_next_match_label) View teamNextMatchLabel;
+    @Bind(R.id.team_next_match_details) View teamNextMatchDetails;
+    @Bind(R.id.progress) View progress;
 
     @Override
     public void updateData(@Nullable TeamInfoBinder.Model data) {
-        if (data == null || view == null) {
-            setDataBound(false);
-            return;
-        }
+        ButterKnife.bind(this, mRootView);
 
         if (data.nickname.isEmpty()) {
             teamName.setText("Team " + data.teamNumber);
@@ -47,39 +60,39 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
         // If the team doesn't have a defined website, create a Google search for the team name
         if (data.website.isEmpty()) {
-            view.findViewById(R.id.team_website_container).setTag("https://www.google.com/search?q=" + Uri.encode(data.nickname));
-            ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.find_event_on_google);
+            teamWebsiteContainer.setTag("https://www.google.com/search?q=" + Uri.encode(data.nickname));
+            teamWebsiteTitle.setText(R.string.find_event_on_google);
         } else {
-            view.findViewById(R.id.team_website_container).setTag(data.website);
-            ((TextView) view.findViewById(R.id.team_website_title)).setText(R.string.view_team_website);
+            teamWebsiteContainer.setTag(data.website);
+            teamWebsiteTitle.setText(R.string.view_team_website);
         }
 
-        view.findViewById(R.id.team_twitter_container).setTag("https://twitter.com/search?q=%23" + data.teamKey);
-        ((TextView) view.findViewById(R.id.team_twitter_title)).setText(mActivity.getString(R.string.view_team_twitter, data.teamKey));
+        teamTwitterContainer.setTag("https://twitter.com/search?q=%23" + data.teamKey);
+        teamTwitterTitle.setText(mActivity.getString(R.string.view_team_twitter, data.teamKey));
 
-        view.findViewById(R.id.team_youtube_container).setTag("https://www.youtube.com/results?search_query=" + data.teamKey);
-        ((TextView) view.findViewById(R.id.team_youtube_title)).setText(mActivity.getString(R.string.view_team_youtube, data.teamKey));
+        teamYoutubeContainer.setTag("https://www.youtube.com/results?search_query=" + data.teamKey);
+        teamYoutubeTitle.setText(mActivity.getString(R.string.view_team_youtube, data.teamKey));
 
-        view.findViewById(R.id.team_cd_container).setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.teamKey);
+        teamCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.teamKey);
 
         if (data.fullName.isEmpty()) {
             // No full name specified, hide the view
-            view.findViewById(R.id.team_full_name_container).setVisibility(View.GONE);
+            teamFullNameContainer.setVisibility(View.GONE);
         } else {
             // This string needs to be specially formatted
             SpannableString string = new SpannableString("aka " + data.fullName);
             string.setSpan(new TextAppearanceSpan(mActivity,
                     R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            ((TextView) view.findViewById(R.id.team_full_name)).setText(string);
+            teamFullName.setText(string);
         }
 
-        view.findViewById(R.id.team_next_match_label).setVisibility(View.GONE);
-        view.findViewById(R.id.team_next_match_details).setVisibility(View.GONE);
-        view.findViewById(R.id.content).setVisibility(View.VISIBLE);
+        teamNextMatchLabel.setVisibility(View.GONE);
+        teamNextMatchDetails.setVisibility(View.GONE);
+        content.setVisibility(View.VISIBLE);
 
-        view.findViewById(R.id.progress).setVisibility(View.GONE);
+        progress.setVisibility(View.GONE);
 
-        view.findViewById(R.id.content).setVisibility(View.VISIBLE);
+        content.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
         setDataBound(true);
 
@@ -87,7 +100,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
     @Override
     public void onComplete() {
-        View progressBar = view.findViewById(R.id.progress);
+        View progressBar = progress;
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
@@ -111,11 +124,17 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     private void bindNoDataView() {
         try {
             content.setVisibility(View.GONE);
-            view.findViewById(R.id.progress).setVisibility(View.GONE);
+            progress.setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void unbind() {
+        super.unbind();
+        ButterKnife.unbind(this);
     }
 
     public static class Model {
