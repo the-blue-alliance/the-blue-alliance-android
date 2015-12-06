@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -38,19 +39,17 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
     private APIv2 datafeed;
     private LoadTBADataCallbacks callbacks;
     private Context context;
-    private TBAStatusController controller;
     private long startTime;
     private Database mDb;
     private TeamListWriter mTeamWriter;
     private EventListWriter mEventWriter;
     private DistrictListWriter mDistrictWriter;
 
-    public LoadTBAData(APIv2 datafeed, LoadTBADataCallbacks callbacks, Context c, TBAStatusController controller,
+    public LoadTBAData(APIv2 datafeed, LoadTBADataCallbacks callbacks, Context c,
                        Database db, TeamListWriter teamWriter, EventListWriter eventWriter, DistrictListWriter districtWriter) {
         this.datafeed = datafeed;
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
-        this.controller = controller;
         this.startTime = System.currentTimeMillis();
         this.mDb = db;
         this.mTeamWriter = teamWriter;
@@ -83,13 +82,13 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
          * database and insert all the new teams and events.        *
          */
 
-        int maxCompYear = controller.getMaxCompYear();
         try {
-            int maxPageNum = 0;
+            APIStatus status = datafeed.status().toBlocking().first().body();
+            int maxCompYear = status.getMaxSeason();
 
-            // First, wipe all relevant data from the database
 
             List<Team> allTeams = new ArrayList<>();
+            int maxPageNum = 0;
             if (Arrays.binarySearch(dataToLoad, LOAD_TEAMS) != -1) {
                 mDb.getTeamsTable().deleteAllRows();
                 // First we will load all the teams
@@ -167,6 +166,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             Schedulers.io().createWorker().schedule(() -> mDistrictWriter.write(allDistricts));
 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+
+            // Write TBA Status
+            editor.putString(TBAStatusController.STATUS_PREF_KEY, status.getJsonBlob());
+            editor.putInt(Constants.LAST_YEAR_KEY, status.getMaxSeason());
+
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
                 editor.putBoolean(Database.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE + pageNum, true);

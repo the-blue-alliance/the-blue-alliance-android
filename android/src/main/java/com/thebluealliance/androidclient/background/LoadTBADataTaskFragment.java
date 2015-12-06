@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
-import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
@@ -25,7 +24,6 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
     @Inject TeamListWriter mTeamWriter;
     @Inject EventListWriter mEventWriter;
     @Inject DistrictListWriter mDistrictWriter;
-    @Inject TBAStatusController mStatusController;
 
     LoadTBAData.LoadTBADataCallbacks callback;
     private LoadTBAData task;
@@ -64,7 +62,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         }
 
         if (task == null) {
-            task = new LoadTBAData(mDatafeed, this, getActivity(), mStatusController, mDb, mTeamWriter, mEventWriter, mDistrictWriter);
+            task = new LoadTBAData(mDatafeed, this, getActivity(), mDb, mTeamWriter, mEventWriter, mDistrictWriter);
             task.execute(dataToLoad);
         }
     }
