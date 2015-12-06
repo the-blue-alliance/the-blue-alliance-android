@@ -369,8 +369,10 @@ public class Database extends SQLiteOpenHelper {
                         if (motto.getColumnIndex(TeamsTable.MOTTO) == -1) {
                             db.execSQL("ALTER TABLE " + TABLE_TEAMS + " ADD COLUMN " + TeamsTable.MOTTO + " TEXT DEFAULT '' ");
                         }
+                        db.setTransactionSuccessful();
                     } finally {
                         motto.close();
+                        db.endTransaction();
                         break;
                     }
             }
