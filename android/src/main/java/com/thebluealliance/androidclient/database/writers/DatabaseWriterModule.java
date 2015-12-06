@@ -95,4 +95,12 @@ public class DatabaseWriterModule {
     public YearsParticipatedWriter yearsParticipatedWriter(Database db, TeamWriter teamWriter) {
         return new YearsParticipatedWriter(db, teamWriter);
     }
+
+    @Provides @Singleton
+    public EventTeamAndTeamListWriter provideEventTeamAndTeamListWriter(
+      Database database,
+      EventTeamListWriter eventTeamListWriter,
+      TeamListWriter teamListWriter) {
+        return new EventTeamAndTeamListWriter(database, eventTeamListWriter, teamListWriter);
+    }
 }

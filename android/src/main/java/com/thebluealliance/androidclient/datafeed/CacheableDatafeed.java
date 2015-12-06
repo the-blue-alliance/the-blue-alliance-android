@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
+import com.thebluealliance.androidclient.datafeed.combiners.TeamAndEventTeamCombiner;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
@@ -153,9 +154,10 @@ public class CacheableDatafeed {
     }
 
     public Observable<List<Team>> fetchEventTeams(String eventKey, String cacheHeader) {
-        Observable<List<Team>> apiData = mResponseMap.getAndWriteResponseBody(
+        Observable<List<Team>> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mRetrofitAPI.fetchEventTeams(eventKey, cacheHeader),
-          mWriter.teamListWriter.get());
+          new TeamAndEventTeamCombiner(eventKey),
+          mWriter.eventTeamAndTeamListWriter.get());
         return mAPICache.fetchEventTeams(eventKey).concatWith(apiData);
     }
 

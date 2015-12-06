@@ -84,6 +84,10 @@ public class EventHelper {
         return eventName.trim();
     }
 
+    public static int getYear(String eventKey) {
+        return Integer.parseInt(eventKey.substring(0, 4));
+    }
+
     public static int getYearWeek(Date date) {
         if (date == null) return -1;
         Calendar cal = Calendar.getInstance();

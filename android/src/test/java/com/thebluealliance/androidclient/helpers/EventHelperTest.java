@@ -272,6 +272,12 @@ public class EventHelperTest {
     }
 
     @Test
+    public void testGetYear() {
+        assertEquals(2015, EventHelper.getYear("2015cthar"));
+        assertEquals(2012, EventHelper.getYear("2012ct"));
+    }
+
+    @Test
     public void testGetYearWeek() {
         assertEquals(-1, EventHelper.getYearWeek(null));
 

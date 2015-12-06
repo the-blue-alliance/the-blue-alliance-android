@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter
 import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
+import com.thebluealliance.androidclient.database.writers.EventTeamAndTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamWriter;
 import com.thebluealliance.androidclient.database.writers.EventWriter;
@@ -41,6 +42,7 @@ public class DatabaseWriter {
     public Lazy<TeamWriter> teamWriter;
     public Lazy<TeamListWriter> teamListWriter;
     public Lazy<YearsParticipatedWriter> yearsParticipatedWriter;
+    public Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamListWriter;
 
     @Inject
     public DatabaseWriter(
@@ -60,7 +62,8 @@ public class DatabaseWriter {
       Lazy<MediaListWriter> mediaList,
       Lazy<TeamWriter> team,
       Lazy<TeamListWriter> teamList,
-      Lazy<YearsParticipatedWriter> yearsParticipated) {
+      Lazy<YearsParticipatedWriter> yearsParticipated,
+      Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamList) {
         awardWriter = award;
         awardListWriter = awardList;
         districtWriter = district;
@@ -78,5 +81,6 @@ public class DatabaseWriter {
         teamWriter = team;
         teamListWriter = teamList;
         yearsParticipatedWriter = yearsParticipated;
+        eventTeamAndTeamListWriter = eventTeamAndTeamList;
     }
 }
