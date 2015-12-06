@@ -62,6 +62,7 @@ public class TeamInfoFragment
             ViewGroup container,
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_team_info, container, false);
+
         mBinder.setRootView(view);
 
         // Register this fragment as the callback for all clickable views
@@ -69,7 +70,6 @@ public class TeamInfoFragment
         view.findViewById(R.id.team_twitter_container).setOnClickListener(mSocialClickListener);
         view.findViewById(R.id.team_cd_container).setOnClickListener(mSocialClickListener);
         view.findViewById(R.id.team_youtube_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.team_website_container).setOnClickListener(mSocialClickListener);
 
         return view;
     }

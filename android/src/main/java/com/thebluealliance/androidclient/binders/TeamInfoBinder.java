@@ -36,6 +36,8 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Bind(R.id.team_next_match_label) View teamNextMatchLabel;
     @Bind(R.id.team_next_match_details) View teamNextMatchDetails;
     @Bind(R.id.progress) View progress;
+    @Bind(R.id.team_motto_container) View teamMottoContainer;
+    @Bind(R.id.team_motto) TextView teamMotto;
 
     @Override
     public void updateData(@Nullable TeamInfoBinder.Model data) {
@@ -56,6 +58,14 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
             // Tag is used to create an ACTION_VIEW intent for a maps application
             teamLocationContainer.setTag("geo:0,0?q=" + Uri.encode(data.location));
+        }
+
+        if (data.motto.isEmpty()) {
+            // No location; hide the location view
+            teamMottoContainer.setVisibility(View.GONE);
+        } else {
+            // Show and populate the location view
+            teamMotto.setText(data.motto);
         }
 
         // If the team doesn't have a defined website, create a Google search for the team name
@@ -143,6 +153,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         public String fullName;
         public String location;
         public String website;
+        public String motto;
         public int teamNumber;
     }
 }
