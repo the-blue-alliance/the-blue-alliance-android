@@ -129,6 +129,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 try {
+                    mConsumer.bindViews();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
                     Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");

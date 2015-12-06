@@ -50,8 +50,12 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     }
 
     @Override
-    public void updateData(@Nullable TeamInfoBinder.Model data) {
+    public void bindViews() {
         ButterKnife.bind(this, mRootView);
+    }
+
+    @Override
+    public void updateData(@Nullable TeamInfoBinder.Model data) {
         mSocialClickListener.setModelKey(data.teamKey);
 
         if (data.nickname.isEmpty()) {

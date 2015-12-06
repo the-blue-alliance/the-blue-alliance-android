@@ -73,11 +73,14 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         mInflater = inflater;
     }
 
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
+    }
 
     //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override
     public void updateData(@Nullable Model data) {
-        ButterKnife.bind(this, mRootView);
         mSocialClickListener.setModelKey(data.eventKey);
         mIsLive = data.isLive;
         eventName.setText(data.nameString);

@@ -30,6 +30,12 @@ public interface DataConsumer<T> {
     void onComplete();
 
     /**
+     * Called for ButterKnife Injection
+     */
+    @UiThread
+    void bindViews();
+
+    /**
      * Called when we can't fetch data :(
      */
     @UiThread
