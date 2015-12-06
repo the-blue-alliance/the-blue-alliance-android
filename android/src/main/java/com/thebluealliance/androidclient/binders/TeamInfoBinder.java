@@ -11,13 +11,18 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.SocialClickListener;
 
 import org.w3c.dom.Text;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
+
+    @Inject SocialClickListener mSocialClickListener;
 
     @Bind(R.id.content) View content;
     @Bind(R.id.team_name) TextView teamName;
@@ -39,9 +44,15 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Bind(R.id.team_motto_container) View teamMottoContainer;
     @Bind(R.id.team_motto) TextView teamMotto;
 
+    @Inject
+    public TeamInfoBinder(SocialClickListener socialClickListener) {
+        mSocialClickListener = socialClickListener;
+    }
+
     @Override
     public void updateData(@Nullable TeamInfoBinder.Model data) {
         ButterKnife.bind(this, mRootView);
+        mSocialClickListener.setModelKey(data.teamKey);
 
         if (data.nickname.isEmpty()) {
             teamName.setText("Team " + data.teamNumber);
@@ -59,6 +70,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             // Tag is used to create an ACTION_VIEW intent for a maps application
             teamLocationContainer.setTag("geo:0,0?q=" + Uri.encode(data.location));
         }
+        teamLocationContainer.setOnClickListener(mSocialClickListener);
 
         if (data.motto.isEmpty()) {
             // No location; hide the location view
@@ -76,14 +88,18 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             teamWebsiteContainer.setTag(data.website);
             teamWebsiteTitle.setText(R.string.view_team_website);
         }
+        teamWebsiteContainer.setOnClickListener(mSocialClickListener);
 
         teamTwitterContainer.setTag("https://twitter.com/search?q=%23" + data.teamKey);
+        teamTwitterContainer.setOnClickListener(mSocialClickListener);
         teamTwitterTitle.setText(mActivity.getString(R.string.view_team_twitter, data.teamKey));
 
         teamYoutubeContainer.setTag("https://www.youtube.com/results?search_query=" + data.teamKey);
+        teamYoutubeContainer.setOnClickListener(mSocialClickListener);
         teamYoutubeTitle.setText(mActivity.getString(R.string.view_team_youtube, data.teamKey));
 
         teamCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.teamKey);
+        teamCdContainer.setOnClickListener(mSocialClickListener);
 
         if (data.fullName.isEmpty()) {
             // No full name specified, hide the view

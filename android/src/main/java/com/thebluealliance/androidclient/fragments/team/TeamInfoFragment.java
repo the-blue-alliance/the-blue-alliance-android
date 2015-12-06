@@ -35,7 +35,6 @@ public class TeamInfoFragment
 
     private String mTeamKey;
 
-    @Inject SocialClickListener mSocialClickListener;
     @Inject Lazy<EventRenderer> mEventRenderer;
 
     public static TeamInfoFragment newInstance(String teamKey) {
@@ -53,7 +52,6 @@ public class TeamInfoFragment
             throw new IllegalArgumentException("TeamInfoFragment must be created with a team key!");
         }
         super.onCreate(savedInstanceState);
-        mSocialClickListener.setModelKey(mTeamKey);
     }
 
     @Override
@@ -64,12 +62,6 @@ public class TeamInfoFragment
         View view = inflater.inflate(R.layout.fragment_team_info, container, false);
 
         mBinder.setRootView(view);
-
-        // Register this fragment as the callback for all clickable views
-        view.findViewById(R.id.team_location_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.team_twitter_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.team_cd_container).setOnClickListener(mSocialClickListener);
-        view.findViewById(R.id.team_youtube_container).setOnClickListener(mSocialClickListener);
 
         return view;
     }

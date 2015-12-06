@@ -33,8 +33,8 @@ public class BinderModule {
     }
 
     @Provides
-    public TeamInfoBinder provideTeamInfoBinder() {
-        return new TeamInfoBinder();
+    public TeamInfoBinder provideTeamInfoBinder(SocialClickListener socialClickListener) {
+        return new TeamInfoBinder(socialClickListener);
     }
 
     @Provides

@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -41,7 +42,6 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Bind(R.id.content) View content;
     @Bind(R.id.event_name) TextView eventName;
     @Bind(R.id.event_date) TextView eventDate;
-    @Bind(R.id.event_location) TextView eventLoc;
     @Bind(R.id.event_venue) TextView eventVenue;
     @Bind(R.id.top_teams) TextView topTeams;
     @Bind(R.id.top_oprs) TextView topOprs;
@@ -77,6 +77,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override
     public void updateData(@Nullable Model data) {
+        ButterKnife.bind(this, mRootView);
         mSocialClickListener.setModelKey(data.eventKey);
         mIsLive = data.isLive;
         eventName.setText(data.nameString);
@@ -170,6 +171,12 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         if (!isDataBound()) {
             bindNoDataView();
         }
+    }
+
+    @Override
+    public void unbind() {
+        super.unbind();
+        ButterKnife.unbind(this);
     }
 
     private void bindNoDataView() {
