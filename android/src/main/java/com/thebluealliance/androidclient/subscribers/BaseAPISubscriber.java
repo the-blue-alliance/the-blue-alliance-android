@@ -32,11 +32,13 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     BindType mDataToBind;
     RefreshController mRefreshController; //TODO hook up to DI
     String mRefreshTag;
+    boolean hasBinderBoundViews;
     boolean shouldBindImmediately;
     boolean shouldBindOnce;
 
     public BaseAPISubscriber() {
         shouldBindImmediately = true;
+        hasBinderBoundViews = false;
     }
 
     public void setShouldBindImmediately(boolean shouldBind) {
@@ -77,6 +79,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         try {
             parseData();
             if (shouldBindImmediately || shouldBindOnce) {
+                bindViewsIfNeeded();
                 bindData();
             }
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -91,6 +94,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
             mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
             if (mConsumer != null) {
                 try {
+                    bindViewsIfNeeded();
                     mConsumer.onComplete();
                 } catch (Exception e) {
                     Log.e(Constants.LOG_TAG, "UNABLE TO COMPLETE RENDER");
@@ -106,6 +110,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
+                bindViewsIfNeeded();
                 mConsumer.onError(throwable);
             }
         });
@@ -129,7 +134,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 try {
-                    mConsumer.bindViews();
+                    bindViewsIfNeeded();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
                     Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
@@ -155,5 +160,12 @@ public abstract class BaseAPISubscriber<APIType, BindType>
      */
     protected boolean shouldPostToEventBus() {
         return false;
+    }
+
+    protected void bindViewsIfNeeded() {
+        if (!hasBinderBoundViews && mConsumer != null) {
+            mConsumer.bindViews();
+            hasBinderBoundViews = true;
+        }
     }
 }
