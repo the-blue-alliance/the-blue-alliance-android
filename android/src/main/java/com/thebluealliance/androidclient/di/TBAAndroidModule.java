@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.EventRankingsWriter;
+import com.thebluealliance.androidclient.database.writers.EventStatsWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamAndTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamWriter;
@@ -92,9 +93,11 @@ public class TBAAndroidModule {
       Lazy<TeamListWriter> teamList,
       Lazy<YearsParticipatedWriter> yearsParticipated,
       Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamList,
-      Lazy<EventRankingsWriter> eventRankings) {
+      Lazy<EventRankingsWriter> eventRankings,
+      Lazy<EventStatsWriter> eventStats) {
         return new DatabaseWriter(award, awardList, district, districtList, districtTeam,
           districtTeamList, event, eventList, eventTeam, eventTeamList, match, matchList, media,
-          mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventRankings);
+          mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventRankings,
+          eventStats);
     }
 }

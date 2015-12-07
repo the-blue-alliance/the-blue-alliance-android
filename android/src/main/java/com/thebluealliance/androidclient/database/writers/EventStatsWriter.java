@@ -8,12 +8,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class EventRankingsWriter extends BaseDbWriter<KeyAndJson> {
+public class EventStatsWriter extends BaseDbWriter<KeyAndJson> {
 
     private final EventWriter mEventWriter;
 
     @Inject
-    public EventRankingsWriter(Database db, EventWriter eventWriter) {
+    public EventStatsWriter(Database db, EventWriter eventWriter) {
         super(db);
         mEventWriter = eventWriter;
     }
@@ -23,8 +23,8 @@ public class EventRankingsWriter extends BaseDbWriter<KeyAndJson> {
         mDb.getWritableDatabase().beginTransaction();
         try {
             Event event = mDb.getEventsTable().get(newData.key);
-            if (event != null && newData.json != null && newData.json.isJsonArray()) {
-                event.setRankings(newData.json.getAsJsonArray());
+            if (event != null && newData.json != null && newData.json.isJsonObject()) {
+                event.setStats(newData.json.getAsJsonObject());
                 mEventWriter.write(event);
             }
             mDb.getWritableDatabase().setTransactionSuccessful();
