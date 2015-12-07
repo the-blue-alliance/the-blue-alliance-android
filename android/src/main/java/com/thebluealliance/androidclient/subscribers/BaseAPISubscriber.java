@@ -146,6 +146,15 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     }
 
     /**
+     *
+     */
+    public void bindViewsIfNeeded() {
+        if (!hasBinderBoundViews && mConsumer != null) {
+            mConsumer.bindViews();
+            hasBinderBoundViews = true;
+        }
+    }
+    /**
      * Post {@link #mAPIData} to the given {@link EventBus}
      */
     protected void postToEventBus(EventBus eventBus) {
@@ -162,10 +171,4 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         return false;
     }
 
-    protected void bindViewsIfNeeded() {
-        if (!hasBinderBoundViews && mConsumer != null) {
-            mConsumer.bindViews();
-            hasBinderBoundViews = true;
-        }
-    }
 }

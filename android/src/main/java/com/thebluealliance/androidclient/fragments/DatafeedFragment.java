@@ -87,6 +87,12 @@ public abstract class DatafeedFragment
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBinder.unbind();
+    }
+
     /**
      * Allows other things to bind this instance
      */

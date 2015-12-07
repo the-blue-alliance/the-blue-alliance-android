@@ -78,7 +78,6 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         ButterKnife.bind(this, mRootView);
     }
 
-    //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
     @Override
     public void updateData(@Nullable Model data) {
         mSocialClickListener.setModelKey(data.eventKey);
@@ -148,7 +147,6 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         progressBar.setVisibility(View.GONE);
 
         EventBus.getDefault().post(new ActionBarTitleEvent(data.titleString));
-        //EventBus.getDefault().post(new EventInfoLoadedEvent());
 
         mNoDataBinder.unbindData();
         setDataBound(true);

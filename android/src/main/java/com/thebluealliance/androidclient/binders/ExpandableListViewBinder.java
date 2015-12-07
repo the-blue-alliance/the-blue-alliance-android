@@ -151,6 +151,8 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
 
     @Override
     public void unbind() {
+        super.unbind();
+        ButterKnife.unbind(this);
         if (expandableListView != null) {
             expandableListView.setVisibility(View.GONE);
         }

@@ -92,7 +92,8 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void unbind() {
-        setDataBound(false);
+        super.unbind();
+        ButterKnife.unbind(this);
         if (listView != null) {
             listView.setVisibility(View.GONE);
         }

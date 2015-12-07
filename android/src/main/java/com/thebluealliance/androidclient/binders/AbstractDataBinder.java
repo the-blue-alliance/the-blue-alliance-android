@@ -3,17 +3,15 @@ package com.thebluealliance.androidclient.binders;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
-
-import butterknife.ButterKnife;
 
 /**
  * A class that takes in input data model and updates views accordingly
@@ -67,6 +65,9 @@ public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
     }
 
     public void unbind() {
-        //TODO remove regular data, show progress bar again
+        Log.d(Constants.LOG_TAG, "UNBINDING");
+        setDataBound(false);
+        /* Child classes can unbind their own views. */
+        /** Don't show NoDataBinder because we'll call this from {@link Fragment#onDestroyView()} */
     }
 }

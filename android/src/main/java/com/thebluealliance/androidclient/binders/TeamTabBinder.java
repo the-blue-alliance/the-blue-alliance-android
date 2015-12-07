@@ -46,6 +46,12 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     }
 
     @Override
+    public void unbind() {
+        super.unbind();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public void onError(Throwable throwable) {
 
     }
