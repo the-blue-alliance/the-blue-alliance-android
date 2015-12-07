@@ -29,11 +29,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import dagger.Lazy;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -115,11 +114,6 @@ public class RecentNotificationsSubscriberTest {
     }
 
     private static DatabaseWriter mockDatabaseWriter() {
-        return new DatabaseWriter(
-          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
-          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
-          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
-          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
-          mock(Lazy.class));
+        return mock(DatabaseWriter.class, RETURNS_DEEP_STUBS);
     }
 }

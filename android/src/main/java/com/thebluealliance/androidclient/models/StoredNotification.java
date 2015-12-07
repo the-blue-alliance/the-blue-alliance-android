@@ -131,13 +131,13 @@ public class StoredNotification {
         String data = getMessageData();
         switch (getType()) {
             case NotificationTypes.MATCH_SCORE:
-                notification = new ScoreNotification(data, writer.matchWriter.get());
+                notification = new ScoreNotification(data, writer.getMatchWriter().get());
                 break;
             case NotificationTypes.UPCOMING_MATCH:
                 notification = new UpcomingMatchNotification(data);
                 break;
             case NotificationTypes.ALLIANCE_SELECTION:
-                notification = new AllianceSelectionNotification(data, writer.eventWriter.get());
+                notification = new AllianceSelectionNotification(data, writer.getEventWriter().get());
                 break;
             case NotificationTypes.LEVEL_STARTING:
                 notification = new CompLevelStartingNotification(data);
@@ -146,7 +146,7 @@ public class StoredNotification {
                 notification = new ScheduleUpdatedNotification(data);
                 break;
             case NotificationTypes.AWARDS:
-                notification = new AwardsPostedNotification(data, writer.awardListWriter.get());
+                notification = new AwardsPostedNotification(data, writer.getAwardListWriter().get());
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(data);

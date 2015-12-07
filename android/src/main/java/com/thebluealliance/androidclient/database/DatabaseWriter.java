@@ -28,27 +28,27 @@ import dagger.Lazy;
 
 public class DatabaseWriter {
 
-    public final Lazy<AwardWriter> awardWriter;
-    public final Lazy<AwardListWriter> awardListWriter;
-    public final Lazy<DistrictWriter> districtWriter;
-    public final Lazy<DistrictListWriter> districtListWriter;
-    public final Lazy<DistrictTeamWriter> districtTeamWriter;
-    public final Lazy<DistrictTeamListWriter> districtTeamListWriter;
-    public final Lazy<EventWriter> eventWriter;
-    public final Lazy<EventListWriter> eventListWriter;
-    public final Lazy<EventTeamWriter> eventTeamWriter;
-    public final Lazy<EventTeamListWriter> eventTeamListWriter;
-    public final Lazy<MatchWriter> matchWriter;
-    public final Lazy<MatchListWriter> matchListWriter;
-    public final Lazy<MediaWriter> mediaWriter;
-    public final Lazy<MediaListWriter> mediaListWriter;
-    public final Lazy<TeamWriter> teamWriter;
-    public final Lazy<TeamListWriter> teamListWriter;
-    public final Lazy<YearsParticipatedWriter> yearsParticipatedWriter;
-    public final Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamListWriter;
-    public final Lazy<EventRankingsWriter> eventRankingsWriter;
-    public final Lazy<EventStatsWriter> eventStatsWriter;
-    public final Lazy<EventDistrictPointsWriter> eventDistrictPointsWriter;
+    private final Lazy<AwardWriter> awardWriter;
+    private final Lazy<AwardListWriter> awardListWriter;
+    private final Lazy<DistrictWriter> districtWriter;
+    private final Lazy<DistrictListWriter> districtListWriter;
+    private final Lazy<DistrictTeamWriter> districtTeamWriter;
+    private final Lazy<DistrictTeamListWriter> districtTeamListWriter;
+    private final Lazy<EventWriter> eventWriter;
+    private final Lazy<EventListWriter> eventListWriter;
+    private final Lazy<EventTeamWriter> eventTeamWriter;
+    private final Lazy<EventTeamListWriter> eventTeamListWriter;
+    private final Lazy<MatchWriter> matchWriter;
+    private final Lazy<MatchListWriter> matchListWriter;
+    private final Lazy<MediaWriter> mediaWriter;
+    private final Lazy<MediaListWriter> mediaListWriter;
+    private final Lazy<TeamWriter> teamWriter;
+    private final Lazy<TeamListWriter> teamListWriter;
+    private final Lazy<YearsParticipatedWriter> yearsParticipatedWriter;
+    private final Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamListWriter;
+    private final Lazy<EventRankingsWriter> eventRankingsWriter;
+    private final Lazy<EventStatsWriter> eventStatsWriter;
+    private final Lazy<EventDistrictPointsWriter> eventDistrictPointsWriter;
 
     @Inject
     public DatabaseWriter(
@@ -94,5 +94,89 @@ public class DatabaseWriter {
         eventRankingsWriter = eventRankings;
         eventStatsWriter = eventStats;
         eventDistrictPointsWriter = eventDistrictPoints;
+    }
+
+    public Lazy<AwardWriter> getAwardWriter() {
+        return awardWriter;
+    }
+
+    public Lazy<AwardListWriter> getAwardListWriter() {
+        return awardListWriter;
+    }
+
+    public Lazy<DistrictWriter> getDistrictWriter() {
+        return districtWriter;
+    }
+
+    public Lazy<DistrictListWriter> getDistrictListWriter() {
+        return districtListWriter;
+    }
+
+    public Lazy<DistrictTeamWriter> getDistrictTeamWriter() {
+        return districtTeamWriter;
+    }
+
+    public Lazy<DistrictTeamListWriter> getDistrictTeamListWriter() {
+        return districtTeamListWriter;
+    }
+
+    public Lazy<EventWriter> getEventWriter() {
+        return eventWriter;
+    }
+
+    public Lazy<EventListWriter> getEventListWriter() {
+        return eventListWriter;
+    }
+
+    public Lazy<EventTeamWriter> getEventTeamWriter() {
+        return eventTeamWriter;
+    }
+
+    public Lazy<EventTeamListWriter> getEventTeamListWriter() {
+        return eventTeamListWriter;
+    }
+
+    public Lazy<MatchWriter> getMatchWriter() {
+        return matchWriter;
+    }
+
+    public Lazy<MatchListWriter> getMatchListWriter() {
+        return matchListWriter;
+    }
+
+    public Lazy<MediaWriter> getMediaWriter() {
+        return mediaWriter;
+    }
+
+    public Lazy<MediaListWriter> getMediaListWriter() {
+        return mediaListWriter;
+    }
+
+    public Lazy<TeamWriter> getTeamWriter() {
+        return teamWriter;
+    }
+
+    public Lazy<TeamListWriter> getTeamListWriter() {
+        return teamListWriter;
+    }
+
+    public Lazy<YearsParticipatedWriter> getYearsParticipatedWriter() {
+        return yearsParticipatedWriter;
+    }
+
+    public Lazy<EventTeamAndTeamListWriter> getEventTeamAndTeamListWriter() {
+        return eventTeamAndTeamListWriter;
+    }
+
+    public Lazy<EventRankingsWriter> getEventRankingsWriter() {
+        return eventRankingsWriter;
+    }
+
+    public Lazy<EventStatsWriter> getEventStatsWriter() {
+        return eventStatsWriter;
+    }
+
+    public Lazy<EventDistrictPointsWriter> getEventDistrictPointsWriter() {
+        return eventDistrictPointsWriter;
     }
 }

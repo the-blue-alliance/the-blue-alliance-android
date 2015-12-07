@@ -113,13 +113,13 @@ public class GCMMessageHandler extends IntentService {
                     break;
                 case NotificationTypes.MATCH_SCORE:
                 case "score":
-                    notification = new ScoreNotification(messageData, mWriter.matchWriter.get());
+                    notification = new ScoreNotification(messageData, mWriter.getMatchWriter().get());
                     break;
                 case NotificationTypes.UPCOMING_MATCH:
                     notification = new UpcomingMatchNotification(messageData);
                     break;
                 case NotificationTypes.ALLIANCE_SELECTION:
-                    notification = new AllianceSelectionNotification(messageData, mWriter.eventWriter.get());
+                    notification = new AllianceSelectionNotification(messageData, mWriter.getEventWriter().get());
                     break;
                 case NotificationTypes.LEVEL_STARTING:
                     notification = new CompLevelStartingNotification(messageData);
@@ -128,7 +128,7 @@ public class GCMMessageHandler extends IntentService {
                     notification = new ScheduleUpdatedNotification(messageData);
                     break;
                 case NotificationTypes.AWARDS:
-                    notification = new AwardsPostedNotification(messageData, mWriter.awardListWriter.get());
+                    notification = new AwardsPostedNotification(messageData, mWriter.getAwardListWriter().get());
                     break;
                 case NotificationTypes.DISTRICT_POINTS_UPDATED:
                     notification = new DistrictPointsUpdatedNotification(messageData);
