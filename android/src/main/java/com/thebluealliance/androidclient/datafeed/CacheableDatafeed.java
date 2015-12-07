@@ -203,9 +203,10 @@ public class CacheableDatafeed {
     }
 
     public Observable<JsonObject> fetchEventDistrictPoints(String eventKey, String cacheHeader) {
-        //TODO write response to db
-        Observable<JsonObject> apiData = mResponseMap.getResponseBody(
-          mRetrofitAPI.fetchEventDistrictPoints(eventKey, cacheHeader));
+        Observable<JsonObject> apiData = mResponseMap.getAndWriteMappedResponseBody(
+          mRetrofitAPI.fetchEventDistrictPoints(eventKey, cacheHeader),
+          new JsonObjectAndKeyCombiner(eventKey),
+          mWriter.eventDistrictPointsWriter.get());
         return mAPICache.fetchEventDistrictPoints(eventKey).concatWith(apiData);
     }
 

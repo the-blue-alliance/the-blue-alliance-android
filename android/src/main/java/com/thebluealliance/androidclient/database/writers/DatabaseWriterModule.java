@@ -113,4 +113,11 @@ public class DatabaseWriterModule {
     public EventStatsWriter provideEventStatsWriter(Database db, EventWriter eventWriter) {
         return new EventStatsWriter(db, eventWriter);
     }
+
+    @Provides @Singleton
+    public EventDistrictPointsWriter provideEventDistrictPointsWriter(
+      Database db,
+      EventWriter eventWriter) {
+        return new EventDistrictPointsWriter(db, eventWriter);
+    }
 }

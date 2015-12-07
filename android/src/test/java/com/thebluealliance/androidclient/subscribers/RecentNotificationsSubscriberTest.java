@@ -119,6 +119,7 @@ public class RecentNotificationsSubscriberTest {
           mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
           mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
           mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
-          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class));
+          mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class), mock(Lazy.class),
+          mock(Lazy.class));
     }
 }

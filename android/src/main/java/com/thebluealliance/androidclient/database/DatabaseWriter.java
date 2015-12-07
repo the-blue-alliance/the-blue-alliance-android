@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictWriter;
+import com.thebluealliance.androidclient.database.writers.EventDistrictPointsWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.EventRankingsWriter;
 import com.thebluealliance.androidclient.database.writers.EventStatsWriter;
@@ -27,26 +28,27 @@ import dagger.Lazy;
 
 public class DatabaseWriter {
 
-    public Lazy<AwardWriter> awardWriter;
-    public Lazy<AwardListWriter> awardListWriter;
-    public Lazy<DistrictWriter> districtWriter;
-    public Lazy<DistrictListWriter> districtListWriter;
-    public Lazy<DistrictTeamWriter> districtTeamWriter;
-    public Lazy<DistrictTeamListWriter> districtTeamListWriter;
-    public Lazy<EventWriter> eventWriter;
-    public Lazy<EventListWriter> eventListWriter;
-    public Lazy<EventTeamWriter> eventTeamWriter;
-    public Lazy<EventTeamListWriter> eventTeamListWriter;
-    public Lazy<MatchWriter> matchWriter;
-    public Lazy<MatchListWriter> matchListWriter;
-    public Lazy<MediaWriter> mediaWriter;
-    public Lazy<MediaListWriter> mediaListWriter;
-    public Lazy<TeamWriter> teamWriter;
-    public Lazy<TeamListWriter> teamListWriter;
-    public Lazy<YearsParticipatedWriter> yearsParticipatedWriter;
-    public Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamListWriter;
-    public Lazy<EventRankingsWriter> eventRankingsWriter;
-    public Lazy<EventStatsWriter> eventStatsWriter;
+    public final Lazy<AwardWriter> awardWriter;
+    public final Lazy<AwardListWriter> awardListWriter;
+    public final Lazy<DistrictWriter> districtWriter;
+    public final Lazy<DistrictListWriter> districtListWriter;
+    public final Lazy<DistrictTeamWriter> districtTeamWriter;
+    public final Lazy<DistrictTeamListWriter> districtTeamListWriter;
+    public final Lazy<EventWriter> eventWriter;
+    public final Lazy<EventListWriter> eventListWriter;
+    public final Lazy<EventTeamWriter> eventTeamWriter;
+    public final Lazy<EventTeamListWriter> eventTeamListWriter;
+    public final Lazy<MatchWriter> matchWriter;
+    public final Lazy<MatchListWriter> matchListWriter;
+    public final Lazy<MediaWriter> mediaWriter;
+    public final Lazy<MediaListWriter> mediaListWriter;
+    public final Lazy<TeamWriter> teamWriter;
+    public final Lazy<TeamListWriter> teamListWriter;
+    public final Lazy<YearsParticipatedWriter> yearsParticipatedWriter;
+    public final Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamListWriter;
+    public final Lazy<EventRankingsWriter> eventRankingsWriter;
+    public final Lazy<EventStatsWriter> eventStatsWriter;
+    public final Lazy<EventDistrictPointsWriter> eventDistrictPointsWriter;
 
     @Inject
     public DatabaseWriter(
@@ -69,7 +71,8 @@ public class DatabaseWriter {
       Lazy<YearsParticipatedWriter> yearsParticipated,
       Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamList,
       Lazy<EventRankingsWriter> eventRankings,
-      Lazy<EventStatsWriter> eventStats) {
+      Lazy<EventStatsWriter> eventStats,
+      Lazy<EventDistrictPointsWriter> eventDistrictPoints) {
         awardWriter = award;
         awardListWriter = awardList;
         districtWriter = district;
@@ -90,5 +93,6 @@ public class DatabaseWriter {
         eventTeamAndTeamListWriter = eventTeamAndTeamList;
         eventRankingsWriter = eventRankings;
         eventStatsWriter = eventStats;
+        eventDistrictPointsWriter = eventDistrictPoints;
     }
 }
