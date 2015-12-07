@@ -103,4 +103,9 @@ public class DatabaseWriterModule {
       TeamListWriter teamListWriter) {
         return new EventTeamAndTeamListWriter(database, eventTeamListWriter, teamListWriter);
     }
+
+    @Provides @Singleton
+    public EventRankingsWriter provideEventRankingsWriter(Database db, EventWriter eventWriter) {
+        return new EventRankingsWriter(db, eventWriter);
+    }
 }
