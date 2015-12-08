@@ -13,10 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -25,7 +22,8 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
-import com.thebluealliance.androidclient.firebase.BufferedChildEventListener;
+import com.thebluealliance.androidclient.firebase.FirebaseChildType;
+import com.thebluealliance.androidclient.firebase.ResumeableRxFirebase;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -41,8 +39,10 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
-public class GamedayTickerFragment extends Fragment implements ChildEventListener {
+public class GamedayTickerFragment extends Fragment implements Action1<List<FirebaseNotification>> {
 
     private static final String TICKER_FILTER_ENABLED_NOTIFICATIONS = "gameday_ticker_filter_enabled_notificaitons";
 
@@ -60,7 +60,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     private FloatingActionButton mFab;
     private int mFirstVisiblePosition;
     private List<FirebaseNotification> mAllNotifications = new ArrayList<>();
-    private BufferedChildEventListener mChildEventListener;
+    private ResumeableRxFirebase mFirebaseSubscriber;
     private FragmentComponent mComponent;
 
     private boolean mChildHasBeenAdded = false;
@@ -79,12 +79,19 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         }
         mComponent.inject(this);
         loadFirebaseParams();
-        mChildEventListener = new BufferedChildEventListener(this);
+        mFirebaseSubscriber = new ResumeableRxFirebase();
         // Delivery will be resumed once the view hierarchy is created
-        mChildEventListener.pauseDelivery();
+        mFirebaseSubscriber.pauseDelivery();
+        mFirebaseSubscriber.getObservable()
+          .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
+          .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
+          .buffer(5)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(this);
         Firebase.setAndroidContext(getActivity());
         Firebase ticker = new Firebase(mFirebaseUrl);
-        ticker.limitToLast(mFirebaseLoadDepth).addChildEventListener(mChildEventListener);
+        ticker.limitToLast(mFirebaseLoadDepth).addChildEventListener(mFirebaseSubscriber);
     }
 
     @Override
@@ -121,7 +128,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     @Override
     public void onResume() {
         super.onResume();
-        mChildEventListener.resumeDelivery();
+        mFirebaseSubscriber.resumeDelivery();
     }
 
     @Override
@@ -133,7 +140,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
             mListState = mListView.onSaveInstanceState();
             mFirstVisiblePosition = mListView.getFirstVisiblePosition();
         }
-        mChildEventListener.pauseDelivery();
+        mFirebaseSubscriber.pauseDelivery();
     }
 
     private void onFabClicked() {
@@ -180,6 +187,7 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
     }
 
     private void loadFirebaseParams() {
+        //TODO load from subclass
         mFirebaseUrl = Utilities.readLocalProperty(getActivity(), "firebase.url", FIREBASE_URL_DEFAULT);
         String loadDepthTemp = Utilities.readLocalProperty(getActivity(), "firebase.depth", Integer.toString(FIREBASE_LOAD_DEPTH_DEFAULT));
 
@@ -197,7 +205,10 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
 
         Observable.from(mAllNotifications)
                 .filter(notification -> enabledNotificationKeys.contains(notification.getNotificationType()))
-                .map(FirebaseNotification::getNotification)
+                .map(firebaseNotification -> {
+                    firebaseNotification.setDatabaseWriter(mWriter);
+                    return firebaseNotification.getNotification();
+                })
                 .filter(n -> n != null)
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -234,45 +245,26 @@ public class GamedayTickerFragment extends Fragment implements ChildEventListene
         return enabledNotificationKeys;
     }
 
-    @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    public void call(List<FirebaseNotification> firebaseNotifications) {
         mChildHasBeenAdded = true;
-        Log.d(Constants.LOG_TAG, "Adding ticker item with key " + dataSnapshot.getKey());
         mProgressBar.setVisibility(View.GONE);
-        FirebaseNotification notification = dataSnapshot.getValue(FirebaseNotification.class);
-        notification.setDatabaseWriter(mWriter);
-        mAllNotifications.add(0, notification);
-        Log.d(Constants.LOG_TAG, "Json: " + notification.convertToJson());
-        // Normally we would call updateList() to update the list
-        // However, that requires rechecking the types of all notificaitons. To be more
-        // efficient, we should simply add it to the adapter if the notificaiton's type is
-        // currently enabled
-        if (getEnabledNotificationKeys().contains(notification.getNotificationType())) {
-            BaseNotification n = notification.getNotification();
-            if (n != null) {
-                mNotificationsAdapter.values.add(0, n);
-                mNotificationsAdapter.notifyDataSetChanged();
+        for (FirebaseNotification firebaseNotification : firebaseNotifications) {
+            firebaseNotification.setDatabaseWriter(mWriter);
+            mAllNotifications.add(0, firebaseNotification);
+
+            // Normally we would call updateList() to update the list
+            // However, that requires rechecking the types of all notificaitons. To be more
+            // efficient, we should simply add it to the adapter if the notificaiton's type is
+            // currently enabled
+            if (getEnabledNotificationKeys().contains(firebaseNotification.getNotificationType())) {
+                BaseNotification notification = firebaseNotification.getNotification();
+                if (notification != null) {
+                    Log.d(Constants.LOG_TAG, "Adding ticker item with key " + notification.getKey());
+                    mNotificationsAdapter.values.add(0, notification);
+                    mNotificationsAdapter.notifyDataSetChanged();
+                }
             }
         }
     }
 
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-    }
-
-    @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-    }
-
-    @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-    }
-
-    @Override
-    public void onCancelled(FirebaseError firebaseError) {
-
-    }
 }
