@@ -10,12 +10,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class RecentNotificationsFragment
   extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
 
     @Inject Database mDb;
+    @Inject EventBus mEventBus;
 
     @Override
     protected void inject() {
@@ -32,6 +34,11 @@ public class RecentNotificationsFragment
                 observer.onError(e);
             }
         });
+    }
+
+    @Override
+    protected boolean shouldRegisterSubscriberToEventBus() {
+        return true;
     }
 
     @Override

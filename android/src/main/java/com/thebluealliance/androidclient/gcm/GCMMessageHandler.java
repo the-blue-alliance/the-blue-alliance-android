@@ -46,6 +46,8 @@ public class GCMMessageHandler extends IntentService {
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
     @Inject DatabaseWriter mWriter;
+    @Inject SharedPreferences mPrefs;
+    @Inject EventBus mEventBus;
 
     private NotificationComponent mComponenet;
 
@@ -144,8 +146,7 @@ public class GCMMessageHandler extends IntentService {
                 return;
             }
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-            boolean enabled = prefs.getBoolean("enable_notifications", true);
+            boolean enabled = mPrefs.getBoolean("enable_notifications", true);
             if (enabled) {
                 Notification built;
 
@@ -169,12 +170,12 @@ public class GCMMessageHandler extends IntentService {
                         built = notification.buildNotification(c);
                     }
 
-                    setNotificationParams(built, c, messageType, prefs);
+                    setNotificationParams(built, c, messageType, mPrefs);
                     int id = notification.getNotificationId();
                     notificationManager.notify(id, built);
                 }
 
-                EventBus.getDefault().post(new NotificationsUpdatedEvent());
+                mEventBus.post(new NotificationsUpdatedEvent(notification));
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
