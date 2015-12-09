@@ -126,13 +126,13 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
                 mCurrentSelectedNavigationItemId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
-                switchToModeForId(mCurrentSelectedNavigationItemId);
+                switchToModeForId(mCurrentSelectedNavigationItemId, savedInstanceState);
             } else {
-                switchToModeForId(R.id.nav_item_events);
+                switchToModeForId(R.id.nav_item_events, savedInstanceState);
             }
         } else {
             mCurrentSelectedYearPosition = 0;
-            switchToModeForId(initNavId);
+            switchToModeForId(initNavId, savedInstanceState);
         }
 
 
@@ -164,14 +164,19 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION, mCurrentSelectedYearPosition);
         outState.putInt(STATE_SELECTED_NAV_ID, mCurrentSelectedNavigationItemId);
+        Fragment subFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+        if (subFragment != null) {
+            subFragment.onSaveInstanceState(outState);
+        }
     }
 
-    private void switchToModeForId(int id) {
+    private void switchToModeForId(int id, Bundle savedInstanceState) {
         Fragment fragment;
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = EventsByWeekFragment.newInstance(mMaxCompYear- mCurrentSelectedYearPosition);
+                int weekTab = savedInstanceState != null ? savedInstanceState.getInt(EventsByWeekFragment.TAB, 0) : 0;
+                fragment = EventsByWeekFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition, weekTab);
                 break;
             case R.id.nav_item_districts:
                 fragment = DistrictListFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition);
@@ -312,7 +317,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         final int id = item.getId();
         if (id != mCurrentSelectedNavigationItemId) {
             // Launch after a short delay to give the drawer time to close.
-            handler.postDelayed(() -> switchToModeForId(id), DRAWER_CLOSE_ANIMATION_DURATION);
+            handler.postDelayed(() -> switchToModeForId(id, null), DRAWER_CLOSE_ANIMATION_DURATION);
         }
     }
 
@@ -340,13 +345,13 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 return;
             } else {
                 Log.d(Constants.LOG_TAG, "New requested mode");
-                switchToModeForId(requestedMode);
+                switchToModeForId(requestedMode, null);
                 // Ensure that the Action Bar is properly configured for the current mode
                 invalidateOptionsMenu();
             }
         } else {
             /* No intent given. Switch to default mode */
-            switchToModeForId(mCurrentSelectedNavigationItemId);
+            switchToModeForId(mCurrentSelectedNavigationItemId, null);
             invalidateOptionsMenu();
         }
     }

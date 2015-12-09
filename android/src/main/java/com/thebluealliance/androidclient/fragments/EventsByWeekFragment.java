@@ -31,7 +31,7 @@ import rx.Observable;
 public class EventsByWeekFragment
         extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
 
-    private static final String YEAR = "YEAR", TAB = "tab";
+    public static final String YEAR = "YEAR", TAB = "tab";
 
     @Inject FragmentBinder mFragmentBinder;
     @Inject TBAStatusController mStatusController;
@@ -42,6 +42,15 @@ public class EventsByWeekFragment
     private int mSelectedTab;
     private ViewPager mViewPager;
     private SlidingTabs mTabs;
+
+    public static EventsByWeekFragment newInstance(int year, int tab) {
+        EventsByWeekFragment f = new EventsByWeekFragment();
+        Bundle args = new Bundle();
+        args.putInt(YEAR, year);
+        args.putInt(TAB, tab);
+        f.setArguments(args);
+        return f;
+    }
 
     public static EventsByWeekFragment newInstance(int year) {
         EventsByWeekFragment f = new EventsByWeekFragment();
@@ -56,15 +65,10 @@ public class EventsByWeekFragment
         super.onCreate(savedInstanceState);
         Log.d(Constants.LOG_TAG, "EventsByWeekFragment created!");
         mYear = mStatusController.getMaxCompYear();
-        if (getArguments() != null && getArguments().containsKey(YEAR)) {
+        if (getArguments() != null) {
             // Default to the current year if no year is provided in the arguments
-            mYear = getArguments().getInt(YEAR);
-        }
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            mSelectedTab = savedInstanceState.getInt(TAB, -1);
-        } else {
-            mSelectedTab = -1;
+            mYear = getArguments().getInt(YEAR, mStatusController.getMaxCompYear());
+            mSelectedTab = getArguments().getInt(TAB, -1);
         }
         mBinder.setFragment(this);
     }
@@ -108,6 +112,14 @@ public class EventsByWeekFragment
         super.onSaveInstanceState(outState);
         if (mViewPager != null) {
             outState.putInt(TAB, mViewPager.getCurrentItem());
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.containsKey(TAB) && mViewPager != null) {
+            mViewPager.setCurrentItem(savedInstanceState.getInt(TAB));
         }
     }
 
