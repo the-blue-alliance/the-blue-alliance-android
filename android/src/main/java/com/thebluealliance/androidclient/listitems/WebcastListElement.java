@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
+import com.thebluealliance.androidclient.listeners.WebcastClickListener;
 import com.thebluealliance.androidclient.types.WebcastType;
 
 public class WebcastListElement extends ListElement {
@@ -53,7 +54,7 @@ public class WebcastListElement extends ListElement {
             holder.value.setVisibility(View.VISIBLE);
             holder.value.setText(type.render(c));
             holder.value.setTypeface(null, Typeface.NORMAL);
-            holder.container.setOnClickListener(v -> c.startActivity(WebcastHelper.getIntentForWebcast(c, eventKey, type, webcast, number)));
+            holder.container.setOnClickListener(new WebcastClickListener(c, eventKey, type, webcast, number));
         } else {
             holder.value.setVisibility(View.GONE);
         }

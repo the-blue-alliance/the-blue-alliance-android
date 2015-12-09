@@ -51,7 +51,7 @@ public class WebcastHelper {
         }
     }
 
-    private static Intent getWebIntentForUrl(String url) {
+    public static Intent getWebIntentForUrl(String url) {
         return new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
     }
 
