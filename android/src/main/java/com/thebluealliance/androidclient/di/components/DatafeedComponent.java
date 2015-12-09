@@ -1,14 +1,13 @@
 package com.thebluealliance.androidclient.di.components;
 
-import android.support.v4.app.Fragment;
-
-import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.activities.HomeActivity;
+import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
-import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
+import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 import javax.inject.Singleton;
 
@@ -16,17 +15,17 @@ import dagger.Component;
 
 @Singleton
 @Component(
-  modules = {DatafeedModule.class, TBAAndroidModule.class},
+  modules = {DatafeedModule.class},
   dependencies = {ApplicationComponent.class})
 public interface DatafeedComponent {
-    void inject(CacheableDatafeed datafeed);
-    void inject(DatafeedModule module);
-    void inject(Fragment fragment);
-    void inject(APICache cache);
 
-    APICache cache();
     CacheableDatafeed datafeed();
-    RefreshController refreshController();
-    DatabaseWriter databaseWriter();
-    RetrofitResponseMap retrofitResponseMap();
+
+    void inject(StatusRefreshService statusRefreshService);
+    void inject(MyTbaUpdateService myTbaUpdateService);
+
+    void inject(TBAAndroid tbaAndroid);
+    void inject(HomeActivity homeActivity);
+    void inject(LaunchActivity launchActivity);
+    void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
 }

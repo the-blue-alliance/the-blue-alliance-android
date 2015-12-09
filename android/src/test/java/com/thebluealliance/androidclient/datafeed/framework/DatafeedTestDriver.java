@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.framework;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
@@ -19,6 +21,16 @@ public class DatafeedTestDriver {
         SubscriberTestController<API, VIEW> controller = getSubscriberController(subscriber);
         controller
           .withApiData(null)
+          .parse()
+          .bind();
+    }
+
+    public static <API extends JsonElement, VIEW>
+    void parseJsonNull(BaseAPISubscriber<API, VIEW> subscriber)
+    throws BasicModel.FieldNotDefinedException {
+        SubscriberTestController<API, VIEW> controller = getSubscriberController(subscriber);
+        controller
+          .withApiData((API)JsonNull.INSTANCE)
           .parse()
           .bind();
     }

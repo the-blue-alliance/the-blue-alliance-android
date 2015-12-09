@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import android.support.annotation.WorkerThread;
+
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
@@ -7,20 +10,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-
-public class DistrictTeamListWriter implements Action1<List<DistrictTeam>> {
-    private Database mDb;
-
+public class DistrictTeamListWriter extends BaseDbWriter<List<DistrictTeam>> {
     @Inject
     public DistrictTeamListWriter(Database db) {
-        mDb = db;
+        super(db);
     }
 
     @Override
-    public void call(List<DistrictTeam> districtTeams) {
-        Schedulers.io().createWorker()
-          .schedule(() -> mDb.getDistrictTeamsTable().add(districtTeams));
+    @WorkerThread
+    public void write(List<DistrictTeam> districtTeams) {
+        mDb.getDistrictTeamsTable().add(ImmutableList.copyOf(districtTeams));
     }
 }

@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.di.components;
 
+import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -7,8 +8,13 @@ import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
+import com.thebluealliance.androidclient.binders.BinderModule;
+import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
+import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
@@ -26,6 +32,7 @@ import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
+import com.thebluealliance.androidclient.fragments.gameday.GamedayTickerFragment;
 import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
 import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyFavoritesFragment;
@@ -35,11 +42,9 @@ import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
 import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
-import com.thebluealliance.androidclient.binders.BinderModule;
-import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import javax.inject.Singleton;
 
@@ -51,7 +56,8 @@ import dagger.Component;
     SubscriberModule.class,
     BinderModule.class,
     DatafeedModule.class,
-    DatabaseWriterModule.class},
+    DatabaseWriterModule.class,
+    ClickListenerModule.class},
   dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
 
@@ -89,6 +95,7 @@ public interface FragmentComponent {
 
     void inject(GamedayWebcastsFragment gamedayWebcastsFragment);
     void inject(RecentNotificationsFragment recentNotificationsFragment);
+    void inject(GamedayTickerFragment gamedayTickerFragment);
 
     void inject(MySubscriptionsFragment mySubscriptionsFragment);
     void inject(MyFavoritesFragment myFavoritesFragment);
@@ -100,4 +107,8 @@ public interface FragmentComponent {
     void inject(ViewMatchActivity activity);
     void inject(ViewTeamActivity activity);
     void inject(ViewEventActivity activity);
+    void inject(ContributorsActivity contributorsActivity);
+
+    void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
+    void inject(AllTeamsListFragment allTeamsListFragment);
 }

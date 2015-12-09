@@ -73,13 +73,18 @@ public class EventsTable extends ModelTable<Event> {
             mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
-                    "Database.Events.KEY, Database.Events.YEAR");
+              "Database.Events.KEY, Database.Events.YEAR");
         }
     }
 
     @Override
     protected void deleteCallback(Event event) {
         mDb.delete(Database.TABLE_SEARCH_EVENTS, Database.SearchEvent.KEY + " = ?", new String[]{event.getKey()});
+    }
+
+    @Override
+    protected void deleteAllCallback() {
+        mDb.execSQL("delete from " + Database.TABLE_SEARCH_EVENTS);
     }
 
     @Override
@@ -117,4 +122,37 @@ public class EventsTable extends ModelTable<Event> {
         mDb.endTransaction();
     }
 
+    /**
+     * Used in {@link com.thebluealliance.androidclient.activities.MoreSearchResultsActivity}
+     * If you change the ordering of the rows selected, be sure that you also updated indexes in
+     * {@link com.thebluealliance.androidclient.adapters.EventCursorAdapter}
+     */
+    public Cursor getForSearchQuery(String query) {
+        String table = getTableName();
+        String searchTable = Database.TABLE_SEARCH_EVENTS;
+        String rawQuery = "SELECT " + table + ".rowid as '_id',"
+            + table + "." + KEY + ","
+            + table + "." + NAME + ","
+            + table + "." + SHORTNAME + ","
+            + table + "." + TYPE + ","
+            + table + "." + DISTRICT + ","
+            + table + "." + START + ","
+            + table + "." + END + ","
+            + table + "." + LOCATION + ","
+            + table + "." + VENUE + ","
+            + table + "." + OFFICIAL + ","
+            + table + "." + DISTRICT_STRING
+            + " FROM " + getTableName()
+            + " JOIN (SELECT " + searchTable + "." + Database.SearchEvent.KEY + " FROM " + searchTable + " WHERE " + searchTable + "." + Database.SearchEvent.TITLES + " MATCH ?)" +
+            " as 'tempevents' ON tempevents." +Database.SearchEvent.KEY+ " = " + table + "." + KEY + " ORDER BY " + table + "." + YEAR + " DESC";
+        Cursor cursor = mDb.rawQuery(rawQuery, new String[]{query});
+
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
+    }
 }

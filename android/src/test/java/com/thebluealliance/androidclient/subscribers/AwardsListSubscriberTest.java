@@ -2,12 +2,14 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
+import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.renderers.AwardRenderer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,14 +29,17 @@ import static junit.framework.Assert.assertTrue;
 public class AwardsListSubscriberTest {
 
     @Mock public Database mDb;
+    @Mock public APICache mCache;
 
     private AwardsListSubscriber mSubscriber;
+    private AwardRenderer mRenderer;
     private List<Award> mAwards;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mSubscriber = new AwardsListSubscriber(mDb);
+        mRenderer = new AwardRenderer(mCache);
+        mSubscriber = new AwardsListSubscriber(mDb, mRenderer);
         mAwards = ModelMaker.getModelList(Award.class, "2015necmp_awards");
         DatabaseMocker.mockTeamsTable(mDb);
     }

@@ -169,7 +169,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (teamQueryResults.getPosition() >= MAX_RESULTS_PER_CATEGORY) {
                     break;
                 }
-                String key = teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.KEY));
+                String key = teamQueryResults.getString(teamQueryResults.getColumnIndex("_id"));
                 Team team = Database.getInstance(this).getTeamsTable().get(key);
                 if (team == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
@@ -216,7 +216,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (eventQueryResults.getPosition() >= MAX_RESULTS_PER_CATEGORY) {
                     break;
                 }
-                String key = eventQueryResults.getString(eventQueryResults.getColumnIndex(Database.SearchEvent.KEY));
+                String key = eventQueryResults.getString(eventQueryResults.getColumnIndex("_id"));
                 Event event = Database.getInstance(this).getEventsTable().get(key);
                 if (event == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes

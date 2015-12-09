@@ -7,11 +7,18 @@ import android.widget.ProgressBar;
 
 import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
 import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>> {
 
@@ -21,18 +28,29 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             MODE_EXPAND_ONLY = 2,
             MODE_EXPAND_ALL = 3;
 
-    public ExpandableListView expandableListView;
-    public ProgressBar progressBar;
+    @Bind(R.id.expandable_list) ExpandableListView expandableListView;
+    @Bind(R.id.progress) ProgressBar progressBar;
+
+    //public ExpandableListView expandableListView;
+    //public ProgressBar progressBar;
 
     private short mExpandMode;
+    protected ModelRendererSupplier mRendererSupplier;
 
-    public ExpandableListViewBinder() {
+    @Inject
+    public ExpandableListViewBinder(ModelRendererSupplier supplier) {
         super();
+        mRendererSupplier = supplier;
         mExpandMode = MODE_EXPAND_NONE;
     }
 
     public void setExpandMode(short mode) {
         mExpandMode = mode;
+    }
+
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
     }
 
     @Override
@@ -63,7 +81,7 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     }
 
     protected ExpandableListViewAdapter newAdapter(List<ListGroup> data) {
-        return new ExpandableListViewAdapter(mActivity, data);
+        return new ExpandableListViewAdapter(mActivity, mRendererSupplier, data);
     }
 
     @Override
@@ -133,6 +151,8 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
 
     @Override
     public void unbind() {
+        super.unbind();
+        ButterKnife.unbind(this);
         if (expandableListView != null) {
             expandableListView.setVisibility(View.GONE);
         }

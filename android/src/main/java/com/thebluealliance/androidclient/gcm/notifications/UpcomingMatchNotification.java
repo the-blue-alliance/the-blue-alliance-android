@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by Nathan on 7/24/2014.
- */
 public class UpcomingMatchNotification extends BaseNotification {
 
     private String eventName, eventKey, matchKey, redTeams[], blueTeams[];
@@ -41,6 +38,34 @@ public class UpcomingMatchNotification extends BaseNotification {
 
     public UpcomingMatchNotification(String messageData) {
         super("upcoming_match", messageData);
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public String getMatchKey() {
+        return matchKey;
+    }
+
+    public String[] getRedTeams() {
+        return redTeams;
+    }
+
+    public String[] getBlueTeams() {
+        return blueTeams;
+    }
+
+    public JsonElement getMatchTime() {
+        return matchTime;
+    }
+
+    public JsonArray getTeamKeys() {
+        return teamKeys;
     }
 
     @Override
@@ -68,7 +93,7 @@ public class UpcomingMatchNotification extends BaseNotification {
             redTeams[i] = teamKeys.get(i).getAsString().substring(3);
             blueTeams[i] = teamKeys.get(i + teamKeys.size() / 2).getAsString().substring(3);
         }
-        if (!jsonData.has("scheduled_time")) {
+        if (jsonData.has("scheduled_time")) {
             matchTime = jsonData.get("scheduled_time");
         } else {
             matchTime = JsonNull.INSTANCE;
@@ -137,6 +162,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         String notificationTitle = context.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
@@ -151,7 +177,7 @@ public class UpcomingMatchNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         /* This notification has no data that we can store locally */
     }
 

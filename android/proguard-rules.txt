@@ -35,9 +35,14 @@ public static *** d(...);
     public void onEvent*(**);
 }
 
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keepclassmembers class android.support.design.widget.FloatingActionButton$Behavior { public <init>(); }
+
 -keep class com.firebase.** { *; }
 -keepnames class com.fasterxml.jackson.** { *; }
--keepnames class com.thebluealliance.androidclient.models.FirebaseNotification { *; }
+-keep class com.thebluealliance.androidclient.** { *; }
+-keepnames class com.thebluealliance.androidclient.** { *; }
 -keep public class com.thebluealliance.androidclient.models.FirebaseNotification {
     public void set(*);
     public ** get*();
@@ -50,7 +55,9 @@ public static *** d(...);
 -dontwarn android.support.**
 -dontwarn sun.misc.Unsafe
 -dontwarn java.lang.invoke**
+-dontwarn java.lang.invoke.*
 -dontwarn retrofit.**
 -keep class retrofit.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
+-keepattributes *Annotation*

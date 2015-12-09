@@ -17,13 +17,14 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class ViewDistrictActivity extends FABNotificationSettingsActivity
@@ -69,7 +70,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
         }
 
         mDistrictKey = DistrictHelper.generateKey(districtAbbrev, mYear);
-        setModelKey(mDistrictKey, ModelHelper.MODELS.DISTRICT);
+        setModelKey(mDistrictKey, ModelType.DISTRICT);
         setContentView(R.layout.activity_view_district);
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);
@@ -147,8 +148,8 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        mWarningMessage.setText(message);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
         mWarningMessage.setVisibility(View.VISIBLE);
     }
 
@@ -196,6 +197,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;

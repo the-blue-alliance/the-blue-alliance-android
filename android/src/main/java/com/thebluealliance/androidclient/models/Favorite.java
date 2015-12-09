@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.models;
 import android.content.ContentValues;
 
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 
 /**
  * File created by phil on 8/13/14.
@@ -48,8 +48,8 @@ public class Favorite {
         return modelEnum;
     }
 
-    public ModelHelper.MODELS getModelType() {
-        return ModelHelper.MODELS.values()[modelEnum];
+    public ModelType getModelType() {
+        return ModelType.values()[modelEnum];
     }
 
     public void setModelEnum(int modelEnum) {

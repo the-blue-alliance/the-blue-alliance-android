@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 
 import de.greenrobot.event.EventBus;
 
-public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<ListItem>> {
+public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
 
     private String mStatToSortBy;
     private Resources mResources;
@@ -44,15 +44,21 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonObject, List<List
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
         if (mAPIData == null ||
-          !mAPIData.has("oprs") || !mAPIData.get("oprs").isJsonObject() ||
-          !mAPIData.has("dprs") ||!mAPIData.get("dprs").isJsonObject() ||
-          !mAPIData.has("ccwms") || !mAPIData.get("ccwms").isJsonObject()) {
+          !mAPIData.isJsonObject()) {
+
             return;
         }
 
-        JsonObject oprs = mAPIData.get("oprs").getAsJsonObject();
-        JsonObject dprs = mAPIData.get("dprs").getAsJsonObject();
-        JsonObject ccwms = mAPIData.get("ccwms").getAsJsonObject();
+        JsonObject statsData = mAPIData.getAsJsonObject();
+        if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject() ||
+          !statsData.has("dprs") ||!statsData.get("dprs").isJsonObject() ||
+          !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
+            return;
+        }
+
+        JsonObject oprs = statsData.get("oprs").getAsJsonObject();
+        JsonObject dprs = statsData.get("dprs").getAsJsonObject();
+        JsonObject ccwms = statsData.get("ccwms").getAsJsonObject();
 
         for (Entry<String, JsonElement> stat : oprs.entrySet()) {
             String teamKey = "frc" + stat.getKey();

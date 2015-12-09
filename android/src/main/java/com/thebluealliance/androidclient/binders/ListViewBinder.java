@@ -6,17 +6,26 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
-    public ListView listView;
-    public ProgressBar progressBar;
+    @Bind(R.id.list) ListView listView;
+    @Bind(R.id.progress) ProgressBar progressBar;
+
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
+    }
 
     @Override
     public void updateData(@Nullable List<ListItem> data) {
@@ -30,7 +39,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         }
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
-        ListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
+        ListViewAdapter adapter = newAdapter(new ArrayList<>(data));
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -83,7 +92,8 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void unbind() {
-        setDataBound(false);
+        super.unbind();
+        ButterKnife.unbind(this);
         if (listView != null) {
             listView.setVisibility(View.GONE);
         }

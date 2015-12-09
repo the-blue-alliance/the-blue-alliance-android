@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,8 @@ public class DistrictPointsListSubscriberTest {
         MockitoAnnotations.initMocks(this);
         DatabaseMocker.mockEventsTable(mDb);
         DatabaseMocker.mockTeamsTable(mDb);
-        mSubscriber = new DistrictPointsListSubscriber(mDb, DatafeedModule.getGson());
+        DistrictPointBreakdownRenderer renderer = new DistrictPointBreakdownRenderer();
+        mSubscriber = new DistrictPointsListSubscriber(mDb, DatafeedModule.getGson(), renderer);
         mPoints = ModelMaker.getModel(JsonObject.class, "2015necmp_points");
     }
 
@@ -50,8 +52,19 @@ public class DistrictPointsListSubscriberTest {
     }
 
     @Test
+    public void testParseJsonNull() throws BasicModel.FieldNotDefinedException {
+        DatafeedTestDriver.parseJsonNull(mSubscriber);
+    }
+
+    @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mPoints);
+    }
+
+    @Test
+    public void testCorrectParsedType() throws BasicModel.FieldNotDefinedException {
+        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mPoints);
+        assertTrue(data instanceof DistrictPointsListSubscriber.Type);
     }
 
     @Test

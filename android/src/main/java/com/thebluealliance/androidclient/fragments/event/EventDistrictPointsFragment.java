@@ -1,28 +1,40 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
+
+import java.util.List;
 
 import rx.Observable;
 
 public class EventDistrictPointsFragment
-        extends ListViewFragment<JsonObject, DistrictPointsListSubscriber> {
+        extends DatafeedFragment<JsonElement, List<ListItem>, DistrictPointsListSubscriber, DistrictPointsListBinder> {
     private static final String KEY = "event_key";
 
     private String mEventKey;
+    private Parcelable mListState;
+    private ListViewAdapter mAdapter;
 
-    //TODO implement way to show "not part of district" warning
-    private boolean isDistrict;
+    private ListView mListView;
 
     public static EventDistrictPointsFragment newInstance(String eventKey) {
         EventDistrictPointsFragment f = new EventDistrictPointsFragment();
@@ -38,7 +50,6 @@ public class EventDistrictPointsFragment
             mEventKey = getArguments().getString(KEY, "");
         }
         super.onCreate(savedInstanceState);
-        isDistrict = true;
         setHasOptionsMenu(true);
         mSubscriber.setEventKey(mEventKey);
     }
@@ -50,25 +61,32 @@ public class EventDistrictPointsFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mBinder.setRootView(v);
+        mListView = (ListView) v.findViewById(R.id.list);
+        ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        TextView nonDistrictWarning = (TextView) v.findViewById(R.id.info_container);
+        if (mAdapter != null) {
+            mListView.setAdapter(mAdapter);
+            mListView.onRestoreInstanceState(mListState);
+            progressBar.setVisibility(View.GONE);
+        }
+        mBinder.nonDistrictWarning = nonDistrictWarning;
+
+        mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
 
         //disable touch feedback (you can't click the elements here...)
         mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
         mListView.setSelector(R.drawable.transparent);
-        return view;
+        return v;
     }
 
-    public void updateDistrict(boolean isDistrict) {
-        this.isDistrict = isDistrict;
-        if (getView() == null) {
-            return;
-        }
-
-        View moreInfoContainer = getView().findViewById(R.id.more_info_container);
-        if (isDistrict) {
-            moreInfoContainer.setVisibility(View.GONE);
-        } else {
-            moreInfoContainer.setVisibility(View.VISIBLE);
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mListView != null) {
+            mAdapter = (ListViewAdapter) mListView.getAdapter();
+            mListState = mListView.onSaveInstanceState();
         }
     }
 

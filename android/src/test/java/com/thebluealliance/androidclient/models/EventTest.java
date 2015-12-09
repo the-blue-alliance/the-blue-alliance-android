@@ -3,8 +3,8 @@ package com.thebluealliance.androidclient.models;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.types.DistrictType;
+import com.thebluealliance.androidclient.types.EventType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,13 +37,13 @@ public class EventTest {
         assertEquals(mEvent.getEventName(), "NE District - Hartford Event");
         assertEquals(mEvent.getEventShortName(), "Hartford");
         assertEquals(mEvent.getDistrictEnum(),
-                     DistrictHelper.DISTRICTS.NEW_ENGLAND.ordinal());
+                     DistrictType.NEW_ENGLAND.ordinal());
         assertEquals(mEvent.getVenue(), "Hartford Public High School\n55 Forest Street\nHartford, CT 06105\nUSA");
         assertEquals(mEvent.getLocation(), "Hartford, CT, USA");
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
         assertEquals(mEvent.getEventYear(), 2015);
         assertEquals(mEvent.getEventType(),
-                     EventHelper.TYPE.DISTRICT);
+                     EventType.DISTRICT);
         assertFalse(mEvent.getWebcasts().isJsonNull());
         assertTrue(mEvent.getWebcasts().isJsonArray());
         assertFalse(mEvent.getAlliances().isJsonNull());

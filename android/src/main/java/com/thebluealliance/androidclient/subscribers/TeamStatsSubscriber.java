@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.content.res.Resources;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
@@ -12,7 +13,7 @@ import com.thebluealliance.androidclient.models.Stat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamStatsSubscriber extends BaseAPISubscriber<JsonObject, List<ListItem>> {
+public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
 
     private Resources mResources;
 
@@ -25,23 +26,24 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonObject, List<List
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null) {
+        if (mAPIData == null || !mAPIData.isJsonObject()) {
             return;
         }
-        if (mAPIData.has("opr")) {
+        JsonObject statsData = mAPIData.getAsJsonObject();
+        if (statsData.has("opr")) {
             mDataToBind.add(new LabelValueListItem(
               mResources.getString(R.string.opr_no_colon),
-              Stat.displayFormat.format(mAPIData.get("opr").getAsDouble())));
+              Stat.displayFormat.format(statsData.get("opr").getAsDouble())));
         }
-        if (mAPIData.has("dpr")) {
+        if (statsData.has("dpr")) {
             mDataToBind.add(new LabelValueListItem(
               mResources.getString(R.string.dpr_no_colon),
-              Stat.displayFormat.format(mAPIData.get("dpr").getAsDouble())));
+              Stat.displayFormat.format(statsData.get("dpr").getAsDouble())));
         }
-        if (mAPIData.has("ccwm")) {
+        if (statsData.has("ccwm")) {
             mDataToBind.add(new LabelValueListItem(
               mResources.getString(R.string.ccwm_no_colon),
-              Stat.displayFormat.format(mAPIData.get("ccwm").getAsDouble())));
+              Stat.displayFormat.format(statsData.get("ccwm").getAsDouble())));
         }
     }
 }

@@ -6,9 +6,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -44,7 +45,7 @@ public class TBAApiTest {
             assertEquals(event.getEventShortName(), "Groton");
             assertEquals(event.isOfficial(), true);
             assertEquals(event.getLocation(), "Groton, CT, USA");
-            assertEquals(event.getEventType(), EventHelper.TYPE.DISTRICT);
+            assertEquals(event.getEventType(), EventType.DISTRICT);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to get event fields");
             e.printStackTrace();
@@ -110,10 +111,10 @@ public class TBAApiTest {
         Media yt = medias.get(1);
         try {
             assertEquals(cd.getForeignKey(), "39894");
-            assertEquals(cd.getMediaType(), Media.TYPE.CD_PHOTO_THREAD);
+            assertEquals(cd.getMediaType(), MediaType.CD_PHOTO_THREAD);
             assertEquals(cd.getDetails(), JSONHelper.getasJsonObject("{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"}"));
 
-            assertEquals(yt.getMediaType(), Media.TYPE.YOUTUBE);
+            assertEquals(yt.getMediaType(), MediaType.YOUTUBE);
             assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
             assertEquals(yt.getDetails(), new JsonObject());
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -132,7 +133,7 @@ public class TBAApiTest {
             assertEquals(match.getEventKey(), "2014ctgro");
             assertEquals(match.getMatchNumber(), 1);
             assertEquals(match.getSetNumber(), 1);
-            assertEquals(match.getType(), MatchHelper.TYPE.FINAL);
+            assertEquals(match.getType(), MatchType.FINAL);
             assertEquals(match.getAlliances(), JSONHelper.getasJsonObject("{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}"));
             assertEquals(match.getTimeString(), "3:36 PM");
             assertEquals(match.getTime(), new Date(1394393760));

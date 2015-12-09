@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.activities.LaunchActivity;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -22,14 +21,17 @@ import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 
 import java.util.Map;
 
 
 public class Database extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 25;
+    public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_";
+    public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
+    public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
+
+    private static final int DATABASE_VERSION = 29;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database";
     public static final @Deprecated String TABLE_API = "api";
@@ -55,7 +57,8 @@ public class Database extends SQLiteOpenHelper {
             + TeamsTable.SHORTNAME + " TEXT DEFAULT '', "
             + TeamsTable.LOCATION + " TEXT DEFAULT '',"
             + TeamsTable.WEBSITE + " TEXT DEFAULT '', "
-            + TeamsTable.YEARS_PARTICIPATED + " TEXT DEFAULT '' "
+            + TeamsTable.YEARS_PARTICIPATED + " TEXT DEFAULT '', "
+            + TeamsTable.MOTTO + " TEXT DEFAULT '' "
             + ")";
     String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + EventsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
@@ -170,7 +173,8 @@ public class Database extends SQLiteOpenHelper {
             NotificationsTable.INTENT + " TEXT DEFAULT '', " +
             NotificationsTable.TIME + " TIMESTAMP, " +
             NotificationsTable.SYSTEM_ID + " INTEGER NOT NULL, " +
-            NotificationsTable.ACTIVE + " INTEGER DEFAULT 1 )";
+            NotificationsTable.ACTIVE + " INTEGER DEFAULT 1, " +
+            NotificationsTable.MSG_DATA + " TEXT DEFAULT '')";
 
     protected SQLiteDatabase mDb;
     private static Database sDatabaseInstance;
@@ -345,6 +349,32 @@ public class Database extends SQLiteOpenHelper {
                     // delete deprecated responses table
                     db.execSQL("DROP TABLE IF EXISTS " + TABLE_API);
                     break;
+                case 28:
+                    // recreate stored notifications table
+                    db.beginTransaction();
+                    try {
+                        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
+                        db.execSQL(CREATE_NOTIFICATIONS);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
+                case 29:
+                    // Add team motto
+                    db.beginTransaction();
+                    Cursor motto = null;
+                    try {
+                        motto = db.rawQuery("SELECT * FROM " + TABLE_TEAMS + " LIMIT 0,1", null);
+                        if (motto.getColumnIndex(TeamsTable.MOTTO) == -1) {
+                            db.execSQL("ALTER TABLE " + TABLE_TEAMS + " ADD COLUMN " + TeamsTable.MOTTO + " TEXT DEFAULT '' ");
+                        }
+                        db.setTransactionSuccessful();
+                    } finally {
+                        motto.close();
+                        db.endTransaction();
+                        break;
+                    }
             }
             upgradeTo++;
         }
@@ -369,9 +399,9 @@ public class Database extends SQLiteOpenHelper {
         // Clear the data-related shared prefs
         Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            if (entry.getKey().contains(DataManager.Events.ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
-                    entry.getKey().contains(DataManager.Teams.ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE) ||
-                    entry.getKey().contains(DataManager.Districts.ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
+            if (entry.getKey().contains(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
+                    entry.getKey().contains(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE) ||
+                    entry.getKey().contains(ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().
                         remove(entry.getKey()).commit();
             }
@@ -407,7 +437,7 @@ public class Database extends SQLiteOpenHelper {
         builder.setDistinct(true);
 
         cursor = builder.query(mDb,
-                new String[]{SearchTeam.KEY, SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
+                new String[]{SearchTeam.KEY + " as _id", SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
 
         if (cursor == null) {
             return null;
@@ -428,7 +458,7 @@ public class Database extends SQLiteOpenHelper {
         builder.setDistinct(true);
 
         cursor = builder.query(mDb,
-                new String[]{SearchEvent.KEY, SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
+                new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
 
         if (cursor == null) {
             return null;

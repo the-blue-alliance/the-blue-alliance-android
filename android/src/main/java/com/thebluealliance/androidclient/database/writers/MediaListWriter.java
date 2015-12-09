@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import android.support.annotation.WorkerThread;
+
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Media;
 
@@ -7,19 +10,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-
-public class MediaListWriter implements Action1<List<Media>> {
-    private Database mDb;
-
+public class MediaListWriter extends BaseDbWriter<List<Media>> {
     @Inject
     public MediaListWriter(Database db) {
-        mDb = db;
+        super(db);
     }
 
     @Override
-    public void call(List<Media> medias) {
-        Schedulers.io().createWorker().schedule(() -> mDb.getMediasTable().add(medias));
+    @WorkerThread
+    public void write(List<Media> medias) {
+        mDb.getMediasTable().add(ImmutableList.copyOf(medias));
     }
 }

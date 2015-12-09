@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -21,20 +22,15 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
-/**
- * Created by phil on 3/27/15.
- */
 public class FirebaseNotification {
 
     private String time;
     private Map<String, Object> payload;
 
-    @JsonIgnore
-    private String jsonString;
-    @JsonIgnore
-    private BaseNotification notification;
-    @JsonIgnore
-    private static final DateFormat dateFormat;
+    @JsonIgnore private String jsonString;
+    @JsonIgnore private BaseNotification notification;
+    @JsonIgnore private DatabaseWriter writer;
+    @JsonIgnore private static final DateFormat dateFormat;
 
     static {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
@@ -44,6 +40,10 @@ public class FirebaseNotification {
     public FirebaseNotification() {
         jsonString = "";
         notification = null;
+    }
+
+    public void setDatabaseWriter(DatabaseWriter writer) {
+        this.writer = writer;
     }
 
     public Map<String, Object> getPayload() {
@@ -82,13 +82,13 @@ public class FirebaseNotification {
         }
         switch (messageType) {
             case NotificationTypes.MATCH_SCORE:
-                notification = new ScoreNotification(messageData);
+                notification = new ScoreNotification(messageData, writer.getMatchWriter().get());
                 break;
             case NotificationTypes.UPCOMING_MATCH:
                 notification = new UpcomingMatchNotification(messageData);
                 break;
             case NotificationTypes.ALLIANCE_SELECTION:
-                notification = new AllianceSelectionNotification(messageData);
+                notification = new AllianceSelectionNotification(messageData, writer.getEventWriter().get());
                 break;
             case NotificationTypes.LEVEL_STARTING:
                 notification = new CompLevelStartingNotification(messageData);
@@ -97,7 +97,7 @@ public class FirebaseNotification {
                 notification = new ScheduleUpdatedNotification(messageData);
                 break;
             case NotificationTypes.AWARDS:
-                notification = new AwardsPostedNotification(messageData);
+                notification = new AwardsPostedNotification(messageData, writer.getAwardListWriter().get());
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(messageData);

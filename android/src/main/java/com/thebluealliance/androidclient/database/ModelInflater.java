@@ -237,6 +237,9 @@ public class ModelInflater {
                 case TeamsTable.YEARS_PARTICIPATED:
                     team.setYearsParticipated(data.getString(i));
                     break;
+                case TeamsTable.MOTTO:
+                    team.setMotto(data.getString(i));
+                    break;
                 default:
             }
         }
@@ -423,6 +426,9 @@ public class ModelInflater {
                     break;
                 case NotificationsTable.ACTIVE:
                     storedNotification.setActive(data.getInt(i));
+                    break;
+                case NotificationsTable.MSG_DATA:
+                    storedNotification.setMessageData(data.getString(i));
                     break;
             }
         }

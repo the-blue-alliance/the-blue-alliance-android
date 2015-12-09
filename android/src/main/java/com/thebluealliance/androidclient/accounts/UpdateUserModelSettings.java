@@ -17,8 +17,8 @@ import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.models.Favorite;
@@ -62,7 +62,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
 
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
-        ModelHelper.MODELS modelType = settings.modelType;
+        ModelType modelType = settings.modelType;
 
         ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
         request.setModelKey(modelKey);

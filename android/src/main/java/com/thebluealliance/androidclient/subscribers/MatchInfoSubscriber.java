@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.renderers.MediaRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +34,18 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
 
     private Gson mGson;
     private EventBus mEventBus;
+    private MatchRenderer mRenderer;
+    private MediaRenderer mMediaRenderer;
     private String mMatchTitle;
     private String mMatchKey;
 
-    public MatchInfoSubscriber(Gson gson, EventBus eventBus) {
+    public MatchInfoSubscriber(Gson gson, EventBus eventBus, MatchRenderer renderer, MediaRenderer mediaRenderer) {
         super();
         mDataToBind = new ArrayList<>();
         mGson = gson;
         mEventBus = eventBus;
+        mRenderer = renderer;
+        mMediaRenderer = mediaRenderer;
         mMatchTitle = null;
         mMatchKey = null;
     }
@@ -50,16 +57,17 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
             return;
         }
 
-        mDataToBind.add(mAPIData.match.render(false, true, false, false));
+        mDataToBind.add(mRenderer.renderFromModel(mAPIData.match, MatchRenderer.RENDER_MATCH_INFO));
 
         mMatchTitle = mAPIData.match.getTitle();
         mMatchKey = mAPIData.match.getKey();
         JsonArray matchVideos = mAPIData.match.getVideos();
         for (int i = 0; i < matchVideos.size(); i++) {
             JsonElement video = matchVideos.get(i);
-            if (Media.TYPE.fromString(video.getAsJsonObject().get("type").getAsString()) !=
-              Media.TYPE.NONE) {
-                mDataToBind.add(mGson.fromJson(video, Media.class).render());
+            if (MediaType.fromString(video.getAsJsonObject().get("type").getAsString()) !=
+              MediaType.NONE) {
+                Media media = mGson.fromJson(video, Media.class);
+                mDataToBind.add(mMediaRenderer.renderFromModel(media, null));
             }
         }
 

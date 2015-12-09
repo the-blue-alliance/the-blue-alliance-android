@@ -17,13 +17,14 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
-import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 public class ViewMatchActivity extends FABNotificationSettingsActivity
   implements HasFragmentComponent {
@@ -48,7 +49,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
+        setModelKey(mMatchKey, ModelType.MATCH);
         setContentView(R.layout.activity_view_match);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
@@ -71,7 +72,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
+        setModelKey(mMatchKey, ModelType.MATCH);
         Log.i(Constants.LOG_TAG, "New ViewMatch intent with key: " + mMatchKey);
         setupActionBar();
 
@@ -97,9 +98,9 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
     }
 
     @Override
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
         if (mWarningMessage != null) {
-            mWarningMessage.setText(message);
+            mWarningMessage.setText(warningMessage);
             mWarningMessage.setVisibility(View.VISIBLE);
         }
     }
@@ -165,6 +166,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;

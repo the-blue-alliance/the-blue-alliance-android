@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
@@ -39,7 +39,7 @@ import rx.Observable;
  * @author Nathan Walters
  */
 public class EventStatsFragment
-  extends DatafeedFragment<JsonObject, List<ListItem>, StatsListSubscriber, StatsListBinder> {
+  extends DatafeedFragment<JsonElement, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
     private static final String KEY = "eventKey", SORT = "sort";
 
@@ -117,11 +117,10 @@ public class EventStatsFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mBinder.setRootView(view);
         mListView = (ListView) view.findViewById(R.id.list);
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mBinder.listView = mListView;
-        mBinder.progressBar = mProgressBar;
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.
         if (mAdapter != null) {
@@ -182,7 +181,7 @@ public class EventStatsFragment
     }
 
     @Override
-    protected Observable<JsonObject> getObservable(String tbaCacheHeader) {
+    protected Observable<? extends JsonElement> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchEventStats(mEventKey, tbaCacheHeader);
     }
 

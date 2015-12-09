@@ -19,7 +19,7 @@ public class WeekEventsExtractor implements Func1<List<Event>, List<Event>> {
     @Override
     public List<Event> call(List<Event> events) {
         List<Event> weekEvents = new ArrayList<>();
-        for (int i = 0; i < events.size(); ) {
+        for (int i = 0; i < events.size(); i++) {
             Event event = events.get(i);
             try {
                 if (event.getCompetitionWeek() == mWeek) {

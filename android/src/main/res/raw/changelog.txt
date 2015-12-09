@@ -1,38 +1,6 @@
-<b>Version 2.2.4</b>
+Version 3.0.0:<br>
+    - We've rewritten the way the app loads data to make it better, faster, and more reliable. Hope you can notice an improvement :)<br>
+    - Many bugfixes and other app improvements<br>
 <br>
-<br>
-- Bug fixes
-<br>
-<br>
-<br>
-<b>Version 2.2.3</b>
-<br>
-<br>
-- Bug fixes
-<br>
-<br>
-<br>
-<b>Version 2.2.2</b>
-<br>
-<br>
-- Bug fixes
-<br>
-<br>
-<br>
-<b>Version 2.2.1</b>
-<br>
-<br>
-- Bug fixes
-<br>
-<br>
-<br>
-<b>Version 2.2.0</b>
-<br>
-<br>
-- Mobile GameDay! This includes the TBA notification ticker and webcast deep linking support
-<br>
-- Notifications now have more relevant information, making them easier to read
-<br>
-- Fix 'Carter Division' bugs
-<br>
-- Other fixes and improvements
+View the full changelog for this and previous releases on the GitHub page:<br>
+https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>

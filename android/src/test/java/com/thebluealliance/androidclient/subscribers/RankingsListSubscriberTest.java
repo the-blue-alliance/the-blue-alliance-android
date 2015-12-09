@@ -52,6 +52,11 @@ public class RankingsListSubscriberTest {
     }
 
     @Test
+    public void testJsonNull() throws BasicModel.FieldNotDefinedException {
+        DatafeedTestDriver.parseJsonNull(mSubscriber);
+    }
+
+    @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mRankings);
         verify(mEventBus).post(any(EventRankingsEvent.class));

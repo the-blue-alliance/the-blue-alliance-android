@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
@@ -35,7 +35,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     String beamUri;
     boolean searchEnabled = true;
     String modelKey = "";
-    ModelHelper.MODELS modelType;
+    ModelType modelType;
 
     /**
      * If this Activity was triggered by tapping a system notification, dismiss the "active" stored
@@ -100,7 +100,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
         // Do nothing by default
     }
 
@@ -127,7 +127,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         invalidateOptionsMenu();
     }
 
-    protected void setModelKey(String key, ModelHelper.MODELS type) {
+    protected void setModelKey(String key, ModelType type) {
         modelKey = key;
         modelType = type;
     }

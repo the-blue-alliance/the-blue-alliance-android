@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.types.MediaType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class MediaTest {
     public void testCdMedia() throws BasicModel.FieldNotDefinedException {
         assertNotNull(cdMedia);
         assertEquals(cdMedia.getMediaType(),
-                     Media.TYPE.CD_PHOTO_THREAD);
+                     MediaType.CD_PHOTO_THREAD);
         assertEquals(cdMedia.getForeignKey(), "39894");
         assertFalse(cdMedia.getDetails().isJsonNull());
         JsonObject details = cdMedia.getDetails();
@@ -42,7 +43,7 @@ public class MediaTest {
     public void testYtMedia() throws BasicModel.FieldNotDefinedException {
         assertNotNull(ytMedia);
         assertEquals(ytMedia.getMediaType(),
-                     Media.TYPE.YOUTUBE);
+                     MediaType.YOUTUBE);
         assertEquals(ytMedia.getForeignKey(), "RpSgUrsghv4");
         assertFalse(ytMedia.getDetails().isJsonNull());
     }

@@ -1,23 +1,21 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import android.support.annotation.WorkerThread;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.EventTeam;
 
 import javax.inject.Inject;
 
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-
-public class EventTeamWriter implements Action1<EventTeam> {
-    private Database mDb;
-
+public class EventTeamWriter extends BaseDbWriter<EventTeam> {
     @Inject
     public EventTeamWriter(Database db) {
-        mDb = db;
+        super(db);
     }
 
     @Override
-    public void call(EventTeam eventTeam) {
-        Schedulers.io().createWorker().schedule(() -> mDb.getEventTeamsTable().add(eventTeam));
+    @WorkerThread
+    public void write(EventTeam eventTeam) {
+        mDb.getEventTeamsTable().add(eventTeam);
     }
 }

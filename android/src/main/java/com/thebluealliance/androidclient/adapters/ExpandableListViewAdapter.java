@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListGroup;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +22,20 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     public final List<ListGroup> groups;
     public LayoutInflater inflater;
     public Activity mActivity;
+
     private boolean mIsChildSelectable = true;
+    protected ModelRendererSupplier mRendererSupplier;
 
     public ExpandableListViewAdapter() {
         groups = new ArrayList<>();
     }
 
-    public ExpandableListViewAdapter(Activity activity, List<ListGroup> groups) {
+    public ExpandableListViewAdapter(
+      Activity activity,
+      ModelRendererSupplier supplier,
+      List<ListGroup> groups) {
         mActivity = activity;
+        mRendererSupplier = supplier;
         this.groups = groups;
         inflater = activity.getLayoutInflater();
     }
@@ -110,7 +117,8 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        return groups.get(groupPosition).children.get(childPosition).render().getView(mActivity, inflater, convertView);
+        return groups.get(groupPosition).children.get(childPosition)
+          .render(mRendererSupplier).getView(mActivity, inflater, convertView);
     }
 }
 

@@ -20,8 +20,10 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
@@ -80,7 +82,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
             currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
         }
 
-        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
+        setModelKey(mEventKey, ModelType.EVENT);
         setContentView(R.layout.activity_view_event);
 
         infoMessage = (TextView) findViewById(R.id.info_container);
@@ -124,7 +126,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         } else {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
-        setModelKey(mEventKey, ModelHelper.MODELS.EVENT);
+        setModelKey(mEventKey, ModelType.EVENT);
         adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -201,7 +203,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         }
     }
 
-    public void showInfoMessage(String message) {
+    public void showInfoMessage(CharSequence message) {
         infoMessage.setText(message);
         infoMessage.setVisibility(View.VISIBLE);
     }
@@ -211,14 +213,22 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        this.warningMessage.setText(warningMessage);
+        this.warningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
         warningMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onTbaStatusUpdate(APIStatus newStatus) {
+        super.onTbaStatusUpdate(newStatus);
+        if (newStatus.getDownEvents().contains(mEventKey)) {
+            showWarningMessage(getText(R.string.event_not_updating_warning));
+        }
     }
 
     @Override
@@ -272,6 +282,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
               .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
               .build();
         }
         return mComponent;

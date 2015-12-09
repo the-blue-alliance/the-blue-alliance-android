@@ -7,6 +7,8 @@ import com.thebluealliance.androidclient.models.EventWeekTab;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
+
 public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     private EventsByWeekFragment mFragment;
@@ -27,6 +29,17 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
     @Override
     public void onComplete() {
 
+    }
+
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
+    }
+
+    @Override
+    public void unbind() {
+        super.unbind();
+        ButterKnife.unbind(this);
     }
 
     @Override

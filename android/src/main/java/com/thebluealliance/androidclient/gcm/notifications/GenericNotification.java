@@ -83,7 +83,7 @@ public class GenericNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         /* No data to be stored locally */
     }
 

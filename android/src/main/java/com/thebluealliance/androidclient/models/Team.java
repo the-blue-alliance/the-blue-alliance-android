@@ -1,22 +1,14 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.database.tables.TeamsTable;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
+import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.listitems.TeamListElement;
-
-import java.util.Arrays;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public class Team extends BasicModel<Team> {
 
@@ -31,7 +23,7 @@ public class Team extends BasicModel<Team> {
     private JsonArray yearsParticipated;
 
     public Team() {
-        super(Database.TABLE_TEAMS);
+        super(Database.TABLE_TEAMS, ModelType.TEAM);
         yearsParticipated = null;
     }
 
@@ -141,67 +133,15 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    @Override
-    public TeamListElement render() {
-        try {
-            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation());
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
-            return null;
+    public String getMotto() throws FieldNotDefinedException {
+        if (fields.containsKey(TeamsTable.MOTTO) && fields.get(TeamsTable.MOTTO) instanceof String) {
+            return (String) fields.get(TeamsTable.MOTTO);
         }
+        throw new FieldNotDefinedException("Field Database.Teams.MOTTO is not defined");
     }
 
-    public TeamListElement render(boolean showTeamInfoButton) {
-        try {
-            return new TeamListElement(getKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
-            return null;
-        }
+    public void setMotto(String motto) {
+        fields.put(TeamsTable.MOTTO, motto);
     }
 
-    public static APIResponse<Team> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying teams table: " + whereClause + Arrays.toString(whereArgs));
-        TeamsTable table = Database.getInstance(c).getTeamsTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        Team team;
-        if (cursor != null && cursor.moveToFirst()) {
-            team = table.inflate(cursor);
-            cursor.close();
-        } else {
-            team = new Team();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Team updatedTeam;
-                if (url.contains("years_participated")) {
-                    Log.w(Constants.DATAMANAGER_LOG, "Fetching years participated");
-                    updatedTeam = new Team();
-                    team.setYearsParticipated(response.getData());
-                } else {
-                    updatedTeam = JSONHelper.getGson().fromJson(response.getData(), Team.class);
-                }
-                team.merge(updatedTeam);
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            team.write(c);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(team, code);
-    }
-
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getTeamsTable().add(this);
-    }
 }

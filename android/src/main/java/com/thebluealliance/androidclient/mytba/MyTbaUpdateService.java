@@ -18,6 +18,8 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
+import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
@@ -41,7 +43,7 @@ public class MyTbaUpdateService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mDb = ((TBAAndroid) getApplication()).getModule().provideDatabase();
+        getComponenet().inject(this);
     }
 
     @Override
@@ -84,8 +86,9 @@ public class MyTbaUpdateService extends IntentService {
 
         FavoritesTable favorites = mDb.getFavoritesTable();
         favorites.recreate(currentUser);
-        for (int i = 0; i < favoriteCollection.size(); i++) {
-            ModelsMobileApiMessagesFavoriteMessage f = favoriteCollection.getFavorites().get(i);
+        List<ModelsMobileApiMessagesFavoriteMessage> favoriteList = favoriteCollection.getFavorites();
+        for (int i = 0; i < favoriteList.size(); i++) {
+            ModelsMobileApiMessagesFavoriteMessage f = favoriteList.get(i);
             favoriteModels.add(
               new Favorite(currentUser, f.getModelKey(), f.getModelType().intValue()));
         }
@@ -107,7 +110,9 @@ public class MyTbaUpdateService extends IntentService {
 
         SubscriptionsTable subscriptions = mDb.getSubscriptionsTable();
         subscriptions.recreate(currentUser);
-        for (ModelsMobileApiMessagesSubscriptionMessage s : subscriptionCollection.getSubscriptions()) {
+        List<ModelsMobileApiMessagesSubscriptionMessage> subscriptionList = subscriptionCollection.getSubscriptions();
+        for (int i = 0; i < subscriptionList.size(); i++) {
+            ModelsMobileApiMessagesSubscriptionMessage s = subscriptionList.get(i);
             subscriptionModels.add(
               new Subscription(
                 currentUser,
@@ -117,5 +122,13 @@ public class MyTbaUpdateService extends IntentService {
         }
         subscriptions.add(subscriptionModels);
         Log.d(Constants.LOG_TAG, "Added " + subscriptionModels.size() + " subscriptions");
+    }
+
+    private DatafeedComponent getComponenet() {
+        TBAAndroid application = ((TBAAndroid) getApplication());
+        return DaggerDatafeedComponent.builder()
+          .applicationComponent(application.getComponent())
+          .datafeedModule(application.getDatafeedModule())
+          .build();
     }
 }

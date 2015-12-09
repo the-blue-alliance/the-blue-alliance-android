@@ -1,6 +1,8 @@
 /local.properties
 .DS_Store
 
+*.txtbak
+
 # Keys
 *.jks
 

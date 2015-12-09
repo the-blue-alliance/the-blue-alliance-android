@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorAccent">@color/accent</item>
@@ -152,7 +152,7 @@
         <item name="android:paddingTop">16dp</item>
     </style>
 
-    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner" />
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
 
     <style name="ListItemButtonStyle">
         <item name="android:background">?android:attr/selectableItemBackground</item>
@@ -200,6 +200,19 @@
 
     <style name="GamedayTickerCheckboxAwardsPosted" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/gameday_ticker_awards_header</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="normalText" >
+        <item name="android:textStyle">normal</item>
     </style>
 
 </resources>

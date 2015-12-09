@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 
 import rx.Observable;
 
-public class TeamAtEventStatsFragment extends ListViewFragment<JsonObject, TeamStatsSubscriber> {
+public class TeamAtEventStatsFragment extends ListViewFragment<JsonElement, TeamStatsSubscriber> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -54,7 +54,7 @@ public class TeamAtEventStatsFragment extends ListViewFragment<JsonObject, TeamS
     }
 
     @Override
-    protected Observable<JsonObject> getObservable(String tbaCacheHeader) {
+    protected Observable<? extends JsonElement> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchTeamAtEventStats(mEventKey, mTeamKey, tbaCacheHeader);
     }
 

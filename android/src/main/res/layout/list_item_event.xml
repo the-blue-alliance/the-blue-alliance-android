@@ -38,4 +38,12 @@
         android:text="Location"
         android:textColor="@color/secondary_text_color"
         android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/model_settings"
+        style="@style/ListItemButtonStyle"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:src="@drawable/ic_settings_black_24dp" />
 </RelativeLayout>

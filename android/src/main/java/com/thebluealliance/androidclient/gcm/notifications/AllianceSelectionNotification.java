@@ -15,6 +15,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.database.writers.EventWriter;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -25,16 +26,23 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by phil on 11/21/14.
- */
 public class AllianceSelectionNotification extends BaseNotification {
 
+    private final EventWriter mWriter;
     private Event event;
     private String eventKey;
 
-    public AllianceSelectionNotification(String messageData) {
+    public AllianceSelectionNotification(String messageData, EventWriter writer) {
         super(NotificationTypes.ALLIANCE_SELECTION, messageData);
+        mWriter = writer;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public String getEventKey() {
+        return eventKey;
     }
 
     @Override
@@ -44,6 +52,7 @@ public class AllianceSelectionNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not have an 'event' object");
         }
         event = gson.fromJson(jsonData.get("event"), Event.class);
+        eventKey = event.getKey();
     }
 
     @Override
@@ -58,8 +67,7 @@ public class AllianceSelectionNotification extends BaseNotification {
             return null;
         }
 
-        eventKey = event.getKey();
-        String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
+        String contentText = r.getString(R.string.notification_alliances_updated, eventName);
         Intent instance = getIntent(context);
 
         stored = new StoredNotification();
@@ -68,6 +76,7 @@ public class AllianceSelectionNotification extends BaseNotification {
         String title = r.getString(R.string.notification_alliances_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
@@ -87,9 +96,9 @@ public class AllianceSelectionNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         if (event != null) {
-            event.write(c);
+            mWriter.write(event);
         }
     }
 

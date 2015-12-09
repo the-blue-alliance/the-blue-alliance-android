@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 import java.util.List;
 
@@ -19,14 +20,13 @@ public class MatchListAdapter extends ExpandableListViewAdapter {
 
     private String mTeamKey;
 
-    public MatchListAdapter(Activity a, List<ListGroup> groups, String selectedTeam) {
-        super(a, groups);
+    public MatchListAdapter(
+      Activity a,
+      ModelRendererSupplier supplier,
+      List<ListGroup> groups,
+      String selectedTeam) {
+        super(a, supplier, groups);
         mTeamKey = selectedTeam;
-    }
-
-    public MatchListAdapter(Activity activity, List<ListGroup> groups) {
-        super(activity, groups);
-        mTeamKey = "";
     }
 
     public void setTeamKey(String teamKey) {
@@ -41,7 +41,7 @@ public class MatchListAdapter extends ExpandableListViewAdapter {
         if (child instanceof Match) {
             ((Match) child).setSelectedTeam(mTeamKey);
         }
-        ListItem renderedChild = child.render();
+        ListItem renderedChild = child.render(mRendererSupplier);
         if (renderedChild != null) {
             return renderedChild.getView(mActivity, inflater, convertView);
         } else {

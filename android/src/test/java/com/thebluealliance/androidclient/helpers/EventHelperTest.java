@@ -1,17 +1,27 @@
 package com.thebluealliance.androidclient.helpers;
 
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.types.EventType;
+
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/**
- * File created by jerry on 4/13/2015.
- */
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class EventHelperTest {
 
-    @org.junit.Test
+    @Test
     public void testEventShortName() {
         assertEquals("{ Random 2.718 stuff! }", EventHelper.shortName("  { Random 2.718 stuff! }  "));
         assertEquals("Bee's Knee's LX", EventHelper.shortName("UN District -Bee's Knee's LX  "));
@@ -245,5 +255,103 @@ public class EventHelperTest {
         assertEquals("Mt. Olive", EventHelper.shortName("MAR District - Mt. Olive Event"));
         assertEquals("Israel", EventHelper.shortName("Israel Regional - see Site Info for additional information"));
         assertEquals("Kokomo City of Firsts", EventHelper.shortName("IN District - Kokomo City of Firsts Event sponsored by AndyMark"));
+    }
+
+    @Test
+    public void testValidateKey() {
+        String[] validKeys = new String[]{"2015cthar", "2014cmp", "2003moo", "2013moo2"};
+        String[] invalidKeys = new String[]{null, "", "foobar", "2012"};
+
+        for (String key : validKeys) {
+            assertTrue(EventHelper.validateEventKey(key));
+        }
+
+        for (String key : invalidKeys) {
+            assertFalse(EventHelper.validateEventKey(key));
+        }
+    }
+
+    @Test
+    public void testGetYear() {
+        assertEquals(2015, EventHelper.getYear("2015cthar"));
+        assertEquals(2012, EventHelper.getYear("2012ct"));
+    }
+
+    @Test
+    public void testGetYearWeek() {
+        assertEquals(-1, EventHelper.getYearWeek(null));
+
+        Date date = new Date(115, 1, 5);
+        assertEquals(EventHelper.getYearWeek(date), 6);
+    }
+
+    @Test
+    public void testGetCompWeek() {
+        assertEquals(-1, EventHelper.competitionWeek(null));
+
+        Date preseason = new Date(115, 1, 5);
+        assertEquals(0, EventHelper.competitionWeek(preseason));
+
+        Date week5 = new Date(115, 2, 28);
+        assertEquals(5, EventHelper.competitionWeek(week5));
+    }
+
+    @Test
+    public void testGetLabelForEvent() throws BasicModel.FieldNotDefinedException {
+        Event noType = mockEventType(EventType.NONE);
+        assertEquals(EventHelper.generateLabelForEvent(noType), EventHelper.WEEKLESS_LABEL);
+
+        Event preseason = mockEventType(EventType.PRESEASON);
+        assertEquals(EventHelper.generateLabelForEvent(preseason), EventHelper.PRESEASON_LABEL);
+
+        Event offseason = mockEventType(EventType.OFFSEASON);
+        when(offseason.getStartDate()).thenReturn(new Date(115, 4, 2));
+        assertEquals(EventHelper.generateLabelForEvent(offseason), "May Offseason Events");
+
+        Event cmpDivision = mockEventType(EventType.CMP_DIVISION);
+        assertEquals(EventHelper.generateLabelForEvent(cmpDivision), EventHelper.CHAMPIONSHIP_LABEL);
+
+        Event cmpFinals = mockEventType(EventType.CMP_FINALS);
+        assertEquals(EventHelper.generateLabelForEvent(cmpFinals), EventHelper.CHAMPIONSHIP_LABEL);
+
+        Event regional = mockRegularEvent(EventType.REGIONAL, 2015, 5);
+        assertEquals(EventHelper.generateLabelForEvent(regional), "Week 5");
+
+        Event district = mockRegularEvent(EventType.DISTRICT, 2015, 2);
+        assertEquals(EventHelper.generateLabelForEvent(district), "Week 2");
+
+        Event districtCmp = mockRegularEvent(EventType.DISTRICT_CMP, 2012, 1);
+        assertEquals(EventHelper.generateLabelForEvent(districtCmp), "Week 1");
+
+        /* Special cases for 2016 events & Week 0.5 */
+        Event regional2016 = mockRegularEvent(EventType.REGIONAL, 2016, 1);
+        assertEquals(EventHelper.generateLabelForEvent(regional2016), "Week 0.5");
+
+        Event district2016 = mockRegularEvent(EventType.DISTRICT, 2016, 4);
+        assertEquals(EventHelper.generateLabelForEvent(district2016), "Week 3");
+
+        Event districtCmp2016 = mockRegularEvent(EventType.DISTRICT_CMP, 2016, 7);
+        assertEquals(EventHelper.generateLabelForEvent(districtCmp2016), "Week 6");
+    }
+
+    @Test
+    public void testWeekLabelFromNumber() {
+        assertEquals(EventHelper.weekLabelFromNum(2015, -1), EventHelper.PRESEASON_LABEL);
+        assertEquals(EventHelper.weekLabelFromNum(2015, 4), "Week 4");
+        assertEquals(EventHelper.weekLabelFromNum(2015, 9), EventHelper.CHAMPIONSHIP_LABEL);
+        assertEquals(EventHelper.weekLabelFromNum(2015, 12), EventHelper.OFFSEASON_LABEL);
+    }
+
+    private static Event mockEventType(EventType type) throws BasicModel.FieldNotDefinedException {
+        Event event = mock(Event.class);
+        when(event.getEventType()).thenReturn(type);
+        return event;
+    }
+
+    private static Event mockRegularEvent(EventType type, int year, int week) throws BasicModel.FieldNotDefinedException {
+        Event event = mockEventType(type);
+        when(event.getEventYear()).thenReturn(year);
+        when(event.getCompetitionWeek()).thenReturn(week);
+        return event;
     }
 }

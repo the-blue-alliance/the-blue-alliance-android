@@ -11,8 +11,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.background.PopulateContributors;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 /**
  * Created by Nathan on 6/20/2014.
@@ -46,6 +52,12 @@ public class ContributorsActivity extends DatafeedActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        new PopulateContributors(this).execute();
+    }
+
+    @Override
     public void onCreateNavigationDrawer() {
         setNavigationDrawerEnabled(false);
     }
@@ -70,7 +82,7 @@ public class ContributorsActivity extends DatafeedActivity {
     }
 
     @Override
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
 
     }
 
@@ -79,7 +91,23 @@ public class ContributorsActivity extends DatafeedActivity {
 
     }
 
-    public void inject() {
+    @Override
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
+              .build();
+        }
+        return mComponent;
+    }
 
+    public void inject() {
+        getComponent().inject(this);
     }
 }

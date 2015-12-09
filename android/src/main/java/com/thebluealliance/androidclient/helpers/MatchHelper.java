@@ -2,16 +2,17 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.types.MatchType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,91 +31,35 @@ import java.util.regex.Pattern;
  */
 public class MatchHelper {
 
-    public enum TYPE {
-        NONE,
-        QUAL {
-            @Override
-            public TYPE previous() {
-                return null; // see below for options for this line
-            }
-        },
-        QUARTER,
-        SEMI,
-        FINAL {
-            @Override
-            public TYPE next() {
-                return null; // see below for options for this line
-            }
-        };
-
-        public TYPE next() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() + 1];
-        }
-
-        public TYPE previous() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() - 1];
-        }
-
-        public TYPE get(String str) {
-            return valueOf(str);
-        }
-
-        public static TYPE fromShortType(String str) {
-            switch (str) {
-                case "qm":
-                    return QUAL;
-                case "ef":
-                case "qf":
-                    return QUARTER;
-                case "sf":
-                    return SEMI;
-                case "f":
-                    return FINAL;
-                default:
-                    throw new IllegalArgumentException("Invalid short type");
-            }
-        }
-
-        public static TYPE fromKey(String key) {
-            if (key.contains("_qm")) return QUAL;
-            if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
-            if (key.contains("_sf")) return SEMI;
-            if (key.contains("_f")) return FINAL;
-            return NONE;
-        }
-    }
-
-    public static final HashMap<TYPE, String> SHORT_TYPES;
-    public static final HashMap<TYPE, String> LONG_TYPES;
-    public static final HashMap<TYPE, String> ABBREV_TYPES;
-    public static final HashMap<TYPE, Integer> PLAY_ORDER;
+    public static final HashMap<MatchType, String> SHORT_TYPES;
+    public static final HashMap<MatchType, String> LONG_TYPES;
+    public static final HashMap<MatchType, String> ABBREV_TYPES;
+    public static final HashMap<MatchType, Integer> PLAY_ORDER;
 
     static {
         SHORT_TYPES = new HashMap<>();
-        SHORT_TYPES.put(MatchHelper.TYPE.QUAL, "qm");
-        SHORT_TYPES.put(MatchHelper.TYPE.QUARTER, "qf");
-        SHORT_TYPES.put(MatchHelper.TYPE.SEMI, "sf");
-        SHORT_TYPES.put(MatchHelper.TYPE.FINAL, "f");
+        SHORT_TYPES.put(MatchType.QUAL, "qm");
+        SHORT_TYPES.put(MatchType.QUARTER, "qf");
+        SHORT_TYPES.put(MatchType.SEMI, "sf");
+        SHORT_TYPES.put(MatchType.FINAL, "f");
 
         LONG_TYPES = new HashMap<>(); // TODO: I18N
-        LONG_TYPES.put(MatchHelper.TYPE.QUAL, "Quals");
-        LONG_TYPES.put(MatchHelper.TYPE.QUARTER, "Quarters");
-        LONG_TYPES.put(MatchHelper.TYPE.SEMI, "Semis");
-        LONG_TYPES.put(MatchHelper.TYPE.FINAL, "Finals");
+        LONG_TYPES.put(MatchType.QUAL, "Quals");
+        LONG_TYPES.put(MatchType.QUARTER, "Quarters");
+        LONG_TYPES.put(MatchType.SEMI, "Semis");
+        LONG_TYPES.put(MatchType.FINAL, "Finals");
 
         PLAY_ORDER = new HashMap<>();
-        PLAY_ORDER.put(MatchHelper.TYPE.QUAL, 1);
-        PLAY_ORDER.put(MatchHelper.TYPE.QUARTER, 2);
-        PLAY_ORDER.put(MatchHelper.TYPE.SEMI, 3);
-        PLAY_ORDER.put(MatchHelper.TYPE.FINAL, 4);
+        PLAY_ORDER.put(MatchType.QUAL, 1);
+        PLAY_ORDER.put(MatchType.QUARTER, 2);
+        PLAY_ORDER.put(MatchType.SEMI, 3);
+        PLAY_ORDER.put(MatchType.FINAL, 4);
 
         ABBREV_TYPES = new HashMap<>(); // TODO: I18N
-        ABBREV_TYPES.put(MatchHelper.TYPE.QUAL, "Q");
-        ABBREV_TYPES.put(MatchHelper.TYPE.QUARTER, "QF");
-        ABBREV_TYPES.put(MatchHelper.TYPE.SEMI, "SF");
-        ABBREV_TYPES.put(MatchHelper.TYPE.FINAL, "F");
+        ABBREV_TYPES.put(MatchType.QUAL, "Q");
+        ABBREV_TYPES.put(MatchType.QUARTER, "QF");
+        ABBREV_TYPES.put(MatchType.SEMI, "SF");
+        ABBREV_TYPES.put(MatchType.FINAL, "F");
     }
 
     public static boolean validateMatchKey(String key) {
@@ -133,36 +78,45 @@ public class MatchHelper {
 
     /**
      * Returns the match object of the match next to be played
+     * Iterate backwards to account for data gaps
      *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Next match
      */
-    public static Match getNextMatchPlayed(List<Match> matches) throws BasicModel.FieldNotDefinedException {
-        for (Match m : matches) {
-            if (!m.hasBeenPlayed()) {
-                return m;
+    public static @Nullable Match getNextMatchPlayed(List<Match> matches)
+      throws BasicModel.FieldNotDefinedException {
+        if (matches == null || matches.isEmpty()) return null;
+
+        Match last = null;
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            Match m = matches.get(i);
+            if (m.hasBeenPlayed()) {
+                return last;
             }
+            last = m;
         }
-        //all matches have been played
-        return null;
+
+        // no matches played
+        return matches.get(0);
     }
 
     /**
      * Returns the match object of the last match played
+     * Iterate backwards to account for data gaps
      *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Last match played
      */
-    public static Match getLastMatchPlayed(List<Match> matches) throws BasicModel.FieldNotDefinedException {
-        Match last = null;
-        for (Match m : matches) {
-            if (!m.hasBeenPlayed()) {
-                break;
-            } else {
-                last = m;
+    public static @Nullable Match getLastMatchPlayed(List<Match> matches)
+      throws BasicModel.FieldNotDefinedException {
+        if (matches == null || matches.isEmpty()) return null;
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            Match m = matches.get(i);
+            if (m.hasBeenPlayed()) {
+                return m;
             }
         }
-        return last;
+        return null;
     }
 
     /**
@@ -192,76 +146,6 @@ public class MatchHelper {
     }
 
     /**
-     * Constructs a match list for a team competing at an event
-     *
-     * @param c       activity
-     * @param matches list of matches
-     * @return match list
-     */
-    public static ArrayList<ListGroup> constructMatchList(Context c, ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
-
-        ArrayList<ListGroup> groups = new ArrayList<>();
-        ListGroup qualMatches = new ListGroup(c.getString(R.string.quals_header));
-        ListGroup quarterMatches = new ListGroup(c.getString(R.string.quarters_header));
-        ListGroup semiMatches = new ListGroup(c.getString(R.string.semis_header));
-        ListGroup finalMatches = new ListGroup(c.getString(R.string.finals_header));
-
-        ListGroup currentGroup = qualMatches;
-        TYPE lastType = null;
-        for (Match match : matches) {
-
-            if (lastType != match.getType()) {
-                switch (match.getType()) {
-                    case QUAL:
-                        currentGroup = qualMatches;
-                        break;
-                    case QUARTER:
-                        currentGroup = quarterMatches;
-                        break;
-                    case SEMI:
-                        currentGroup = semiMatches;
-                        break;
-                    case FINAL:
-                        currentGroup = finalMatches;
-                        break;
-                }
-            }
-
-            currentGroup.children.add(match);
-        }
-
-        if (!qualMatches.children.isEmpty()) {
-            groups.add(qualMatches);
-        }
-
-        if (!quarterMatches.children.isEmpty()) {
-            groups.add(quarterMatches);
-        }
-        if (!semiMatches.children.isEmpty()) {
-            groups.add(semiMatches);
-        }
-        if (!finalMatches.children.isEmpty()) {
-            groups.add(finalMatches);
-        }
-        return groups;
-    }
-
-    public static ArrayList<Match> getMatchesForTeam(ArrayList<Match> matches, String teamKey) {
-        ArrayList<Match> teamMatches = new ArrayList<>();
-        for (Match match : matches) {
-            try {
-                if (match.getAlliances().toString().contains(teamKey + "\"")) {
-                    teamMatches.add(match);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
-                continue;
-            }
-        }
-        return teamMatches;
-    }
-
-    /**
      * Gets the alliance for a team competing at an event by looking at QF matches Used if no
      * alliance data available
      *
@@ -276,7 +160,7 @@ public class MatchHelper {
         }
         for (Match match : teamMatches) {
             try {
-                if (match.getType() == TYPE.QUARTER) {
+                if (match.getType() == MatchType.QUARTER) {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = Match.getRedTeams(matchAlliances);
                     Boolean isRed = Match.hasTeam(redTeams, teamKey);
@@ -373,7 +257,7 @@ public class MatchHelper {
         ArrayList<Match> finalMatches = new ArrayList<>();
 
         ArrayList<Match> currentGroup = qualMatches;
-        TYPE lastType = null;
+        MatchType lastType = null;
 
         // Team might be a no-show/drop out last minute at an event,
         // and might not play any matches as a result.
@@ -605,7 +489,7 @@ public class MatchHelper {
 
             String set = null, number;
             String typeCode = m.group(1);
-            TYPE type = TYPE.fromShortType(typeCode);
+            MatchType type = MatchType.fromShortType(typeCode);
             String typeName = (abbrev ? ABBREV_TYPES : LONG_TYPES).get(type);
 
             // If the match key looks like AA##, then the numbers correspond to the match number.
@@ -642,15 +526,15 @@ public class MatchHelper {
         return getMatchTitleFromMatchKey(context, matchKey, true);
     }
 
-    public static TYPE getMatchTypeFromKey(String matchKey) {
+    public static MatchType getMatchTypeFromKey(String matchKey) {
         String keyWithoutEvent = matchKey.replaceAll(".*_", "");
         Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
             String typeCode = m.group(1);
-            return TYPE.fromShortType(typeCode);
+            return MatchType.fromShortType(typeCode);
         } else {
-            return TYPE.NONE;
+            return MatchType.NONE;
         }
     }
 }

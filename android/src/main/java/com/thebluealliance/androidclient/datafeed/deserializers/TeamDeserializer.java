@@ -47,6 +47,10 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
             team.setWebsite(object.get("website").getAsString());
         }
 
+        if (!isNull(object.get("motto"))) {
+            team.setMotto(object.get("motto").getAsString());
+        }
+
         return team;
     }
 

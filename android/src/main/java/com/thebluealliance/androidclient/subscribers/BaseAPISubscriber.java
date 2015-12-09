@@ -32,14 +32,24 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     BindType mDataToBind;
     RefreshController mRefreshController; //TODO hook up to DI
     String mRefreshTag;
+    boolean hasBinderBoundViews;
     boolean shouldBindImmediately;
+    boolean shouldBindOnce;
 
     public BaseAPISubscriber() {
         shouldBindImmediately = true;
+        hasBinderBoundViews = false;
     }
 
     public void setShouldBindImmediately(boolean shouldBind) {
         shouldBindImmediately = shouldBind;
+    }
+
+    /**
+     * If set, bind immediately once until onComplete is called
+     */
+    public void setShouldBindOnce(boolean shouldBind) {
+        shouldBindOnce = shouldBind;
     }
 
     public void setConsumer(DataConsumer<BindType> consumer) {
@@ -68,7 +78,8 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         postToEventBus(EventBus.getDefault());
         try {
             parseData();
-            if (shouldBindImmediately) {
+            if (shouldBindImmediately || shouldBindOnce) {
+                bindViewsIfNeeded();
                 bindData();
             }
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -78,10 +89,12 @@ public abstract class BaseAPISubscriber<APIType, BindType>
 
     @Override
     public void onCompleted() {
+        shouldBindOnce = false;
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
             if (mConsumer != null) {
                 try {
+                    bindViewsIfNeeded();
                     mConsumer.onComplete();
                 } catch (Exception e) {
                     Log.e(Constants.LOG_TAG, "UNABLE TO COMPLETE RENDER");
@@ -97,6 +110,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
+                bindViewsIfNeeded();
                 mConsumer.onError(throwable);
             }
         });
@@ -120,6 +134,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mConsumer != null) {
                 try {
+                    bindViewsIfNeeded();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
                     Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
@@ -130,6 +145,15 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         });
     }
 
+    /**
+     *
+     */
+    public void bindViewsIfNeeded() {
+        if (!hasBinderBoundViews && mConsumer != null) {
+            mConsumer.bindViews();
+            hasBinderBoundViews = true;
+        }
+    }
     /**
      * Post {@link #mAPIData} to the given {@link EventBus}
      */
@@ -146,4 +170,5 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     protected boolean shouldPostToEventBus() {
         return false;
     }
+
 }

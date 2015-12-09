@@ -3,14 +3,18 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.renderers.EventRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListItem>> {
 
-    public AllianceListSubscriber() {
+    EventRenderer mRenderer;
+
+    public AllianceListSubscriber(EventRenderer renderer) {
         super();
+        mRenderer = renderer;
         mDataToBind = new ArrayList<>();
     }
 
@@ -20,6 +24,6 @@ public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListIt
         if (mAPIData == null) {
             return;
         }
-        mAPIData.renderAlliances(mDataToBind);
+        mRenderer.renderAlliances(mAPIData, mDataToBind);
     }
 }

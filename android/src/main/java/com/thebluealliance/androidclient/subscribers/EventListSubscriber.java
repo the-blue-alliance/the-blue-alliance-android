@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.renderers.ModelRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,11 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Lis
       MODE_DISTRICT = 2;
 
     private int mRenderMode;
+    private ModelRenderer<Event, ?> mRenderer;
 
-    public EventListSubscriber() {
+    public EventListSubscriber(ModelRenderer<Event, ?> renderer) {
         super();
+        mRenderer = renderer;
         mDataToBind = new ArrayList<>();
         mRenderMode = MODE_WEEK;
     }
@@ -39,13 +42,13 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Lis
         switch (mRenderMode) {
             case MODE_WEEK:
             default:
-                EventHelper.renderEventListForWeek(mAPIData, mDataToBind);
+                EventHelper.renderEventListForWeek(mAPIData, mDataToBind, mRenderer);
                 break;
             case MODE_TEAM:
-                EventHelper.renderEventListForTeam(mAPIData, mDataToBind);
+                EventHelper.renderEventListForTeam(mAPIData, mDataToBind, mRenderer);
                 break;
             case MODE_DISTRICT:
-                EventHelper.renderEventListForDistrict(mAPIData, mDataToBind);
+                EventHelper.renderEventListForDistrict(mAPIData, mDataToBind, mRenderer);
                 break;
         }
     }

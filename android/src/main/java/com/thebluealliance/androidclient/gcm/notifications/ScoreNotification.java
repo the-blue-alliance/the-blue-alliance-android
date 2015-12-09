@@ -17,9 +17,11 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.database.writers.MatchWriter;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -31,16 +33,31 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by Nathan on 7/24/2014.
- */
 public class ScoreNotification extends BaseNotification {
 
+    private final MatchWriter mWriter;
     private String eventName, eventKey, matchKey;
     private Match match;
 
-    public ScoreNotification(String messageData) {
-        super("score", messageData);
+    public ScoreNotification(String messageData, MatchWriter writer) {
+        super(NotificationTypes.MATCH_SCORE, messageData);
+        mWriter = writer;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public String getMatchKey() {
+        return matchKey;
+    }
+
+    public Match getMatch() {
+        return match;
     }
 
     @Override
@@ -123,7 +140,7 @@ public class ScoreNotification extends BaseNotification {
 
         boolean useSpecial2015Format;
         try {
-            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchHelper.TYPE.FINAL;
+            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchType.FINAL;
         } catch (BasicModel.FieldNotDefinedException e) {
             useSpecial2015Format = false;
             Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
@@ -189,6 +206,7 @@ public class ScoreNotification extends BaseNotification {
         stored.setBody(notificationString);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setMessageData(messageData);
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
@@ -201,9 +219,9 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         if (match != null) {
-            match.write(c);
+            mWriter.write(match);
         }
     }
 
@@ -238,6 +256,7 @@ public class ScoreNotification extends BaseNotification {
         holder.title.setText(c.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
         holder.time.setText(getNotificationTimeString(c));
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
+        /** TODO Move to {@link com.thebluealliance.androidclient.renderers.MatchRenderer} */
         match.render(false, false, false, true).getView(c, inflater, holder.matchView);
 
         return convertView;

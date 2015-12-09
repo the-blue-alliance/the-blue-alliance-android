@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,14 +44,16 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
     private String mTeamKey;
     private Resources mResources;
+    private MatchRenderer mMatchRenderer;
     private boolean mIsMatchListLoaded;
 
     // Data loaded from other sources
     private List<Match> mMatches;
 
-    public TeamAtEventSummarySubscriber(Resources resources) {
+    public TeamAtEventSummarySubscriber(Resources resources, MatchRenderer matchRenderer) {
         super();
         mResources = resources;
+        mMatchRenderer = matchRenderer;
         mIsMatchListLoaded = false;
         mDataToBind = new ArrayList<>();
     }
@@ -122,6 +125,15 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             rankingString = EventHelper.createRankingBreakdown(rankingElements);
         }
 
+        // Rank
+        if (rank > 0) {
+            mDataToBind.add(new LabelValueListItem(
+              mResources.getString(R.string.team_at_event_rank),
+              rank + Utilities.getOrdinalFor(rank)));
+        }
+
+        LabelValueListItem rankBreakdownItem = new LabelValueListItem("Ranking Breakdown", rankingString);
+
         MatchHelper.EventStatus status;
         try {
             status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
@@ -132,12 +144,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
-            // Rank
-            if (rank > 0) {
-                mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_rank),
-                  rank + Utilities.getOrdinalFor(rank)));
-            }
+
             // Record
             /* Don't show for 2015 events, because no wins and such */
             if (year != 2015 && !recordString.equals("0-0-0")) {
@@ -166,22 +173,30 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
             // Ranking Breakdown
             if (rankingString != null && !rankingString.isEmpty()) {
-                mDataToBind.add(new LabelValueListItem("Ranking Breakdown", rankingString));
+                mDataToBind.add(rankBreakdownItem);
             }
 
             if (lastMatch != null) {
                 mDataToBind.add(new LabelValueListItem
                   (mResources.getString(R.string.title_last_match),
-                    lastMatch.render()));
+                    mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
             }
             if (nextMatch != null) {
                 mDataToBind.add(new LabelValueListItem(
                   mResources.getString(R.string.title_next_match),
-                  nextMatch.render()));
+                  mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
             }
+        } else if (rank > 0) {
+            // Only show ranking breakdown if rankings are available
+            mDataToBind.add(rankBreakdownItem);
+        }
 
+        if (mDataToBind.size() > 0) {
+            // If there is data to add, then add an empty item next to it so we can scroll
+            // all the way down and not have the FAB overlap with anything
             mDataToBind.add(new EmptyListElement(""));
         }
+
     }
 
     /**

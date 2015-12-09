@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.os.Bundle;
 
+import com.thebluealliance.androidclient.types.ModelType;
+
 import java.util.ArrayList;
 
 /**
@@ -9,7 +11,7 @@ import java.util.ArrayList;
  */
 public class ModelNotificationFavoriteSettings {
     public String modelKey = "";
-    public ModelHelper.MODELS modelType = null;
+    public ModelType modelType = null;
     public boolean isFavorite = false;
     public ArrayList<String> enabledNotifications = new ArrayList<>();
 

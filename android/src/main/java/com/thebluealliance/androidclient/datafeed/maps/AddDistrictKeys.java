@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
+import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
@@ -20,11 +21,14 @@ public class AddDistrictKeys implements Func1<List<District>, List<District>> {
 
     @Override
     public List<District> call(List<District> districts) {
+        if (districts == null) {
+            return null;
+        }
         for (int i = 0; i < districts.size(); i++) {
             District district = districts.get(i);
             try {
-                String key = district.getAbbreviation();
-                district.setKey(mYear + key);
+                String key = DistrictHelper.generateKey(district.getAbbreviation(), mYear);
+                district.setKey(key);
                 district.setYear(mYear);
             } catch (BasicModel.FieldNotDefinedException e) {
                 e.printStackTrace();

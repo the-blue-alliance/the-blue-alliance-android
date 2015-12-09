@@ -1,8 +1,15 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
+import com.thebluealliance.androidclient.database.tables.MatchesTable;
+import com.thebluealliance.androidclient.datafeed.combiners.JsonArrayAndKeyCombiner;
+import com.thebluealliance.androidclient.datafeed.combiners.JsonObjectAndKeyCombiner;
+import com.thebluealliance.androidclient.datafeed.combiners.TeamAndEventTeamCombiner;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
@@ -55,21 +62,21 @@ public class CacheableDatafeed {
     public Observable<List<Team>> fetchTeamPage(int pageNum, String cacheHeader) {
         Observable<List<Team>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchTeamPage(pageNum, cacheHeader),
-          mWriter.teamListWriter.get());
+          mWriter.getTeamListWriter().get());
         return mAPICache.fetchTeamPage(pageNum).concatWith(apiData);
     }
 
     public Observable<Team> fetchTeam(String teamKey, String cacheHeader) {
         Observable<Team> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchTeam(teamKey, cacheHeader),
-          mWriter.teamWriter.get());
+          mWriter.getTeamWriter().get());
         return mAPICache.fetchTeam(teamKey).concatWith(apiData);
     }
 
     public Observable<List<Event>> fetchTeamEvents(String teamKey, int year, String cacheHeader) {
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchTeamEvents(teamKey, year, cacheHeader),
-          mWriter.eventListWriter.get());
+          mWriter.getEventListWriter().get());
         return mAPICache.fetchTeamEvents(teamKey, year).concatWith(apiData);
     }
 
@@ -77,7 +84,8 @@ public class CacheableDatafeed {
         WeekEventsExtractor extractor = new WeekEventsExtractor(week);
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventsInYear(year, cacheHeader),
-          mWriter.eventListWriter.get());
+          mWriter.getEventListWriter().get(),
+          Database.TABLE_EVENTS, EventsTable.WEEK + " = ?", new String[]{Integer.toString(week)});
         return mAPICache.fetchEventsInWeek(year, week).concatWith(apiData.map(extractor));
     }
 
@@ -87,7 +95,7 @@ public class CacheableDatafeed {
       String cacheHeader) {
         Observable<List<Award>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchTeamAtEventAwards(teamKey, eventKey, cacheHeader),
-          mWriter.awardListWriter.get());
+          mWriter.getAwardListWriter().get());
         return mAPICache.fetchTeamAtEventAwards(teamKey, eventKey).concatWith(apiData);
     }
 
@@ -97,7 +105,7 @@ public class CacheableDatafeed {
       String cacheHeader) {
         Observable<List<Match>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchTeamAtEventMatches(teamKey, eventKey, cacheHeader),
-          mWriter.matchListWriter.get());
+          mWriter.getMatchListWriter().get());
         return mAPICache.fetchTeamAtEventMatches(teamKey, eventKey).concatWith(apiData);
     }
 
@@ -113,14 +121,14 @@ public class CacheableDatafeed {
         Observable<JsonArray> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mRetrofitAPI.fetchTeamYearsParticipated(teamKey, cacheHeader),
           new YearsParticipatedInfoMap(teamKey),
-          mWriter.yearsParticipatedWriter.get());
+          mWriter.getYearsParticipatedWriter().get());
         return mAPICache.fetchTeamYearsParticipated(teamKey).concatWith(apiData);
     }
 
     public Observable<List<Media>> fetchTeamMediaInYear(String teamKey, int year, String cacheHeader) {
         Observable<List<Media>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchTeamMediaInYear(teamKey, year, cacheHeader),
-          mWriter.mediaListWriter.get());
+          mWriter.getMediaListWriter().get());
         return mAPICache.fetchTeamMediaInYear(teamKey, year).concatWith(apiData);
     }
 
@@ -135,46 +143,51 @@ public class CacheableDatafeed {
     public Observable<List<Event>> fetchEventsInYear(int year, String cacheHeader) {
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventsInYear(year, cacheHeader),
-          mWriter.eventListWriter.get());
+          mWriter.getEventListWriter().get(),
+          Database.TABLE_EVENTS, EventsTable.YEAR + " = ?", new String[]{Integer.toString(year)});
         return mAPICache.fetchEventsInYear(year).concatWith(apiData);
     }
 
     public Observable<Event> fetchEvent(String eventKey, String cacheHeader) {
         Observable<Event> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEvent(eventKey, cacheHeader),
-          mWriter.eventWriter.get());
+          mWriter.getEventWriter().get());
         return mAPICache.fetchEvent(eventKey).concatWith(apiData);
     }
 
     public Observable<List<Team>> fetchEventTeams(String eventKey, String cacheHeader) {
-        Observable<List<Team>> apiData = mResponseMap.getAndWriteResponseBody(
+        Observable<List<Team>> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mRetrofitAPI.fetchEventTeams(eventKey, cacheHeader),
-          mWriter.teamListWriter.get());
+          new TeamAndEventTeamCombiner(eventKey),
+          mWriter.getEventTeamAndTeamListWriter().get());
         return mAPICache.fetchEventTeams(eventKey).concatWith(apiData);
     }
 
     public Observable<JsonArray> fetchEventRankings(String eventKey, String cacheHeader) {
-        //TODO write the response to the db
-        Observable<JsonArray> apiData = mResponseMap.getResponseBody(
-          mRetrofitAPI.fetchEventRankings(eventKey, cacheHeader));
+        Observable<JsonArray> apiData = mResponseMap.getAndWriteMappedResponseBody(
+          mRetrofitAPI.fetchEventRankings(eventKey, cacheHeader),
+          new JsonArrayAndKeyCombiner(eventKey),
+          mWriter.getEventRankingsWriter().get());
         return mAPICache.fetchEventRankings(eventKey).concatWith(apiData);
     }
 
     public Observable<List<Match>> fetchEventMatches(String eventKey, String cacheHeader) {
         Observable<List<Match>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventMatches(eventKey, cacheHeader),
-          mWriter.matchListWriter.get());
+          mWriter.getMatchListWriter().get(),
+          Database.TABLE_MATCHES, MatchesTable.EVENT + " = ?", new String[]{eventKey});
         return mAPICache.fetchEventMatches(eventKey).concatWith(apiData);
     }
 
-    public Observable<JsonObject> fetchEventStats(String eventKey, String cacheHeader) {
-        //TODO write the response to the db
-        Observable<JsonObject> apiData = mResponseMap.getResponseBody(
-          mRetrofitAPI.fetchEventStats(eventKey, cacheHeader));
+    public Observable<? extends JsonElement> fetchEventStats(String eventKey, String cacheHeader) {
+        Observable<JsonObject> apiData = mResponseMap.getAndWriteMappedResponseBody(
+          mRetrofitAPI.fetchEventStats(eventKey, cacheHeader),
+          new JsonObjectAndKeyCombiner(eventKey),
+          mWriter.getEventStatsWriter().get());
         return mAPICache.fetchEventStats(eventKey).concatWith(apiData);
     }
 
-    public Observable<JsonObject> fetchTeamAtEventStats(
+    public Observable<? extends JsonElement> fetchTeamAtEventStats(
       String eventKey,
       String teamKey,
       String cacheHeader) {
@@ -185,14 +198,15 @@ public class CacheableDatafeed {
     public Observable<List<Award>> fetchEventAwards(String eventKey, String cacheHeader) {
         Observable<List<Award>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventAwards(eventKey, cacheHeader),
-          mWriter.awardListWriter.get());
+          mWriter.getAwardListWriter().get());
         return mAPICache.fetchEventAwards(eventKey).concatWith(apiData);
     }
 
     public Observable<JsonObject> fetchEventDistrictPoints(String eventKey, String cacheHeader) {
-        //TODO write response to db
-        Observable<JsonObject> apiData = mResponseMap.getResponseBody(
-          mRetrofitAPI.fetchEventDistrictPoints(eventKey, cacheHeader));
+        Observable<JsonObject> apiData = mResponseMap.getAndWriteMappedResponseBody(
+          mRetrofitAPI.fetchEventDistrictPoints(eventKey, cacheHeader),
+          new JsonObjectAndKeyCombiner(eventKey),
+          mWriter.getEventDistrictPointsWriter().get());
         return mAPICache.fetchEventDistrictPoints(eventKey).concatWith(apiData);
     }
 
@@ -200,7 +214,7 @@ public class CacheableDatafeed {
         Observable<List<District>> apiData = mResponseMap.mapAndWriteResponseBody(
           mRetrofitAPI.fetchDistrictList(year, cacheHeader),
           new AddDistrictKeys(year),
-          mWriter.districtListWriter.get());
+          mWriter.getDistrictListWriter().get());
         return mAPICache.fetchDistrictList(year).concatWith(apiData);
     }
 
@@ -210,7 +224,7 @@ public class CacheableDatafeed {
       String cacheHeader) {
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchDistrictEvents(districtShort, year, cacheHeader),
-          mWriter.eventListWriter.get());
+          mWriter.getEventListWriter().get());
         return mAPICache.fetchDistrictEvents(districtShort, year).concatWith(apiData);
     }
 
@@ -218,7 +232,7 @@ public class CacheableDatafeed {
         Observable<List<DistrictTeam>> apiData = mResponseMap.mapAndWriteResponseBody(
           mRetrofitAPI.fetchDistrictRankings(districtShort, year, cacheHeader),
           new AddDistrictTeamKey(districtShort, year),
-          mWriter.districtTeamListWriter.get());
+          mWriter.getDistrictTeamListWriter().get());
         return mAPICache.fetchDistrictRankings(districtShort, year).concatWith(apiData);
     }
 
@@ -233,7 +247,7 @@ public class CacheableDatafeed {
     public Observable<Match> fetchMatch(String matchKey, String cacheHeader) {
         Observable<Match> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchMatch(matchKey, cacheHeader),
-          mWriter.matchWriter.get());
+          mWriter.getMatchWriter().get());
         return mAPICache.fetchMatch(matchKey).concatWith(apiData);
     }
 }

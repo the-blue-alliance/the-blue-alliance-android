@@ -122,6 +122,10 @@ public class RefreshController {
      * Refreshable}s.
      */
     public void startRefresh(@RefreshType int refreshType) {
+        if (mIsRefreshing) {
+            return;
+        }
+        mIsRefreshing = true;
         for (RefreshWrapper wrapper: mRefreshableStates.values()) {
             Refreshable refreshable = wrapper.getRefreshable();
             if (refreshable != null) {

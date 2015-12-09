@@ -16,11 +16,14 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.database.writers.AwardListWriter;
+import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.ArrayList;
@@ -28,17 +31,28 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by phil on 11/21/14.
- */
 public class AwardsPostedNotification extends BaseNotification {
 
+    private final AwardListWriter mWriter;
     private String eventName, eventKey;
     private List<Award> awards;
 
-    public AwardsPostedNotification(String messageData) {
+    public AwardsPostedNotification(String messageData, AwardListWriter writer) {
         super(NotificationTypes.AWARDS, messageData);
         awards = new ArrayList<>();
+        mWriter = writer;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public List<Award> getAwards() {
+        return awards;
     }
 
     @Override
@@ -74,6 +88,7 @@ public class AwardsPostedNotification extends BaseNotification {
         String title = context.getString(R.string.notification_awards_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
@@ -88,11 +103,17 @@ public class AwardsPostedNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
-        for (Award award : awards) {
-            if (award != null) {
-                award.write(c);
+    public void updateDataLocally() {
+        if (awards != null) {
+            // Set award keys for writing
+            for (Award award : awards) {
+                try {
+                    award.setKey(AwardHelper.createAwardKey(award.getEventKey(), award.getEnum()));
+                } catch (BasicModel.FieldNotDefinedException e) {
+                    /* Can't write without a key */
+                }
             }
+            mWriter.write(awards);
         }
     }
 

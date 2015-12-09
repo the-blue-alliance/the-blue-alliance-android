@@ -25,9 +25,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by phil on 11/21/14.
- */
 public class ScheduleUpdatedNotification extends BaseNotification {
 
     private String eventName, eventKey;
@@ -35,6 +32,18 @@ public class ScheduleUpdatedNotification extends BaseNotification {
 
     public ScheduleUpdatedNotification(String messageData) {
         super(NotificationTypes.SCHEDULE_UPDATED, messageData);
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public JsonElement getMatchTime() {
+        return matchTime;
     }
 
     @Override
@@ -80,6 +89,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         String title = context.getString(R.string.notification_schedule_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
@@ -95,7 +105,7 @@ public class ScheduleUpdatedNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public void updateDataLocally() {
         /* This notification has no data that we can store locally */
     }
 

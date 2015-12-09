@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.di;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
@@ -11,7 +13,11 @@ import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictWriter;
+import com.thebluealliance.androidclient.database.writers.EventDistrictPointsWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
+import com.thebluealliance.androidclient.database.writers.EventRankingsWriter;
+import com.thebluealliance.androidclient.database.writers.EventStatsWriter;
+import com.thebluealliance.androidclient.database.writers.EventTeamAndTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamWriter;
 import com.thebluealliance.androidclient.database.writers.EventWriter;
@@ -57,6 +63,12 @@ public class TBAAndroidModule {
 
     @Provides
     @Singleton
+    public SharedPreferences provideSharedPrefs(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
+    @Singleton
     public EventBus provideEventBus() {
         return EventBus.getDefault();
     }
@@ -80,9 +92,14 @@ public class TBAAndroidModule {
       Lazy<MediaListWriter> mediaList,
       Lazy<TeamWriter> team,
       Lazy<TeamListWriter> teamList,
-      Lazy<YearsParticipatedWriter> yearsParticipated) {
+      Lazy<YearsParticipatedWriter> yearsParticipated,
+      Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamList,
+      Lazy<EventRankingsWriter> eventRankings,
+      Lazy<EventStatsWriter> eventStats,
+      Lazy<EventDistrictPointsWriter> eventDistrictPoints) {
         return new DatabaseWriter(award, awardList, district, districtList, districtTeam,
           districtTeamList, event, eventList, eventTeam, eventTeamList, match, matchList, media,
-          mediaList, team, teamList, yearsParticipated);
+          mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventRankings,
+          eventStats, eventDistrictPoints);
     }
 }

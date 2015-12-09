@@ -4,7 +4,17 @@ import android.app.Activity;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
+import com.thebluealliance.androidclient.renderers.AwardRenderer;
+import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
+import com.thebluealliance.androidclient.renderers.DistrictRenderer;
+import com.thebluealliance.androidclient.renderers.EventRenderer;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.renderers.MediaRenderer;
+import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
+import com.thebluealliance.androidclient.renderers.RendererModule;
+import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import dagger.Module;
 import dagger.Provides;
@@ -15,7 +25,7 @@ import de.greenrobot.event.EventBus;
  * Each of these are annotated as @Singleton, so references are shared within their component
  * (e.g. unique references per activity)
  */
-@Module(includes = {TBAAndroidModule.class})
+@Module(includes = {TBAAndroidModule.class, RendererModule.class})
 public class SubscriberModule {
 
     private Activity mActivity;
@@ -30,8 +40,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public EventListSubscriber provideEventListSubscriber() {
-        return new EventListSubscriber();
+    public EventListSubscriber provideEventListSubscriber(EventRenderer renderer) {
+        return new EventListSubscriber(renderer);
     }
 
     @Provides
@@ -45,8 +55,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public TeamListSubscriber provideTeamListSubscriber() {
-        return new TeamListSubscriber();
+    public TeamListSubscriber provideTeamListSubscriber(TeamRenderer renderer) {
+        return new TeamListSubscriber(renderer);
     }
 
     @Provides
@@ -60,15 +70,16 @@ public class SubscriberModule {
     }
 
     @Provides
-    public AllianceListSubscriber provideAllianceListSubscriber() {
-        return new AllianceListSubscriber();
+    public AllianceListSubscriber provideAllianceListSubscriber(EventRenderer renderer) {
+        return new AllianceListSubscriber(renderer);
     }
 
     @Provides
     public DistrictPointsListSubscriber provideDistrictPointsListSubscriber(
       Database db,
-      Gson gson) {
-        return new DistrictPointsListSubscriber(db, gson);
+      Gson gson,
+      DistrictPointBreakdownRenderer renderer) {
+        return new DistrictPointsListSubscriber(db, gson, renderer);
     }
 
     @Provides
@@ -77,24 +88,26 @@ public class SubscriberModule {
     }
 
     @Provides
-    public AwardsListSubscriber provideAwardsListSubscriber(Database db) {
-        return new AwardsListSubscriber(db);
+    public AwardsListSubscriber provideAwardsListSubscriber(Database db, AwardRenderer renderer) {
+        return new AwardsListSubscriber(db, renderer);
     }
 
     @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {
         return new TeamStatsSubscriber(mActivity.getResources());
     }
 
-    @Provides TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(Database db) {
-        return new TeamAtEventSummarySubscriber(mActivity.getResources());
+    @Provides
+    TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
+        return new TeamAtEventSummarySubscriber(mActivity.getResources(), renderer);
     }
 
     @Provides EventTabSubscriber provideEventTabsSubscriber() {
         return new EventTabSubscriber();
     }
 
-    @Provides DistrictListSubscriber provideDistrictListSubscriber(Database db) {
-        return new DistrictListSubscriber(db);
+    @Provides
+    DistrictListSubscriber provideDistrictListSubscriber(Database db, DistrictRenderer renderer) {
+        return new DistrictListSubscriber(db, renderer);
     }
 
     @Provides DistrictRankingsSubscriber provideDistrictRankingsSubscriber(Database db) {
@@ -113,24 +126,30 @@ public class SubscriberModule {
         return new TeamAtDistrictBreakdownSubscriber(mActivity.getResources(), db, gson);
     }
 
-    @Provides MatchInfoSubscriber provideMatchInfoSubscriber(Gson gson, EventBus eventBus) {
-        return new MatchInfoSubscriber(gson, eventBus);
+    @Provides
+    MatchInfoSubscriber provideMatchInfoSubscriber(
+      Gson gson,
+      EventBus eventBus,
+      MatchRenderer renderer,
+      MediaRenderer mediaRenderer) {
+        return new MatchInfoSubscriber(gson, eventBus, renderer, mediaRenderer);
     }
 
-    @Provides WebcastListSubscriber provideWebcastListSubscriber() {
-        return new WebcastListSubscriber();
+    @Provides WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
+        return new WebcastListSubscriber(renderer);
+    }
+
+    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
+        return new RecentNotificationsSubscriber(writer);
     }
 
     @Provides
-    RecentNotificationsSubscriber provideRecentNotificationsSubscriber() {
-        return new RecentNotificationsSubscriber();
+    SubscriptionListSubscriber provideSubscriptionListSubscriber(MyTbaModelRenderer renderer) {
+        return new SubscriptionListSubscriber(renderer);
     }
 
-    @Provides SubscriptionListSubscriber provideSubscriptionListSubscriber() {
-        return new SubscriptionListSubscriber(mActivity);
-    }
-
-    @Provides FavoriteListSubscriber provideFavoriteListSubscriber() {
-        return new FavoriteListSubscriber(mActivity);
+    @Provides
+    FavoriteListSubscriber provideFavoriteListSubscriber(MyTbaModelRenderer renderer) {
+        return new FavoriteListSubscriber(renderer);
     }
 }

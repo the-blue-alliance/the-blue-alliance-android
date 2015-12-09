@@ -12,11 +12,12 @@ import android.view.MenuItem;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 /**
  * Created by phil on 2/3/15.
@@ -82,6 +83,7 @@ public class RecentNotificationsActivity extends BaseActivity implements HasFrag
                     .binderModule(application.getBinderModule())
                     .databaseWriterModule(application.getDatabaseWriterModule())
                     .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
                     .build();
         }
         return mComponent;

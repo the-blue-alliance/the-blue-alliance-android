@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.activities.settings;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -23,6 +22,7 @@ import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
@@ -42,7 +42,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private FloatingActionButton saveModelPreferencesFab;
 
     private String modelKey;
-    private ModelHelper.MODELS modelType;
+    private ModelType modelType;
 
     private NotificationSettingsFragment settings;
     private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
@@ -54,7 +54,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private View settingsListContainer;
     private View greenContainer;
 
-    public static Intent newInstance(Context context, String modelKey, ModelHelper.MODELS modelType) {
+    public static Intent newInstance(Context context, String modelKey, ModelType modelType) {
         Intent intent = new Intent(context, MyTBAModelSettingsActivity.class);
         intent.putExtra(EXTRA_MODEL_KEY, modelKey);
         intent.putExtra(EXTRA_MODEL_TYPE, modelType.getEnum());
@@ -145,7 +145,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     }
 
     @Override
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
         // Nope.
     }
 

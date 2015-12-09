@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.types.MediaType;
 
 import java.util.HashMap;
 
@@ -16,9 +16,10 @@ public class Constants {
     // !!!!DO NOT MODIFY!!!!
     public static final String ALL_DATA_LOADED_KEY = "all_data_loaded";
     public static final String APP_VERSION_KEY = "app_version";
+    public static final String LAST_YEAR_KEY = "last_season";
 
     public static final HashMap<String, String> MATCH_LEVELS;
-    public static final HashMap<Media.TYPE, String> MEDIA_IMG_URL_PATTERN,
+    public static final HashMap<MediaType, String> MEDIA_IMG_URL_PATTERN,
             MEDIA_LINK_URL_PATTERN;
 
     static {
@@ -38,10 +39,10 @@ public class Constants {
 
         MEDIA_IMG_URL_PATTERN = new HashMap<>();
         MEDIA_LINK_URL_PATTERN = new HashMap<>();
-        MEDIA_IMG_URL_PATTERN.put(Media.TYPE.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/img/%s");
-        MEDIA_LINK_URL_PATTERN.put(Media.TYPE.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/photos/%s");
-        MEDIA_IMG_URL_PATTERN.put(Media.TYPE.YOUTUBE, "http://img.youtube.com/vi/%s/hqdefault.jpg");
-        MEDIA_LINK_URL_PATTERN.put(Media.TYPE.YOUTUBE, "https://www.youtube.com/watch?v=%s");
+        MEDIA_IMG_URL_PATTERN.put(MediaType.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/img/%s");
+        MEDIA_LINK_URL_PATTERN.put(MediaType.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/photos/%s");
+        MEDIA_IMG_URL_PATTERN.put(MediaType.YOUTUBE, "http://img.youtube.com/vi/%s/hqdefault.jpg");
+        MEDIA_LINK_URL_PATTERN.put(MediaType.YOUTUBE, "https://www.youtube.com/watch?v=%s");
     }
 
     public static String getApiHeader() {
@@ -62,7 +63,6 @@ public class Constants {
                     7, 9, 9, 9, 9, 9, 9};          // 2010 -
 
 
-    public static final int MAX_COMP_YEAR = 2016;
     public static final int FIRST_COMP_YEAR = 1992;
     public static final int FIRST_DISTRICT_YEAR = 2009;
 

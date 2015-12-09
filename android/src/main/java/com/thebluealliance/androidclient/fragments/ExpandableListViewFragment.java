@@ -18,6 +18,8 @@ import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
+
 public abstract class ExpandableListViewFragment<T, S extends BaseAPISubscriber<T, List<ListGroup>>>
   extends DatafeedFragment<T, List<ListGroup>, S, ExpandableListViewBinder> {
 
@@ -30,6 +32,7 @@ public abstract class ExpandableListViewFragment<T, S extends BaseAPISubscriber<
     @Override
     public @Nullable View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, null);
+        mBinder.setRootView(v);
         mExpandableListView = (ExpandableListView) v.findViewById(R.id.expandable_list);
         ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mAdapter != null) {
@@ -38,8 +41,6 @@ public abstract class ExpandableListViewFragment<T, S extends BaseAPISubscriber<
             mExpandableListView.setSelection(mFirstVisiblePosition);
             progressBar.setVisibility(View.GONE);
         }
-        mBinder.expandableListView = mExpandableListView;
-        mBinder.progressBar = progressBar;
 
         mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
         return v;

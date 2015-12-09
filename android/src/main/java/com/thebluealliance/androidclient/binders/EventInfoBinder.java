@@ -15,73 +15,102 @@ import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
+import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
+
+import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
 
 public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     private LayoutInflater mInflater;
+    private MatchRenderer mMatchRenderer;
     private boolean mIsLive;
 
-    public View view;
-    public View content;
-    public TextView eventName;
-    public TextView eventDate;
-    public TextView eventLoc;
-    public TextView eventVenue;
-    public TextView topTeams;
-    public TextView topOprs;
-    public View topTeamsContainer;
-    public View topOprsContainer;
-    public ProgressBar progressBar;
+    @Inject SocialClickListener mSocialClickListener;
+    @Inject EventInfoContainerClickListener mInfoClickListener;
+
+    @Bind(R.id.content) View content;
+    @Bind(R.id.event_name) TextView eventName;
+    @Bind(R.id.event_date) TextView eventDate;
+    @Bind(R.id.event_venue) TextView eventVenue;
+    @Bind(R.id.top_teams) TextView topTeams;
+    @Bind(R.id.top_oprs) TextView topOprs;
+    @Bind(R.id.top_teams_container) View topTeamsContainer;
+    @Bind(R.id.top_oprs_container) View topOprsContainer;
+    @Bind(R.id.progress) ProgressBar progressBar;
+    @Bind(R.id.event_date_container) View eventDateContainer;
+    @Bind(R.id.event_venue_container) View eventVenueContainer;
+    @Bind(R.id.event_website_container) View eventWebsiteContainer;
+    @Bind(R.id.event_website_title) TextView eventWebsiteTitle;
+    @Bind(R.id.event_twitter_container) View eventTwitterContainer;
+    @Bind(R.id.event_twitter_title) TextView eventTwitterTitle;
+    @Bind(R.id.event_youtube_container) View eventYoutubeContainer;
+    @Bind(R.id.event_youtube_title) TextView eventYoutubeTitle;
+    @Bind(R.id.event_cd_container) View eventCdContainer;
+    @Bind(R.id.last_match_view) FrameLayout lastMatchView;
+    @Bind(R.id.next_match_view) FrameLayout nextMatchView;
+
+    @Inject
+    public EventInfoBinder(MatchRenderer renderer,
+      SocialClickListener socialClickListener,
+      EventInfoContainerClickListener eventInfoContainerClickListener) {
+        mSocialClickListener = socialClickListener;
+        mInfoClickListener = eventInfoContainerClickListener;
+        mMatchRenderer = renderer;
+    }
 
     public void setInflater(LayoutInflater inflater) {
         mInflater = inflater;
     }
 
-    //TODO this needs lots of cleanup. Move click events to their own listeners, no findviewbyid
+    @Override
+    public void bindViews() {
+        ButterKnife.bind(this, mRootView);
+    }
+
     @Override
     public void updateData(@Nullable Model data) {
-        if (data == null || view == null) {
-            setDataBound(false);
-            return;
-        }
-
+        mSocialClickListener.setModelKey(data.eventKey);
         mIsLive = data.isLive;
         eventName.setText(data.nameString);
-        if (data.dateString.isEmpty()) {
-            view.findViewById(R.id.event_date_container).setVisibility(View.GONE);
+        if (data.dateString == null || data.dateString.isEmpty()) {
+            eventDateContainer.setVisibility(View.GONE);
         } else {
             eventDate.setText(data.dateString);
         }
 
         // Show a venue if it is available, otherwise show just the location. If neither is available, hide
-        if (!data.venueString.isEmpty()) {
+        if (data.venueString != null && !data.venueString.isEmpty()) {
             eventVenue.setText(data.venueString);
-        } else if (!data.locationString.isEmpty()) {
+        } else if (data.locationString != null && !data.locationString.isEmpty()) {
             eventVenue.setText(data.locationString);
         } else {
             eventVenue.setText(R.string.no_location_available);
-            view.findViewById(R.id.event_venue_container).setVisibility(View.GONE);
+            eventVenueContainer.setVisibility(View.GONE);
         }
 
         // setup social media intents
         // Default to showing the nav arrow in the venue view and the venue view being clickable
         // We need to set these again even though they're defined in XML in case we gain a location
         // or venue on a refresh and we're reusing the same view.
-
-        View eventVenueContainer = view.findViewById(R.id.event_venue_container);
         eventVenueContainer.setFocusable(true);
         eventVenueContainer.setClickable(true);
+        eventVenueContainer.setOnClickListener(mSocialClickListener);
 
-        if (!data.venueString.isEmpty()) {
+        if (data.venueString != null && !data.venueString.isEmpty()) {
             // Set the tag to the event venue if it is available
             eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.venueString));
-        } else if (!data.locationString.isEmpty()) {
+        } else if (data.locationString != null && !data.locationString.isEmpty()) {
             // Otherwise, use the location
             eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.locationString));
         } else {
@@ -94,27 +123,30 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         }
 
         // If the event doesn't have a defined website, create a Google search for the event name
-        if (data.eventWebsite.isEmpty()) {
-            view.findViewById(R.id.event_website_container).setTag("https://www.google.com/search?q=" + Uri.encode(data.nameString));
-            ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.find_event_on_google);
+        if (data.eventWebsite != null && data.eventWebsite.isEmpty()) {
+            eventWebsiteContainer.setTag("https://www.google.com/search?q=" + Uri.encode(data.nameString));
+            eventWebsiteTitle.setText(R.string.find_event_on_google);
         } else {
-            view.findViewById(R.id.event_website_container).setTag(data.eventWebsite);
-            ((TextView) view.findViewById(R.id.event_website_title)).setText(R.string.view_event_website);
+            eventWebsiteContainer.setTag(data.eventWebsite);
+            eventWebsiteTitle.setText(R.string.view_event_website);
         }
+        eventWebsiteContainer.setOnClickListener(mSocialClickListener);
 
-        view.findViewById(R.id.event_twitter_container).setTag("https://twitter.com/search?q=%23" + data.eventKey);
-        ((TextView) view.findViewById(R.id.event_twitter_title)).setText(mActivity.getString(R.string.view_event_twitter, data.eventKey));
+        eventTwitterContainer.setTag("https://twitter.com/search?q=%23" + data.eventKey);
+        eventTwitterTitle.setText(mActivity.getString(R.string.view_event_twitter, data.eventKey));
+        eventTwitterContainer.setOnClickListener(mSocialClickListener);
 
-        view.findViewById(R.id.event_youtube_container).setTag("https://www.youtube.com/results?search_query=" + data.eventKey);
-        ((TextView) view.findViewById(R.id.event_youtube_title)).setText(mActivity.getString(R.string.view_event_youtube, data.eventKey));
+        eventYoutubeContainer.setTag("https://www.youtube.com/results?search_query=" + data.eventKey);
+        eventYoutubeTitle.setText(mActivity.getString(R.string.view_event_youtube, data.eventKey));
+        eventYoutubeContainer.setOnClickListener(mSocialClickListener);
 
-        view.findViewById(R.id.event_cd_container).setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.eventKey);
+        eventCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.eventKey);
+        eventCdContainer.setOnClickListener(mSocialClickListener);
 
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
 
         EventBus.getDefault().post(new ActionBarTitleEvent(data.titleString));
-        //EventBus.getDefault().post(new EventInfoLoadedEvent());
 
         mNoDataBinder.unbindData();
         setDataBound(true);
@@ -142,6 +174,12 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         }
     }
 
+    @Override
+    public void unbind() {
+        super.unbind();
+        ButterKnife.unbind(this);
+    }
+
     private void bindNoDataView() {
         try {
             content.setVisibility(View.GONE);
@@ -165,42 +203,47 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     protected void showLastMatch(MatchListElement match) {
-        FrameLayout matchView = (FrameLayout) view.findViewById(R.id.last_match_view);
+        FrameLayout matchView = lastMatchView;
         matchView.setVisibility(View.VISIBLE);
         matchView.removeAllViews();
         matchView.addView(match.getView(mActivity, mInflater, null));
     }
 
     protected void showNextMatch(MatchListElement match) {
-        FrameLayout matchView = (FrameLayout) view.findViewById(R.id.next_match_view);
+        FrameLayout matchView = nextMatchView;
         matchView.setVisibility(View.VISIBLE);
         matchView.removeAllViews();
         matchView.addView(match.getView(mActivity, mInflater, null));
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(LiveEventMatchUpdateEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mIsLive && event.getLastMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing last match");
-                showLastMatch(event.getLastMatch().render());
+                showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
             }
             if (mIsLive && event.getNextMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing next match");
-                showNextMatch(event.getNextMatch().render());
+                showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
             }
         });
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(EventRankingsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             topTeamsContainer.setVisibility(View.VISIBLE);
+            topTeamsContainer.setOnClickListener(mInfoClickListener);
             topTeams.setText(Html.fromHtml(event.getRankString()));
         });
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(EventStatsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             topOprsContainer.setVisibility(View.VISIBLE);
+            topOprsContainer.setOnClickListener(mInfoClickListener);
             topOprs.setText(Html.fromHtml(event.getStatString()));
         });
     }

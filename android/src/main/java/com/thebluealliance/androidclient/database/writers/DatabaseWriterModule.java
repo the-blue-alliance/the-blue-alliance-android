@@ -92,7 +92,32 @@ public class DatabaseWriterModule {
     }
 
     @Provides @Singleton
-    public YearsParticipatedWriter yearsParticipatedWriter(Database db) {
-        return new YearsParticipatedWriter(db);
+    public YearsParticipatedWriter yearsParticipatedWriter(Database db, TeamWriter teamWriter) {
+        return new YearsParticipatedWriter(db, teamWriter);
+    }
+
+    @Provides @Singleton
+    public EventTeamAndTeamListWriter provideEventTeamAndTeamListWriter(
+      Database database,
+      EventTeamListWriter eventTeamListWriter,
+      TeamListWriter teamListWriter) {
+        return new EventTeamAndTeamListWriter(database, eventTeamListWriter, teamListWriter);
+    }
+
+    @Provides @Singleton
+    public EventRankingsWriter provideEventRankingsWriter(Database db, EventWriter eventWriter) {
+        return new EventRankingsWriter(db, eventWriter);
+    }
+
+    @Provides @Singleton
+    public EventStatsWriter provideEventStatsWriter(Database db, EventWriter eventWriter) {
+        return new EventStatsWriter(db, eventWriter);
+    }
+
+    @Provides @Singleton
+    public EventDistrictPointsWriter provideEventDistrictPointsWriter(
+      Database db,
+      EventWriter eventWriter) {
+        return new EventDistrictPointsWriter(db, eventWriter);
     }
 }

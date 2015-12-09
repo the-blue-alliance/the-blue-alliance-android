@@ -1,29 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.LegacyAPIHelper;
+import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.types.ModelType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-/**
- * Created by phil on 7/1/14.
- */
 public class EventTeam extends BasicModel<EventTeam> {
 
     public static final String[] NOTIFICATION_TYPES = {
@@ -35,7 +17,7 @@ public class EventTeam extends BasicModel<EventTeam> {
     };
 
     public EventTeam() {
-        super(Database.TABLE_EVENTTEAMS);
+        super(Database.TABLE_EVENTTEAMS, ModelType.EVENTTEAM);
     }
 
     public void setKey(String newKey) {
@@ -104,56 +86,4 @@ public class EventTeam extends BasicModel<EventTeam> {
         throw new FieldNotDefinedException("Field Database.EventTeams.COMPWEEK is not defined");
     }
 
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getEventTeamsTable().add(this);
-    }
-
-    @Override
-    public ListElement render() {
-        return null;
-    }
-
-    public static APIResponse<ArrayList<EventTeam>> queryList(Context c, RequestParams requestParams, String teamKey, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying eventTeams table: " + whereClause + Arrays.toString(whereArgs));
-        EventTeamsTable table = Database.getInstance(c).getEventTeamsTable();
-        Cursor cursor = table.query(fields, whereClause, whereArgs, null, null, null, null);
-        ArrayList<EventTeam> eventTeams = new ArrayList<>();
-        ArrayList<Event> events = new ArrayList<>();
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                eventTeams.add(table.inflate(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = LegacyAPIHelper.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                JsonArray matchList = JSONHelper.getasJsonArray(response.getData());
-                eventTeams = new ArrayList<>();
-                for (JsonElement m : matchList) {
-                    Event e = JSONHelper.getGson().fromJson(m, Event.class);
-                    events.add(e);
-                    try {
-                        EventTeam et = EventTeamHelper.fromEvent(teamKey, e);
-                        eventTeams.add(et);
-                    } catch (FieldNotDefinedException e1) {
-                        Log.e(Constants.LOG_TAG, "Couldn't make eventTeam from event");
-                    }
-                }
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            Database.getInstance(c).getEventTeamsTable().add(eventTeams);
-            Database.getInstance(c).getEventsTable().add(events);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "Found " + events.size() + " events and, updated in db? " + changed);
-        return new APIResponse<>(eventTeams, code);
-    }
 }

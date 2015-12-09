@@ -15,14 +15,16 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-import java.util.Calendar;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 
@@ -31,13 +33,15 @@ public class EventsByWeekFragment
 
     private static final String YEAR = "YEAR", TAB = "tab";
 
+    @Inject FragmentBinder mFragmentBinder;
+    @Inject TBAStatusController mStatusController;
+
     private int mYear;
     private EventsByWeekFragmentPagerAdapter mFragmentAdapter;
     private Parcelable mPagerState, mAdapterState;
     private int mSelectedTab;
     private ViewPager mViewPager;
     private SlidingTabs mTabs;
-    private FragmentBinder mFragmentBinder;
 
     public static EventsByWeekFragment newInstance(int year) {
         EventsByWeekFragment f = new EventsByWeekFragment();
@@ -49,8 +53,9 @@ public class EventsByWeekFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         Log.d(Constants.LOG_TAG, "EventsByWeekFragment created!");
-        mYear = Calendar.getInstance().get(Calendar.YEAR);
+        mYear = mStatusController.getMaxCompYear();
         if (getArguments() != null && getArguments().containsKey(YEAR)) {
             // Default to the current year if no year is provided in the arguments
             mYear = getArguments().getInt(YEAR);
@@ -81,7 +86,6 @@ public class EventsByWeekFragment
         mTabs = (SlidingTabs) view.findViewById(R.id.event_pager_tabs);
         ViewCompat.setElevation(mTabs, getResources().getDimension(R.dimen.toolbar_elevation));
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
-        mFragmentBinder = new FragmentBinder();
         mViewPager.addOnPageChangeListener(mFragmentBinder);
 
         return view;
@@ -114,7 +118,6 @@ public class EventsByWeekFragment
         mFragmentAdapter = new EventsByWeekFragmentPagerAdapter(getChildFragmentManager(), mYear, labels);
         mFragmentBinder.setAdapter(mFragmentAdapter);
         mViewPager.setAdapter(mFragmentAdapter);
-        mViewPager.removeOnPageChangeListener(null);
         mTabs.setViewPager(mViewPager);
         if (mPagerState != null) {
             mViewPager.onRestoreInstanceState(mPagerState);
@@ -125,6 +128,8 @@ public class EventsByWeekFragment
         if (mSelectedTab != -1) {
             mViewPager.setCurrentItem(mSelectedTab);
         }
+
+        mFragmentAdapter.setAutoBindOnceAtPosition(mViewPager.getCurrentItem(), true);
     }
 
     @Override
@@ -156,10 +161,13 @@ public class EventsByWeekFragment
 
         if (currentYear != mYear && week1Index > -1) {
             mViewPager.setCurrentItem(week1Index);
+            mFragmentBinder.onPageSelected(week1Index);
         } else if (currentIndex < weekCount && currentIndex > -1) {
             mViewPager.setCurrentItem(currentIndex);
+            mFragmentBinder.onPageSelected(currentIndex);
         } else {
             mViewPager.setCurrentItem(0);
+            mFragmentBinder.onPageSelected(0);
         }
     }
 
@@ -176,8 +184,8 @@ public class EventsByWeekFragment
         List<EventWeekTab> tabs = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter())
                 .getTabs();
         for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).getWeek() >= week) {
-                return i;
+            if (tabs.get(i).getWeek() > week) {
+                return i-1;
             }
         }
         return -1;
