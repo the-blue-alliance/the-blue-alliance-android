@@ -60,7 +60,7 @@ public class Constants {
     public static final int[] CMP_WEEK =
             {1, 1, 1, 6, 4, 6, 5, 9,               // 1992 - 1999
                     5, 6, 8, 6, 7, 8, 7, 7, 8, 8,  // 2000 - 2009
-                    7, 9, 9, 9, 9, 9, 9};          // 2010 -
+                    7, 9, 9, 9, 9, 9, 10};         // 2010 -
 
 
     public static final int FIRST_COMP_YEAR = 1992;

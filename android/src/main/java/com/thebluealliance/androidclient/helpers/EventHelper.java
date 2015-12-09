@@ -148,6 +148,18 @@ public class EventHelper {
         //there should always be something in the CMP set for every year
         int cmpWeek = Utilities.getCmpWeek(year);
 
+        /**
+         * Special cases for 2016:
+         * Week 1 is actually Week 0.5, everything else is one less
+         * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
+         */
+        if (year == 2016 && weekNum == 1) {
+            return String.format(FLOAT_REGIONAL_LABEL, 0.5);
+        }
+        if (year == 2016 && weekNum > 1 && weekNum < cmpWeek) {
+            weekNum--;
+        }
+
         if (weekNum > 0 && weekNum < cmpWeek) {
             return String.format(REGIONAL_LABEL, weekNum);
         }

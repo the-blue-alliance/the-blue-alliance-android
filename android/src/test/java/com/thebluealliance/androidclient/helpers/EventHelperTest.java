@@ -340,7 +340,12 @@ public class EventHelperTest {
         assertEquals(EventHelper.weekLabelFromNum(2015, 4), "Week 4");
         assertEquals(EventHelper.weekLabelFromNum(2015, 9), EventHelper.CHAMPIONSHIP_LABEL);
         assertEquals(EventHelper.weekLabelFromNum(2015, 12), EventHelper.OFFSEASON_LABEL);
-    }
+
+        assertEquals(EventHelper.weekLabelFromNum(2016, -1), EventHelper.PRESEASON_LABEL);
+        assertEquals(EventHelper.weekLabelFromNum(2016, 1), "Week 0.5");
+        assertEquals(EventHelper.weekLabelFromNum(2016, 4), "Week 3");
+        assertEquals(EventHelper.weekLabelFromNum(2016, 10), EventHelper.CHAMPIONSHIP_LABEL);
+        assertEquals(EventHelper.weekLabelFromNum(2016, 12), EventHelper.OFFSEASON_LABEL);}
 
     private static Event mockEventType(EventType type) throws BasicModel.FieldNotDefinedException {
         Event event = mock(Event.class);

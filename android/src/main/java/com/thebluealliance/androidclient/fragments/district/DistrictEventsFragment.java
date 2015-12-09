@@ -41,6 +41,7 @@ public class DistrictEventsFragment extends ListViewFragment<List<Event>, EventL
         mShort = key.substring(4);
         mYear = Integer.parseInt(key.substring(0, 4));
         super.onCreate(savedInstanceState);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
     }
 
     @Override
