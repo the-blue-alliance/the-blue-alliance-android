@@ -15,10 +15,13 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -49,6 +52,9 @@ public class APIStatusDeserializerTest {
         assertEquals(mStatus.getLatestAppersion(), 123488);
         assertEquals(mStatus.isFmsApiDown(), false);
         assertEquals(mStatus.getJsonBlob(), mJsonData.toString());
+        assertTrue(mStatus.hasMessage());
+        assertEquals("This is only a test", mStatus.getMessageText());
+        assertEquals(new Date(1449698422l * 1000), mStatus.getMessageExipration());
 
         List<String> downKeys = mStatus.getDownEvents();
         assertNotNull(downKeys);
@@ -136,6 +142,27 @@ public class APIStatusDeserializerTest {
     public void testBadLatestVersion() {
         mJsonData.get(APIStatusDeserializer.ANDROID_SETTINGS_TAG).getAsJsonObject()
           .add(APIStatusDeserializer.LATEST_APP_VERSION_TAG, new JsonArray());
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+    }
+
+    @Test
+    public void testNoMessage() {
+        mJsonData.remove(APIStatusDeserializer.MESSAGE_DICT);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        assertFalse(mStatus.hasMessage());
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void testNoMessageText() {
+        mJsonData.get(APIStatusDeserializer.MESSAGE_DICT).getAsJsonObject()
+          .remove(APIStatusDeserializer.MESSAGE_TEXT);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void testNoMessageExpiration() {
+        mJsonData.get(APIStatusDeserializer.MESSAGE_DICT).getAsJsonObject()
+          .remove(APIStatusDeserializer.MESSAGE_EXPIRATION);
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
     }
 }

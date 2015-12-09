@@ -9,9 +9,12 @@ import com.thebluealliance.androidclient.models.APIStatus;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
+
+    private static final int MS_PER_SECOND = 1000;
 
     public static final String MAX_SEASON_TAG = "max_season";
     public static final String FMS_API_DOWN_TAG = "is_datafeed_down";
@@ -19,6 +22,9 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
     public static final String ANDROID_SETTINGS_TAG = "android";
     public static final String MIN_APP_VERSION_TAG = "min_app_version";
     public static final String LATEST_APP_VERSION_TAG = "latest_app_version";
+    public static final String MESSAGE_DICT = "message";
+    public static final String MESSAGE_TEXT = "text";
+    public static final String MESSAGE_EXPIRATION = "expiration";
 
     @Override
     public APIStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -71,6 +77,22 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             throw new JsonParseException("Latest app version not found");
         }
         status.setLatestAppersion(latestAppVersion.getAsInt());
+
+        JsonElement message = data.get(MESSAGE_DICT);
+        if (message != null && !message.isJsonNull() && message.isJsonObject()) {
+            JsonObject adminMessage = data.get(MESSAGE_DICT).getAsJsonObject();
+            JsonElement messageText = adminMessage.get(MESSAGE_TEXT);
+            JsonElement messageExpiration = adminMessage.get(MESSAGE_EXPIRATION);
+            if (messageText == null || messageText.isJsonNull()
+              || messageExpiration == null || messageExpiration.isJsonNull()) {
+                throw new JsonParseException("Message requires text and expiration");
+            }
+            status.setHasMessage(true);
+            status.setMessageText(messageText.getAsString());
+            status.setMessageExipration(new Date(messageExpiration.getAsLong() * MS_PER_SECOND));
+        } else {
+            status.setHasMessage(false);
+        }
 
         status.setJsonBlob(json.toString());
         return status;
