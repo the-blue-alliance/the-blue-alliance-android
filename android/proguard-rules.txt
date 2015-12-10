@@ -35,6 +35,25 @@ public static *** d(...);
     public void onEvent*(**);
 }
 
+# ButterKnife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
+-dontwarn com.google.api.client.extensions.android.**
+-dontwarn com.google.api.client.googleapis.extensions.android.**
+-dontwarn com.google.android.gms.**
+-dontwarn com.facebook.stetho.**
+-dontwarn com.google.api.client.**
+
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
 -keepclassmembers class android.support.design.widget.FloatingActionButton$Behavior { public <init>(); }
