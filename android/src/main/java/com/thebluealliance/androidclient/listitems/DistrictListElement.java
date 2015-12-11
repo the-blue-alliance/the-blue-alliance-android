@@ -49,7 +49,7 @@ public class DistrictListElement extends ListElement {
 
         /* For mytba list, show the year as well */
         if (showMyTba) {
-            holder.title.setText(String.format("$1%d %2$s District", year, type.getName()));
+            holder.title.setText(String.format("%1$d %2$s District", year, type.getName()));
         } else {
             holder.title.setText(String.format("%1$s District", type.getName()));
         }
