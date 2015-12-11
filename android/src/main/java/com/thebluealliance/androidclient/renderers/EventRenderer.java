@@ -48,6 +48,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
         try {
             return new EventListElement(
               event.getKey(),
+              event.getEventYear(),
               event.getEventShortName(),
               event.getDateString(),
               event.getLocation(),

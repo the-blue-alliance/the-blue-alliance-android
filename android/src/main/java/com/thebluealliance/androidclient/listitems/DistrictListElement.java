@@ -19,6 +19,7 @@ public class DistrictListElement extends ListElement {
     public final DistrictType type;
     public final int numEvents;
     public final String key;
+    public final int year;
     public final boolean showMyTba;
 
     public DistrictListElement(District district, int numEvents, boolean showMyTba)
@@ -26,6 +27,7 @@ public class DistrictListElement extends ListElement {
         super(district.getKey());
         type = DistrictType.fromEnum(district.getEnum());
         key = district.getKey();
+        year = district.getYear();
         this.numEvents = numEvents;
         this.showMyTba = showMyTba;
     }
@@ -45,7 +47,12 @@ public class DistrictListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.title.setText(String.format("%1$s District", type.getName()));
+        /* For mytba list, show the year as well */
+        if (showMyTba) {
+            holder.title.setText(String.format("$1%d %2$s District", year, type.getName()));
+        } else {
+            holder.title.setText(String.format("%1$s District", type.getName()));
+        }
         if (numEvents != -1) {
             holder.events.setVisibility(View.VISIBLE);
             holder.events.setText(String.format("%1$d Events", numEvents));

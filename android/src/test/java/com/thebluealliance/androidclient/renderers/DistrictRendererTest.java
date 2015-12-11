@@ -47,7 +47,7 @@ public class DistrictRendererTest {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(mDistrict));
         when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(new ArrayList<>()));
         DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
-        assertDistrictItem(element, 0, false);
+        assertDistrictItem(element, 0, 2015, false);
     }
 
     @Test
@@ -63,20 +63,21 @@ public class DistrictRendererTest {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(mDistrict));
         when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(null));
         DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
-        assertDistrictItem(element, 0, false);
+        assertDistrictItem(element, 0, 2015, false);
     }
 
     @Test
     public void testRenderFromModel() {
         DistrictListElement element = mRenderer.renderFromModel(mDistrict, new DistrictRenderer.RenderArgs(12, true));
-        assertDistrictItem(element, 12, true);
+        assertDistrictItem(element, 12, 2015, true);
     }
 
-    private void assertDistrictItem(DistrictListElement element, int numEvents, boolean showMyTba) {
+    private void assertDistrictItem(DistrictListElement element, int numEvents, int year, boolean showMyTba) {
         assertNotNull(element);
         assertEquals(element.key, DISTRICT_KEY);
         assertEquals(element.numEvents, numEvents);
         assertEquals(element.type, DistrictType.NEW_ENGLAND);
         assertEquals(element.showMyTba, showMyTba);
+        assertEquals(element.year, year);
     }
 }

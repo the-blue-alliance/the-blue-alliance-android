@@ -21,6 +21,7 @@ public class EventListElement extends ListElement implements Serializable {
     public final String eventDates;
     public final String eventLocation;
     public final String eventKey;
+    public final int eventYear;
     public final boolean showMyTba;
 
     public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
@@ -29,15 +30,17 @@ public class EventListElement extends ListElement implements Serializable {
         eventName = event.getEventName();
         eventDates = event.getDateString();
         eventLocation = event.getLocation();
+        eventYear = event.getEventYear();
         this.showMyTba = false;
     }
 
-    public EventListElement(String key, String name, String dates, String location, boolean showMyTba) {
+    public EventListElement(String key, int year, String name, String dates, String location, boolean showMyTba) {
         super(key);
         eventKey = key;
         eventName = name;
         eventDates = dates;
         eventLocation = location;
+        eventYear = year;
         this.showMyTba = showMyTba;
     }
 
@@ -73,7 +76,12 @@ public class EventListElement extends ListElement implements Serializable {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.name.setText(eventName);
+        /* When rendering in mytba list, show year with event name */
+        if (showMyTba) {
+            holder.name.setText(String.format("%1$d %2$s", eventYear, eventName));
+        } else {
+            holder.name.setText(eventName);
+        }
         holder.dates.setText(eventDates);
         holder.location.setText(eventLocation);
 
