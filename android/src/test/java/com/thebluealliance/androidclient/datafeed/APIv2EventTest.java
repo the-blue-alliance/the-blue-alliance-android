@@ -38,9 +38,9 @@ public class APIv2EventTest extends AbstractAPIv2Test {
     @Test
     public void testFetchEventRankings(){
         mApi.fetchEventRankings("2014cthar", null).subscribe(rankings -> {
-            assertTrue(rankings.body().size() > 0);
-            assertTrue(rankings.body().get(0).isJsonArray());
-            assertEquals(rankings.body().get(0).getAsJsonArray().get(0).getAsString(), "Rank");
+            assertTrue(rankings.body().getAsJsonArray().size() > 0);
+            assertTrue(rankings.body().getAsJsonArray().get(0).isJsonArray());
+            assertEquals(rankings.body().getAsJsonArray().get(0).getAsJsonArray().get(0).getAsString(), "Rank");
         });
     }
 
@@ -54,9 +54,9 @@ public class APIv2EventTest extends AbstractAPIv2Test {
     @Test
     public void testFetchEventStats(){
         mApi.fetchEventStats("2014cthar", null).subscribe(stats -> {
-            assertTrue(stats.body().has("oprs"));
-            assertTrue(stats.body().has("dprs"));
-            assertTrue(stats.body().has("ccwms"));
+            assertTrue(stats.body().getAsJsonObject().has("oprs"));
+            assertTrue(stats.body().getAsJsonObject().has("dprs"));
+            assertTrue(stats.body().getAsJsonObject().has("ccwms"));
         });
     }
 
@@ -70,8 +70,8 @@ public class APIv2EventTest extends AbstractAPIv2Test {
     @Test
     public void testFetchEventDistrictPoins(){
         mApi.fetchEventDistrictPoints("2014cthar", null).subscribe(points -> {
-            assertTrue(points.body().has("points"));
-            assertTrue(points.body().has("tiebreakers"));
+            assertTrue(points.body().getAsJsonObject().has("points"));
+            assertTrue(points.body().getAsJsonObject().has("tiebreakers"));
         });
     }
 }
