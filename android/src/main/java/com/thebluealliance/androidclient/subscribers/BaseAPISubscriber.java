@@ -5,11 +5,13 @@ import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import de.greenrobot.event.EventBus;
@@ -32,9 +34,12 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     BindType mDataToBind;
     RefreshController mRefreshController; //TODO hook up to DI
     String mRefreshTag;
+    Tracker mAnalyticsTracker;
     boolean hasBinderBoundViews;
     boolean shouldBindImmediately;
     boolean shouldBindOnce;
+
+    private long mRefreshStart;
 
     public BaseAPISubscriber() {
         shouldBindImmediately = true;
@@ -64,11 +69,19 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         mRefreshTag = refreshTag;
     }
 
+    public void setTracker(Tracker tracker) {
+        mAnalyticsTracker = tracker;
+    }
+
     /**
      * Called when a refresh begins
      */
-    public void onRefreshStart() {
+    public void onRefreshStart(@RefreshController.RefreshType int refreshType) {
         mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
+        mRefreshStart = System.nanoTime();
+        if (refreshType == RefreshController.REQUESTED_BY_USER) {
+            sendRefreshUpdate();
+        }
     }
 
     @Override
@@ -103,6 +116,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                 }
             }
         });
+
+        long totalRefreshTime = System.nanoTime() - mRefreshStart;
+        sendTimingUpdate(totalRefreshTime / 1000); // Convert to ms
     }
 
     @Override
@@ -171,4 +187,15 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         return false;
     }
 
+    private void sendTimingUpdate(long timeSpent) {
+        if (mAnalyticsTracker != null) {
+            mAnalyticsTracker.send(AnalyticsHelper.getTimingHit(timeSpent, this.getClass().getSimpleName(), mRefreshTag));
+        }
+    }
+
+    private void sendRefreshUpdate() {
+        if (mAnalyticsTracker != null) {
+            mAnalyticsTracker.send(AnalyticsHelper.getRefreshHit(mRefreshTag));
+        }
+    }
 }

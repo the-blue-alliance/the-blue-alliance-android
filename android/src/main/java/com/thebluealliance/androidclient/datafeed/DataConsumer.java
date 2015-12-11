@@ -19,9 +19,10 @@ public interface DataConsumer<T> {
 
     /**
      * A hook for binders to clean up their views
+     * @param unbindViews
      */
     @UiThread
-    void unbind();
+    void unbind(boolean unbindViews);
 
     /**
      * Called when loading completes

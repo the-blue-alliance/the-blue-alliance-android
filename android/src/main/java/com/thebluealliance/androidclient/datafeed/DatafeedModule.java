@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Cache;
@@ -105,8 +106,8 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton
-    public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson) {
-        return new TBAStatusController(prefs, gson);
+    public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson, Tracker tracker) {
+        return new TBAStatusController(prefs, gson, tracker);
     }
 
     public static Gson getGson() {

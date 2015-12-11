@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.android.gms.analytics.Tracker;
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -71,6 +73,12 @@ public class TBAAndroidModule {
     @Singleton
     public EventBus provideEventBus() {
         return EventBus.getDefault();
+    }
+
+    @Provides
+    @Singleton
+    public Tracker provideAndroidTracker(Context context) {
+        return Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, context);
     }
 
     @Provides

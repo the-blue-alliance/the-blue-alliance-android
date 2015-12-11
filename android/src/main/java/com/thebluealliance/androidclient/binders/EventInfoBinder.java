@@ -175,9 +175,11 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     @Override
-    public void unbind() {
-        super.unbind();
-        ButterKnife.unbind(this);
+    public void unbind(boolean unbindViews) {
+        super.unbind(unbindViews);
+        if (unbindViews) {
+            ButterKnife.unbind(this);
+        }
     }
 
     private void bindNoDataView() {

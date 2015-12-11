@@ -37,9 +37,11 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
     }
 
     @Override
-    public void unbind() {
-        super.unbind();
-        ButterKnife.unbind(this);
+    public void unbind(boolean unbindViews) {
+        super.unbind(unbindViews);
+        if (unbindViews) {
+            ButterKnife.unbind(this);
+        }
     }
 
     @Override

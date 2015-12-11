@@ -13,8 +13,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 
-import org.w3c.dom.Text;
-
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -162,9 +160,11 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     }
 
     @Override
-    public void unbind() {
-        super.unbind();
-        ButterKnife.unbind(this);
+    public void unbind(boolean unbindViews) {
+        super.unbind(unbindViews);
+        if (unbindViews) {
+            ButterKnife.unbind(this);
+        }
     }
 
     public static class Model {

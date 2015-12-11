@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
@@ -41,6 +42,7 @@ public abstract class DatafeedFragment
     @Inject protected Lazy<EventBusSubscriber> mEventBusSubscriber;
     @Inject protected NoDataBinder mNoDataBinder;
     @Inject protected RefreshController mRefreshController;
+    @Inject protected Tracker mAnalyticsTracker;
 
     protected CacheableDatafeed mDatafeed;
     protected Observable<? extends T> mObservable;
@@ -61,6 +63,7 @@ public abstract class DatafeedFragment
         mSubscriber.setConsumer(mBinder);
         mSubscriber.setRefreshController(mRefreshController);
         mSubscriber.setRefreshTag(mRefreshTag);
+        mSubscriber.setTracker(mAnalyticsTracker);
         mBinder.setActivity(getActivity());
         mBinder.setNoDataBinder(mNoDataBinder);
         mBinder.setNoDataParams(getNoDataParams());
@@ -90,7 +93,7 @@ public abstract class DatafeedFragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mBinder.unbind();
+        mBinder.unbind(true);
     }
 
     /**
@@ -135,6 +138,7 @@ public abstract class DatafeedFragment
                 mObservable.subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
                         .subscribe(mSubscriber);
+                mSubscriber.onRefreshStart(refreshType);
             }
 
         }
@@ -143,11 +147,9 @@ public abstract class DatafeedFragment
     @Override
     public void onRefreshStart(@RefreshType int refreshType) {
         if (mSubscriber != null && mBinder != null) {
-            mBinder.unbind();
+            mBinder.unbind(false);
             setShouldBindOnce(isCurrentlyVisible);
             getNewObservables(RefreshController.REQUESTED_BY_USER);
-            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
-            mSubscriber.onRefreshStart();
         }
     }
 

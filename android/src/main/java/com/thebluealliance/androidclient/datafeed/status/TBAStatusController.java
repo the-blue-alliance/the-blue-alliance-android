@@ -4,17 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.models.APIStatus;
 
 import java.util.Calendar;
@@ -34,16 +35,18 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     /* 15 minutes in nanoseconds */
     private static final double UPDATE_TIMEOUT_NS = 9e+11;
 
-    private SharedPreferences mPrefs;
-    private Gson mGson;
+    private final SharedPreferences mPrefs;
+    private final Gson mGson;
+    private final Tracker mAnalyticsTracker;
 
     private long mLastUpdateTime;
     private long mLastDialogTime;
 
     @Inject
-    public TBAStatusController(SharedPreferences prefs, Gson gson) {
+    public TBAStatusController(SharedPreferences prefs, Gson gson, Tracker tracker) {
         mPrefs = prefs;
         mGson = gson;
+        mAnalyticsTracker = tracker;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
     }
@@ -95,7 +98,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
     @Override
     public void onActivityStarted(Activity activity) {
-
+        new AnalyticsActions.ReportActivityStart(activity).run();
     }
 
     @Override
@@ -114,21 +117,15 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
             new AlertDialog.Builder(activity)
               .setTitle(R.string.update_dialog_title)
               .setMessage(R.string.update_dialog_text)
-              .setPositiveButton(R.string.update_dialog_action, new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int which) {
-                      /* Open Play Store page */
-                      dialog.dismiss();
-                      Intent i = new Intent(Intent.ACTION_VIEW);
-                      i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient"));
-                      activity.startActivity(i);
-                  }
+              .setPositiveButton(R.string.update_dialog_action, (dialog, which) -> {
+                  /* Open Play Store page */
+                  dialog.dismiss();
+                  Intent i = new Intent(Intent.ACTION_VIEW);
+                  i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient"));
+                  activity.startActivity(i);
               })
-              .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                  @Override
-                  public void onClick(DialogInterface dialog, int which) {
-                      dialog.dismiss();
-                  }
+              .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                  dialog.dismiss();
               })
               .show();
             mLastDialogTime = System.nanoTime();
@@ -142,7 +139,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
     @Override
     public void onActivityStopped(Activity activity) {
-
+        new AnalyticsActions.ReportActivityStop(activity).run();
     }
 
     @Override

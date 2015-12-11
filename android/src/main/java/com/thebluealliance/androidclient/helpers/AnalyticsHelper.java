@@ -6,9 +6,8 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Analytics;
 
-/**
- * Created by phil on 3/24/15.
- */
+import java.util.Map;
+
 public class AnalyticsHelper {
 
     public static boolean ANALYTICS_ENABLED = true;
@@ -18,12 +17,16 @@ public class AnalyticsHelper {
 
         Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
 
-        t.send(new HitBuilders.TimingBuilder()
+        t.send(getTimingHit(time, name, label));
+    }
+
+    public static Map<String, String> getTimingHit(long time, String name, String label) {
+        return new HitBuilders.TimingBuilder()
                 .setCategory("load_timing")
                 .setValue(time)
                 .setVariable(name)
                 .setLabel(label)
-                .build());
+                .build();
     }
 
     public static void sendSearchUpdate(Context c, String query) {
@@ -37,15 +40,12 @@ public class AnalyticsHelper {
                 .build());
     }
 
-    public static void sendRefreshUpdate(Context c, String key) {
-        if (!ANALYTICS_ENABLED) return;
-
-        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("refresh")
-                .setAction("toolbar-button")
-                .setLabel(key)
-                .build());
+    public static Map<String, String> getRefreshHit(String key) {
+        return new HitBuilders.EventBuilder()
+          .setCategory("refresh")
+          .setAction("toolbar-button")
+          .setLabel(key)
+          .build();
     }
 
     public static void sendClickUpdate(Context c, String category, String action, String key) {

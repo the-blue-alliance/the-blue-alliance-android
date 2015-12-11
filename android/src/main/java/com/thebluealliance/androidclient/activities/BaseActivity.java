@@ -18,11 +18,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.types.ModelType;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer, a search
@@ -50,7 +49,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new AnalyticsActions.ReportActivityStart(this).run();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -74,12 +72,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
