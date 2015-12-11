@@ -2,13 +2,11 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
-import com.thebluealliance.androidclient.datafeed.combiners.JsonArrayAndKeyCombiner;
-import com.thebluealliance.androidclient.datafeed.combiners.JsonObjectAndKeyCombiner;
+import com.thebluealliance.androidclient.datafeed.combiners.JsonAndKeyCombiner;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAndEventTeamCombiner;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
@@ -163,10 +161,10 @@ public class CacheableDatafeed {
         return mAPICache.fetchEventTeams(eventKey).concatWith(apiData);
     }
 
-    public Observable<JsonArray> fetchEventRankings(String eventKey, String cacheHeader) {
-        Observable<JsonArray> apiData = mResponseMap.getAndWriteMappedResponseBody(
+    public Observable<? extends JsonElement> fetchEventRankings(String eventKey, String cacheHeader) {
+        Observable<JsonElement> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mRetrofitAPI.fetchEventRankings(eventKey, cacheHeader),
-          new JsonArrayAndKeyCombiner(eventKey),
+          new JsonAndKeyCombiner(eventKey),
           mWriter.getEventRankingsWriter().get());
         return mAPICache.fetchEventRankings(eventKey).concatWith(apiData);
     }
@@ -180,9 +178,9 @@ public class CacheableDatafeed {
     }
 
     public Observable<? extends JsonElement> fetchEventStats(String eventKey, String cacheHeader) {
-        Observable<JsonObject> apiData = mResponseMap.getAndWriteMappedResponseBody(
+        Observable<JsonElement> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mRetrofitAPI.fetchEventStats(eventKey, cacheHeader),
-          new JsonObjectAndKeyCombiner(eventKey),
+          new JsonAndKeyCombiner(eventKey),
           mWriter.getEventStatsWriter().get());
         return mAPICache.fetchEventStats(eventKey).concatWith(apiData);
     }
@@ -202,10 +200,10 @@ public class CacheableDatafeed {
         return mAPICache.fetchEventAwards(eventKey).concatWith(apiData);
     }
 
-    public Observable<JsonObject> fetchEventDistrictPoints(String eventKey, String cacheHeader) {
-        Observable<JsonObject> apiData = mResponseMap.getAndWriteMappedResponseBody(
+    public Observable<? extends JsonElement> fetchEventDistrictPoints(String eventKey, String cacheHeader) {
+        Observable<JsonElement> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mRetrofitAPI.fetchEventDistrictPoints(eventKey, cacheHeader),
-          new JsonObjectAndKeyCombiner(eventKey),
+          new JsonAndKeyCombiner(eventKey),
           mWriter.getEventDistrictPointsWriter().get());
         return mAPICache.fetchEventDistrictPoints(eventKey).concatWith(apiData);
     }

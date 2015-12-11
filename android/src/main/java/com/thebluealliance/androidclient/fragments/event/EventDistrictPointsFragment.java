@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
@@ -96,7 +95,7 @@ public class EventDistrictPointsFragment
     }
 
     @Override
-    protected Observable<JsonObject> getObservable(String tbaCacheHeader) {
+    protected Observable<? extends JsonElement> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchEventDistrictPoints(mEventKey, tbaCacheHeader);
     }
 

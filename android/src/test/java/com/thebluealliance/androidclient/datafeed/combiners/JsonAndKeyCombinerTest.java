@@ -16,15 +16,15 @@ import static org.junit.Assert.assertTrue;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
-public class JsonObjectAndKeyCombinerTest {
+public class JsonAndKeyCombinerTest {
 
     private JsonObject mStats;
-    private JsonObjectAndKeyCombiner mCombiner;
+    private JsonAndKeyCombiner mCombiner;
 
     @Before
     public void setUp() {
         mStats = ModelMaker.getModel(JsonObject.class, "2015necmp_stats");
-        mCombiner = new JsonObjectAndKeyCombiner("2015necmp");
+        mCombiner = new JsonAndKeyCombiner("2015necmp");
     }
 
     @Test

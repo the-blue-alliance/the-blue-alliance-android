@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.retrofit;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.squareup.okhttp.CacheControl;
 import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
 import com.thebluealliance.androidclient.models.APIStatus;
@@ -103,7 +103,7 @@ public interface APIv2 {
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
     @GET("/api/v2/event/{eventKey}/rankings")
-    Observable<Response<JsonArray>> fetchEventRankings(
+    Observable<Response<JsonElement>> fetchEventRankings(
       @Path("eventKey") String eventKey,
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
@@ -113,7 +113,7 @@ public interface APIv2 {
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
     @GET("/api/v2/event/{eventKey}/stats")
-    Observable<Response<JsonObject>> fetchEventStats(
+    Observable<Response<JsonElement>> fetchEventStats(
       @Path("eventKey") String eventKey,
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
@@ -123,7 +123,7 @@ public interface APIv2 {
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
     @GET("/api/v2/event/{eventKey}/district_points")
-    Observable<Response<JsonObject>> fetchEventDistrictPoints(
+    Observable<Response<JsonElement>> fetchEventDistrictPoints(
       @Path("eventKey") String eventKey,
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 

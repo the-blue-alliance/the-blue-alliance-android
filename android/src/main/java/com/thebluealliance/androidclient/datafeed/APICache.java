@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -24,6 +23,7 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.DistrictType;
 
 import java.util.Calendar;
 import java.util.List;
@@ -237,7 +237,7 @@ public class APICache {
         });
     }
 
-    public Observable<JsonArray> fetchEventRankings(String eventKey) {
+    public Observable<JsonElement> fetchEventRankings(String eventKey) {
         return Observable.create((observer) -> {
             try {
                 Event event = mDb.getEventsTable()
@@ -264,7 +264,7 @@ public class APICache {
         });
     }
 
-    public Observable<JsonObject> fetchEventStats(String eventKey) {
+    public Observable<JsonElement> fetchEventStats(String eventKey) {
         return Observable.create((observer) -> {
             try {
                 Event event = mDb.getEventsTable()
@@ -291,7 +291,7 @@ public class APICache {
         });
     }
 
-    public Observable<JsonObject> fetchEventDistrictPoints(String eventKey) {
+    public Observable<JsonElement> fetchEventDistrictPoints(String eventKey) {
         return Observable.create((observer) -> {
             try {
                 Event event = mDb.getEventsTable().get(eventKey);
