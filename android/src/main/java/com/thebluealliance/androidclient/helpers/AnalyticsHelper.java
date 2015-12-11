@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -68,5 +69,12 @@ public class AnalyticsHelper {
                 .setAction("social-click")
                 .setTarget(key)
                 .build());
+    }
+
+    public static Map<String, String> getErrorHit(Throwable throwable) {
+        return new HitBuilders.ExceptionBuilder()
+          .setDescription(Log.getStackTraceString(throwable))
+          .setFatal(false)
+          .build();
     }
 }

@@ -130,6 +130,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                 mConsumer.onError(throwable);
             }
         });
+        sendExceptionUpdate(throwable);
     }
 
     @Override
@@ -196,6 +197,12 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     private void sendRefreshUpdate() {
         if (mAnalyticsTracker != null) {
             mAnalyticsTracker.send(AnalyticsHelper.getRefreshHit(mRefreshTag));
+        }
+    }
+
+    private void sendExceptionUpdate(Throwable throwable) {
+        if (mAnalyticsTracker != null) {
+            mAnalyticsTracker.send(AnalyticsHelper.getErrorHit(throwable));
         }
     }
 }
