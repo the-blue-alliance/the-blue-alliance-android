@@ -84,7 +84,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
 
         mYearSelectorContainer = findViewById(R.id.year_selector_container);
         mYarSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
