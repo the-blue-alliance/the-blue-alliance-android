@@ -41,7 +41,7 @@ import javax.inject.Inject;
 public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
 
     /**
-     * Saved instance state key representing the last select navigajjjjtion drawer item
+     * Saved instance state key representing the last select navigation drawer item
      */
     private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
 
