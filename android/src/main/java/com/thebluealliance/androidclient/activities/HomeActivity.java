@@ -238,15 +238,16 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 setupActionBarForDistricts();
                 break;
             case R.id.nav_item_teams:
-                getSupportActionBar().setTitle("Teams");
+                getSupportActionBar().setTitle(R.string.teams);
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
             case R.id.nav_item_my_tba:
-                getSupportActionBar().setTitle("myTBA");
+                getSupportActionBar().setTitle(R.string.mytba);
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
             case R.id.nav_item_notifications:
-                getSupportActionBar().setTitle("Notifications");
+                getSupportActionBar().setTitle(R.string.notifications);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
         }
 
