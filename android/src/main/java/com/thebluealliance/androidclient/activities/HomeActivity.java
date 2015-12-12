@@ -56,8 +56,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
-    @Inject
-    TBAStatusController mStatusController;
+    @Inject TBAStatusController mStatusController;
 
     private boolean mFromSavedInstance = false;
     private int mCurrentSelectedNavigationItemId = -1;
