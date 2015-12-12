@@ -24,6 +24,15 @@ Want to add features, fix bugs, or just poke around the code? No problem!
 
 For more detailed instructions, checkout [GitHub's Guide to Contributing](https://guides.github.com/activities/contributing-to-open-source/)
 
+### <a name="style"></a>
+Code Style
+----------
+
+We use the base [Android Code Style](https://github.com/android/platform_development/blob/master/ide/intellij/codestyles/AndroidStyle.xml)
+When you set up Android Studio, copy `AndroidStyle.xml` into your config directory (on linux,
+`~/.AndroidStudioXX/config/codestyles/` and then open Settings -> Editor -> Code Style and in the
+ dropdown, select `AndroidStyle`.
+
 ### <a name="setup"></a>
 Environment Setup
 -----------------
