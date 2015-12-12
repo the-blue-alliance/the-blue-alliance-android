@@ -20,15 +20,15 @@ public class ThreadSafeFormatters {
 
     private static final DateFormat sEventDateFormat = new SimpleDateFormat("yyyy-MM-dd", ENGLISH);
     private static final DateFormat sEventRenderFormat =
-      new SimpleDateFormat("MMM d, yyyy", ENGLISH);
+            new SimpleDateFormat("MMM d, yyyy", ENGLISH);
     private static final DateFormat sEventRenderShortFormat =
-      new SimpleDateFormat("MMM d", ENGLISH);
+            new SimpleDateFormat("MMM d", ENGLISH);
     private static final DateFormat sMonthFormat = new SimpleDateFormat("MMM", ENGLISH);
 
     private static NumberFormat sDoubleOnePlaceFormat = new DecimalFormat("##.#");
     private static NumberFormat sDoubleTwoPlacesFormat = new DecimalFormat("###.##");
 
-    public static synchronized Date parseEventDate(String dateString) throws ParseException{
+    public static synchronized Date parseEventDate(String dateString) throws ParseException {
         return sEventDateFormat.parse(dateString);
     }
 

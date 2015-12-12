@@ -20,27 +20,46 @@ import butterknife.ButterKnife;
 
 public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
-    @Inject SocialClickListener mSocialClickListener;
+    @Inject
+    SocialClickListener mSocialClickListener;
 
-    @Bind(R.id.content) View content;
-    @Bind(R.id.team_name) TextView teamName;
-    @Bind(R.id.team_location_container) View teamLocationContainer;
-    @Bind(R.id.team_location) TextView teamLocation;
+    @Bind(R.id.content)
+    View content;
+    @Bind(R.id.team_name)
+    TextView teamName;
+    @Bind(R.id.team_location_container)
+    View teamLocationContainer;
+    @Bind(R.id.team_location)
+    TextView teamLocation;
 
-    @Bind(R.id.team_website_container) View teamWebsiteContainer;
-    @Bind(R.id.team_website_title) TextView teamWebsiteTitle;
-    @Bind(R.id.team_twitter_container) View teamTwitterContainer;
-    @Bind(R.id.team_twitter_title) TextView teamTwitterTitle;
-    @Bind(R.id.team_youtube_container) View teamYoutubeContainer;
-    @Bind(R.id.team_youtube_title) TextView teamYoutubeTitle;
-    @Bind(R.id.team_cd_container) View teamCdContainer;
-    @Bind(R.id.team_full_name_container) View teamFullNameContainer;
-    @Bind(R.id.team_full_name) TextView teamFullName;
-    @Bind(R.id.team_next_match_label) View teamNextMatchLabel;
-    @Bind(R.id.team_next_match_details) View teamNextMatchDetails;
-    @Bind(R.id.progress) View progress;
-    @Bind(R.id.team_motto_container) View teamMottoContainer;
-    @Bind(R.id.team_motto) TextView teamMotto;
+    @Bind(R.id.team_website_container)
+    View teamWebsiteContainer;
+    @Bind(R.id.team_website_title)
+    TextView teamWebsiteTitle;
+    @Bind(R.id.team_twitter_container)
+    View teamTwitterContainer;
+    @Bind(R.id.team_twitter_title)
+    TextView teamTwitterTitle;
+    @Bind(R.id.team_youtube_container)
+    View teamYoutubeContainer;
+    @Bind(R.id.team_youtube_title)
+    TextView teamYoutubeTitle;
+    @Bind(R.id.team_cd_container)
+    View teamCdContainer;
+    @Bind(R.id.team_full_name_container)
+    View teamFullNameContainer;
+    @Bind(R.id.team_full_name)
+    TextView teamFullName;
+    @Bind(R.id.team_next_match_label)
+    View teamNextMatchLabel;
+    @Bind(R.id.team_next_match_details)
+    View teamNextMatchDetails;
+    @Bind(R.id.progress)
+    View progress;
+    @Bind(R.id.team_motto_container)
+    View teamMottoContainer;
+    @Bind(R.id.team_motto)
+    TextView teamMotto;
 
     @Inject
     public TeamInfoBinder(SocialClickListener socialClickListener) {

@@ -31,8 +31,8 @@ public class ImageListElement extends ListElement {
         }
         ImageListElement element = (ImageListElement) o;
         return imageUrl.equals(element.imageUrl) &&
-          linkUrl.equals(element.linkUrl) &&
-          isVideo == element.isVideo;
+                linkUrl.equals(element.linkUrl) &&
+                isVideo == element.isVideo;
     }
 
     @Override

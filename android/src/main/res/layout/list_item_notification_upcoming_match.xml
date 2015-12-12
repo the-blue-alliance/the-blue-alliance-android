@@ -56,7 +56,8 @@
                     android:textColor="@color/secondary_text_color"
                     android:textSize="18sp" />
 
-                <com.thebluealliance.androidclient.views.MatchView android:id="@+id/match_details"
+                <com.thebluealliance.androidclient.views.MatchView
+                    android:id="@+id/match_details"
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

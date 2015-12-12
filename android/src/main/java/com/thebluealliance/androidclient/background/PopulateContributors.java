@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;

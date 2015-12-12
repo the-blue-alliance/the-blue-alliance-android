@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.google.common.collect.ImmutableList;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
@@ -28,8 +29,10 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             MODE_EXPAND_ONLY = 2,
             MODE_EXPAND_ALL = 3;
 
-    @Bind(R.id.expandable_list) ExpandableListView expandableListView;
-    @Bind(R.id.progress) ProgressBar progressBar;
+    @Bind(R.id.expandable_list)
+    ExpandableListView expandableListView;
+    @Bind(R.id.progress)
+    ProgressBar progressBar;
 
     //public ExpandableListView expandableListView;
     //public ProgressBar progressBar;

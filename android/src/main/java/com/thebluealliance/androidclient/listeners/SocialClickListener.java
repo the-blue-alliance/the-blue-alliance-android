@@ -46,7 +46,7 @@ public class SocialClickListener implements View.OnClickListener {
             } else {
                 // No application can handle this intent
                 Toast.makeText(mContext, "No app can handle that request", Toast.LENGTH_SHORT)
-                  .show();
+                        .show();
             }
         }
     }

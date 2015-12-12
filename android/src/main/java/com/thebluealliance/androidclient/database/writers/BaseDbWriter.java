@@ -11,6 +11,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * Common code for a Database Writer
+ *
  * @param <T> Type of object to be written (e.g. model type of list of models)
  */
 public abstract class BaseDbWriter<T> implements Action4<String, String, String[], T> {
@@ -23,6 +24,7 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
 
     /**
      * Writes new models to the db
+     *
      * @param newModels New models to write
      */
     @WorkerThread
@@ -31,15 +33,16 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
     /**
      * Delete the objects associated with the query in the db
      * So we can account for deletions
-     * @param dbTable String TABLE_* constant from {@link Database}
-     * @param sqlWhere SQL WHERE Clause
+     *
+     * @param dbTable   String TABLE_* constant from {@link Database}
+     * @param sqlWhere  SQL WHERE Clause
      * @param whereArgs args for WHERE clause
      */
     @WorkerThread
     public void clear(
-      @Nullable String dbTable,
-      @Nullable String sqlWhere,
-      @Nullable String[] whereArgs) {
+            @Nullable String dbTable,
+            @Nullable String sqlWhere,
+            @Nullable String[] whereArgs) {
         if (dbTable == null || sqlWhere == null || whereArgs == null) {
             // No clearing to do
             return;
@@ -52,10 +55,10 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
 
     @Override
     public void call(
-      @Nullable String dbTable,
-      @Nullable String sqlWhere,
-      @Nullable String[] whereArgs,
-      T newModels) {
+            @Nullable String dbTable,
+            @Nullable String sqlWhere,
+            @Nullable String[] whereArgs,
+            T newModels) {
         if (newModels == null) {
             return;
         }
@@ -73,9 +76,12 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
 
     /**
      * Returns the ModelTable associated with the given string
+     *
      * @param tableName A TABLE_* constant from {@link Database}
      */
-    private static @Nullable ModelTable getTable(Database db, String tableName) {
+    private static
+    @Nullable
+    ModelTable getTable(Database db, String tableName) {
         switch (tableName) {
             case Database.TABLE_AWARDS:
                 return db.getAwardsTable();

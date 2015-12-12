@@ -15,17 +15,21 @@ import dagger.Component;
 
 @Singleton
 @Component(
-  modules = {DatafeedModule.class},
-  dependencies = {ApplicationComponent.class})
+        modules = {DatafeedModule.class},
+        dependencies = {ApplicationComponent.class})
 public interface DatafeedComponent {
 
     CacheableDatafeed datafeed();
 
     void inject(StatusRefreshService statusRefreshService);
+
     void inject(MyTbaUpdateService myTbaUpdateService);
 
     void inject(TBAAndroid tbaAndroid);
+
     void inject(HomeActivity homeActivity);
+
     void inject(LaunchActivity launchActivity);
+
     void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
 }

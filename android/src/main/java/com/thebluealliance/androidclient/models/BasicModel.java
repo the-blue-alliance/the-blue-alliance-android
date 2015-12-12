@@ -33,7 +33,7 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
         }
     }
 
-    public String getTable(){
+    public String getTable() {
         return table;
     }
 
@@ -47,7 +47,7 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
     @SuppressWarnings("unchecked")
     public ListElement render(ModelRendererSupplier supplier) {
         ModelRenderer<T, ?> renderer = supplier.getRendererForType(type);
-        return renderer != null ? renderer.renderFromModel((T)this, null) : null;
+        return renderer != null ? renderer.renderFromModel((T) this, null) : null;
     }
 
     /*

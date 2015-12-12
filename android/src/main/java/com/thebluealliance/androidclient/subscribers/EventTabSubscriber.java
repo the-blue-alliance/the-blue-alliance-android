@@ -44,9 +44,9 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
 
             if (isOffseason ? lastEventMonth != month : lastEventWeek != competitionWeek) {
                 mDataToBind.add(new EventWeekTab(
-                  competitionWeek,
-                  isOffseason ? month : -1,
-                  EventHelper.generateLabelForEvent(event)));
+                        competitionWeek,
+                        isOffseason ? month : -1,
+                        EventHelper.generateLabelForEvent(event)));
 
                 lastEventMonth = month;
                 lastEventWeek = competitionWeek;

@@ -29,7 +29,7 @@ public abstract class ListHeader implements ListItem {
     @Override
     public boolean equals(Object o) {
         return (o instanceof ListHeader) &&
-          ((ListHeader) o).getText().equals(name);
+                ((ListHeader) o).getText().equals(name);
     }
 
     @Override

@@ -15,7 +15,7 @@ public class SubscriptionSortByModelComparator implements Comparator<Subscriptio
         if (lhs.getModelEnum() == rhs.getModelEnum()) {
             if (lhs.getModelType() == ModelType.TEAM) {
                 return Integer.compare(TeamHelper.getTeamNumber(lhs.getModelKey()),
-                  TeamHelper.getTeamNumber(rhs.getModelKey()));
+                        TeamHelper.getTeamNumber(rhs.getModelKey()));
             }
             return lhs.getModelKey().compareTo(rhs.getModelKey());
         } else {

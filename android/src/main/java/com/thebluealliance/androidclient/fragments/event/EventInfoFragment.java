@@ -23,7 +23,7 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class EventInfoFragment
-  extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
+        extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
 
     private static final String KEY = "eventKey";
 

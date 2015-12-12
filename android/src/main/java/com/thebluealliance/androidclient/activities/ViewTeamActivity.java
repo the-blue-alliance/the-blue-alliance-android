@@ -56,7 +56,8 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
     private int[] mYearsParticipated;
 
-    @Inject TBAStatusController mStatusController;
+    @Inject
+    TBAStatusController mStatusController;
 
     // Should come in the format frc####
     private String mTeamKey;

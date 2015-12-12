@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -32,14 +33,18 @@ import java.util.Date;
  */
 public class CompLevelStartingNotification extends BaseNotification {
 
-    private @Nullable JsonElement scheduledTime;
+    private
+    @Nullable
+    JsonElement scheduledTime;
     private String eventName, eventKey, compLevelAbbrev;
 
     public CompLevelStartingNotification(String messageData) {
         super(NotificationTypes.LEVEL_STARTING, messageData);
     }
 
-    public @Nullable JsonElement getScheduledTime() {
+    public
+    @Nullable
+    JsonElement getScheduledTime() {
         return scheduledTime;
     }
 

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.database.writers;
 import android.support.annotation.WorkerThread;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
 

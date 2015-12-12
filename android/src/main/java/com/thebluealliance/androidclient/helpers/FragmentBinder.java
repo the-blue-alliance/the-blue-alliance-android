@@ -52,11 +52,11 @@ public class FragmentBinder implements ViewPager.OnPageChangeListener {
         }
         if (state == ViewPager.SCROLL_STATE_IDLE) {
             if (mSelectedPage - 1 >= 0
-              && !mFragmentAdapter.isFragmentAtPositionBound(mSelectedPage - 1)) {
+                    && !mFragmentAdapter.isFragmentAtPositionBound(mSelectedPage - 1)) {
                 mFragmentAdapter.bindFragmentAtPosition(mSelectedPage - 1);
             }
             if (mSelectedPage + 1 < mFragmentAdapter.getCount()
-              && !mFragmentAdapter.isFragmentAtPositionBound(mSelectedPage + 1)) {
+                    && !mFragmentAdapter.isFragmentAtPositionBound(mSelectedPage + 1)) {
                 mFragmentAdapter.bindFragmentAtPosition(mSelectedPage + 1);
             }
         }

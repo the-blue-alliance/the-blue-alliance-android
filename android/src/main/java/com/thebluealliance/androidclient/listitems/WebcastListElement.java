@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
 import com.thebluealliance.androidclient.listeners.WebcastClickListener;
@@ -75,8 +76,8 @@ public class WebcastListElement extends ListElement {
         }
         WebcastListElement element = (WebcastListElement) o;
         return eventKey.equals(element.eventKey) &&
-          eventName.equals(element.eventName) &&
-          webcast.equals(element.webcast) &&
-          number == element.number;
+                eventName.equals(element.eventName) &&
+                webcast.equals(element.webcast) &&
+                number == element.number;
     }
 }

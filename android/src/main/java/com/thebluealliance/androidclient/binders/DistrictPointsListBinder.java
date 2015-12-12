@@ -27,7 +27,7 @@ public class DistrictPointsListBinder extends ListViewBinder {
     @Override
     public void updateData(@Nullable List<ListItem> data) {
         super.updateData(data);
-        if (data instanceof Type && !((Type)data).isDistrict) {
+        if (data instanceof Type && !((Type) data).isDistrict) {
             nonDistrictWarning.setText(mResources.getString(R.string.warning_not_real_district));
             nonDistrictWarning.setVisibility(View.VISIBLE);
         } else {

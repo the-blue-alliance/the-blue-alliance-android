@@ -29,7 +29,8 @@ import retrofit.Converter;
  */
 public final class LenientGsonConverterFactory implements Converter.Factory {
     /**
-     * Create an instance using a default {@link Gson} instance for conversion. Encoding to JSON and
+     * Create an instance using a default {@link Gson} instance for conversion. Encoding to JSON
+     * and
      * decoding from JSON (when no charset is specified by a header) will use UTF-8.
      */
     public static LenientGsonConverterFactory create() {
@@ -51,7 +52,8 @@ public final class LenientGsonConverterFactory implements Converter.Factory {
         this.gson = gson;
     }
 
-    @Override public Converter<?> get(Type type) {
+    @Override
+    public Converter<?> get(Type type) {
         TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
         return new LenientGsonConverter<>(adapter);
     }

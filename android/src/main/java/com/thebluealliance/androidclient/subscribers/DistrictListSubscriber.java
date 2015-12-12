@@ -49,7 +49,7 @@ public class DistrictListSubscriber extends BaseAPISubscriber<List<District>, Li
         String whereClause = EventsTable.YEAR + " = ? AND " + EventsTable.DISTRICT + " = ?";
         String[] whereArgs = new String[]{year, Integer.toString(districtEnum)};
         Cursor cursor =
-          mDb.getEventsTable().query(fields, whereClause, whereArgs, null, null, null, null);
+                mDb.getEventsTable().query(fields, whereClause, whereArgs, null, null, null, null);
         if (cursor == null || !cursor.moveToFirst()) {
             return 0;
         } else {

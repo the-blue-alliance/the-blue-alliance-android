@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DistrictRankingsSubscriber
-  extends BaseAPISubscriber<List<DistrictTeam>, List<ListItem>> {
+        extends BaseAPISubscriber<List<DistrictTeam>, List<ListItem>> {
 
     Database mDb;
 
@@ -41,12 +41,12 @@ public class DistrictRankingsSubscriber
                 nickname = "Team " + districtTeam.getTeamKey().substring(3);
             }
             mDataToBind.add(
-              new DistrictTeamListElement(
-                districtTeam.getTeamKey(),
-                districtTeam.getDistrictKey(),
-                nickname,
-                districtTeam.getRank(),
-                districtTeam.getTotalPoints()));
+                    new DistrictTeamListElement(
+                            districtTeam.getTeamKey(),
+                            districtTeam.getDistrictKey(),
+                            nickname,
+                            districtTeam.getRank(),
+                            districtTeam.getTotalPoints()));
         }
     }
 }

@@ -35,7 +35,8 @@ public class TeamInfoFragment
 
     private String mTeamKey;
 
-    @Inject Lazy<EventRenderer> mEventRenderer;
+    @Inject
+    Lazy<EventRenderer> mEventRenderer;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();

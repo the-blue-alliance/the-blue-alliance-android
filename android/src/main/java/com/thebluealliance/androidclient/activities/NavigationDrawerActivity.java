@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
@@ -87,8 +88,6 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     /**
      * We set up the nav drawer here to give child activities a chance to set the window's Action
      * Bar if they're using a Toolbar instead of the default Action Bar.
-     *
-     * @param savedInstanceState
      */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -121,7 +120,8 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     }
 
     /**
-     * Called before the navigation drawer is created. Subclasses can override this to perform setup
+     * Called before the navigation drawer is created. Subclasses can override this to perform
+     * setup
      * before the navigation drawer is created, such as enabling or disabling it or disabling the
      * action bar toggle. Subclasses do not have to call through to super.
      */
@@ -152,7 +152,8 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     }
 
     /**
-     * Provides a default implementation of item click handling that simply opens the specified mode
+     * Provides a default implementation of item click handling that simply opens the specified
+     * mode
      * in a StartActivity that is inserted into the back stack. Children classes can override this
      * if they want to enable custom handling of click events. If children override this method,
      * they should <strong>not</strong> call through to this method.

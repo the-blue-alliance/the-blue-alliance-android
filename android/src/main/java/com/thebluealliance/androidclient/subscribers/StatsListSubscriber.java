@@ -4,6 +4,7 @@ import android.content.res.Resources;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
@@ -44,15 +45,15 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
         if (mAPIData == null ||
-          !mAPIData.isJsonObject()) {
+                !mAPIData.isJsonObject()) {
 
             return;
         }
 
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject() ||
-          !statsData.has("dprs") ||!statsData.get("dprs").isJsonObject() ||
-          !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
+                !statsData.has("dprs") || !statsData.get("dprs").isJsonObject() ||
+                !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
             return;
         }
 
@@ -68,18 +69,18 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             double dpr = dprs.has(stat.getKey()) ? dprs.get(stat.getKey()).getAsDouble() : 0;
             double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;
             String displayString = mResources.getString(
-              R.string.stats_format,
-              Stat.displayFormat.format(opr),
-              Stat.displayFormat.format(dpr),
-              Stat.displayFormat.format(ccwm));
+                    R.string.stats_format,
+                    Stat.displayFormat.format(opr),
+                    Stat.displayFormat.format(dpr),
+                    Stat.displayFormat.format(ccwm));
             mDataToBind.add(new StatsListElement(
-              teamKey,
-              stat.getKey(),
-              teamName,
-              displayString,
-              opr,
-              dpr,
-              ccwm
+                    teamKey,
+                    stat.getKey(),
+                    teamName,
+                    displayString,
+                    opr,
+                    dpr,
+                    ccwm
             ));
         }
         Collections.sort(mDataToBind, new StatListElementComparator(mStatToSortBy));
@@ -89,7 +90,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     private String getTopStatsString() {
         String statsString = "";
         for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()); i++) {
-            String opr = ((StatsListElement)mDataToBind.get(i)).getFormattedOpr();
+            String opr = ((StatsListElement) mDataToBind.get(i)).getFormattedOpr();
             statsString += (i + 1) + ". <b>" + opr + "</b>";
             if (i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()) - 1) {
                 statsString += "<br>";

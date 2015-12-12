@@ -15,28 +15,45 @@ public enum DistrictType {
     public static DistrictType fromEnum(int districtEnum) {
         switch (districtEnum) {
             default:
-            case 0: return NO_DISTRICT;
-            case 1: return MICHIGAN;
-            case 2: return MID_ATLANTIC;
-            case 3: return NEW_ENGLAND;
-            case 4: return PACIFIC_NORTHWEST;
-            case 5: return INDIANA;
-            case 6: return CHESAPEAKE;
-            case 7: return NORTH_CAROLINA;
-            case 8: return GEORGIA;
+            case 0:
+                return NO_DISTRICT;
+            case 1:
+                return MICHIGAN;
+            case 2:
+                return MID_ATLANTIC;
+            case 3:
+                return NEW_ENGLAND;
+            case 4:
+                return PACIFIC_NORTHWEST;
+            case 5:
+                return INDIANA;
+            case 6:
+                return CHESAPEAKE;
+            case 7:
+                return NORTH_CAROLINA;
+            case 8:
+                return GEORGIA;
         }
     }
 
     public static DistrictType fromAbbreviation(String abbrev) {
         switch (abbrev) {
-            case "fim": return MICHIGAN;
-            case "mar": return MID_ATLANTIC;
-            case "ne":  return NEW_ENGLAND;
-            case "pnw": return PACIFIC_NORTHWEST;
-            case "in":  return INDIANA;
-            case "chs": return CHESAPEAKE;
-            case "nc":  return NORTH_CAROLINA;
-            case "pch": return GEORGIA;
+            case "fim":
+                return MICHIGAN;
+            case "mar":
+                return MID_ATLANTIC;
+            case "ne":
+                return NEW_ENGLAND;
+            case "pnw":
+                return PACIFIC_NORTHWEST;
+            case "in":
+                return INDIANA;
+            case "chs":
+                return CHESAPEAKE;
+            case "nc":
+                return NORTH_CAROLINA;
+            case "pch":
+                return GEORGIA;
             default:
                 return NO_DISTRICT;
         }

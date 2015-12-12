@@ -5,10 +5,10 @@ import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
-public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.Model>{
+public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.Model> {
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException{
+    public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind = new TeamInfoBinder.Model();
         if (mAPIData == null) {
             return;

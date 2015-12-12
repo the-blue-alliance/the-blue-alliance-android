@@ -28,6 +28,7 @@ import rx.subjects.Subject;
  * the events received during the paused state are delivered to the listener in the order that they
  * were received (this happens synchronously).
  * <p>
+ *
  * @author Nathan
  * @author Phil
  */
@@ -56,6 +57,7 @@ public class ResumeableRxFirebase implements ChildEventListener {
      * You should use {@link Observable#buffer(int)} on the result, because after a pause and
      * resume in this class, the buffered events will come through very quickly (probably too
      * quickly for your subscriber)
+     *
      * @return an {@link Observable} that you can subscribe to
      */
     public Observable<ChildEvent> getObservable() {

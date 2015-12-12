@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary">
@@ -14,7 +13,7 @@
         android:gravity="center_horizontal"
         android:text="@string/update_required_title"
         android:textColor="@color/white"
-        android:textSize="36sp"/>
+        android:textSize="36sp" />
 
     <ImageView
         android:id="@+id/welcome_logo"
@@ -23,7 +22,7 @@
         android:layout_above="@+id/update_message"
         android:layout_below="@id/update_title"
         android:layout_centerInParent="true"
-        android:src="@drawable/ic_tba_lamp"/>
+        android:src="@drawable/ic_tba_lamp" />
 
     <TextView
         android:id="@id/update_message"
@@ -34,8 +33,8 @@
         android:gravity="center_horizontal"
         android:text="@string/update_required_text"
         android:textColor="@color/white"
-        android:textSize="20sp"/>
-    
+        android:textSize="20sp" />
+
     <ImageButton
         android:id="@+id/update_google_play_button"
         android:layout_height="wrap_content"
@@ -46,5 +45,5 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
         android:scaleType="fitCenter"
-        android:adjustViewBounds="true"/>
+        android:adjustViewBounds="true" />
 </RelativeLayout>

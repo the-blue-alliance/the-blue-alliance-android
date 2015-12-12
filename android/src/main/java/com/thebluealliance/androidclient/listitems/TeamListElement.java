@@ -34,12 +34,12 @@ public class TeamListElement extends ListElement {
     }
 
     public TeamListElement(
-      String key,
-      int number,
-      String name,
-      String location,
-      boolean showLinkToTeamDetails,
-      boolean showMyTbaDetails) {
+            String key,
+            int number,
+            String name,
+            String location,
+            boolean showLinkToTeamDetails,
+            boolean showMyTbaDetails) {
         super(key);
         mTeamNumber = number;
         mTeamName = name;

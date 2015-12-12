@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import java.util.List;
 
 public abstract class ListViewFragment<T, S extends BaseAPISubscriber<T, List<ListItem>>>
-  extends DatafeedFragment<T, List<ListItem>, S, ListViewBinder> {
+        extends DatafeedFragment<T, List<ListItem>, S, ListViewBinder> {
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;
@@ -27,7 +27,9 @@ public abstract class ListViewFragment<T, S extends BaseAPISubscriber<T, List<Li
     protected ListView mListView;
 
     @Override
-    public @Nullable View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public
+    @Nullable
+    View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.list_view_with_spinner, null);
         mBinder.setRootView(v);
         mListView = (ListView) v.findViewById(R.id.list);

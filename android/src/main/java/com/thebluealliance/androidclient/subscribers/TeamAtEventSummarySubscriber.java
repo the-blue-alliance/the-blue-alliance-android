@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -66,7 +67,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
         if (!mIsMatchListLoaded || mAPIData == null ||
-          mAPIData.event == null || mAPIData.teamAtEventRank == null) {
+                mAPIData.event == null || mAPIData.teamAtEventRank == null) {
             return;
         }
 
@@ -75,13 +76,13 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
         int[] record = MatchHelper.getRecordForTeam(mMatches, mTeamKey);
         String recordString =
-          String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
+                String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
 
         Event event = mAPIData.event;
         int year = event.getEventYear();
         boolean activeEvent = event.isHappeningNow();
         String actionBarTitle =
-          String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
+                String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
         String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getEventShortName());
         EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
@@ -128,8 +129,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         // Rank
         if (rank > 0) {
             mDataToBind.add(new LabelValueListItem(
-              mResources.getString(R.string.team_at_event_rank),
-              rank + Utilities.getOrdinalFor(rank)));
+                    mResources.getString(R.string.team_at_event_rank),
+                    rank + Utilities.getOrdinalFor(rank)));
         }
 
         LabelValueListItem rankBreakdownItem = new LabelValueListItem("Ranking Breakdown", rankingString);
@@ -139,7 +140,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: "
-              + Arrays.toString(e.getStackTrace()));
+                    + Arrays.toString(e.getStackTrace()));
             status = MatchHelper.EventStatus.NOT_AVAILABLE;
         }
 
@@ -149,26 +150,26 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             /* Don't show for 2015 events, because no wins and such */
             if (year != 2015 && !recordString.equals("0-0-0")) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_record),
-                  recordString));
+                        mResources.getString(R.string.team_at_event_record),
+                        recordString));
             }
 
             // Alliance
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
-              status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+                    status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_alliance),
-                  EventHelper.generateAllianceSummary(
-                    mResources,
-                    allianceNumber,
-                    alliancePick)));
+                        mResources.getString(R.string.team_at_event_alliance),
+                        EventHelper.generateAllianceSummary(
+                                mResources,
+                                allianceNumber,
+                                alliancePick)));
             }
 
             // Status
             if (status != MatchHelper.EventStatus.NOT_PICKED) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_status),
-                  status.getDescriptionString(mResources)));
+                        mResources.getString(R.string.team_at_event_status),
+                        status.getDescriptionString(mResources)));
             }
 
             // Ranking Breakdown
@@ -178,13 +179,13 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
             if (lastMatch != null) {
                 mDataToBind.add(new LabelValueListItem
-                  (mResources.getString(R.string.title_last_match),
-                    mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
+                        (mResources.getString(R.string.title_last_match),
+                                mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
             }
             if (nextMatch != null) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.title_next_match),
-                  mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
+                        mResources.getString(R.string.title_next_match),
+                        mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
             }
         } else if (rank > 0) {
             // Only show ranking breakdown if rankings are available

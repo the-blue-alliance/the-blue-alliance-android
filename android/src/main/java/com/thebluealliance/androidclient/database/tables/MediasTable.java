@@ -17,7 +17,7 @@ public class MediasTable extends ModelTable<Media> {
 
     private SQLiteDatabase mDb;
 
-    public MediasTable(SQLiteDatabase db){
+    public MediasTable(SQLiteDatabase db) {
         super(db);
         this.mDb = db;
     }

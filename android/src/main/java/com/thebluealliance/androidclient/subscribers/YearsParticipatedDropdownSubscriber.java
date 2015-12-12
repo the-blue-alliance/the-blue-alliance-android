@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
 
 import java.util.Arrays;

@@ -18,7 +18,7 @@ public class DistrictsTable extends ModelTable<District> {
 
     private SQLiteDatabase mDb;
 
-    public DistrictsTable(SQLiteDatabase db){
+    public DistrictsTable(SQLiteDatabase db) {
         super(db);
         this.mDb = db;
     }

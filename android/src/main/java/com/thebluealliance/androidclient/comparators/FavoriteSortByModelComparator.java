@@ -13,13 +13,13 @@ public class FavoriteSortByModelComparator implements Comparator<Favorite> {
         if (lhs.getModelEnum() == rhs.getModelEnum()) {
             if (lhs.getModelType() == ModelType.TEAM) {
                 return Integer.compare(TeamHelper.getTeamNumber(lhs.getModelKey()),
-                  TeamHelper.getTeamNumber(rhs.getModelKey()));
+                        TeamHelper.getTeamNumber(rhs.getModelKey()));
             } else if (lhs.getModelType() == ModelType.EVENT || lhs.getModelType() == ModelType.EVENTTEAM) {
                 // Sort year newest first
                 int yearCmp = compareEventYears(rhs.getModelKey(), lhs.getModelKey());
                 if (yearCmp == 0) {
                     return EventHelper.getEventCode(lhs.getModelKey())
-                      .compareTo(EventHelper.getEventCode(rhs.getModelKey()));
+                            .compareTo(EventHelper.getEventCode(rhs.getModelKey()));
                 }
                 return yearCmp;
             } else {

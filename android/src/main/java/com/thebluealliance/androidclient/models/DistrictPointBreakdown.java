@@ -63,31 +63,31 @@ public class DistrictPointBreakdown implements RenderableModel {
 
     public RenderableModel renderQualPoints(Resources resources) {
         return new BreakdownItem(
-          resources.getString(R.string.district_qual_points),
-          String.format(resources.getString(R.string.district_points_format), qualPoints));
+                resources.getString(R.string.district_qual_points),
+                String.format(resources.getString(R.string.district_points_format), qualPoints));
     }
 
     public RenderableModel renderElimPoints(Resources resources) {
         return new BreakdownItem(
-          resources.getString(R.string.district_elim_points),
-          String.format(resources.getString(R.string.district_points_format), elimPoints));
+                resources.getString(R.string.district_elim_points),
+                String.format(resources.getString(R.string.district_points_format), elimPoints));
     }
 
     public RenderableModel renderAlliancePoints(Resources resources) {
         return new BreakdownItem(
-          resources.getString(R.string.district_alliance_points),
-          String.format(resources.getString(R.string.district_points_format), alliancePoints));
+                resources.getString(R.string.district_alliance_points),
+                String.format(resources.getString(R.string.district_points_format), alliancePoints));
     }
 
     public RenderableModel renderAwardPoints(Resources resources) {
         return new BreakdownItem(
-          resources.getString(R.string.district_award_points),
-          String.format(resources.getString(R.string.district_points_format), awardPoints));
+                resources.getString(R.string.district_award_points),
+                String.format(resources.getString(R.string.district_points_format), awardPoints));
     }
 
     public RenderableModel renderTotalPoints(Resources resources) {
         return new BreakdownItem(resources.getString(R.string.total_district_points),
-          String.format(resources.getString(R.string.district_points_format), totalPoints));
+                String.format(resources.getString(R.string.district_points_format), totalPoints));
     }
 
     public String getTeamKey() {
@@ -125,7 +125,7 @@ public class DistrictPointBreakdown implements RenderableModel {
     @Override
     public DistrictTeamListElement render(ModelRendererSupplier supplier) {
         DistrictPointBreakdownRenderer renderer =
-          (DistrictPointBreakdownRenderer)supplier.getRendererForType(ModelType.DISTRICTPOINTS);
+                (DistrictPointBreakdownRenderer) supplier.getRendererForType(ModelType.DISTRICTPOINTS);
         return renderer != null ? renderer.renderFromModel(this, null) : null;
     }
 

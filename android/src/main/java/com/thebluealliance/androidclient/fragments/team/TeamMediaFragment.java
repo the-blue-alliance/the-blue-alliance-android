@@ -27,11 +27,11 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class TeamMediaFragment extends DatafeedFragment<
-  List<Media>,
-  List<ListGroup>,
-  MediaListSubscriber,
-  ExpandableListViewBinder>
-  implements HasYearParam {
+        List<Media>,
+        List<ListGroup>,
+        MediaListSubscriber,
+        ExpandableListViewBinder>
+        implements HasYearParam {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.PlusManager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;

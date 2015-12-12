@@ -17,7 +17,9 @@ public class RefreshWrapper {
         mRefreshState = refreshState;
     }
 
-    public @Nullable Refreshable getRefreshable() {
+    public
+    @Nullable
+    Refreshable getRefreshable() {
         return mRefreshable.get();
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 import rx.Observable;
 
 public class MySubscriptionsFragment
-  extends ListViewFragment<List<Subscription>, SubscriptionListSubscriber> {
+        extends ListViewFragment<List<Subscription>, SubscriptionListSubscriber> {
 
     public static MySubscriptionsFragment newInstance() {
         return new MySubscriptionsFragment();

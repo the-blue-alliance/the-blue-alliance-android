@@ -2,7 +2,8 @@ package com.thebluealliance.androidclient.types;
 
 import com.thebluealliance.androidclient.helpers.EventHelper;
 
-/** Do not insert any new entries above the existing enums!!!
+/**
+ * Do not insert any new entries above the existing enums!!!
  * Things depend on their ordinal values, so you can only to the bottom of the list
  */
 public enum EventType {

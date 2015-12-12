@@ -21,6 +21,6 @@ public class ModelSettingsClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         mContext.startActivity(
-          MyTBAModelSettingsActivity.newInstance(mContext, mModelKey, mModelType));
+                MyTBAModelSettingsActivity.newInstance(mContext, mModelKey, mModelType));
     }
 }

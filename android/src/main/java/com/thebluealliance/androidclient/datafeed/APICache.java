@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
@@ -139,8 +140,8 @@ public class APICache {
             try {
                 String where = MediasTable.TEAMKEY + " = ? AND " + MediasTable.YEAR + " = ?";
                 List<Media> medias =
-                  mDb.getMediasTable()
-                    .getForQuery(null, where, new String[]{teamKey, Integer.toString(year)});
+                        mDb.getMediasTable()
+                                .getForQuery(null, where, new String[]{teamKey, Integer.toString(year)});
                 observer.onNext(medias);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -162,7 +163,7 @@ public class APICache {
             try {
                 String where = String.format("%1$s = ?", EventsTable.YEAR);
                 List<Event> events = mDb.getEventsTable()
-                  .getForQuery(null, where, new String[]{Integer.toString(year)});
+                        .getForQuery(null, where, new String[]{Integer.toString(year)});
                 if (!observer.isUnsubscribed()) {
                     observer.onNext(events);
                     observer.onCompleted();
@@ -177,10 +178,10 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 String where =
-                  String.format("%1$s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.WEEK);
+                        String.format("%1$s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.WEEK);
                 List<Event> events = mDb.getEventsTable()
-                  .getForQuery(null, where,
-                    new String[]{Integer.toString(year), Integer.toString(week)});
+                        .getForQuery(null, where,
+                                new String[]{Integer.toString(year), Integer.toString(week)});
                 observer.onNext(events);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -200,11 +201,11 @@ public class APICache {
                 String end = Long.toString(cal.getTimeInMillis());
 
                 String where = String.format(
-                  "%1$s >= ? AND %2$s < ?",
-                  EventsTable.START,
-                  EventsTable.END);
+                        "%1$s >= ? AND %2$s < ?",
+                        EventsTable.START,
+                        EventsTable.END);
                 List<Event> events = mDb.getEventsTable()
-                  .getForQuery(null, where, new String[]{start, end});
+                        .getForQuery(null, where, new String[]{start, end});
                 observer.onNext(events);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -241,7 +242,7 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 Event event = mDb.getEventsTable()
-                  .get(eventKey, new String[]{EventsTable.RANKINGS});
+                        .get(eventKey, new String[]{EventsTable.RANKINGS});
                 observer.onNext(event != null ? event.getRankings() : null);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -255,7 +256,7 @@ public class APICache {
             try {
                 String where = String.format("%1$s = ?", MatchesTable.EVENT);
                 List<Match> matches = mDb.getMatchesTable()
-                  .getForQuery(null, where, new String[]{eventKey});
+                        .getForQuery(null, where, new String[]{eventKey});
                 observer.onNext(matches);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -268,7 +269,7 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 Event event = mDb.getEventsTable()
-                  .get(eventKey, new String[]{EventsTable.STATS});
+                        .get(eventKey, new String[]{EventsTable.STATS});
                 observer.onNext(event != null ? event.getStats() : null);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -282,7 +283,7 @@ public class APICache {
             try {
                 String where = String.format("%1$s = ?", AwardsTable.EVENTKEY);
                 List<Award> awards = mDb.getAwardsTable()
-                  .getForQuery(null, where, new String[]{eventKey});
+                        .getForQuery(null, where, new String[]{eventKey});
                 observer.onNext(awards);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -320,7 +321,7 @@ public class APICache {
             try {
                 String where = String.format("%1$s = ?", DistrictsTable.YEAR);
                 List<District> districts = mDb.getDistrictsTable()
-                  .getForQuery(null, where, new String[]{Integer.toString(year)});
+                        .getForQuery(null, where, new String[]{Integer.toString(year)});
                 observer.onNext(districts);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -333,12 +334,12 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 String where =
-                  String.format("$1%s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.DISTRICT);
+                        String.format("$1%s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.DISTRICT);
                 int districtEnum = DistrictType.fromAbbreviation(districtShort).ordinal();
                 List<Event> events = mDb.getEventsTable().getForQuery(
-                  null,
-                  where,
-                  new String[]{Integer.toString(year), Integer.toString(districtEnum)});
+                        null,
+                        where,
+                        new String[]{Integer.toString(year), Integer.toString(districtEnum)});
                 observer.onNext(events);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -351,14 +352,14 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 String where = String.format(
-                  "%1$s = ? AND %2$s = ?",
-                  DistrictTeamsTable.YEAR,
-                  DistrictTeamsTable.DISTRICT_ENUM);
+                        "%1$s = ? AND %2$s = ?",
+                        DistrictTeamsTable.YEAR,
+                        DistrictTeamsTable.DISTRICT_ENUM);
                 int districtEnum = DistrictType.fromAbbreviation(districtShort).ordinal();
                 List<DistrictTeam> districtTeams = mDb.getDistrictTeamsTable().getForQuery(
-                  null,
-                  where,
-                  new String[]{Integer.toString(year), Integer.toString(districtEnum)});
+                        null,
+                        where,
+                        new String[]{Integer.toString(year), Integer.toString(districtEnum)});
                 observer.onNext(districtTeams);
                 observer.onCompleted();
             } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.database.writers;
 import android.support.annotation.WorkerThread;
 
 import com.google.common.collect.ImmutableList;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
 

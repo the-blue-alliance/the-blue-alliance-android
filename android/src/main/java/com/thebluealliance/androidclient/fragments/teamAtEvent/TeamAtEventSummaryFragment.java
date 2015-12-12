@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscribe
 import rx.Observable;
 
 public class TeamAtEventSummaryFragment
-  extends ListViewFragment<Model, TeamAtEventSummarySubscriber> {
+        extends ListViewFragment<Model, TeamAtEventSummarySubscriber> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -61,9 +61,9 @@ public class TeamAtEventSummaryFragment
     @Override
     protected Observable<Model> getObservable(String cacheHeader) {
         return Observable.zip(
-          mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey, cacheHeader),
-          mDatafeed.fetchEvent(mEventKey, cacheHeader),
-          new TeamAtEventSummaryCombiner());
+                mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey, cacheHeader),
+                mDatafeed.fetchEvent(mEventKey, cacheHeader),
+                new TeamAtEventSummaryCombiner());
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.content.Intent;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 

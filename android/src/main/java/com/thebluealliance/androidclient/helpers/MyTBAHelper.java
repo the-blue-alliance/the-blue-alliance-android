@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import com.thebluealliance.androidclient.Constants;
 
 import java.util.Map;

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.Constants;
@@ -51,24 +52,30 @@ public class DatafeedModule {
 
     public static int CACHE_SIZE = 10 * 1024 * 1024;
 
-    public DatafeedModule() {}
+    public DatafeedModule() {
+    }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
         return getRetrofit(gson, okHttpClient, prefs);
     }
 
-    @Provides @Singleton @Named("retrofit")
+    @Provides
+    @Singleton
+    @Named("retrofit")
     public APIv2 provideRetrofitAPI(Retrofit retrofit) {
         return retrofit.create(APIv2.class);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public Gson provideGson() {
         return getGson();
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public OkHttpClient getOkHttp(Cache responseCache) {
         OkHttpClient client = new OkHttpClient();
         client.interceptors().add(new APIv2RequestInterceptor());
@@ -76,36 +83,42 @@ public class DatafeedModule {
         return client;
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public Cache provideOkCache(Context context) {
         return new Cache(context.getCacheDir(), CACHE_SIZE);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public APICache provideApiCache(Database db) {
         return new APICache(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public CacheableDatafeed provideDatafeed(
-      @Named("retrofit") APIv2 retrofit,
-      APICache cache,
-      DatabaseWriter writer,
-      RetrofitResponseMap responseMap) {
+            @Named("retrofit") APIv2 retrofit,
+            APICache cache,
+            DatabaseWriter writer,
+            RetrofitResponseMap responseMap) {
         return new CacheableDatafeed(retrofit, cache, writer, responseMap);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public RefreshController provideRefreshController() {
         return new RefreshController();
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MyTbaDatafeed provideMyTbaDatafeed(Context context, SharedPreferences prefs, Database db) {
         return new MyTbaDatafeed(context, context.getResources(), prefs, db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson, Tracker tracker) {
         return new TBAStatusController(prefs, gson, tracker);
     }
@@ -126,15 +139,15 @@ public class DatafeedModule {
 
     public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
         String baseUrl = Utilities.isDebuggable()
-          ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
-          : APIv2.TBA_URL;
+                ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
+                : APIv2.TBA_URL;
         baseUrl = baseUrl.isEmpty() ? APIv2.TBA_URL : baseUrl;
         Log.d(Constants.LOG_TAG, "Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
-          .baseUrl(baseUrl)
-          .client(okHttpClient)
-          .addConverterFactory(LenientGsonConverterFactory.create(gson))
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-          .build();
+                .baseUrl(baseUrl)
+                .client(okHttpClient)
+                .addConverterFactory(LenientGsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
     }
 }

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.models;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;

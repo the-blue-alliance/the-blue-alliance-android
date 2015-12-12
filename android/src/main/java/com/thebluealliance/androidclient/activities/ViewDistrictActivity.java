@@ -28,7 +28,7 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class ViewDistrictActivity extends FABNotificationSettingsActivity
-  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
+        implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
@@ -192,13 +192,13 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
         }
         return mComponent;
     }

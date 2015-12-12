@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -83,8 +84,10 @@ public class MatchHelper {
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Next match
      */
-    public static @Nullable Match getNextMatchPlayed(List<Match> matches)
-      throws BasicModel.FieldNotDefinedException {
+    public static
+    @Nullable
+    Match getNextMatchPlayed(List<Match> matches)
+            throws BasicModel.FieldNotDefinedException {
         if (matches == null || matches.isEmpty()) return null;
 
         Match last = null;
@@ -107,8 +110,10 @@ public class MatchHelper {
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Last match played
      */
-    public static @Nullable Match getLastMatchPlayed(List<Match> matches)
-      throws BasicModel.FieldNotDefinedException {
+    public static
+    @Nullable
+    Match getLastMatchPlayed(List<Match> matches)
+            throws BasicModel.FieldNotDefinedException {
         if (matches == null || matches.isEmpty()) return null;
         for (int i = matches.size() - 1; i >= 0; i--) {
             Match m = matches.get(i);

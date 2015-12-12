@@ -27,7 +27,7 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 public class ViewMatchActivity extends FABNotificationSettingsActivity
-  implements HasFragmentComponent {
+        implements HasFragmentComponent {
 
     public static final String MATCH_KEY = "match_key";
 
@@ -59,7 +59,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
 
         MatchInfoFragment matchInfoFragment = MatchInfoFragment.newInstance(mMatchKey);
         getSupportFragmentManager().beginTransaction()
-          .add(R.id.match_info_fragment_container, matchInfoFragment).commit();
+                .add(R.id.match_info_fragment_container, matchInfoFragment).commit();
 
         mWarningMessage = (TextView) findViewById(R.id.warning_container);
     }
@@ -78,7 +78,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
 
         MatchInfoFragment matchInfoFragment = MatchInfoFragment.newInstance(mMatchKey);
         getSupportFragmentManager().beginTransaction()
-          .replace(R.id.match_info_fragment_container, matchInfoFragment).commit();
+                .replace(R.id.match_info_fragment_container, matchInfoFragment).commit();
     }
 
     @Override
@@ -161,13 +161,13 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
         }
         return mComponent;
     }

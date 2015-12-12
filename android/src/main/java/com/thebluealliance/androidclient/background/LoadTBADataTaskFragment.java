@@ -19,11 +19,17 @@ import javax.inject.Named;
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
     DatafeedComponent mComponent;
-    @Inject @Named("retrofit") APIv2 mDatafeed;
-    @Inject Database mDb;
-    @Inject TeamListWriter mTeamWriter;
-    @Inject EventListWriter mEventWriter;
-    @Inject DistrictListWriter mDistrictWriter;
+    @Inject
+    @Named("retrofit")
+    APIv2 mDatafeed;
+    @Inject
+    Database mDb;
+    @Inject
+    TeamListWriter mTeamWriter;
+    @Inject
+    EventListWriter mEventWriter;
+    @Inject
+    DistrictListWriter mDistrictWriter;
 
     LoadTBAData.LoadTBADataCallbacks callback;
     private LoadTBAData task;

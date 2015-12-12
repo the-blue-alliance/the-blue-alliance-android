@@ -18,7 +18,8 @@ import com.thebluealliance.androidclient.database.tables.TeamsTable;
  * WARNING: TERRIBLE HACKS WITHIN
  * For some reason, I was having trouble getting the returned cursor to get the right column index
  * from a column name (would always return -1/not found), so the indexes are just directly done
- */public class TeamCursorAdapter extends CursorAdapter {
+ */
+public class TeamCursorAdapter extends CursorAdapter {
 
     public String getKey(int position) {
         Cursor c = getCursor();
